@@ -1231,7 +1231,8 @@ String[][] CalendarDD;
 int[][] CalendarDate;
 
 
-float X_control, Y_control;
+float X_control;
+float Y_control;
 
 
 float STUDY_X_coordinate = 0;
@@ -1556,18 +1557,7 @@ int WIN3D_include = 1;
 
 
 
-int Shade_Surface_Wire = -1;
-int Shade_Surface_Base = 0;
-int Shade_Surface_White = 1;
-int Shade_Surface_Materials = 2;
-int Shade_Global_Solar = 3;
-int Shade_Vertex_Solar = 4;
-int Shade_Vertex_Solid = 5;
-int Shade_Vertex_Elevation = 6;
 
-int number_of_shading_options = 7;
-
-int WIN3D_FACES_SHADE = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
 
 
 
@@ -1650,7 +1640,7 @@ float[][] allVertices = {{0,0,0}};
 int[][] allFaces_PNT = {{0,0,0}};
 int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
 
-float[][] allSolids = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
+float[][] allSolids_DEF = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
 
 float[][] allObject2Ds_XYZS = {{0,0,0,0}};
 int[] allObject2Ds_MAP = {0};
@@ -4638,7 +4628,7 @@ float dist_lon_lat (double lon1, double lat1, double lon2, double lat2) {
   return(d);
 }
 
-float fn_dist (float[] a, float[] b) {
+float SOLARCHVISION_fn_dist (float[] a, float[] b) {
 
   float d = 0;
   for (int i = 0; i < a.length; i++) {
@@ -4649,7 +4639,7 @@ float fn_dist (float[] a, float[] b) {
   return d;
 }
 
-float[] fn_G (float[][] a) {
+float[] SOLARCHVISION_fn_G (float[][] a) {
 
   float[] b = a[0]; // initializing to the first node
   
@@ -4668,7 +4658,7 @@ float[] fn_G (float[][] a) {
   return b;
 }
 
-float[] fn_normalize (float[] a) {
+float[] SOLARCHVISION_fn_normalize (float[] a) {
   float[] b = a;
   float d = 0;
   for (int i = 0; i < a.length; i++) {
@@ -4683,7 +4673,7 @@ float[] fn_normalize (float[] a) {
   return b;
 }
 
-float fn_dot (float[] a, float b[]) {
+float SOLARCHVISION_fn_dot (float[] a, float b[]) {
   float d = 0;
   for (int i = 0; i < min(a.length, b.length); i++) {
     d += a[i] * b[i];
@@ -5587,10 +5577,10 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
           
           for (int i = 0; i < 24; i += 1) {
             for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {      
-              _valuesH          [i][j] = SOLARCHVISION_NORMAL(_valuesO          [i][j])[N_Middle];
-              _valuesH_overcast [i][j] = SOLARCHVISION_NORMAL(_valuesO_overcast [i][j])[N_Middle];
-              _valuesH_scattered[i][j] = SOLARCHVISION_NORMAL(_valuesO_scattered[i][j])[N_Middle];
-              _valuesH_clear    [i][j] = SOLARCHVISION_NORMAL(_valuesO_clear    [i][j])[N_Middle];
+              _valuesH          [i][j] = SOLARCHVISION_NORMAL(_valuesO          [i][j])[STAT_N_Middle];
+              _valuesH_overcast [i][j] = SOLARCHVISION_NORMAL(_valuesO_overcast [i][j])[STAT_N_Middle];
+              _valuesH_scattered[i][j] = SOLARCHVISION_NORMAL(_valuesO_scattered[i][j])[STAT_N_Middle];
+              _valuesH_clear    [i][j] = SOLARCHVISION_NORMAL(_valuesO_clear    [i][j])[STAT_N_Middle];
               
               //if (l == LAYER_drybulb) println("Average at hour", i, ", day", j, "=", _valuesH[i][j]);
             }
@@ -6002,7 +5992,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       File_output_norm[(j - STUDY_j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
-        File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
+        File_output_norm[(j - STUDY_j_start)].print(STAT_N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
@@ -6411,7 +6401,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
-        File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
+        File_output_norm[(j - STUDY_j_start)].print(STAT_N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
@@ -6810,7 +6800,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
-        File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
+        File_output_norm[(j - STUDY_j_start)].print(STAT_N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
@@ -7408,7 +7398,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
       File_output_norm[(j - STUDY_j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
-        File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
+        File_output_norm[(j - STUDY_j_start)].print(STAT_N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
@@ -8061,7 +8051,7 @@ void SOLARCHVISION_STUDY_draw_data_normals (int i, int j, float[] _valuesA, floa
         if (NormalsA[l] < 0) NormalsA[l] += 360;
       }
       
-      if ((l == N_Max) || (l == N_Min)) {
+      if ((l == STAT_N_Max) || (l == STAT_N_Min)) {
         NormalsA[l] = FLOAT_undefined;
       }
     }
@@ -8091,7 +8081,7 @@ void SOLARCHVISION_STUDY_draw_data_normals (int i, int j, float[] _valuesA, floa
         if (NormalsB[l] < 0) NormalsB[l] += 360;
       }
       
-      if ((l == N_Max) || (l == N_Min)) {
+      if ((l == STAT_N_Max) || (l == STAT_N_Min)) {
         NormalsB[l] = FLOAT_undefined;
       }
     }
@@ -8109,42 +8099,42 @@ void SOLARCHVISION_STUDY_draw_data_normals (int i, int j, float[] _valuesA, floa
     //int l = impact_layer;
 
 
-    if (l == N_Middle) {
+    if (l == STAT_N_Middle) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
       STUDY_Diagrams.stroke(0, 191, 0, _OPACITY);
       STUDY_Diagrams.fill(0, 191, 0, _OPACITY);
     }
-    else if (l == N_MidHigh) {
+    else if (l == STAT_N_MidHigh) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
       STUDY_Diagrams.stroke(191, 0, 0, _OPACITY);
       STUDY_Diagrams.fill(191, 0, 0, _OPACITY);
     } 
-    else if (l == N_MidLow) {
+    else if (l == STAT_N_MidLow) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
       STUDY_Diagrams.stroke(0, 0, 191, _OPACITY);
       STUDY_Diagrams.fill(0, 0, 191, _OPACITY);
     } 
-    else if (l == N_Max) {
+    else if (l == STAT_N_Max) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
       STUDY_Diagrams.stroke(255, 127, 127, _OPACITY);
       STUDY_Diagrams.fill(255, 127, 127, _OPACITY);
     } 
-    else if (l == N_Min) {
+    else if (l == STAT_N_Min) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
       STUDY_Diagrams.stroke(127, 127, 255, _OPACITY);
       STUDY_Diagrams.fill(127, 127, 255, _OPACITY);
     }
-    else if (l == N_M50) {
+    else if (l == STAT_N_M50) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
       STUDY_Diagrams.stroke(0, 127, 0);
       STUDY_Diagrams.fill(0, 127, 0);
     }
-    else if (l == N_M75) {
+    else if (l == STAT_N_M75) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
       STUDY_Diagrams.stroke(127, 0, 0);
       STUDY_Diagrams.fill(127, 0, 0);
     } 
-    else if (l == N_M25) {
+    else if (l == STAT_N_M25) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
       STUDY_Diagrams.stroke(0, 0, 127);
       STUDY_Diagrams.fill(0, 0, 127);
@@ -8196,10 +8186,10 @@ void SOLARCHVISION_STUDY_draw_data_normals (int i, int j, float[] _valuesA, floa
 
     
     float z_l = 60; //l;
-    if (l == N_M75) z_l = 61;
-    if (l == N_M50) z_l = 61;
-    if (l == N_M25) z_l = 61;
-    if (l == N_Ave) z_l = 62;
+    if (l == STAT_N_M75) z_l = 61;
+    if (l == STAT_N_M50) z_l = 61;
+    if (l == STAT_N_M25) z_l = 61;
+    if (l == STAT_N_Ave) z_l = 62;
     
     if ((NormalsA[l] < 0.9 * FLOAT_undefined) && (NormalsB[l] < 0.9 * FLOAT_undefined)) {
       my_line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, z_l * sz_Plot * STUDY_W_scale, (j + ((i + 0.5 + SOLARCHVISION_deltaTime) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot, z_l * sz_Plot * STUDY_W_scale); 
@@ -8836,19 +8826,19 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
 
 
-int N_MidLow = 0;
-int N_Middle = 1;
-int N_MidHigh = 2;
+int STAT_N_MidLow = 0;
+int STAT_N_Middle = 1;
+int STAT_N_MidHigh = 2;
 
-int N_M25 = 3;
-int N_M50 = 4;
-int N_M75 = 5;
+int STAT_N_M25 = 3;
+int STAT_N_M50 = 4;
+int STAT_N_M75 = 5;
 
-int N_Min = 6;
-int N_Ave = 7;
-int N_Max = 8;
+int STAT_N_Min = 6;
+int STAT_N_Ave = 7;
+int STAT_N_Max = 8;
 
-String[] N_Title = {
+String[] STAT_N_Title = {
   "Mid-LOW*       ",   
   "MIDDLE*        ", 
   "Mid-HIGH*      ", 
@@ -8863,18 +8853,18 @@ String[] N_Title = {
 
 };
 
-int[] reverse_N;
+int[] STAT_reverse_N;
 {
-  reverse_N = new int [9];
-  reverse_N[N_MidLow] = N_MidHigh;
-  reverse_N[N_Middle] = N_Middle;
-  reverse_N[N_MidHigh] = N_MidLow;
-  reverse_N[N_M25] = N_M75;
-  reverse_N[N_M50] = N_M50;
-  reverse_N[N_M75] = N_M25;
-  reverse_N[N_Min] = N_Max;
-  reverse_N[N_Ave] = N_Ave;
-  reverse_N[N_Max] = N_Min;
+  STAT_reverse_N = new int [9];
+  STAT_reverse_N[STAT_N_MidLow] = STAT_N_MidHigh;
+  STAT_reverse_N[STAT_N_Middle] = STAT_N_Middle;
+  STAT_reverse_N[STAT_N_MidHigh] = STAT_N_MidLow;
+  STAT_reverse_N[STAT_N_M25] = STAT_N_M75;
+  STAT_reverse_N[STAT_N_M50] = STAT_N_M50;
+  STAT_reverse_N[STAT_N_M75] = STAT_N_M25;
+  STAT_reverse_N[STAT_N_Min] = STAT_N_Max;
+  STAT_reverse_N[STAT_N_Ave] = STAT_N_Ave;
+  STAT_reverse_N[STAT_N_Max] = STAT_N_Min;
 }
 
 float[] SOLARCHVISION_NORMAL (float[] _values) {
@@ -8894,38 +8884,38 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
     for (int i = 0; i < NV; i += 1) {
       if (_values[i] < 0.9 * FLOAT_undefined) {
         _weight = 1;
-        weight_array[N_Ave] += _weight;
-        return_array[N_Ave] += _values[i];
+        weight_array[STAT_N_Ave] += _weight;
+        return_array[STAT_N_Ave] += _values[i];
         
         _weight = (0.5 * (NV + 1)) - abs((0.5 * (NV + 1)) - (i + 1));
-        weight_array[N_Middle] += _weight;
-        return_array[N_Middle] += _values[i] * _weight;
+        weight_array[STAT_N_Middle] += _weight;
+        return_array[STAT_N_Middle] += _values[i] * _weight;
         
         _weight = (i + 1);
-        weight_array[N_MidHigh] += _weight;
-        return_array[N_MidHigh] += _values[i] * _weight;
+        weight_array[STAT_N_MidHigh] += _weight;
+        return_array[STAT_N_MidHigh] += _values[i] * _weight;
         
         _weight = (NV + 1 - i);
-        weight_array[N_MidLow] += _weight;
-        return_array[N_MidLow] += _values[i] * _weight; 
+        weight_array[STAT_N_MidLow] += _weight;
+        return_array[STAT_N_MidLow] += _values[i] * _weight; 
       }
     }
 
-    return_array[N_Ave] /= weight_array[N_Ave];
-    return_array[N_Middle] /= weight_array[N_Middle];
-    return_array[N_MidHigh] /= weight_array[N_MidHigh];
-    return_array[N_MidLow] /= weight_array[N_MidLow];
+    return_array[STAT_N_Ave] /= weight_array[STAT_N_Ave];
+    return_array[STAT_N_Middle] /= weight_array[STAT_N_Middle];
+    return_array[STAT_N_MidHigh] /= weight_array[STAT_N_MidHigh];
+    return_array[STAT_N_MidLow] /= weight_array[STAT_N_MidLow];
     
-    return_array[N_Max] = _values[(NV - 1)];
-    return_array[N_Min] = _values[0];
+    return_array[STAT_N_Max] = _values[(NV - 1)];
+    return_array[STAT_N_Min] = _values[0];
 
     if ((NV % 2) == 1) {
 
-      return_array[N_M50] = _values[(floor(NV / 2))];
+      return_array[STAT_N_M50] = _values[(floor(NV / 2))];
     }
     else {
       
-      return_array[N_M50] = 0.5 * (_values[(floor(NV / 2))] + _values[(floor(NV / 2) - 1)]);
+      return_array[STAT_N_M50] = 0.5 * (_values[(floor(NV / 2))] + _values[(floor(NV / 2) - 1)]);
 
     }
     
@@ -8933,11 +8923,11 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
     
     q = int(roundTo((NV * 0.75), 1));
     if (q > NV - 1) q = NV - 1;
-    return_array[N_M75] = _values[q];
+    return_array[STAT_N_M75] = _values[q];
 
     q = int(roundTo((NV * 0.25), 1));
     if (q < 0) q = 0;
-    return_array[N_M25] = _values[q];
+    return_array[STAT_N_M25] = _values[q];
   }
   else {
     for (int i = 0; i < return_array.length; i += 1) {
@@ -9690,10 +9680,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.strokeWeight(0); 
         
         if (Impact_TYPE == Impact_ACTIVE) {  
-          STUDY_Diagrams.text(N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+          STUDY_Diagrams.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          STUDY_Diagrams.text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+          STUDY_Diagrams.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
         }            
         //?? French
       }
@@ -10156,10 +10146,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.fill(0);
       STUDY_Diagrams.strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        STUDY_Diagrams.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        STUDY_Diagrams.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
       }            
       //?? French        
     }
@@ -10453,10 +10443,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.fill(0);
       STUDY_Diagrams.strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        STUDY_Diagrams.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        STUDY_Diagrams.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
       }            
       //?? French
     }
@@ -10778,10 +10768,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.fill(0);
       STUDY_Diagrams.strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        STUDY_Diagrams.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        STUDY_Diagrams.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
       }            
       //?? French
     }    
@@ -10972,7 +10962,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       the_filename = "sunPattern_Pallet.bmp";
 
-      TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+      TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
       println("Saving texture:", TEXTURE_path);
       
@@ -11016,8 +11006,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+      //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map  
 
       
 
@@ -13905,14 +13895,14 @@ int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, floa
   {
     
     float[][] newSolid = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
-    allSolids = (float[][]) concat(allSolids, newSolid);
+    allSolids_DEF = (float[][]) concat(allSolids_DEF, newSolid);
 
   }
   
-  allGroup3Ds_Solids[allGroup3Ds_num][1] = allSolids.length - 1;
+  allGroup3Ds_Solids[allGroup3Ds_num][1] = allSolids_DEF.length - 1;
 
 
-  return(allSolids.length - 1);
+  return(allSolids_DEF.length - 1);
 }
 
 
@@ -13936,7 +13926,7 @@ void SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float s
   
   allGroup3Ds_Object2Ds = (int[][]) concat(allGroup3Ds_Object2Ds, newObject_Object2Ds);   
 
-  int[][] newObject_Solids = {{allSolids.length, 0}}; // i.e. null because start > end 
+  int[][] newObject_Solids = {{allSolids_DEF.length, 0}}; // i.e. null because start > end 
   
   allGroup3Ds_Solids = (int[][]) concat(allGroup3Ds_Solids, newObject_Solids);      
   
@@ -14120,7 +14110,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
   if (Current_ObjectCategory == ObjectCategory_Solids) {
     
-    int number_of_Solid_before = allSolids.length; 
+    int number_of_Solid_before = allSolids_DEF.length; 
 
     for (int o = 0; o < selectedSolid_numbers.length; o++) {
 
@@ -14151,7 +14141,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int o = number_of_Solid_before; o < allSolids.length; o++) {
+    for (int o = number_of_Solid_before; o < allSolids_DEF.length; o++) {
       
       int[] newlyAddedSolid = {o};
       
@@ -14973,10 +14963,10 @@ void SOLARCHVISION_delete_Selection () {
       
 
         {
-          float[][] startList = (float[][]) subset(allSolids, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolids, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allSolids_DEF, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSolids_DEF, OBJ_NUM + 1);
           
-          allSolids = (float[][]) concat(startList, endList);
+          allSolids_DEF = (float[][]) concat(startList, endList);
         }
 
       }
@@ -15238,10 +15228,10 @@ void SOLARCHVISION_delete_Selection () {
     
         if ((0 < startSolid) && (startSolid <= endSolid)) {
           
-          float[][] startList = (float[][]) subset(allSolids, 0, startSolid);
-          float[][] endList = (float[][]) subset(allSolids, endSolid + 1);
+          float[][] startList = (float[][]) subset(allSolids_DEF, 0, startSolid);
+          float[][] endList = (float[][]) subset(allSolids_DEF, endSolid + 1);
           
-          allSolids = (float[][]) concat(startList, endList);
+          allSolids_DEF = (float[][]) concat(startList, endList);
           
           Solids_updated = 1;
           
@@ -17050,7 +17040,7 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                 PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
                 PVector UV = U.cross(V);
                 float[] W = {UV.x, UV.y, UV.z};
-                W = fn_normalize(W);
+                W = SOLARCHVISION_fn_normalize(W);
       
                 top_Vertices[s][0] += W[0] * Modify_Input_OpenningDepth;
                 top_Vertices[s][1] += W[1] * Modify_Input_OpenningDepth;
@@ -17180,7 +17170,7 @@ void SOLARCHVISION_offsetVertices_Selection (int _type, float _amount) {
                 if (_type == 1) UV = PVector.add(U, V);
                 
                 float[] W = {UV.x, UV.y, UV.z};
-                W = fn_normalize(W);
+                W = SOLARCHVISION_fn_normalize(W);
                 
                 selectedVertex_offsetValues[o][0] += W[0] * _amount;
                 selectedVertex_offsetValues[o][1] += W[1] * _amount;
@@ -17385,7 +17375,7 @@ void SOLARCHVISION_select_All () {
   }
   
   if (Current_ObjectCategory == ObjectCategory_Solids) {
-    selectedSolid_numbers = new int [allSolids.length];
+    selectedSolid_numbers = new int [allSolids_DEF.length];
     for (int i = 0; i < selectedSolid_numbers.length; i++) { 
       selectedSolid_numbers[i] = i;
     }
@@ -17593,7 +17583,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int i = 1; i < allSolids.length; i++) {
+    for (int i = 1; i < allSolids_DEF.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedSolid_numbers.length; j++) {
@@ -18803,7 +18793,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int xtr, fl
                             , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
 
-      G = fn_normalize(fn_G(the_points));
+      G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
       vM1[i] = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }
     
@@ -18816,7 +18806,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int xtr, fl
                             , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
 
-      G = fn_normalize(fn_G(the_points));
+      G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
       vM2[i] = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     } 
     
@@ -18829,7 +18819,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int xtr, fl
                             , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
                             , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
       
-      G = fn_normalize(fn_G(the_points));
+      G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
       vM3[i] = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }    
     
@@ -18842,7 +18832,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int xtr, fl
                             , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
       
-      G = fn_normalize(fn_G(the_points));
+      G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
       vM4[i] = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }      
     
@@ -18994,13 +18984,13 @@ void SOLARCHVISION_add_Face_afterSphericalTessellation (int m, int tes, int lyr,
                           , {allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
                           , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}};
     
-    G = fn_normalize(fn_G(the_points));
+    G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
     M = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
     G[0] = (allVertices[C][0] - cx) + (allVertices[D][0] - cx) - (allVertices[M][0] - cx);
     G[1] = (allVertices[C][1] - cy) + (allVertices[D][1] - cy) - (allVertices[M][1] - cy);
     G[2] = (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
-    G = fn_normalize(G);
+    G = SOLARCHVISION_fn_normalize(G);
     MM = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);    
   }   
  
@@ -19010,14 +19000,14 @@ void SOLARCHVISION_add_Face_afterSphericalTessellation (int m, int tes, int lyr,
                           , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}
                           , {allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz}};
     
-    G = fn_normalize(fn_G(the_points));
+    G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
     N = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
 
     
     G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (allVertices[N][0] - cx);
     G[1] = (allVertices[A][1] - cy) + (allVertices[B][1] - cy) - (allVertices[N][1] - cy);
     G[2] = (allVertices[A][2] - cz) + (allVertices[B][2] - cz) - (allVertices[N][2] - cz);
-    G = fn_normalize(G);    
+    G = SOLARCHVISION_fn_normalize(G);    
     NN = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
   }
@@ -19054,7 +19044,7 @@ void SOLARCHVISION_add_Face_afterSphericalTessellation (int m, int tes, int lyr,
 
 
  
-String objMapsSubfolder = "maps/";
+String obj_MapsSubfolder = "maps/";
 
 PrintWriter mtlOutput;
 PrintWriter objOutput;
@@ -19126,14 +19116,14 @@ void SOLARCHVISION_export_objects () {
           
           String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
       
-          String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+          String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
       
           println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
           saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
     
-          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
-          mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
+          //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
+          mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
         }
       }
       
@@ -19319,14 +19309,14 @@ void SOLARCHVISION_export_objects () {
         
         String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
     
-        String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+        String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
     
         println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
   
-        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
         
         EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n][0] + 180;
         EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n][1] - 90;
@@ -19505,7 +19495,7 @@ void SOLARCHVISION_export_objects () {
       
         if (objExportMaterialLibrary != 0) {
         
-          String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+          String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
     
           if (Display_SolarImpact_Image != 0) {
             println("Saving texture:", new_TEXTURE_path);
@@ -19527,8 +19517,8 @@ void SOLARCHVISION_export_objects () {
           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
+          //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
         }
         
         int Display_solarch_texture = 0;
@@ -19635,8 +19625,8 @@ void SOLARCHVISION_export_objects () {
     
             the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
       
-            new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-            opacity_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + "opacity_" + the_filename;
+            new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+            opacity_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + "opacity_" + the_filename;
       
             println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
             saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
@@ -19679,9 +19669,9 @@ void SOLARCHVISION_export_objects () {
             mtlOutput.println("\tTr 1.000"); //  0-1 transparency
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-            //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
-            mtlOutput.println("\tmap_d " + objMapsSubfolder + "opacity_" + the_filename); // diffuse map
+            //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
+            mtlOutput.println("\tmap_d " + obj_MapsSubfolder + "opacity_" + the_filename); // diffuse map
           }
         }    
       }
@@ -20044,7 +20034,7 @@ void SOLARCHVISION_export_objects () {
         if (objExportUsePalletOrBakeFaces == 0) {
           the_filename = "shade_Pallet.bmp";
     
-          TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+          TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
     
           println("Saving texture:", TEXTURE_path);
           
@@ -20090,8 +20080,8 @@ void SOLARCHVISION_export_objects () {
           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+          //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map  
         }
       }
 
@@ -20146,7 +20136,7 @@ void SOLARCHVISION_export_objects () {
     
                   the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + ".bmp";
     
-                  TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+                  TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
           
                   println("Combined texture:", TEXTURE_path);
                   
@@ -20162,8 +20152,8 @@ void SOLARCHVISION_export_objects () {
                   mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                   mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
             
-                  //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+                  //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map  
                   
                 }
               }
@@ -20243,7 +20233,7 @@ void SOLARCHVISION_export_objects () {
                         if (objExportCombinedMaterial == 0) { 
                           the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                           
-                          TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+                          TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
                   
                           println("Baking texture:", TEXTURE_path);
                         }
@@ -20353,8 +20343,8 @@ void SOLARCHVISION_export_objects () {
                           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
                     
-                          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-                          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+                          //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+                          mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map  
                         }
                       }
 
@@ -20648,7 +20638,7 @@ void SOLARCHVISION_export_objects () {
       
       the_filename = "windFlow_Pallet.bmp";
       
-      String TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+      String TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
         
       println("Saving texture:", TEXTURE_path);
       
@@ -20690,8 +20680,8 @@ void SOLARCHVISION_export_objects () {
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+      //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map  
   
     }    
     
@@ -20732,7 +20722,7 @@ void SOLARCHVISION_export_objects () {
         float the_dist = dist(x1, y1, z1, x2, y2, z2);
         
         float[] W = {x2 - x1, y2 - y1, z2 - z1};
-        W = fn_normalize(W);
+        W = SOLARCHVISION_fn_normalize(W);
     
         float Alpha = asin_ang(W[2]);
         float Beta = atan2_ang(W[1], W[0]) + 90;   
@@ -20843,7 +20833,7 @@ void SOLARCHVISION_export_objects () {
   
         the_filename = "skyPattern_Pallet.bmp";
   
-        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+        TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
   
         println("Saving texture:", TEXTURE_path);
         
@@ -20887,8 +20877,8 @@ void SOLARCHVISION_export_objects () {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
   
-        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+        //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map  
 
       }      
       
@@ -20924,7 +20914,7 @@ void SOLARCHVISION_export_objects () {
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
             
             for (int j = 0; j < subFace.length; j++) {
-              subFace[j] = fn_normalize(subFace[j]);
+              subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
             }
          
            
@@ -21669,20 +21659,20 @@ void SOLARCHVISION_delete_Sections () {
 
 
 void SOLARCHVISION_delete_Solids () {
-  allSolids = new float [1][13]; 
-  allSolids[0][0] = 0;
-  allSolids[0][1] = 0;
-  allSolids[0][2] = 0;
-  allSolids[0][3] = 2;
-  allSolids[0][4] = 2;
-  allSolids[0][5] = 2;
-  allSolids[0][6] = 1;
-  allSolids[0][7] = 1;
-  allSolids[0][8] = 1;
-  allSolids[0][9] = 0;
-  allSolids[0][10] = 0;
-  allSolids[0][11] = 0;
-  allSolids[0][12] = 1;
+  allSolids_DEF = new float [1][13]; 
+  allSolids_DEF[0][0] = 0;
+  allSolids_DEF[0][1] = 0;
+  allSolids_DEF[0][2] = 0;
+  allSolids_DEF[0][3] = 2;
+  allSolids_DEF[0][4] = 2;
+  allSolids_DEF[0][5] = 2;
+  allSolids_DEF[0][6] = 1;
+  allSolids_DEF[0][7] = 1;
+  allSolids_DEF[0][8] = 1;
+  allSolids_DEF[0][9] = 0;
+  allSolids_DEF[0][10] = 0;
+  allSolids_DEF[0][11] = 0;
+  allSolids_DEF[0][12] = 1;
   
   for (int q = 0; q < allGroup3Ds_num + 1; q++) {
     allGroup3Ds_Solids[q][0] = 0;
@@ -22336,7 +22326,7 @@ void SOLARCHVISION_draw_SKY3D () {
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
           
           for (int j = 0; j < subFace.length; j++) {
-            subFace[j] = fn_normalize(subFace[j]);
+            subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
           }
        
           WIN3D_Diagrams.beginShape();
@@ -22427,7 +22417,7 @@ void SOLARCHVISION_draw_windFlow () {
       float the_dist = dist(x1, y1, z1, x2, y2, z2);
       
       float[] W = {x2 - x1, y2 - y1, z2 - z1};
-      W = fn_normalize(W);
+      W = SOLARCHVISION_fn_normalize(W);
   
       float Alpha = asin_ang(W[2]);
       float Beta = atan2_ang(W[1], W[0]) + 90;   
@@ -22971,14 +22961,14 @@ void SOLARCHVISION_draw_land (int target_window) {
                 
                 String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
             
-                String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+                String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
             
                 println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
                 saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
           
-                //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
-                mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
+                //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
+                mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
               }
             }
           }
@@ -23321,7 +23311,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solid (float[] VERTEX_now, int P
 float SOLARCHVISION_vertexU_Shade_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
   SolidImpactType = 0;
-  float val = SOLARCHVISION_calculate_SolidImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
+  float val = SOLARCHVISION_get_SolidImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
   float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
   
@@ -23369,7 +23359,7 @@ float SOLARCHVISION_vertexU_Shade_Global_Solar (float[] VERTEX_now, float[] VERT
   PVector V = new PVector(VERTEX_prev[0] - VERTEX_now[0], VERTEX_prev[1] - VERTEX_now[1], VERTEX_prev[2] - VERTEX_now[2]);
   PVector UV = U.cross(V);
   float[] W = {UV.x, UV.y, UV.z};
-  W = fn_normalize(W);
+  W = SOLARCHVISION_fn_normalize(W);
   
   float Alpha = asin_ang(W[2]);
   float Beta = atan2_ang(W[1], W[0]) + 90;       
@@ -23465,6 +23455,23 @@ float SOLARCHVISION_getShader_PAL_Multiplier () {
 
 
 
+int Shade_Surface_Wire = -1;
+int Shade_Surface_Base = 0;
+int Shade_Surface_White = 1;
+int Shade_Surface_Materials = 2;
+int Shade_Global_Solar = 3;
+int Shade_Vertex_Solar = 4;
+int Shade_Vertex_Solid = 5;
+int Shade_Vertex_Elevation = 6;
+
+int number_of_shading_options = 7;
+
+int WIN3D_FACES_SHADE = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
+
+
+
+
+
 void SOLARCHVISION_draw_Group3Ds () {
 
   if (Display_Building_Model != 0) {
@@ -23504,7 +23511,7 @@ void SOLARCHVISION_draw_Group3Ds () {
             PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
             PVector UV = U.cross(V);
             float[] W = {UV.x, UV.y, UV.z};
-            W = fn_normalize(W);
+            W = SOLARCHVISION_fn_normalize(W);
             
             float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_scale3D;
             float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_scale3D;
@@ -23837,7 +23844,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                   PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
                   PVector UV = U.cross(V);
                   float[] W = {UV.x, UV.y, UV.z};
-                  W = fn_normalize(W);
+                  W = SOLARCHVISION_fn_normalize(W);
                   
                   float Alpha = asin_ang(W[2]);
                   float Beta = atan2_ang(W[1], W[0]) + 90; 
@@ -23977,11 +23984,11 @@ void SOLARCHVISION_draw_Group3Ds () {
                                     VECT[2] = tan_ang(Alpha);      
                                   }  
                                   
-                                  VECT = fn_normalize(VECT);
+                                  VECT = SOLARCHVISION_fn_normalize(VECT);
                                   
                                   float[] SunV = {SunR[1], SunR[2], SunR[3]};
                                   
-                                  float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
+                                  float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
                                   if (SunMask <= 0) SunMask = 0; // removes backing faces 
                                   
                                   float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -23989,7 +23996,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                                   float[] ray_start = subFace[s];     
                                   float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
                                   
-                                  if (fn_dot(W, ray_direction) > 0) { // removes backing faces
+                                  if (SOLARCHVISION_fn_dot(W, ray_direction) > 0) { // removes backing faces
                                   
                                     if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
                                       if (_values_E_dir < 0) {
@@ -24582,7 +24589,7 @@ void SOLARCHVISION_draw_Object2Ds () {
 
 int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   int hit = 0;
 
@@ -24635,7 +24642,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_d
                 float[] vectA = {allVertices[allFaces_PNT[f][i]][0] - x[o], allVertices[allFaces_PNT[f][i]][1] - y[o], allVertices[allFaces_PNT[f][i]][2] - z[o]}; 
                 float[] vectB = {allVertices[allFaces_PNT[f][next_i]][0] - x[o], allVertices[allFaces_PNT[f][next_i]][1] - y[o], allVertices[allFaces_PNT[f][next_i]][2] - z[o]};
                 
-                float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+                float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
                 
                 AnglesAll[o] += t;
         
@@ -24691,7 +24698,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allFaces_PNT.length][4];
 
@@ -24753,7 +24760,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
             float[] vectA = {allVertices[allFaces_PNT[f][i]][0] - x[o], allVertices[allFaces_PNT[f][i]][1] - y[o], allVertices[allFaces_PNT[f][i]][2] - z[o]}; 
             float[] vectB = {allVertices[allFaces_PNT[f][next_i]][0] - x[o], allVertices[allFaces_PNT[f][next_i]][1] - y[o], allVertices[allFaces_PNT[f][next_i]][2] - z[o]};
             
-            float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+            float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
             
             AnglesAll[o] += t;
     
@@ -24862,7 +24869,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allObject2Ds_Faces.length][4];
 
@@ -24920,7 +24927,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           float[] vectA = {allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][0] - x[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][1] - y[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][2] - z[o]}; 
           float[] vectB = {allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][0] - x[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][1] - y[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][2] - z[o]};
           
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
           
           AnglesAll[o] += t;
   
@@ -25027,7 +25034,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allFractals_Faces.length][4];
 
@@ -25085,7 +25092,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           float[] vectA = {allFractals_Vertices[allFractals_Faces[f][i]][0] - x[o], allFractals_Vertices[allFractals_Faces[f][i]][1] - y[o], allFractals_Vertices[allFractals_Faces[f][i]][2] - z[o]}; 
           float[] vectB = {allFractals_Vertices[allFractals_Faces[f][next_i]][0] - x[o], allFractals_Vertices[allFractals_Faces[f][next_i]][1] - y[o], allFractals_Vertices[allFractals_Faces[f][next_i]][2] - z[o]};
           
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
           
           AnglesAll[o] += t;
   
@@ -25192,7 +25199,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allCameras_Faces.length][4];
 
@@ -25250,7 +25257,7 @@ float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           float[] vectA = {allCameras_Vertices[allCameras_Faces[f][i]][0] - x[o], allCameras_Vertices[allCameras_Faces[f][i]][1] - y[o], allCameras_Vertices[allCameras_Faces[f][i]][2] - z[o]}; 
           float[] vectB = {allCameras_Vertices[allCameras_Faces[f][next_i]][0] - x[o], allCameras_Vertices[allCameras_Faces[f][next_i]][1] - y[o], allCameras_Vertices[allCameras_Faces[f][next_i]][2] - z[o]};
           
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
           
           AnglesAll[o] += t;
   
@@ -25358,7 +25365,7 @@ float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allSections_Faces.length][4];
 
@@ -25416,7 +25423,7 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           float[] vectA = {allSections_Vertices[allSections_Faces[f][i]][0] - x[o], allSections_Vertices[allSections_Faces[f][i]][1] - y[o], allSections_Vertices[allSections_Faces[f][i]][2] - z[o]}; 
           float[] vectB = {allSections_Vertices[allSections_Faces[f][next_i]][0] - x[o], allSections_Vertices[allSections_Faces[f][next_i]][1] - y[o], allSections_Vertices[allSections_Faces[f][next_i]][2] - z[o]};
           
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
           
           AnglesAll[o] += t;
   
@@ -25523,7 +25530,7 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allSolids_Faces.length][4];
 
@@ -25581,7 +25588,7 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           float[] vectA = {allSolids_Vertices[allSolids_Faces[f][i]][0] - x[o], allSolids_Vertices[allSolids_Faces[f][i]][1] - y[o], allSolids_Vertices[allSolids_Faces[f][i]][2] - z[o]}; 
           float[] vectB = {allSolids_Vertices[allSolids_Faces[f][next_i]][0] - x[o], allSolids_Vertices[allSolids_Faces[f][next_i]][1] - y[o], allSolids_Vertices[allSolids_Faces[f][next_i]][2] - z[o]};
           
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
           
           AnglesAll[o] += t;
   
@@ -25690,7 +25697,7 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
-  float[] ray_normal = fn_normalize(ray_dir);   
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [(LAND_n_I - 1) * (LAND_n_J - 1) + 1][4];
 
@@ -25795,7 +25802,7 @@ float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           float[] vectA = {xA - x[o], yA - y[o], zA - z[o]}; 
           float[] vectB = {xB - x[o], yB - y[o], zB - z[o]};
           
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
           
           AnglesAll[o] += t;
   
@@ -26911,10 +26918,8 @@ PImage[] WindRose_Image;
 
 int Display_WindRose_Image = 0; // 0:talse 1:true
 
+int Rendered_WindRose_RES = 1;
 int WindRose_RES = 400;
-
-int Rendered_WindRose_RES = WindRose_RES;
-
 
 PImage[] SolarImpact_Image;
 
@@ -27539,7 +27544,7 @@ float SolidImpact_positionStep = 1.25;
 
 int SolidImpactType = 0; // INTERNAL! 0:simple 1:complex
 
-float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
+float SOLARCHVISION_get_SolidImpact_atXYZ (float x, float y, float z) {
 
   float v = 0;
   
@@ -27559,13 +27564,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, f
 
   float val = 1;
   
-  for (int n = 1; n < allSolids.length; n++) {
+  for (int n = 1; n < allSolids_DEF.length; n++) {
     
     float r = Solid_get_value(n);
     float d = Solid_get_Distance(n, x, y, z);
 
     //d *= pow(d, SolidImpact_Power);
-    d *= pow(d, SolidImpact_Power / float(allSolids.length - 1));    
+    d *= pow(d, SolidImpact_Power / float(allSolids_DEF.length - 1));    
 
     if (val < 0) val *= abs(d - r);
     else {
@@ -27574,13 +27579,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, f
 
   }
   
-  if (allSolids.length - 1 > 0) {
+  if (allSolids_DEF.length - 1 > 0) {
     float val_sign = 1;
     if (val < 0) {
       val_sign = -1;
       val = abs(val);
     } 
-    val = pow(val, 1.0 / float(allSolids.length - 1));
+    val = pow(val, 1.0 / float(allSolids_DEF.length - 1));
     val *= val_sign;    
   } 
 
@@ -27598,13 +27603,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
 
   for (int o = 0; o < 2; o++) {
 
-    for (int n = 1; n < allSolids.length; n++) {
+    for (int n = 1; n < allSolids_DEF.length; n++) {
 
       float r = Solid_get_value(n);
       float d = Solid_get_Distance(n, x + o * deltaX , y + o * deltaY, z);
       
       //d *= pow(d, SolidImpact_Power);
-      d *= pow(d, SolidImpact_Power / float(allSolids.length - 1));
+      d *= pow(d, SolidImpact_Power / float(allSolids_DEF.length - 1));
   
       if (val[o] < 0) val[o] *= abs(d - r);
       else {
@@ -27612,13 +27617,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
       }        
     }
     
-    if (allSolids.length - 1 > 0) {
+    if (allSolids_DEF.length - 1 > 0) {
       float val_sign = 1;
       if (val[o] < 0) {
         val_sign = -1;
         val[o] = abs(val[o]);
       } 
-      val[o] = pow(val[o], 1.0 / float(allSolids.length - 1));
+      val[o] = pow(val[o], 1.0 / float(allSolids_DEF.length - 1));
       val[o] *= val_sign;    
     }     
   }
@@ -27699,12 +27704,12 @@ void SOLARCHVISION_calculate_windFlow () {
         for (int n = 0; n < num_steps; n += 1) {
           
           SolidImpactType = 0;
-          float inside_or_outside = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+          float inside_or_outside = SOLARCHVISION_get_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
           
           if (inside_or_outside > 0) {
           
             SolidImpactType = 1;
-            float val = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+            float val = SOLARCHVISION_get_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
   
     
             float MinimumDistance_trace = 1 / float(num_steps);
@@ -27794,7 +27799,7 @@ void SOLARCHVISION_calculate_windFlow () {
 
 
 
-float fn_dot2D (float x1, float y1, float x2, float y2) {
+float SOLARCHVISION_fn_2Ddot (float x1, float y1, float x2, float y2) {
   return x1 * x2 + y1 * y2;
 }
 
@@ -27859,7 +27864,7 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
     float test_y = y + b;
     float test_z = z + c;
     
-    float test_v = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_x, test_y, test_z);        
+    float test_v = SOLARCHVISION_get_SolidImpact_atXYZ(test_x, test_y, test_z);        
     
     if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
       v_min = test_v;
@@ -27876,9 +27881,9 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
       z_max = test_z;
     }
     
-    //if (((abs(test_v - v) < min_dist) && (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
+    //if (((abs(test_v - v) < min_dist) && (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
     if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
-      //if (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
+      //if (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
       
         min_dist = abs(test_v - v);
         
@@ -27965,7 +27970,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
       float test_y = y + b;
       float test_z = z + c;
       
-      float test_v = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_x, test_y, test_z);        
+      float test_v = SOLARCHVISION_get_SolidImpact_atXYZ(test_x, test_y, test_z);        
       
       if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
         v_min = test_v;
@@ -28017,8 +28022,8 @@ int[][] SolidImpact_Contours_V2Lines = {{0,0}};
 
 int PROCESS_subdivisions = 1; //1; // 0,1,2,3
 
-float deltaSolidImpact = 0.05;
-float deltaSolidImpactLines = 0.1 * deltaSolidImpact;
+float deltaSolidImpactStep = 0.05;
+float deltaSolidImpactLines = 0.1 * deltaSolidImpactStep;
 
 
 void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
@@ -28090,9 +28095,9 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
         float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
       
         SolidImpactType = 0;
-        float val = SOLARCHVISION_calculate_SolidImpact_atXYZ(x, y, z);     
+        float val = SOLARCHVISION_get_SolidImpact_atXYZ(x, y, z);     
         
-        float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpact) - 0.5 * deltaSolidImpact;
+        float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpactStep) - 0.5 * deltaSolidImpactStep;
         float g_line = roundTo(SolidImpact_Grade * val, deltaSolidImpactLines);
         
         float _u = PAL_Multiplier * val + 0.5;
@@ -28153,9 +28158,9 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
         float y = SolidImpact_Contours_U1Vertices[k][1];
         float z = SolidImpact_Contours_U1Vertices[k][2];
         
-        float val = SolidImpact_Contours_U1Vertices[k][3]; //SOLARCHVISION_calculate_SolidImpact_atXYZ(x, y, z);
+        float val = SolidImpact_Contours_U1Vertices[k][3]; //SOLARCHVISION_get_SolidImpact_atXYZ(x, y, z);
         
-        float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpact) - 0.5 * deltaSolidImpact;
+        float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpactStep) - 0.5 * deltaSolidImpactStep;
         float g_line = roundTo(SolidImpact_Grade * val, deltaSolidImpactLines);
   
         float dx = 1;
@@ -28579,11 +28584,11 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
       int[][] newV1Line = {{point_prev, point_next}};
       SolidImpact_Contours_V1Lines = (int[][]) concat(SolidImpact_Contours_V1Lines, newV1Line);
       
-      float val_new = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
-      float g_new =      roundTo(SolidImpact_Grade * val_new, deltaSolidImpact) - 0.5 * deltaSolidImpact;
+      float val_new = SOLARCHVISION_get_SolidImpact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
+      float g_new =      roundTo(SolidImpact_Grade * val_new, deltaSolidImpactStep) - 0.5 * deltaSolidImpactStep;
       float g_line_new = roundTo(SolidImpact_Grade * val_new, deltaSolidImpactLines);
       
-      if (g_line - g_line_new >= deltaSolidImpact) {
+      if (g_line - g_line_new >= deltaSolidImpactStep) {
         
 
         float nearestPointDist = FLOAT_undefined;
@@ -28592,7 +28597,7 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
         for (int q = 1; q < SolidImpact_Contours_U1Vertices.length; q++) {
 
           //if (abs(g_line_new / SolidImpact_Grade - SolidImpact_Contours_U1Vertices[q][3]) < 0.0001) {
-          if (g_line - g_line_new < 2 * deltaSolidImpact) {
+          if (g_line - g_line_new < 2 * deltaSolidImpactStep) {
             
             float d = dist(test_point_dir[0], test_point_dir[1], test_point_dir[2], SolidImpact_Contours_U1Vertices[q][0], SolidImpact_Contours_U1Vertices[q][1], SolidImpact_Contours_U1Vertices[q][2]);
     
@@ -28628,18 +28633,6 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
 
 
 
-float[][] skyVertices = {{0,0,0}};
-int[][] skyFaces = {{0}};
-
-int POINTER_skyVertices = 1;
-int POINTER_skyFaces = 1;
-
-
-float[][] TempObjectVertices = {{0,0,0}};
-int[][] TempObjectFaces = {{0}};
-
-int POINTER_TempObjectVertices = 1;
-int POINTER_TempObjectFaces = 1;
 
 void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, int Tessellation, int isSky, float t) {
 
@@ -28907,7 +28900,7 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
 
   for (int i = 1; i < POINTER_TempObjectVertices; i++) {
 
-    float the_dist = fn_dist(newVertex[0], TempObjectVertices[i]);
+    float the_dist = SOLARCHVISION_fn_dist(newVertex[0], TempObjectVertices[i]);
     
     if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for Fractal spheres!
 
@@ -28963,7 +28956,7 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
   
               //print("q=", q, "; k=" );
             
-              total_distances += fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
+              total_distances += SOLARCHVISION_fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
     
             }
   
@@ -29099,8 +29092,8 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
     float[] M = {(x1 + x2 + x4) / 3.0, (y1 + y2 + y4) / 3.0, (z1 + z2 + z4) / 3.0};
     float[] N = {(x3 + x2 + x4) / 3.0, (y3 + y2 + y4) / 3.0, (z3 + z2 + z4) / 3.0};
     
-    M = fn_normalize(M);
-    N = fn_normalize(N);
+    M = SOLARCHVISION_fn_normalize(M);
+    N = SOLARCHVISION_fn_normalize(N);
 
     myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Tessellation, BuildFaces);     
 
@@ -29120,7 +29113,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
         
       float[] Q = {P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z};
       
-      Q = fn_normalize(Q);
+      Q = SOLARCHVISION_fn_normalize(Q);
       
       myLozenge(x2,y2,z2, P[0],P[1],P[2], x1,y1,z1, Q[0],Q[1],Q[2], Tessellation, BuildFaces);
     }
@@ -29141,7 +29134,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
         
       float[] Q = {P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z};
       
-      Q = fn_normalize(Q);
+      Q = SOLARCHVISION_fn_normalize(Q);
       
       myLozenge(x4,y4,z4, P[0],P[1],P[2], x3,y3,z3, Q[0],Q[1],Q[2], Tessellation, BuildFaces);
     }
@@ -29151,16 +29144,21 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
 
 }
 
-PVector fn_perpendicular (PVector M, PVector A, PVector B) {
+int POINTER_skyVertices = 1;
+int POINTER_skyFaces = 1;
 
-  PVector AB = PVector.sub(B, A);
-  PVector AM = PVector.sub(M, A);
-  PVector HM = PVector.sub(AM, PVector.mult(AB, PVector.dot(AM, AB) / AB.magSq()));
-  
-  PVector H = PVector.sub(M, HM);
-  
-  return H;
-}
+float[][] skyVertices = {{0,0,0}};
+int[][] skyFaces = {{0}};
+
+
+int POINTER_TempObjectVertices = 1;
+int POINTER_TempObjectFaces = 1;
+
+
+float[][] TempObjectVertices = {{0,0,0}};
+int[][] TempObjectFaces = {{0}};
+
+
 
 
 
@@ -29187,12 +29185,12 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
       VECT[2] = tan_ang(Alpha);      
     }   
   
-    VECT = fn_normalize(VECT);
+    VECT = SOLARCHVISION_fn_normalize(VECT);
 
 
     float[] SunV = {SunR1, SunR2, SunR3};
   
-    float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
+    float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
     if (SunMask <= 0) SunMask = 0; // removes backing faces 
     
     float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -29203,7 +29201,7 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
 /*
     float[] REF_SunV = {SunR1, SunR2, -SunR3};
   
-    float REF_SunMask = fn_dot(fn_normalize(REF_SunV), fn_normalize(VECT));
+    float REF_SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(REF_SunV), SOLARCHVISION_fn_normalize(VECT));
     if (REF_SunMask <= 0) REF_SunMask = 0; // removes backing faces 
    
     float REF_SkyMask = 1 - (0.5 * (1.0 + (Alpha / 90.0)));      
@@ -29666,7 +29664,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }  
 
   if (Current_ObjectCategory == ObjectCategory_Solids) {
-    length_of_indexes = allSolids.length;
+    length_of_indexes = allSolids_DEF.length;
     start_index_OBJ_NUM = selectedSolid_numbers[start_index];
   }   
   
@@ -34559,9 +34557,9 @@ void mouseClicked () {
             
                 if (Current_ObjectCategory == ObjectCategory_Solids) {
     
-                  x1 = allSolids[selectedSolid_numbers[selectedSolid_numbers.length - 1]][0]; 
-                  y1 = allSolids[selectedSolid_numbers[selectedSolid_numbers.length - 1]][1]; 
-                  z1 = allSolids[selectedSolid_numbers[selectedSolid_numbers.length - 1]][2];              
+                  x1 = allSolids_DEF[selectedSolid_numbers[selectedSolid_numbers.length - 1]][0]; 
+                  y1 = allSolids_DEF[selectedSolid_numbers[selectedSolid_numbers.length - 1]][1]; 
+                  z1 = allSolids_DEF[selectedSolid_numbers[selectedSolid_numbers.length - 1]][2];              
                 }                 
 
                 if (Current_ObjectCategory == ObjectCategory_Vertices) {
@@ -34915,7 +34913,7 @@ void mouseClicked () {
                 int keep_number_of_Group3Ds = allGroup3Ds_num + 1;
                 int keep_number_of_Object2Ds = allObject2Ds_num + 1;
                 int keep_number_of_Fractals = allFractals_num + 1;
-                int keep_number_of_Solids = allSolids.length;
+                int keep_number_of_Solids = allSolids_DEF.length;
                 int keep_number_of_Sections = allSections_num + 1;
                 int keep_number_of_Cameras = allCameras_num + 1;
                 
@@ -35364,14 +35362,14 @@ void mouseClicked () {
       
               
 
-                if (keep_number_of_Solids != allSolids.length) { // if any Solid created during the process
+                if (keep_number_of_Solids != allSolids_DEF.length) { // if any Solid created during the process
   
                   selectedSolid_numbers = new int [1];
                   selectedSolid_numbers[0] = 0;
                   
-                  for (int o = keep_number_of_Solids; o < allSolids.length; o++) {
+                  for (int o = keep_number_of_Solids; o < allSolids_DEF.length; o++) {
                     
-                    int[] newlyAddedSolid = {allSolids.length - 1};
+                    int[] newlyAddedSolid = {allSolids_DEF.length - 1};
                     
                     selectedSolid_numbers = concat(selectedSolid_numbers, newlyAddedSolid);
                   }  
@@ -36685,118 +36683,18 @@ String getGrib2Filename (int k, int l, int h) {
 }
 
 
-String getWgrib2Filename (int k, int l, int h, float _lon, float _lat) {
-  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
-}
-
 String getWgrib2Filename_MultiplePoints (int k, int l, int h, int part) {
   return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + "_part" + nf(part, 3) + ".txt");
 }
 
-float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
-
-  float theValue = FLOAT_undefined;
-
-  String ValueFilename = getWgrib2Filename(k, l, h, _lon, _lat); 
-
-  String ValueFile = Wgrib2TempFolder + "/" + ValueFilename;
-
-  String[] filenames = getfiles(Wgrib2TempFolder);
-
-  String[] file_lines = {};
-
-  int runWgrib2 = 1;
-
-  if (filenames != null) {
-    for (int i = 0; i < filenames.length; i++) {
-      if (filenames[i].equals(ValueFilename)) {
-
-        file_lines = loadStrings(ValueFile);
-
-        if (file_lines.length > 0) {
-          //println("The previous extraction file is found:", ValueFilename);
-          runWgrib2 = 0;
-        }
-      }
-    }
-  }
-
-  if (runWgrib2 == 1) {
-    String Grib2File = getGrib2Folder(GRIB2_DOMAIN_SELECTION) + "/" + getGrib2Filename(k, l, h);
-
-    String CommandArguments[] = {
-      "wgrib2", Grib2File.replace('/', char(92)), "-s", "-lon", String.valueOf(_lon), String.valueOf(_lat), ">", ValueFile
-    };
-
-    String[] the_command = {
-      CommandArguments[0] + " " + CommandArguments[1] + " " + CommandArguments[2] + " " + CommandArguments[3] + " " + CommandArguments[4] + " " + CommandArguments[5] + " " + CommandArguments[6]
-    };
-
-    println(CommandArguments);
-    launch(CommandArguments);
-  } 
-
-  int _stay = 1;
-
-  while ((_stay != 0) && (_stay < 100000)) {
-
-    //println(_stay);
-
-    _stay += 1;
-
-    filenames = getfiles(Wgrib2TempFolder);
-
-    if (filenames != null) {
-      for (int i = 0; i < filenames.length; i++) {
-        //println(filenames[i]);
-
-        if (filenames[i].equals(ValueFilename)) {
-          //println("The wgrib2 extraction is ready:", ValueFilename);
-
-          file_lines = loadStrings(ValueFile);
-
-          if (file_lines.length > 0) _stay = 0;
-        }
-      }
-    }
-  }
-
-  if (_stay != 0) {
-    println("The wgrib2 extraction is not ready:", ValueFilename);
-  } else {
-    //println(file_lines);
-
-    if (file_lines.length > 0) {
-
-      int _posX = file_lines[0].indexOf("lon=");
-      int _posY = file_lines[0].indexOf("lat=");
-      int _posZ = file_lines[0].indexOf("val=");
-
-      float uX = Float.valueOf(file_lines[0].substring(_posX + 4, _posY - 1));
-      float uY = Float.valueOf(file_lines[0].substring(_posY + 4, _posZ - 1));
-      
-      if (dist_lon_lat((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180) > 5) { // that means the distance should be less than 5km.
-        println(uX, uY, _lat, _lat);
-        println((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180);
-        println("----------------------------------------");
-      } else {
-        if (_posZ > 0) {
-          theValue = Float.valueOf(file_lines[0].substring(_posZ + 4));
-
-          theValue *= LAYERS_GRIB2_MUL[l];
-          theValue += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C
-        }
-      }
-    }
-  }
-
-  return(theValue);
+String getWgrib2Filename (int k, int l, int h, float _lon, float _lat) {
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
 }
 
 
 
-
 int MAX_GRIB2_PASS = 200;
+
 
 float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, String the_link) {
   
@@ -37080,6 +36978,112 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
   return theValues;
 }
+
+
+
+float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
+
+  float theValue = FLOAT_undefined;
+
+  String ValueFilename = getWgrib2Filename(k, l, h, _lon, _lat); 
+
+  String ValueFile = Wgrib2TempFolder + "/" + ValueFilename;
+
+  String[] filenames = getfiles(Wgrib2TempFolder);
+
+  String[] file_lines = {};
+
+  int runWgrib2 = 1;
+
+  if (filenames != null) {
+    for (int i = 0; i < filenames.length; i++) {
+      if (filenames[i].equals(ValueFilename)) {
+
+        file_lines = loadStrings(ValueFile);
+
+        if (file_lines.length > 0) {
+          //println("The previous extraction file is found:", ValueFilename);
+          runWgrib2 = 0;
+        }
+      }
+    }
+  }
+
+  if (runWgrib2 == 1) {
+    String Grib2File = getGrib2Folder(GRIB2_DOMAIN_SELECTION) + "/" + getGrib2Filename(k, l, h);
+
+    String CommandArguments[] = {
+      "wgrib2", Grib2File.replace('/', char(92)), "-s", "-lon", String.valueOf(_lon), String.valueOf(_lat), ">", ValueFile
+    };
+
+    String[] the_command = {
+      CommandArguments[0] + " " + CommandArguments[1] + " " + CommandArguments[2] + " " + CommandArguments[3] + " " + CommandArguments[4] + " " + CommandArguments[5] + " " + CommandArguments[6]
+    };
+
+    println(CommandArguments);
+    launch(CommandArguments);
+  } 
+
+  int _stay = 1;
+
+  while ((_stay != 0) && (_stay < 100000)) {
+
+    //println(_stay);
+
+    _stay += 1;
+
+    filenames = getfiles(Wgrib2TempFolder);
+
+    if (filenames != null) {
+      for (int i = 0; i < filenames.length; i++) {
+        //println(filenames[i]);
+
+        if (filenames[i].equals(ValueFilename)) {
+          //println("The wgrib2 extraction is ready:", ValueFilename);
+
+          file_lines = loadStrings(ValueFile);
+
+          if (file_lines.length > 0) _stay = 0;
+        }
+      }
+    }
+  }
+
+  if (_stay != 0) {
+    println("The wgrib2 extraction is not ready:", ValueFilename);
+  } else {
+    //println(file_lines);
+
+    if (file_lines.length > 0) {
+
+      int _posX = file_lines[0].indexOf("lon=");
+      int _posY = file_lines[0].indexOf("lat=");
+      int _posZ = file_lines[0].indexOf("val=");
+
+      float uX = Float.valueOf(file_lines[0].substring(_posX + 4, _posY - 1));
+      float uY = Float.valueOf(file_lines[0].substring(_posY + 4, _posZ - 1));
+      
+      if (dist_lon_lat((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180) > 5) { // that means the distance should be less than 5km.
+        println(uX, uY, _lat, _lat);
+        println((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180);
+        println("----------------------------------------");
+      } else {
+        if (_posZ > 0) {
+          theValue = Float.valueOf(file_lines[0].substring(_posZ + 4));
+
+          theValue *= LAYERS_GRIB2_MUL[l];
+          theValue += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C
+        }
+      }
+    }
+  }
+
+  return(theValue);
+}
+
+
+
+
 
 float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float z) {
 
@@ -39717,9 +39721,9 @@ int Solids_DisplayDegree = 16; //8; // internal - number of each face corners
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolids_Faces = new int [1 + Solids_DisplayFaces * (allSolids.length - 1)][Solids_DisplayDegree]; 
+  allSolids_Faces = new int [1 + Solids_DisplayFaces * (allSolids_DEF.length - 1)][Solids_DisplayDegree]; 
     
-  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids.length][3];
+  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids_DEF.length][3];
   allSolids_Vertices[0][0] = 0;
   allSolids_Vertices[0][1] = 0;
   allSolids_Vertices[0][2] = 0;
@@ -39728,7 +39732,7 @@ void SOLARCHVISION_draw_Solids () {
 
     WIN3D_Diagrams.strokeWeight(2);
     
-    for (int f = 1; f < allSolids.length; f++) {
+    for (int f = 1; f < allSolids_DEF.length; f++) {
       
       float Solid_posX = Solid_get_posX(f);
       float Solid_posY = Solid_get_posY(f);
@@ -40851,7 +40855,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory_Solids) {
       int n = theVertices[q];
       
-      if ((n != 0) && (n < allSolids.length)) {
+      if ((n != 0) && (n < allSolids_DEF.length)) {
 
         float Solid_posX = Solid_get_posX(n);
         float Solid_posY = Solid_get_posY(n);
@@ -41085,7 +41089,7 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
       }
       
       for (int f = allGroup3Ds_Solids[OBJ_NUM][0]; f <= allGroup3Ds_Solids[OBJ_NUM][1]; f++) {
-        if ((0 < f) && (f <= allSolids.length - 1)) {
+        if ((0 < f) && (f <= allSolids_DEF.length - 1)) {
           
           float Solid_posX = Solid_get_posX(f);
           float Solid_posY = Solid_get_posY(f);
@@ -41347,7 +41351,7 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float r, int the_Vector) {
       }         
       
       for (int f = allGroup3Ds_Solids[OBJ_NUM][0]; f <= allGroup3Ds_Solids[OBJ_NUM][1]; f++) {
-        if ((0 < f) && (f <= allSolids.length - 1)) {
+        if ((0 < f) && (f <= allSolids_DEF.length - 1)) {
 
           float x = Solid_get_posX(f);
           float y = Solid_get_posY(f);
@@ -41547,7 +41551,7 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
       }     
       
       for (int f = allGroup3Ds_Solids[OBJ_NUM][0]; f <= allGroup3Ds_Solids[OBJ_NUM][1]; f++) {
-        if ((0 < f) && (f <= allSolids.length - 1)) {
+        if ((0 < f) && (f <= allSolids_DEF.length - 1)) {
           
           float x = Solid_get_posX(f);
           float y = Solid_get_posY(f);
@@ -46351,7 +46355,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         textSize(1.125 * MESSAGE_S_View);
       }
               
-      text(N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MESSAGE_S_View);
+      text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MESSAGE_S_View);
     }    
 
     X_clicked = -1;
@@ -46919,7 +46923,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SolidImpact_sectionType", SolidImpact_sectionType);
   newChild1.setFloat("SolidImpact_positionStep", SolidImpact_positionStep);
   newChild1.setInt("PROCESS_subdivisions", PROCESS_subdivisions);
-  newChild1.setFloat("deltaSolidImpact", deltaSolidImpact);
+  newChild1.setFloat("deltaSolidImpactStep", deltaSolidImpactStep);
   newChild1.setFloat("deltaSolidImpactLines", deltaSolidImpactLines);
   newChild1.setFloat("MinimumDistance_traceU", MinimumDistance_traceU);
   newChild1.setFloat("MinimumDistance_traceV", MinimumDistance_traceV);
@@ -47216,17 +47220,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   println("Saving:Solids");
   {
-    newChild1 = my_xml.addChild("allSolids");
-    int ni = allSolids.length;
+    newChild1 = my_xml.addChild("allSolids_DEF");
+    int ni = allSolids_DEF.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Solid");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allSolids[i].length; j++) {
+      //for (int j = 0; j < allSolids_DEF[i].length; j++) {
       for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
-        lineSTR += nf(allSolids[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 != allSolids[i].length) lineSTR += ",";
+        lineSTR += nf(allSolids_DEF[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 != allSolids_DEF[i].length) lineSTR += ",";
       }
       
       newChild2.setContent(lineSTR);
@@ -48168,7 +48172,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SolidImpact_sectionType = children0[L].getInt("SolidImpact_sectionType");
       SolidImpact_positionStep = children0[L].getFloat("SolidImpact_positionStep");
       PROCESS_subdivisions = children0[L].getInt("PROCESS_subdivisions");
-      deltaSolidImpact = children0[L].getFloat("deltaSolidImpact");
+      deltaSolidImpactStep = children0[L].getFloat("deltaSolidImpactStep");
       deltaSolidImpactLines = children0[L].getFloat("deltaSolidImpactLines");
       MinimumDistance_traceU = children0[L].getFloat("MinimumDistance_traceU");
       MinimumDistance_traceV = children0[L].getFloat("MinimumDistance_traceV");
@@ -48459,11 +48463,11 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     println("Loading:Solids");
-    children0 = FileAll.getChildren("allSolids");
+    children0 = FileAll.getChildren("allSolids_DEF");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allSolids = new float [ni][13];
+      allSolids_DEF = new float [ni][13];
       
       XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
@@ -48471,7 +48475,7 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 13; j++) {
-          allSolids[i][j] = float(parts[j]);
+          allSolids_DEF[i][j] = float(parts[j]);
         }
 
       }
@@ -49007,121 +49011,121 @@ void SOLARCHVISION_load_project (String myFile) {
 
 void Solid_updatePosition (int n, float a, float b, float c) {
   
-  allSolids[n][0] = a;
-  allSolids[n][1] = b;
-  allSolids[n][2] = c;  
+  allSolids_DEF[n][0] = a;
+  allSolids_DEF[n][1] = b;
+  allSolids_DEF[n][2] = c;  
 } 
 
 void Solid_updatePowers (int n, float a, float b, float c) {
   
-  allSolids[n][3] = a;
-  allSolids[n][4] = b;
-  allSolids[n][5] = c;  
+  allSolids_DEF[n][3] = a;
+  allSolids_DEF[n][4] = b;
+  allSolids_DEF[n][5] = c;  
 } 
 
 void Solid_Scale (int n, float a, float b, float c) {
   
-  allSolids[n][6] *= a;
-  allSolids[n][7] *= b;
-  allSolids[n][8] *= c;  
+  allSolids_DEF[n][6] *= a;
+  allSolids_DEF[n][7] *= b;
+  allSolids_DEF[n][8] *= c;  
 } 
 
 void Solid_RotateX (int n, float t) {
   
-  allSolids[n][9] += t;
+  allSolids_DEF[n][9] += t;
 } 
 
 void Solid_RotateY (int n, float t) {
   
-  allSolids[n][10] += t;
+  allSolids_DEF[n][10] += t;
 } 
 
 void Solid_RotateZ (int n, float t) {
   
-  allSolids[n][11] += t;
+  allSolids_DEF[n][11] += t;
 } 
 
 float Solid_get_posX (int n) { 
 
-  return allSolids[n][0];
+  return allSolids_DEF[n][0];
 } 
 
 float Solid_get_posY (int n) { 
 
-  return allSolids[n][1];
+  return allSolids_DEF[n][1];
 } 
 
 float Solid_get_posZ (int n) { 
 
-  return allSolids[n][2];
+  return allSolids_DEF[n][2];
 } 
 
 float Solid_get_powX (int n) { 
 
-  return allSolids[n][3];
+  return allSolids_DEF[n][3];
 } 
 
 float Solid_get_powY (int n) { 
 
-  return allSolids[n][4];
+  return allSolids_DEF[n][4];
 } 
 
 float Solid_get_powZ (int n) { 
 
-  return allSolids[n][5];
+  return allSolids_DEF[n][5];
 } 
 
 float Solid_get_scaleX (int n) { 
 
-  return allSolids[n][6];
+  return allSolids_DEF[n][6];
 } 
 
 float Solid_get_scaleY (int n) { 
 
-  return allSolids[n][7];
+  return allSolids_DEF[n][7];
 } 
 
 float Solid_get_scaleZ (int n) { 
 
-  return allSolids[n][8];
+  return allSolids_DEF[n][8];
 } 
 
 float Solid_get_rotX (int n) { 
 
-  return allSolids[n][9];
+  return allSolids_DEF[n][9];
 } 
 
 
 float Solid_get_rotY (int n) { 
 
-  return allSolids[n][10];
+  return allSolids_DEF[n][10];
 } 
 
 float Solid_get_rotZ (int n) { 
 
-  return allSolids[n][11];
+  return allSolids_DEF[n][11];
 } 
 
 float Solid_get_value (int n) { 
 
-  return allSolids[n][12];
+  return allSolids_DEF[n][12];
 } 
 
 float Solid_get_Distance (int n, float a, float b, float c) {
   
-  float posX = allSolids[n][0];
-  float posY = allSolids[n][1];
-  float posZ = allSolids[n][2];
-  float powX = allSolids[n][3];
-  float powY = allSolids[n][4];
-  float powZ = allSolids[n][5];
-  float scaleX = allSolids[n][6];
-  float scaleY = allSolids[n][7];
-  float scaleZ = allSolids[n][8];
-  float rotX = allSolids[n][9];
-  float rotY = allSolids[n][10];
-  float rotZ = allSolids[n][11];
-  float value = allSolids[n][12];
+  float posX = allSolids_DEF[n][0];
+  float posY = allSolids_DEF[n][1];
+  float posZ = allSolids_DEF[n][2];
+  float powX = allSolids_DEF[n][3];
+  float powY = allSolids_DEF[n][4];
+  float powZ = allSolids_DEF[n][5];
+  float scaleX = allSolids_DEF[n][6];
+  float scaleY = allSolids_DEF[n][7];
+  float scaleZ = allSolids_DEF[n][8];
+  float rotX = allSolids_DEF[n][9];
+  float rotY = allSolids_DEF[n][10];
+  float rotZ = allSolids_DEF[n][11];
+  float value = allSolids_DEF[n][12];
 
   a -= posX;
   b -= posY;    
