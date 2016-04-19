@@ -13225,7 +13225,7 @@ float EquationOfTime (float DateAngle) {
   return 0.01  * (9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
 }
 
-float E = 2.7182818284;
+float FLOAT_e = 2.7182818284;
 
 float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAngle, float HourAngleOrigin, float CloudCover) {
   float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle); 
@@ -13246,7 +13246,7 @@ float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAn
   float ALT_ = (asin_ang(z)) * PI / 180; 
   float ALT_true = ALT_ + 0.061359 * (0.1594 + 1.1230 * ALT_ + 0.065656 * ALT_ * ALT_) / (1 + 28.9344 * ALT_ + 277.3971 * ALT_ * ALT_);
   
-  float PPo = pow(E, (-LocationElevation / 8435.2));
+  float PPo = pow(FLOAT_e, (-LocationElevation / 8435.2));
   float Bb = ((sin_ang (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_true + 6.07995), -1.6364)));
   float m = PPo / Bb;
   
@@ -13256,7 +13256,7 @@ float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAn
   
   float AtmosphereRatio;
   if (z < 0.01) AtmosphereRatio = 0.0; 
-  else AtmosphereRatio = pow(E, (-m * StationTurbidity));
+  else AtmosphereRatio = pow(FLOAT_e, (-m * StationTurbidity));
     
   float Idirect = Io * AtmosphereRatio; // Optical air mass: global Meteorological Database for Engineers, Planners and Education; Version 5.00 - Edition 2003
   
@@ -27132,7 +27132,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                         }
                         else { 
                           //float MULT_dif = 2.0;
-                          float MULT_dif = E; // 2.718
+                          float MULT_dif = FLOAT_e; // 2.718
                           
                           RAD_VALUE = _values_R_dif * MULT_dif;
                           EFF_VALUE = _values_E_dif * MULT_dif;
