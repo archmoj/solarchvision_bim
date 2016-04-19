@@ -247,16 +247,16 @@ int Create_Cylinder_Degree = 24;
 int Create_Poly_Degree = 6;
 
 
-int Create_Mesh_Poly = 0;
-int Create_Mesh_Extrude = 0;
-int Create_Mesh_Tri = 0;
-int Create_Mesh_Quad = 0;
-int Create_Mesh_House = 0; 
-int Create_Mesh_SuperOBJ = 0;
-int Create_Mesh_Parametric = 0;
-int Create_Mesh_Person = 0;
-int Create_Mesh_Plant = 0;
-int Create_Fractal = 0;
+int Create_Mesh_Poly_Button = 0;
+int Create_Mesh_Extrude_Button = 0;
+int Create_Mesh_Tri_Button = 0;
+int Create_Mesh_Quad_Button = 0;
+int Create_Mesh_House_Button = 0; 
+int Create_Mesh_SuperOBJ_Button = 0;
+int Create_Mesh_Parametric_Button = 0;
+int Create_Mesh_Person_Button = 0;
+int Create_Mesh_Plant_Button = 0;
+int Create_Fractal_Plant_Button = 0;
 
 
 int Create_Mesh_Parametric_Type = 0;
@@ -35069,7 +35069,7 @@ void mouseClicked () {
 
 
                 
-                if (Create_Mesh_SuperOBJ == 1) {
+                if (Create_Mesh_SuperOBJ_Button == 1) {
     
                   if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
 
@@ -35110,7 +35110,7 @@ void mouseClicked () {
                 
   
                   
-                if (Create_Mesh_Tri == 1) {
+                if (Create_Mesh_Tri_Button == 1) {
                   
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
@@ -35118,39 +35118,39 @@ void mouseClicked () {
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                 }
                 
-                if (Create_Mesh_Quad == 1) {
+                if (Create_Mesh_Quad_Button == 1) {
                   
                   SOLARCHVISION_add_Mesh4(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
                 }
                 
-                if (Create_Mesh_Poly == 1) {
+                if (Create_Mesh_Poly_Button == 1) {
 
                   SOLARCHVISION_add_PolygonHyper(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
-                if (Create_Mesh_Extrude == 1) {       
+                if (Create_Mesh_Extrude_Button == 1) {       
 
                   SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
-                if (Create_Mesh_House == 1) {   
+                if (Create_Mesh_House_Button == 1) {   
        
                   SOLARCHVISION_add_House_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, ry, rz, ry, rot);
                 }
     
-                if (Create_Mesh_Parametric != 0) {
+                if (Create_Mesh_Parametric_Button != 0) {
                   
                   SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, ry, rz, Create_Mesh_Parametric_Type, rot);
                 }
     
   
-                if (Create_Mesh_Person != 0) {
+                if (Create_Mesh_Person_Button != 0) {
 
                   randomSeed(millis());
                   SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
                 }
                 
-                if (Create_Mesh_Plant != 0) {
+                if (Create_Mesh_Plant_Button != 0) {
                   int n = 0;
                   if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_PEOPLE_Files_Num;
     
@@ -35158,7 +35158,7 @@ void mouseClicked () {
                   SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
                 }    
 
-                if (Create_Fractal != 0) {
+                if (Create_Fractal_Plant_Button != 0) {
                   
                   randomSeed(millis());
                   SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 2 * rz, rot, Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
@@ -36015,7 +36015,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (ROLLOUT_child == 4) { // Solid
     
-      Create_Mesh_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ" , Create_Mesh_SuperOBJ, 0, 1, 1), 1));
+      Create_Mesh_SuperOBJ_Button = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ_Button" , Create_Mesh_SuperOBJ_Button, 0, 1, 1), 1));
 
       //Create_Input_powRnd = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
       Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, CubePower, -2);
@@ -36041,7 +36041,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (ROLLOUT_child == 6) { // Living
 
-      Create_Fractal = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal" , Create_Fractal, 0, 1, 1), 1));
+      Create_Fractal_Plant_Button = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_Button" , Create_Fractal_Plant_Button, 0, 1, 1), 1));
       Create_Fractal_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Type" , Create_Fractal_Type, 0, 0, 1), 1));
       Create_Fractal_DegreeMin = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_DegreeMin" , Create_Fractal_DegreeMin, 1, 9, 1), 1));
       Create_Fractal_DegreeMax = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_DegreeMax" , Create_Fractal_DegreeMax, 1, 9, 1), 1));
@@ -45295,16 +45295,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 void set_to_Create_Nothing () {
   
-  Create_Mesh_Poly = 0;
-  Create_Mesh_Extrude = 0;
-  Create_Mesh_Tri = 0;
-  Create_Mesh_Quad = 0;
-  Create_Mesh_House = 0; 
-  Create_Mesh_Parametric = 0;
-  Create_Mesh_SuperOBJ = 0;
-  Create_Mesh_Person = 0;
-  Create_Mesh_Plant = 0;
-  Create_Fractal = 0;
+  Create_Mesh_Poly_Button = 0;
+  Create_Mesh_Extrude_Button = 0;
+  Create_Mesh_Tri_Button = 0;
+  Create_Mesh_Quad_Button = 0;
+  Create_Mesh_House_Button = 0; 
+  Create_Mesh_Parametric_Button = 0;
+  Create_Mesh_SuperOBJ_Button = 0;
+  Create_Mesh_Person_Button = 0;
+  Create_Mesh_Plant_Button = 0;
+  Create_Fractal_Plant_Button = 0;
   
   View_Select_Create_Modify = 0;
   
@@ -45315,7 +45315,7 @@ void set_to_Create_Nothing () {
 void set_to_Create_Fractal () {
   set_to_Create_Nothing();
   
-  Create_Fractal = 1;
+  Create_Fractal_Plant_Button = 1;
   Current_ObjectCategory = ObjectCategory_Fractals;
 }  
 
@@ -45323,21 +45323,21 @@ void set_to_Create_Fractal () {
 void set_to_Create_Tree () {
   set_to_Create_Nothing();
   
-  Create_Mesh_Plant = 1;
+  Create_Mesh_Plant_Button = 1;
   Current_ObjectCategory = ObjectCategory_Object2Ds;  
 }
 
 void set_to_Create_Person () {
   set_to_Create_Nothing();
   
-  Create_Mesh_Person = 1;
+  Create_Mesh_Person_Button = 1;
   Current_ObjectCategory = ObjectCategory_Object2Ds;  
 }
 
 void set_to_Create_Parametric (int n) {
   set_to_Create_Nothing();
   
-  Create_Mesh_Parametric = 1;
+  Create_Mesh_Parametric_Button = 1;
   Create_Mesh_Parametric_Type = n;
   
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
@@ -45346,42 +45346,42 @@ void set_to_Create_Parametric (int n) {
 void set_to_Create_Tri () {
   set_to_Create_Nothing();
   
-  Create_Mesh_Tri = 1;
+  Create_Mesh_Tri_Button = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
 
 void set_to_Create_Poly () {
   set_to_Create_Nothing();
   
-  Create_Mesh_Poly = 1;
+  Create_Mesh_Poly_Button = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
 
 void set_to_Create_Extrude () {
   set_to_Create_Nothing();
   
-  Create_Mesh_Extrude = 1;
+  Create_Mesh_Extrude_Button = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
 
 void set_to_Create_Hyper () {
   set_to_Create_Nothing();
   
-  Create_Mesh_Quad = 1;
+  Create_Mesh_Quad_Button = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
 
 void set_to_Create_House () {
   set_to_Create_Nothing();
   
-  Create_Mesh_House = 1;
+  Create_Mesh_House_Button = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
 
 void set_to_Create_Box () {
   set_to_Create_Nothing();
   
-  Create_Mesh_SuperOBJ = 1;
+  Create_Mesh_SuperOBJ_Button = 1;
 
   Create_Input_powX = CubePower;   
   Create_Input_powY = CubePower; 
@@ -45393,7 +45393,7 @@ void set_to_Create_Box () {
 void set_to_Create_Octahedron () {
   set_to_Create_Nothing();
   
-  Create_Mesh_SuperOBJ = 1;
+  Create_Mesh_SuperOBJ_Button = 1;
 
   Create_Input_powX = 1;  
   Create_Input_powY = 1; 
@@ -45405,7 +45405,7 @@ void set_to_Create_Octahedron () {
 void set_to_Create_Sphere () {
   set_to_Create_Nothing();
   
-  Create_Mesh_SuperOBJ = 1;
+  Create_Mesh_SuperOBJ_Button = 1;
 
   Create_Input_powX = 2;  
   Create_Input_powY = 2; 
@@ -45417,7 +45417,7 @@ void set_to_Create_Sphere () {
 void set_to_Create_Cylinder () {
   set_to_Create_Nothing();
   
-  Create_Mesh_SuperOBJ = 1;
+  Create_Mesh_SuperOBJ_Button = 1;
 
   Create_Input_powX = 2;  
   Create_Input_powY = 2; 
@@ -45429,7 +45429,7 @@ void set_to_Create_Cylinder () {
 void set_to_Create_Cushion () {
   set_to_Create_Nothing();
   
-  Create_Mesh_SuperOBJ = 1;
+  Create_Mesh_SuperOBJ_Button = 1;
 
   Create_Input_powX = CubePower;   
   Create_Input_powY = CubePower;  
