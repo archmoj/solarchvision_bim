@@ -454,15 +454,15 @@ float LocationLatitude;
 float LocationLongitude;
 float LocationTimeZone;
 float LocationElevation;
-float Delta_NOON;
+float LocationDeltaNoon;
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
 
 
-float LocationLatitude_step = 0.1;
-float LocationLongitude_step = 0.1;
-float LocationElevation_step = 1.0;
+float LocationLAT_step = 0.1;
+float LocationLON_step = 0.1;
+float LocationELE_step = 1.0;
 
 int save_frame_number = 0;
 
@@ -1233,10 +1233,10 @@ int STUDY_draw_data_raws = 0;
 int STUDY_draw_data_sorted = 1;
 int STUDY_draw_data_normals = 1;
 int STUDY_draw_data_probs = 0;
-int sum_interval = 2;
-float level_pix = 8;
+int STUDY_sum_interval = 2;
+float STUDY_level_pix = 8;
 
-float _pix = 0; 
+float STUDY_pix = 0; 
 
 color STUDY_color_data_raws = color(0, 0, 0);
 
@@ -1533,24 +1533,24 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 300; //325; //340; 
-int w_pixel = int(h_pixel * 1.5); 
+int hSTUDY_pixel = 300; //325; //340; 
+int wSTUDY_pixel = int(hSTUDY_pixel * 1.5); 
 
-float MESSAGE_S_View = w_pixel / 40.0;
+float MESSAGE_S_View = wSTUDY_pixel / 40.0;
 
 
-int a_pixel = int(1.5 * MESSAGE_S_View); // menu bar
-int b_pixel = int(2.75 * MESSAGE_S_View); // 3D tool bar
+int aSTUDY_pixel = int(1.5 * MESSAGE_S_View); // menu bar
+int bSTUDY_pixel = int(2.75 * MESSAGE_S_View); // 3D tool bar
 
-int d_pixel = int(4.5 * MESSAGE_S_View); // time bar
+int dSTUDY_pixel = int(4.5 * MESSAGE_S_View); // time bar
 
 
 float WIN3D_scale3D; 
 
 int WIN3D_CX_View = 0;
-int WIN3D_CY_View = a_pixel + b_pixel + 0;
-int WIN3D_X_View = int(1.25 * h_pixel);
-int WIN3D_Y_View = h_pixel;
+int WIN3D_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+int WIN3D_X_View = int(1.25 * hSTUDY_pixel);
+int WIN3D_Y_View = hSTUDY_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
@@ -1563,7 +1563,7 @@ float WIN3D_RY_coordinate = 0;
 float WIN3D_RZ_coordinate = 0; //0; //180; //135;
 float WIN3D_RS_coordinate = 5.0;
 
-float WIN3D_ZOOM_coordinate = 60; // / (h_pixel / 300.0);
+float WIN3D_ZOOM_coordinate = 60; // / (hSTUDY_pixel / 300.0);
 
 int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 
@@ -1598,10 +1598,10 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = int(1.25 * h_pixel);
-int WORLD_CY_View = a_pixel + b_pixel + 0;
-int WORLD_X_View = int(1.75 * h_pixel);
-int WORLD_Y_View = h_pixel;
+int WORLD_CX_View = int(1.25 * hSTUDY_pixel);
+int WORLD_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+int WORLD_X_View = int(1.75 * hSTUDY_pixel);
+int WORLD_Y_View = hSTUDY_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
 int WORLD_Update = 1;
@@ -1624,29 +1624,29 @@ int WORLD_viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
 
 
 int STUDY_CX_View = 0;
-int STUDY_CY_View = a_pixel + b_pixel + h_pixel;
-int STUDY_X_View = 2 * w_pixel;
-int STUDY_Y_View = 1 * h_pixel;
+int STUDY_CY_View = aSTUDY_pixel + bSTUDY_pixel + hSTUDY_pixel;
+int STUDY_X_View = 2 * wSTUDY_pixel;
+int STUDY_Y_View = 1 * hSTUDY_pixel;
 float STUDY_R_View = float(STUDY_Y_View) / float(STUDY_X_View);
 float STUDY_S_View;
 
 int STUDY_Update = 1;
 int STUDY_include = 1;
 
-int ROLLOUT_CX_View = 2 * w_pixel;
-int ROLLOUT_CY_View = a_pixel + b_pixel + 0;
-int ROLLOUT_X_View = 1 * h_pixel;
-int ROLLOUT_Y_View = 2 * h_pixel;
+int ROLLOUT_CX_View = 2 * wSTUDY_pixel;
+int ROLLOUT_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+int ROLLOUT_X_View = 1 * hSTUDY_pixel;
+int ROLLOUT_Y_View = 2 * hSTUDY_pixel;
 float ROLLOUT_R_View = float(ROLLOUT_Y_View) / float(ROLLOUT_X_View);
-float ROLLOUT_S_View = h_pixel / 325.0; //1; //0.75; // ?????
+float ROLLOUT_S_View = hSTUDY_pixel / 325.0; //1; //0.75; // ?????
 
 int ROLLOUT_Update = 1;
 int ROLLOUT_include = 1;
 
 
 int MESSAGE_CX_View = 0;
-int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View + 0.5 * (a_pixel + b_pixel + d_pixel));
-int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
+int MESSAGE_CY_View = int(1 * hSTUDY_pixel - 0.75 * MESSAGE_S_View + 0.5 * (aSTUDY_pixel + bSTUDY_pixel + dSTUDY_pixel));
+int MESSAGE_X_View = 2 * wSTUDY_pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
@@ -1785,7 +1785,7 @@ int addNewSelectionToPreviousSelection = 0; // internal
 void setup () {
 
   size(1200, 696, P2D);
-  //size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
+  //size(2 * wSTUDY_pixel + ROLLOUT_X_View, aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel + dSTUDY_pixel, P2D);
   
 
   SOLARCHVISION_draw_frame_icon();
@@ -1873,7 +1873,7 @@ void SOLARCHVISION_update_station (int Step) {
     LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
     LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
     LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-    Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
+    LocationDeltaNoon = (LocationTimeZone - LocationLongitude) / 15.0;
     
     WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
 
@@ -1929,7 +1929,7 @@ void draw () {
 
     float cr;
 
-    cr = w_pixel / 4.0;
+    cr = wSTUDY_pixel / 4.0;
     PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
@@ -2226,7 +2226,7 @@ void draw () {
     fill(255);
     text("Please wait while integrating the models.", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
 
-    MESSAGE_X_View = 2 * w_pixel;
+    MESSAGE_X_View = 2 * wSTUDY_pixel;
 
     X_clicked = -1;
     Y_clicked = -1;
@@ -3287,7 +3287,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
   
   
-    float pal_length = 1 * h_pixel * WIN3D_Image_Scale / the_scale;
+    float pal_length = 1 * hSTUDY_pixel * WIN3D_Image_Scale / the_scale;
     
     for (int q = 0; q < 11; q += 1) {
       
@@ -5977,7 +5977,7 @@ void SOLARCHVISION_LoadENSEMBLE (String FileName, int Load_Layer) {
 
 void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   
-  _pix = (100.0 * STUDY_S_View / level_pix);
+  STUDY_pix = (100.0 * STUDY_S_View / STUDY_level_pix);
 
   STUDY_Diagrams.pushMatrix();
   STUDY_Diagrams.translate(x_Plot, y_Plot);
@@ -6195,7 +6195,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
   
       _interval += 1; 
-      if ((_interval % sum_interval) == 0) {
+      if ((_interval % STUDY_sum_interval) == 0) {
         for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
           _valuesSUM[k] += _valuesA[k];
           _valuesNUM[k] += 1;
@@ -6400,7 +6400,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   
-  _pix = (100.0 * STUDY_S_View / level_pix);
+  STUDY_pix = (100.0 * STUDY_S_View / STUDY_level_pix);
   
   int start_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[0];
   int end_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[1]; 
@@ -6597,7 +6597,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
         
       _interval += 1; 
-      if ((_interval % sum_interval) == 0) {
+      if ((_interval % STUDY_sum_interval) == 0) {
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
           for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
             _valuesSUM[(k * STUDY_num_add_days + j_ADD)] += _valuesA[(k * STUDY_num_add_days + j_ADD)];
@@ -6799,7 +6799,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   
-  _pix = (100.0 * STUDY_S_View / level_pix);
+  STUDY_pix = (100.0 * STUDY_S_View / STUDY_level_pix);
 
   int start_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[0];
   int end_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[1]; 
@@ -6996,7 +6996,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
         
       _interval += 1; 
-      if ((_interval % sum_interval) == 0) {
+      if ((_interval % STUDY_sum_interval) == 0) {
         for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
           for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
             _valuesSUM[(k * STUDY_num_add_days + j_ADD)] += _valuesA[(k * STUDY_num_add_days + j_ADD)];
@@ -7397,7 +7397,7 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
 
 void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   
-  _pix = (100.0 * STUDY_S_View / level_pix);
+  STUDY_pix = (100.0 * STUDY_S_View / STUDY_level_pix);
 
   STUDY_Diagrams.pushMatrix();
   STUDY_Diagrams.translate(x_Plot, y_Plot);
@@ -7601,7 +7601,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
   
       _interval += 1; 
-      if ((_interval % sum_interval) == 0) {
+      if ((_interval % STUDY_sum_interval) == 0) {
         for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
           _valuesSUM[k] += _valuesA[k];
           _valuesNUM[k] += 1;
@@ -7871,8 +7871,8 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
   int PAL_DIR = STUDY_Pallet_PROB_DIR;  
   float PAL_Multiplier = STUDY_Pallet_PROB_MLT;
   
-  float txt_max_width = (sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale;
-  float txt_max_height = _pix;
+  float txt_max_width = (STUDY_sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale;
+  float txt_max_height = STUDY_pix;
   if (txt_max_height > txt_max_width) STUDY_Diagrams.textSize(0.9 * txt_max_width);
   else STUDY_Diagrams.textSize(0.9 * txt_max_height);
    
@@ -7891,8 +7891,8 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
   } 
   
   if ((min_v != tan_ang(89.99)) && (max_v != tan_ang(-89.99))) {    
-    min_v = roundTo((min_v * abs(sy_Plot)), _pix) / _pix;
-    max_v = roundTo((max_v * abs(sy_Plot)), _pix) / _pix;
+    min_v = roundTo((min_v * abs(sy_Plot)), STUDY_pix) / STUDY_pix;
+    max_v = roundTo((max_v * abs(sy_Plot)), STUDY_pix) / STUDY_pix;
     
     if (STUDY_drw_Layer == LAYER_winddir) min_v = 0;
 
@@ -7906,10 +7906,10 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
         float the_value = _valuesSUM[k];
         
         if (STUDY_drw_Layer == LAYER_winddir) {
-          if (roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
+          if (roundTo((the_value * abs(sy_Plot)), STUDY_pix) >= (360 * abs(sy_Plot))) the_value -= 360;
         }
         
-        int h = int(roundTo((roundTo((the_value * abs(sy_Plot)), _pix) / _pix) - min_v, 1));
+        int h = int(roundTo((roundTo((the_value * abs(sy_Plot)), STUDY_pix) / STUDY_pix) - min_v, 1));
         _probs[h] += 1;
         total_probs += 1;
       }
@@ -7933,7 +7933,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0); 
-          STUDY_Diagrams.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * _pix) - 0.5 * _pix, -(sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, _pix); 
+          STUDY_Diagrams.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * STUDY_pix) - 0.5 * STUDY_pix, -(STUDY_sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, STUDY_pix); 
           
           if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
             STUDY_Diagrams.stroke(127);
@@ -7945,10 +7945,10 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
             STUDY_Diagrams.fill(255);
             STUDY_Diagrams.strokeWeight(2);
           }   
-          STUDY_Diagrams.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, -((min_v + n) * _pix) - 0.05 * txt_max_height);
+          STUDY_Diagrams.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (STUDY_sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, -((min_v + n) * STUDY_pix) - 0.05 * txt_max_height);
           
           if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-            File_output_prob[(j - STUDY_j_start)].print(nfs((min_v + n) * _pix / abs(sy_Plot) - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t"); 
+            File_output_prob[(j - STUDY_j_start)].print(nfs((min_v + n) * STUDY_pix / abs(sy_Plot) - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t"); 
           }
         }
       }  
@@ -8795,7 +8795,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             }
               
             STUDY_V_scale[LAYER_developed] = 2.5;
-            STUDY_V_offset[LAYER_developed] = 0; //-20.0 / (1.0 * level_pix); // so that we can have two views on probabilites above and below zero.
+            STUDY_V_offset[LAYER_developed] = 0; //-20.0 / (1.0 * STUDY_level_pix); // so that we can have two views on probabilites above and below zero.
             STUDY_V_belowLine[LAYER_developed] = 0; //1;
             LAYERS_Unit[LAYER_developed] = "mm/12hours";
             LAYERS_Title[LAYER_developed][Language_EN] = "12-hour Surface Accumulated Precipitation";
@@ -8853,7 +8853,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
                 if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][LAYER_developed][now_k] = CLIMATE_WY2[now_i][now_j][LAYER_developed][now_k];
                 if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][LAYER_developed][now_k] = ENSEMBLE[now_i][now_j][LAYER_developed][now_k];
               }
-              //sum_interval = 24;
+              //STUDY_sum_interval = 24;
               STUDY_V_scale[LAYER_developed] = 10;
               STUDY_V_offset[LAYER_developed] = 0;
               STUDY_V_belowLine[LAYER_developed] = 0;
@@ -8868,7 +8868,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
                 if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][LAYER_developed][now_k] = CLIMATE_WY2[now_i][now_j][LAYER_developed][now_k];
                 if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][LAYER_developed][now_k] = ENSEMBLE[now_i][now_j][LAYER_developed][now_k];
               }
-              //sum_interval = 12;
+              //STUDY_sum_interval = 12;
               STUDY_V_scale[LAYER_developed] = 10;
               STUDY_V_offset[LAYER_developed] = 0;
               STUDY_V_belowLine[LAYER_developed] = 0;
@@ -8883,7 +8883,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
                 if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][LAYER_developed][now_k] = CLIMATE_WY2[now_i][now_j][LAYER_developed][now_k];
                 if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][LAYER_developed][now_k] = ENSEMBLE[now_i][now_j][LAYER_developed][now_k];
               }
-              //sum_interval = 6;
+              //STUDY_sum_interval = 6;
               STUDY_V_scale[LAYER_developed] = 10;
               STUDY_V_offset[LAYER_developed] = 0;
               STUDY_V_belowLine[LAYER_developed] = 0;
@@ -12072,20 +12072,20 @@ void STUDY_keyPressed (KeyEvent e) {
         case 'b' :STUDY_draw_data_probs = int((STUDY_draw_data_probs + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'B' :STUDY_draw_data_probs = int((STUDY_draw_data_probs + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
         
-        case 'j' :if (level_pix < 32) level_pix *= pow(2.0, (1.0 / 1.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'J' :if (level_pix > 2) level_pix *= pow(0.5, (1.0 / 1.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'j' :if (STUDY_level_pix < 32) STUDY_level_pix *= pow(2.0, (1.0 / 1.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'J' :if (STUDY_level_pix > 2) STUDY_level_pix *= pow(0.5, (1.0 / 1.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
-        case 'i' :if (sum_interval > 24) sum_interval -= 24;
-                  if (sum_interval > 6) sum_interval -= 6; 
-                  else if (sum_interval > 1) sum_interval -= 1;
-                  if (sum_interval == 5) sum_interval = 4;
-                  println("sum_interval =", sum_interval);
+        case 'i' :if (STUDY_sum_interval > 24) STUDY_sum_interval -= 24;
+                  if (STUDY_sum_interval > 6) STUDY_sum_interval -= 6; 
+                  else if (STUDY_sum_interval > 1) STUDY_sum_interval -= 1;
+                  if (STUDY_sum_interval == 5) STUDY_sum_interval = 4;
+                  println("STUDY_sum_interval =", STUDY_sum_interval);
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'I' :if (sum_interval < 6) sum_interval += 1;
-                  else if (sum_interval < 24) sum_interval += 6;
-                  else sum_interval += 24;
-                  if (sum_interval == 5) sum_interval = 6;
-                  println("sum_interval =", sum_interval);
+        case 'I' :if (STUDY_sum_interval < 6) STUDY_sum_interval += 1;
+                  else if (STUDY_sum_interval < 24) STUDY_sum_interval += 6;
+                  else STUDY_sum_interval += 24;
+                  if (STUDY_sum_interval == 5) STUDY_sum_interval = 6;
+                  println("STUDY_sum_interval =", STUDY_sum_interval);
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
         case '!' :sky_scenario = 1; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
@@ -13077,23 +13077,23 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 1;
 
     WIN3D_CX_View = 0;
-    WIN3D_CY_View = a_pixel + b_pixel + 0;
-    WIN3D_X_View = int(1.25 * h_pixel);
-    WIN3D_Y_View = h_pixel;
+    WIN3D_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+    WIN3D_X_View = int(1.25 * hSTUDY_pixel);
+    WIN3D_Y_View = hSTUDY_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
-    WORLD_CX_View = int(1.25 * h_pixel);
-    WORLD_CY_View = a_pixel + b_pixel + 0;
-    WORLD_X_View = int(1.75 * h_pixel);
-    WORLD_Y_View = h_pixel;
+    WORLD_CX_View = int(1.25 * hSTUDY_pixel);
+    WORLD_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+    WORLD_X_View = int(1.75 * hSTUDY_pixel);
+    WORLD_Y_View = hSTUDY_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
     STUDY_CX_View = 0;
-    STUDY_CY_View = a_pixel + b_pixel + h_pixel;
-    STUDY_X_View = 2 * w_pixel;
-    STUDY_Y_View = 1 * h_pixel;
+    STUDY_CY_View = aSTUDY_pixel + bSTUDY_pixel + hSTUDY_pixel;
+    STUDY_X_View = 2 * wSTUDY_pixel;
+    STUDY_Y_View = 1 * hSTUDY_pixel;
     STUDY_R_View = float(STUDY_Y_View) / float(STUDY_X_View);   
     STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);     
 
@@ -13105,9 +13105,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 0;
    
     WIN3D_CX_View = 0;
-    WIN3D_CY_View = a_pixel + b_pixel + 0;
-    WIN3D_X_View = 3 * h_pixel;
-    WIN3D_Y_View = 2 * h_pixel;
+    WIN3D_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+    WIN3D_X_View = 3 * hSTUDY_pixel;
+    WIN3D_Y_View = 2 * hSTUDY_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  }  
@@ -13118,9 +13118,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 0;
    
     STUDY_CX_View = 0;
-    STUDY_CY_View = a_pixel + b_pixel + 0;
-    STUDY_X_View = 2 * w_pixel;
-    STUDY_Y_View = 2 * h_pixel;
+    STUDY_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+    STUDY_X_View = 2 * wSTUDY_pixel;
+    STUDY_Y_View = 2 * hSTUDY_pixel;
     STUDY_R_View = float(STUDY_Y_View) / float(STUDY_X_View);   
     STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);  
  } 
@@ -13131,9 +13131,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 1;
    
     WORLD_CX_View = 0;
-    WORLD_CY_View = a_pixel + b_pixel + 0;
-    WORLD_X_View = 2 * w_pixel;
-    WORLD_Y_View = 2 * h_pixel;
+    WORLD_CY_View = aSTUDY_pixel + bSTUDY_pixel + 0;
+    WORLD_X_View = 2 * wSTUDY_pixel;
+    WORLD_Y_View = 2 * hSTUDY_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
  } 
@@ -13159,7 +13159,7 @@ void keyPressed (KeyEvent e) {
         BAR_a_selected_parent = -1;
         BAR_a_selected_child = 0;
     
-        image(pre_screen, 0, a_pixel);
+        image(pre_screen, 0, aSTUDY_pixel);
       }
       
       addNewSelectionToPreviousSelection = 0;
@@ -21458,10 +21458,10 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               float u = (x / LAND_TEXTURE_scale_U[n_Map] + 0.5);
               float v = (-y / LAND_TEXTURE_scale_V[n_Map] + 0.5);
   
-              int u_pixel = int(u * LAND_TEXTURE[n_Map].width);
-              int v_pixel = int(v * LAND_TEXTURE[n_Map].height);
+              int uSTUDY_pixel = int(u * LAND_TEXTURE[n_Map].width);
+              int vSTUDY_pixel = int(v * LAND_TEXTURE[n_Map].height);
             
-              color COL = LAND_TEXTURE[n_Map].get(u_pixel, v_pixel);
+              color COL = LAND_TEXTURE[n_Map].get(uSTUDY_pixel, vSTUDY_pixel);
               //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
               float r = COL >> 16 & 0xFF; 
               float g = COL >> 8 & 0xFF;
@@ -31235,10 +31235,10 @@ void mouseWheel(MouseEvent event) {
           
           {
             float displayBarHeight = MESSAGE_S_View;
-            float displayBarWidth = 2 * w_pixel; 
+            float displayBarWidth = 2 * wSTUDY_pixel; 
         
             X_control = 0.5 * displayBarWidth;
-            Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
+            Y_control = aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel + 0.5 * BAR_d_tab;
             
             for (int i = 0; i < BAR_d_Items.length; i++) {
               
@@ -32353,7 +32353,7 @@ void mouseClicked () {
       }    
       
       
-      if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, a_pixel) == 0)) {
+      if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, aSTUDY_pixel) == 0)) {
          
         if (mouseButton == LEFT) {
           if (BAR_a_selected_child != 0) {
@@ -34279,7 +34279,7 @@ void mouseClicked () {
         BAR_a_selected_parent = -1;
         BAR_a_selected_child = 0;
     
-        image(pre_screen, 0, a_pixel);
+        image(pre_screen, 0, aSTUDY_pixel);
         
         X_clicked = -1;
         Y_clicked = -1;      
@@ -34289,15 +34289,15 @@ void mouseClicked () {
         X_clicked = mouseX;
         Y_clicked = mouseY;
 
-        if (isInside(X_clicked, Y_clicked, 0, 0, width, a_pixel) == 1) {
+        if (isInside(X_clicked, Y_clicked, 0, 0, width, aSTUDY_pixel) == 1) {
           BAR_a_Update = 1;
         }
     
-        if (isInside(X_clicked, Y_clicked, 0, a_pixel, width, a_pixel + b_pixel) == 1) {
+        if (isInside(X_clicked, Y_clicked, 0, aSTUDY_pixel, width, aSTUDY_pixel + bSTUDY_pixel) == 1) {
           BAR_b_Update = 1; 
         }
   
-        if (isInside(X_clicked, Y_clicked, 0, a_pixel + b_pixel + 2 * h_pixel, width, a_pixel + b_pixel + 2 * h_pixel + d_pixel) == 1) {
+        if (isInside(X_clicked, Y_clicked, 0, aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel, width, aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel + dSTUDY_pixel) == 1) {
           BAR_d_Update = 1; 
         }  
         
@@ -35853,13 +35853,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       //WORLD_VIEW_Auto = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1), 1));
       //WORLD_VIEW_Number = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1), 1));
 
-      LocationLatitude = MySpinner.update(X_control, Y_control, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
-      LocationLongitude = MySpinner.update(X_control, Y_control, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
-      LocationElevation = MySpinner.update(X_control, Y_control, 0,0,1, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
+      LocationLatitude = MySpinner.update(X_control, Y_control, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLAT_step);
+      LocationLongitude = MySpinner.update(X_control, Y_control, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLON_step);
+      LocationElevation = MySpinner.update(X_control, Y_control, 0,0,1, "Elevation", LocationElevation, -100, 8000, LocationELE_step);
 
-      LocationLatitude_step = MySpinner.update(X_control, Y_control, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -2);
-      LocationLongitude_step = MySpinner.update(X_control, Y_control, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -2);
-      LocationElevation_step = MySpinner.update(X_control, Y_control, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -2);
+      LocationLAT_step = MySpinner.update(X_control, Y_control, 0,0,0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
+      LocationLON_step = MySpinner.update(X_control, Y_control, 0,0,0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
+      LocationELE_step = MySpinner.update(X_control, Y_control, 0,0,0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
       
       Display_SWOB_points = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Display_SWOB_points" , Display_SWOB_points, 0, 2, 1), 1));
       Display_SWOB_nearest = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Display_SWOB_nearest" , Display_SWOB_nearest, 0, 1, 1), 1));
@@ -36214,8 +36214,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_draw_data_sorted = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw sorted", STUDY_draw_data_sorted, 0, 1, 1), 1));
       STUDY_draw_data_normals = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw statistics", STUDY_draw_data_normals, 0, 1, 1), 1));
       STUDY_draw_data_probs = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw probabilities", STUDY_draw_data_probs, 0, 1, 1), 1));
-      sum_interval = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
-      level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
+      STUDY_sum_interval = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities interval", STUDY_sum_interval, 1, 24, 1), 1));
+      STUDY_level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", STUDY_level_pix, 2, 32, -2), 1));    
 
     }
     
@@ -44524,7 +44524,7 @@ PImage pre_screen;
 
 int BAR_a_Update = 1;
 
-float BAR_a_width_parent = 4 * a_pixel;
+float BAR_a_width_parent = 4 * aSTUDY_pixel;
 float BAR_a_width_child = 3.5 * BAR_a_width_parent;
 
 int BAR_a_selected_parent = -1;
@@ -44609,16 +44609,16 @@ void SOLARCHVISION_draw_window_BAR_a () {
     fill(127);
     noStroke();
     
-    rect(0, 0, width, a_pixel);
+    rect(0, 0, width, aSTUDY_pixel);
   
     X_control = 0; //0.25 * MESSAGE_S_View;
-    Y_control = 0.5 * a_pixel;
+    Y_control = 0.5 * aSTUDY_pixel;
     
     for (int i = 0; i < BAR_a_Items.length; i++) {
   
       float cx = X_control + i * BAR_a_width_parent;
       float cy = Y_control;
-      float cr = 0.5 * a_pixel; 
+      float cr = 0.5 * aSTUDY_pixel; 
   
       if (i > 0) cx += 1.5 * BAR_a_width_parent; // to include SOLARCHVISION title     
   
@@ -44626,7 +44626,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
   
         if (BAR_a_selected_parent == -1) {
           
-          pre_screen = get(0, a_pixel, width, height - a_pixel);
+          pre_screen = get(0, aSTUDY_pixel, width, height - aSTUDY_pixel);
           
           //println("Screen GET!");
         }     
@@ -44658,25 +44658,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
   
       if (BAR_a_selected_parent == i) {
         
-        image(pre_screen, 0, a_pixel);
+        image(pre_screen, 0, aSTUDY_pixel);
 
         BAR_a_selected_child = 0; 
         
         for (int j = 1; j < BAR_a_Items[BAR_a_selected_parent].length; j++) {
           
-          if (isInside(X_moved,Y_moved, cx, cy - cr + j * a_pixel, cx + BAR_a_width_child, cy + cr + j * a_pixel) == 1) {
+          if (isInside(X_moved,Y_moved, cx, cy - cr + j * aSTUDY_pixel, cx + BAR_a_width_child, cy + cr + j * aSTUDY_pixel) == 1) {
 
             BAR_a_selected_child = j;
             
             fill(255,127,0);
             noStroke();
-            rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
+            rect(cx, cy - cr + j * aSTUDY_pixel, BAR_a_width_child, aSTUDY_pixel);          
           }  
           else {
             
             fill(0, 223);
             noStroke();
-            rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
+            rect(cx, cy - cr + j * aSTUDY_pixel, BAR_a_width_child, aSTUDY_pixel);          
           }
           
           textAlign(LEFT, CENTER);
@@ -44832,7 +44832,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
             textSize(1.25 * MESSAGE_S_View);
           }
   
-          text(BAR_a_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View + j * a_pixel);
+          text(BAR_a_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View + j * aSTUDY_pixel);
           
         }     
       } 
@@ -44860,7 +44860,7 @@ void SOLARCHVISION_modify_Viewport_Title () {
 
 int BAR_b_Update = 1;
 
-float BAR_b_tab = b_pixel;
+float BAR_b_tab = bSTUDY_pixel;
 
 String[][] BAR_b_Items = {
                           {"11", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "3DViewPoint", "2.0"},
@@ -44958,14 +44958,14 @@ void SOLARCHVISION_draw_window_BAR_b () {
     
     fill(0);
     noStroke();
-    rect(0, a_pixel, width, b_pixel);
+    rect(0, aSTUDY_pixel, width, bSTUDY_pixel);
     
     X_control = 0; //0.25 * MESSAGE_S_View;
-    Y_control = a_pixel + 0.5 * b_pixel;
+    Y_control = aSTUDY_pixel + 0.5 * bSTUDY_pixel;
   
     float cx = X_control;
     float cy = Y_control;
-    float cr = 0.5 * b_pixel;   
+    float cr = 0.5 * bSTUDY_pixel;   
     
     for (int i = 0; i < BAR_b_Items.length; i++) {
       
@@ -44986,7 +44986,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
       noFill();
       stroke(255);
       strokeWeight(1);
-      rect(cx, cy - cr, Item_width, b_pixel);
+      rect(cx, cy - cr, Item_width, bSTUDY_pixel);
       strokeWeight(0);
       
 
@@ -45035,7 +45035,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         fill(255,127,0);
         noStroke();
-        rect(cx, cy - cr, Item_width, b_pixel);     
+        rect(cx, cy - cr, Item_width, bSTUDY_pixel);     
        
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
 
@@ -45174,96 +45174,96 @@ void SOLARCHVISION_draw_window_BAR_b () {
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
 
         if (Bar_Switch.equals("Drop")) {
-          dessin_Drop(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Drop(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("GetLength")) {
-          dessin_GetLength(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_GetLength(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }        
         if (Bar_Switch.equals("Move")) {
-          dessin_Move(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Move(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("Scale")) {
-          dessin_Scale(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Scale(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }    
         if (Bar_Switch.equals("Power")) {
-          dessin_Power(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Power(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }            
         if (Bar_Switch.equals("Rotate")) {
-          dessin_Rotate(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Rotate(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }    
         if (Bar_Switch.equals("Change Seed/Material")) {
-          dessin_Seed(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Seed(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("Change Tessellation")) {
-          dessin_Tessellation(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Tessellation(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("Change Layer")) {
-          dessin_Layer(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Layer(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("Change Visibility")) {
-          dessin_Visibility(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Visibility(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }        
         if (Bar_Switch.equals("FaceNormal")) {
-          dessin_FaceNormal(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_FaceNormal(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }           
         if (Bar_Switch.equals("FaceFirstVertex")) {
-          dessin_FaceFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_FaceFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }            
        
         if (Bar_Switch.equals("ClickSelect")) {
-          dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }       
         if (Bar_Switch.equals("WindowSelect")) {
-          dessin_WindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_WindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }   
         if (Bar_Switch.equals("ProjectionType")) {
-          dessin_ProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_ProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }          
         if (Bar_Switch.equals("Zoom")) {
-          dessin_Zoom(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Zoom(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }   
         if (Bar_Switch.equals("Orbit")) {
-          dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }     
         if (Bar_Switch.equals("CameraRoll")) {
-          dessin_CameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_CameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }             
         if (Bar_Switch.equals("TargetRoll")) {
-          dessin_TargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_TargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }      
         if (Bar_Switch.equals("CameraDistance")) {
-          dessin_CameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_CameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }           
         if (Bar_Switch.equals("LookAtOrigin")) {
-          dessin_LookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_LookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }        
         if (Bar_Switch.equals("LookAtSelection")) {
-          dessin_LookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_LookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }                
         if (Bar_Switch.equals("Pan")) {
-          dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("DistMouseXY")) {
-          dessin_DistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_DistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }          
         if (Bar_Switch.equals("DistZ")) {
-          dessin_DistZ(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_DistZ(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }        
         if (Bar_Switch.equals("Truck")) {
-          dessin_Truck(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_Truck(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("3DModelSize")) {
-          dessin_3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }      
         if (Bar_Switch.equals("SkydomeSize")) {
-          dessin_SkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_SkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }
         if (Bar_Switch.equals("AllModelSize")) {
-          dessin_AllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_AllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }  
 
         if (Bar_Switch.equals("3DViewSpace")) {
-          dessin_3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * bSTUDY_pixel);
         }  
     
         
@@ -45274,7 +45274,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         textAlign(CENTER, CENTER);   
         stroke(255); 
         fill(255);
-        textSize(0.45 * b_pixel);
+        textSize(0.45 * bSTUDY_pixel);
                 
         text(BAR_b_Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MESSAGE_S_View);
       }
@@ -45988,19 +45988,19 @@ void SOLARCHVISION_draw_window_BAR_d () {
   
     BAR_d_Update = 0;
     
-    BAR_d_tab = d_pixel / float(BAR_d_Items.length);
+    BAR_d_tab = dSTUDY_pixel / float(BAR_d_Items.length);
     
     fill(191);
     noStroke();
-    rect(0, a_pixel + b_pixel + 2 * h_pixel, width, d_pixel);
+    rect(0, aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel, width, dSTUDY_pixel);
 
 
 
     float displayBarHeight = MESSAGE_S_View;
-    float displayBarWidth = 2 * w_pixel; 
+    float displayBarWidth = 2 * wSTUDY_pixel; 
 
     X_control = 0.5 * displayBarWidth;
-    Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
+    Y_control = aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel + 0.5 * BAR_d_tab;
     
     for (int i = 0; i < BAR_d_Items.length; i++) {
       
@@ -46352,7 +46352,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
     displayBarHeight = 4.5 * MESSAGE_S_View;
 
     float temp_offsetX = ROLLOUT_CX_View + 0.5 * displayBarWidth;
-    float temp_offsetY = a_pixel + b_pixel + 2 * h_pixel + 0.5 * displayBarHeight;
+    float temp_offsetY = aSTUDY_pixel + bSTUDY_pixel + 2 * hSTUDY_pixel + 0.5 * displayBarHeight;
     
     for (int n = 0; n < 9; n++) {
       
@@ -46613,7 +46613,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("LocationLongitude", LocationLongitude);
   newChild1.setFloat("LocationElevation", LocationElevation);
   newChild1.setFloat("LocationTimeZone", LocationTimeZone);
-  newChild1.setFloat("Delta_NOON", Delta_NOON);
+  newChild1.setFloat("LocationDeltaNoon", LocationDeltaNoon);
 
   newChild1.setInt("Display_Output_in_Explorer", Display_Output_in_Explorer);
   newChild1.setInt("Display_Building_Model", Display_Building_Model);
@@ -46709,9 +46709,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SOLARCHVISION_BEGIN_DAY", SOLARCHVISION_BEGIN_DAY);
   newChild1.setFloat("SOLARCHVISION_DATE", SOLARCHVISION_DATE);
   
-  newChild1.setFloat("LocationLatitude_step", LocationLatitude_step);
-  newChild1.setFloat("LocationLongitude_step", LocationLongitude_step);
-  newChild1.setFloat("LocationElevation_step", LocationElevation_step);
+  newChild1.setFloat("LocationLAT_step", LocationLAT_step);
+  newChild1.setFloat("LocationLON_step", LocationLON_step);
+  newChild1.setFloat("LocationELE_step", LocationELE_step);
   
   
   newChild1.setInt("STUDY_record_JPG", STUDY_record_JPG);
@@ -46910,9 +46910,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("STUDY_draw_data_sorted", STUDY_draw_data_sorted);
   newChild1.setInt("STUDY_draw_data_normals", STUDY_draw_data_normals);
   newChild1.setInt("STUDY_draw_data_probs", STUDY_draw_data_probs);
-  newChild1.setInt("sum_interval", sum_interval);
-  newChild1.setFloat("level_pix", level_pix);
-  newChild1.setFloat("_pix", _pix);
+  newChild1.setInt("STUDY_sum_interval", STUDY_sum_interval);
+  newChild1.setFloat("STUDY_level_pix", STUDY_level_pix);
+  newChild1.setFloat("STUDY_pix", STUDY_pix);
   newChild1.setInt("STUDY_setup", STUDY_setup);
   newChild1.setInt("Materials_Selection", Materials_Selection);
   newChild1.setInt("Shade_Surface_Wire", Shade_Surface_Wire);
@@ -47861,7 +47861,7 @@ void SOLARCHVISION_load_project (String myFile) {
       LocationLongitude = children0[L].getFloat("LocationLongitude");
       LocationElevation = children0[L].getFloat("LocationElevation");
       LocationTimeZone = children0[L].getFloat("LocationTimeZone");
-      Delta_NOON = children0[L].getFloat("Delta_NOON");
+      LocationDeltaNoon = children0[L].getFloat("LocationDeltaNoon");
       
       Display_Output_in_Explorer = children0[L].getInt("Display_Output_in_Explorer");
       Display_Building_Model = children0[L].getInt("Display_Building_Model");
@@ -47957,9 +47957,9 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_BEGIN_DAY = children0[L].getInt("SOLARCHVISION_BEGIN_DAY");
       SOLARCHVISION_DATE = children0[L].getFloat("SOLARCHVISION_DATE");
       
-      LocationLatitude_step = children0[L].getFloat("LocationLatitude_step");
-      LocationLongitude_step = children0[L].getFloat("LocationLongitude_step");
-      LocationElevation_step = children0[L].getFloat("LocationElevation_step");
+      LocationLAT_step = children0[L].getFloat("LocationLAT_step");
+      LocationLON_step = children0[L].getFloat("LocationLON_step");
+      LocationELE_step = children0[L].getFloat("LocationELE_step");
       
       
       STUDY_record_JPG = children0[L].getInt("STUDY_record_JPG");
@@ -48158,9 +48158,9 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY_draw_data_sorted = children0[L].getInt("STUDY_draw_data_sorted");
       STUDY_draw_data_normals = children0[L].getInt("STUDY_draw_data_normals");
       STUDY_draw_data_probs = children0[L].getInt("STUDY_draw_data_probs");
-      sum_interval = children0[L].getInt("sum_interval");
-      level_pix = children0[L].getFloat("level_pix");
-      _pix = children0[L].getFloat("_pix");
+      STUDY_sum_interval = children0[L].getInt("STUDY_sum_interval");
+      STUDY_level_pix = children0[L].getFloat("STUDY_level_pix");
+      STUDY_pix = children0[L].getFloat("STUDY_pix");
       STUDY_setup = children0[L].getInt("STUDY_setup");
       Materials_Selection = children0[L].getInt("Materials_Selection");
       Shade_Surface_Wire = children0[L].getInt("Shade_Surface_Wire");
