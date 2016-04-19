@@ -364,7 +364,7 @@ int SOLARCHVISION_YEAR = year();
 int SOLARCHVISION_MONTH = month();
 int SOLARCHVISION_DAY = day(); 
 int SOLARCHVISION_HOUR = SOLARCHVISION_MODEL_RUN; //hour(); 
-int BEGIN_DAY;
+int SOLARCHVISION_BEGIN_DAY;
 float SOLARCHVISION_DATE;
 
 void SOLARCHVISION_RecordFrame () {
@@ -412,10 +412,10 @@ String MAKE_Filenames (String beginName) {
   //My_Filenames += "S" + nf(100 + STUDY_setup, 3);
   //My_Filenames += "V" + nf(camera_variation, 0); 
   
-  //My_Filenames += nf(draw_data_lines, 0);
-  //My_Filenames += nf(draw_sorted, 0);
-  //My_Filenames += nf(draw_normals, 0);
-  //My_Filenames += nf(draw_probs, 0);
+  //My_Filenames += nf(STUDY_draw_data_raws, 0);
+  //My_Filenames += nf(STUDY_draw_data_sorted, 0);
+  //My_Filenames += nf(STUDY_draw_data_normals, 0);
+  //My_Filenames += nf(STUDY_draw_data_probs, 0);
   
   My_Filenames += sky_scenario_file[sky_scenario];
 
@@ -481,8 +481,8 @@ int WIN3D_record_AUTO = 0;
 int STUDY_max_j_end_parameters = 16; // Constant
 int STUDY_max_j_end_observations = 0; // Variable
 
-float per_day = 61; //1; //45; //61; //30.5;
-int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
+float STUDY_per_day = 61; //1; //45; //61; //30.5;
+int STUDY_num_add_days = 1; //30;//STUDY_per_day; // it should be set up to 1 in order to plot only one day  
 
 int CLIMATE_EPW_start = 1; 
 int CLIMATE_EPW_end = 1;
@@ -1227,18 +1227,18 @@ int Display_MODEL3D_NORMALS = 0;
 int Display_windFlow = 0;
 
 
-int camera_variation = 0; // 1;
+int Camera_Variation = 0; // 1;
 
-int draw_data_lines = 0;
-int draw_sorted = 1;
-int draw_normals = 1;
-int draw_probs = 0;
+int STUDY_draw_data_raws = 0;
+int STUDY_draw_data_sorted = 1;
+int STUDY_draw_data_normals = 1;
+int STUDY_draw_data_probs = 0;
 int sum_interval = 2;
 float level_pix = 8;
 
 float _pix = 0; 
 
-color color_data_lines = color(0, 0, 0);
+color STUDY_color_data_raws = color(0, 0, 0);
 
 float WIN3D_Image_Scale = 1.0;
 
@@ -1252,7 +1252,7 @@ int pre_Sample_Member_start;
 int pre_Sample_Member_end;
 int pre_Sample_Station_start; 
 int pre_Sample_Station_end;
-int pre_num_add_days;
+int pre_STUDY_num_add_days;
 int pre_STUDY_i_start;
 int pre_STUDY_i_end;
 int pre_STUDY_j_end;
@@ -1877,7 +1877,7 @@ void SOLARCHVISION_update_station (int Step) {
     
     WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
 
-    BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
+    SOLARCHVISION_BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
   }
   
   if ((Step == 0) || (Step == 2)) SOLARCHVISION_try_update_CLIMATE_EPW();
@@ -2246,7 +2246,7 @@ void draw () {
         pre_Sample_Member_end = Sample_Member_end;
         pre_Sample_Station_start = Sample_Station_start; 
         pre_Sample_Station_end = Sample_Station_end;
-        pre_num_add_days = num_add_days;
+        pre_STUDY_num_add_days = STUDY_num_add_days;
         pre_STUDY_i_start = STUDY_i_start;
         pre_STUDY_i_end = STUDY_i_end;        
         pre_STUDY_j_end = STUDY_j_end;
@@ -2396,7 +2396,7 @@ void draw () {
           BAR_d_Update = 1;
         }  
         
-        if (pre_num_add_days != num_add_days) {
+        if (pre_STUDY_num_add_days != STUDY_num_add_days) {
           BAR_d_Update = 1;
         }            
 
@@ -2432,7 +2432,7 @@ void draw () {
         if ((pre_SOLARCHVISION_YEAR != SOLARCHVISION_YEAR) || (pre_SOLARCHVISION_MONTH != SOLARCHVISION_MONTH) || (pre_SOLARCHVISION_DAY != SOLARCHVISION_DAY) || (pre_SOLARCHVISION_HOUR != SOLARCHVISION_HOUR) || (pre_Climatic_solar_forecast != Climatic_solar_forecast) || (pre_Climatic_weather_forecast != Climatic_weather_forecast)) {
           BAR_d_Update = 1;
           
-          BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
+          SOLARCHVISION_BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
           SOLARCHVISION_HOUR = int(24 * (SOLARCHVISION_DATE - int(SOLARCHVISION_DATE)));
           SOLARCHVISION_DATE = (SOLARCHVISION_HOUR / 24.0) + (286 + Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY)) % 365;
           println("DATE:", SOLARCHVISION_DATE, "\tHOUR:", SOLARCHVISION_HOUR);
@@ -4074,23 +4074,23 @@ void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, fl
   }
   if (draw_observed == 1) {
 
-    int keep_draw_data_lines = draw_data_lines;
-    int keep_draw_sorted = draw_sorted;
-    int keep_draw_normals = draw_normals;
-    int keep_draw_probs = draw_probs;
+    int keep_STUDY_draw_data_raws = STUDY_draw_data_raws;
+    int keep_STUDY_draw_data_sorted = STUDY_draw_data_sorted;
+    int keep_STUDY_draw_data_normals = STUDY_draw_data_normals;
+    int keep_STUDY_draw_data_probs = STUDY_draw_data_probs;
     
-    draw_data_lines = 1;
-    draw_sorted = 0;
-    draw_normals = 1;
-    draw_probs = 0; 
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_probs = 0; 
     
     now_drawing = databaseNumber_OBSERVED;
     SOLARCHVISION_PlotOBSERVED(x, y, z, sx, sy, sz);
     
-    draw_data_lines = keep_draw_data_lines;
-    draw_sorted = keep_draw_sorted;
-    draw_normals = keep_draw_normals;
-    draw_probs = keep_draw_probs; 
+    STUDY_draw_data_raws = keep_STUDY_draw_data_raws;
+    STUDY_draw_data_sorted = keep_STUDY_draw_data_sorted;
+    STUDY_draw_data_normals = keep_STUDY_draw_data_normals;
+    STUDY_draw_data_probs = keep_STUDY_draw_data_probs; 
   }
   
   now_drawing = -1;
@@ -4122,20 +4122,20 @@ void Plot_Setup () {
 
       if ((plot_impacts == 8) || (plot_impacts == 9)) {
         
-        int keep_BEGIN_DAY = BEGIN_DAY;
-        float keep_per_day = per_day;
+        int keep_SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_BEGIN_DAY;
+        float keep_STUDY_per_day = STUDY_per_day;
         int keep_STUDY_j_end = STUDY_j_end;
         float keep_STUDY_U_scale = STUDY_U_scale;
         
-        BEGIN_DAY = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
-        per_day = 183;
+        SOLARCHVISION_BEGIN_DAY = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
+        STUDY_per_day = 183;
         STUDY_j_end = 2;
         STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
         
         SOLARCHVISION_PlotIMPACT(0, 0 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
         
-        BEGIN_DAY = keep_BEGIN_DAY;
-        per_day = keep_per_day;
+        SOLARCHVISION_BEGIN_DAY = keep_SOLARCHVISION_BEGIN_DAY;
+        STUDY_per_day = keep_STUDY_per_day;
         STUDY_j_end = keep_STUDY_j_end;
         STUDY_U_scale = keep_STUDY_U_scale;
       }
@@ -4154,37 +4154,37 @@ void Plot_Setup () {
   if (STUDY_setup == -2) {
     if (impacts_source == databaseNumber_ENSEMBLE) {
       pre_SOLARCHVISION_DATE = SOLARCHVISION_DATE;
-      int keep_BEGIN_DAY = BEGIN_DAY;
+      int keep_SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_BEGIN_DAY;
       int delta = 4;
       
       SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       SOLARCHVISION_DATE -= delta;
       SOLARCHVISION_update_date();
-      BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
+      SOLARCHVISION_BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
       SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
-      BEGIN_DAY = (BEGIN_DAY + delta) % 365;
+      SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       SOLARCHVISION_DATE -= delta;
       SOLARCHVISION_update_date();
-      BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
+      SOLARCHVISION_BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
       SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
-      BEGIN_DAY = (BEGIN_DAY + 2 * delta) % 365;
+      SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + 2 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       SOLARCHVISION_DATE -= delta;
       SOLARCHVISION_update_date();
-      BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
+      SOLARCHVISION_BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
       SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
-      BEGIN_DAY = (BEGIN_DAY + 3 * delta) % 365;
+      SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + 3 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
       SOLARCHVISION_DATE = pre_SOLARCHVISION_DATE;
       SOLARCHVISION_update_date();
-      BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
+      SOLARCHVISION_BEGIN_DAY = Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY);
       SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
-      BEGIN_DAY = keep_BEGIN_DAY;
+      SOLARCHVISION_BEGIN_DAY = keep_SOLARCHVISION_BEGIN_DAY;
     }
   }
   
@@ -4194,31 +4194,31 @@ void Plot_Setup () {
     
     impacts_source = databaseNumber_ENSEMBLE; 
 
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
     
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0; 
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     impacts_source = databaseNumber_CLIMATE_WY2;
     
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1;
     
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
     
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0; 
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0; 
     SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
     impacts_source = pre_impacts_source;
@@ -4394,16 +4394,16 @@ void Plot_Setup () {
   
   if (STUDY_setup == 7) {
     
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1; 
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1; 
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0;
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
     plot_impacts = -2;
@@ -4418,16 +4418,16 @@ void Plot_Setup () {
 
   if (STUDY_setup == 8) {    
     
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0; 
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     plot_impacts = 3;
@@ -4440,16 +4440,16 @@ void Plot_Setup () {
 
   if (STUDY_setup == 9) {
     
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0; 
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
     plot_impacts = 2;
@@ -4461,16 +4461,16 @@ void Plot_Setup () {
 
   if (STUDY_setup == 10) {
 
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0;
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
     plot_impacts = 4;
@@ -4482,16 +4482,16 @@ void Plot_Setup () {
   
   if (STUDY_setup == 11) {
 
-    draw_sorted = 0;
-    draw_normals = 0;
-    draw_data_lines = 1;
-    draw_probs = 1;
+    STUDY_draw_data_sorted = 0;
+    STUDY_draw_data_normals = 0;
+    STUDY_draw_data_raws = 1;
+    STUDY_draw_data_probs = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    draw_sorted = 1;
-    draw_normals = 1;
-    draw_data_lines = 0;
-    draw_probs = 0;
+    STUDY_draw_data_sorted = 1;
+    STUDY_draw_data_normals = 1;
+    STUDY_draw_data_raws = 0;
+    STUDY_draw_data_probs = 0;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
     plot_impacts = 5;
@@ -4504,10 +4504,10 @@ void Plot_Setup () {
   if (STUDY_setup == 12) {
 
     if (SOLARCHVISION_automated != 0) {
-      draw_sorted = 0;
-      draw_normals = 1;
-      draw_data_lines = 0;
-      draw_probs = 1;
+      STUDY_draw_data_sorted = 0;
+      STUDY_draw_data_normals = 1;
+      STUDY_draw_data_raws = 0;
+      STUDY_draw_data_probs = 1;
     }
 
     STUDY_drw_Layer = LAYER_windspd; 
@@ -4535,10 +4535,10 @@ void Plot_Setup () {
   if (STUDY_setup == 13) {
 
     if (SOLARCHVISION_automated != 0) {
-      draw_sorted = 1;
-      draw_normals = 1;
-      draw_data_lines = 0;
-      draw_probs = 0;
+      STUDY_draw_data_sorted = 1;
+      STUDY_draw_data_normals = 1;
+      STUDY_draw_data_raws = 0;
+      STUDY_draw_data_probs = 0;
     }
 
     STUDY_drw_Layer = STUDY_drw_Layer = LAYER_dirnorrad; 
@@ -5585,28 +5585,28 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
         
         if (Climatic_weather_forecast != 0) {
         
-          int keep_num_add_days = num_add_days;
+          int keep_STUDY_num_add_days = STUDY_num_add_days;
           
-          num_add_days = 7; // 1; for faster results      
+          STUDY_num_add_days = 7; // 1; for faster results      
         
           float[][][] _valuesO;
           float[][][] _valuesO_overcast;
           float[][][] _valuesO_scattered;
           float[][][] _valuesO_clear;
           
-          _valuesO           = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_overcast  = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_scattered = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_clear     = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO           = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
+          _valuesO_overcast  = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
+          _valuesO_scattered = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
+          _valuesO_clear     = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
     
           for (int i = 0; i < 24; i += 1) {      
           
             for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
-              for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
+              for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
                 
                 for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {
                   
-                  int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                  int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
                   if (now_j >= 365) {
                     now_j = now_j % 365; 
@@ -5616,28 +5616,28 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                   }           
               
   
-                  _valuesO          [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
-                  _valuesO_overcast [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
-                  _valuesO_scattered[i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
-                  _valuesO_clear    [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined; 
+                  _valuesO          [i][j][(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+                  _valuesO_overcast [i][j][(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+                  _valuesO_scattered[i][j][(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+                  _valuesO_clear    [i][j][(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined; 
           
                   float Pa = CLIMATE_WY2[i][now_j][l][k];
         
                   if (Pa > 0.9 * FLOAT_undefined) {
                   }
                   else {
-                    _valuesO[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
+                    _valuesO[i][j][(k * STUDY_num_add_days + j_ADD)] = Float.valueOf(Pa);
                     
                     if (SOLARCHVISION_filter("CLIMATE_WY2", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k) == 1) {
-                      _valuesO_overcast[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
+                      _valuesO_overcast[i][j][(k * STUDY_num_add_days + j_ADD)] = Float.valueOf(Pa);
                     }
                     
                     if (SOLARCHVISION_filter("CLIMATE_WY2", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k) == 1) {
-                      _valuesO_scattered[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
+                      _valuesO_scattered[i][j][(k * STUDY_num_add_days + j_ADD)] = Float.valueOf(Pa);
                     }
                     
                     if (SOLARCHVISION_filter("CLIMATE_WY2", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k) == 1) {
-                      _valuesO_clear[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
+                      _valuesO_clear[i][j][(k * STUDY_num_add_days + j_ADD)] = Float.valueOf(Pa);
                     }                  
                   }
                   
@@ -5667,7 +5667,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
             }
           }
     
-          num_add_days = keep_num_add_days;
+          STUDY_num_add_days = keep_STUDY_num_add_days;
           
     
     
@@ -5793,7 +5793,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
     
     for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
       for (int j_for = 0; j_for < STUDY_max_j_end_parameters; j_for += 1) { 
-        int j = ((j_for + BEGIN_DAY) % 365);
+        int j = ((j_for + SOLARCHVISION_BEGIN_DAY) % 365);
         for (int i = 0; i < 24; i += 1) {
           if (ENSEMBLE[i][j][LAYER_cloudcover][k] > 0.9 * FLOAT_undefined) {
           }
@@ -5982,7 +5982,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   STUDY_Diagrams.pushMatrix();
   STUDY_Diagrams.translate(x_Plot, y_Plot);
   
-  color_data_lines = color(0, 0, 63, _Opacity(STUDY_O_scale));
+  STUDY_color_data_raws = color(0, 0, 63, _Opacity(STUDY_O_scale));
   
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
@@ -6048,19 +6048,19 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     if ((STUDY_U_scale >= 0.75) || (((j - STUDY_j_start) % int(1.5 / STUDY_U_scale)) == 0)) {
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       
-      STUDY_Diagrams.text(CalendarDay[int((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
-      if (num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+      STUDY_Diagrams.text(CalendarDay[int((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
+      if (STUDY_num_add_days > 1) {
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }
     
     String _FilenamesAdd = "";
-    if (num_add_days > 1) {
-        //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+    if (STUDY_num_add_days > 1) {
+        //_FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
     }
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6068,27 +6068,27 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       }
       File_output_node[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       File_output_norm[(j - STUDY_j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
 
       for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
 
@@ -6114,7 +6114,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           
           int now_k = k;
           int now_i = i;
-          int now_j = (j + BEGIN_DAY + 365) % 365;
+          int now_j = (j + SOLARCHVISION_BEGIN_DAY + 365) % 365;
 
           if (now_j >= 365) {
            now_j = now_j % 365; 
@@ -6139,7 +6139,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
             
-            if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t"); 
+            if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t"); 
           }
           else {
             int drw_count = SOLARCHVISION_filter("ENSEMBLE", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
@@ -6152,9 +6152,9 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
               _valuesSUM[k] += _valuesA[k];
               _valuesNUM[k] += 1;
 
-              if ((ENSEMBLE_Flag[now_i][now_j][STUDY_drw_Layer][now_k] == 1) && ((draw_data_lines == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
+              if ((ENSEMBLE_Flag[now_i][now_j][STUDY_drw_Layer][now_k] == 1) && ((STUDY_draw_data_raws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
-                if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
+                if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
                   if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
                 }
@@ -6169,7 +6169,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
                   _valuesB[k] = Pb;
                   _valuesB[k] += STUDY_V_offset[STUDY_drw_Layer];
                   
-                  if (draw_data_lines == 1) {
+                  if (STUDY_draw_data_raws == 1) {
                     if ((STUDY_drw_Layer == LAYER_winddir) && (abs(_valuesB[k] - _valuesA[k]) > 180)) {
                       
                     }
@@ -6186,13 +6186,13 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
               }
             }
             else {
-              if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
+              if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
             }
           }          
         }
       }
  
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].println();
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
   
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
@@ -6204,7 +6204,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
             _valuesSUM[k] /= _valuesNUM[k];
           }
         }    
-        if (draw_probs == 1) {
+        if (STUDY_draw_data_probs == 1) {
           SOLARCHVISION_draw_probabilities(i, j, start_z, end_z, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }  
 
@@ -6215,16 +6215,16 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
         
       }        
 
-      if (draw_sorted == 1) {
-        SOLARCHVISION_draw_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_sorted == 1) {
+        SOLARCHVISION_STUDY_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
-      if (draw_normals == 1) {
-        SOLARCHVISION_draw_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_normals == 1) {
+        SOLARCHVISION_STUDY_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: " + nf(SOLARCHVISION_YEAR, 4) + nf(SOLARCHVISION_MONTH, 2) + nf(SOLARCHVISION_DAY, 2) + nf(SOLARCHVISION_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[STUDY_drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_node[(j - STUDY_j_start)].println("Interpolated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       if (LAYERS_Unit[STUDY_drw_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_drw_Layer].equals("W/m²")) File_output_node[(j - STUDY_j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
@@ -6232,7 +6232,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: " + nf(SOLARCHVISION_YEAR, 4) + nf(SOLARCHVISION_MONTH, 2) + nf(SOLARCHVISION_DAY, 2) + nf(SOLARCHVISION_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[STUDY_drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -6241,7 +6241,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_start)].close(); 
     }
 
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: " + nf(SOLARCHVISION_YEAR, 4) + nf(SOLARCHVISION_MONTH, 2) + nf(SOLARCHVISION_DAY, 2) + nf(SOLARCHVISION_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[STUDY_drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       if (LAYERS_Unit[STUDY_drw_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_drw_Layer].equals("W/m²")) File_output_prob[(j - STUDY_j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
@@ -6251,8 +6251,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
   }
 
-  if (draw_data_lines == 1) {
-    SOLARCHVISION_draw_data_lines(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+  if (STUDY_draw_data_raws == 1) {
+    SOLARCHVISION_STUDY_draw_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }    
 
   STUDY_Diagrams.popMatrix();
@@ -6426,14 +6426,14 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-  _valuesB = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesA = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
+  _valuesB = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-  _valuesNUM = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesSUM = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
+  _valuesNUM = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * STUDY_num_add_days)];
   
   float[] Ax_LINES = {0};
   float[] Ay_LINES = {0};
@@ -6457,19 +6457,19 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     if ((STUDY_U_scale >= 0.75) || (((j - STUDY_j_start) % int(1.5 / STUDY_U_scale)) == 0)) {
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       
-      STUDY_Diagrams.text(CalendarDay[int((365 + j * per_day + 286 + BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
-      if (num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+      STUDY_Diagrams.text(CalendarDay[int((365 + j * STUDY_per_day + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
+      if (STUDY_num_add_days > 1) {
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }    
     
     String _FilenamesAdd = "";
-    if (num_add_days > 1) {
-        _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+    if (STUDY_num_add_days > 1) {
+        _FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
     }
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6477,33 +6477,33 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       }
       File_output_node[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
 
       for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
-        for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
+        for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
           
-          _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
-          _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+          _valuesA[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+          _valuesB[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
        
           float[] COL = GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -6519,7 +6519,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
             
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+            int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
             
             
             if (now_j >= 365) {
@@ -6543,43 +6543,43 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
             Pa = CLIMATE_WY2[now_i][now_j][STUDY_drw_Layer][now_k]; 
             if (Pa > 0.9 * FLOAT_undefined) {
-              _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+              _valuesA[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
               
-              if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
+              if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
             }
             else {
               int drw_count = SOLARCHVISION_filter("CLIMATE_WY2", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
 
               if (drw_count == 1) {
-                _valuesA[(k * num_add_days + j_ADD)] = Pa;
-                _valuesA[(k * num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
+                _valuesA[(k * STUDY_num_add_days + j_ADD)] = Pa;
+                _valuesA[(k * STUDY_num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
                 
-                _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
-                _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+                _valuesSUM[(k * STUDY_num_add_days + j_ADD)] += _valuesA[(k * STUDY_num_add_days + j_ADD)];
+                _valuesNUM[(k * STUDY_num_add_days + j_ADD)] += 1;
 
-                if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
-                  if (_valuesA[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_start)].print(nfs(_valuesA[(k * num_add_days + j_ADD)] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
+                if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
+                  if (_valuesA[(k * STUDY_num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_start)].print(nfs(_valuesA[(k * STUDY_num_add_days + j_ADD)] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
                 }
 
                 if (next_k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)) {
                   Pb = CLIMATE_WY2[next_i][next_j][STUDY_drw_Layer][next_k];
                   if (Pb > 0.9 * FLOAT_undefined) {
-                    _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+                    _valuesB[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
                   }
                   else {
-                    _valuesB[(k * num_add_days + j_ADD)] = Pb;
-                    _valuesB[(k * num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
+                    _valuesB[(k * STUDY_num_add_days + j_ADD)] = Pb;
+                    _valuesB[(k * STUDY_num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
                     
-                    if (draw_data_lines == 1) {
-                      if ((STUDY_drw_Layer == LAYER_winddir) && (abs(_valuesB[(k * num_add_days + j_ADD)] - _valuesA[(k * num_add_days + j_ADD)]) > 180)) {
+                    if (STUDY_draw_data_raws == 1) {
+                      if ((STUDY_drw_Layer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_num_add_days + j_ADD)] - _valuesA[(k * STUDY_num_add_days + j_ADD)]) > 180)) {
                       }
                       else {                        
                         Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
-                        Ay_LINES = append(Ay_LINES, _valuesA[(k * num_add_days + j_ADD)] * sy_Plot);
+                        Ay_LINES = append(Ay_LINES, _valuesA[(k * STUDY_num_add_days + j_ADD)] * sy_Plot);
                         Az_LINES = append(Az_LINES, now_k * sz_Plot * STUDY_W_scale);
                         Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
-                        By_LINES = append(By_LINES, _valuesB[(k * num_add_days + j_ADD)] * sy_Plot);
+                        By_LINES = append(By_LINES, _valuesB[(k * STUDY_num_add_days + j_ADD)] * sy_Plot);
                         Bz_LINES = append(Bz_LINES, next_k * sz_Plot * STUDY_W_scale);
                       } 
                     }
@@ -6587,56 +6587,56 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
                 }
               }
               else {
-                if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
+                if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
               }
             }
           }
         }
       }
       
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].println();
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
         
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
-          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
-            _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
-            _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+          for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
+            _valuesSUM[(k * STUDY_num_add_days + j_ADD)] += _valuesA[(k * STUDY_num_add_days + j_ADD)];
+            _valuesNUM[(k * STUDY_num_add_days + j_ADD)] += 1;
             
-            if ((_valuesSUM[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) && (_valuesNUM[(k * num_add_days + j_ADD)] != 0)) {
-              _valuesSUM[(k * num_add_days + j_ADD)] /= _valuesNUM[(k * num_add_days + j_ADD)];
+            if ((_valuesSUM[(k * STUDY_num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) && (_valuesNUM[(k * STUDY_num_add_days + j_ADD)] != 0)) {
+              _valuesSUM[(k * STUDY_num_add_days + j_ADD)] /= _valuesNUM[(k * STUDY_num_add_days + j_ADD)];
             }
           }
         }        
-        if (draw_probs == 1) {
-          SOLARCHVISION_draw_probabilities(i, j, ((start_z - 1) * num_add_days + 1), ((end_z - 1) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        if (STUDY_draw_data_probs == 1) {
+          SOLARCHVISION_draw_probabilities(i, j, ((start_z - 1) * STUDY_num_add_days + 1), ((end_z - 1) * STUDY_num_add_days + STUDY_num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
-          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
-            _valuesSUM[(k * num_add_days + j_ADD)] = 0;
-            _valuesNUM[(k * num_add_days + j_ADD)] = 0;
+          for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
+            _valuesSUM[(k * STUDY_num_add_days + j_ADD)] = 0;
+            _valuesNUM[(k * STUDY_num_add_days + j_ADD)] = 0;
           }
         }    
       }      
       
-      if (draw_sorted == 1) {
-        SOLARCHVISION_draw_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_sorted == 1) {
+        SOLARCHVISION_STUDY_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
-      if (draw_normals == 1) {
-        SOLARCHVISION_draw_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_normals == 1) {
+        SOLARCHVISION_STUDY_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     
     }
     
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][9] + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       File_output_node[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][9] + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -6644,7 +6644,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_start)].close(); 
     }
 
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][9] + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_prob[(j - STUDY_j_start)].flush(); 
@@ -6653,8 +6653,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
   }
   
-  if (draw_data_lines == 1) {
-    SOLARCHVISION_draw_data_lines(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+  if (STUDY_draw_data_raws == 1) {
+    SOLARCHVISION_STUDY_draw_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }       
   
   STUDY_Diagrams.popMatrix();
@@ -6825,14 +6825,14 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
-  _valuesB = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+  _valuesA = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * STUDY_num_add_days)];
+  _valuesB = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * STUDY_num_add_days)];
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
-  _valuesNUM = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+  _valuesSUM = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * STUDY_num_add_days)];
+  _valuesNUM = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * STUDY_num_add_days)];
   
   float[] Ax_LINES = {0};
   float[] Ay_LINES = {0};
@@ -6856,19 +6856,19 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     if ((STUDY_U_scale >= 0.75) || (((j - STUDY_j_start) % int(1.5 / STUDY_U_scale)) == 0)) {
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       
-      STUDY_Diagrams.text(CalendarDay[int((365 + j * per_day + 286 + BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
-      if (num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+      STUDY_Diagrams.text(CalendarDay[int((365 + j * STUDY_per_day + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
+      if (STUDY_num_add_days > 1) {
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }    
     
     String _FilenamesAdd = "";
-    if (num_add_days > 1) {
-        _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+    if (STUDY_num_add_days > 1) {
+        _FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
     }
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6876,33 +6876,33 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       }
       File_output_node[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
 
       for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
-        for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
+        for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
           
-          _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
-          _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+          _valuesA[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+          _valuesB[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
        
           float[] COL = GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -6918,7 +6918,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
             
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+            int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
             
             
             if (now_j >= 365) {
@@ -6942,43 +6942,43 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
             Pa = CLIMATE_EPW[now_i][now_j][STUDY_drw_Layer][now_k]; 
             if (Pa > 0.9 * FLOAT_undefined) {
-              _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+              _valuesA[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
               
-              if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
+              if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
             }
             else {
               int drw_count = SOLARCHVISION_filter("CLIMATE_EPW", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
 
               if (drw_count == 1) {
-                _valuesA[(k * num_add_days + j_ADD)] = Pa;
-                _valuesA[(k * num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
+                _valuesA[(k * STUDY_num_add_days + j_ADD)] = Pa;
+                _valuesA[(k * STUDY_num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
                 
-                _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
-                _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+                _valuesSUM[(k * STUDY_num_add_days + j_ADD)] += _valuesA[(k * STUDY_num_add_days + j_ADD)];
+                _valuesNUM[(k * STUDY_num_add_days + j_ADD)] += 1;
 
-                if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
-                  if (_valuesA[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_start)].print(nfs(_valuesA[(k * num_add_days + j_ADD)] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
+                if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
+                  if (_valuesA[(k * STUDY_num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_start)].print(nfs(_valuesA[(k * STUDY_num_add_days + j_ADD)] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
                 }
 
                 if (next_k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)) {
                   Pb = CLIMATE_EPW[next_i][next_j][STUDY_drw_Layer][next_k];
                   if (Pb > 0.9 * FLOAT_undefined) {
-                    _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+                    _valuesB[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
                   }
                   else {
-                    _valuesB[(k * num_add_days + j_ADD)] = Pb;
-                    _valuesB[(k * num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
+                    _valuesB[(k * STUDY_num_add_days + j_ADD)] = Pb;
+                    _valuesB[(k * STUDY_num_add_days + j_ADD)] += STUDY_V_offset[STUDY_drw_Layer];
                     
-                    if (draw_data_lines == 1) {
-                      if ((STUDY_drw_Layer == LAYER_winddir) && (abs(_valuesB[(k * num_add_days + j_ADD)] - _valuesA[(k * num_add_days + j_ADD)]) > 180)) {
+                    if (STUDY_draw_data_raws == 1) {
+                      if ((STUDY_drw_Layer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_num_add_days + j_ADD)] - _valuesA[(k * STUDY_num_add_days + j_ADD)]) > 180)) {
                       }
                       else {                        
                         Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
-                        Ay_LINES = append(Ay_LINES, _valuesA[(k * num_add_days + j_ADD)] * sy_Plot);
+                        Ay_LINES = append(Ay_LINES, _valuesA[(k * STUDY_num_add_days + j_ADD)] * sy_Plot);
                         Az_LINES = append(Az_LINES, now_k * sz_Plot * STUDY_W_scale);
                         Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
-                        By_LINES = append(By_LINES, _valuesB[(k * num_add_days + j_ADD)] * sy_Plot);
+                        By_LINES = append(By_LINES, _valuesB[(k * STUDY_num_add_days + j_ADD)] * sy_Plot);
                         Bz_LINES = append(Bz_LINES, next_k * sz_Plot * STUDY_W_scale);
                       } 
                     }
@@ -6986,56 +6986,56 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
                 }
               }
               else {
-                if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
+                if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
               }
             }
           }
         }
       }
       
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].println();
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
         
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
         for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
-          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
-            _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
-            _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+          for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
+            _valuesSUM[(k * STUDY_num_add_days + j_ADD)] += _valuesA[(k * STUDY_num_add_days + j_ADD)];
+            _valuesNUM[(k * STUDY_num_add_days + j_ADD)] += 1;
             
-            if ((_valuesSUM[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) && (_valuesNUM[(k * num_add_days + j_ADD)] != 0)) {
-              _valuesSUM[(k * num_add_days + j_ADD)] /= _valuesNUM[(k * num_add_days + j_ADD)];
+            if ((_valuesSUM[(k * STUDY_num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) && (_valuesNUM[(k * STUDY_num_add_days + j_ADD)] != 0)) {
+              _valuesSUM[(k * STUDY_num_add_days + j_ADD)] /= _valuesNUM[(k * STUDY_num_add_days + j_ADD)];
             }
           }
         }        
-        if (draw_probs == 1) {
-          SOLARCHVISION_draw_probabilities(i, j, ((start_z - CLIMATE_EPW_start) * num_add_days + 1), ((end_z - CLIMATE_EPW_start) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        if (STUDY_draw_data_probs == 1) {
+          SOLARCHVISION_draw_probabilities(i, j, ((start_z - CLIMATE_EPW_start) * STUDY_num_add_days + 1), ((end_z - CLIMATE_EPW_start) * STUDY_num_add_days + STUDY_num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
         for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
-          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
-            _valuesSUM[(k * num_add_days + j_ADD)] = 0;
-            _valuesNUM[(k * num_add_days + j_ADD)] = 0;
+          for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
+            _valuesSUM[(k * STUDY_num_add_days + j_ADD)] = 0;
+            _valuesNUM[(k * STUDY_num_add_days + j_ADD)] = 0;
           }
         }    
       }      
       
-      if (draw_sorted == 1) {
-        SOLARCHVISION_draw_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_sorted == 1) {
+        SOLARCHVISION_STUDY_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
-      if (draw_normals == 1) {
-        SOLARCHVISION_draw_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_normals == 1) {
+        SOLARCHVISION_STUDY_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     
     }
     
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][10] + ".epw");
       File_output_node[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][10] + ".epw");
       File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -7043,7 +7043,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_start)].close(); 
     }
 
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][10] + ".epw");
       File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_prob[(j - STUDY_j_start)].flush(); 
@@ -7052,8 +7052,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
   }
   
-  if (draw_data_lines == 1) {
-    SOLARCHVISION_draw_data_lines(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+  if (STUDY_draw_data_raws == 1) {
+    SOLARCHVISION_STUDY_draw_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }       
   
   STUDY_Diagrams.popMatrix();
@@ -7402,7 +7402,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   STUDY_Diagrams.pushMatrix();
   STUDY_Diagrams.translate(x_Plot, y_Plot);
   
-  color_data_lines = color(63, 0, 0, _Opacity(STUDY_O_scale)); 
+  STUDY_color_data_raws = color(63, 0, 0, _Opacity(STUDY_O_scale)); 
   
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
@@ -7461,12 +7461,12 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
   for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
     String _FilenamesAdd = "";
-    if (num_add_days > 1) {
-        //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+    if (STUDY_num_add_days > 1) {
+        //_FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
     }
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -7474,27 +7474,27 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       }
       File_output_node[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
       File_output_norm[(j - STUDY_j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
       }
       File_output_norm[(j - STUDY_j_start)].println("");
     }
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) File_output_norm[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) File_output_prob[(j - STUDY_j_start)].print(nf(i, 2) + "\t");
 
       for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
 
@@ -7520,7 +7520,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           
           int now_k = k;
           int now_i = i;
-          int now_j = (j + BEGIN_DAY + 365) % 365;
+          int now_j = (j + SOLARCHVISION_BEGIN_DAY + 365) % 365;
 
           if (now_j >= 365) {
            now_j = now_j % 365; 
@@ -7545,7 +7545,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
 
-            if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t"); 
+            if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t"); 
           }
           else {
             int drw_count = 1; //SOLARCHVISION_filter("OBSERVED", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
@@ -7558,9 +7558,9 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
               _valuesSUM[k] += _valuesA[k];
               _valuesNUM[k] += 1;
 
-              //if ((OBSERVED_Flag[now_i][now_j][STUDY_drw_Layer][now_k] == 1) && ((draw_data_lines == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
+              //if ((OBSERVED_Flag[now_i][now_j][STUDY_drw_Layer][now_k] == 1) && ((STUDY_draw_data_raws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
-                if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
+                if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
                   if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
                 }
@@ -7575,7 +7575,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
                   _valuesB[k] = Pb;
                   _valuesB[k] += STUDY_V_offset[STUDY_drw_Layer];
                   
-                  if (draw_data_lines == 1) {
+                  if (STUDY_draw_data_raws == 1) {
                     if ((STUDY_drw_Layer == LAYER_winddir) && (abs(_valuesB[k] - _valuesA[k]) > 180)) {
                       
                     }
@@ -7592,13 +7592,13 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
               }
             }
             else {
-              if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
+              if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("not_the_case\t");
             }
           }          
         }
       }
  
-      if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - STUDY_j_start)].println();
+      if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].println();
   
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
@@ -7610,7 +7610,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
             _valuesSUM[k] /= _valuesNUM[k];
           }
         }    
-        if (draw_probs == 1) {
+        if (STUDY_draw_data_probs == 1) {
           //SOLARCHVISION_draw_probabilities(i, j, start_z, end_z, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }  
 
@@ -7621,23 +7621,23 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
         
       }        
 
-      if (draw_sorted == 1) {
-        SOLARCHVISION_draw_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_sorted == 1) {
+        SOLARCHVISION_STUDY_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
-      if (draw_normals == 1) {
-        SOLARCHVISION_draw_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+      if (STUDY_draw_data_normals == 1) {
+        SOLARCHVISION_STUDY_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
-    if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
       File_output_node[(j - STUDY_j_start)].println("The data might be interpolated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
       File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -7645,7 +7645,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_start)].close(); 
     }
 
-    if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
       File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_prob[(j - STUDY_j_start)].flush(); 
@@ -7654,8 +7654,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
   }
 
-  if (draw_data_lines == 1) {
-    SOLARCHVISION_draw_data_lines(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+  if (STUDY_draw_data_raws == 1) {
+    SOLARCHVISION_STUDY_draw_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }    
 
   STUDY_Diagrams.popMatrix();
@@ -7813,9 +7813,9 @@ void SOLARCHVISION_draw_Grid_DAILY (float x_Plot, float y_Plot, float z_Plot, fl
     if ((STUDY_U_scale >= 0.75) || (((i - STUDY_j_start) % int(1.5 / STUDY_U_scale)) == 0)) {
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       
-      STUDY_Diagrams.text(CalendarDay[int((365 + i * per_day + 286 + BEGIN_DAY) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
-      if (num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+      STUDY_Diagrams.text(CalendarDay[int((365 + i * STUDY_per_day + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
+      if (STUDY_num_add_days > 1) {
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }
   }
@@ -7850,9 +7850,9 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
 
 
 
-void SOLARCHVISION_draw_data_lines (float[] Ax_LINES, float[] Ay_LINES, float[] Az_LINES, float[] Bx_LINES, float[] By_LINES, float[] Bz_LINES) {
-  //STUDY_Diagrams.stroke(color_data_lines);
-  //STUDY_Diagrams.fill(color_data_lines);
+void SOLARCHVISION_STUDY_draw_data_raws (float[] Ax_LINES, float[] Ay_LINES, float[] Az_LINES, float[] Bx_LINES, float[] By_LINES, float[] Bz_LINES) {
+  //STUDY_Diagrams.stroke(STUDY_color_data_raws);
+  //STUDY_Diagrams.fill(STUDY_color_data_raws);
   //STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
   
   STUDY_Diagrams.stroke(0, _Opacity(STUDY_O_scale));
@@ -7947,13 +7947,13 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
           }   
           STUDY_Diagrams.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, -((min_v + n) * _pix) - 0.05 * txt_max_height);
           
-          if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
+          if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
             File_output_prob[(j - STUDY_j_start)].print(nfs((min_v + n) * _pix / abs(sy_Plot) - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t"); 
           }
         }
       }  
       
-      if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
+      if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
         File_output_prob[(j - STUDY_j_start)].println(""); 
       }
     }
@@ -7999,7 +7999,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
 }
 
 
-void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
+void SOLARCHVISION_STUDY_draw_data_sorted (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
   int PAL_TYPE = STUDY_Pallet_SORT_CLR; 
   int PAL_DIR = STUDY_Pallet_SORT_DIR;  
@@ -8102,7 +8102,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
 }
 
 
-void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
+void SOLARCHVISION_STUDY_draw_data_normals (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   float[] NormalsA = SOLARCHVISION_NORMAL(_valuesA);
   float[] NormalsB = SOLARCHVISION_NORMAL(_valuesB);
   
@@ -8276,13 +8276,13 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
       my_line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, z_l * sz_Plot * STUDY_W_scale, (j + ((i + 0.5 + SOLARCHVISION_deltaTime) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot, z_l * sz_Plot * STUDY_W_scale); 
     } 
     
-    if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
       if (NormalsA[l] < 0.9 * FLOAT_undefined) File_output_norm[(j - STUDY_j_start)].print(nfs(NormalsA[l] - STUDY_V_offset[STUDY_drw_Layer], 5, 5) + "\t"); 
       else File_output_norm[(j - STUDY_j_start)].print("[undefined]\t");
     }
 
   }
-  if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - STUDY_j_start)].println();
+  if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) File_output_norm[(j - STUDY_j_start)].println();
 }  
 
 
@@ -8290,11 +8290,11 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
 
 void SOLARCHVISION_DevelopDATA (int data_source) {
 
-  float keep_per_day = per_day;
-  int keep_num_add_days = num_add_days;
+  float keep_STUDY_per_day = STUDY_per_day;
+  int keep_STUDY_num_add_days = STUDY_num_add_days;
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-    per_day = 1;
-    num_add_days = 1;
+    STUDY_per_day = 1;
+    STUDY_num_add_days = 1;
   }
   
   int start_z = get_startZ_endZ(data_source)[0];
@@ -8316,13 +8316,13 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
   
   for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
-    for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
+    for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
       for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
         for (int i = 0; i < 24; i += 1) {
   
           int now_k = k;
           int now_i = i;
-          int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+          int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
           
           if (now_j >= 365) {
            now_j = now_j % 365; 
@@ -8587,7 +8587,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
               
               int new_k = k;
               int new_i = ((i + plus_i) + 24 * 365 + 24 * (floor((i + plus_i) / 24.0))) % 24;
-              int new_j = (j + BEGIN_DAY + 365 + floor((i + plus_i) / 24.0)) % 365;
+              int new_j = (j + SOLARCHVISION_BEGIN_DAY + 365 + floor((i + plus_i) / 24.0)) % 365;
               
               if (new_j >= 365) {
                new_j = new_j % 365; 
@@ -8657,7 +8657,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
                 
                 int new_k = k;
                 int new_i = ((i + plus_i) + 24 * 365 + 24 * (floor((i + plus_i) / 24.0))) % 24;
-                int new_j = (j + BEGIN_DAY + 365 + floor((i + plus_i) / 24.0)) % 365;
+                int new_j = (j + SOLARCHVISION_BEGIN_DAY + 365 + floor((i + plus_i) / 24.0)) % 365;
                 
                 if (new_j >= 365) {
                  new_j = new_j % 365; 
@@ -8728,7 +8728,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
               
               int new_k = k;
               int new_i = ((i + plus_i) + 24 * floor((i + plus_i) / 24.0)) % 24;
-              int new_j = (j + BEGIN_DAY + 365 + floor((i + plus_i) / 24.0)) % 365;
+              int new_j = (j + SOLARCHVISION_BEGIN_DAY + 365 + floor((i + plus_i) / 24.0)) % 365;
               
               if (new_j >= 365) {
                new_j = new_j % 365; 
@@ -8897,8 +8897,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
     } 
   }
   
-  per_day = keep_per_day;
-  num_add_days = keep_num_add_days;
+  STUDY_per_day = keep_STUDY_per_day;
+  STUDY_num_add_days = keep_STUDY_num_add_days;
   
 
 }
@@ -9106,19 +9106,19 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
   float[] _valuesSUM_RAD; 
   float[] _valuesSUM_EFF;
   float[] _valuesNUM;
-  _valuesSUM_RAD = new float [(layers_count * num_add_days)];
-  _valuesSUM_EFF = new float [(layers_count * num_add_days)];
-  _valuesNUM = new float [(layers_count * num_add_days)];
+  _valuesSUM_RAD = new float [(layers_count * STUDY_num_add_days)];
+  _valuesSUM_EFF = new float [(layers_count * STUDY_num_add_days)];
+  _valuesNUM = new float [(layers_count * STUDY_num_add_days)];
   
-  for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
+  for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
     for (int k = 0; k < layers_count; k += 1) { 
-      _valuesSUM_RAD[(k * num_add_days + j_ADD)] = FLOAT_undefined;
-      _valuesSUM_EFF[(k * num_add_days + j_ADD)] = FLOAT_undefined;
-      _valuesNUM[(k * num_add_days + j_ADD)] = 0;
+      _valuesSUM_RAD[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+      _valuesSUM_EFF[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
+      _valuesNUM[(k * STUDY_num_add_days + j_ADD)] = 0;
     }          
   }
 
-  for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
+  for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
     
     for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
       
@@ -9129,7 +9129,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
         
         int now_k = k;
         int now_i = i;
-        int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+        int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
 
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -9179,15 +9179,15 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
             _values_E_dir = 0.0001 * Pc;
             _values_E_dif = 0; //0.0001 * Pd;
             
-            if (_valuesSUM_RAD[(k * num_add_days + j_ADD)] > 0.9 * FLOAT_undefined) {
-              _valuesSUM_RAD[(k * num_add_days + j_ADD)] = 0;
-              _valuesSUM_EFF[(k * num_add_days + j_ADD)] = 0;
-              _valuesNUM[(k * num_add_days + j_ADD)] = 0; 
+            if (_valuesSUM_RAD[(k * STUDY_num_add_days + j_ADD)] > 0.9 * FLOAT_undefined) {
+              _valuesSUM_RAD[(k * STUDY_num_add_days + j_ADD)] = 0;
+              _valuesSUM_EFF[(k * STUDY_num_add_days + j_ADD)] = 0;
+              _valuesNUM[(k * STUDY_num_add_days + j_ADD)] = 0; 
             }                  
     
-            _valuesSUM_RAD[(k * num_add_days + j_ADD)] += ((_values_R_dir * SunR[3]) + (_values_R_dif)); // calculates total horizontal radiation
-            _valuesSUM_EFF[(k * num_add_days + j_ADD)] += ((_values_E_dir * SunR[3]) + (_values_E_dif)); // calculates total horizontal effects
-            _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+            _valuesSUM_RAD[(k * STUDY_num_add_days + j_ADD)] += ((_values_R_dir * SunR[3]) + (_values_R_dif)); // calculates total horizontal radiation
+            _valuesSUM_EFF[(k * STUDY_num_add_days + j_ADD)] += ((_values_E_dir * SunR[3]) + (_values_E_dif)); // calculates total horizontal effects
+            _valuesNUM[(k * STUDY_num_add_days + j_ADD)] += 1;
           }
         }
       }
@@ -9206,12 +9206,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   STUDY_Diagrams.pushMatrix();
   STUDY_Diagrams.translate(x_Plot, y_Plot);
 
-  float keep_per_day = per_day;
-  int keep_num_add_days = num_add_days;
+  float keep_STUDY_per_day = STUDY_per_day;
+  int keep_STUDY_num_add_days = STUDY_num_add_days;
   
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-    per_day = 1;
-    num_add_days = 1;
+    STUDY_per_day = 1;
+    STUDY_num_add_days = 1;
   }
   
   int start_z = get_startZ_endZ(impacts_source)[0];
@@ -9269,7 +9269,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //WIND_Diagrams.background(255);
       WIND_Diagrams.translate(0.5 * RES, 0.5 * RES);
     
-      for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
+      for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {    
         for (int i = 0; i < 24; i += 1) {
           if (isInHourlyRange(i) == 1) {
           
@@ -9285,7 +9285,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int now_k = k;
                 int now_i = i;
-                int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
                 if (now_j >= 365) {
                  now_j = now_j % 365; 
@@ -9359,7 +9359,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
                       if (sky_scenario > 1) _s *= 3; // to improve visibility of those cases.
                       
-                      _s /= float(num_add_days);
+                      _s /= float(STUDY_num_add_days);
                       
                       if (_s < 10) _s = 10;
                       
@@ -9405,7 +9405,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     total_WIND_Diagrams.translate(0.5 * RES, 0.5 * RES);
 
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
-      for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
+      for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {    
         for (int i = 0; i < 24; i += 1) {
           if (isInHourlyRange(i) == 1) {
           
@@ -9421,7 +9421,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int now_k = k;
                 int now_i = i;
-                int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
                 if (now_j >= 365) {
                  now_j = now_j % 365; 
@@ -9495,7 +9495,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
                       if (sky_scenario > 1) _s *= 3; // to improve visibility of those cases.
                       
-                      _s /= float(num_add_days);
+                      _s /= float(STUDY_num_add_days);
                       
                       if (_s < 10) _s = 10;
                       
@@ -9682,7 +9682,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
  
-          now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+          now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
       
           if (now_j >= 365) {
            now_j = now_j % 365; 
@@ -9718,7 +9718,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
         
         //----------------------
-        if (camera_variation == 0) draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        if (Camera_Variation == 0) draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         //----------------------
         
         if (draw_impact_summary == 1) { 
@@ -9816,8 +9816,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
   
         String Model_Description = "";
-        //if (camera_variation == 1) Model_Description = "TR: Place-des-Arts";
-        //if (camera_variation == 2) Model_Description = "EV_BUILDING";
+        //if (Camera_Variation == 1) Model_Description = "TR: Place-des-Arts";
+        //if (Camera_Variation == 2) Model_Description = "EV_BUILDING";
   
         STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
         STUDY_Diagrams.textAlign(LEFT, TOP); 
@@ -9906,7 +9906,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
 
-        now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+        now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -9926,8 +9926,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
+            int k = int(nk / STUDY_num_add_days);
+            int j_ADD = nk % STUDY_num_add_days; 
 
             for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
               float Alpha = a * stp_slp;
@@ -9949,7 +9949,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
                       now_k = k;
                       now_i = i;
-                      now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                      now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
                       if (now_j >= 365) {
                        now_j = now_j % 365; 
@@ -10348,7 +10348,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
  
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
 
-        now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+        now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -10368,8 +10368,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
+            int k = int(nk / STUDY_num_add_days);
+            int j_ADD = nk % STUDY_num_add_days; 
             
             float _valuesSUM_RAD = 0;
             float _valuesSUM_EFF = 0;
@@ -10387,7 +10387,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
                   now_k = k;
                   now_i = i;
-                  now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                  now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
       
                   if (now_j >= 365) {
                    now_j = now_j % 365; 
@@ -10631,7 +10631,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
  
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
 
-      now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+      now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
   
       if (now_j >= 365) {
        now_j = now_j % 365; 
@@ -10660,7 +10660,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
 
         now_i = i;
-        now_j = int(j * per_day + BEGIN_DAY + 365) % 365;
+        now_j = int(j * STUDY_per_day + SOLARCHVISION_BEGIN_DAY + 365) % 365;
 
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -10951,8 +10951,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   }
 
-  keep_per_day = per_day;
-  num_add_days = keep_num_add_days;
+  keep_STUDY_per_day = STUDY_per_day;
+  STUDY_num_add_days = keep_STUDY_num_add_days;
 
 
   STUDY_Diagrams.popMatrix();
@@ -11123,11 +11123,11 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
       
-      float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(per_day / num_add_days)][3];        
+      float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY_per_day / STUDY_num_add_days)][3];        
    
-      for (int more_J = 0; more_J < per_day; more_J += num_add_days) {
+      for (int more_J = 0; more_J < STUDY_per_day; more_J += STUDY_num_add_days) {
         
-        now_j = (more_J + j * int(per_day) + BEGIN_DAY + 365) % 365;
+        now_j = (more_J + j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -11154,8 +11154,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
+            int k = int(nk / STUDY_num_add_days);
+            int j_ADD = nk % STUDY_num_add_days; 
             
             float _valuesSUM_RAD = 0;
             float _valuesSUM_EFF = 0;
@@ -11193,7 +11193,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1; 
               
-              now_j = int(more_J + j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+              now_j = int(more_J + j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
   
               if (now_j >= 365) {
                now_j = now_j % 365; 
@@ -11285,7 +11285,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
               if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
               
-              int row_J = more_J / num_add_days;
+              int row_J = more_J / STUDY_num_add_days;
   
               SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
               SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
@@ -11304,7 +11304,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha = 90 - acos_ang(SunR[3]);
               float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
   
-              int row_J = more_J / num_add_days;
+              int row_J = more_J / STUDY_num_add_days;
   
               SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
               SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
@@ -11316,9 +11316,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
  
       
-      for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
+      for (int more_J = 0; more_J < STUDY_per_day - STUDY_num_add_days; more_J += STUDY_num_add_days) { //count one less!
   
-        now_j = (more_J + j * int(per_day) + BEGIN_DAY + 365) % 365;
+        now_j = (more_J + j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -11355,7 +11355,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               for (int s = 0; s < 4; s += 1) {
                 
                 int a = int(i * TES_hour);
-                int b = more_J / num_add_days;
+                int b = more_J / STUDY_num_add_days;
                 
                 if ((s == 1) || (s == 2)) {
                   a += 1;
@@ -11587,7 +11587,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         
       for (float myHOUR = 0; myHOUR < 24; myHOUR += 1) {
         
-        int myDATE_step = num_add_days;
+        int myDATE_step = STUDY_num_add_days;
   
         int myDATE_start = 0;
         int myDATE_end = 360; 
@@ -11783,16 +11783,16 @@ void STUDY_keyPressed (KeyEvent e) {
     }
     else {
       switch(key) {
-        case '0' : camera_variation = 0; STUDY_Update = 1; break;
-        case '1' : camera_variation = 1; STUDY_Update = 1; break;
-        case '2' : camera_variation = 2; STUDY_Update = 1; break;
-        case '3' : camera_variation = 3; STUDY_Update = 1; break;
-        case '4' : camera_variation = 4; STUDY_Update = 1; break;
-        case '5' : camera_variation = 5; STUDY_Update = 1; break;
-        case '6' : camera_variation = 6; STUDY_Update = 1; break;
-        //case '7' : camera_variation = 7; STUDY_Update = 1; break;
-        //case '8' : camera_variation = 8; STUDY_Update = 1; break;
-        //case '9' : camera_variation = 9; STUDY_Update = 1; break;
+        case '0' : Camera_Variation = 0; STUDY_Update = 1; break;
+        case '1' : Camera_Variation = 1; STUDY_Update = 1; break;
+        case '2' : Camera_Variation = 2; STUDY_Update = 1; break;
+        case '3' : Camera_Variation = 3; STUDY_Update = 1; break;
+        case '4' : Camera_Variation = 4; STUDY_Update = 1; break;
+        case '5' : Camera_Variation = 5; STUDY_Update = 1; break;
+        case '6' : Camera_Variation = 6; STUDY_Update = 1; break;
+        //case '7' : Camera_Variation = 7; STUDY_Update = 1; break;
+        //case '8' : Camera_Variation = 8; STUDY_Update = 1; break;
+        //case '9' : Camera_Variation = 9; STUDY_Update = 1; break;
         
  
       }
@@ -11822,7 +11822,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   if (SOLARCHVISION_DATE >= 365) SOLARCHVISION_DATE -= 365;
                   if ((SOLARCHVISION_DATE == 286) || (SOLARCHVISION_DATE == 286.5)) SOLARCHVISION_YEAR += 1;
                   SOLARCHVISION_update_date(); 
-                  BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
+                  SOLARCHVISION_BEGIN_DAY = int(SOLARCHVISION_BEGIN_DAY + 1) % 365; 
                   SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
                   update_DevelopDATA = 1;
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
@@ -11831,13 +11831,13 @@ void STUDY_keyPressed (KeyEvent e) {
                   if (SOLARCHVISION_DATE < 0) SOLARCHVISION_DATE += 365;
                   if ((SOLARCHVISION_DATE == 285) || (SOLARCHVISION_DATE == 285.5)) SOLARCHVISION_YEAR -= 1;
                   SOLARCHVISION_update_date(); 
-                  BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
+                  SOLARCHVISION_BEGIN_DAY = int(365 + SOLARCHVISION_BEGIN_DAY - 1) % 365;
                   SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
                   update_DevelopDATA = 1;
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
                  
-        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case LEFT  :SOLARCHVISION_BEGIN_DAY = (365 + SOLARCHVISION_BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
               
         case UP   :STUDY_drw_Layer = (STUDY_drw_Layer + 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case DOWN :STUDY_drw_Layer = (STUDY_drw_Layer + num_layers - 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;         
@@ -11878,9 +11878,9 @@ void STUDY_keyPressed (KeyEvent e) {
         case 'R' : STUDY_record_AUTO = (STUDY_record_AUTO + 1) % 2; STUDY_Update = 0; ROLLOUT_Update = 1; break;
 
         
-        case '^' : draw_data_lines = 1; Export_STUDY_info_node = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '&' : draw_normals = 1; Export_STUDY_info_norm = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '%' : draw_probs = 1; Export_STUDY_info_prob = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;                 
+        case '^' : STUDY_draw_data_raws = 1; Export_STUDY_info_node = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '&' : STUDY_draw_data_normals = 1; Export_STUDY_info_norm = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '%' : STUDY_draw_data_probs = 1; Export_STUDY_info_prob = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;                 
         
       }
     }    
@@ -11944,10 +11944,10 @@ void STUDY_keyPressed (KeyEvent e) {
                   STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
                   /*
                   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                    per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
+                    STUDY_per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
                   } 
                   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-                    per_day = 1;
+                    STUDY_per_day = 1;
                   }
                   */
                   update_DevelopDATA = 1;
@@ -11964,10 +11964,10 @@ void STUDY_keyPressed (KeyEvent e) {
                   STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
                   /*
                   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                    per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
+                    STUDY_per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
                   } 
                   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-                    per_day = 1;
+                    STUDY_per_day = 1;
                   }                  
                   */
                   update_DevelopDATA = 1;
@@ -12042,15 +12042,15 @@ void STUDY_keyPressed (KeyEvent e) {
         case 'c' :COLOR_STYLE_Active = (COLOR_STYLE_Active + 1) % COLOR_STYLE_Number; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'C' :COLOR_STYLE_Active = (COLOR_STYLE_Active - 1 + COLOR_STYLE_Number) % COLOR_STYLE_Number; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         
-        case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'V' :STUDY_draw_data_raws = int((STUDY_draw_data_raws + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'v' :STUDY_draw_data_raws = int((STUDY_draw_data_raws + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '`' :num_add_days += 2;
-                  if (num_add_days > 365) num_add_days = 365;
+        case '`' :STUDY_num_add_days += 2;
+                  if (STUDY_num_add_days > 365) STUDY_num_add_days = 365;
                   update_DevelopDATA = 1; 
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '~' :num_add_days -= 2;
-                  if (num_add_days < 1) num_add_days = 1;
+        case '~' :STUDY_num_add_days -= 2;
+                  if (STUDY_num_add_days < 1) STUDY_num_add_days = 1;
                   update_DevelopDATA = 1; 
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
@@ -12063,14 +12063,14 @@ void STUDY_keyPressed (KeyEvent e) {
                   update_DevelopDATA = 1; 
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;  
         
-        case 'm' :draw_sorted = int((draw_sorted + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'M' :draw_sorted = int((draw_sorted + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'm' :STUDY_draw_data_sorted = int((STUDY_draw_data_sorted + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'M' :STUDY_draw_data_sorted = int((STUDY_draw_data_sorted + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
-        case 'n' :draw_normals = int((draw_normals + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'N' :draw_normals = int((draw_normals + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'n' :STUDY_draw_data_normals = int((STUDY_draw_data_normals + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'N' :STUDY_draw_data_normals = int((STUDY_draw_data_normals + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
-        case 'b' :draw_probs = int((draw_probs + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'B' :draw_probs = int((draw_probs + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'b' :STUDY_draw_data_probs = int((STUDY_draw_data_probs + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 'B' :STUDY_draw_data_probs = int((STUDY_draw_data_probs + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
         
         case 'j' :if (level_pix < 32) level_pix *= pow(2.0, (1.0 / 1.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'J' :if (level_pix > 2) level_pix *= pow(0.5, (1.0 / 1.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
@@ -12185,19 +12185,19 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
   
   if (Display_SUN3D_Pattern != 0) {
 
-    float keep_per_day = per_day;
-    int keep_num_add_days = num_add_days;
+    float keep_STUDY_per_day = STUDY_per_day;
+    int keep_STUDY_num_add_days = STUDY_num_add_days;
     if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-      per_day = 1;
-      num_add_days = 1;
+      STUDY_per_day = 1;
+      STUDY_num_add_days = 1;
     }    
     
     float previous_DATE = SOLARCHVISION_DATE;
     
     SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
 
-    per_day = keep_per_day;
-    num_add_days = keep_num_add_days; 
+    STUDY_per_day = keep_STUDY_per_day;
+    STUDY_num_add_days = keep_STUDY_num_add_days; 
     SOLARCHVISION_DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
@@ -12209,11 +12209,11 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
   if (Display_SUN3D_Path != 0) {
 
-    float keep_per_day = per_day;
-    int keep_num_add_days = num_add_days;
+    float keep_STUDY_per_day = STUDY_per_day;
+    int keep_STUDY_num_add_days = STUDY_num_add_days;
     if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-      per_day = 1;
-      num_add_days = 1;
+      STUDY_per_day = 1;
+      STUDY_num_add_days = 1;
     }    
     
     float previous_DATE = SOLARCHVISION_DATE;
@@ -12278,7 +12278,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
         int now_i2 = 0;
         int now_j = 0;
     
-        now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+        now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -12300,8 +12300,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
         
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
+            int k = int(nk / STUDY_num_add_days);
+            int j_ADD = nk % STUDY_num_add_days; 
     
             for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
               if (isInHourlyRange(i) == 1) {
@@ -12315,7 +12315,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                 now_i2 = (1 + now_i1) % 24;
                 float i_ratio = i - now_i1;
                 
-                now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
       
                 if (now_j >= 365) {
                  now_j = now_j % 365; 
@@ -12412,8 +12412,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
 
   
-    per_day = keep_per_day;
-    num_add_days = keep_num_add_days; 
+    STUDY_per_day = keep_STUDY_per_day;
+    STUDY_num_add_days = keep_STUDY_num_add_days; 
     SOLARCHVISION_DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
@@ -21074,19 +21074,19 @@ void SOLARCHVISION_export_objects () {
 
   if (Display_SUN3D_Pattern != 0) {
 
-    float keep_per_day = per_day;
-    int keep_num_add_days = num_add_days;
+    float keep_STUDY_per_day = STUDY_per_day;
+    int keep_STUDY_num_add_days = STUDY_num_add_days;
     if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-      per_day = 1;
-      num_add_days = 1;
+      STUDY_per_day = 1;
+      STUDY_num_add_days = 1;
     }    
     
     float previous_DATE = SOLARCHVISION_DATE;
     
     SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, impact_layer, 4);
 
-    per_day = keep_per_day;
-    num_add_days = keep_num_add_days; 
+    STUDY_per_day = keep_STUDY_per_day;
+    STUDY_num_add_days = keep_STUDY_num_add_days; 
     SOLARCHVISION_DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
@@ -23840,11 +23840,11 @@ void SOLARCHVISION_draw_Group3Ds () {
         WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined; 
         WIN3D_VerticesSolarEffect[0] = FLOAT_undefined; 
         
-        float keep_per_day = per_day;
-        int keep_num_add_days = num_add_days;
+        float keep_STUDY_per_day = STUDY_per_day;
+        int keep_STUDY_num_add_days = STUDY_num_add_days;
         if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-          per_day = 1;
-          num_add_days = 1;
+          STUDY_per_day = 1;
+          STUDY_num_add_days = 1;
         }
         
         int start_z = get_startZ_endZ(impacts_source)[0];
@@ -23928,7 +23928,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                   
                   for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
                   
-                    now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+                    now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
                   
                     if (now_j >= 365) {
                      now_j = now_j % 365; 
@@ -23960,8 +23960,8 @@ void SOLARCHVISION_draw_Group3Ds () {
                     int nk = Normals_COL_N[l];
                     
                     if (nk != -1) {
-                      int k = int(nk / num_add_days);
-                      int j_ADD = nk % num_add_days; 
+                      int k = int(nk / STUDY_num_add_days);
+                      int j_ADD = nk % STUDY_num_add_days; 
                   
             
                       for (int i = 0; i < 24; i += 1) {
@@ -23975,7 +23975,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                   
                             now_k = k;
                             now_i = i;
-                            now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                            now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
                       
                             if (now_j >= 365) {
                              now_j = now_j % 365; 
@@ -27083,7 +27083,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
  
-        now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+        now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -27111,8 +27111,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
         
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
+            int k = int(nk / STUDY_num_add_days);
+            int j_ADD = nk % STUDY_num_add_days; 
 
             float[][][] Matrix_ARGB;
             
@@ -27145,7 +27145,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
   
                   now_k = k;
                   now_i = i;
-                  now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                  now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
       
                   if (now_j >= 365) {
                    now_j = now_j % 365; 
@@ -27232,8 +27232,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                             File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
                           }                      
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Montreal_Downtown")) { 
-                            if (camera_variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                            if (camera_variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                            if (Camera_Variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                            if (Camera_Variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
                           }
                           else {
                             File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
@@ -27248,23 +27248,23 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                           }
                           
                           if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Hamedan")) { 
-                            File_Name += "_" + "Hamedan" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            File_Name += "_" + "Hamedan" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
                           }                            
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
-                            File_Name += "_" + "Financial_District" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            File_Name += "_" + "Financial_District" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
                           }    
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
-                            File_Name += "_" + "Ryerson_University" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            File_Name += "_" + "Ryerson_University" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
                           }    
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Place_Bonaventure")) { 
-                            File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
                           }                      
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Montreal_Downtown")) { 
-                            if (camera_variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                            if (camera_variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
+                            if (Camera_Variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
+                            if (Camera_Variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
                           }
                           else {
-                            File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
                           }
     
                           //println(File_Name);
@@ -27386,7 +27386,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
           
             Image_RGBA.updatePixels(); 
             
-            //if (camera_variation == 0) {
+            //if (Camera_Variation == 0) {
               SolarImpact_Image[j + 1] = Image_RGBA;           
               if (SolarImpact_record_JPG == 1) {
                 String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
@@ -27400,7 +27400,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
       }
       
       //----------------------
-      if (camera_variation == 0) draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      if (Camera_Variation == 0) draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //----------------------
       
       if (draw_impact_summary == 1) { 
@@ -27458,7 +27458,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
         
         total_Image_RGBA.updatePixels(); 
         
-        //if (camera_variation == 0) {
+        //if (Camera_Variation == 0) {
           SolarImpact_Image[0] = total_Image_RGBA;           
           if (SolarImpact_record_JPG == 1) {
             String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
@@ -29338,11 +29338,11 @@ void SOLARCHVISION_SolarProjection () {
     SOLARCHVISION_build_SolarProjection_array();
   }
   
-  float keep_per_day = per_day;
-  int keep_num_add_days = num_add_days;
+  float keep_STUDY_per_day = STUDY_per_day;
+  int keep_STUDY_num_add_days = STUDY_num_add_days;
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-    per_day = 1;
-    num_add_days = 1;
+    STUDY_per_day = 1;
+    STUDY_num_add_days = 1;
   }
   
   int start_z = get_startZ_endZ(impacts_source)[0];
@@ -29388,7 +29388,7 @@ void SOLARCHVISION_SolarProjection () {
   
   for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
 
-    now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+    now_j = (j * int(STUDY_per_day) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
 
     if (now_j >= 365) {
      now_j = now_j % 365; 
@@ -29408,8 +29408,8 @@ void SOLARCHVISION_SolarProjection () {
 
     for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
       if (nk != -1) {
-        int k = int(nk / num_add_days);
-        int j_ADD = nk % num_add_days; 
+        int k = int(nk / STUDY_num_add_days);
+        int j_ADD = nk % STUDY_num_add_days; 
 
         for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
           float Alpha = a * stp_slp - 90;
@@ -29431,7 +29431,7 @@ void SOLARCHVISION_SolarProjection () {
   
                   now_k = k;
                   now_i = i;
-                  now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+                  now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
   
                   if (now_j >= 365) {
                    now_j = now_j % 365; 
@@ -29597,8 +29597,8 @@ void SOLARCHVISION_SolarProjection () {
   }
 
 
-  keep_per_day = per_day;
-  num_add_days = keep_num_add_days;
+  keep_STUDY_per_day = STUDY_per_day;
+  STUDY_num_add_days = keep_STUDY_num_add_days;
   
   cursor(ARROW);
 
@@ -31284,15 +31284,15 @@ void mouseWheel(MouseEvent event) {
         
                 if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
                   
-                  int keep_num_add_days = num_add_days;
+                  int keep_STUDY_num_add_days = STUDY_num_add_days;
                   
-                  if (Wheel_Value > 0) num_add_days += 2;
-                  if (Wheel_Value < 0) num_add_days -= 2;
+                  if (Wheel_Value > 0) STUDY_num_add_days += 2;
+                  if (Wheel_Value < 0) STUDY_num_add_days -= 2;
                   
-                  if (num_add_days > 365 / STUDY_j_end) num_add_days = 365 / STUDY_j_end;
-                  if (num_add_days < 1) num_add_days = 1;
+                  if (STUDY_num_add_days > 365 / STUDY_j_end) STUDY_num_add_days = 365 / STUDY_j_end;
+                  if (STUDY_num_add_days < 1) STUDY_num_add_days = 1;
                   
-                  if (keep_num_add_days != num_add_days) {
+                  if (keep_STUDY_num_add_days != STUDY_num_add_days) {
                     //update_DevelopDATA = 1;
                   
                     ROLLOUT_Update = 1;
@@ -36158,7 +36158,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       STUDY_j_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Number of days to plot" , STUDY_j_end, 1, 61, 1), 1));
     
-      BEGIN_DAY = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1), 1));
+      SOLARCHVISION_BEGIN_DAY = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Plot start date" , SOLARCHVISION_BEGIN_DAY, 0, 364, 1), 1));
     
       //SOLARCHVISION_DATE = MySpinner.update(X_control, Y_control, 1,0,0, "Solar date", SOLARCHVISION_DATE, 0, 364.5, 0.5);
       SOLARCHVISION_DATE = int(MySpinner.update(X_control, Y_control, 1,0,0, "Solar date", SOLARCHVISION_DATE, 0, 364, 1));
@@ -36174,7 +36174,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_i_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start hour" , STUDY_i_start, 0, 23, 1), 1));
       STUDY_i_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End hour" , STUDY_i_end, 0, 23, 1), 1));
 
-      num_add_days = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "num_add_days" , num_add_days, 1, 64, -2), 1));
+      STUDY_num_add_days = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_num_add_days" , STUDY_num_add_days, 1, 64, -2), 1));
     }
 
     if (ROLLOUT_child == 3) { // Filters
@@ -36210,10 +36210,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_drw_Layer = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Layer", STUDY_drw_Layer, 0, (num_layers - 1), 1), 1));
       STUDY_V_scale[STUDY_drw_Layer] = MySpinner.update(X_control, Y_control, 1,0,0, "V_scale[" + nf(STUDY_drw_Layer, 2) + "]", STUDY_V_scale[STUDY_drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
 
-      draw_data_lines = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1), 1));
-      draw_sorted = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1), 1));
-      draw_normals = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw statistics", draw_normals, 0, 1, 1), 1));
-      draw_probs = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw probabilities", draw_probs, 0, 1, 1), 1));
+      STUDY_draw_data_raws = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw data", STUDY_draw_data_raws, 0, 1, 1), 1));
+      STUDY_draw_data_sorted = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw sorted", STUDY_draw_data_sorted, 0, 1, 1), 1));
+      STUDY_draw_data_normals = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw statistics", STUDY_draw_data_normals, 0, 1, 1), 1));
+      STUDY_draw_data_probs = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw probabilities", STUDY_draw_data_probs, 0, 1, 1), 1));
       sum_interval = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
 
@@ -46072,10 +46072,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
         if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
   
           if (mouseButton == LEFT) {
-            float keep_DATE = SOLARCHVISION_DATE;
+            float keep_SOLARCHVISION_DATE = SOLARCHVISION_DATE;
             SOLARCHVISION_DATE = (int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
             SOLARCHVISION_update_date(); 
-            BEGIN_DAY = int(BEGIN_DAY + (SOLARCHVISION_DATE - keep_DATE) + 365) % 365;
+            SOLARCHVISION_BEGIN_DAY = int(SOLARCHVISION_BEGIN_DAY + (SOLARCHVISION_DATE - keep_SOLARCHVISION_DATE) + 365) % 365;
             SOLARCHVISION_try_update_ENSEMBLE(SOLARCHVISION_YEAR, SOLARCHVISION_MONTH, SOLARCHVISION_DAY, SOLARCHVISION_HOUR);
             
             update_DevelopDATA = 1;
@@ -46092,9 +46092,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             if (SOLARCHVISION_DATE > _DATE2) _DATE2 += 365;
             
-            per_day = int(roundTo((_DATE2 - SOLARCHVISION_DATE) / float(STUDY_j_end - STUDY_j_start - 1), 1));
+            STUDY_per_day = int(roundTo((_DATE2 - SOLARCHVISION_DATE) / float(STUDY_j_end - STUDY_j_start - 1), 1));
             
-            if (per_day < 0) per_day = 1;
+            if (STUDY_per_day < 0) STUDY_per_day = 1;
             
             update_DevelopDATA = 1;
             
@@ -46105,18 +46105,18 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }        
         }        
 
-        float keep_per_day = per_day;
-        int keep_num_add_days = num_add_days;
+        float keep_STUDY_per_day = STUDY_per_day;
+        int keep_STUDY_num_add_days = STUDY_num_add_days;
         if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-          per_day = 1;
-          num_add_days = 1;
+          STUDY_per_day = 1;
+          STUDY_num_add_days = 1;
         }
 
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
           
-          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
+          for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {    
             
-            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+            int now_j = int(j * STUDY_per_day + (j_ADD - int(roundTo(0.5 * STUDY_num_add_days, 1))) + SOLARCHVISION_BEGIN_DAY + 365) % 365;
 
             if (now_j >= 365) {
              now_j = now_j % 365; 
@@ -46154,8 +46154,8 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }                  
         }        
         
-        per_day = keep_per_day;
-        num_add_days = keep_num_add_days;
+        STUDY_per_day = keep_STUDY_per_day;
+        STUDY_num_add_days = keep_STUDY_num_add_days;
         
       }
 
@@ -46441,22 +46441,22 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
 void SOALRCHVISION_refreshDateTabs () {
   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-    if (per_day == 1) { 
-      per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
+    if (STUDY_per_day == 1) { 
+      STUDY_per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
     }
     else {
-      per_day = 1;
+      STUDY_per_day = 1;
     }
     } 
     if (impacts_source == databaseNumber_ENSEMBLE) {
-    per_day = 1;
+    STUDY_per_day = 1;
     }           
     if (impacts_source == databaseNumber_OBSERVED) {
-    if (per_day == 1) { 
-      per_day = int(STUDY_max_j_end_observations / float(STUDY_j_end - STUDY_j_start));
+    if (STUDY_per_day == 1) { 
+      STUDY_per_day = int(STUDY_max_j_end_observations / float(STUDY_j_end - STUDY_j_start));
     }
     else {
-      per_day = 1;
+      STUDY_per_day = 1;
     }
   }
 }  
@@ -46706,7 +46706,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SOLARCHVISION_MONTH", SOLARCHVISION_MONTH);
   newChild1.setInt("SOLARCHVISION_DAY", SOLARCHVISION_DAY); 
   newChild1.setInt("SOLARCHVISION_HOUR", SOLARCHVISION_HOUR); 
-  newChild1.setInt("BEGIN_DAY", BEGIN_DAY);
+  newChild1.setInt("SOLARCHVISION_BEGIN_DAY", SOLARCHVISION_BEGIN_DAY);
   newChild1.setFloat("SOLARCHVISION_DATE", SOLARCHVISION_DATE);
   
   newChild1.setFloat("LocationLatitude_step", LocationLatitude_step);
@@ -46728,8 +46728,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("STUDY_j_end", STUDY_j_end);
   newChild1.setInt("STUDY_max_j_end_parameters", STUDY_max_j_end_parameters);
   newChild1.setInt("STUDY_max_j_end_observations", STUDY_max_j_end_observations);
-  newChild1.setFloat("per_day", per_day);
-  newChild1.setInt("num_add_days", num_add_days);
+  newChild1.setFloat("STUDY_per_day", STUDY_per_day);
+  newChild1.setInt("STUDY_num_add_days", STUDY_num_add_days);
   newChild1.setInt("CLIMATE_EPW_start", CLIMATE_EPW_start);
   newChild1.setInt("CLIMATE_EPW_end", CLIMATE_EPW_end);
   newChild1.setInt("CLIMATE_WY2_start", CLIMATE_WY2_start);
@@ -46905,11 +46905,11 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_MODEL3D_EDGES", Display_MODEL3D_EDGES);
   newChild1.setInt("Display_MODEL3D_NORMALS", Display_MODEL3D_NORMALS);
   newChild1.setInt("Display_windFlow", Display_windFlow);
-  newChild1.setInt("camera_variation", camera_variation);
-  newChild1.setInt("draw_data_lines", draw_data_lines);
-  newChild1.setInt("draw_sorted", draw_sorted);
-  newChild1.setInt("draw_normals", draw_normals);
-  newChild1.setInt("draw_probs", draw_probs);
+  newChild1.setInt("Camera_Variation", Camera_Variation);
+  newChild1.setInt("STUDY_draw_data_raws", STUDY_draw_data_raws);
+  newChild1.setInt("STUDY_draw_data_sorted", STUDY_draw_data_sorted);
+  newChild1.setInt("STUDY_draw_data_normals", STUDY_draw_data_normals);
+  newChild1.setInt("STUDY_draw_data_probs", STUDY_draw_data_probs);
   newChild1.setInt("sum_interval", sum_interval);
   newChild1.setFloat("level_pix", level_pix);
   newChild1.setFloat("_pix", _pix);
@@ -47954,7 +47954,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_MONTH = children0[L].getInt("SOLARCHVISION_MONTH");
       SOLARCHVISION_DAY = children0[L].getInt("SOLARCHVISION_DAY"); 
       SOLARCHVISION_HOUR = children0[L].getInt("SOLARCHVISION_HOUR"); 
-      BEGIN_DAY = children0[L].getInt("BEGIN_DAY");
+      SOLARCHVISION_BEGIN_DAY = children0[L].getInt("SOLARCHVISION_BEGIN_DAY");
       SOLARCHVISION_DATE = children0[L].getFloat("SOLARCHVISION_DATE");
       
       LocationLatitude_step = children0[L].getFloat("LocationLatitude_step");
@@ -47976,8 +47976,8 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY_j_end = children0[L].getInt("STUDY_j_end");
       STUDY_max_j_end_parameters = children0[L].getInt("STUDY_max_j_end_parameters");
       STUDY_max_j_end_observations = children0[L].getInt("STUDY_max_j_end_observations");
-      per_day = children0[L].getFloat("per_day");
-      num_add_days = children0[L].getInt("num_add_days");
+      STUDY_per_day = children0[L].getFloat("STUDY_per_day");
+      STUDY_num_add_days = children0[L].getInt("STUDY_num_add_days");
       CLIMATE_EPW_start = children0[L].getInt("CLIMATE_EPW_start");
       CLIMATE_EPW_end = children0[L].getInt("CLIMATE_EPW_end");
       CLIMATE_WY2_start = children0[L].getInt("CLIMATE_WY2_start");
@@ -48153,11 +48153,11 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_MODEL3D_EDGES = children0[L].getInt("Display_MODEL3D_EDGES");
       Display_MODEL3D_NORMALS = children0[L].getInt("Display_MODEL3D_NORMALS");
       Display_windFlow = children0[L].getInt("Display_windFlow");
-      camera_variation = children0[L].getInt("camera_variation");
-      draw_data_lines = children0[L].getInt("draw_data_lines");
-      draw_sorted = children0[L].getInt("draw_sorted");
-      draw_normals = children0[L].getInt("draw_normals");
-      draw_probs = children0[L].getInt("draw_probs");
+      Camera_Variation = children0[L].getInt("Camera_Variation");
+      STUDY_draw_data_raws = children0[L].getInt("STUDY_draw_data_raws");
+      STUDY_draw_data_sorted = children0[L].getInt("STUDY_draw_data_sorted");
+      STUDY_draw_data_normals = children0[L].getInt("STUDY_draw_data_normals");
+      STUDY_draw_data_probs = children0[L].getInt("STUDY_draw_data_probs");
       sum_interval = children0[L].getInt("sum_interval");
       level_pix = children0[L].getFloat("level_pix");
       _pix = children0[L].getFloat("_pix");
