@@ -26,6 +26,136 @@ void launch (String s) {open(s);}
 void launch (String[] s) {open(s);}
  
 
+ 
+ 
+ int pre_Sample_Year_start; 
+int pre_Sample_Year_end; 
+int pre_Sample_Member_start;
+int pre_Sample_Member_end;
+int pre_Sample_Station_start; 
+int pre_Sample_Station_end;
+int pre_STUDY_num_add_days;
+int pre_STUDY_i_start;
+int pre_STUDY_i_end;
+int pre_STUDY_j_end;
+int pre_Day_of_Impact_to_Display;
+int pre_STUDY_setup;
+int pre_impacts_source;
+int pre_STATION_NUMBER;
+int pre_Selected_STATION;
+int pre_SOLARCHVISION_YEAR;
+int pre_SOLARCHVISION_MONTH;
+int pre_SOLARCHVISION_DAY;
+int pre_SOLARCHVISION_HOUR;
+float pre_SOLARCHVISION_DATE;
+int pre_Climatic_solar_forecast;
+int pre_Climatic_weather_forecast;
+
+int pre_Load_CLIMATE_EPW;
+int pre_Load_CLIMATE_WY2;
+int pre_Load_ENSEMBLE;
+int pre_Load_OBSERVED;     
+float pre_LocationLatitude;
+float pre_LocationLongitude;
+int pre_WORLD_VIEW_Auto;
+int pre_Load_LAND_MESH;
+int pre_Load_URBAN_MESH;
+
+int pre_SOLID_Pallet_CLR;
+int pre_SOLID_Pallet_DIR; 
+float pre_SOLID_Pallet_MLT; 
+
+float pre_Create_Input_powAll;
+
+
+
+float pre_SolidImpact_Grade;
+float pre_SolidImpact_Power;
+float[] pre_SolidImpact_Rotation = {0,0,0,0};
+float[] pre_SolidImpact_Elevation = {0,0,0,0};
+float[] pre_SolidImpact_scale_U = {0,0,0,0};
+float[] pre_SolidImpact_scale_V = {0,0,0,0};
+float[] pre_SolidImpact_offset_U = {0,0,0,0};
+float[] pre_SolidImpact_offset_V = {0,0,0,0};
+
+float pre_SolidImpact_Wspd; 
+float pre_SolidImpact_Wdir;
+      
+int pre_PROCESS_subdivisions;
+
+int pre_Display_SolidImpact_Points;
+int pre_Display_SolidImpact_Lines;
+
+int pre_Display_windFlow;
+
+int pre_selectedFractal_numbers_lastItem;
+int pre_selectedObject2D_numbers_lastItem;
+int pre_selectedGroup3D_numbers_lastItem;
+int pre_selectedFace_numbers_lastItem;
+int pre_selectedVertex_numbers_lastItem;
+
+int pre_selectedFractal_displayEdges;
+int pre_selectedObject2D_displayEdges;
+
+int pre_selectedSolid_displayEdges;
+int pre_selectedSection_displayEdges;
+int pre_selectedCamera_displayEdges;
+
+int pre_selectedLandPoint_displayPoints;
+
+int pre_Display_MODEL3D_EDGES;
+int pre_Display_MODEL3D_NORMALS;
+
+float pre_softSelection_Power;
+float pre_softSelection_Radius;
+
+float pre_selected_posValue;
+float pre_selected_rotValue;
+float pre_selected_scaleValue;
+
+int pre_selection_alignX;
+int pre_selection_alignY;
+int pre_selection_alignZ;
+      
+int pre_selected_displayReferencePivot;
+
+int pre_selectedGroup3D_displayPivot;
+int pre_selectedGroup3D_displayEdges;
+int pre_selectedGroup3D_displayBox;      
+
+int pre_selectedFace_displayEdges;
+int pre_selectedFace_displayVertexCount;
+int pre_selectedVertex_displayVertices;
+ 
+
+int pre_Current_Camera;
+
+int pre_WIN3D_FACES_SHADE;
+
+int pre_MODEL3D_TESSELLATION;
+
+      
+int pre_Load_Default_Models;
+
+int pre_impact_layer;
+int pre_H_layer_option;
+int pre_F_layer_option;
+int pre_O_layer_option;
+int pre_develop_option;
+int pre_STUDY_drw_Layer;
+int pre_sky_scenario;
+int pre_plot_impacts;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 
@@ -464,7 +594,7 @@ int ENSEMBLE_end = 43; // NAEFS:1-43 we append HRDPS or other scenarions at the 
 
 int numberOfNearestStations_ENSEMBLE = 1;  // <<<<<<<<
 
-int[] nearest_Station_ENSEMBLE = new int [numberOfNearestStations_ENSEMBLE];
+int[] nearest_Station_ENSEMBLE_id = new int [numberOfNearestStations_ENSEMBLE];
 float[] nearest_Station_ENSEMBLE_dist = new float [numberOfNearestStations_ENSEMBLE];
 
 
@@ -473,7 +603,7 @@ int numberOfNearestStations_OBSERVED = 5;  // <<<<<<<<
 int OBSERVED_start = 1; 
 int OBSERVED_end = numberOfNearestStations_OBSERVED;
 
-int[] nearest_Station_OBSERVED = new int [numberOfNearestStations_OBSERVED];
+int[] nearest_Station_OBSERVED_id = new int [numberOfNearestStations_OBSERVED];
 float[] nearest_Station_OBSERVED_dist = new float [numberOfNearestStations_OBSERVED];
 
 
@@ -521,8 +651,8 @@ float AERIAL_Center_Latitude = FLOAT_undefined;
 
 float[][] AERIAL_Locations;
 
-float[][][][] AERIAL;
-int[][][][] AERIAL_Flag;
+float[][][][] AERIAL_data;
+int[][][][] AERIAL_flag;
 
 int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 0; //48;
@@ -584,16 +714,16 @@ int H_layer_option = -1;
 int F_layer_option = -1;
 int O_layer_option = -1;
 
-int DEV_OP_0 = 8;
-int DEV_OP_1 = 6;
-int DEV_OP_2 = 5;
-int DEV_OP_3 = 7;
-int DEV_OP_4 = 4;
-int DEV_OP_5 = 3;
-int DEV_OP_6 = 10;
-int DEV_OP_7 = 9;
-int DEV_OP_8 = 11;
-int DEV_OP_9 = 0;
+int DEV_OP_00 = 8;
+int DEV_OP_01 = 6;
+int DEV_OP_02 = 5;
+int DEV_OP_03 = 7;
+int DEV_OP_04 = 4;
+int DEV_OP_05 = 3;
+int DEV_OP_06 = 10;
+int DEV_OP_07 = 9;
+int DEV_OP_08 = 11;
+int DEV_OP_09 = 0;
 int DEV_OP_10 = 1;
 int DEV_OP_11 = 2;
 
@@ -601,7 +731,7 @@ int DEV_OP_11 = 2;
 
 
 
-int develop_option = DEV_OP_6; //between 0 - 11...
+int develop_option = DEV_OP_06; //between 0 - 11...
 int develop_per_day = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues> 
 
 int update_DevelopDATA = 1;
@@ -670,7 +800,7 @@ float[] STUDY_V_belowLine;
 String[] LAYERS_Unit;
 String[][] LAYERS_Title;
 String[] LAYERS_ENSEMBLE; 
-String[][] LAYERS_GRIB2;
+String[][] LAYERS_GRIB2_VAL;
 float[] LAYERS_GRIB2_MUL;
 float[] LAYERS_GRIB2_ADD;
 
@@ -685,7 +815,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
   LAYERS_Unit = new String [num_layers];  
   LAYERS_Title = new String [num_layers][2];
   LAYERS_ENSEMBLE = new String [num_layers];
-  LAYERS_GRIB2 = new String [num_layers][GRIB2_TGL_number]; 
+  LAYERS_GRIB2_VAL = new String [num_layers][GRIB2_TGL_number]; 
   LAYERS_GRIB2_MUL = new float [num_layers];
   LAYERS_GRIB2_ADD = new float [num_layers];
   
@@ -700,10 +830,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Wind Direction";
     LAYERS_Title[i][Language_FR] = "Direction du vent à la surface";
     LAYERS_ENSEMBLE[i] = "WDIR-SFC";
-    LAYERS_GRIB2[i][0] = "WDIR_TGL_10";
-    LAYERS_GRIB2[i][1] = "WDIR_TGL_40";
-    LAYERS_GRIB2[i][2] = "WDIR_TGL_80";
-    LAYERS_GRIB2[i][3] = "WDIR_TGL_120";
+    LAYERS_GRIB2_VAL[i][0] = "WDIR_TGL_10";
+    LAYERS_GRIB2_VAL[i][1] = "WDIR_TGL_40";
+    LAYERS_GRIB2_VAL[i][2] = "WDIR_TGL_80";
+    LAYERS_GRIB2_VAL[i][3] = "WDIR_TGL_120";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -717,10 +847,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Wind Speed";
     LAYERS_Title[i][Language_FR] = "Vitesse du vent à la surface";
     LAYERS_ENSEMBLE[i] = "WIND-SFC";
-    LAYERS_GRIB2[i][0] = "WIND_TGL_10"; // m/sec
-    LAYERS_GRIB2[i][1] = "WIND_TGL_40"; // m/sec
-    LAYERS_GRIB2[i][2] = "WIND_TGL_80"; // m/sec
-    LAYERS_GRIB2[i][3] = "WIND_TGL_120"; // m/sec
+    LAYERS_GRIB2_VAL[i][0] = "WIND_TGL_10"; // m/sec
+    LAYERS_GRIB2_VAL[i][1] = "WIND_TGL_40"; // m/sec
+    LAYERS_GRIB2_VAL[i][2] = "WIND_TGL_80"; // m/sec
+    LAYERS_GRIB2_VAL[i][3] = "WIND_TGL_120"; // m/sec
     LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -734,10 +864,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Accumulated Precipitation";
     LAYERS_Title[i][Language_FR] = "Précipitations accumulées à la surface";
     LAYERS_ENSEMBLE[i] = "APCP-SFC";
-    LAYERS_GRIB2[i][0] = "APCP_SFC_0"; // kg/m²
-    LAYERS_GRIB2[i][1] = "APCP_SFC_0"; // kg/m²
-    LAYERS_GRIB2[i][2] = "APCP_SFC_0"; // kg/m²
-    LAYERS_GRIB2[i][3] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][0] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][1] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][2] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][3] = "APCP_SFC_0"; // kg/m²
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -751,10 +881,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Relative Humidity";
     LAYERS_Title[i][Language_FR] = "Humidité relative à la surface";
     LAYERS_ENSEMBLE[i] = "RELH-SFC";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -768,10 +898,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Air Temperature";
     LAYERS_Title[i][Language_FR] = "Température de l'air à la surface";
     LAYERS_ENSEMBLE[i] = "TMP-SFC";
-    LAYERS_GRIB2[i][0] = "TMP_TGL_2"; // Kelvin
-    LAYERS_GRIB2[i][1] = "TMP_TGL_40"; // Kelvin
-    LAYERS_GRIB2[i][2] = "TMP_TGL_80"; // Kelvin
-    LAYERS_GRIB2[i][3] = "TMP_TGL_120"; // Kelvin
+    LAYERS_GRIB2_VAL[i][0] = "TMP_TGL_2"; // Kelvin
+    LAYERS_GRIB2_VAL[i][1] = "TMP_TGL_40"; // Kelvin
+    LAYERS_GRIB2_VAL[i][2] = "TMP_TGL_80"; // Kelvin
+    LAYERS_GRIB2_VAL[i][3] = "TMP_TGL_120"; // Kelvin
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = -273.15; // °K > °C
   }
@@ -785,10 +915,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Direct normal radiation";
     LAYERS_Title[i][Language_FR] = "Rayonnement direct normal";
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -802,10 +932,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Diffuse horizontal radiation";
     LAYERS_Title[i][Language_FR] = "Diffus rayonnement horizontal";
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -819,10 +949,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Global horizontal radiation";
     LAYERS_Title[i][Language_FR] = "Rayonnement global horizontal";
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -836,10 +966,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "";
     LAYERS_Title[i][Language_FR] = "";
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -855,10 +985,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     //LAYERS_Title[i][Language_FR] = "Effet direct normal (basé sur 18°C)";
     LAYERS_Title[i][Language_FR] = "Effet direct normal <18°C<";
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -874,10 +1004,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     //LAYERS_Title[i][Language_FR] = "Effet diffus normal (basé sur 18°C)";
     LAYERS_Title[i][Language_FR] = "Effet diffus normal <18°C<";
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -891,10 +1021,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Total Cloud Cover";
     LAYERS_Title[i][Language_FR] = "Couvert nuageux total";
     LAYERS_ENSEMBLE[i] = "TCDC";
-    LAYERS_GRIB2[i][0] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2[i][1] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2[i][2] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2[i][3] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][0] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][1] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][2] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][3] = "TCDC_SFC_0"; // percent
     LAYERS_GRIB2_MUL[i] = 0.1; // percent >> tenth    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -908,10 +1038,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Ceiling height";
     LAYERS_Title[i][Language_FR] = "Hauteur sous plafond";  
     LAYERS_ENSEMBLE[i] = "";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -925,10 +1055,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Mean Sea level Pressure";
     LAYERS_Title[i][Language_FR] = "Pression moyenne au niveau de la mer";
     LAYERS_ENSEMBLE[i] = "MSLP";
-    LAYERS_GRIB2[i][0] = "PRMSL_MSL_0";
-    LAYERS_GRIB2[i][1] = "PRMSL_MSL_0";
-    LAYERS_GRIB2[i][2] = "PRMSL_MSL_0";
-    LAYERS_GRIB2[i][3] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][0] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][1] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][2] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][3] = "PRMSL_MSL_0";
     LAYERS_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -942,10 +1072,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Geopotential at 500 hPa";
     LAYERS_Title[i][Language_FR] = "Géopotentiel à 500 hPa";
     LAYERS_ENSEMBLE[i] = "HGT-500HPA";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -961,10 +1091,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     //LAYERS_Title[i][Language_FR] = "Épaisseurs (différence de géopotentiel) entre 1000 et 500 hPa";
     LAYERS_Title[i][Language_FR] = "Différence de géopotentiel";
     LAYERS_ENSEMBLE[i] = "LAYER-1000-500HPA";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -978,19 +1108,19 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Wind Speed at 200 hPa";
     LAYERS_Title[i][Language_FR] = "Vitesse du vent à 200 hPa";  
     LAYERS_ENSEMBLE[i] = "WIND-200HPA";
-    LAYERS_GRIB2[i][0] = "";
-    LAYERS_GRIB2[i][1] = "";
-    LAYERS_GRIB2[i][2] = "";
-    LAYERS_GRIB2[i][3] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
 
 }
 
-int sky_scenario = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
-String[] sky_scenario_text = {"", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"};
-String[] sky_scenario_file = {"", "", "Overcast sky", "Scattered sky", "Clear sky"};
+int STUDY_skyScenario_Active = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
+String[] STUDY_skyScenario_Title = {"", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"};
+String[] STUDY_skyScenario_FileTXT = {"", "", "Overcast sky", "Scattered sky", "Clear sky"};
 
 int FILTER_Hourly = 0;
 int FILTER_Daily = 1;
@@ -1062,15 +1192,15 @@ float windFlow_Pallet_MLT = 1;
 
 int Impact_ACTIVE = 1;
 int Impact_PASSIVE = 2;
-int Impact_SPD_DIR = 1;
-int Impact_SPD_DIR_TMP = 2;
+int Impact_WIND_Overlay = 1;
+int Impact_WIND_Temperature = 2;
 
 int Impact_TYPE = 1; 
 
 
 
 
-String[][] _WORDS = {
+String[][] SOLARCHVISION_WORDS = {
  {"", ""}, 
  {"at hour", "à l'heure"}, 
  {"day", "jour"}, 
@@ -1215,123 +1345,7 @@ float WORLD_Image_Scale = 1.0;
 
 float STUDY_Image_Scale = 1.0;
 
-int pre_Sample_Year_start; 
-int pre_Sample_Year_end; 
-int pre_Sample_Member_start;
-int pre_Sample_Member_end;
-int pre_Sample_Station_start; 
-int pre_Sample_Station_end;
-int pre_STUDY_num_add_days;
-int pre_STUDY_i_start;
-int pre_STUDY_i_end;
-int pre_STUDY_j_end;
-int pre_Day_of_Impact_to_Display;
-int pre_STUDY_setup;
-int pre_impacts_source;
-int pre_STATION_NUMBER;
-int pre_Selected_STATION;
-int pre_SOLARCHVISION_YEAR;
-int pre_SOLARCHVISION_MONTH;
-int pre_SOLARCHVISION_DAY;
-int pre_SOLARCHVISION_HOUR;
-float pre_SOLARCHVISION_DATE;
-int pre_Climatic_solar_forecast;
-int pre_Climatic_weather_forecast;
 
-int pre_Load_CLIMATE_EPW;
-int pre_Load_CLIMATE_WY2;
-int pre_Load_ENSEMBLE;
-int pre_Load_OBSERVED;     
-float pre_LocationLatitude;
-float pre_LocationLongitude;
-int pre_WORLD_VIEW_Auto;
-int pre_Load_LAND_MESH;
-int pre_Load_URBAN_MESH;
-
-int pre_SOLID_Pallet_CLR;
-int pre_SOLID_Pallet_DIR; 
-float pre_SOLID_Pallet_MLT; 
-
-float pre_Create_Input_powAll;
-
-
-
-float pre_SolidImpact_Grade;
-float pre_SolidImpact_Power;
-float[] pre_SolidImpact_Rotation = {0,0,0,0};
-float[] pre_SolidImpact_Elevation = {0,0,0,0};
-float[] pre_SolidImpact_scale_U = {0,0,0,0};
-float[] pre_SolidImpact_scale_V = {0,0,0,0};
-float[] pre_SolidImpact_offset_U = {0,0,0,0};
-float[] pre_SolidImpact_offset_V = {0,0,0,0};
-
-float pre_SolidImpact_Wspd; 
-float pre_SolidImpact_Wdir;
-      
-int pre_PROCESS_subdivisions;
-
-int pre_Display_SolidImpact_Points;
-int pre_Display_SolidImpact_Lines;
-
-int pre_Display_windFlow;
-
-int pre_selectedFractal_numbers_lastItem;
-int pre_selectedObject2D_numbers_lastItem;
-int pre_selectedGroup3D_numbers_lastItem;
-int pre_selectedFace_numbers_lastItem;
-int pre_selectedVertex_numbers_lastItem;
-
-int pre_selectedFractal_displayEdges;
-int pre_selectedObject2D_displayEdges;
-
-int pre_selectedSolid_displayEdges;
-int pre_selectedSection_displayEdges;
-int pre_selectedCamera_displayEdges;
-
-int pre_selectedLandPoint_displayPoints;
-
-int pre_Display_MODEL3D_EDGES;
-int pre_Display_MODEL3D_NORMALS;
-
-float pre_softSelection_Power;
-float pre_softSelection_Radius;
-
-float pre_selected_posValue;
-float pre_selected_rotValue;
-float pre_selected_scaleValue;
-
-int pre_selection_alignX;
-int pre_selection_alignY;
-int pre_selection_alignZ;
-      
-int pre_selected_displayReferencePivot;
-
-int pre_selectedGroup3D_displayPivot;
-int pre_selectedGroup3D_displayEdges;
-int pre_selectedGroup3D_displayBox;      
-
-int pre_selectedFace_displayEdges;
-int pre_selectedFace_displayVertexCount;
-int pre_selectedVertex_displayVertices;
- 
-
-int pre_Current_Camera;
-
-int pre_WIN3D_FACES_SHADE;
-
-int pre_MODEL3D_TESSELLATION;
-
-      
-int pre_Load_Default_Models;
-
-int pre_impact_layer;
-int pre_H_layer_option;
-int pre_F_layer_option;
-int pre_O_layer_option;
-int pre_develop_option;
-int pre_STUDY_drw_Layer;
-int pre_sky_scenario;
-int pre_plot_impacts;
 
 
 
@@ -1619,21 +1633,21 @@ int MESSAGE_X_View = 2 * wSTUDY_pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
-float CAM_x;
-float CAM_y;
-float CAM_z;
-float CAM_fov;
-float CAM_dist;
+float SOLARCHVISION_CAM_x;
+float SOLARCHVISION_CAM_y;
+float SOLARCHVISION_CAM_z;
+float SOLARCHVISION_CAM_fov;
+float SOLARCHVISION_CAM_dist;
 
-float CAM_clipNear = 0.01;
-float CAM_clipFar = 2000000000.0;
+float SOLARCHVISION_CAM_clipNear = 0.01;
+float SOLARCHVISION_CAM_clipFar = 2000000000.0;
 
 
 
 
 
 float[][] allVertices = {{0,0,0}};
-int[][] allFaces = {{0,0,0}};
+int[][] allFaces_PNT = {{0,0,0}};
 int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
 
 float[][] allSolids = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
@@ -2332,7 +2346,7 @@ void draw () {
         
         pre_STUDY_drw_Layer = STUDY_drw_Layer;
         
-        pre_sky_scenario = sky_scenario;
+        pre_sky_scenario = STUDY_skyScenario_Active;
         
         pre_plot_impacts = plot_impacts;
         
@@ -3027,7 +3041,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
           for (int o = 0; o < Scenarios_max; o += 1){
             
-            float _val = AERIAL[GRIB2_Hour][LAYER_drybulb][n][o];
+            float _val = AERIAL_data[GRIB2_Hour][LAYER_drybulb][n][o];
             
             if (_val < 0.9 * FLOAT_undefined) {
       
@@ -3070,14 +3084,14 @@ void SOLARCHVISION_draw_WIN3D () {
     
           for (int o = 0; o < Scenarios_max; o += 1){
             
-            //float _val = AERIAL[GRIB2_Hour][LAYER_drybulb][n][o];
-            float _val = AERIAL[GRIB2_Hour][LAYER_windspd][n][o];
+            //float _val = AERIAL_data[GRIB2_Hour][LAYER_drybulb][n][o];
+            float _val = AERIAL_data[GRIB2_Hour][LAYER_windspd][n][o];
             
             if (_val < 0.9 * FLOAT_undefined) {
               
-              float teta = AERIAL[GRIB2_Hour][LAYER_winddir][n][o];
+              float teta = AERIAL_data[GRIB2_Hour][LAYER_winddir][n][o];
               float D_teta = 15; 
-              float R = 5.0 * AERIAL[GRIB2_Hour][LAYER_windspd][n][o];
+              float R = 5.0 * AERIAL_data[GRIB2_Hour][LAYER_windspd][n][o];
               
               float R_in = 0.0 * R; 
               float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
@@ -3216,8 +3230,8 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
     if (WIN3D_View_Type == 1) {
       
-      //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-      the_scale *= (0.5 / tan(0.5 * CAM_fov));
+      //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale;
+      the_scale *= (0.5 / tan(0.5 * SOLARCHVISION_CAM_fov));
     }
     else {
       float ZOOM = Orthographic_Zoom();
@@ -3228,16 +3242,16 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     WIN3D_Diagrams.pushMatrix();
   
-    CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+    SOLARCHVISION_CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
   
-    CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+    SOLARCHVISION_CAM_dist = (0.5 * refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
   
     if (WIN3D_View_Type == 1) {
   
       float aspect = 1.0 / WIN3D_R_View;
       
-      float zFar = CAM_dist * 1000;
-      float zNear = CAM_dist * 0.001;
+      float zFar = SOLARCHVISION_CAM_dist * 1000;
+      float zNear = SOLARCHVISION_CAM_dist * 0.001;
   
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
     }
@@ -3412,7 +3426,7 @@ void SOLARCHVISION_draw_WORLD () {
             for (int _turn = 1; _turn <= 2; _turn += 1){
               for (int o = 0; o < Scenarios_max; o += 1){
               
-                float _val = AERIAL[GRIB2_Hour][LAYER_drybulb][n][o];
+                float _val = AERIAL_data[GRIB2_Hour][LAYER_drybulb][n][o];
                 
                 if (_val < 0.9 * FLOAT_undefined) {
                 
@@ -3465,14 +3479,14 @@ void SOLARCHVISION_draw_WORLD () {
             for (int _turn = 1; _turn <= 2; _turn += 1){
               for (int o = 0; o < Scenarios_max; o += 1){
               
-                //float _val = AERIAL[GRIB2_Hour][LAYER_drybulb][n][o];
-                float _val = AERIAL[GRIB2_Hour][LAYER_windspd][n][o];
+                //float _val = AERIAL_data[GRIB2_Hour][LAYER_drybulb][n][o];
+                float _val = AERIAL_data[GRIB2_Hour][LAYER_windspd][n][o];
                 
                 if (_val < 0.9 * FLOAT_undefined) {              
                   
-                  float teta = AERIAL[GRIB2_Hour][LAYER_winddir][n][o];
+                  float teta = AERIAL_data[GRIB2_Hour][LAYER_winddir][n][o];
                   float D_teta = 15; 
-                  float R = 0.25 * R_station * AERIAL[GRIB2_Hour][LAYER_windspd][n][o];
+                  float R = 0.25 * R_station * AERIAL_data[GRIB2_Hour][LAYER_windspd][n][o];
                   
                   float R_in = 0.0 * R; 
                   float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD_Image_Scale;
@@ -3557,7 +3571,7 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
     }   
   
-    int nearest_Station_OBSERVED = -1;
+    int nearest_Station_OBSERVED_id = -1;
     float nearest_Station_OBSERVED_dist = FLOAT_undefined;
     
     for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
@@ -3599,12 +3613,12 @@ void SOLARCHVISION_draw_WORLD () {
       
       if (nearest_Station_OBSERVED_dist > d) {
         nearest_Station_OBSERVED_dist = d;
-        nearest_Station_OBSERVED = f;
+        nearest_Station_OBSERVED_id = f;
       }     
     }    
     
     if (Display_SWOB_nearest == 1) {   
-      int f = nearest_Station_OBSERVED;
+      int f = nearest_Station_OBSERVED_id;
       
       float _lat = float(STATION_SWOB_INFO[f][3]);
       float _lon = float(STATION_SWOB_INFO[f][4]); 
@@ -4237,19 +4251,19 @@ void Plot_Setup () {
     develop_Layer = STUDY_drw_Layer;
     STUDY_drw_Layer = LAYER_developed; 
     
-    develop_option = DEV_OP_1;
+    develop_option = DEV_OP_01;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    develop_option = DEV_OP_2;
+    develop_option = DEV_OP_02;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    develop_option = DEV_OP_3;
+    develop_option = DEV_OP_03;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    develop_option = DEV_OP_4;
+    develop_option = DEV_OP_04;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
@@ -4267,15 +4281,15 @@ void Plot_Setup () {
       develop_Layer = STUDY_drw_Layer;
       STUDY_drw_Layer = LAYER_developed;
   
-      develop_option = DEV_OP_6; 
+      develop_option = DEV_OP_06; 
       SOLARCHVISION_DevelopDATA(impacts_source);
       SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
-      develop_option = DEV_OP_7; 
+      develop_option = DEV_OP_07; 
       SOLARCHVISION_DevelopDATA(impacts_source);
       SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
-      develop_option = DEV_OP_8; 
+      develop_option = DEV_OP_08; 
       SOLARCHVISION_DevelopDATA(impacts_source);
       SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
@@ -4329,12 +4343,12 @@ void Plot_Setup () {
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_drw_Layer = LAYER_developed;
-    develop_option = DEV_OP_1; 
+    develop_option = DEV_OP_01; 
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_drw_Layer = LAYER_developed;
-    develop_option = DEV_OP_3; 
+    develop_option = DEV_OP_03; 
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
@@ -4345,19 +4359,19 @@ void Plot_Setup () {
   
   if (STUDY_setup == 6) {
     
-    sky_scenario = 4;
+    STUDY_skyScenario_Active = 4;
     SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    sky_scenario = 3;
+    STUDY_skyScenario_Active = 3;
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    sky_scenario = 2;
+    STUDY_skyScenario_Active = 2;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    sky_scenario = 1;
+    STUDY_skyScenario_Active = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    sky_scenario = pre_sky_scenario;
+    STUDY_skyScenario_Active = pre_sky_scenario;
   }  
   
   
@@ -4485,7 +4499,7 @@ void Plot_Setup () {
     //STUDY_drw_Layer = LAYER_A_precipitation ; 
     //develop_Layer = STUDY_drw_Layer;
     //STUDY_drw_Layer = LAYER_developed; 
-    //develop_option = DEV_OP_9;
+    //develop_option = DEV_OP_09;
     //SOLARCHVISION_DevelopDATA(impacts_source); 
     //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
@@ -6019,17 +6033,17 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       
       STUDY_Diagrams.text(CalendarDay[int((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
       if (STUDY_num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }
     
     String _FilenamesAdd = "";
     if (STUDY_num_add_days > 1) {
-        //_FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+        //_FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6038,8 +6052,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       File_output_norm[(j - STUDY_j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
@@ -6047,8 +6061,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
@@ -6111,7 +6125,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
             if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t"); 
           }
           else {
-            int drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+            int drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
             
             if (drw_count == 1) {
 
@@ -6428,17 +6442,17 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       
       STUDY_Diagrams.text(CalendarDay[int((365 + j * STUDY_per_day + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
       if (STUDY_num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }    
     
     String _FilenamesAdd = "";
     if (STUDY_num_add_days > 1) {
-        _FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+        _FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6447,8 +6461,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
@@ -6456,8 +6470,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
@@ -6517,7 +6531,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
               if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
             }
             else {
-              int drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+              int drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
               if (drw_count == 1) {
                 _valuesA[(k * STUDY_num_add_days + j_ADD)] = Pa;
@@ -6827,17 +6841,17 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       
       STUDY_Diagrams.text(CalendarDay[int((365 + j * STUDY_per_day + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
       if (STUDY_num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }    
     
     String _FilenamesAdd = "";
     if (STUDY_num_add_days > 1) {
-        _FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+        _FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6846,8 +6860,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
@@ -6855,8 +6869,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
@@ -6916,7 +6930,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
               if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t");
             }
             else {
-              int drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+              int drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
               if (drw_count == 1) {
                 _valuesA[(k * STUDY_num_add_days + j_ADD)] = Pa;
@@ -7052,7 +7066,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
   if (Load_OBSERVED == 1) {
     
     for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
-      nearest_Station_OBSERVED[q] = -1;
+      nearest_Station_OBSERVED_id[q] = -1;
       nearest_Station_OBSERVED_dist[q] = FLOAT_undefined;
     }
     
@@ -7071,17 +7085,17 @@ void SOLARCHVISION_try_update_OBSERVED () {
           int added_before = 0;
           
           for (int p = 0; p < q; p++) {
-            if (nearest_Station_OBSERVED[p] == f) added_before = 1;
+            if (nearest_Station_OBSERVED_id[p] == f) added_before = 1;
           }
           
           if (added_before == 0) {
             nearest_Station_OBSERVED_dist[q] = d;
-            nearest_Station_OBSERVED[q] = f;
+            nearest_Station_OBSERVED_id[q] = f;
           }
         }     
       }
       
-      nearest_Station_OBSERVED[q] = nearest_Station_OBSERVED[q];
+      nearest_Station_OBSERVED_id[q] = nearest_Station_OBSERVED_id[q];
     }    
     
     
@@ -7119,7 +7133,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
       
       for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
         
-        int f = nearest_Station_OBSERVED[q];
+        int f = nearest_Station_OBSERVED_id[q];
         
         if (f != -1) {
         
@@ -7431,21 +7445,21 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
     String _FilenamesAdd = "";
     if (STUDY_num_add_days > 1) {
-        //_FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s");
+        //_FilenamesAdd = ("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
+      File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
 
       File_output_node[(j - STUDY_j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
-        File_output_node[(j - STUDY_j_start)].print(STATION_SWOB_INFO[nearest_Station_OBSERVED[l]][6] + "\t"); 
+        File_output_node[(j - STUDY_j_start)].print(STATION_SWOB_INFO[nearest_Station_OBSERVED_id[l]][6] + "\t"); 
       }
       File_output_node[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
+      File_output_norm[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
       File_output_norm[(j - STUDY_j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_start)].print(N_Title[l] + "\t"); 
@@ -7453,8 +7467,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
+      File_output_prob[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_drw_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_drw_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
 
       File_output_prob[(j - STUDY_j_start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_start)].println("");
@@ -7517,7 +7531,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
             if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) File_output_node[(j - STUDY_j_start)].print("[undefined]\t"); 
           }
           else {
-            int drw_count = 1; //SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+            int drw_count = 1; //SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
             
             if (drw_count == 1) {
 
@@ -7784,7 +7798,7 @@ void SOLARCHVISION_draw_Grid_DAILY (float x_Plot, float y_Plot, float z_Plot, fl
       
       STUDY_Diagrams.text(CalendarDay[int((365 + i * STUDY_per_day + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
       if (STUDY_num_add_days > 1) {
-        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + _WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        //STUDY_Diagrams.text(("±" + int(STUDY_num_add_days / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }
   }
@@ -7800,12 +7814,12 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
   STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
   STUDY_Diagrams.textAlign(LEFT, TOP);
 
-  if (impacts_source == databaseNumber_CLIMATE_EPW) STUDY_Diagrams.text((_WORDS[0][Language_Active] + ":" + LocationName + "\n"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text((_WORDS[0][Language_Active] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (impacts_source == databaseNumber_ENSEMBLE)    STUDY_Diagrams.text((_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(SOLARCHVISION_YEAR, 4) + "_" + nf(SOLARCHVISION_MONTH, 2) + "_" + nf(SOLARCHVISION_DAY, 2) + "_" + nf(SOLARCHVISION_HOUR, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (impacts_source == databaseNumber_OBSERVED)    STUDY_Diagrams.text((_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(SOLARCHVISION_YEAR, 4) + "_" + nf(SOLARCHVISION_MONTH, 2) + "_" + nf(SOLARCHVISION_DAY, 2) + "_" + nf(SOLARCHVISION_HOUR, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (impacts_source == databaseNumber_CLIMATE_EPW) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (impacts_source == databaseNumber_ENSEMBLE)    STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(SOLARCHVISION_YEAR, 4) + "_" + nf(SOLARCHVISION_MONTH, 2) + "_" + nf(SOLARCHVISION_DAY, 2) + "_" + nf(SOLARCHVISION_HOUR, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (impacts_source == databaseNumber_OBSERVED)    STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(SOLARCHVISION_YEAR, 4) + "_" + nf(SOLARCHVISION_MONTH, 2) + "_" + nf(SOLARCHVISION_DAY, 2) + "_" + nf(SOLARCHVISION_HOUR, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 
-  switch(sky_scenario) {
+  switch(STUDY_skyScenario_Active) {
     case 1 : STUDY_Diagrams.stroke(0, 0, 0); STUDY_Diagrams.fill(0, 0, 0); break;
     case 2 : STUDY_Diagrams.stroke(0, 0, 255); STUDY_Diagrams.fill(0, 0, 255); break;
     case 3 : STUDY_Diagrams.stroke(0, 127, 0); STUDY_Diagrams.fill(0, 127, 0); break;
@@ -7814,7 +7828,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
   
   STUDY_Diagrams.textAlign(RIGHT, TOP);
 
-  STUDY_Diagrams.text(sky_scenario_text[sky_scenario], (STUDY_j_end - STUDY_j_start - 0.05) * sx_Plot, (0.3 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  STUDY_Diagrams.text(STUDY_skyScenario_Title[STUDY_skyScenario_Active], (STUDY_j_end - STUDY_j_start - 0.05) * sx_Plot, (0.3 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 }  
 
 
@@ -8409,7 +8423,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   
   
   
-          if (develop_option == DEV_OP_0) {  
+          if (develop_option == DEV_OP_00) {  
             
             if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
              
@@ -8436,7 +8450,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           }         
   
    
-          if (develop_option == DEV_OP_1) {
+          if (develop_option == DEV_OP_01) {
             float Alpha = Angle_inclination;
             float Beta = Angle_orientation;
             
@@ -8459,7 +8473,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[LAYER_developed][Language_FR] = LAYERS_Title[LAYER_developed][Language_EN]; // ??         
           } 
           
-          if (develop_option == DEV_OP_2) {
+          if (develop_option == DEV_OP_02) {
             float Alpha = Angle_inclination;
             float Beta = Angle_orientation;
             
@@ -8481,7 +8495,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[LAYER_developed][Language_FR] = LAYERS_Title[LAYER_developed][Language_EN]; // ?? 
           } 
           
-          if (develop_option == DEV_OP_3) {
+          if (develop_option == DEV_OP_03) {
             float Alpha = asin_ang(SunR[3]);
             float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
             
@@ -8502,7 +8516,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[LAYER_developed][Language_FR] = LAYERS_Title[LAYER_developed][Language_EN]; // ?? 
           }         
           
-          if (develop_option == DEV_OP_4) {
+          if (develop_option == DEV_OP_04) {
             float Alpha = asin_ang(SunR[3]);
             float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
             
@@ -8524,7 +8538,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           } 
           
           
-          if (develop_option == DEV_OP_5) {
+          if (develop_option == DEV_OP_05) {
             
             if (T < 0.9 * FLOAT_undefined) { 
               _valuesSUM[now_k] += (T - 18) / 24;
@@ -8542,7 +8556,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[LAYER_developed][Language_FR] = LAYERS_Title[LAYER_developed][Language_EN]; // ??         
           } 
           
-          if (develop_option == DEV_OP_6) {
+          if (develop_option == DEV_OP_06) {
             
             _valuesSUM[now_k] = 0;
             float sum_count = 0;
@@ -8611,7 +8625,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           }     
       
       
-          if (develop_option == DEV_OP_7) {
+          if (develop_option == DEV_OP_07) {
             
             _valuesSUM[now_k] = 0;
             float sum_count = 0;
@@ -8683,7 +8697,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   
           }           
           
-          if (develop_option == DEV_OP_8) {
+          if (develop_option == DEV_OP_08) {
             
             _valuesSUM[now_k] = 0;
             float sum_count = 0;
@@ -8753,7 +8767,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           } 
           
   
-          if (develop_option == DEV_OP_9) {
+          if (develop_option == DEV_OP_09) {
             
             if (RAIN < 0.9 * FLOAT_undefined) { 
               _valuesSUM[now_k] = RAIN;
@@ -8814,7 +8828,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           
           
          
-          if ((develop_option == DEV_OP_2) || (develop_option == DEV_OP_4)) {
+          if ((develop_option == DEV_OP_02) || (develop_option == DEV_OP_04)) {
            
             if ((i == 23) && (develop_per_day == 1)) {
               for (int l = i + 1 - 24; l <= i ; l += 1) {
@@ -9137,10 +9151,10 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
         else {
     
           int drw_count = 0;
-          if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-          if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-          if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-          if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
           
           if (drw_count == 1) {
             _values_R_dir = 0.001 * Pa;
@@ -9196,8 +9210,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     Rendered_WindRose_RES = RES;
     
-    if (plot_impacts == -2) Impact_TYPE = Impact_SPD_DIR; 
-    if (plot_impacts == -1) Impact_TYPE = Impact_SPD_DIR_TMP;
+    if (plot_impacts == -2) Impact_TYPE = Impact_WIND_Overlay; 
+    if (plot_impacts == -1) Impact_TYPE = Impact_WIND_Temperature;
     
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -9219,17 +9233,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
     
-    if (Impact_TYPE == Impact_SPD_DIR) {  
+    if (Impact_TYPE == Impact_WIND_Overlay) {  
       PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
     }
-    if (Impact_TYPE == Impact_SPD_DIR_TMP) {  
+    if (Impact_TYPE == Impact_WIND_Temperature) {  
       //PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
       PAL_TYPE = 12; PAL_DIR = -1;
     }             
 
     float PAL_Multiplier = 1; 
-    if (Impact_TYPE == Impact_SPD_DIR) PAL_Multiplier = 1.0;
-    if (Impact_TYPE == Impact_SPD_DIR_TMP) PAL_Multiplier = 1.0 / 30.0;
+    if (Impact_TYPE == Impact_WIND_Overlay) PAL_Multiplier = 1.0;
+    if (Impact_TYPE == Impact_WIND_Temperature) PAL_Multiplier = 1.0 / 30.0;
 
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
       
@@ -9291,10 +9305,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 }
                 else {
                   int drw_count = 0;
-                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                       
                   if ((impacts_source == databaseNumber_ENSEMBLE) && (ENSEMBLE_flag[now_i][now_j][LAYER_winddir][now_k] != 1)) drw_count = 0;
                     
@@ -9322,11 +9336,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
          
                     float _u = 0;
          
-                    if (Impact_TYPE == Impact_SPD_DIR) {
+                    if (Impact_TYPE == Impact_WIND_Overlay) {
   
                       float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count); 
   
-                      if (sky_scenario > 1) _s *= 3; // to improve visibility of those cases.
+                      if (STUDY_skyScenario_Active > 1) _s *= 3; // to improve visibility of those cases.
                       
                       _s /= float(STUDY_num_add_days);
                       
@@ -9337,7 +9351,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
                       WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                     }
-                    if (Impact_TYPE == Impact_SPD_DIR_TMP) {
+                    if (Impact_TYPE == Impact_WIND_Temperature) {
                       _u = 0.5 + 0.5 * (PAL_Multiplier * T);
                       
                       if (PAL_DIR == -1) _u = 1 - _u;
@@ -9427,10 +9441,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 }
                 else {
                   int drw_count = 0;
-                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                       
                   if ((impacts_source == databaseNumber_ENSEMBLE) && (ENSEMBLE_flag[now_i][now_j][LAYER_winddir][now_k] != 1)) drw_count = 0;
                     
@@ -9458,11 +9472,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                     float _u = 0;
          
-                    if (Impact_TYPE == Impact_SPD_DIR) {
+                    if (Impact_TYPE == Impact_WIND_Overlay) {
   
                       float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count) / (STUDY_j_end - STUDY_j_start);
   
-                      if (sky_scenario > 1) _s *= 3; // to improve visibility of those cases.
+                      if (STUDY_skyScenario_Active > 1) _s *= 3; // to improve visibility of those cases.
                       
                       _s /= float(STUDY_num_add_days);
                       
@@ -9473,7 +9487,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
                       total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                     }
-                    if (Impact_TYPE == Impact_SPD_DIR_TMP) {
+                    if (Impact_TYPE == Impact_WIND_Temperature) {
                       _u = 0.5 + 0.5 * (PAL_Multiplier * T);
                       
                       if (PAL_DIR == -1) _u = 1 - _u;
@@ -9536,13 +9550,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);      
     }
 
-    if (Impact_TYPE != Impact_SPD_DIR) { 
+    if (Impact_TYPE != Impact_WIND_Overlay) { 
       
       float pal_length = 400;
       for (int q = 0; q < 11; q += 1) {
         float _u = 0;
       
-        if (Impact_TYPE == Impact_SPD_DIR_TMP) _u = 0.1 * q;
+        if (Impact_TYPE == Impact_WIND_Temperature) _u = 0.1 * q;
         
         if (PAL_DIR == -1) _u = 1 - _u;
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -9569,7 +9583,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
         STUDY_Diagrams.textAlign(CENTER, CENTER);
 
-        if (Impact_TYPE == Impact_SPD_DIR_TMP) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_WIND_Temperature) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
       }
     }         
 
@@ -9587,11 +9601,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(LEFT, TOP); 
-      if (Impact_TYPE == Impact_SPD_DIR) {  
+      if (Impact_TYPE == Impact_WIND_Overlay) {  
         STUDY_Diagrams.text(("Wind direction and speed"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
-      if (Impact_TYPE == Impact_SPD_DIR_TMP) {  
+      if (Impact_TYPE == Impact_WIND_Temperature) {  
         STUDY_Diagrams.text(("Wind direction and speed with air temperature"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }           
@@ -9961,10 +9975,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       else {
       
                         int drw_count = 0;
-                        if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                        if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                        if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                        if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                        if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                        if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                        if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                        if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                         
                         if (drw_count == 1) {
                           _values_R_dir = 0.001 * Pa;
@@ -10399,10 +10413,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   else {
   
                     int drw_count = 0;
-                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                       
                     if (drw_count == 1) {
                       _values_R_dir = 0.001 * Pa;
@@ -11226,10 +11240,10 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               else {
   
                 int drw_count = 0;
-                if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i1, now_j, now_k);
-                if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i1, now_j, now_k);
-                if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i1, now_j, now_k);
-                if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i1, now_j, now_k);
+                if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
+                if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
+                if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
+                if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
                   
                 if (drw_count == 1) {
                   _values_R_dir = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
@@ -12057,10 +12071,10 @@ void STUDY_keyPressed (KeyEvent e) {
                   println("STUDY_sum_interval =", STUDY_sum_interval);
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
-        case '!' :sky_scenario = 1; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '@' :sky_scenario = 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '#' :sky_scenario = 3; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '$' :sky_scenario = 4; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '!' :STUDY_skyScenario_Active = 1; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '@' :STUDY_skyScenario_Active = 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '#' :STUDY_skyScenario_Active = 3; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '$' :STUDY_skyScenario_Active = 4; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
         case 's' : STUDY_record_JPG = 1; STUDY_record_PDF = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'S' : STUDY_record_PDF = 1; STUDY_record_JPG = 0; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
@@ -13931,15 +13945,15 @@ int SOLARCHVISION_add_Face (int[] f) {
     
     int[][] newFace = {f}; 
     
-    allFaces = (int[][]) concat(allFaces, newFace);
+    allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
 
   }
   
-  allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces.length - 1;
+  allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces_PNT.length - 1;
   
   
   
-  return(allFaces.length - 1);
+  return(allFaces_PNT.length - 1);
 }
 
 
@@ -13985,7 +13999,7 @@ void SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float s
   
   allGroup3Ds_Solids = (int[][]) concat(allGroup3Ds_Solids, newObject_Solids);      
   
-  int[][] newObject_Faces = {{allFaces.length, 0}}; // i.e. null because start > end   
+  int[][] newObject_Faces = {{allFaces_PNT.length, 0}}; // i.e. null because start > end   
   
   allGroup3Ds_Faces = (int[][]) concat(allGroup3Ds_Faces, newObject_Faces);
 
@@ -14088,7 +14102,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
   if (Current_ObjectCategory == ObjectCategory_Faces) {
     
-    int number_of_Faces_before = allFaces.length;
+    int number_of_Faces_before = allFaces_PNT.length;
     
     for (int o = 0; o < selectedFace_numbers.length; o++) {
       
@@ -14099,12 +14113,12 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
       int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
       int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
   
-      if ((0 < f) && (f < allFaces.length)) {
+      if ((0 < f) && (f < allFaces_PNT.length)) {
      
         int[] newFace = {};
         
-        for (int j = 0; j < allFaces[f].length; j++) {
-          int vNo = allFaces[f][j];
+        for (int j = 0; j < allFaces_PNT[f].length; j++) {
+          int vNo = allFaces_PNT[f][j];
           
           int vertex_listed = 0;
           
@@ -14154,7 +14168,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
     selectedFace_numbers = new int [1];
     selectedFace_numbers[0] = 0;
     
-    for (int o = number_of_Faces_before; o < allFaces.length; o++) {
+    for (int o = number_of_Faces_before; o < allFaces_PNT.length; o++) {
       
       int[] newlyAddedFace = {o};
       
@@ -14404,12 +14418,12 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
       
           for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
   
-            if ((0 < f) && (f < allFaces.length)) {
+            if ((0 < f) && (f < allFaces_PNT.length)) {
            
               int[] newFace = {};
               
-              for (int j = 0; j < allFaces[f].length; j++) {
-                int vNo = allFaces[f][j];
+              for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                int vNo = allFaces_PNT[f][j];
                 
                 int vertex_listed = 0;
                 
@@ -14601,12 +14615,12 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
         int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
     
-        if ((0 < f) && (f < allFaces.length)) {
+        if ((0 < f) && (f < allFaces_PNT.length)) {
        
           int[] newFace = {};
           
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
             
             int vertex_listed = 0;
             
@@ -15060,10 +15074,10 @@ void SOLARCHVISION_delete_Selection () {
       
 
         {
-          int[][] startList = (int[][]) subset(allFaces, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allFaces, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allFaces_PNT, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allFaces_PNT, OBJ_NUM + 1);
           
-          allFaces = (int[][]) concat(startList, endList);
+          allFaces_PNT = (int[][]) concat(startList, endList);
         }
 
         {
@@ -15119,10 +15133,10 @@ void SOLARCHVISION_delete_Selection () {
        
         if ((0 < startFace) && (startFace <= endFace)) {
           {
-            int[][] startList = (int[][]) subset(allFaces, 0, startFace);
-            int[][] endList = (int[][]) subset(allFaces, endFace + 1);
+            int[][] startList = (int[][]) subset(allFaces_PNT, 0, startFace);
+            int[][] endList = (int[][]) subset(allFaces_PNT, endFace + 1);
             
-            allFaces = (int[][]) concat(startList, endList);
+            allFaces_PNT = (int[][]) concat(startList, endList);
           }
           
           {
@@ -15349,9 +15363,9 @@ void SOLARCHVISION_deleteIsolatedVertices_Selection () {
     
       int found = -1;
       
-      for (int i = 1; i < allFaces.length; i++) { // the first node is null
-        for (int j = 0; j < allFaces[i].length; j++) {
-          if (allFaces[i][j] == vNo) {
+      for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces_PNT[i].length; j++) {
+          if (allFaces_PNT[i][j] == vNo) {
             
             found = 1;
           }
@@ -15364,11 +15378,11 @@ void SOLARCHVISION_deleteIsolatedVertices_Selection () {
    
       if (found == -1) {
         
-        for (int i = 1; i < allFaces.length; i++) { // the first node is null
-          for (int j = 0; j < allFaces[i].length; j++) {
-            if (allFaces[i][j] > vNo) {
+        for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces_PNT[i].length; j++) {
+            if (allFaces_PNT[i][j] > vNo) {
               
-              allFaces[i][j] -= 1;
+              allFaces_PNT[i][j] -= 1;
             }
           }
         }             
@@ -15396,9 +15410,9 @@ void SOLARCHVISION_deleteIsolatedVertices_Scene () {
   
     int found = -1;
   
-    for (int i = 1; i < allFaces.length; i++) { // the first node is null
-      for (int j = 0; j < allFaces[i].length; j++) {
-        if (allFaces[i][j] == vNo) {
+    for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+      for (int j = 0; j < allFaces_PNT[i].length; j++) {
+        if (allFaces_PNT[i][j] == vNo) {
           found = 1;
         }
       }
@@ -15412,11 +15426,11 @@ void SOLARCHVISION_deleteIsolatedVertices_Scene () {
         allVertices = (float[][]) concat(startList, endList);
       }
       
-      for (int i = 1; i < allFaces.length; i++) { // the first node is null
-        for (int j = 0; j < allFaces[i].length; j++) {
-          if (allFaces[i][j] > vNo) {
+      for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces_PNT[i].length; j++) {
+          if (allFaces_PNT[i][j] > vNo) {
             
-            allFaces[i][j] -= 1;
+            allFaces_PNT[i][j] -= 1;
 
           }
         }
@@ -15442,9 +15456,9 @@ void SOLARCHVISION_selectIsolatedVertices_Scene () {
   
     int found = -1;
   
-    for (int i = 1; i < allFaces.length; i++) { // the first node is null
-      for (int j = 0; j < allFaces[i].length; j++) {
-        if (allFaces[i][j] == vNo) {
+    for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+      for (int j = 0; j < allFaces_PNT[i].length; j++) {
+        if (allFaces_PNT[i][j] == vNo) {
           found = 1;
         }
       }
@@ -15568,10 +15582,10 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
     
         int found = -1;
       
-        for (int i = 1; i < allFaces.length; i++) { // the first node is null
-          for (int j = 0; j < allFaces[i].length; j++) {
+        for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces_PNT[i].length; j++) {
             
-            int q = allFaces[i][j];
+            int q = allFaces_PNT[i][j];
             
             if (q > vNo) { // it is faster than (q != vNo)
             
@@ -15579,7 +15593,7 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
               
               if (d <= Modify_Input_WeldTreshold) { 
               
-                allFaces[i][j] = vNo;
+                allFaces_PNT[i][j] = vNo;
   
                 found = q;
               }
@@ -15598,11 +15612,11 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
             allVertices = (float[][]) concat(startList, endList);
           }
           
-          for (int i = 1; i < allFaces.length; i++) { // the first node is null
-            for (int j = 0; j < allFaces[i].length; j++) {
-              if (allFaces[i][j] > q) {
+          for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+            for (int j = 0; j < allFaces_PNT[i].length; j++) {
+              if (allFaces_PNT[i][j] > q) {
                 
-                allFaces[i][j] -= 1;
+                allFaces_PNT[i][j] -= 1;
               }
             }
           }
@@ -15664,10 +15678,10 @@ void SOLARCHVISION_weldObjectsVertices_Selection () {
                 
                 if (f != 0) {
                               
-                  for (int j = 0; j < allFaces[f].length; j++) {
-                    if (allFaces[f][j] == q) {
+                  for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                    if (allFaces_PNT[f][j] == q) {
                       
-                      allFaces[f][j] = vNo;
+                      allFaces_PNT[f][j] = vNo;
                       
                       found = q;
                     }
@@ -15689,11 +15703,11 @@ void SOLARCHVISION_weldObjectsVertices_Selection () {
             allVertices = (float[][]) concat(startList, endList);
           }
           
-          for (int i = 1; i < allFaces.length; i++) { // the first node is null
-            for (int j = 0; j < allFaces[i].length; j++) {
-              if (allFaces[i][j] > q) {
+          for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+            for (int j = 0; j < allFaces_PNT[i].length; j++) {
+              if (allFaces_PNT[i][j] > q) {
                 
-                allFaces[i][j] -= 1;
+                allFaces_PNT[i][j] -= 1;
               }
             }
           }
@@ -15762,12 +15776,12 @@ void SOLARCHVISION_separateVertices_Selection () {
       
       if (vNo != 0) {
       
-        for (int i = 1; i < allFaces.length; i++) { // the first node is null
-          for (int j = 0; j < allFaces[i].length; j++) {
+        for (int i = 1; i < allFaces_PNT.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces_PNT[i].length; j++) {
             
-            if (allFaces[i][j] == vNo) { 
+            if (allFaces_PNT[i][j] == vNo) { 
             
-              allFaces[i][j] = SOLARCHVISION_add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]); 
+              allFaces_PNT[i][j] = SOLARCHVISION_add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]); 
             
             }
           }
@@ -15830,25 +15844,25 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
               
               for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroup3Ds_Faces[i][j] += allFaces[f].length;
+                  allGroup3Ds_Faces[i][j] += allFaces_PNT[f].length;
                 }
               }  
-              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces_PNT[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                
                 if (new_selectedFace_numbers[p] != 0) {
                 
                   if (new_selectedFace_numbers[p] > f) {  
-                    new_selectedFace_numbers[p] += allFaces[f].length;
+                    new_selectedFace_numbers[p] += allFaces_PNT[f].length;
                   }
                 }
               }              
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces_PNT, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
               
               
               int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -15856,34 +15870,34 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
               int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
   
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                   }
                 }
                 
                 float[] G_face = {0,0,0};  
                 
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces_PNT[f].length);
                   }
                 }
                 
-                float[][] new_Vertices = new float [allFaces[f].length][3];
+                float[][] new_Vertices = new float [allFaces_PNT[f].length][3];
               
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
                     
                     new_Vertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
                   }
                 }
                 
-                int[] new_Vertex_numbers = new int [allFaces[f].length];
+                int[] new_Vertex_numbers = new int [allFaces_PNT[f].length];
                 
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
                   
                   new_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]); 
                 } 
@@ -15893,11 +15907,11 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
                 defaultLayer = allFaces_MTLV[f][2];
                 defaultVisibility = allFaces_MTLV[f][3];              
               
-                for(int s = 0; s < allFaces[f].length; s++) { 
+                for(int s = 0; s < allFaces_PNT[f].length; s++) { 
                   
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
   
-                  int[][] newFace = {{new_Vertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_Vertex_numbers[s_next]}};
+                  int[][] newFace = {{new_Vertex_numbers[s], allFaces_PNT[f][s], allFaces_PNT[f][s_next], new_Vertex_numbers[s_next]}};
                   int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -15906,8 +15920,8 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
       
                          
                 { // modifying the base face to shape the openning  
-                  for(int s = 0; s < allFaces[f].length; s++) {
-                    allFaces[f][s] = new_Vertex_numbers[s];
+                  for(int s = 0; s < allFaces_PNT[f].length; s++) {
+                    allFaces_PNT[f][s] = new_Vertex_numbers[s];
                   }
                 } 
                 
@@ -15916,7 +15930,7 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
               allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
@@ -16000,25 +16014,25 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
               
               for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroup3Ds_Faces[i][j] += 2 * allFaces[f].length;
+                  allGroup3Ds_Faces[i][j] += 2 * allFaces_PNT[f].length;
                 }
               }  
-              allGroup3Ds_Faces[OBJ_NUM][1] += 2 * allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allGroup3Ds_Faces[OBJ_NUM][1] += 2 * allFaces_PNT[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                
                 if (new_selectedFace_numbers[p] != 0) { 
                 
                   if (new_selectedFace_numbers[p] > f) {  
-                    new_selectedFace_numbers[p] += 2 * allFaces[f].length;
+                    new_selectedFace_numbers[p] += 2 * allFaces_PNT[f].length;
                   }
                 }
               }              
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces_PNT, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
               
               
               int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -16026,31 +16040,31 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
               int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
   
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                   }
                 }
                 
                 float[] G_face = {0,0,0};  
                 
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces_PNT[f].length);
                   }
                 }
                 
                 
-                float[][] new_A_EdgeVertices = new float [allFaces[f].length][3];
-                float[][] new_B_EdgeVertices = new float [allFaces[f].length][3];
-                float[][] new_CenterVertices = new float [allFaces[f].length][3];
+                float[][] new_A_EdgeVertices = new float [allFaces_PNT[f].length][3];
+                float[][] new_B_EdgeVertices = new float [allFaces_PNT[f].length][3];
+                float[][] new_CenterVertices = new float [allFaces_PNT[f].length][3];
               
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
   
-                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_prev = (s + allFaces_PNT[f].length - 1) % allFaces_PNT[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
                   
                   for (int j = 0; j < 3; j++) {
                     
@@ -16061,11 +16075,11 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
                   }
                 }
                 
-                int[] new_A_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge (1/3)
-                int[] new_B_EdgeVertex_numbers = new int [allFaces[f].length]; // on the other edge (2/3)
-                int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
+                int[] new_A_EdgeVertex_numbers = new int [allFaces_PNT[f].length]; // on the edge (1/3)
+                int[] new_B_EdgeVertex_numbers = new int [allFaces_PNT[f].length]; // on the other edge (2/3)
+                int[] new_CenterVertex_numbers = new int [allFaces_PNT[f].length]; // in the center
                 
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
                   
                   new_A_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
                   new_B_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
@@ -16079,12 +16093,12 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
                 defaultLayer = allFaces_MTLV[f][2];
                 defaultVisibility = allFaces_MTLV[f][3];
               
-                for(int s = 0; s < allFaces[f].length; s++) { 
+                for(int s = 0; s < allFaces_PNT[f].length; s++) { 
                   
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
                   
                   {
-                    int[][] newFace = {{allFaces[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
+                    int[][] newFace = {{allFaces_PNT[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
                     int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                 
                     midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -16102,8 +16116,8 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
       
                          
                 { // modifying the base face to shape the openning  
-                  for(int s = 0; s < allFaces[f].length; s++) {
-                    allFaces[f][s] = new_CenterVertex_numbers[s];
+                  for(int s = 0; s < allFaces_PNT[f].length; s++) {
+                    allFaces_PNT[f][s] = new_CenterVertex_numbers[s];
                   }
                 } 
                 
@@ -16112,7 +16126,7 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
               allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
@@ -16195,25 +16209,25 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
               
               for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroup3Ds_Faces[i][j] += allFaces[f].length;
+                  allGroup3Ds_Faces[i][j] += allFaces_PNT[f].length;
                 }
               }  
-              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces_PNT[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
                 if (new_selectedFace_numbers[p] != 0) {
                 
                   if (new_selectedFace_numbers[p] > f) {  
-                    new_selectedFace_numbers[p] += allFaces[f].length;
+                    new_selectedFace_numbers[p] += allFaces_PNT[f].length;
                   }
                 }
               }              
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces_PNT, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
               
               
               int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -16221,28 +16235,28 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
               int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
   
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                   }
                 }
                 
                 float[] G_face = {0,0,0};  
                 
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces_PNT[f].length);
                   }
                 }
                 
-                float[][] new_EdgeVertices = new float [allFaces[f].length][3];
-                float[][] new_CenterVertices = new float [allFaces[f].length][3];
+                float[][] new_EdgeVertices = new float [allFaces_PNT[f].length][3];
+                float[][] new_CenterVertices = new float [allFaces_PNT[f].length][3];
               
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
   
-                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  int s_prev = (s + allFaces_PNT[f].length - 1) % allFaces_PNT[f].length;
                   
                   for (int j = 0; j < 3; j++) {
                     
@@ -16252,10 +16266,10 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
                   }
                 }
                 
-                int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
-                int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
+                int[] new_EdgeVertex_numbers = new int [allFaces_PNT[f].length]; // on the edge
+                int[] new_CenterVertex_numbers = new int [allFaces_PNT[f].length]; // in the center
                 
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
                   
                   new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
                   new_CenterVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
@@ -16268,11 +16282,11 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
                 defaultLayer = allFaces_MTLV[f][2];
                 defaultVisibility = allFaces_MTLV[f][3];
                 
-                for(int s = 0; s < allFaces[f].length; s++) { 
+                for(int s = 0; s < allFaces_PNT[f].length; s++) { 
                   
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
   
-                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
+                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces_PNT[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
                   int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -16281,8 +16295,8 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
       
                          
                 { // modifying the base face to match new center face
-                  for(int s = 0; s < allFaces[f].length; s++) {
-                    allFaces[f][s] = new_CenterVertex_numbers[s];
+                  for(int s = 0; s < allFaces_PNT[f].length; s++) {
+                    allFaces_PNT[f][s] = new_CenterVertex_numbers[s];
                   }
                 } 
                 
@@ -16291,7 +16305,7 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
               allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
@@ -16373,25 +16387,25 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
               
               for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroup3Ds_Faces[i][j] += allFaces[f].length;
+                  allGroup3Ds_Faces[i][j] += allFaces_PNT[f].length;
                 }
               }  
-              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces_PNT[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
                 if (new_selectedFace_numbers[p] != 0) {
                   
                   if (new_selectedFace_numbers[p] > f) {  
-                    new_selectedFace_numbers[p] += allFaces[f].length;
+                    new_selectedFace_numbers[p] += allFaces_PNT[f].length;
                   }
                 }
               }              
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces_PNT, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
               
               
               int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -16399,27 +16413,27 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
               int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
   
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                   }
                 }
                 
                 float[] G_face = {0,0,0};  
                 
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces_PNT[f].length);
                   }
                 }
                 
-                float[][] new_EdgeVertices = new float [allFaces[f].length][3];
+                float[][] new_EdgeVertices = new float [allFaces_PNT[f].length][3];
               
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
   
-                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  int s_prev = (s + allFaces_PNT[f].length - 1) % allFaces_PNT[f].length;
                   
                   for (int j = 0; j < 3; j++) {
                     
@@ -16428,9 +16442,9 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
                   }
                 }
                 
-                int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
+                int[] new_EdgeVertex_numbers = new int [allFaces_PNT[f].length]; // on the edge
                 
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
                   
                   new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
                 } 
@@ -16442,11 +16456,11 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
                 defaultLayer = allFaces_MTLV[f][2];
                 defaultVisibility = allFaces_MTLV[f][3];
               
-                for(int s = 0; s < allFaces[f].length; s++) { 
+                for(int s = 0; s < allFaces_PNT[f].length; s++) { 
                   
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
   
-                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next]}};
+                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces_PNT[f][s], new_EdgeVertex_numbers[s_next]}};
                   int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -16455,8 +16469,8 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
       
                          
                 { // modifying the base face to match new center face
-                  for(int s = 0; s < allFaces[f].length; s++) {
-                    allFaces[f][s] = new_EdgeVertex_numbers[s];
+                  for(int s = 0; s < allFaces_PNT[f].length; s++) {
+                    allFaces_PNT[f][s] = new_EdgeVertex_numbers[s];
                   }
                 } 
                 
@@ -16465,7 +16479,7 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
               allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
@@ -16545,7 +16559,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              if (allFaces[f].length == 4) {
+              if (allFaces_PNT[f].length == 4) {
               
                 for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                   for (int j = 0; j < 2; j++) {
@@ -16565,9 +16579,9 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                 }             
     
     
-                int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+                int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
                 int[][] midList_Faces = new int [0][0];
-                int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+                int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
                 
                 
                 int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -16575,11 +16589,11 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                 int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
     
                 { 
-                  float[][] base_Vertices = new float [allFaces[f].length][3];
+                  float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
     
-                  for(int i = 0; i < allFaces[f].length; i++) {
+                  for(int i = 0; i < allFaces_PNT[f].length; i++) {
                     for (int j = 0; j < 3; j++) {
-                      base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                      base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                     }
                   }
                   
@@ -16613,16 +16627,16 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                       int s = i * (Modify_Input_TessellateRows + 1) + j;
                     
                       if ((i == 0) && (j == 0)) {
-                        new_EdgeVertex_numbers[s] = allFaces[f][0];
+                        new_EdgeVertex_numbers[s] = allFaces_PNT[f][0];
                       }
                       else if ((i == Modify_Input_TessellateColumns) && (j == 0)) {
-                        new_EdgeVertex_numbers[s] = allFaces[f][1];
+                        new_EdgeVertex_numbers[s] = allFaces_PNT[f][1];
                       }
                       else if ((i == Modify_Input_TessellateColumns) && (j == Modify_Input_TessellateRows)) {
-                        new_EdgeVertex_numbers[s] = allFaces[f][2];
+                        new_EdgeVertex_numbers[s] = allFaces_PNT[f][2];
                       }
                       else if ((i == 0) && (j == Modify_Input_TessellateRows)) {
-                        new_EdgeVertex_numbers[s] = allFaces[f][3];
+                        new_EdgeVertex_numbers[s] = allFaces_PNT[f][3];
                       }                    
                       else {
                         new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
@@ -16666,7 +16680,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                 startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
                 startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
     
-                allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+                allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
                 allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
       
                 { // to avoid processing the faces twice they should be deleted from the list.
@@ -16748,25 +16762,25 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
               
               for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroup3Ds_Faces[i][j] += allFaces[f].length - 1;
+                  allGroup3Ds_Faces[i][j] += allFaces_PNT[f].length - 1;
                 }
               }  
-              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces_PNT[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
                 if (new_selectedFace_numbers[p] != 0) {
                   
                   if (new_selectedFace_numbers[p] > f) {  
-                    new_selectedFace_numbers[p] += allFaces[f].length - 1;
+                    new_selectedFace_numbers[p] += allFaces_PNT[f].length - 1;
                   }
                 }
               }             
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
               int[][] midList_Faces = new int [0][0];
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
               
               
               int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -16774,36 +16788,36 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
               int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
   
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                   }
                 }
                 
                 float[] G_face = {0,0,0};  
                 
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces_PNT[f].length);
                   }
                 }
                 
-                float[][] new_EdgeVertices = new float [allFaces[f].length][3];
+                float[][] new_EdgeVertices = new float [allFaces_PNT[f].length][3];
               
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
   
-                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  int s_prev = (s + allFaces_PNT[f].length - 1) % allFaces_PNT[f].length;
                   
                   for (int j = 0; j < 3; j++) {
                     new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
                   }
                 }
                 
-                int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
+                int[] new_EdgeVertex_numbers = new int [allFaces_PNT[f].length]; // on the edge
                 
-                for(int s = 0; s < allFaces[f].length; s++) {
+                for(int s = 0; s < allFaces_PNT[f].length; s++) {
                   
                   new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
                 } 
@@ -16817,11 +16831,11 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
                 defaultLayer = allFaces_MTLV[f][2];
                 defaultVisibility = allFaces_MTLV[f][3];              
               
-                for(int s = 0; s < allFaces[f].length; s++) { 
+                for(int s = 0; s < allFaces_PNT[f].length; s++) { 
                   
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
   
-                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number}};
+                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces_PNT[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number}};
                   int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -16838,7 +16852,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
               allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
@@ -16919,25 +16933,25 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
               
               for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroup3Ds_Faces[i][j] += allFaces[f].length - 1;
+                  allGroup3Ds_Faces[i][j] += allFaces_PNT[f].length - 1;
                 }
               }  
-              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+              allGroup3Ds_Faces[OBJ_NUM][1] += allFaces_PNT[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                
                 if (new_selectedFace_numbers[p] != 0) {
                   
                   if (new_selectedFace_numbers[p] > f) {  
-                    new_selectedFace_numbers[p] += allFaces[f].length - 1;
+                    new_selectedFace_numbers[p] += allFaces_PNT[f].length - 1;
                   }
                 }
               }             
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] startList_Faces = (int[][]) subset(allFaces_PNT, 0, f);
               int[][] midList_Faces = new int [0][0];
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
               
               
               int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
@@ -16945,19 +16959,19 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
               int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
   
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces_PNT[f][i])][j];
                   }
                 }
                 
                 float[] G_face = {0,0,0};  
                 
-                for(int i = 0; i < allFaces[f].length; i++) {
+                for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces_PNT[f].length);
                   }
                 }
                 
@@ -16971,11 +16985,11 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
                 defaultLayer = allFaces_MTLV[f][2];
                 defaultVisibility = allFaces_MTLV[f][3];                
               
-                for(int s = 0; s < allFaces[f].length; s++) { 
+                for(int s = 0; s < allFaces_PNT[f].length; s++) { 
                   
-                  int s_next = (s + 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces_PNT[f].length;
   
-                  int[][] newFace = {{allFaces[f][s], allFaces[f][s_next], new_CenterVertex_number}};
+                  int[][] newFace = {{allFaces_PNT[f][s], allFaces_PNT[f][s_next], new_CenterVertex_number}};
                   int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -16992,7 +17006,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
               allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
@@ -17071,11 +17085,11 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
             
             if ((startFace <= f) && (f <= endFace)) {
             
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-              float[][] top_Vertices = new float [allFaces[f].length][3];
+              float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+              float[][] top_Vertices = new float [allFaces_PNT[f].length][3];
               
-              for (int s = 0; s < allFaces[f].length; s++) {
-                int vNo = allFaces[f][s];
+              for (int s = 0; s < allFaces_PNT[f].length; s++) {
+                int vNo = allFaces_PNT[f][s];
                 
                 base_Vertices[s][0] = allVertices[vNo][0];
                 base_Vertices[s][1] = allVertices[vNo][1];
@@ -17086,10 +17100,10 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                 top_Vertices[s][2] = allVertices[vNo][2];              
               }
                 
-              for (int s = 0; s < allFaces[f].length; s++) {
+              for (int s = 0; s < allFaces_PNT[f].length; s++) {
         
-                int s_next = (s + 1) % allFaces[f].length;
-                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                int s_next = (s + 1) % allFaces_PNT[f].length;
+                int s_prev = (s + allFaces_PNT[f].length - 1) % allFaces_PNT[f].length;
                 
                 PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
                 PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
@@ -17102,26 +17116,26 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                 top_Vertices[s][2] += W[2] * Modify_Input_OpenningDepth;
               }  
               
-              int[] base_Vertex_numbers = new int [allFaces[f].length];
-              int[] top_Vertex_numbers = new int [allFaces[f].length];
+              int[] base_Vertex_numbers = new int [allFaces_PNT[f].length];
+              int[] top_Vertex_numbers = new int [allFaces_PNT[f].length];
               
-              for(int s = 0; s < allFaces[f].length; s++) {
+              for(int s = 0; s < allFaces_PNT[f].length; s++) {
                 
                 base_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
                 top_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
               }        
          
-              for(int s = 0; s < allFaces[f].length; s++) {
+              for(int s = 0; s < allFaces_PNT[f].length; s++) {
                 
-                int s_next = (s + 1) % allFaces[f].length;
+                int s_next = (s + 1) % allFaces_PNT[f].length;
   
                 if (Modify_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
                   int[][] newFace = {{base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]}};  
-                  allFaces = (int[][]) concat(allFaces, newFace);
+                  allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
                 }
                 else {
                   int[][] newFace = {{base_Vertex_numbers[s], base_Vertex_numbers[s_next], top_Vertex_numbers[s_next], top_Vertex_numbers[s]}};  
-                  allFaces = (int[][]) concat(allFaces, newFace);         
+                  allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);         
                 }       
                 
                 int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
@@ -17130,17 +17144,17 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
               
               { // adding the cap
                 int[][] newFace = {top_Vertex_numbers};  
-                allFaces = (int[][]) concat(allFaces, newFace);         
+                allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);         
        
                 int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
                 allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);  
                 
-                int[] lastFace = {allFaces.length - 1};
+                int[] lastFace = {allFaces_PNT.length - 1};
     
                 new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);       
               }
 
-              allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces.length - 1;
+              allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces_PNT.length - 1;
 
             }
           }
@@ -17198,18 +17212,18 @@ void SOLARCHVISION_offsetVertices_Selection (int _type, float _amount) {
       
       if (vNo != 0) {
     
-        for (int f = 1; f < allFaces.length; f++) { // the first node is null
-          for (int j = 0; j < allFaces[f].length; j++) {
+        for (int f = 1; f < allFaces_PNT.length; f++) { // the first node is null
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
             
-            if (allFaces[f][j] == vNo) { 
+            if (allFaces_PNT[f][j] == vNo) { 
               
-              float[][] base_Vertices = new float [allFaces[f].length][3];
+              float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
               
-              for (int s = 0; s < allFaces[f].length; s++) {
+              for (int s = 0; s < allFaces_PNT[f].length; s++) {
   
-                base_Vertices[s][0] = allVertices[allFaces[f][s]][0];
-                base_Vertices[s][1] = allVertices[allFaces[f][s]][1];
-                base_Vertices[s][2] = allVertices[allFaces[f][s]][2];
+                base_Vertices[s][0] = allVertices[allFaces_PNT[f][s]][0];
+                base_Vertices[s][1] = allVertices[allFaces_PNT[f][s]][1];
+                base_Vertices[s][2] = allVertices[allFaces_PNT[f][s]][2];
               }
               
               for(int s = 0; s < base_Vertices.length; s++) {
@@ -17304,7 +17318,7 @@ void SOLARCHVISION_changeVisibilityFaces_Selection (int new_vsb) {
 
 void SOLARCHVISION_changeVisibilityFaces_Scene (int new_vsb) {
   
-  for (int f = allFaces.length - 1; f > 0; f--) { // the first node is null
+  for (int f = allFaces_PNT.length - 1; f > 0; f--) { // the first node is null
     allFaces_MTLV[f][3] = new_vsb;
   }
   
@@ -17313,7 +17327,7 @@ void SOLARCHVISION_changeVisibilityFaces_Scene (int new_vsb) {
 
 void SOLARCHVISION_reverseVisibilityFaces_Scene () {
   
-  for (int f = allFaces.length - 1; f > 0; f--) { // the first node is null
+  for (int f = allFaces_PNT.length - 1; f > 0; f--) { // the first node is null
     
     int vsb = allFaces_MTLV[f][3];
     int new_vsb = vsb;
@@ -17416,7 +17430,7 @@ void SOLARCHVISION_select_All () {
   }
 
   if (Current_ObjectCategory == ObjectCategory_Faces) {
-    selectedFace_numbers = new int [allFaces.length];
+    selectedFace_numbers = new int [allFaces_PNT.length];
     for (int i = 0; i < selectedFace_numbers.length; i++) { 
       selectedFace_numbers[i] = i;
     }
@@ -17580,7 +17594,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedFace_numbers = new int [1];
     selectedFace_numbers[0] = 0;
     
-    for (int i = 1; i < allFaces.length; i++) {
+    for (int i = 1; i < allFaces_PNT.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedFace_numbers.length; j++) {
@@ -17826,7 +17840,7 @@ void SOLARCHVISION_convert_Face_to_Group3D () {
     
     int f = selectedFace_numbers[i];
     
-    for (int j = 0; j < allFaces[f].length; j++) {
+    for (int j = 0; j < allFaces_PNT[f].length; j++) {
       
       for (int OBJ_NUM = 1; OBJ_NUM < allGroup3Ds_num + 1; OBJ_NUM++) {
       
@@ -17860,11 +17874,11 @@ void SOLARCHVISION_convert_Vertex_to_Group3D () {
     
     int vNo = selectedVertex_numbers[i];
     
-    for (int f = 1; f < allFaces.length; f++) {
+    for (int f = 1; f < allFaces_PNT.length; f++) {
       
-      for (int j = 0; j < allFaces[f].length; j++) {
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
         
-        if (allFaces[f][j] == vNo) { 
+        if (allFaces_PNT[f][j] == vNo) { 
         
           for (int OBJ_NUM = 1; OBJ_NUM < allGroup3Ds_num + 1; OBJ_NUM++) {
           
@@ -17900,11 +17914,11 @@ void SOLARCHVISION_convert_Vertex_to_Face () {
     
     int vNo = selectedVertex_numbers[i];
 
-    for (int f = 1; f < allFaces.length; f++) {
+    for (int f = 1; f < allFaces_PNT.length; f++) {
       
-      for (int j = 0; j < allFaces[f].length; j++) {
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
         
-        if (allFaces[f][j] == vNo) { 
+        if (allFaces_PNT[f][j] == vNo) { 
         
           int previously_added = 0;
           for (int q = 0; q < selectedFace_numbers.length; q++) {
@@ -18051,9 +18065,9 @@ void SOLARCHVISION_convert_Group3D_to_Vertex () {
     
     for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) { 
       
-      for (int j = 0; j < allFaces[f].length; j++) {
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
         
-        int vNo = allFaces[f][j];
+        int vNo = allFaces_PNT[f][j];
         
         int previously_added = 0;
         for (int q = 0; q < selectedVertex_numbers.length; q++) {
@@ -18082,9 +18096,9 @@ void SOLARCHVISION_convert_Face_to_Vertex () {
     
     int f = selectedFace_numbers[i];
     
-    for (int j = 0; j < allFaces[f].length; j++) {
+    for (int j = 0; j < allFaces_PNT[f].length; j++) {
       
-      int vNo = allFaces[f][j];
+      int vNo = allFaces_PNT[f][j];
       
       int previously_added = 0;
       for (int q = 0; q < selectedVertex_numbers.length; q++) {
@@ -19079,7 +19093,7 @@ void SOLARCHVISION_add_Face_afterSphericalTessellation (int m, int tes, int lyr,
     
     int[][] newFace = {{M, B, N, D}}; 
     
-    allFaces = (int[][]) concat(allFaces, newFace);
+    allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
   }
 
   {
@@ -19090,7 +19104,7 @@ void SOLARCHVISION_add_Face_afterSphericalTessellation (int m, int tes, int lyr,
     
     int[][] newFace = {{MM, B, M, A}}; 
     
-    //allFaces = (int[][]) concat(allFaces, newFace);
+    //allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
   }
 
 }
@@ -19747,7 +19761,7 @@ void SOLARCHVISION_export_objects () {
       float rw = rh * Object2DImageRatios[n];
       
       float t = 0; //WIN3D_RZ_coordinate * PI / 180.0;
-      //if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      //if (WIN3D_View_Type == 1) t = atan2(y - SOLARCHVISION_CAM_y, x - SOLARCHVISION_CAM_x) + 0.5 * PI; 
       
       if (allObject2Ds_MAP[f] < 0) t += PI;            
       
@@ -19926,7 +19940,7 @@ void SOLARCHVISION_export_objects () {
            Materials_Used[i] = 0;
         }
 
-        for (int f = 1; f < allFaces.length; f++) {
+        for (int f = 1; f < allFaces_PNT.length; f++) {
       
           int mt = allFaces_MTLV[f][0];
 
@@ -19996,11 +20010,11 @@ void SOLARCHVISION_export_objects () {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
                 
-                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+                for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                  int vNo = allFaces_PNT[f][j];
                   base_Vertices[j][0] = allVertices[vNo][0];
                   base_Vertices[j][1] = allVertices[vNo][1];
                   base_Vertices[j][2] = allVertices[vNo][2];
@@ -20161,11 +20175,11 @@ void SOLARCHVISION_export_objects () {
                 }
                 
                 
-                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                if ((allFaces_PNT[f].length != 4) && (Tessellation == 0)) {
                   Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
                 }
                 
-                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
           
                 for (int n = 0; n < TotalSubNo; n++) {
       
@@ -20243,11 +20257,11 @@ void SOLARCHVISION_export_objects () {
                 }
                 
                 
-                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                if ((allFaces_PNT[f].length != 4) && (Tessellation == 0)) {
                   Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
                 }
                 
-                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
           
                 float x1 = 0;
                 float y1 = 0;
@@ -20265,9 +20279,9 @@ void SOLARCHVISION_export_objects () {
                 float y4 = 0;
                 float z4 = 0;
 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+                for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                  int vNo = allFaces_PNT[f][j];
                   base_Vertices[j][0] = allVertices[vNo][0];
                   base_Vertices[j][1] = allVertices[vNo][1];
                   base_Vertices[j][2] = allVertices[vNo][2];
@@ -21111,17 +21125,17 @@ void SOLARCHVISION_export_objects_script () {
   
   scrOutput.println("-osnap off");
   
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
     
-    if ((allFaces[f].length == 3) || (allFaces[f].length == 4)) {
+    if ((allFaces_PNT[f].length == 3) || (allFaces_PNT[f].length == 4)) {
       
       scrOutput.println("3dface");
       
-      for (int j = 0; j < allFaces[f].length; j++) {
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
         
-        float x = allVertices[allFaces[f][j]][0];
-        float y = allVertices[allFaces[f][j]][1];
-        float z = allVertices[allFaces[f][j]][2];
+        float x = allVertices[allFaces_PNT[f][j]][0];
+        float y = allVertices[allFaces_PNT[f][j]][1];
+        float z = allVertices[allFaces_PNT[f][j]][2];
         
         /*
         { 
@@ -21812,10 +21826,10 @@ void SOLARCHVISION_delete_Object2Ds () {
 
 void SOLARCHVISION_delete_Faces () {
   
-  allFaces = new int [1][3];
-  allFaces[0][0] = 0;
-  allFaces[0][1] = 0;
-  allFaces[0][2] = 0;
+  allFaces_PNT = new int [1][3];
+  allFaces_PNT[0][0] = 0;
+  allFaces_PNT[0][1] = 0;
+  allFaces_PNT[0][2] = 0;
   
   allFaces_MTLV = new int [1][4];
   allFaces_MTLV[0][0] = 0;
@@ -21900,7 +21914,7 @@ void SOLARCHVISION_add_urban () {
   if (urbanVertices_start == 0) { // avoids overloading the urban model when it was loaded before.
     if (Load_URBAN_MESH == 1) {
       urbanVertices_start = allVertices.length;
-      urbanFaces_start = allFaces.length;
+      urbanFaces_start = allFaces_PNT.length;
       
       //float h = (HeightAboveGround - LocationElevation);
       float h = 0; //-20; // ?????????????????????????????????????????
@@ -21908,7 +21922,7 @@ void SOLARCHVISION_add_urban () {
       SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0,1,1, 0,0,h, 1,1,1);
       
       urbanVertices_end = allVertices.length;
-      urbanFaces_end = allFaces.length;
+      urbanFaces_end = allFaces_PNT.length;
     }
   }
 }
@@ -22260,7 +22274,7 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
 
   SKY2D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
 
     int vsb = allFaces_MTLV[f][3];
     
@@ -22280,11 +22294,11 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
       if (allFaces_MTLV[f][0] == 0) {
         Tessellation += MODEL3D_TESSELLATION;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-      float[][] base_Vertices = new float [allFaces[f].length][3];
-      for (int j = 0; j < allFaces[f].length; j++) {
-        int vNo = allFaces[f][j];
+      float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+        int vNo = allFaces_PNT[f][j];
         base_Vertices[j][0] = allVertices[vNo][0];
         base_Vertices[j][1] = allVertices[vNo][1];
         base_Vertices[j][2] = allVertices[vNo][2];
@@ -23516,15 +23530,15 @@ void SOLARCHVISION_draw_Group3Ds () {
     
     if (Display_MODEL3D_NORMALS != 0) {
       
-      for (int f = 1; f < allFaces.length; f++) {
+      for (int f = 1; f < allFaces_PNT.length; f++) {
         
         int vsb = allFaces_MTLV[f][3];
         
         if (vsb > 0) {
         
-          float[][] base_Vertices = new float [allFaces[f].length][3];
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
+          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
             base_Vertices[j][0] = allVertices[vNo][0];
             base_Vertices[j][1] = allVertices[vNo][1];
             base_Vertices[j][2] = allVertices[vNo][2];
@@ -23628,7 +23642,7 @@ void SOLARCHVISION_draw_Group3Ds () {
     
   
     if (WIN3D_FACES_SHADE != Shade_Vertex_Solar) {
-      for (int f = 1; f < allFaces.length; f++) {
+      for (int f = 1; f < allFaces_PNT.length; f++) {
         
         int vsb = allFaces_MTLV[f][3];
         
@@ -23644,8 +23658,8 @@ void SOLARCHVISION_draw_Group3Ds () {
               
               WIN3D_Diagrams.beginShape();
               
-              for (int j = 0; j < allFaces[f].length; j++) {
-                int vNo = allFaces[f][j];
+              for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                int vNo = allFaces_PNT[f][j];
                 
                 WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_scale3D);
               }    
@@ -23664,11 +23678,11 @@ void SOLARCHVISION_draw_Group3Ds () {
               if (allFaces_MTLV[f][0] == 0) {
                 Tessellation += MODEL3D_TESSELLATION;
               }
-              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+              if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-              for (int j = 0; j < allFaces[f].length; j++) {
-                int vNo = allFaces[f][j];
+              float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+              for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                int vNo = allFaces_PNT[f][j];
                 base_Vertices[j][0] = allVertices[vNo][0];
                 base_Vertices[j][1] = allVertices[vNo][1];
                 base_Vertices[j][2] = allVertices[vNo][2];
@@ -23735,7 +23749,7 @@ void SOLARCHVISION_draw_Group3Ds () {
     
           int N_baked = 0;
           
-          for (int f = 1; f < allFaces.length; f++) {
+          for (int f = 1; f < allFaces_PNT.length; f++) {
             
             int vsb = allFaces_MTLV[f][3];
         
@@ -23751,11 +23765,11 @@ void SOLARCHVISION_draw_Group3Ds () {
                 if (allFaces_MTLV[f][0] == 0) {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
-                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+                for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                  int vNo = allFaces_PNT[f][j];
                   base_Vertices[j][0] = allVertices[vNo][0];
                   base_Vertices[j][1] = allVertices[vNo][1];
                   base_Vertices[j][2] = allVertices[vNo][2];
@@ -23839,9 +23853,9 @@ void SOLARCHVISION_draw_Group3Ds () {
         
         int[][] PROCESSED_DAILY_SCENARIOS = {{}};  
     
-        for (int f = 1; f < allFaces.length; f++) {
+        for (int f = 1; f < allFaces_PNT.length; f++) {
   
-          println("calculating %", nf(100.0 * f / (1.0 * allFaces.length), 0,2)); 
+          println("calculating %", nf(100.0 * f / (1.0 * allFaces_PNT.length), 0,2)); 
           
           int vsb = allFaces_MTLV[f][3];
         
@@ -23857,11 +23871,11 @@ void SOLARCHVISION_draw_Group3Ds () {
               if (allFaces_MTLV[f][0] == 0) {
                 Tessellation += MODEL3D_TESSELLATION;
               }
-              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+              if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-              for (int j = 0; j < allFaces[f].length; j++) {
-                int vNo = allFaces[f][j];
+              float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+              for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                int vNo = allFaces_PNT[f][j];
                 base_Vertices[j][0] = allVertices[vNo][0];
                 base_Vertices[j][1] = allVertices[vNo][1];
                 base_Vertices[j][2] = allVertices[vNo][2];
@@ -23987,10 +24001,10 @@ void SOLARCHVISION_draw_Group3Ds () {
                             else {
                       
                               int drw_count = 0;
-                              if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                              if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                              if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                              if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                              if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                              if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                              if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                              if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                               
                               if (drw_count == 1) {
                                 _values_R_dir = 0.001 * Pa; 
@@ -24158,9 +24172,9 @@ void SOLARCHVISION_look_3DViewport_towards_Selection () {
 
 void SOLARCHVISION_lookXY_3DViewport_towards_Selection () {
 
-  float xO = CAM_x / OBJECTS_scale;
-  float yO = CAM_y / OBJECTS_scale;
-  float zO = CAM_z / OBJECTS_scale;
+  float xO = SOLARCHVISION_CAM_x / OBJECTS_scale;
+  float yO = SOLARCHVISION_CAM_y / OBJECTS_scale;
+  float zO = SOLARCHVISION_CAM_z / OBJECTS_scale;
   
   float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
   float xA = ray_end[0] / OBJECTS_scale;
@@ -24183,9 +24197,9 @@ void SOLARCHVISION_lookXY_3DViewport_towards_Selection () {
 
 void SOLARCHVISION_lookZ_3DViewport_towards_Selection () {
 
-  float xO = CAM_x / OBJECTS_scale;
-  float yO = CAM_y / OBJECTS_scale;
-  float zO = CAM_z / OBJECTS_scale;
+  float xO = SOLARCHVISION_CAM_x / OBJECTS_scale;
+  float yO = SOLARCHVISION_CAM_y / OBJECTS_scale;
+  float zO = SOLARCHVISION_CAM_z / OBJECTS_scale;
   
   float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
   float xA = ray_end[0] / OBJECTS_scale;
@@ -24206,9 +24220,9 @@ void SOLARCHVISION_lookZ_3DViewport_towards_Selection () {
 
 void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
   
-  float xA = CAM_x / OBJECTS_scale;
-  float yA = CAM_y / OBJECTS_scale;
-  float zA = CAM_z / OBJECTS_scale;
+  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
+  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
+  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
   
   float Image_X = mouseX - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
   float Image_Y = mouseY - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
@@ -24226,9 +24240,9 @@ void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
   float yB = yO + t * dy;
   float zB = zO + t * dz;
   
-  CAM_x = xB * OBJECTS_scale;           
-  CAM_y = yB * OBJECTS_scale;
-  CAM_z = zB * OBJECTS_scale;     
+  SOLARCHVISION_CAM_x = xB * OBJECTS_scale;           
+  SOLARCHVISION_CAM_y = yB * OBJECTS_scale;
+  SOLARCHVISION_CAM_z = zB * OBJECTS_scale;     
   
   SOLARCHVISION_reverseTransform_3DViewport();
 
@@ -24238,9 +24252,9 @@ void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
 
 void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
   
-  float xA = CAM_x / OBJECTS_scale;
-  float yA = CAM_y / OBJECTS_scale;
-  float zA = CAM_z / OBJECTS_scale;
+  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
+  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
+  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
   
   float[] P = getPivot();
   
@@ -24256,9 +24270,9 @@ void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
   float yB = yO + t * dy;
   float zB = zO + t * dz;
   
-  CAM_x = xB * OBJECTS_scale;           
-  CAM_y = yB * OBJECTS_scale;
-  CAM_z = zB * OBJECTS_scale;     
+  SOLARCHVISION_CAM_x = xB * OBJECTS_scale;           
+  SOLARCHVISION_CAM_y = yB * OBJECTS_scale;
+  SOLARCHVISION_CAM_z = zB * OBJECTS_scale;     
   
   SOLARCHVISION_reverseTransform_3DViewport();
   
@@ -24270,9 +24284,9 @@ void SOLARCHVISION_rotateZ_3DViewport_around_Selection (float t) {
   
   WIN3D_RX_coordinate += t;
 
-  float xA = CAM_x / OBJECTS_scale;
-  float yA = CAM_y / OBJECTS_scale;
-  float zA = CAM_z / OBJECTS_scale;
+  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
+  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
+  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
 
   float[] P = getPivot();
   
@@ -24306,9 +24320,9 @@ void SOLARCHVISION_rotateZ_3DViewport_around_Selection (float t) {
   float yF = yE + yO;
   float zF = zE + zO;
   
-  CAM_x = xF * OBJECTS_scale;           
-  CAM_y = yF * OBJECTS_scale;
-  CAM_z = zF * OBJECTS_scale; 
+  SOLARCHVISION_CAM_x = xF * OBJECTS_scale;           
+  SOLARCHVISION_CAM_y = yF * OBJECTS_scale;
+  SOLARCHVISION_CAM_z = zF * OBJECTS_scale; 
   
   SOLARCHVISION_reverseTransform_3DViewport();
   
@@ -24319,9 +24333,9 @@ void SOLARCHVISION_rotateXY_3DViewport_around_Selection (float t) {
   
   WIN3D_RZ_coordinate += t;
 
-  float xA = CAM_x / OBJECTS_scale;
-  float yA = CAM_y / OBJECTS_scale;
-  float zA = CAM_z / OBJECTS_scale;
+  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
+  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
+  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
   
   float[] P = getPivot();
   
@@ -24336,9 +24350,9 @@ void SOLARCHVISION_rotateXY_3DViewport_around_Selection (float t) {
   float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
   float zB = zA;
   
-  CAM_x = xB * OBJECTS_scale;           
-  CAM_y = yB * OBJECTS_scale;
-  CAM_z = zB * OBJECTS_scale;   
+  SOLARCHVISION_CAM_x = xB * OBJECTS_scale;           
+  SOLARCHVISION_CAM_y = yB * OBJECTS_scale;
+  SOLARCHVISION_CAM_z = zB * OBJECTS_scale;   
   
   SOLARCHVISION_reverseTransform_3DViewport();
   
@@ -24349,9 +24363,9 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_coordin
 
   float px, py, pz;
   
-  px = CAM_x;
-  py = CAM_y;
-  pz = CAM_z;  
+  px = SOLARCHVISION_CAM_x;
+  py = SOLARCHVISION_CAM_y;
+  pz = SOLARCHVISION_CAM_z;  
 
   float CAM_x1, CAM_y1, CAM_z1;
   
@@ -24370,17 +24384,17 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_coordin
 
   float CAM_x2, CAM_y2, CAM_z2;
 
-  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+  SOLARCHVISION_CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
 
-  CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  SOLARCHVISION_CAM_dist = (0.5 * refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
   
   CAM_x2 = 0;
   CAM_y2 = 0;
-  CAM_z2 = CAM_dist;
+  CAM_z2 = SOLARCHVISION_CAM_dist;
   
-  CAM_x2 *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-  CAM_y2 *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-  CAM_z2 *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);  
+  CAM_x2 *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_y2 *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_z2 *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);  
 
 
   WIN3D_X_coordinate = CAM_x2 - CAM_x1; 
@@ -24425,42 +24439,42 @@ void SOLARCHVISION_apply_Current_Camera () {
 
 void SOLARCHVISION_transform_3DViewport () {
   
-  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+  SOLARCHVISION_CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
 
-  CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  SOLARCHVISION_CAM_dist = (0.5 * refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
   
-  CAM_x = 0;
-  CAM_y = 0;
-  CAM_z = CAM_dist;
+  SOLARCHVISION_CAM_x = 0;
+  SOLARCHVISION_CAM_y = 0;
+  SOLARCHVISION_CAM_z = SOLARCHVISION_CAM_dist;
 
   
-  CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-  CAM_y *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-  CAM_z *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+  SOLARCHVISION_CAM_x *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
+  SOLARCHVISION_CAM_y *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
+  SOLARCHVISION_CAM_z *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
     
-  CAM_x -= WIN3D_X_coordinate;
-  CAM_y += WIN3D_Y_coordinate;
-  CAM_z -= WIN3D_Z_coordinate;
+  SOLARCHVISION_CAM_x -= WIN3D_X_coordinate;
+  SOLARCHVISION_CAM_y += WIN3D_Y_coordinate;
+  SOLARCHVISION_CAM_z -= WIN3D_Z_coordinate;
   
   float px, py, pz;
   
-  px = CAM_x;
-  py = CAM_y * cos_ang(WIN3D_RX_coordinate) - CAM_z * sin_ang(WIN3D_RX_coordinate);
-  pz = CAM_y * sin_ang(WIN3D_RX_coordinate) + CAM_z * cos_ang(WIN3D_RX_coordinate);
+  px = SOLARCHVISION_CAM_x;
+  py = SOLARCHVISION_CAM_y * cos_ang(WIN3D_RX_coordinate) - SOLARCHVISION_CAM_z * sin_ang(WIN3D_RX_coordinate);
+  pz = SOLARCHVISION_CAM_y * sin_ang(WIN3D_RX_coordinate) + SOLARCHVISION_CAM_z * cos_ang(WIN3D_RX_coordinate);
   
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;
+  SOLARCHVISION_CAM_x = px;
+  SOLARCHVISION_CAM_y = py;
+  SOLARCHVISION_CAM_z = pz;
   
-  pz = CAM_z;
-  px = CAM_x * cos_ang(WIN3D_RZ_coordinate) - CAM_y * sin_ang(WIN3D_RZ_coordinate);
-  py = CAM_x * sin_ang(WIN3D_RZ_coordinate) + CAM_y * cos_ang(WIN3D_RZ_coordinate);
+  pz = SOLARCHVISION_CAM_z;
+  px = SOLARCHVISION_CAM_x * cos_ang(WIN3D_RZ_coordinate) - SOLARCHVISION_CAM_y * sin_ang(WIN3D_RZ_coordinate);
+  py = SOLARCHVISION_CAM_x * sin_ang(WIN3D_RZ_coordinate) + SOLARCHVISION_CAM_y * cos_ang(WIN3D_RZ_coordinate);
   
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;   
+  SOLARCHVISION_CAM_x = px;
+  SOLARCHVISION_CAM_y = py;
+  SOLARCHVISION_CAM_z = pz;   
   
-  //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+  //println("Camera:", nf(SOLARCHVISION_CAM_x,0,4), nf(SOLARCHVISION_CAM_y,0,4), nf(SOLARCHVISION_CAM_z,0,4));
 
 }
 
@@ -24472,10 +24486,10 @@ void SOLARCHVISION_put_3DViewport () {
 
     float aspect = 1.0 / WIN3D_R_View;
     
-    float zFar = CAM_dist * CAM_clipFar;
-    float zNear = CAM_dist * CAM_clipNear;
+    float zFar = SOLARCHVISION_CAM_dist * SOLARCHVISION_CAM_clipFar;
+    float zNear = SOLARCHVISION_CAM_dist * SOLARCHVISION_CAM_clipNear;
     
-    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
+    WIN3D_Diagrams.perspective(SOLARCHVISION_CAM_fov, aspect, zNear, zFar);
 
     WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
@@ -24520,7 +24534,7 @@ void SOLARCHVISION_draw_Object2Ds () {
       float y = allObject2Ds_XYZS[f][1] * OBJECTS_scale;
       float z = allObject2Ds_XYZS[f][2] * OBJECTS_scale;
       
-      DistZ[f] = dist(x, y, z, CAM_x, CAM_y, CAM_z);
+      DistZ[f] = dist(x, y, z, SOLARCHVISION_CAM_x, SOLARCHVISION_CAM_y, SOLARCHVISION_CAM_z);
     }
     
     for (int g = 1; g <= allObject2Ds_num; g++) {
@@ -24554,7 +24568,7 @@ void SOLARCHVISION_draw_Object2Ds () {
         float rw = rh * Object2DImageRatios[n];
         
         float t = WIN3D_RZ_coordinate * PI / 180.0;
-        if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+        if (WIN3D_View_Type == 1) t = atan2(y - SOLARCHVISION_CAM_y, x - SOLARCHVISION_CAM_x) + 0.5 * PI; 
         
         if (allObject2Ds_MAP[f] < 0) t += PI;         
         
@@ -24631,7 +24645,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_d
 
   int hit = 0;
 
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
 
     int vsb = allFaces_MTLV[f][3];
     
@@ -24674,11 +24688,11 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_d
               
               AnglesAll[o] = 0;      
             
-              for (int i = 0; i < allFaces[f].length; i++) {
-                int next_i = (i + 1) % allFaces[f].length;
+              for (int i = 0; i < allFaces_PNT[f].length; i++) {
+                int next_i = (i + 1) % allFaces_PNT[f].length;
                 
-                float[] vectA = {allVertices[allFaces[f][i]][0] - x[o], allVertices[allFaces[f][i]][1] - y[o], allVertices[allFaces[f][i]][2] - z[o]}; 
-                float[] vectB = {allVertices[allFaces[f][next_i]][0] - x[o], allVertices[allFaces[f][next_i]][1] - y[o], allVertices[allFaces[f][next_i]][2] - z[o]};
+                float[] vectA = {allVertices[allFaces_PNT[f][i]][0] - x[o], allVertices[allFaces_PNT[f][i]][1] - y[o], allVertices[allFaces_PNT[f][i]][2] - z[o]}; 
+                float[] vectB = {allVertices[allFaces_PNT[f][next_i]][0] - x[o], allVertices[allFaces_PNT[f][next_i]][1] - y[o], allVertices[allFaces_PNT[f][next_i]][2] - z[o]};
                 
                 float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
                 
@@ -24738,22 +24752,22 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allFaces.length][4];
+  float[][] hitPoint = new float [allFaces_PNT.length][4];
 
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allFaces = new float [allFaces.length];
+  float[] pre_angle_to_allFaces = new float [allFaces_PNT.length];
   
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
     pre_angle_to_allFaces[f] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
 
     int vsb = allFaces_MTLV[f][3];
     
@@ -24792,11 +24806,11 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           
           AnglesAll[o] = 0;      
         
-          for (int i = 0; i < allFaces[f].length; i++) {
-            int next_i = (i + 1) % allFaces[f].length;
+          for (int i = 0; i < allFaces_PNT[f].length; i++) {
+            int next_i = (i + 1) % allFaces_PNT[f].length;
             
-            float[] vectA = {allVertices[allFaces[f][i]][0] - x[o], allVertices[allFaces[f][i]][1] - y[o], allVertices[allFaces[f][i]][2] - z[o]}; 
-            float[] vectB = {allVertices[allFaces[f][next_i]][0] - x[o], allVertices[allFaces[f][next_i]][1] - y[o], allVertices[allFaces[f][next_i]][2] - z[o]};
+            float[] vectA = {allVertices[allFaces_PNT[f][i]][0] - x[o], allVertices[allFaces_PNT[f][i]][1] - y[o], allVertices[allFaces_PNT[f][i]][2] - z[o]}; 
+            float[] vectB = {allVertices[allFaces_PNT[f][next_i]][0] - x[o], allVertices[allFaces_PNT[f][next_i]][1] - y[o], allVertices[allFaces_PNT[f][next_i]][2] - z[o]};
             
             float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
             
@@ -24872,7 +24886,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
   
   float pre_dist = FLOAT_undefined;
   
-  for (int f = 1; f < allFaces.length; f++) {
+  for (int f = 1; f < allFaces_PNT.length; f++) {
     
     float hx = hitPoint[f][0];
     float hy = hitPoint[f][1];
@@ -27157,10 +27171,10 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                   else {
       
                     int drw_count = 0;
-                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                     
                     if (drw_count == 1) {
                       _values_R_dir = 0.001 * Pa;  
@@ -29443,10 +29457,10 @@ void SOLARCHVISION_SolarProjection () {
                   else {
   
                     int drw_count = 0;
-                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED_data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
                     
                     if (drw_count == 1) {
                       _values_R_dir = 0.001 * Pa;
@@ -29697,7 +29711,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }
  
   if (Current_ObjectCategory == ObjectCategory_Faces) {
-    length_of_indexes = allFaces.length; 
+    length_of_indexes = allFaces_PNT.length; 
     start_index_OBJ_NUM = selectedFace_numbers[start_index];
   }                
   
@@ -30123,8 +30137,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     int OBJ_NUM = 0;
     float min_dist = FLOAT_undefined;  
     
-    for (int j = 0; j < allFaces[f].length; j++) {
-      int vNo = allFaces[f][j];
+    for (int j = 0; j < allFaces_PNT[f].length; j++) {
+      int vNo = allFaces_PNT[f][j];
 
       float x = allVertices[vNo][0];
       float y = allVertices[vNo][1];          
@@ -30636,10 +30650,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
         for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
-          if ((0 < f) && (f < allFaces.length)) { 
+          if ((0 < f) && (f < allFaces_PNT.length)) { 
       
-            for (int j = 0; j < allFaces[f].length; j++) {
-              int vNo = allFaces[f][j];
+            for (int j = 0; j < allFaces_PNT[f].length; j++) {
+              int vNo = allFaces_PNT[f][j];
   
               float x = allVertices[vNo][0] * OBJECTS_scale;
               float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -30724,7 +30738,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   
   if (Current_ObjectCategory == ObjectCategory_Faces) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allFaces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allFaces_PNT.length; OBJ_NUM++) {
       
       int break_loops = 0;
       
@@ -30733,8 +30747,8 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      for (int j = 0; j < allFaces[OBJ_NUM].length; j++) {
-        int vNo = allFaces[OBJ_NUM][j];
+      for (int j = 0; j < allFaces_PNT[OBJ_NUM].length; j++) {
+        int vNo = allFaces_PNT[OBJ_NUM][j];
 
         float x = allVertices[vNo][0] * OBJECTS_scale;
         float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -31836,7 +31850,7 @@ void mouseReleased () {
           
                   float[] ray_direction = new float [3];
           
-                  float[] ray_start = {CAM_x, CAM_y, CAM_z};
+                  float[] ray_start = {SOLARCHVISION_CAM_x, SOLARCHVISION_CAM_y, SOLARCHVISION_CAM_z};
           
                   float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
                   
@@ -32675,7 +32689,7 @@ void mouseClicked () {
                   }
                   else {
 
-                    if ((develop_option == DEV_OP_6) || (develop_option == DEV_OP_7) || (develop_option == DEV_OP_8)) {
+                    if ((develop_option == DEV_OP_06) || (develop_option == DEV_OP_07) || (develop_option == DEV_OP_08)) {
                       
                       if (STUDY_drw_Layer == develop_Layer) {
                     
@@ -34503,7 +34517,7 @@ void mouseClicked () {
     
             float[] ray_direction = new float [3];
     
-            float[] ray_start = {CAM_x, CAM_y, CAM_z};
+            float[] ray_start = {SOLARCHVISION_CAM_x, SOLARCHVISION_CAM_y, SOLARCHVISION_CAM_z};
     
             float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
             
@@ -34723,13 +34737,13 @@ void mouseClicked () {
                         
                         selectedFace_displayVertexCount = 1;                 
                         
-                        int n = allFaces[f].length;
+                        int n = allFaces_PNT[f].length;
                         
                         if (n > 2) {
                           int[] tmpFace = new int[n];
                           float[] G = {0,0,0}; 
                           for (int j = 0; j < n; j++) {
-                            tmpFace[j] = allFaces[f][j];
+                            tmpFace[j] = allFaces_PNT[f][j];
                             G[0] += allVertices[tmpFace[j]][0] / float(n); 
                             G[1] += allVertices[tmpFace[j]][1] / float(n);
                             G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -34763,7 +34777,7 @@ void mouseClicked () {
 
                           if (flip_face == 1) {
                             for (int j = 0; j < n; j++) {
-                              allFaces[f][j] = tmpFace[n - j - 1];
+                              allFaces_PNT[f][j] = tmpFace[n - j - 1];
                             }
                           }
                         }
@@ -34779,13 +34793,13 @@ void mouseClicked () {
                         }
                         if (OBJ_NUM != 0) {         
                           for (int q = allGroup3Ds_Faces[OBJ_NUM][0]; q <= allGroup3Ds_Faces[OBJ_NUM][1]; q++) {                    
-                            int n = allFaces[q].length;
+                            int n = allFaces_PNT[q].length;
                             
                             if (n > 2) {
                               int[] tmpFace = new int[n];
                               float[] G = {0,0,0}; 
                               for (int j = 0; j < n; j++) {
-                                tmpFace[j] = allFaces[q][j];
+                                tmpFace[j] = allFaces_PNT[q][j];
                                 G[0] += allVertices[tmpFace[j]][0] / float(n); 
                                 G[1] += allVertices[tmpFace[j]][1] / float(n);
                                 G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -34819,7 +34833,7 @@ void mouseClicked () {
     
                               if (flip_face == 1) {
                                 for (int j = 0; j < n; j++) {
-                                  allFaces[q][j] = tmpFace[n - j - 1];
+                                  allFaces_PNT[q][j] = tmpFace[n - j - 1];
                                 }
                               }
                             }
@@ -34839,7 +34853,7 @@ void mouseClicked () {
                         
                         selectedFace_displayVertexCount = 1;
 
-                        int n = allFaces[f].length;
+                        int n = allFaces_PNT[f].length;
                         
                         if (n > 2) {
                             
@@ -34847,7 +34861,7 @@ void mouseClicked () {
                           float min_dist = FLOAT_undefined;
                           
                           for (int j = 0; j < n; j++) {
-                            int vNo = allFaces[f][j];
+                            int vNo = allFaces_PNT[f][j];
                             
                             float d = dist(RxP[0], RxP[1], RxP[2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
                             
@@ -34859,11 +34873,11 @@ void mouseClicked () {
                           
                           int[] tmpFace = new int[n];
                           for (int j = 0; j < n; j++) {
-                            tmpFace[j] = allFaces[f][j];
+                            tmpFace[j] = allFaces_PNT[f][j];
                           }  
                           
                           for (int j = 0; j < n; j++) {
-                            allFaces[f][j] = tmpFace[(j + min_num + n) % n];
+                            allFaces_PNT[f][j] = tmpFace[(j + min_num + n) % n];
                           }
 
                         }
@@ -35145,9 +35159,9 @@ void mouseClicked () {
                   
                   int f = int(RxP[4]);
 
-                  float keep_CAM_x = CAM_x;
-                  float keep_CAM_y = CAM_y;
-                  float keep_CAM_z = CAM_z;
+                  float keep_CAM_x = SOLARCHVISION_CAM_x;
+                  float keep_CAM_y = SOLARCHVISION_CAM_y;
+                  float keep_CAM_z = SOLARCHVISION_CAM_z;
                   float keep_WIN3D_X_coordinate = WIN3D_X_coordinate; 
                   float keep_WIN3D_Y_coordinate = WIN3D_Y_coordinate;
                   float keep_WIN3D_Z_coordinate = WIN3D_Z_coordinate;
@@ -35159,9 +35173,9 @@ void mouseClicked () {
 
                   {
 
-                    CAM_x = RxP[0];
-                    CAM_y = RxP[1];
-                    CAM_z = RxP[2] + eyeLevel;       
+                    SOLARCHVISION_CAM_x = RxP[0];
+                    SOLARCHVISION_CAM_y = RxP[1];
+                    SOLARCHVISION_CAM_z = RxP[2] + eyeLevel;       
   
                     SOLARCHVISION_reverseTransform_3DViewport();
                     
@@ -35181,9 +35195,9 @@ void mouseClicked () {
                     WIN3D_Update = 1;                    
                   }  
                 
-                  CAM_x = keep_CAM_x;
-                  CAM_y = keep_CAM_y;
-                  CAM_z = keep_CAM_z;
+                  SOLARCHVISION_CAM_x = keep_CAM_x;
+                  SOLARCHVISION_CAM_y = keep_CAM_y;
+                  SOLARCHVISION_CAM_z = keep_CAM_z;
                   WIN3D_X_coordinate = keep_WIN3D_X_coordinate; 
                   WIN3D_Y_coordinate = keep_WIN3D_Y_coordinate;
                   WIN3D_Z_coordinate = keep_WIN3D_Z_coordinate;
@@ -35199,7 +35213,7 @@ void mouseClicked () {
                   
                   int f = int(RxP[4]);
 
-                  int n = allFaces[f].length;
+                  int n = allFaces_PNT[f].length;
                   
                   if (n > 2) {
                     
@@ -35210,13 +35224,13 @@ void mouseClicked () {
                       
                       int j_next = (j + 1) % n;
                       
-                      float x1 = allVertices[allFaces[f][j]][0];
-                      float y1 = allVertices[allFaces[f][j]][1];
-                      float z1 = allVertices[allFaces[f][j]][2];                        
+                      float x1 = allVertices[allFaces_PNT[f][j]][0];
+                      float y1 = allVertices[allFaces_PNT[f][j]][1];
+                      float z1 = allVertices[allFaces_PNT[f][j]][2];                        
 
-                      float x2 = allVertices[allFaces[f][j_next]][0];
-                      float y2 = allVertices[allFaces[f][j_next]][1];
-                      float z2 = allVertices[allFaces[f][j_next]][2];                        
+                      float x2 = allVertices[allFaces_PNT[f][j_next]][0];
+                      float y2 = allVertices[allFaces_PNT[f][j_next]][1];
+                      float z2 = allVertices[allFaces_PNT[f][j_next]][2];                        
 
                       
                       //float Alpha = asin_ang(z2 - z1);
@@ -35234,9 +35248,9 @@ void mouseClicked () {
                     
                     for (int j = 0; j < n; j++) {
                       
-                      float x1 = allVertices[allFaces[f][j]][0];
-                      float y1 = allVertices[allFaces[f][j]][1];
-                      float z1 = allVertices[allFaces[f][j]][2];
+                      float x1 = allVertices[allFaces_PNT[f][j]][0];
+                      float y1 = allVertices[allFaces_PNT[f][j]][1];
+                      float z1 = allVertices[allFaces_PNT[f][j]][2];
                       
                       float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
                       float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
@@ -35319,17 +35333,17 @@ void mouseClicked () {
                     G[1] = 0;
                     G[2] = 0;
                     for (int j = 0; j < n; j++) {
-                      float the_x = allVertices[allFaces[f][j]][0];
-                      float the_y = allVertices[allFaces[f][j]][1];
-                      float the_z = allVertices[allFaces[f][j]][2];
+                      float the_x = allVertices[allFaces_PNT[f][j]][0];
+                      float the_y = allVertices[allFaces_PNT[f][j]][1];
+                      float the_z = allVertices[allFaces_PNT[f][j]][2];
                       
                       G[0] += the_x / float(n); 
                       G[1] += the_y / float(n);
                       G[2] += the_z / float(n);
                     }
 
-                    PVector AG = new PVector(allVertices[allFaces[f][0]][0] - G[0], allVertices[allFaces[f][0]][1] - G[1], allVertices[allFaces[f][0]][2] - G[2]);                       
-                    PVector BG = new PVector(allVertices[allFaces[f][1]][0] - G[0], allVertices[allFaces[f][1]][1] - G[1], allVertices[allFaces[f][1]][2] - G[2]);
+                    PVector AG = new PVector(allVertices[allFaces_PNT[f][0]][0] - G[0], allVertices[allFaces_PNT[f][0]][1] - G[1], allVertices[allFaces_PNT[f][0]][2] - G[2]);                       
+                    PVector BG = new PVector(allVertices[allFaces_PNT[f][1]][0] - G[0], allVertices[allFaces_PNT[f][1]][1] - G[1], allVertices[allFaces_PNT[f][1]][2] - G[2]);
                    
                     PVector GAxGB = AG.cross(BG);
                     
@@ -36065,8 +36079,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Current_Camera = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Current_Camera" , Current_Camera, 0, allCameras_num, 1), 1));
       
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.01, 100, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 1000, 2000000000, -2);
+      SOLARCHVISION_CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "SOLARCHVISION_CAM_clipNear" , SOLARCHVISION_CAM_clipNear, 0.01, 100, -2);
+      SOLARCHVISION_CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "SOLARCHVISION_CAM_clipFar" , SOLARCHVISION_CAM_clipFar, 1000, 2000000000, -2);
     
       //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
 
@@ -36147,7 +36161,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
 
     if (ROLLOUT_child == 3) { // Filters
-      sky_scenario = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Sky status", sky_scenario, 1, 4, 1), 1));
+      STUDY_skyScenario_Active = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Sky status", STUDY_skyScenario_Active, 1, 4, 1), 1));
       FILTER_Active = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Hourly/daily filter", FILTER_Active, 0, 1, 1), 1));
 
       H_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Climate filter option" , H_layer_option, -1, 6, 1), 1));
@@ -36401,8 +36415,8 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
   
 
   
-  AERIAL = new float [49][num_layers][AERIAL_num][Scenarios_max];
-  AERIAL_Flag = new int [49][num_layers][AERIAL_num][Scenarios_max];
+  AERIAL_data = new float [49][num_layers][AERIAL_num][Scenarios_max];
+  AERIAL_flag = new int [49][num_layers][AERIAL_num][Scenarios_max];
   AERIAL_Locations = new float [AERIAL_num][3]; // lon, lat, tgl
   AERIAL_Center_Longitude = LocationLongitude;
   AERIAL_Center_Latitude = LocationLatitude;
@@ -36415,8 +36429,8 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
     for (int k = 0; k <= 48; k += 1) {
       for (int l = 0; l < num_layers; l++) {
         for (int o = 0; o < Scenarios_max; o += 1){   
-          AERIAL[k][l][n][o] = FLOAT_undefined;
-          AERIAL_Flag[k][l][n][o] = -1;        
+          AERIAL_data[k][l][n][o] = FLOAT_undefined;
+          AERIAL_flag[k][l][n][o] = -1;        
         }
       }
     }  
@@ -36535,7 +36549,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
               LocationLatitude = AERIAL_Locations[n][1];
             
               int o = 0; // now only for deterministic!
-              AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, h, AERIAL_Locations[n][0], AERIAL_Locations[n][1]); 
+              AERIAL_data[GRIB2_Hour][GRIB2_Layer][n][o] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, h, AERIAL_Locations[n][0], AERIAL_Locations[n][1]); 
               
             }
 
@@ -36570,7 +36584,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
                   nPoint += 1;
                   
                   for (int o = 0; o < Scenarios_max; o += 1){
-                    AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[nPoint][o];
+                    AERIAL_data[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[nPoint][o];
                   }
                 }
               }
@@ -36586,19 +36600,19 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
     
     int h = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
     
-    if ((LAYERS_GRIB2[LAYER_winddir][h].substring(0, 4)).equals("UGRD") && (LAYERS_GRIB2[LAYER_windspd][h].substring(0, 4)).equals("VGRD")) {
+    if ((LAYERS_GRIB2_VAL[LAYER_winddir][h].substring(0, 4)).equals("UGRD") && (LAYERS_GRIB2_VAL[LAYER_windspd][h].substring(0, 4)).equals("VGRD")) {
 
       for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
       GRIB2_Hour = k;    
       
         for (int o = 0; o < Scenarios_max; o += 1){
           
-          float u = AERIAL[GRIB2_Hour][LAYER_winddir][n][o]; // because U component stored in LAYER_winddir 
-          float v = AERIAL[GRIB2_Hour][LAYER_windspd][n][o]; // because U component stored in LAYER_windspd
+          float u = AERIAL_data[GRIB2_Hour][LAYER_winddir][n][o]; // because U component stored in LAYER_winddir 
+          float v = AERIAL_data[GRIB2_Hour][LAYER_windspd][n][o]; // because U component stored in LAYER_windspd
           
           if ((abs(u) < 0.9 * FLOAT_undefined) && (abs(v) < 0.9 * FLOAT_undefined)) { 
-            AERIAL[GRIB2_Hour][LAYER_windspd][n][o] = 3.6 * pow((pow(u, 2) + pow(v, 2)), 0.5); // now converting from m/s >> Km/h 
-            AERIAL[GRIB2_Hour][LAYER_winddir][n][o] = 180 + atan2_ang(u, v); // ???????????? range checking?
+            AERIAL_data[GRIB2_Hour][LAYER_windspd][n][o] = 3.6 * pow((pow(u, 2) + pow(v, 2)), 0.5); // now converting from m/s >> Km/h 
+            AERIAL_data[GRIB2_Hour][LAYER_winddir][n][o] = 180 + atan2_ang(u, v); // ???????????? range checking?
           }
           
         }
@@ -36617,10 +36631,10 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
 
       for (int n = 0; n < AERIAL_num; n += 1) {
         for (int o = 0; o < Scenarios_max; o += 1){
-          if (AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] < 0.9 * FLOAT_undefined) {
-            AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
+          if (AERIAL_data[GRIB2_Hour][GRIB2_Layer][n][o] < 0.9 * FLOAT_undefined) {
+            AERIAL_flag[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
           }
-          else AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
+          else AERIAL_flag[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
         }
       }          
     }
@@ -36665,7 +36679,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
           }
 
           
-          ENSEMBLE_data[next_i][next_j][l][43 + o] = AERIAL[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing after member 43
+          ENSEMBLE_data[next_i][next_j][l][43 + o] = AERIAL_data[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing after member 43
 
           println(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + "[" + nf(o, 0) + "]:", next_i, next_j, l, ENSEMBLE_data[next_i][next_j][l][43 + o]);          
           println("GDPS:", next_i, next_j, l, ENSEMBLE_data[next_i][next_j][l][21]);
@@ -36690,16 +36704,16 @@ String getGrib2Folder (int s) {
 String getGrib2Filename (int k, int l, int h) {
   String return_txt = "";
   
-  String F_L = LAYERS_GRIB2[l][h];
+  String F_L = LAYERS_GRIB2_VAL[l][h];
   
   if (l == LAYER_winddir) {
     if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {
       F_L = F_L.replace("WDIR", "UGRD");
-      LAYERS_GRIB2[l][h] = F_L;      
+      LAYERS_GRIB2_VAL[l][h] = F_L;      
     }
     else {
       F_L = F_L.replace("UGRD", "WDIR");
-      LAYERS_GRIB2[l][h] = F_L;  
+      LAYERS_GRIB2_VAL[l][h] = F_L;  
     }
   }
   
@@ -36707,12 +36721,12 @@ String getGrib2Filename (int k, int l, int h) {
     if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {
     
       F_L = F_L.replace("WIND", "VGRD");
-      LAYERS_GRIB2[l][h] = F_L;
+      LAYERS_GRIB2_VAL[l][h] = F_L;
       LAYERS_GRIB2_MUL[l] = 1; // that is for no unit conversion!
     }
     else {
       F_L = F_L.replace("VGRD", "WIND");
-      LAYERS_GRIB2[l][h] = F_L;  
+      LAYERS_GRIB2_VAL[l][h] = F_L;  
       LAYERS_GRIB2_MUL[l] = 3.6; // m/s > Km/h
     }
   }
@@ -36731,11 +36745,11 @@ String getGrib2Filename (int k, int l, int h) {
 
 
 String getWgrib2Filename (int k, int l, int h, float _lon, float _lat) {
-  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][h] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
 }
 
 String getWgrib2Filename_MultiplePoints (int k, int l, int h, int part) {
-  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][h] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + "_part" + nf(part, 3) + ".txt");
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + "_part" + nf(part, 3) + ".txt");
 }
 
 float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
@@ -36914,7 +36928,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
     }
   
     newChild1 = my_xml.addChild("forecast_element");
-    newChild1.setString("code", LAYERS_GRIB2[l][h]); 
+    newChild1.setString("code", LAYERS_GRIB2_VAL[l][h]); 
     newChild1.setString("unit", LAYERS_Unit[l]); 
     newChild1.setString("title_english", LAYERS_Title[l][Language_EN]);
     newChild1.setString("titre_francais", LAYERS_Title[l][Language_FR]);
@@ -37118,7 +37132,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
     THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_run" + nf(GRIB2_RUN, 2);
     THE_XML_filename += "/" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
     THE_XML_filename += "/fhr" + nf(k, 3);
-    THE_XML_filename += "_" + LAYERS_GRIB2[l][h];
+    THE_XML_filename += "_" + LAYERS_GRIB2_VAL[l][h];
     THE_XML_filename += ".xml";
     saveXML(my_xml, THE_XML_filename);
   }
@@ -37135,9 +37149,9 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
   float px, py, pz;
 
-  x -= CAM_x;
-  y -= CAM_y;
-  z += CAM_z;
+  x -= SOLARCHVISION_CAM_x;
+  y -= SOLARCHVISION_CAM_y;
+  z += SOLARCHVISION_CAM_z;
 
   pz = z;
   px = x * cos_ang(-WIN3D_RZ_coordinate) - y * sin_ang(-WIN3D_RZ_coordinate);
@@ -37159,8 +37173,8 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
   if (z > 0) {
     if (WIN3D_View_Type == 1) {
       
-      Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-      Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+      Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale;
+      Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale;
       Image_Z = z;
     }
     else {
@@ -37535,11 +37549,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           if (allFaces_MTLV[f][0] == 0) {
             Tessellation += MODEL3D_TESSELLATION;
           }
-          if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+          if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-          float[][] base_Vertices = new float [allFaces[f].length][3];
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
+          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
             base_Vertices[j][0] = allVertices[vNo][0];
             base_Vertices[j][1] = allVertices[vNo][1];
             base_Vertices[j][2] = allVertices[vNo][2];
@@ -37596,8 +37610,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         
         if (f != 0) {
 
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
           
             float x = allVertices[vNo][0] * OBJECTS_scale;
             float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -37740,7 +37754,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         if (OBJ_NUM != 0) {
     
           for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
-            if ((0 < f) && (f < allFaces.length)) { 
+            if ((0 < f) && (f < allFaces_PNT.length)) { 
         
               int Tessellation = allFaces_MTLV[f][1];
               
@@ -37748,11 +37762,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               if (allFaces_MTLV[f][0] == 0) {
                 Tessellation += MODEL3D_TESSELLATION;
               }
-              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+              if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
         
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-              for (int j = 0; j < allFaces[f].length; j++) {
-                int vNo = allFaces[f][j];
+              float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+              for (int j = 0; j < allFaces_PNT[f].length; j++) {
+                int vNo = allFaces_PNT[f][j];
                 base_Vertices[j][0] = allVertices[vNo][0];
                 base_Vertices[j][1] = allVertices[vNo][1];
                 base_Vertices[j][2] = allVertices[vNo][2];
@@ -38183,8 +38197,8 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
     
     PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
     
-    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
-    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale);
+    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale);
   }
   else {
     float ZOOM = Orthographic_Zoom();
@@ -38213,9 +38227,9 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   PNT_y = py;
   PNT_z = pz;    
   
-  PNT_x += CAM_x;
-  PNT_y += CAM_y;
-  PNT_z -= CAM_z;  
+  PNT_x += SOLARCHVISION_CAM_x;
+  PNT_y += SOLARCHVISION_CAM_y;
+  PNT_z -= SOLARCHVISION_CAM_z;  
 
   float[] return_array = {PNT_x, PNT_y, -PNT_z};
   
@@ -38557,7 +38571,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             SHADOW_Diagrams.stroke(0); 
             SHADOW_Diagrams.fill(0);              
             
-            for (int f = 1; f < allFaces.length; f++) {
+            for (int f = 1; f < allFaces_PNT.length; f++) {
               
               int vsb = allFaces_MTLV[f][3];
         
@@ -38572,11 +38586,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                   if (allFaces_MTLV[f][0] == 0) {
                     Tessellation += MODEL3D_TESSELLATION;
                   }
-                  if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                  if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
                   
-                  float[][] base_Vertices = new float [allFaces[f].length][3];
-                  for (int g = 0; g < allFaces[f].length; g++) {
-                    int vNo = allFaces[f][g];
+                  float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+                  for (int g = 0; g < allFaces_PNT[f].length; g++) {
+                    int vNo = allFaces_PNT[f][g];
                     base_Vertices[g][0] = allVertices[vNo][0];
                     base_Vertices[g][1] = allVertices[vNo][1];
                     base_Vertices[g][2] = allVertices[vNo][2];
@@ -39010,7 +39024,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           SHADOW_Diagrams.stroke(0); 
           SHADOW_Diagrams.fill(0);
           
-          for (int f = 1; f < allFaces.length; f++) {
+          for (int f = 1; f < allFaces_PNT.length; f++) {
             
             int vsb = allFaces_MTLV[f][3];
         
@@ -39025,11 +39039,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                 if (allFaces_MTLV[f][0] == 0) {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
-                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
                 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int g = 0; g < allFaces[f].length; g++) {
-                  int vNo = allFaces[f][g];
+                float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+                for (int g = 0; g < allFaces_PNT[f].length; g++) {
+                  int vNo = allFaces_PNT[f][g];
                   base_Vertices[g][0] = allVertices[vNo][0];
                   base_Vertices[g][1] = allVertices[vNo][1];
                   base_Vertices[g][2] = allVertices[vNo][2];
@@ -39483,9 +39497,9 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
   
     float x = 0, y = 0, z = 0;
     
-    float keep_CAM_x = CAM_x;
-    float keep_CAM_y = CAM_y;
-    float keep_CAM_z = CAM_z;
+    float keep_CAM_x = SOLARCHVISION_CAM_x;
+    float keep_CAM_y = SOLARCHVISION_CAM_y;
+    float keep_CAM_z = SOLARCHVISION_CAM_z;
     float keep_WIN3D_X_coordinate = WIN3D_X_coordinate; 
     float keep_WIN3D_Y_coordinate = WIN3D_Y_coordinate;
     float keep_WIN3D_Z_coordinate = WIN3D_Z_coordinate;
@@ -39520,14 +39534,14 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       float y3 = x2 * sin_ang(Camera_RZ) + y2 * cos_ang(Camera_RZ);
       float z3 = z2;
 
-      x = CAM_x + x3;
-      y = CAM_y + y3;
-      z = CAM_z + z3;
+      x = SOLARCHVISION_CAM_x + x3;
+      y = SOLARCHVISION_CAM_y + y3;
+      z = SOLARCHVISION_CAM_z + z3;
     }
   
-    CAM_x = keep_CAM_x;
-    CAM_y = keep_CAM_y;
-    CAM_z = keep_CAM_z;
+    SOLARCHVISION_CAM_x = keep_CAM_x;
+    SOLARCHVISION_CAM_y = keep_CAM_y;
+    SOLARCHVISION_CAM_z = keep_CAM_z;
     WIN3D_X_coordinate = keep_WIN3D_X_coordinate; 
     WIN3D_Y_coordinate = keep_WIN3D_Y_coordinate;
     WIN3D_Z_coordinate = keep_WIN3D_Z_coordinate;
@@ -40028,7 +40042,7 @@ void SOLARCHVISION_draw_Fractals () {
         // ----------------        
        
         float t = WIN3D_RZ_coordinate * PI / 180.0;
-        if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+        if (WIN3D_View_Type == 1) t = atan2(y - SOLARCHVISION_CAM_y, x - SOLARCHVISION_CAM_x) + 0.5 * PI; 
 
         {
           allFractals_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
@@ -40659,8 +40673,8 @@ int[] SOLARCHVISION_get_selectedFace_Vertices () {
       
       int f = OBJ_NUM;
   
-      for (int j = 0; j < allFaces[f].length; j++) {
-        int vNo = allFaces[f][j];
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+        int vNo = allFaces_PNT[f][j];
         
         int vertex_listed = 0;
         
@@ -40696,10 +40710,10 @@ int[] SOLARCHVISION_get_selectedGroup3D_Vertices () {
   
       for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
 
-        if ((0 < f) && (f < allFaces.length)) { 
-          for (int j = 0; j < allFaces[f].length; j++) {
+        if ((0 < f) && (f < allFaces_PNT.length)) { 
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
             
-            int vNo = allFaces[f][j];
+            int vNo = allFaces_PNT[f][j];
             
             int vertex_listed = 0;
             
@@ -42919,7 +42933,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       if (OBJ_NUM != 0) {      
         
         for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
-          if ((0 < f) && (f < allFaces.length)) {
+          if ((0 < f) && (f < allFaces_PNT.length)) {
         
             if (View_Select_Create_Modify == 4) {
               int n = allFaces_MTLV[f][0];
@@ -46301,7 +46315,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           if (impacts_source == databaseNumber_OBSERVED) {
             //if ((j % 1 == 0)) {
-              txt = STATION_SWOB_INFO[nearest_Station_OBSERVED[j]][6];
+              txt = STATION_SWOB_INFO[nearest_Station_OBSERVED_id[j]][6];
             //}
           }                 
 
@@ -46770,7 +46784,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("STUDY_print_title", STUDY_print_title);
   newChild1.setFloat("STUDY_T_scale", STUDY_T_scale);
   newChild1.setFloat("STUDY_U_scale", STUDY_U_scale);
-  newChild1.setInt("sky_scenario", sky_scenario);
+  newChild1.setInt("STUDY_skyScenario_Active", STUDY_skyScenario_Active);
   newChild1.setInt("FILTER_Hourly", FILTER_Hourly);
   newChild1.setInt("FILTER_Daily", FILTER_Daily);
   newChild1.setInt("FILTER_Active", FILTER_Active);
@@ -46821,8 +46835,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("windFlow_Pallet_MLT", windFlow_Pallet_MLT);
   newChild1.setInt("Impact_ACTIVE", Impact_ACTIVE);
   newChild1.setInt("Impact_PASSIVE", Impact_PASSIVE);
-  newChild1.setInt("Impact_SPD_DIR", Impact_SPD_DIR);
-  newChild1.setInt("Impact_SPD_DIR_TMP", Impact_SPD_DIR_TMP);
+  newChild1.setInt("Impact_WIND_Overlay", Impact_WIND_Overlay);
+  newChild1.setInt("Impact_WIND_Temperature", Impact_WIND_Temperature);
   newChild1.setInt("Impact_TYPE", Impact_TYPE);
   newChild1.setFloat("STUDY_O_scale", STUDY_O_scale);
   newChild1.setFloat("STUDY_W_scale", STUDY_W_scale);
@@ -46892,13 +46906,13 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Shade_Vertex_Solar", Shade_Vertex_Solar);
   newChild1.setInt("Shade_Vertex_Solid", Shade_Vertex_Solid);
   newChild1.setInt("Shade_Vertex_Elevation", Shade_Vertex_Elevation);
-  newChild1.setFloat("CAM_x", CAM_x);
-  newChild1.setFloat("CAM_y", CAM_y);
-  newChild1.setFloat("CAM_z", CAM_z);
-  newChild1.setFloat("CAM_fov", CAM_fov);
-  newChild1.setFloat("CAM_dist", CAM_dist);
-  newChild1.setFloat("CAM_clipNear", CAM_clipNear);
-  newChild1.setFloat("CAM_clipFar", CAM_clipFar);
+  newChild1.setFloat("SOLARCHVISION_CAM_x", SOLARCHVISION_CAM_x);
+  newChild1.setFloat("SOLARCHVISION_CAM_y", SOLARCHVISION_CAM_y);
+  newChild1.setFloat("SOLARCHVISION_CAM_z", SOLARCHVISION_CAM_z);
+  newChild1.setFloat("SOLARCHVISION_CAM_fov", SOLARCHVISION_CAM_fov);
+  newChild1.setFloat("SOLARCHVISION_CAM_dist", SOLARCHVISION_CAM_dist);
+  newChild1.setFloat("SOLARCHVISION_CAM_clipNear", SOLARCHVISION_CAM_clipNear);
+  newChild1.setFloat("SOLARCHVISION_CAM_clipFar", SOLARCHVISION_CAM_clipFar);
   newChild1.setInt("Current_Camera", Current_Camera);
   newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
   newChild1.setFloat("refScale", refScale);
@@ -47348,15 +47362,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   println("Saving:Faces");
   {
     {
-      newChild1 = my_xml.addChild("allFaces");
-      newChild1.setInt("ni", allFaces.length);
-      for (int i = 0; i < allFaces.length; i++) {
+      newChild1 = my_xml.addChild("allFaces_PNT");
+      newChild1.setInt("ni", allFaces_PNT.length);
+      for (int i = 0; i < allFaces_PNT.length; i++) {
         newChild2 = newChild1.addChild("Face");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allFaces[i].length; j++) {
-          lineSTR += nf(allFaces[i][j], 0);
-          if (j < allFaces[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allFaces_PNT[i].length; j++) {
+          lineSTR += nf(allFaces_PNT[i][j], 0);
+          if (j < allFaces_PNT[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       } 
@@ -48018,7 +48032,7 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY_print_title = children0[L].getInt("STUDY_print_title");
       STUDY_T_scale = children0[L].getFloat("STUDY_T_scale");
       STUDY_U_scale = children0[L].getFloat("STUDY_U_scale");
-      sky_scenario = children0[L].getInt("sky_scenario");
+      STUDY_skyScenario_Active = children0[L].getInt("STUDY_skyScenario_Active");
       FILTER_Hourly = children0[L].getInt("FILTER_Hourly");
       FILTER_Daily = children0[L].getInt("FILTER_Daily");
       FILTER_Active = children0[L].getInt("FILTER_Active");
@@ -48069,8 +48083,8 @@ void SOLARCHVISION_load_project (String myFile) {
       windFlow_Pallet_MLT = children0[L].getFloat("windFlow_Pallet_MLT");
       Impact_ACTIVE = children0[L].getInt("Impact_ACTIVE");
       Impact_PASSIVE = children0[L].getInt("Impact_PASSIVE");
-      Impact_SPD_DIR = children0[L].getInt("Impact_SPD_DIR");
-      Impact_SPD_DIR_TMP = children0[L].getInt("Impact_SPD_DIR_TMP");
+      Impact_WIND_Overlay = children0[L].getInt("Impact_WIND_Overlay");
+      Impact_WIND_Temperature = children0[L].getInt("Impact_WIND_Temperature");
       Impact_TYPE = children0[L].getInt("Impact_TYPE");
       STUDY_O_scale = children0[L].getFloat("STUDY_O_scale");
       STUDY_W_scale = children0[L].getFloat("STUDY_W_scale");
@@ -48140,13 +48154,13 @@ void SOLARCHVISION_load_project (String myFile) {
       Shade_Vertex_Solar = children0[L].getInt("Shade_Vertex_Solar");
       Shade_Vertex_Solid = children0[L].getInt("Shade_Vertex_Solid");
       Shade_Vertex_Elevation = children0[L].getInt("Shade_Vertex_Elevation");
-      CAM_x = children0[L].getFloat("CAM_x");
-      CAM_y = children0[L].getFloat("CAM_y");
-      CAM_z = children0[L].getFloat("CAM_z");
-      CAM_fov = children0[L].getFloat("CAM_fov");
-      CAM_dist = children0[L].getFloat("CAM_dist");
-      CAM_clipNear = children0[L].getFloat("CAM_clipNear");
-      CAM_clipFar = children0[L].getFloat("CAM_clipFar");
+      SOLARCHVISION_CAM_x = children0[L].getFloat("SOLARCHVISION_CAM_x");
+      SOLARCHVISION_CAM_y = children0[L].getFloat("SOLARCHVISION_CAM_y");
+      SOLARCHVISION_CAM_z = children0[L].getFloat("SOLARCHVISION_CAM_z");
+      SOLARCHVISION_CAM_fov = children0[L].getFloat("SOLARCHVISION_CAM_fov");
+      SOLARCHVISION_CAM_dist = children0[L].getFloat("SOLARCHVISION_CAM_dist");
+      SOLARCHVISION_CAM_clipNear = children0[L].getFloat("SOLARCHVISION_CAM_clipNear");
+      SOLARCHVISION_CAM_clipFar = children0[L].getFloat("SOLARCHVISION_CAM_clipFar");
       Current_Camera = children0[L].getInt("Current_Camera");
       OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
       refScale = children0[L].getFloat("refScale");
@@ -48591,10 +48605,10 @@ void SOLARCHVISION_load_project (String myFile) {
     
     println("Loading:Faces");
     {
-      children0 = FileAll.getChildren("allFaces");
+      children0 = FileAll.getChildren("allFaces_PNT");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allFaces = new int [0][0];
+        allFaces_PNT = new int [0][0];
         XML[] children1 = children0[L].getChildren("Face");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
@@ -48604,7 +48618,7 @@ void SOLARCHVISION_load_project (String myFile) {
           for (int j = 0; j < nj; j++) {
             newFace[0][j] = int(parts[j]); 
           }
-          allFaces = (int[][]) concat(allFaces, newFace);
+          allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
         }
       }   
   
