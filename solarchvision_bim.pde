@@ -695,7 +695,10 @@ String[][] GRIB2_DOMAINS = {
 //int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21; // should convert U&V to wind speed and direction!   
 //int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
 //int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
-int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1;
+
+int GRIB2_DOMAIN_SELECTION = 3; 
+int Scenarios_max = 1;
+
 //int GRIB2_DOMAIN_SELECTION = 4; int Scenarios_max = 1; // not working now!
 
 {
