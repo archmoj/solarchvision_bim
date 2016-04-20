@@ -1487,7 +1487,7 @@ int[][] Materials_Color = new int [Materials_Number][4]; // ARGB
   }  
 }
 
-void empty_Materials_DirectArea () {
+void SOLARCHVISION_empty_Materials_DirectArea () {
 
   for (int mt = 0; mt < Materials_Number; mt++) {
     for (int i = 0; i < 24; i += 1) {
@@ -1500,7 +1500,7 @@ void empty_Materials_DirectArea () {
 
 }
 
-void empty_Materials_DiffuseArea () {
+void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
   for (int mt = 0; mt < Materials_Number; mt++) {
     for (int i = 0; i < 24; i += 1) {
@@ -1766,8 +1766,8 @@ void setup () {
   SOLARCHVISION_DATE = (286 + SOLARCHVISION_Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (SOLARCHVISION_HOUR >= 12) SOLARCHVISION_DATE += 0.5;   
 
-  empty_Materials_DirectArea();
-  empty_Materials_DiffuseArea();
+  SOLARCHVISION_empty_Materials_DirectArea();
+  SOLARCHVISION_empty_Materials_DiffuseArea();
 
   WIN3D_VerticesSolarEnergy = new float [1];
   WIN3D_VerticesSolarEffect = new float [1];
@@ -2487,32 +2487,32 @@ void draw () {
         }     
 
         if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 19");
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 19");
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }
         
         if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 20");
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 20");
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }
         
         if (pre_selectedGroup3D_numbers_lastItem != selectedGroup3D_numbers[selectedGroup3D_numbers.length - 1]) {
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 21");
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 21");
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }
 
         if (pre_selectedFace_numbers_lastItem != selectedFace_numbers[selectedFace_numbers.length - 1]) {
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 22");
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 22");
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }
         
         if (pre_selectedVertex_numbers_lastItem != selectedVertex_numbers[selectedVertex_numbers.length - 1]) {
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 23");
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 23");
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }        
         
@@ -2530,20 +2530,20 @@ void draw () {
 
         
         if (pre_selection_alignX != selection_alignX) {    
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 24");    
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 24");    
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }        
         
         if (pre_selection_alignY != selection_alignY) {   
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 25");     
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 25");     
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }      
         
         if (pre_selection_alignZ != selection_alignZ) {        
-          println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 26");
-          SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+          println("SOLARCHVISION_calculate_selection_BoundingBox 26");
+          SOLARCHVISION_calculate_selection_BoundingBox();
           WIN3D_Update = 1;
         }      
         
@@ -2917,7 +2917,7 @@ void draw () {
 
 } 
 
-float refScale = 250;
+float WIN3D_refScale = 250;
 
 PGraphics WIN3D_Diagrams;
 
@@ -2946,7 +2946,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     WIN3D_Diagrams.beginDraw();  
   
-    WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
+    WIN3D_scale3D = WIN3D_Y_View / WIN3D_refScale; // fits field of view to window's height
   
     WIN3D_Diagrams.background(233);
   
@@ -3040,7 +3040,7 @@ void SOLARCHVISION_draw_WIN3D () {
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
               
-              float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
       
               WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
               WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);           
@@ -3106,7 +3106,7 @@ void SOLARCHVISION_draw_WIN3D () {
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
               
-              float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
       
               WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
               //WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);           
@@ -3220,7 +3220,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
     if (WIN3D_View_Type == 1) {
       
-      //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale;
+      //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale;
       the_scale *= (0.5 / tan(0.5 * SOLARCHVISION_CAM_fov));
     }
     else {
@@ -3234,7 +3234,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
     SOLARCHVISION_CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
   
-    SOLARCHVISION_CAM_dist = (0.5 * refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
+    SOLARCHVISION_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
   
     if (WIN3D_View_Type == 1) {
   
@@ -3275,7 +3275,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u); 
+      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u); 
       
       WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -3425,7 +3425,7 @@ void SOLARCHVISION_draw_WORLD () {
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
         
                   if (_turn == 1) {
                     WORLD_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -3501,7 +3501,7 @@ void SOLARCHVISION_draw_WORLD () {
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
         
                   if (_turn == 1) {
                     WORLD_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -5089,7 +5089,7 @@ float[] SOLARCHVISION_DBCW (float _variable) {
 }
 
 
-float[] GET_COLOR_STYLE (int COLOR_STYLE_Active, float j) {
+float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Active, float j) {
   float[] c = {255, 0, 0, 0};
   
   if (COLOR_STYLE_Active == 0) {
@@ -6015,7 +6015,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 6);
         }
         else {
-          float[] COL = GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + ENSEMBLE_end - ENSEMBLE_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + ENSEMBLE_end - ENSEMBLE_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
           
@@ -6119,7 +6119,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           }
         }    
         if (STUDY_draw_data_probs == 1) {
-          SOLARCHVISION_draw_STUDY_probabilities(i, j, start_z, end_z, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          SOLARCHVISION_draw_STUDY_dataProbs(i, j, start_z, end_z, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }  
 
         for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
@@ -6166,7 +6166,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   }
 
   if (STUDY_draw_data_raws == 1) {
-    SOLARCHVISION_draw_STUDY_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+    SOLARCHVISION_draw_STUDY_dataRaws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }    
 
   STUDY_Diagrams.popMatrix();
@@ -6419,7 +6419,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           _valuesA[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
        
-          float[] COL = GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -6523,7 +6523,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           }
         }        
         if (STUDY_draw_data_probs == 1) {
-          SOLARCHVISION_draw_STUDY_probabilities(i, j, ((start_z - 1) * STUDY_num_add_days + 1), ((end_z - 1) * STUDY_num_add_days + STUDY_num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          SOLARCHVISION_draw_STUDY_dataProbs(i, j, ((start_z - 1) * STUDY_num_add_days + 1), ((end_z - 1) * STUDY_num_add_days + STUDY_num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
           for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
@@ -6568,7 +6568,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   }
   
   if (STUDY_draw_data_raws == 1) {
-    SOLARCHVISION_draw_STUDY_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+    SOLARCHVISION_draw_STUDY_dataRaws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }       
   
   STUDY_Diagrams.popMatrix();
@@ -6818,7 +6818,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
           _valuesA[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * STUDY_num_add_days + j_ADD)] = FLOAT_undefined;
        
-          float[] COL = GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -6922,7 +6922,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
           }
         }        
         if (STUDY_draw_data_probs == 1) {
-          SOLARCHVISION_draw_STUDY_probabilities(i, j, ((start_z - CLIMATE_EPW_start) * STUDY_num_add_days + 1), ((end_z - CLIMATE_EPW_start) * STUDY_num_add_days + STUDY_num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          SOLARCHVISION_draw_STUDY_dataProbs(i, j, ((start_z - CLIMATE_EPW_start) * STUDY_num_add_days + 1), ((end_z - CLIMATE_EPW_start) * STUDY_num_add_days + STUDY_num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
         for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
           for (int j_ADD = 0; j_ADD < STUDY_num_add_days; j_ADD += 1) {
@@ -6967,7 +6967,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   }
   
   if (STUDY_draw_data_raws == 1) {
-    SOLARCHVISION_draw_STUDY_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+    SOLARCHVISION_draw_STUDY_dataRaws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }       
   
   STUDY_Diagrams.popMatrix();
@@ -7421,7 +7421,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 6);
         }
         else {
-          float[] COL = GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + OBSERVED_end - OBSERVED_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + OBSERVED_end - OBSERVED_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
           
@@ -7525,7 +7525,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           }
         }    
         if (STUDY_draw_data_probs == 1) {
-          //SOLARCHVISION_draw_STUDY_probabilities(i, j, start_z, end_z, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          //SOLARCHVISION_draw_STUDY_dataProbs(i, j, start_z, end_z, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }  
 
         for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) {
@@ -7569,7 +7569,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   }
 
   if (STUDY_draw_data_raws == 1) {
-    SOLARCHVISION_draw_STUDY_data_raws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+    SOLARCHVISION_draw_STUDY_dataRaws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }    
 
   STUDY_Diagrams.popMatrix();
@@ -7764,7 +7764,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
 
 
 
-void SOLARCHVISION_draw_STUDY_data_raws (float[] Ax_LINES, float[] Ay_LINES, float[] Az_LINES, float[] Bx_LINES, float[] By_LINES, float[] Bz_LINES) {
+void SOLARCHVISION_draw_STUDY_dataRaws (float[] Ax_LINES, float[] Ay_LINES, float[] Az_LINES, float[] Bx_LINES, float[] By_LINES, float[] Bz_LINES) {
   //STUDY_Diagrams.stroke(STUDY_color_data_raws);
   //STUDY_Diagrams.fill(STUDY_color_data_raws);
   //STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
@@ -7779,7 +7779,7 @@ void SOLARCHVISION_draw_STUDY_data_raws (float[] Ax_LINES, float[] Ay_LINES, flo
 }
 
 
-void SOLARCHVISION_draw_STUDY_probabilities (int i, int j, int start_z, int end_z, float[] _valuesSUM, float[] _valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
+void SOLARCHVISION_draw_STUDY_dataProbs (int i, int j, int start_z, int end_z, float[] _valuesSUM, float[] _valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
   int PAL_TYPE = STUDY_Pallet_PROB_CLR; 
   int PAL_DIR = STUDY_Pallet_PROB_DIR;  
@@ -7842,7 +7842,7 @@ void SOLARCHVISION_draw_STUDY_probabilities (int i, int j, int start_z, int end_
           if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
           if (PAL_DIR == 2) _u =  0.5 * _u;
           
-          float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -7883,7 +7883,7 @@ void SOLARCHVISION_draw_STUDY_probabilities (int i, int j, int start_z, int end_
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
     
-    float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
     STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
     STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);     
     
@@ -7948,7 +7948,7 @@ void SOLARCHVISION_draw_STUDY_data_sorted (int i, int j, float[] _valuesA, float
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
     
-    float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
     STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
     STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
@@ -7985,7 +7985,7 @@ void SOLARCHVISION_draw_STUDY_data_sorted (int i, int j, float[] _valuesA, float
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
     
-    float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
     STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
     STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);     
      
@@ -9289,7 +9289,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
-                      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
                       
                       WIND_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
                       
@@ -9425,7 +9425,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
-                      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
                       total_WIND_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
                       
                       total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
@@ -9493,7 +9493,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
         
-        float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
         STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
         STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);         
         
@@ -9694,7 +9694,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
         
-        float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
         STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
         STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);         
         
@@ -9996,8 +9996,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  //float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-                  float[] COL = GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+                  //float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
                   STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
                   STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
                   
@@ -10081,8 +10081,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
               
-              //float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-              float[] COL = GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+              //float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
               STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
               STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);               
               
@@ -10160,7 +10160,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
       STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
       STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);       
       
@@ -10383,7 +10383,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                     if (PAL_DIR == 2) _u =  0.5 * _u;
                     
-                    float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
                     STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
                     STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);                     
                     
@@ -10457,7 +10457,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
       STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
       STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);       
       
@@ -10803,7 +10803,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
       STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
       STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);       
       
@@ -10979,7 +10979,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
 
-        float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
         
         Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);        
       }
@@ -11298,7 +11298,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                     if (PAL_DIR == 2) _u =  0.5 * _u;
                     
-                    float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
   
                     float r = sx_Plot;
   
@@ -12294,7 +12294,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);    
+                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);    
                   
                   WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
                   WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -12760,8 +12760,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                    if (nextIndex != -1) selectedCamera_numbers[selectedCamera_numbers.length - 1] = nextIndex;
                  }         
                  
-                 println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 27");
-                 SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                 println("SOLARCHVISION_calculate_selection_BoundingBox 27");
+                 SOLARCHVISION_calculate_selection_BoundingBox();
                  
                  SOLARCHVISION_reset_selectedRefValues();  
                  
@@ -12819,8 +12819,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                  }         
                  
                  
-                 println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 28");
-                 SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                 println("SOLARCHVISION_calculate_selection_BoundingBox 28");
+                 SOLARCHVISION_calculate_selection_BoundingBox();
                  
                  SOLARCHVISION_reset_selectedRefValues();  
                  
@@ -14609,8 +14609,8 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
     Current_ObjectCategory = ObjectCategory_Group3Ds;
     SOLARCHVISION_UI_BAR_b_Update = 1;
 
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 731");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();  
+    println("SOLARCHVISION_calculate_selection_BoundingBox 731");
+    SOLARCHVISION_calculate_selection_BoundingBox();  
    
   }
 
@@ -15404,8 +15404,8 @@ void SOLARCHVISION_selectIsolatedVertices_Scene () {
   Current_ObjectCategory = ObjectCategory_Vertices; 
   SOLARCHVISION_UI_BAR_b_Update = 1;
   
-  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 31");
-  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();      
+  println("SOLARCHVISION_calculate_selection_BoundingBox 31");
+  SOLARCHVISION_calculate_selection_BoundingBox();      
 }
 
 
@@ -15475,8 +15475,8 @@ void SOLARCHVISION_selectNearVertices_Selection () {
 
     } 
 
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 32");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 32");
+    SOLARCHVISION_calculate_selection_BoundingBox();
   } 
 }
 
@@ -15554,8 +15554,8 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
     selectedVertex_numbers = new int [1];
     selectedVertex_numbers[0] = 0;  
   
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 33");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 33");
+    SOLARCHVISION_calculate_selection_BoundingBox();
   }
 }
 
@@ -15644,8 +15644,8 @@ void SOLARCHVISION_weldObjectsVertices_Selection () {
     selectedVertex_numbers = new int [1];
     selectedVertex_numbers[0] = 0;  
   
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 34");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 34");
+    SOLARCHVISION_calculate_selection_BoundingBox();
   }
 }
 
@@ -15655,7 +15655,7 @@ void SOLARCHVISION_repositionVertices_Selection () {
 
   if (Current_ObjectCategory == ObjectCategory_Vertices) { 
    
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) { 
   
@@ -15671,8 +15671,8 @@ void SOLARCHVISION_repositionVertices_Selection () {
 
     } 
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 35");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 35");
+    SOLARCHVISION_calculate_selection_BoundingBox();
   }
 }
 
@@ -15718,8 +15718,8 @@ void SOLARCHVISION_separateVertices_Selection () {
     selectedVertex_numbers = new int [1];
     selectedVertex_numbers[0] = 0;  
   
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 36");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 36");
+    SOLARCHVISION_calculate_selection_BoundingBox();
   }
 }
 
@@ -15886,8 +15886,8 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 37");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 37");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }  
@@ -16080,8 +16080,8 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 38");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 38");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }  
@@ -16260,8 +16260,8 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 39");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 39");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
@@ -16434,8 +16434,8 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 40");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 40");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
@@ -16634,8 +16634,8 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 41");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 41");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }  
@@ -16805,8 +16805,8 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 42");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 42");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }  
@@ -16959,8 +16959,8 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
     Current_ObjectCategory = ObjectCategory_Faces; 
     SOLARCHVISION_UI_BAR_b_Update = 1;
     
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 43");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 43");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }
@@ -17094,8 +17094,8 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
     
     selectedFace_numbers = new_selectedFace_numbers;
 
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 101");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 101");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
@@ -17201,8 +17201,8 @@ void SOLARCHVISION_offsetVertices_Selection (int _type, float _amount) {
       }
     } 
 
-    println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 102");
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    println("SOLARCHVISION_calculate_selection_BoundingBox 102");
+    SOLARCHVISION_calculate_selection_BoundingBox();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
@@ -17321,8 +17321,8 @@ void SOLARCHVISION_deselect_All () {
     selectedSolid_numbers[0] = 0;  
   }  
   
-  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 0");
-  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+  println("SOLARCHVISION_calculate_selection_BoundingBox 0");
+  SOLARCHVISION_calculate_selection_BoundingBox();
 }
 
 void SOLARCHVISION_select_All () {
@@ -17390,8 +17390,8 @@ void SOLARCHVISION_select_All () {
     }
   }  
   
-  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 44");
-  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+  println("SOLARCHVISION_calculate_selection_BoundingBox 44");
+  SOLARCHVISION_calculate_selection_BoundingBox();
 }
 
 
@@ -17658,8 +17658,8 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }    
 
-  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 45");
-  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+  println("SOLARCHVISION_calculate_selection_BoundingBox 45");
+  SOLARCHVISION_calculate_selection_BoundingBox();
 }  
 
 
@@ -20053,7 +20053,7 @@ void SOLARCHVISION_export_objects_OBJ () {
               if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
             }            
           
-            float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+            float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
             
             Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);        
           }
@@ -20653,7 +20653,7 @@ void SOLARCHVISION_export_objects_OBJ () {
         
         float _u = 0.5 + 0.5 * _val;
 
-        float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
         
         Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);        
       }
@@ -20850,7 +20850,7 @@ void SOLARCHVISION_export_objects_OBJ () {
           
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
         
-          float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
           
           Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);        
         }
@@ -22395,7 +22395,7 @@ void SOLARCHVISION_draw_windFlow () {
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);      
+      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);      
 
       /*    
       WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -23297,7 +23297,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solid (float[] VERTEX_now, int P
 
   float _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
   
-  float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
+  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);     
   
   return COL;  
 }
@@ -23322,7 +23322,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, i
 
   float _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
   
   return COL;  
 }
@@ -23343,7 +23343,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
   
   float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
   
   return COL;
 }
@@ -23743,7 +23743,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
             
-                      float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
                       
                       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);          
               
@@ -24078,7 +24078,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                     if (PAL_DIR == 2) _u =  0.5 * _u;
           
-                    float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
           
                     WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
             
@@ -24329,7 +24329,7 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_coordin
 
   SOLARCHVISION_CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
 
-  SOLARCHVISION_CAM_dist = (0.5 * refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
+  SOLARCHVISION_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
   
   CAM_x2 = 0;
   CAM_y2 = 0;
@@ -24384,7 +24384,7 @@ void SOLARCHVISION_transform_3DViewport () {
   
   SOLARCHVISION_CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
 
-  SOLARCHVISION_CAM_dist = (0.5 * refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
+  SOLARCHVISION_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
   
   SOLARCHVISION_CAM_x = 0;
   SOLARCHVISION_CAM_y = 0;
@@ -27301,7 +27301,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
               
-              _c = GET_COLOR_STYLE(PAL_TYPE, _u);
+              _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
               
               if (Image_A != 0) Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
               else Image_RGBA.pixels[np] = color(223, 223, 223);
@@ -27373,7 +27373,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
           if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
           if (PAL_DIR == 2) _u =  0.5 * _u;
           
-          _c = GET_COLOR_STYLE(PAL_TYPE, _u);
+          _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
           
           if (Image_A != 0) total_Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
           else total_Image_RGBA.pixels[np] = color(223, 223, 223);
@@ -28101,7 +28101,7 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
         
-        float[] COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
+        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);     
     
         if ((PROCESS_subdivisions == 1) || (PROCESS_subdivisions == 2)) {
           //if ((g == g_line) && (g != 0)) {
@@ -29842,8 +29842,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
 
     //if (pre_selectedLandPoint_numbers_lastItem != selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 6");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 6");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -29892,8 +29892,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
 
     //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 6");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 6");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -29942,8 +29942,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
     
     //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 5");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 5");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -30006,8 +30006,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     
     
     //if (pre_selectedGroup3D_numbers_lastItem != selectedGroup3D_numbers[selectedGroup3D_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 4");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 4");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -30057,8 +30057,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     
     
     //if (pre_selectedFace_numbers_lastItem != selectedFace_numbers[selectedFace_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 3");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 3");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -30128,8 +30128,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     
     
     //if (pre_selectedVertex_numbers_lastItem != selectedVertex_numbers[selectedVertex_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 2");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 2");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -30179,8 +30179,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
 
     //if (pre_selectedSolid_numbers_lastItem != selectedSolid_numbers[selectedSolid_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 6e");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 6e");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -30230,8 +30230,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
 
     //if (pre_selectedSection_numbers_lastItem != selectedSection_numbers[selectedSection_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 6b");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 6b");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }
 
@@ -30279,8 +30279,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
 
     //if (pre_selectedCamera_numbers_lastItem != selectedCamera_numbers[selectedCamera_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 6c");
-      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+      println("SOLARCHVISION_calculate_selection_BoundingBox 6c");
+      SOLARCHVISION_calculate_selection_BoundingBox();
     //}
   }           
     
@@ -31470,8 +31470,8 @@ void mouseWheel (MouseEvent event) {
                    if (nextIndex != -1) selectedCamera_numbers[selectedCamera_numbers.length - 1] = nextIndex;
                  }         
       
-                 println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 534");
-                 SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                 println("SOLARCHVISION_calculate_selection_BoundingBox 534");
+                 SOLARCHVISION_calculate_selection_BoundingBox();
                        
                  WIN3D_Update = 1; 
               }
@@ -31748,8 +31748,8 @@ void mouseReleased () {
       
                 SOLARCHVISION_RectSelect(corner1x, corner1y, corner2x, corner2y);
                 
-                println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 1");
-                SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                println("SOLARCHVISION_calculate_selection_BoundingBox 1");
+                SOLARCHVISION_calculate_selection_BoundingBox();
                 
                 SOLARCHVISION_reset_selectedRefValues();  
 
@@ -32234,7 +32234,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
     Current_ObjectCategory = ObjectCategory_Group3Ds;
     
-    SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+    SOLARCHVISION_calculate_selection_BoundingBox();
 
     WIN3D_Update = 1;
   }
@@ -33297,7 +33297,7 @@ void mouseClicked () {
             }
 
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Save Current ReferenceBox")) {
-              calculate_selection_BoundingBox();
+              SOLARCHVISION_save_current_BoundingBox();
               SOLARCHVISION_highlight_in_BAR_b("<pvt>");
               SOLARCHVISION_UI_BAR_b_Update = 1;  
             }
@@ -33308,7 +33308,7 @@ void mouseClicked () {
               WIN3D_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Use Selection ReferenceBox")) {
-              SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+              SOLARCHVISION_calculate_selection_BoundingBox();
               SOLARCHVISION_highlight_in_BAR_b("|pvt|");
               SOLARCHVISION_UI_BAR_b_Update = 1;  
             }
@@ -34584,8 +34584,8 @@ void mouseClicked () {
     
                   SOLARCHVISION_move_Selection(dx, dy, dz);
   
-                  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 10");
-                  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                  println("SOLARCHVISION_calculate_selection_BoundingBox 10");
+                  SOLARCHVISION_calculate_selection_BoundingBox();
                   WIN3D_Update = 1;    
                 }
 
@@ -35330,8 +35330,8 @@ void mouseClicked () {
                         selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
                       }  
     
-                      println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 9_Section");
-                      SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                      println("SOLARCHVISION_calculate_selection_BoundingBox 9_Section");
+                      SOLARCHVISION_calculate_selection_BoundingBox();
                     }      
 
                     SolidImpact_offset_U[SolidImpact_sectionType] = Section_offset_U;
@@ -35369,8 +35369,8 @@ void mouseClicked () {
                     selectedSolid_numbers = concat(selectedSolid_numbers, newlyAddedSolid);
                   }  
 
-                  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 9_Solid");
-                  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                  println("SOLARCHVISION_calculate_selection_BoundingBox 9_Solid");
+                  SOLARCHVISION_calculate_selection_BoundingBox();
                 }   
                 
               
@@ -35387,8 +35387,8 @@ void mouseClicked () {
                     selectedCamera_numbers = concat(selectedCamera_numbers, newlyAddedCamera);
                   }  
 
-                  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 9_Camera");
-                  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                  println("SOLARCHVISION_calculate_selection_BoundingBox 9_Camera");
+                  SOLARCHVISION_calculate_selection_BoundingBox();
                 }                   
 
   
@@ -35404,8 +35404,8 @@ void mouseClicked () {
                     selectedGroup3D_numbers = concat(selectedGroup3D_numbers, newlyAddedGroup3D);
                   }  
 
-                  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 9_Group3D");
-                  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                  println("SOLARCHVISION_calculate_selection_BoundingBox 9_Group3D");
+                  SOLARCHVISION_calculate_selection_BoundingBox();
                 }   
 
                 if (keep_number_of_Object2Ds != allObject2Ds_num + 1) { // if any Object2D created during the process
@@ -35420,8 +35420,8 @@ void mouseClicked () {
                     selectedObject2D_numbers = concat(selectedObject2D_numbers, newlyAddedObject2D);
                   }  
 
-                  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 9_Object2D");
-                  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                  println("SOLARCHVISION_calculate_selection_BoundingBox 9_Object2D");
+                  SOLARCHVISION_calculate_selection_BoundingBox();
                 }   
 
 
@@ -35437,8 +35437,8 @@ void mouseClicked () {
                     selectedFractal_numbers = concat(selectedFractal_numbers, newlyAddedFractal);
                   }  
 
-                  println("SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox 9_Fractal");
-                  SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox();
+                  println("SOLARCHVISION_calculate_selection_BoundingBox 9_Fractal");
+                  SOLARCHVISION_calculate_selection_BoundingBox();
                 }   
 
 
@@ -37113,8 +37113,8 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
   if (z > 0) {
     if (WIN3D_View_Type == 1) {
       
-      Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale;
-      Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale;
+      Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale;
+      Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale;
       Image_Z = z;
     }
     else {
@@ -37652,7 +37652,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
             if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) {
               
-              float[] COL = GET_COLOR_STYLE(14, _u); // <<<<<<<<<<<<<<<<<
+              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(14, _u); // <<<<<<<<<<<<<<<<<
               fill(COL[1], COL[2], COL[3], COL[0]);
               stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -38135,15 +38135,15 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
   if (WIN3D_View_Type == 1) {
     
-    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
+    PNT_z = (0.5 * WIN3D_refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
     
-    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale);
-    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * refScale);
+    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale);
+    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale);
   }
   else {
     float ZOOM = Orthographic_Zoom();
 
-    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
+    PNT_z = (0.5 * WIN3D_refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
@@ -40689,7 +40689,7 @@ int SOLARCHVISION_saved_alignX = 0;
 int SOLARCHVISION_saved_alignY = 0;
 int SOLARCHVISION_saved_alignZ = 0;
 
-void SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox () {
+void SOLARCHVISION_calculate_selection_BoundingBox () {
 
   
   int keep_selection_alignX = selection_alignX;
@@ -40977,7 +40977,7 @@ void SOLARCHVISION_calculate_SOLARCHVISION_selection_BoundingBox () {
 
 
 
-void calculate_selection_BoundingBox () {
+void SOLARCHVISION_save_current_BoundingBox () {
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 9; j++) {
@@ -46855,7 +46855,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("SOLARCHVISION_CAM_clipFar", SOLARCHVISION_CAM_clipFar);
   newChild1.setInt("Current_Camera", Current_Camera);
   newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
-  newChild1.setFloat("refScale", refScale);
+  newChild1.setFloat("WIN3D_refScale", WIN3D_refScale);
   newChild1.setFloat("WIN3D_Y_coordinate", WIN3D_Y_coordinate);
   newChild1.setFloat("WIN3D_Z_coordinate", WIN3D_Z_coordinate);
   newChild1.setFloat("WIN3D_S_coordinate", WIN3D_S_coordinate);
@@ -48103,7 +48103,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_CAM_clipFar = children0[L].getFloat("SOLARCHVISION_CAM_clipFar");
       Current_Camera = children0[L].getInt("Current_Camera");
       OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
-      refScale = children0[L].getFloat("refScale");
+      WIN3D_refScale = children0[L].getFloat("WIN3D_refScale");
       WIN3D_Y_coordinate = children0[L].getFloat("WIN3D_Y_coordinate");
       WIN3D_Z_coordinate = children0[L].getFloat("WIN3D_Z_coordinate");
       WIN3D_S_coordinate = children0[L].getFloat("WIN3D_S_coordinate");
