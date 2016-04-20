@@ -22,8 +22,8 @@
 
 import processing.pdf.*;
 
-void launch (String s) {open(s);}
-void launch (String[] s) {open(s);}
+  void launch (String s) {open(s);}
+  void launch (String[] s) {open(s);}
  
 
  
@@ -1879,7 +1879,7 @@ void SOLARCHVISION_update_station (int Step) {
 void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_Group3Ds(); //not deleting all
-   if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_ProjectModel();
+   if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_Model_Main();
 
 }
 
@@ -2173,7 +2173,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_ProjectModel", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_add_Model_Main", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 21) {
     SOLARCHVISION_update_models(2);
@@ -3941,7 +3941,7 @@ void SOLARCHVISION_draw_STUDY () {
     //STUDY_Diagrams.translate(STUDY_X_coordinate * -0.25, STUDY_Y_coordinate * 0.5); 
     STUDY_Diagrams.translate(STUDY_X_coordinate * -0.425, STUDY_Y_coordinate * 0.5);
 
-    Plot_Setup();
+    SOLARCHVISION_Plot_Setup();
     
     //STUDY_Diagrams.translate(STUDY_X_coordinate * 0.25, STUDY_Y_coordinate * 0.5);
     STUDY_Diagrams.translate(STUDY_X_coordinate * 0.425, STUDY_Y_coordinate * 0.5);
@@ -4074,7 +4074,7 @@ void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, fl
 
 
 
-void Plot_Setup () {
+void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_setup == 14) {
 
@@ -22020,7 +22020,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   }
  
   if (n == 7) {
-    SOLARCHVISION_add_ProjectModel();
+    SOLARCHVISION_add_Model_Main();
   }      
 
  
@@ -26322,7 +26322,7 @@ void SOLARCHVISION_DownloadLAND_MESH () {
 
 
  
-void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
+void SOLARCHVISION_add_Model_2DsFromFile () {
 
   SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
   
@@ -26348,7 +26348,7 @@ void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
 }
 
 
-void SOLARCHVISION_add_ProjectModel_CMC () { //CMC
+void SOLARCHVISION_add_Model_CMC () { //CMC
 
 
   {
@@ -26377,7 +26377,7 @@ void SOLARCHVISION_add_ProjectModel_CMC () { //CMC
 }
 
 
-void SOLARCHVISION_add_ProjectModel () { //Home
+void SOLARCHVISION_add_Model_Main () { //Home
 
 
 
@@ -26445,7 +26445,7 @@ void SOLARCHVISION_add_ProjectModel () { //Home
 }
 
 
-void SOLARCHVISION_add_ProjectModel_BASIC () {
+void SOLARCHVISION_add_Model_BASIC () {
 
 /*
   {
@@ -26841,7 +26841,7 @@ void SOLARCHVISION_add_ProjectModel_BASIC () {
 }
 
 
-void SOLARCHVISION_add_ProjectModel_SCHOOL () {
+void SOLARCHVISION_add_Model_SCHOOL () {
   
   int[][] block = {
                    {1,1,1,1,0,0,0,0,0,0,0},
@@ -28667,7 +28667,7 @@ void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int xtr,
       int prev_i = ((i + 5 - 2) % 5) + 1;
       
       {
-        myLozenge(
+        SOLARCHVISION_createLozenge(
                   TempObjectVertices[vT[prev_i]][0], TempObjectVertices[vT[prev_i]][1], TempObjectVertices[vT[prev_i]][2],
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
                   TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2],
@@ -28676,7 +28676,7 @@ void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int xtr,
       }
       
       {
-        myLozenge(
+        SOLARCHVISION_createLozenge(
                   TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
                   TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
@@ -28685,7 +28685,7 @@ void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int xtr,
       }      
 
       {
-        myLozenge(
+        SOLARCHVISION_createLozenge(
                   TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
                   TempObjectVertices[vT[prev_i]][0], TempObjectVertices[vT[prev_i]][1], TempObjectVertices[vT[prev_i]][2],
@@ -28694,7 +28694,7 @@ void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int xtr,
       }     
 
       {
-        myLozenge(
+        SOLARCHVISION_createLozenge(
   
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
                   TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],                    
@@ -28705,7 +28705,7 @@ void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int xtr,
       }
 
       {
-        myLozenge(
+        SOLARCHVISION_createLozenge(
                   TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
                   TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2],
                   TempObjectVertices[vB[next_i]][0], TempObjectVertices[vB[next_i]][1], TempObjectVertices[vB[next_i]][2],
@@ -29040,7 +29040,7 @@ void SOLARCHVISION_addTempObjectToScene (int m, int tes, int lyr, int vsb, int x
 
 }
 
-void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
+void SOLARCHVISION_createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
   
 
   if (Tessellation > 0) {
@@ -29090,7 +29090,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
     M = SOLARCHVISION_fn_normalize(M);
     N = SOLARCHVISION_fn_normalize(N);
 
-    myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Tessellation, BuildFaces);     
+    SOLARCHVISION_createLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Tessellation, BuildFaces);     
 
 
     if (BuildFaces != 0) 
@@ -29110,7 +29110,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       Q = SOLARCHVISION_fn_normalize(Q);
       
-      myLozenge(x2,y2,z2, P[0],P[1],P[2], x1,y1,z1, Q[0],Q[1],Q[2], Tessellation, BuildFaces);
+      SOLARCHVISION_createLozenge(x2,y2,z2, P[0],P[1],P[2], x1,y1,z1, Q[0],Q[1],Q[2], Tessellation, BuildFaces);
     }
 
 
@@ -29131,7 +29131,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       Q = SOLARCHVISION_fn_normalize(Q);
       
-      myLozenge(x4,y4,z4, P[0],P[1],P[2], x3,y3,z3, Q[0],Q[1],Q[2], Tessellation, BuildFaces);
+      SOLARCHVISION_createLozenge(x4,y4,z4, P[0],P[1],P[2], x3,y3,z3, Q[0],Q[1],Q[2], Tessellation, BuildFaces);
     }
 
 
@@ -31134,7 +31134,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
 int mouseWheelConsume = 0;
 
-void mouseWheel(MouseEvent event) {
+void mouseWheel (MouseEvent event) {
 
   if (frameCount > Last_initializationStep) {
   
@@ -39972,7 +39972,7 @@ void SOLARCHVISION_draw_Fractals () {
         float Alpha = 0;
         float Beta = rot; 
       
-        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+        SOLARCHVISION_Plant_branch_Main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
         
         // ----------------
         x *= OBJECTS_scale;
@@ -40225,7 +40225,7 @@ float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
+void SOLARCHVISION_Plant_branch_Main (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -40298,7 +40298,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
         }
       }
 
-      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
+      SOLARCHVISION_Plant_branch_Main(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
 
     }
   } else {
