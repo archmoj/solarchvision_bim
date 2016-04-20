@@ -1761,7 +1761,7 @@ void setup () {
   //size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
   
 
-  SOLARCHVISION_draw_frame_icon();
+  SOLARCHVISION_draw_frameIcon();
 
   SOLARCHVISION_DATE = (286 + Convert2Date(SOLARCHVISION_MONTH, SOLARCHVISION_DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (SOLARCHVISION_HOUR >= 12) SOLARCHVISION_DATE += 0.5;   
@@ -1796,7 +1796,7 @@ void setup () {
   loop();
 }
 
-void SOLARCHVISION_draw_frame_icon () {
+void SOLARCHVISION_draw_frameIcon () {
   int frame_icon_size = 64;
   
   PGraphics frame_icon = createGraphics(frame_icon_size, frame_icon_size);  
@@ -1974,11 +1974,11 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_LoadWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_ListWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 3) {
-    SOLARCHVISION_LoadWorldImages();
-    Load_WORLDViewImage(WORLD_VIEW_Number); // to load the globe image into memory
+    SOLARCHVISION_ListWorldImages();
+    SOLARCHVISION_Load_WorldViewImage(WORLD_VIEW_Number); // to load the globe image into memory
 
     stroke(0);
     fill(0);
@@ -4553,11 +4553,6 @@ String[] getfiles (String _Folder) {
     }
   }
   return filenames;
-}
-
-void my_line (float ax, float ay, float az, float bx, float by, float bz) {
-  //line(ax, ay, az, bx, by, bz);
-  STUDY_Diagrams.line(ax, ay, bx, by);
 }
 
 
@@ -7597,7 +7592,7 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
       STUDY_Diagrams.stroke(0);
       STUDY_Diagrams.fill(0);
     }
-    my_line(STUDY_j_start * sx_Plot, -i * STUDY_S_View, 0, STUDY_j_end * sx_Plot, -i * STUDY_S_View, 0); 
+    STUDY_Diagrams.line(STUDY_j_start * sx_Plot, -i * STUDY_S_View, STUDY_j_end * sx_Plot, -i * STUDY_S_View); 
     
     if ((i >= 0) || (STUDY_V_belowLine[STUDY_drw_Layer] != 0)) {  
       STUDY_Diagrams.stroke(0);
@@ -7616,10 +7611,10 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
       int j_step = 3;
       for (int j = j_step; j <= 24; j += j_step) {
         if (j != 24) {
-          my_line((i + j / 24.0) * sx_Plot, -5 * STUDY_S_View, 0, (i + j / 24.0) * sx_Plot, 5 * STUDY_S_View, 0);
+          STUDY_Diagrams.line((i + j / 24.0) * sx_Plot, -5 * STUDY_S_View, (i + j / 24.0) * sx_Plot, 5 * STUDY_S_View);
         }
         else {
-          my_line((i + j / 24.0) * sx_Plot, -105 * STUDY_S_View, 0, (i + j / 24.0) * sx_Plot, (5 - Shift_DOWN) * STUDY_S_View, 0);
+          STUDY_Diagrams.line((i + j / 24.0) * sx_Plot, -105 * STUDY_S_View, (i + j / 24.0) * sx_Plot, (5 - Shift_DOWN) * STUDY_S_View);
         }
       }
     }
@@ -7668,7 +7663,7 @@ void SOLARCHVISION_draw_Grid_Spherical_POSITION (float x_Plot, float y_Plot, flo
       int r = 0;
       if ((t % 45) != 0) r = 15;
       
-      my_line((i + obj_offset_x + r * obj_scale * (cos_ang(t))) * sx_Plot, -(r * obj_scale * (sin_ang(t))) * sx_Plot, 0, (i + obj_offset_x + 90 * obj_scale * (cos_ang(t))) * sx_Plot, -(90 * obj_scale * (sin_ang(t))) * sx_Plot, 0); 
+      STUDY_Diagrams.line((i + obj_offset_x + r * obj_scale * (cos_ang(t))) * sx_Plot, -(r * obj_scale * (sin_ang(t))) * sx_Plot, (i + obj_offset_x + 90 * obj_scale * (cos_ang(t))) * sx_Plot, -(90 * obj_scale * (sin_ang(t))) * sx_Plot); 
       
       if (((t + 45) % 90) == 0) {
         STUDY_Diagrams.stroke(0, 127);
@@ -7779,7 +7774,7 @@ void SOLARCHVISION_STUDY_draw_data_raws (float[] Ax_LINES, float[] Ay_LINES, flo
   STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0.5);
   
   for (int i = 1; i < Ax_LINES.length; i += 1) {
-    my_line(Ax_LINES[i], Ay_LINES[i], Az_LINES[i], Bx_LINES[i], By_LINES[i], Bz_LINES[i]); 
+    STUDY_Diagrams.line(Ax_LINES[i], Ay_LINES[i], Bx_LINES[i], By_LINES[i]); 
   } 
 }
 
@@ -8192,7 +8187,7 @@ void SOLARCHVISION_STUDY_draw_data_normals (int i, int j, float[] _valuesA, floa
     if (l == STAT_N_Ave) z_l = 62;
     
     if ((NormalsA[l] < 0.9 * FLOAT_undefined) && (NormalsB[l] < 0.9 * FLOAT_undefined)) {
-      my_line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, z_l * sz_Plot * STUDY_W_scale, (j + ((i + 0.5 + SOLARCHVISION_deltaTime) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot, z_l * sz_Plot * STUDY_W_scale); 
+      STUDY_Diagrams.line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, (j + ((i + 0.5 + SOLARCHVISION_deltaTime) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot); 
     } 
     
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
@@ -12973,8 +12968,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;              
 
-        case 'x' :SOLARCHVISION_export_objects(); ROLLOUT_Update = 1; break;
-        case 'y' :SOLARCHVISION_export_objects_script(); ROLLOUT_Update = 1; break;
+        case 'x' :SOLARCHVISION_export_objects_OBJ(); ROLLOUT_Update = 1; break;
+        case 'y' :SOLARCHVISION_export_objects_SCR(); ROLLOUT_Update = 1; break;
         
       }
     }
@@ -13203,7 +13198,7 @@ void keyPressed (KeyEvent e) {
   }
 }
 
-void keyReleased() {   
+void keyReleased () {   
     
   addNewSelectionToPreviousSelection = 0;
 }
@@ -13353,7 +13348,7 @@ void ResetFontStyle () {
   STUDY_Diagrams.textFont(SOLARCHVISION_font);
 }
 
-void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, float s) {
+void SOLARCHVISION_add_Object2D_single (String t, int m, float x, float y, float z, float s) {
 
   if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
   
@@ -13453,7 +13448,7 @@ void SOLARCHVISION_LoadObject2DImages () {
 
 
 
-void SOLARCHVISION_LoadWorldImages () {
+void SOLARCHVISION_ListWorldImages () {
 
   WORLD_VIEW_Filenames = sort(getfiles(WorldViewFolder));
 
@@ -13544,7 +13539,7 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
   }
   
   if (return_VIEWPORT != WORLD_VIEW_Number) {
-    Load_WORLDViewImage(return_VIEWPORT);
+    SOLARCHVISION_Load_WorldViewImage(return_VIEWPORT);
     
     if (Display_EARTH3D_OBJECT != 0) WIN3D_Update = 1;    
   }
@@ -13555,7 +13550,7 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
 
 PImage WORLDViewImage;
 
-void Load_WORLDViewImage (int n) {
+void SOLARCHVISION_Load_WorldViewImage (int n) {
 
   println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
   
@@ -14008,11 +14003,11 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
         int n = allObject2Ds_MAP[OBJ_NUM];
         if (abs(n) > n1) {
           if (produce_another_variation == 1) n = 0; // this makes it random
-          SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+          SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
         }
         else {
           if (produce_another_variation == 1) n = 0; // this makes it random
-          SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+          SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
         }
       }
     }
@@ -14305,11 +14300,11 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                 
                 if (abs(n) > n1) {
                   if (produce_another_variation == 1) n = 0; // this makes it random
-                  SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+                  SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
                 }
                 else {
                   if (produce_another_variation == 1) n = 0; // this makes it random
-                  SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+                  SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
                 }
 
               }
@@ -14496,10 +14491,10 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
           
           int n = allObject2Ds_MAP[OBJ_NUM];
           if (abs(n) > n1) {
-            SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+            SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
           }
           else {
-            SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+            SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
           }
         }
       }
@@ -18584,7 +18579,7 @@ void SOLARCHVISION_add_Mesh5 (int m, int tes, int lyr, int vsb, int xtr, float x
 
 }
 
-void SOLARCHVISION_add_Polygon (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, int n, float rot) {
+void SOLARCHVISION_add_PolygonMesh (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, int n, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
@@ -19059,7 +19054,7 @@ int obj_lastGroupNumber;
 
 int num_vertices_added = 0;
 
-void SOLARCHVISION_export_objects () {
+void SOLARCHVISION_export_objects_OBJ () {
   
   String fileBasename = ProjectName;
   
@@ -21048,7 +21043,7 @@ void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
 
 
 
-void SOLARCHVISION_export_objects_script () {
+void SOLARCHVISION_export_objects_SCR () {
   
   String scrFilename = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.scr";
 
@@ -21095,7 +21090,7 @@ void SOLARCHVISION_export_objects_script () {
 }
     
   
-void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float sx, float sy, float sz) {
+void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float sx, float sy, float sz) {
   
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
@@ -21181,7 +21176,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
 }  
 
 
-float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
+float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
 
   float[][] importVertices = {{}};
   
@@ -21412,7 +21407,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
                     if (foundNearTree == 0) {
                       
                       if (people_or_trees == 2) {
-                        SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                        SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, s);
                       }
                       else {
                         SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
@@ -21478,10 +21473,10 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               if (dist(x,y,0,0) > 10.0) { // i.e. No 2D at the center!
               
                 if (people_or_trees == 1) {
-                  SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+                  SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
                 }
                 else if (people_or_trees == 2) {
-                  SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+                  SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
                 }
                 else {
                   SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
@@ -21509,10 +21504,10 @@ void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, fl
     float z = z0;
     
     if (people_or_trees == 1) {
-      SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+      SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
     }
     else if (people_or_trees == 2) {
-      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
     }
     else {
       SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
@@ -21536,10 +21531,10 @@ void SOLARCHVISION_add_Object2Ds_plane (int people_or_trees, int n, float x0, fl
     float z = z0;
     
     if (people_or_trees == 1) {
-      SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+      SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
     }
     else if (people_or_trees == 2) {
-      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
     }
     else {
       SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
@@ -21570,10 +21565,10 @@ void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, fl
     float z = z0;
     
     if (people_or_trees == 1) {
-      SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+      SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
     }
     else if (people_or_trees == 2) {
-      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
     }
     else {
       SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
@@ -21850,7 +21845,7 @@ void SOLARCHVISION_add_urban () {
       //float h = (HeightAboveGround - LocationElevation);
       float h = 0; //-20; // ?????????????????????????????????????????
   
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0,1,1, 0,0,h, 1,1,1);
+      SOLARCHVISION_import_objects_OBJ("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0,1,1, 0,0,h, 1,1,1);
       
       urbanVertices_end = allVertices.length;
       urbanFaces_end = allFaces_PNT.length;
@@ -26209,7 +26204,7 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
 }
 
 
-void SOLARCHVISION_DownloadLAND_MESH() {
+void SOLARCHVISION_DownloadLAND_MESH () {
 
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
@@ -26347,7 +26342,7 @@ void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
     float y = float(parts[1]);
     float z = float(parts[2]);
     
-    SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+    SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
   }
   
 }
@@ -32226,8 +32221,8 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     
     int NUM_allGroup3Ds_Faces_Before = allGroup3Ds_num + 1;
     
-    //SOLARCHVISION_import_objects(Filename, -1,0,0,1,1, 0,0,0, 1,1,1); // different objects: different materials
-    SOLARCHVISION_import_objects(Filename, Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, 0,0,0, 1,1,1); // apply default material
+    //SOLARCHVISION_import_objects_OBJ(Filename, -1,0,0,1,1, 0,0,0, 1,1,1); // different objects: different materials
+    SOLARCHVISION_import_objects_OBJ(Filename, Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, 0,0,0, 1,1,1); // apply default material
     
     int NUM_allGroup3Ds_Faces_After = allGroup3Ds_num + 1;
     
@@ -32338,7 +32333,7 @@ void mouseClicked () {
             }   
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
-              SOLARCHVISION_export_objects(); 
+              SOLARCHVISION_export_objects_OBJ(); 
             }    
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
@@ -35069,7 +35064,7 @@ void mouseClicked () {
                 if (Create_Mesh_Person_Button != 0) {
 
                   randomSeed(millis());
-                  SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+                  SOLARCHVISION_add_Object2D_single("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
                 }
                 
                 if (Create_Mesh_Plant_Button != 0) {
@@ -35077,7 +35072,7 @@ void mouseClicked () {
                   if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_PEOPLE_Files_Num;
     
                   randomSeed(millis());
-                  SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
+                  SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, 2 * rz);
                 }    
 
                 if (Create_Fractal_Plant_Button != 0) {
@@ -41740,7 +41735,7 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
 
 
 
-float SOLARCHVISION_softVertexSelectionFunction(float d_min) {
+float SOLARCHVISION_softVertexSelectionFunction (float d_min) {
   
   float v = 0;
   
