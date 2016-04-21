@@ -163,8 +163,14 @@ float pre_CreateInput_powAll;
  
  
  
- 
- 
+
+
+
+int SavedScreenShots = 0;
+
+float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
+
+
  
  
  
@@ -176,15 +182,24 @@ float FLOAT_undefined = 2000000000; // it must be a positive big number that is 
 float CubePower = 16; //8; 
 float StarPower = 0.25; 
 
-float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
-
-float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
 
 double DOUBLE_r_Earth = 6373000.0;
 float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
 
 
-float BiosphereStep = 5.0; //2.5; // 5: 5 degrees
+float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
+
+float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
+
+
+float MAX_SHADING_DIST = 250; // the biggest object should be 250
+
+
+float GlobalAlbedo = 0; // 0-100
+
+float GLOBE_calculatedResolution = 2.5; //1, 2.5, 5
+
+float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
 float objExport_Scale = 1; //0.001; // 0.001: 1km --> 1
 int objExport_FlipZYaxis = 0; //1; // 1: to fit in Unity3D
@@ -427,27 +442,27 @@ int ObjectCategory_Cameras = 9;
 
 int Current_ObjectCategory = ObjectCategory_Group3Ds; 
 
-int Create_Mesh_as_Solid = 0; // 0:Mesh 1:Solid
+int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
-int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:Pivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
-int View_XYZ_ChangeOption = 0; // 0-1
-int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. Fractals
-
-
+int WIN3D_UI_CurrentTask = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:Pivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
+int WIN3D_UI_OptionXorY = 0; // 0-1
+int WIN3D_UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. Fractals
 
 
 
-int Display_SWOB_points = 0; // 0-2
-int Display_SWOB_nearest = 0;
 
-int Display_NAEFS_points = 0; // 0-2
-int Display_NAEFS_nearest = 0;
 
-int Display_CWEEDS_points = 0; // 0-2
-int Display_CWEEDS_nearest = 0;
+int Display_SWOB_Points = 0; // 0-2
+int Display_SWOB_Nearest = 0;
 
-int Display_EPW_points = 1; // 0-2
-int Display_EPW_nearest = 1;
+int Display_NAEFS_Points = 0; // 0-2
+int Display_NAEFS_Nearest = 0;
+
+int Display_CWEEDS_Points = 0; // 0-2
+int Display_CWEEDS_Nearest = 0;
+
+int Display_EPW_Points = 1; // 0-2
+int Display_EPW_Nearest = 1;
 
 int FRAME_record_AUTO = 0;
 int FRAME_record_JPG = 0;
@@ -460,28 +475,19 @@ int SolidImpact_record_JPG = 0;
 int SolarImpact_record_JPG = 0;  
 
 
-int Ensemble_Audio_Output = 0; // inactive
-int Launch_External_Simulation = 0; // inactive
-int Launch_External_Hardware = 0; // inactive
+int RUN_AudioProduct = 0; // inactive
+int RUN_ExternalSimulation = 0; // inactive
+int RUN_ExternalHardware = 0; // inactive
 
 
 //-------------------------------
 
-float SolidImpact_Wspd = 5; // (5m/s = 18 km/h) 
-float SolidImpact_Wdir = 180.0;
+float SolidImpact_WindSpeed = 5; // (5m/s = 18 km/h) 
+float SolidImpact_WindDirection = 180.0;
 
 float SolidImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
 float SolidImpact_Grade = 0.02; //1.0; //0.1; //10.0; //contour lines 
 
-float GlobalAlbedo = 0; // 0-100
-
-float MAX_SHADING_DIST = 250; // the biggest object should be 250
-
-int SavedScreenShots = 0;
-
-float interpolation_weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
-
-float GlobeRES = 2.5; //1, 2.5, 5
 
 
 int CLIMATIC_SolarForecast = 0; //                                   Used for solar radiation only
@@ -2283,8 +2289,8 @@ void draw () {
         pre_SolidImpact_Rotation[SolidImpact_sectionType] = SolidImpact_Rotation[SolidImpact_sectionType];
         pre_SolidImpact_Elevation[SolidImpact_sectionType] = SolidImpact_Elevation[SolidImpact_sectionType];
         
-        pre_SolidImpact_Wspd = SolidImpact_Wspd; 
-        pre_SolidImpact_Wdir = SolidImpact_Wdir;
+        pre_SolidImpact_Wspd = SolidImpact_WindSpeed; 
+        pre_SolidImpact_Wdir = SolidImpact_WindDirection;
       
         pre_Process_subDivisions = Process_subDivisions;
       
@@ -2791,8 +2797,8 @@ void draw () {
 
         
         
-        if (pre_SolidImpact_Wspd != SolidImpact_Wspd) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SolidImpact_Wdir != SolidImpact_Wdir) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Wspd != SolidImpact_WindSpeed) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Wdir != SolidImpact_WindDirection) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
 
         if (pre_Process_subDivisions != Process_subDivisions) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
@@ -3584,7 +3590,7 @@ void SOLARCHVISION_draw_WORLD () {
     for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
       float draw_info = 0;
     
-      if (Display_SWOB_points != 0) draw_info = 1;
+      if (Display_SWOB_Points != 0) draw_info = 1;
     
       float _lat = float(STATION_SWOB_INFO[f][3]);
       float _lon = float(STATION_SWOB_INFO[f][4]); 
@@ -3605,7 +3611,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.fill(191, 0, 0, 191);      
         WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
   
-        if (Display_SWOB_points > 1) {
+        if (Display_SWOB_Points > 1) {
           WORLD_Diagrams.strokeWeight(0);
           WORLD_Diagrams.stroke(0);
           WORLD_Diagrams.fill(0);      
@@ -3624,7 +3630,7 @@ void SOLARCHVISION_draw_WORLD () {
       }     
     }    
     
-    if (Display_SWOB_nearest == 1) {   
+    if (Display_SWOB_Nearest == 1) {   
       int f = nearest_Station_OBSERVED_id;
       
       float _lat = float(STATION_SWOB_INFO[f][3]);
@@ -3651,7 +3657,7 @@ void SOLARCHVISION_draw_WORLD () {
     for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
       float draw_info = 0;
     
-      if (Display_NAEFS_points != 0) draw_info = 1;
+      if (Display_NAEFS_Points != 0) draw_info = 1;
     
       float _lat = float(STATION_NAEFS_INFO[f][3]);
       float _lon = float(STATION_NAEFS_INFO[f][4]); 
@@ -3673,7 +3679,7 @@ void SOLARCHVISION_draw_WORLD () {
         
         WORLD_Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
   
-        if (Display_NAEFS_points > 1) {
+        if (Display_NAEFS_Points > 1) {
           WORLD_Diagrams.strokeWeight(0);
           WORLD_Diagrams.stroke(0);
           WORLD_Diagrams.fill(0);      
@@ -3693,7 +3699,7 @@ void SOLARCHVISION_draw_WORLD () {
       
     }
     
-    if (Display_NAEFS_nearest == 1) {   
+    if (Display_NAEFS_Nearest == 1) {   
       int f = nearest_STATION_NAEFS;
     
       float _lat = float(STATION_NAEFS_INFO[f][3]);
@@ -3719,7 +3725,7 @@ void SOLARCHVISION_draw_WORLD () {
     for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
       float draw_info = 0;
     
-      if (Display_CWEEDS_points != 0) draw_info = 1;
+      if (Display_CWEEDS_Points != 0) draw_info = 1;
       
       float _lat = float(STATION_CWEEDS_INFO[f][3]);
       float _lon = float(STATION_CWEEDS_INFO[f][4]); 
@@ -3740,7 +3746,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.noFill();
         WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
   
-        if (Display_CWEEDS_points > 1) {
+        if (Display_CWEEDS_Points > 1) {
           WORLD_Diagrams.strokeWeight(0);
           WORLD_Diagrams.stroke(0);
           WORLD_Diagrams.fill(0);      
@@ -3758,7 +3764,7 @@ void SOLARCHVISION_draw_WORLD () {
       }     
     } 
   
-    if (Display_CWEEDS_nearest == 1) {   
+    if (Display_CWEEDS_Nearest == 1) {   
       int f = nearest_STATION_CWEEDS;
     
       float _lat = float(STATION_CWEEDS_INFO[f][3]);
@@ -3784,7 +3790,7 @@ void SOLARCHVISION_draw_WORLD () {
     for (int f = 0; f < STATION_EPW_INFO.length; f += 1) {
       float draw_info = 0;
       
-      if (Display_EPW_points != 0) draw_info = 1;
+      if (Display_EPW_Points != 0) draw_info = 1;
       
       float _lat = float(STATION_EPW_INFO[f][3]);
       float _lon = float(STATION_EPW_INFO[f][4]); 
@@ -3805,7 +3811,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.noFill();
         WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
   
-        if (Display_EPW_points > 1) {
+        if (Display_EPW_Points > 1) {
           WORLD_Diagrams.strokeWeight(0);
           WORLD_Diagrams.stroke(0);
           WORLD_Diagrams.fill(0);      
@@ -3823,7 +3829,7 @@ void SOLARCHVISION_draw_WORLD () {
       }     
     } 
   
-    if (Display_EPW_nearest == 1) {   
+    if (Display_EPW_Nearest == 1) {   
       int f = nearest_STATION_EPW;
     
       float _lat = float(STATION_EPW_INFO[f][3]);
@@ -5487,7 +5493,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                     //if (l == LAYER_winddir) ENSEMBLE_data[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
                     //else ENSEMBLE_data[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
                     
-                    float interpolation_pow = pow(2.0, interpolation_weight);
+                    float interpolation_pow = pow(2.0, Interpolation_Weight);
                 
                     ENSEMBLE_data[i][j][l][k] = (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow));
                     if (l == LAYER_winddir) ENSEMBLE_data[i][j][l][k] = (ENSEMBLE_data[i][j][l][k] + 360) % 360;
@@ -13395,14 +13401,14 @@ void SOLARCHVISION_add_Object2D_single (String t, int m, float x, float y, float
     
     if (abs(n) > n1) {
     
-      if (Create_Mesh_as_Solid != 0) {
+      if (CreateInput_MeshOrSolid != 0) {
         
         float x0 = x;
         float y0 = y;
         float z0 = 0.5 * s + z;
         float r0 = 0.4 * s; // <<<<<<< approximate
         
-        SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, Create_Mesh_as_Solid);
+        SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, CreateInput_MeshOrSolid);
       }
     }
   
@@ -19159,8 +19165,8 @@ void SOLARCHVISION_export_objects_OBJ () {
       float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
       float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
       
-      float delta_Alpha = -BiosphereStep; 
-      float delta_Beta = -BiosphereStep;
+      float delta_Alpha = -BIOSPHERE_drawResolution; 
+      float delta_Beta = -BIOSPHERE_drawResolution;
       
       float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
   
@@ -19355,8 +19361,8 @@ void SOLARCHVISION_export_objects_OBJ () {
 
 
     
-    float delta_Alpha = -BiosphereStep;
-    float delta_Beta = -BiosphereStep; 
+    float delta_Alpha = -BIOSPHERE_drawResolution;
+    float delta_Beta = -BIOSPHERE_drawResolution; 
     
     float r = FLOAT_r_Earth;
 
@@ -22519,8 +22525,8 @@ void SOLARCHVISION_draw_TROPO3D () {
       float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
       float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
       
-      float delta_Alpha = -BiosphereStep;
-      float delta_Beta = -BiosphereStep;
+      float delta_Alpha = -BIOSPHERE_drawResolution;
+      float delta_Beta = -BIOSPHERE_drawResolution;
       
       float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
       
@@ -22653,8 +22659,8 @@ void SOLARCHVISION_draw_EARTH3D () {
     float CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n][0] + EARTH_IMAGES_BoundariesX[n][1]);
     float CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n][0] + EARTH_IMAGES_BoundariesY[n][1]);
     
-    float delta_Alpha = -BiosphereStep;
-    float delta_Beta = -BiosphereStep;
+    float delta_Alpha = -BIOSPHERE_drawResolution;
+    float delta_Beta = -BIOSPHERE_drawResolution;
     
     float r = FLOAT_r_Earth;
     
@@ -26660,14 +26666,14 @@ void SOLARCHVISION_add_Model_BASIC () {
   }  
 
   
-  int keep_Create_Mesh_as_Solid = Create_Mesh_as_Solid;
-  Create_Mesh_as_Solid = 1; // 0;
+  int keep_Create_Mesh_as_Solid = CreateInput_MeshOrSolid;
+  CreateInput_MeshOrSolid = 1; // 0;
   
   SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
   SOLARCHVISION_add_Object2Ds_polar(2, 15, 0,0,0, 50,100); // 2D trees
   //SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 50,100); // fractal trees
   
-  Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
+  CreateInput_MeshOrSolid = keep_Create_Mesh_as_Solid;
 
 
   {
@@ -27608,8 +27614,8 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, f
 
 float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float z) {
 
-  float deltaX = SolidImpact_Wspd * cos_ang(SolidImpact_Wdir);
-  float deltaY = SolidImpact_Wspd * sin_ang(SolidImpact_Wdir);
+  float deltaX = SolidImpact_WindSpeed * cos_ang(SolidImpact_WindDirection);
+  float deltaY = SolidImpact_WindSpeed * sin_ang(SolidImpact_WindDirection);
 
   float[] val = {1, 1};
 
@@ -27668,8 +27674,8 @@ void SOLARCHVISION_calculate_WindFlow () {
 
 
         
-  float deltaX = -SolidImpact_Wspd * cos_ang(SolidImpact_Wdir);
-  float deltaY = -SolidImpact_Wspd * sin_ang(SolidImpact_Wdir);
+  float deltaX = -SolidImpact_WindSpeed * cos_ang(SolidImpact_WindDirection);
+  float deltaY = -SolidImpact_WindSpeed * sin_ang(SolidImpact_WindDirection);
   float deltaZ = 0;   
 
 /* 
@@ -27738,7 +27744,7 @@ void SOLARCHVISION_calculate_WindFlow () {
             
             float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
   
-            float acceleration = -SolidImpact_Wspd * (point_min[3] - val);
+            float acceleration = -SolidImpact_WindSpeed * (point_min[3] - val);
   
             float dx = v1[0] + v2[0] * acceleration;
             float dy = v1[1] + v2[1] * acceleration;
@@ -27756,7 +27762,7 @@ void SOLARCHVISION_calculate_WindFlow () {
             float z2 = test_point[2] + 0.5 * dz * scale;
   
   
-            float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SolidImpact_Wspd) / SolidImpact_Wspd; 
+            float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SolidImpact_WindSpeed) / SolidImpact_WindSpeed; 
         
             int point_prev = 0;
             int point_next = 0;
@@ -29244,8 +29250,8 @@ int rebuild_WindRoseImage_array = 1;
 
 void SOLARCHVISION_build_SolarProjection_array () {
   
-  SOLARCHVISION_GLOBE_stp_slp = GlobeRES;
-  SOLARCHVISION_GLOBE_stp_dir = GlobeRES;
+  SOLARCHVISION_GLOBE_stp_slp = GLOBE_calculatedResolution;
+  SOLARCHVISION_GLOBE_stp_dir = GLOBE_calculatedResolution;
   SOLARCHVISION_GLOBE_n_slp = int(roundTo(180.0 / (1.0 * SOLARCHVISION_GLOBE_stp_slp), 1)) + 1;  
   SOLARCHVISION_GLOBE_n_dir = int(roundTo(360.0 / (1.0 * SOLARCHVISION_GLOBE_stp_dir), 1));
 
@@ -31366,7 +31372,7 @@ void mouseWheel (MouseEvent event) {
               float z0 = P[2];
 
   
-              if (View_Select_Create_Modify == 3) { // rotate
+              if (WIN3D_UI_CurrentTask == 3) { // rotate
       
                 float r = (15 * Wheel_Value) * PI / 180.0;
                 
@@ -31378,7 +31384,7 @@ void mouseWheel (MouseEvent event) {
                 
               }   
 
-              if (View_Select_Create_Modify == 2) { // scale
+              if (WIN3D_UI_CurrentTask == 2) { // scale
       
                 float s = pow(pow(2.0, 0.25), Wheel_Value);
                 
@@ -31399,7 +31405,7 @@ void mouseWheel (MouseEvent event) {
               }       
 
 
-              if (View_Select_Create_Modify == 1) { // move
+              if (WIN3D_UI_CurrentTask == 1) { // move
               
                 float d = Wheel_Value;
       
@@ -31421,8 +31427,8 @@ void mouseWheel (MouseEvent event) {
               
 
               
-              if (Modify_Object_Parameters == 0) {
-                if (View_Select_Create_Modify >= 4) { // other properties
+              if (WIN3D_UI_TaskModifyParameter == 0) {
+                if (WIN3D_UI_CurrentTask >= 4) { // other properties
         
                   int p = int(Wheel_Value);
                   
@@ -31434,7 +31440,7 @@ void mouseWheel (MouseEvent event) {
               }
               
       
-              if (View_Select_Create_Modify == -1) { // PickSelect 
+              if (WIN3D_UI_CurrentTask == -1) { // PickSelect 
               
                  int go_direction = int(Wheel_Value);
 
@@ -31494,7 +31500,7 @@ void mouseWheel (MouseEvent event) {
               }
 
               
-              if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -10) || (View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -14)) { // viewport:zoom
+              if ((WIN3D_UI_CurrentTask == -3) || (WIN3D_UI_CurrentTask == -10) || (WIN3D_UI_CurrentTask == -12) || (WIN3D_UI_CurrentTask == -14)) { // viewport:zoom
       
                 if (WIN3D_View_Type == 1) {
                   WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale; 
@@ -31507,7 +31513,7 @@ void mouseWheel (MouseEvent event) {
       
               }
               
-              if (View_Select_Create_Modify == -4) { // viewport:elevation
+              if (WIN3D_UI_CurrentTask == -4) { // viewport:elevation
                 
                 if (Wheel_Value > 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); 
                 if (Wheel_Value < 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate));
@@ -31516,7 +31522,7 @@ void mouseWheel (MouseEvent event) {
       
               }  
               
-              if (View_Select_Create_Modify == -5) { // viewport:3DModelSize
+              if (WIN3D_UI_CurrentTask == -5) { // viewport:3DModelSize
                 
                 if (Wheel_Value > 0) OBJECTS_scale *= pow(2.0, 0.25);
                 if (Wheel_Value < 0) OBJECTS_scale /= pow(2.0, 0.25);
@@ -31525,11 +31531,11 @@ void mouseWheel (MouseEvent event) {
       
               }          
       
-              if (View_Select_Create_Modify == -6) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == -6) { // viewport:different functions with wheel
       
-                if (Modify_Object_Parameters == 0) { // Truck
+                if (WIN3D_UI_TaskModifyParameter == 0) { // Truck
       
-                  if (View_XYZ_ChangeOption == 0) {
+                  if (WIN3D_UI_OptionXorY == 0) {
       
                     WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
                     
@@ -31537,7 +31543,7 @@ void mouseWheel (MouseEvent event) {
                     
                   }
       
-                  if (View_XYZ_ChangeOption == 1) {
+                  if (WIN3D_UI_OptionXorY == 1) {
       
                     WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
                     
@@ -31548,9 +31554,9 @@ void mouseWheel (MouseEvent event) {
                 }
                 
                 
-                if (Modify_Object_Parameters == 1) {  // Orbit
+                if (WIN3D_UI_TaskModifyParameter == 1) {  // Orbit
       
-                  if (View_XYZ_ChangeOption == 0) {
+                  if (WIN3D_UI_OptionXorY == 0) {
       
                     WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                     
@@ -31558,7 +31564,7 @@ void mouseWheel (MouseEvent event) {
                     
                   }
       
-                  if (View_XYZ_ChangeOption == 1) {
+                  if (WIN3D_UI_OptionXorY == 1) {
       
                     WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                     
@@ -31574,9 +31580,9 @@ void mouseWheel (MouseEvent event) {
               }  
       
   
-              if (View_Select_Create_Modify == -7) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == -7) { // viewport:different functions with wheel
       
-                if (Modify_Object_Parameters == 0) { // SkydomeSize
+                if (WIN3D_UI_TaskModifyParameter == 0) { // SkydomeSize
                 
                   if (Wheel_Value > 0) SKY3D_scale *= pow(2.0, 0.25);              
                   if (Wheel_Value < 0) SKY3D_scale /= pow(2.0, 0.25);
@@ -31586,9 +31592,9 @@ void mouseWheel (MouseEvent event) {
                 }
               }
   
-              if (View_Select_Create_Modify == -8) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == -8) { // viewport:different functions with wheel
       
-                if (Modify_Object_Parameters == 0) { // AllModelSize
+                if (WIN3D_UI_TaskModifyParameter == 0) { // AllModelSize
                 
                   if (Wheel_Value > 0) {
                     OBJECTS_scale *= pow(2.0, 0.25);
@@ -31605,15 +31611,15 @@ void mouseWheel (MouseEvent event) {
                 }
               }    
               
-              if (View_Select_Create_Modify == -9) { // viewport:TargetRollXY/TargetRoolZ
+              if (WIN3D_UI_CurrentTask == -9) { // viewport:TargetRollXY/TargetRoolZ
   
-                if (View_XYZ_ChangeOption == 0) {   
+                if (WIN3D_UI_OptionXorY == 0) {   
                   WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                   
                   SOLARCHVISION_reverseTransform_3DViewport(); 
                 }
                 
-                if (View_XYZ_ChangeOption == 1) {   
+                if (WIN3D_UI_OptionXorY == 1) {   
                   WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                   
                   SOLARCHVISION_reverseTransform_3DViewport(); 
@@ -31622,14 +31628,14 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
               
-              if (View_Select_Create_Modify == -11) { // viewport:CameraRollXY/CameraRoolZ
+              if (WIN3D_UI_CurrentTask == -11) { // viewport:CameraRollXY/CameraRoolZ
   
-                if (View_XYZ_ChangeOption == 0) {   
+                if (WIN3D_UI_OptionXorY == 0) {   
   
                   SOLARCHVISION_rotateZ_3DViewport_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
                 }
                 
-                if (View_XYZ_ChangeOption == 1) {   
+                if (WIN3D_UI_OptionXorY == 1) {   
   
                   SOLARCHVISION_rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
                 }    
@@ -31638,7 +31644,7 @@ void mouseWheel (MouseEvent event) {
       
               }            
               
-              if (View_Select_Create_Modify == -13) { // viewport:CameraDistance
+              if (WIN3D_UI_CurrentTask == -13) { // viewport:CameraDistance
   
                 SOLARCHVISION_move_3DViewport_towards_Selection(pow(2, -0.5 * Wheel_Value));
   
@@ -31646,7 +31652,7 @@ void mouseWheel (MouseEvent event) {
       
               }              
           
-              if (View_Select_Create_Modify == -15) { // viewport:PanX
+              if (WIN3D_UI_CurrentTask == -15) { // viewport:PanX
               
                 WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
   
@@ -31654,7 +31660,7 @@ void mouseWheel (MouseEvent event) {
       
               }         
           
-              if (View_Select_Create_Modify == -16) { // viewport:PanY
+              if (WIN3D_UI_CurrentTask == -16) { // viewport:PanY
               
                 WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
   
@@ -31662,7 +31668,7 @@ void mouseWheel (MouseEvent event) {
       
               }      
               
-              if (View_Select_Create_Modify == -17) { // viewport:DistMouseXY
+              if (WIN3D_UI_CurrentTask == -17) { // viewport:DistMouseXY
               
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
   
@@ -31742,7 +31748,7 @@ void mouseReleased () {
           if (WIN3D_include == 1) {
             if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
       
-              if ((View_Select_Create_Modify == -2) || (View_Select_Create_Modify > 1)) { // RectSelect also if scale, rotate, modify, etc. where selected          
+              if ((WIN3D_UI_CurrentTask == -2) || (WIN3D_UI_CurrentTask > 1)) { // RectSelect also if scale, rotate, modify, etc. where selected          
 
                 float corner1x = SOLARCHVISION_X_click1 - 0.5 * WIN3D_X_View - WIN3D_CX_View;
                 float corner1y = SOLARCHVISION_Y_click1 - 0.5 * WIN3D_Y_View - WIN3D_CY_View;
@@ -31775,7 +31781,7 @@ void mouseReleased () {
               }
               
       
-              if (View_Select_Create_Modify == 18) {      
+              if (WIN3D_UI_CurrentTask == 18) {      
                
                 float x1 = 0;
                 float y1 = 0;
@@ -31862,25 +31868,25 @@ void mouseReleased () {
                 float dy_rot = dx * sin_ang(-WIN3D_RZ_coordinate) + dy * cos_ang(-WIN3D_RZ_coordinate);
                 float dz_rot = dz;
                 
-                if (Modify_Object_Parameters == 0) {
+                if (WIN3D_UI_TaskModifyParameter == 0) {
                   CreateInput_Length = dist(x1, y1, z1, x2, y2, z2);
                 }
-                if (Modify_Object_Parameters == 1) {
+                if (WIN3D_UI_TaskModifyParameter == 1) {
                   CreateInput_Width = dist(x1, y1, z1, x2, y2, z2);
                 }
-                if (Modify_Object_Parameters == 2) {
+                if (WIN3D_UI_TaskModifyParameter == 2) {
                   CreateInput_Height = dist(x1, y1, z1, x2, y2, z2);
                 }
-                if (Modify_Object_Parameters == 3) {
+                if (WIN3D_UI_TaskModifyParameter == 3) {
                   CreateInput_Length = abs(dx_rot);
                   CreateInput_Width = abs(dy_rot);
                   CreateInput_Height = abs(dz_rot);
                 }
-                if (Modify_Object_Parameters == 4) {
+                if (WIN3D_UI_TaskModifyParameter == 4) {
                   CreateInput_Length = abs(dx_rot);
                   CreateInput_Width = abs(dy_rot);
                 }
-                if (Modify_Object_Parameters == 5) {
+                if (WIN3D_UI_TaskModifyParameter == 5) {
                   CreateInput_Orientation = atan2_ang(y2 - y1, x2 - x1) + 90;
                 }
                   
@@ -31928,7 +31934,7 @@ void mouseDragged () {
             float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
             float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
   
-            if ((View_Select_Create_Modify == -15) || (View_Select_Create_Modify == -16)) { // viewport
+            if ((WIN3D_UI_CurrentTask == -15) || (WIN3D_UI_CurrentTask == -16)) { // viewport
   
               if (mouseButton == LEFT) { // CameraRollXY
                 
@@ -31945,7 +31951,7 @@ void mouseDragged () {
               }     
             } 
             
-            if ((View_Select_Create_Modify == -14) || (View_Select_Create_Modify == -17)) { // viewport
+            if ((WIN3D_UI_CurrentTask == -14) || (WIN3D_UI_CurrentTask == -17)) { // viewport
   
               if (mouseButton == LEFT) { // pan
   
@@ -31967,7 +31973,7 @@ void mouseDragged () {
   
             }            
             
-            if ((View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -13)) { // viewport
+            if ((WIN3D_UI_CurrentTask == -12) || (WIN3D_UI_CurrentTask == -13)) { // viewport
             
               if (mouseButton == LEFT) { // CameraRoll
   
@@ -31988,7 +31994,7 @@ void mouseDragged () {
     
             }  
             
-            if (View_Select_Create_Modify == -11) { // viewport
+            if (WIN3D_UI_CurrentTask == -11) { // viewport
             
               if (mouseButton == LEFT) { // CameraRollXY
                 
@@ -32006,7 +32012,7 @@ void mouseDragged () {
   
             }            
   
-            if (View_Select_Create_Modify == -10) { // viewport
+            if (WIN3D_UI_CurrentTask == -10) { // viewport
             
               if (mouseButton == LEFT) { // TargetRoll
   
@@ -32028,7 +32034,7 @@ void mouseDragged () {
     
             }  
             
-            if (View_Select_Create_Modify == -9) { // viewport
+            if (WIN3D_UI_CurrentTask == -9) { // viewport
             
               if (mouseButton == LEFT) { // TargetRollXY
   
@@ -32050,7 +32056,7 @@ void mouseDragged () {
     
             }            
            
-            if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -7) || (View_Select_Create_Modify == -8)) { // viewport
+            if ((WIN3D_UI_CurrentTask == -3) || (WIN3D_UI_CurrentTask == -7) || (WIN3D_UI_CurrentTask == -8)) { // viewport
             
               if (mouseButton == LEFT) { // orbit
       
@@ -32070,7 +32076,7 @@ void mouseDragged () {
     
             }  
             
-            if (View_Select_Create_Modify == -4) { 
+            if (WIN3D_UI_CurrentTask == -4) { 
   
               if (mouseButton == LEFT) { // move Y
     
@@ -32088,7 +32094,7 @@ void mouseDragged () {
   
             }
   
-            if (View_Select_Create_Modify == -5) { // viewport
+            if (WIN3D_UI_CurrentTask == -5) { // viewport
   
               if (mouseButton == LEFT) { // pan
             
@@ -32110,17 +32116,17 @@ void mouseDragged () {
     
             }
   
-            if (View_Select_Create_Modify == -6) { // viewport:different functions
+            if (WIN3D_UI_CurrentTask == -6) { // viewport:different functions
     
-              if (Modify_Object_Parameters == 0) { // Truck
+              if (WIN3D_UI_TaskModifyParameter == 0) { // Truck
   
-                if (View_XYZ_ChangeOption == 0) {
+                if (WIN3D_UI_OptionXorY == 0) {
                   if (mouseButton == LEFT) WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
                   if (mouseButton == RIGHT) WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                   WIN3D_Update = 1;  
                 }
     
-                if (View_XYZ_ChangeOption == 1) {
+                if (WIN3D_UI_OptionXorY == 1) {
                   if (mouseButton == RIGHT) WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
                   if (mouseButton == LEFT) WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                   WIN3D_Update = 1; 
@@ -32129,15 +32135,15 @@ void mouseDragged () {
               }
               
               
-              if (Modify_Object_Parameters == 1) {  // Orbit
+              if (WIN3D_UI_TaskModifyParameter == 1) {  // Orbit
     
-                if (View_XYZ_ChangeOption == 0) {
+                if (WIN3D_UI_OptionXorY == 0) {
                   if (mouseButton == LEFT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
                   if (mouseButton == RIGHT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
                   WIN3D_Update = 1;
                 }
     
-                if (View_XYZ_ChangeOption == 1) {
+                if (WIN3D_UI_OptionXorY == 1) {
                   if (mouseButton == RIGHT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
                   if (mouseButton == LEFT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
                   WIN3D_Update = 1;
@@ -32999,49 +33005,49 @@ void mouseClicked () {
             }              
   
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide SWOB points")) {
-              Display_SWOB_points = (Display_SWOB_points  + 1) % 2;
+              Display_SWOB_Points = (Display_SWOB_Points  + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
-              Display_SWOB_nearest = (Display_SWOB_nearest + 1) % 2;
+              Display_SWOB_Nearest = (Display_SWOB_Nearest + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
-              Display_NAEFS_points = (Display_NAEFS_points + 1) % 2;
+              Display_NAEFS_Points = (Display_NAEFS_Points + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
-              Display_NAEFS_nearest = (Display_NAEFS_nearest  + 1) % 2;
+              Display_NAEFS_Nearest = (Display_NAEFS_Nearest  + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
-              Display_CWEEDS_points = (Display_CWEEDS_points + 1) % 2;
+              Display_CWEEDS_Points = (Display_CWEEDS_Points + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
-              Display_CWEEDS_nearest = (Display_CWEEDS_nearest + 1) % 2;
+              Display_CWEEDS_Nearest = (Display_CWEEDS_Nearest + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide EPW points")) {
-              Display_EPW_points = (Display_EPW_points + 1) % 2;
+              Display_EPW_Points = (Display_EPW_Points + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide EPW nearest")) {
-              Display_EPW_nearest = (Display_EPW_nearest + 1) % 2;
+              Display_EPW_Nearest = (Display_EPW_Nearest + 1) % 2;
               
               WORLD_Update = 1;  
               ROLLOUT_Update = 1;
@@ -34507,7 +34513,7 @@ void mouseClicked () {
             }
             else if (mouseButton == LEFT) {
            
-              if ((View_Select_Create_Modify == 0) || (View_Select_Create_Modify == 1)) {
+              if ((WIN3D_UI_CurrentTask == 0) || (WIN3D_UI_CurrentTask == 1)) {
                 RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
               }
               else {
@@ -34538,7 +34544,7 @@ void mouseClicked () {
             
             if (RxP[4] > 0) {
                            
-              if (View_Select_Create_Modify == 1) { // move
+              if (WIN3D_UI_CurrentTask == 1) { // move
 
                 float x1 = FLOAT_undefined;
                 float y1 = FLOAT_undefined;
@@ -34614,27 +34620,27 @@ void mouseClicked () {
               
               if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
               
-                if ((Modify_Object_Parameters != 0) && (View_Select_Create_Modify >= 4)) { // Pick/Assign properties 
+                if ((WIN3D_UI_TaskModifyParameter != 0) && (WIN3D_UI_CurrentTask >= 4)) { // Pick/Assign properties 
                   
                   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) {
       
                     int f = int(RxP[4]);
                   
-                    if ((View_Select_Create_Modify == 4) || (View_Select_Create_Modify == 5) || (View_Select_Create_Modify == 6) || (View_Select_Create_Modify == 7)) {
+                    if ((WIN3D_UI_CurrentTask == 4) || (WIN3D_UI_CurrentTask == 5) || (WIN3D_UI_CurrentTask == 6) || (WIN3D_UI_CurrentTask == 7)) {
                       
-                      if (Modify_Object_Parameters == 1) { // Pick 
-                        if (View_Select_Create_Modify == 4) DEFAULT_CreateMaterial = allFaces_MTLV[f][0];
-                        if (View_Select_Create_Modify == 5) DEFAULT_CreateTessellation = allFaces_MTLV[f][1];
-                        if (View_Select_Create_Modify == 6) DEFAULT_CreateLayer = allFaces_MTLV[f][2];
-                        if (View_Select_Create_Modify == 7) DEFAULT_CreateVisibility = allFaces_MTLV[f][3];
+                      if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
+                        if (WIN3D_UI_CurrentTask == 4) DEFAULT_CreateMaterial = allFaces_MTLV[f][0];
+                        if (WIN3D_UI_CurrentTask == 5) DEFAULT_CreateTessellation = allFaces_MTLV[f][1];
+                        if (WIN3D_UI_CurrentTask == 6) DEFAULT_CreateLayer = allFaces_MTLV[f][2];
+                        if (WIN3D_UI_CurrentTask == 7) DEFAULT_CreateVisibility = allFaces_MTLV[f][3];
                       } 
-                      if (Modify_Object_Parameters == 2) { // Assign(sub) 
-                        if (View_Select_Create_Modify == 4) allFaces_MTLV[f][0] = DEFAULT_CreateMaterial;
-                        if (View_Select_Create_Modify == 5) allFaces_MTLV[f][1] = DEFAULT_CreateTessellation;
-                        if (View_Select_Create_Modify == 6) allFaces_MTLV[f][2] = DEFAULT_CreateLayer;
-                        if (View_Select_Create_Modify == 7) allFaces_MTLV[f][3] = DEFAULT_CreateVisibility; 
+                      if (WIN3D_UI_TaskModifyParameter == 2) { // Assign(sub) 
+                        if (WIN3D_UI_CurrentTask == 4) allFaces_MTLV[f][0] = DEFAULT_CreateMaterial;
+                        if (WIN3D_UI_CurrentTask == 5) allFaces_MTLV[f][1] = DEFAULT_CreateTessellation;
+                        if (WIN3D_UI_CurrentTask == 6) allFaces_MTLV[f][2] = DEFAULT_CreateLayer;
+                        if (WIN3D_UI_CurrentTask == 7) allFaces_MTLV[f][3] = DEFAULT_CreateVisibility; 
                       }
-                      if (Modify_Object_Parameters == 3) { // Assign(all) 
+                      if (WIN3D_UI_TaskModifyParameter == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
                         for (int i = 0; i < allGroup3Ds_num + 1; i++) {
                           if ((allGroup3Ds_Faces[i][0] <= f) && (f <= allGroup3Ds_Faces[i][1])) {
@@ -34644,20 +34650,20 @@ void mouseClicked () {
                         }
                         if (OBJ_NUM != 0) {
                           for (int q = allGroup3Ds_Faces[OBJ_NUM][0]; q <= allGroup3Ds_Faces[OBJ_NUM][1]; q++) {                    
-                            if (View_Select_Create_Modify == 4) allFaces_MTLV[q][0] = DEFAULT_CreateMaterial;
-                            if (View_Select_Create_Modify == 5) allFaces_MTLV[q][1] = DEFAULT_CreateTessellation;
-                            if (View_Select_Create_Modify == 6) allFaces_MTLV[q][2] = DEFAULT_CreateLayer;
-                            if (View_Select_Create_Modify == 7) allFaces_MTLV[q][3] = DEFAULT_CreateVisibility;
+                            if (WIN3D_UI_CurrentTask == 4) allFaces_MTLV[q][0] = DEFAULT_CreateMaterial;
+                            if (WIN3D_UI_CurrentTask == 5) allFaces_MTLV[q][1] = DEFAULT_CreateTessellation;
+                            if (WIN3D_UI_CurrentTask == 6) allFaces_MTLV[q][2] = DEFAULT_CreateLayer;
+                            if (WIN3D_UI_CurrentTask == 7) allFaces_MTLV[q][3] = DEFAULT_CreateVisibility;
                           }
                         }
                       }    
                     }
                     
-                    if (View_Select_Create_Modify == 14) {
-                      if (Modify_Object_Parameters == 1) { // Pick 
+                    if (WIN3D_UI_CurrentTask == 14) {
+                      if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
                         //?????????????????????????????????????????????????
                       }     
-                      if (Modify_Object_Parameters == 2) { // Assign
+                      if (WIN3D_UI_TaskModifyParameter == 2) { // Assign
                         int OBJ_NUM = 0;
                         for (int i = 0; i < allGroup3Ds_num + 1; i++) {
                           if ((allGroup3Ds_Faces[i][0] <= f) && (f <= allGroup3Ds_Faces[i][1])) {
@@ -34678,7 +34684,7 @@ void mouseClicked () {
                       }                   
                     }
                     
-                    if (View_Select_Create_Modify == 15) { //FaceNormal
+                    if (WIN3D_UI_CurrentTask == 15) { //FaceNormal
                     
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
                         
@@ -34701,7 +34707,7 @@ void mouseClicked () {
                           }  
                           
                           int flip_face = 0;
-                          if (Modify_Object_Parameters == 1) flip_face = 1;
+                          if (WIN3D_UI_TaskModifyParameter == 1) flip_face = 1;
                           else {
                             PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
                             PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
@@ -34718,10 +34724,10 @@ void mouseClicked () {
                            
                             float V = PG.dot(GAxGB); 
                             
-                            if (Modify_Object_Parameters == 2) {
+                            if (WIN3D_UI_TaskModifyParameter == 2) {
                               if (V > 0) flip_face = 1;
                             }
-                            if (Modify_Object_Parameters == 3) {
+                            if (WIN3D_UI_TaskModifyParameter == 3) {
                               if (V < 0) flip_face = 1;
                             }
                           }
@@ -34757,7 +34763,7 @@ void mouseClicked () {
                               }  
                               
                               int flip_face = 0;
-                              if (Modify_Object_Parameters == 1) flip_face = 1;
+                              if (WIN3D_UI_TaskModifyParameter == 1) flip_face = 1;
                               else {
                                 PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
                                 PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
@@ -34774,10 +34780,10 @@ void mouseClicked () {
                                
                                 float V = PG.dot(GAxGB); 
                                 
-                                if (Modify_Object_Parameters == 2) {
+                                if (WIN3D_UI_TaskModifyParameter == 2) {
                                   if (V > 0) flip_face = 1;
                                 }
-                                if (Modify_Object_Parameters == 3) {
+                                if (WIN3D_UI_TaskModifyParameter == 3) {
                                   if (V < 0) flip_face = 1;
                                 }
                               }
@@ -34794,7 +34800,7 @@ void mouseClicked () {
                     }   
                     
                     
-                    if (View_Select_Create_Modify == 16) { //FaceFirstVertex
+                    if (WIN3D_UI_CurrentTask == 16) { //FaceFirstVertex
                     
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
                         
@@ -34857,9 +34863,9 @@ void mouseClicked () {
                     int n1 = Object2D_PEOPLE_Files_Num;
                     int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
             
-                    if (View_Select_Create_Modify == 4) {
+                    if (WIN3D_UI_CurrentTask == 4) {
                       
-                      if (Modify_Object_Parameters == 1) { // Pick 
+                      if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
                         if (n <= n1) { // case: people 
                           CreatePerson_Type = n;
                         }
@@ -34867,7 +34873,7 @@ void mouseClicked () {
                           CreatePlant_Type = n - n1;
                         }
                       } 
-                      if ((Modify_Object_Parameters == 2) || (Modify_Object_Parameters == 3)) { // Assign
+                      if ((WIN3D_UI_TaskModifyParameter == 2) || (WIN3D_UI_TaskModifyParameter == 3)) { // Assign
                         if (n <= n1) { // case: people 
                           allObject2Ds_MAP[OBJ_NUM] = sign_n * CreatePerson_Type;
                         }
@@ -34883,26 +34889,26 @@ void mouseClicked () {
       
                     int OBJ_NUM = int(RxP[4]);
                       
-                    if (Modify_Object_Parameters == 1) { // Pick 
-                      if (View_Select_Create_Modify == 8) CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
-                      if (View_Select_Create_Modify == 9) {CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM]; CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];}
-                      if (View_Select_Create_Modify == 10) CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
-                      if (View_Select_Create_Modify == 11) CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
-                      if (View_Select_Create_Modify == 12) CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
-                      if (View_Select_Create_Modify == 13) { // all properties
+                    if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
+                      if (WIN3D_UI_CurrentTask == 8) CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 9) {CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM]; CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];}
+                      if (WIN3D_UI_CurrentTask == 10) CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 11) CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 12) CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 13) { // all properties
                         CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
                         CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
                         CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
                         CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
                       }                      
                     } 
-                    if (Modify_Object_Parameters == 2) { //Assign
-                      if (View_Select_Create_Modify == 8) allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;                    
-                      if (View_Select_Create_Modify == 9) {allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax; allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;}                 
-                      if (View_Select_Create_Modify == 10) allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
-                      if (View_Select_Create_Modify == 11) allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
-                      if (View_Select_Create_Modify == 12) allFractals_LeafSize[OBJ_NUM] = CreateFractal_LeafSize;
-                      if (View_Select_Create_Modify == 13) { // all properties
+                    if (WIN3D_UI_TaskModifyParameter == 2) { //Assign
+                      if (WIN3D_UI_CurrentTask == 8) allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;                    
+                      if (WIN3D_UI_CurrentTask == 9) {allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax; allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;}                 
+                      if (WIN3D_UI_CurrentTask == 10) allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
+                      if (WIN3D_UI_CurrentTask == 11) allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
+                      if (WIN3D_UI_CurrentTask == 12) allFractals_LeafSize[OBJ_NUM] = CreateFractal_LeafSize;
+                      if (WIN3D_UI_CurrentTask == 13) { // all properties
                         allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;
                         allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
                         allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
@@ -34914,13 +34920,13 @@ void mouseClicked () {
                   WIN3D_Update = 1;                 
                   ROLLOUT_Update = 1;                  
                 } 
-                else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
+                else if ((WIN3D_UI_CurrentTask != 0) && (WIN3D_UI_CurrentTask != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
 
                   SOLARCHVISION_PickSelect(RxP);
                 }      
               }
               
-              if (View_Select_Create_Modify == 0) { // create
+              if (WIN3D_UI_CurrentTask == 0) { // create
     
                 int keep_number_of_Group3Ds = allGroup3Ds_num + 1;
                 int keep_number_of_Object2Ds = allObject2Ds_num + 1;
@@ -35033,7 +35039,7 @@ void mouseClicked () {
                   
                   
                   
-                  if (Create_Mesh_as_Solid == 1) {
+                  if (CreateInput_MeshOrSolid == 1) {
                    
                     SOLARCHVISION_add_Solid(x,y,z, px,py,pz, rx,ry,rz, 0,0,rot, 1);
                   }                
@@ -35786,17 +35792,17 @@ void SOLARCHVISION_draw_ROLLOUT () {
       LocationLON_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
       LocationELE_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
       
-      Display_SWOB_points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_SWOB_points" , Display_SWOB_points, 0, 2, 1), 1));
-      Display_SWOB_nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_SWOB_nearest" , Display_SWOB_nearest, 0, 1, 1), 1));
+      Display_SWOB_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_SWOB_Points" , Display_SWOB_Points, 0, 2, 1), 1));
+      Display_SWOB_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_SWOB_Nearest" , Display_SWOB_Nearest, 0, 1, 1), 1));
 
-      Display_NAEFS_points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_NAEFS_points" , Display_NAEFS_points, 0, 2, 1), 1));
-      Display_NAEFS_nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_NAEFS_nearest" , Display_NAEFS_nearest, 0, 1, 1), 1));
+      Display_NAEFS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_NAEFS_Points" , Display_NAEFS_Points, 0, 2, 1), 1));
+      Display_NAEFS_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_NAEFS_Nearest" , Display_NAEFS_Nearest, 0, 1, 1), 1));
 
-      Display_CWEEDS_points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_CWEEDS_points" , Display_CWEEDS_points, 0, 2, 1), 1));
-      Display_CWEEDS_nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_CWEEDS_nearest" , Display_CWEEDS_nearest, 0, 1, 1), 1));
+      Display_CWEEDS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_CWEEDS_Points" , Display_CWEEDS_Points, 0, 2, 1), 1));
+      Display_CWEEDS_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_CWEEDS_Nearest" , Display_CWEEDS_Nearest, 0, 1, 1), 1));
 
-      Display_EPW_points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_EPW_points" , Display_EPW_points, 0, 2, 1), 1));
-      Display_EPW_nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_EPW_nearest" , Display_EPW_nearest, 0, 1, 1), 1));        
+      Display_EPW_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_EPW_Points" , Display_EPW_Points, 0, 2, 1), 1));
+      Display_EPW_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Display_EPW_Nearest" , Display_EPW_Nearest, 0, 1, 1), 1));        
     }
 
     if (SOLARCHVISION_ROLLOUT_child == 2) { // Weather
@@ -35846,7 +35852,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 1) { // General
 
-      Create_Mesh_as_Solid = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Mesh_as_Solid" , Create_Mesh_as_Solid, 0, 1, 1), 1));
+      CreateInput_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_MeshOrSolid" , CreateInput_MeshOrSolid, 0, 1, 1), 1));
     
       MODEL3D_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "MODEL3D_Tessellation" , MODEL3D_Tessellation, 0, 4, 1), 1));
       
@@ -35855,7 +35861,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_TESSELLATION = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SKY3D_TESSELLATION" , SKY3D_TESSELLATION, 0, 4, 1), 1));   
       SKY3D_scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 0.0000001, 1000000, -2);
 
-      BiosphereStep = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "BiosphereStep" , BiosphereStep, 1, 10, 1), 1);
+      BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "BIOSPHERE_drawResolution" , BIOSPHERE_drawResolution, 1, 10, 1), 1);
 
       OBJECTS_scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "OBJECTS_scale" , OBJECTS_scale, 0.0000001, 1000000, -2);      
 
@@ -36059,8 +36065,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SolidImpact_offset_V[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SolidImpact_offset_V[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_offset_V[SolidImpact_sectionType], -10000, 10000, -2);
       
     
-      SolidImpact_Wspd = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SolidImpact_Wspd (m/s)" , SolidImpact_Wspd, 1, 16, -2); 
-      SolidImpact_Wdir = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SolidImpact_Wdir" , SolidImpact_Wdir, 0, 360, 15);
+      SolidImpact_WindSpeed = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SolidImpact_WindSpeed (m/s)" , SolidImpact_WindSpeed, 1, 16, -2); 
+      SolidImpact_WindDirection = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "SolidImpact_WindDirection" , SolidImpact_WindDirection, 0, 360, 15);
       
 
       Process_subDivisions = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Process_subDivisions" , Process_subDivisions, 0, 3, 1), 1));
@@ -36246,7 +36252,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     if (SOLARCHVISION_ROLLOUT_child == 1) { // Interpolation
     
-      interpolation_weight = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "interpolation_weight", interpolation_weight, 0, 5, 0.5);
+      Interpolation_Weight = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
       CLIMATIC_SolarForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
       CLIMATIC_WeatherForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));    
     
@@ -36319,9 +36325,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Launch
       
-      Ensemble_Audio_Output = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Ensemble_Audio_Output", Ensemble_Audio_Output, 0, 1, 1), 1));
-      Launch_External_Simulation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Launch_External_Simulation", Launch_External_Simulation, 0, 1, 1), 1));
-      Launch_External_Hardware = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Launch_External_Hardware", Launch_External_Hardware, 0, 1, 1), 1));
+      RUN_AudioProduct = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "RUN_AudioProduct", RUN_AudioProduct, 0, 1, 1), 1));
+      RUN_ExternalSimulation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "RUN_ExternalSimulation", RUN_ExternalSimulation, 0, 1, 1), 1));
+      RUN_ExternalHardware = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "RUN_ExternalHardware", RUN_ExternalHardware, 0, 1, 1), 1));
       
     }    
     
@@ -39918,7 +39924,7 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
     
     
     
-    if (Create_Mesh_as_Solid != 0) {
+    if (CreateInput_MeshOrSolid != 0) {
   
       randomSeed(q);
       
@@ -40376,7 +40382,7 @@ void SOLARCHVISION_Plant_branch_addSolids (float x0, float y0, float z0, float A
       //float rz = 0.5 * abs(z_new - z0);
       float rz = 0.5 * abs(z_new - z0) * 1.25; // <<<<<<< to somehow compensate the shrinkage!
       
-      SOLARCHVISION_add_Solid(cx,cy,cz, 2,2,2, rx,ry,rz, 0,(rotZX * 180 / PI),(rotXY * 180 / PI), Create_Mesh_as_Solid);
+      SOLARCHVISION_add_Solid(cx,cy,cz, 2,2,2, rx,ry,rz, 0,(rotZX * 180 / PI),(rotXY * 180 / PI), CreateInput_MeshOrSolid);
 
 
       SOLARCHVISION_Plant_branch_addSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
@@ -40392,7 +40398,7 @@ void SOLARCHVISION_Plant_branch_addSolids (float x0, float y0, float z0, float A
     if (Display_Leaves != 0) {
       
       float r0 = 0.5 * LeafSize;
-      SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, Create_Mesh_as_Solid);
+      SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, CreateInput_MeshOrSolid);
   
     }
 
@@ -42590,10 +42596,10 @@ void SOLARCHVISION_drop_Selection () {
 
         float[] RxP = new float [5];
 
-        if (Modify_Object_Parameters == 0) { 
+        if (WIN3D_UI_TaskModifyParameter == 0) { 
           RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
         }
-        else if (Modify_Object_Parameters == 1) {
+        else if (WIN3D_UI_TaskModifyParameter == 1) {
           RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
         }
         else {
@@ -42608,10 +42614,10 @@ void SOLARCHVISION_drop_Selection () {
         else {
           ray_direction[2] = 1; // <<<< going upwards
           
-          if (Modify_Object_Parameters == 0) { 
+          if (WIN3D_UI_TaskModifyParameter == 0) { 
             RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
           }
-          else if (Modify_Object_Parameters == 2) {
+          else if (WIN3D_UI_TaskModifyParameter == 2) {
             RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
           }          
           else {
@@ -42647,10 +42653,10 @@ void SOLARCHVISION_drop_Selection () {
 
         float[] RxP = new float [5];
 
-        if (Modify_Object_Parameters == 0) { 
+        if (WIN3D_UI_TaskModifyParameter == 0) { 
           RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
         }
-        else if (Modify_Object_Parameters == 1) {
+        else if (WIN3D_UI_TaskModifyParameter == 1) {
           RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
         }
         else {
@@ -42665,10 +42671,10 @@ void SOLARCHVISION_drop_Selection () {
         else {
           ray_direction[2] = 1; // <<<< going upwards
           
-          if (Modify_Object_Parameters == 0) { 
+          if (WIN3D_UI_TaskModifyParameter == 0) { 
             RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
           }
-          else if (Modify_Object_Parameters == 2) {
+          else if (WIN3D_UI_TaskModifyParameter == 2) {
             RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
           }          
           else {
@@ -42706,7 +42712,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         
         int f = OBJ_NUM;
       
-        if (View_Select_Create_Modify == 4) {
+        if (WIN3D_UI_CurrentTask == 4) {
           int n = allCameras_Type[f];
           n += p;
           if (n > 1) n = 0;
@@ -42732,7 +42738,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         
         int f = OBJ_NUM;
       
-        if (View_Select_Create_Modify == 4) {
+        if (WIN3D_UI_CurrentTask == 4) {
           int n = allSections_Type[f];
           n += p;
           if (n > 3) n = 0;
@@ -42742,7 +42748,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Solids_updated = 1;      
         }        
       
-        if (View_Select_Create_Modify == 5) {
+        if (WIN3D_UI_CurrentTask == 5) {
           int n = allSections_RES1[f];
           if (p > 0) n *= 2;
           if (p < 0) n /= 2;
@@ -42779,7 +42785,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         
         int f = OBJ_NUM;
       
-        if ((View_Select_Create_Modify == 19) ||  (View_Select_Create_Modify == 20) ||  (View_Select_Create_Modify == 21) ||  (View_Select_Create_Modify == 22)) {
+        if ((WIN3D_UI_CurrentTask == 19) ||  (WIN3D_UI_CurrentTask == 20) ||  (WIN3D_UI_CurrentTask == 21) ||  (WIN3D_UI_CurrentTask == 22)) {
           
 
           float Solid_powX = Solid_get_powX(f);
@@ -42789,10 +42795,10 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           
           float n = 2;
           
-          if (View_Select_Create_Modify == 19) n = Solid_powX; 
-          if (View_Select_Create_Modify == 20) n = Solid_powY; 
-          if (View_Select_Create_Modify == 21) n = Solid_powZ; 
-          if (View_Select_Create_Modify == 22) {
+          if (WIN3D_UI_CurrentTask == 19) n = Solid_powX; 
+          if (WIN3D_UI_CurrentTask == 20) n = Solid_powY; 
+          if (WIN3D_UI_CurrentTask == 21) n = Solid_powZ; 
+          if (WIN3D_UI_CurrentTask == 22) {
             n = Solid_powX;
           }          
 
@@ -42802,10 +42808,10 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if (n > CubePower) n = StarPower;
           if (n < StarPower) n = CubePower;
           
-          if (View_Select_Create_Modify == 19) Solid_powX = n; 
-          if (View_Select_Create_Modify == 20) Solid_powY = n; 
-          if (View_Select_Create_Modify == 21) Solid_powZ = n; 
-          if (View_Select_Create_Modify == 22) {
+          if (WIN3D_UI_CurrentTask == 19) Solid_powX = n; 
+          if (WIN3D_UI_CurrentTask == 20) Solid_powY = n; 
+          if (WIN3D_UI_CurrentTask == 21) Solid_powZ = n; 
+          if (WIN3D_UI_CurrentTask == 22) {
             Solid_powX = n;
             Solid_powY = n;
             Solid_powZ = n;
@@ -42834,7 +42840,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         
         int f = OBJ_NUM;
       
-        if (View_Select_Create_Modify == 4) {
+        if (WIN3D_UI_CurrentTask == 4) {
           int n = allFaces_MTLV[f][0];
           n += p;
           if (n > 8) n = 0;
@@ -42842,7 +42848,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           allFaces_MTLV[f][0] = n;
         }
         
-        if (View_Select_Create_Modify == 5) {
+        if (WIN3D_UI_CurrentTask == 5) {
           int n = allFaces_MTLV[f][1];
           n += p;
           if (n > 4) n = 0;
@@ -42850,7 +42856,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           allFaces_MTLV[f][1] = n;              
         }   
 
-        if (View_Select_Create_Modify == 6) {
+        if (WIN3D_UI_CurrentTask == 6) {
           int n = allFaces_MTLV[f][2];
           n += p;
           if (n > 16) n = 0;
@@ -42858,7 +42864,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           allFaces_MTLV[f][2] = n;              
         }  
 
-        if (View_Select_Create_Modify == 7) {
+        if (WIN3D_UI_CurrentTask == 7) {
           int n = allFaces_MTLV[f][3];
           n += p;
           if (n > 2) n = 0;
@@ -42881,7 +42887,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
           if ((0 < f) && (f < allFaces_PNT.length)) {
         
-            if (View_Select_Create_Modify == 4) {
+            if (WIN3D_UI_CurrentTask == 4) {
               int n = allFaces_MTLV[f][0];
               n += p;
               if (n > 8) n = 0;
@@ -42889,7 +42895,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
               allFaces_MTLV[f][0] = n;
             }
             
-            if (View_Select_Create_Modify == 5) {
+            if (WIN3D_UI_CurrentTask == 5) {
               int n = allFaces_MTLV[f][1];
               n += p;
               if (n > 4) n = 0;
@@ -42897,7 +42903,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
               allFaces_MTLV[f][1] = n;              
             }      
       
-            if (View_Select_Create_Modify == 6) {
+            if (WIN3D_UI_CurrentTask == 6) {
               int n = allFaces_MTLV[f][2];
               n += p;
               if (n > 16) n = 0;
@@ -42905,7 +42911,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
               allFaces_MTLV[f][2] = n;              
             }  
 
-            if (View_Select_Create_Modify == 7) {
+            if (WIN3D_UI_CurrentTask == 7) {
               int n = allFaces_MTLV[f][3];
               n += p;
               if (n > 2) n = 0;
@@ -42926,7 +42932,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       
       if (OBJ_NUM != 0) {      
         
-        if (View_Select_Create_Modify == 4) {
+        if (WIN3D_UI_CurrentTask == 4) {
          
           int n = allObject2Ds_MAP[OBJ_NUM];
           int sign_n = 1;
@@ -42969,12 +42975,12 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       
       if (OBJ_NUM != 0) {      
 
-        if (View_Select_Create_Modify == 4) {
+        if (WIN3D_UI_CurrentTask == 4) {
           
           allFractals_Seed[OBJ_NUM] += p;
           
         } 
-        if (View_Select_Create_Modify == 8) {
+        if (WIN3D_UI_CurrentTask == 8) {
           int q = allFractals_DegreeMax[OBJ_NUM];
           
           q += p;
@@ -42986,7 +42992,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_DegreeMax = q;
           ROLLOUT_Update = 1;
         }
-        if (View_Select_Create_Modify == 9) {
+        if (WIN3D_UI_CurrentTask == 9) {
           int q1 = allFractals_DegreeMin[OBJ_NUM];
           int q2 = allFractals_DegreeMax[OBJ_NUM];
           q1 += p;
@@ -43008,7 +43014,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             ROLLOUT_Update = 1;
           }
         }
-        if (View_Select_Create_Modify == 10) {
+        if (WIN3D_UI_CurrentTask == 10) {
           int q = allFractals_DegreeMin[OBJ_NUM];
           
           q += p;
@@ -43020,7 +43026,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_DegreeMin = q;
           ROLLOUT_Update = 1;
         }        
-        if (View_Select_Create_Modify == 11) {
+        if (WIN3D_UI_CurrentTask == 11) {
           float q = allFractals_TrunkSize[OBJ_NUM];
           
           q += 0.25 * p;
@@ -43032,7 +43038,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_TrunkSize = q;
           ROLLOUT_Update = 1;
         }
-        if (View_Select_Create_Modify == 12) {
+        if (WIN3D_UI_CurrentTask == 12) {
           float q = allFractals_LeafSize[OBJ_NUM];
           
           q += 0.25 * p;
@@ -44732,28 +44738,28 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 if (selectedFractal_displayEdges == 0) {stroke(127); fill(127);}
               }              
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide SWOB points")) {
-                if (Display_SWOB_points == 0) {stroke(127); fill(127);}
+                if (Display_SWOB_Points == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide SWOB nearest")) {
-                if (Display_SWOB_nearest == 0) {stroke(127); fill(127);}
+                if (Display_SWOB_Nearest == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide NAEFS points")) {
-                if (Display_NAEFS_points == 0) {stroke(127); fill(127);}
+                if (Display_NAEFS_Points == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide NAEFS nearest")) {
-                if (Display_NAEFS_nearest == 0) {stroke(127); fill(127);}
+                if (Display_NAEFS_Nearest == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide CWEEDS points")) {
-                if (Display_CWEEDS_points == 0) {stroke(127); fill(127);}
+                if (Display_CWEEDS_Points == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide CWEEDS nearest")) {
-                if (Display_CWEEDS_nearest == 0) {stroke(127); fill(127);}
+                if (Display_CWEEDS_Nearest == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide EPW points")) {
-                if (Display_EPW_points == 0) {stroke(127); fill(127);}
+                if (Display_EPW_Points == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide EPW nearest")) {
-                if (Display_EPW_nearest == 0) {stroke(127); fill(127);}
+                if (Display_EPW_Nearest == 0) {stroke(127); fill(127);}
               }          
               
             }
@@ -44981,7 +44987,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }
         
         if (Bar_Switch.equals("Mesh|Solid")) {
-          Create_Mesh_as_Solid = j - 1;
+          CreateInput_MeshOrSolid = j - 1;
           
           ROLLOUT_Update = 1;          
         }        
@@ -45235,7 +45241,7 @@ void SOLARCHVISION_UI_set_to_Create_Nothing () {
   CreateButton_2DPlant = 0;
   CreateButton_Fractal = 0;
   
-  View_Select_Create_Modify = 0;
+  WIN3D_UI_CurrentTask = 0;
   
   ROLLOUT_Update = 1;    
 }
@@ -45371,7 +45377,7 @@ void SOLARCHVISION_UI_set_to_Create_Cushion () {
 
 
 void SOLARCHVISION_UI_set_to_Modify_Move (int n) {
-  View_Select_Create_Modify = 1;
+  WIN3D_UI_CurrentTask = 1;
   
   selected_posVector = n;
   
@@ -45379,7 +45385,7 @@ void SOLARCHVISION_UI_set_to_Modify_Move (int n) {
 }
 
 void SOLARCHVISION_UI_set_to_Modify_Scale (int n) {
-  View_Select_Create_Modify = 2;
+  WIN3D_UI_CurrentTask = 2;
   
   selected_scaleVector = n;
 
@@ -45388,7 +45394,7 @@ void SOLARCHVISION_UI_set_to_Modify_Scale (int n) {
 
 
 void SOLARCHVISION_UI_set_to_Modify_Rotate (int n) {
-  View_Select_Create_Modify = 3;
+  WIN3D_UI_CurrentTask = 3;
   
   selected_rotVector = n;
 
@@ -45396,94 +45402,94 @@ void SOLARCHVISION_UI_set_to_Modify_Rotate (int n) {
 }
   
 void SOLARCHVISION_UI_set_to_Modify_Seed (int n) {
-  View_Select_Create_Modify = 4;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 4;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_Tessellation (int n) {
-  View_Select_Create_Modify = 5;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 5;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_Layer (int n) {
-  View_Select_Create_Modify = 6;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 6;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_Visibility (int n) {
-  View_Select_Create_Modify = 7;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 7;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
  
-// the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
+// the same messages of WIN3D_UI_CurrentTask=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
 
 void SOLARCHVISION_UI_set_to_Modify_DegreeMax (int n) {
-  View_Select_Create_Modify = 8;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 8;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_DegreeDif (int n) {
-  View_Select_Create_Modify = 9;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 9;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_DegreeMin (int n) {
-  View_Select_Create_Modify = 10;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 10;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_TrunkSize (int n) {
-  View_Select_Create_Modify = 11;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 11;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_LeafSize (int n) {
-  View_Select_Create_Modify = 12;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 12;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_AllFractalProps (int n) {
-  View_Select_Create_Modify = 13;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 13;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_Pivot (int n) {
-  View_Select_Create_Modify = 14;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D_UI_CurrentTask = 14;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_FaceNormal (int n) {
-  View_Select_Create_Modify = 15;
-  Modify_Object_Parameters = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
+  WIN3D_UI_CurrentTask = 15;
+  WIN3D_UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
   ROLLOUT_Update = 1; 
 }
 
 void SOLARCHVISION_UI_set_to_Modify_FaceFirstVertex (int n) {
-  View_Select_Create_Modify = 16;
-  Modify_Object_Parameters = n; // 1:default
+  WIN3D_UI_CurrentTask = 16;
+  WIN3D_UI_TaskModifyParameter = n; // 1:default
   
   Current_ObjectCategory = ObjectCategory_Faces; // << because it only works with face sub-object
   //SOLARCHVISION_UI_BAR_b_Update = 1;
@@ -45493,30 +45499,30 @@ void SOLARCHVISION_UI_set_to_Modify_FaceFirstVertex (int n) {
 
 
 void SOLARCHVISION_UI_set_to_Modify_Drop (int n) {
-  View_Select_Create_Modify = 17;
+  WIN3D_UI_CurrentTask = 17;
   
-  Modify_Object_Parameters = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
+  WIN3D_UI_TaskModifyParameter = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
   
   ROLLOUT_Update = 1;
 }
 
 
 void SOLARCHVISION_UI_set_to_Modify_GetLength (int n) {
-  View_Select_Create_Modify = 18;
+  WIN3D_UI_CurrentTask = 18;
   
-  Modify_Object_Parameters = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane) 
+  WIN3D_UI_TaskModifyParameter = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane) 
   
   ROLLOUT_Update = 1;
 }
 
 void SOLARCHVISION_UI_set_to_Modify_Power (int n) {
 
-  if (n == 0) View_Select_Create_Modify = 19; // x 
-  if (n == 1) View_Select_Create_Modify = 20; // y 
-  if (n == 2) View_Select_Create_Modify = 21; // z 
-  if (n == 3) View_Select_Create_Modify = 22; // xyz
+  if (n == 0) WIN3D_UI_CurrentTask = 19; // x 
+  if (n == 1) WIN3D_UI_CurrentTask = 20; // y 
+  if (n == 2) WIN3D_UI_CurrentTask = 21; // z 
+  if (n == 3) WIN3D_UI_CurrentTask = 22; // xyz
 
-  Modify_Object_Parameters = 0; // 0:change
+  WIN3D_UI_TaskModifyParameter = 0; // 0:change
     
   ROLLOUT_Update = 1;
 }
@@ -45524,7 +45530,7 @@ void SOLARCHVISION_UI_set_to_Modify_Power (int n) {
 
 void SOLARCHVISION_UI_set_to_Create_Solid () {
   
-  View_Select_Create_Modify = 0; 
+  WIN3D_UI_CurrentTask = 0; 
   
   Current_ObjectCategory = ObjectCategory_Solids; // << because it only works with Solids
   //SOLARCHVISION_UI_BAR_b_Update = 1;
@@ -45534,7 +45540,7 @@ void SOLARCHVISION_UI_set_to_Create_Solid () {
 
 void SOLARCHVISION_UI_set_to_Create_Section () {
   
-  View_Select_Create_Modify = 0; 
+  WIN3D_UI_CurrentTask = 0; 
   
   Current_ObjectCategory = ObjectCategory_Sections; // << because it only works with sections
   //SOLARCHVISION_UI_BAR_b_Update = 1;
@@ -45544,7 +45550,7 @@ void SOLARCHVISION_UI_set_to_Create_Section () {
 
 void SOLARCHVISION_UI_set_to_Create_Camera () {
 
-  View_Select_Create_Modify = 0;
+  WIN3D_UI_CurrentTask = 0;
   
   Current_ObjectCategory = ObjectCategory_Cameras; // << because it only works with cameras
   //SOLARCHVISION_UI_BAR_b_Update = 1;
@@ -45563,7 +45569,7 @@ void SOLARCHVISION_UI_set_to_View_ProjectionType (int n) {
 
 void SOLARCHVISION_UI_set_to_View_ClickSelect (int n) {
 
-  View_Select_Create_Modify = -1;
+  WIN3D_UI_CurrentTask = -1;
 
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1; 
@@ -45577,7 +45583,7 @@ void SOLARCHVISION_UI_set_to_View_ClickSelect (int n) {
 }
 
 void SOLARCHVISION_UI_set_to_View_WindowSelect (int n) {
-  View_Select_Create_Modify = -2;
+  WIN3D_UI_CurrentTask = -2;
   
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1; 
@@ -45618,19 +45624,19 @@ void SOLARCHVISION_UI_set_to_View_PivotZ (int n) {
 void SOLARCHVISION_UI_set_to_View_Truck (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -3;
+    WIN3D_UI_CurrentTask = -3;
   }
 
   if (n == 1) {
-    View_Select_Create_Modify = -6;
-    Modify_Object_Parameters = 0;            
-    View_XYZ_ChangeOption = 0;  
+    WIN3D_UI_CurrentTask = -6;
+    WIN3D_UI_TaskModifyParameter = 0;            
+    WIN3D_UI_OptionXorY = 0;  
   } 
 
   if (n == 2) {
-    View_Select_Create_Modify = -6;
-    Modify_Object_Parameters = 0;            
-    View_XYZ_ChangeOption = 1;  
+    WIN3D_UI_CurrentTask = -6;
+    WIN3D_UI_TaskModifyParameter = 0;            
+    WIN3D_UI_OptionXorY = 1;  
   }           
   
   ROLLOUT_Update = 1;          
@@ -45640,7 +45646,7 @@ void SOLARCHVISION_UI_set_to_View_Truck (int n) {
 void SOLARCHVISION_UI_set_to_View_DistMouseXY (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -17;
+    WIN3D_UI_CurrentTask = -17;
   }
 
   ROLLOUT_Update = 1;          
@@ -45651,7 +45657,7 @@ void SOLARCHVISION_UI_set_to_View_DistMouseXY (int n) {
 void SOLARCHVISION_UI_set_to_View_CameraDistance (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -13;
+    WIN3D_UI_CurrentTask = -13;
   }
 
   ROLLOUT_Update = 1;          
@@ -45662,19 +45668,19 @@ void SOLARCHVISION_UI_set_to_View_CameraDistance (int n) {
 void SOLARCHVISION_UI_set_to_View_CameraRoll (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -12;
+    WIN3D_UI_CurrentTask = -12;
   }
 
   if (n == 1) {
-    View_Select_Create_Modify = -11;
-    Modify_Object_Parameters = 0;            
-    View_XYZ_ChangeOption = 0;  
+    WIN3D_UI_CurrentTask = -11;
+    WIN3D_UI_TaskModifyParameter = 0;            
+    WIN3D_UI_OptionXorY = 0;  
   } 
 
   if (n == 2) {
-    View_Select_Create_Modify = -11;
-    Modify_Object_Parameters = 0;            
-    View_XYZ_ChangeOption = 1;  
+    WIN3D_UI_CurrentTask = -11;
+    WIN3D_UI_TaskModifyParameter = 0;            
+    WIN3D_UI_OptionXorY = 1;  
   }           
   
   ROLLOUT_Update = 1;          
@@ -45685,19 +45691,19 @@ void SOLARCHVISION_UI_set_to_View_CameraRoll (int n) {
 void SOLARCHVISION_UI_set_to_View_TargetRoll (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -10;
+    WIN3D_UI_CurrentTask = -10;
   }
 
   if (n == 1) {
-    View_Select_Create_Modify = -9;
-    Modify_Object_Parameters = 0;            
-    View_XYZ_ChangeOption = 0;  
+    WIN3D_UI_CurrentTask = -9;
+    WIN3D_UI_TaskModifyParameter = 0;            
+    WIN3D_UI_OptionXorY = 0;  
   } 
 
   if (n == 2) {
-    View_Select_Create_Modify = -9;
-    Modify_Object_Parameters = 0;            
-    View_XYZ_ChangeOption = 1;  
+    WIN3D_UI_CurrentTask = -9;
+    WIN3D_UI_TaskModifyParameter = 0;            
+    WIN3D_UI_OptionXorY = 1;  
   }           
   
   ROLLOUT_Update = 1;          
@@ -45707,19 +45713,19 @@ void SOLARCHVISION_UI_set_to_View_TargetRoll (int n) {
 void SOLARCHVISION_UI_set_to_View_Orbit (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -3;
+    WIN3D_UI_CurrentTask = -3;
   }
 
   if (n == 1) {
-    View_Select_Create_Modify = -6;
-    Modify_Object_Parameters = 1;            
-    View_XYZ_ChangeOption = 0;  
+    WIN3D_UI_CurrentTask = -6;
+    WIN3D_UI_TaskModifyParameter = 1;            
+    WIN3D_UI_OptionXorY = 0;  
   } 
 
   if (n == 2) {
-    View_Select_Create_Modify = -6;
-    Modify_Object_Parameters = 1;            
-    View_XYZ_ChangeOption = 1;  
+    WIN3D_UI_CurrentTask = -6;
+    WIN3D_UI_TaskModifyParameter = 1;            
+    WIN3D_UI_OptionXorY = 1;  
   }           
   
   ROLLOUT_Update = 1;          
@@ -45766,15 +45772,15 @@ void SOLARCHVISION_UI_set_to_View_LookAtOrigin (int n) {
 void SOLARCHVISION_UI_set_to_View_Pan (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -14;
+    WIN3D_UI_CurrentTask = -14;
   }
 
   if (n == 1) {
-    View_Select_Create_Modify = -15;
+    WIN3D_UI_CurrentTask = -15;
   }
 
   if (n == 2) {
-    View_Select_Create_Modify = -16;
+    WIN3D_UI_CurrentTask = -16;
   }
 
   
@@ -45782,7 +45788,7 @@ void SOLARCHVISION_UI_set_to_View_Pan (int n) {
 }  
 
 void SOLARCHVISION_UI_set_to_View_Zoom (int n) {
-  View_Select_Create_Modify = -4;
+  WIN3D_UI_CurrentTask = -4;
 
   if (n == 1) {
     WIN3D_ZOOM_coordinate = 60;
@@ -45796,7 +45802,7 @@ void SOLARCHVISION_UI_set_to_View_Zoom (int n) {
 
 void SOLARCHVISION_UI_set_to_View_3DModelSize () {
 
-  View_Select_Create_Modify = -5;
+  WIN3D_UI_CurrentTask = -5;
   
   WIN3D_Update = 1;  
     
@@ -45805,7 +45811,7 @@ void SOLARCHVISION_UI_set_to_View_3DModelSize () {
 
 void SOLARCHVISION_UI_set_to_View_SkydomeSize () {
 
-  View_Select_Create_Modify = -7;
+  WIN3D_UI_CurrentTask = -7;
   
   WIN3D_Update = 1;  
     
@@ -45814,7 +45820,7 @@ void SOLARCHVISION_UI_set_to_View_SkydomeSize () {
 
 void SOLARCHVISION_UI_set_to_View_AllModelSize () {
 
-  View_Select_Create_Modify = -8;
+  WIN3D_UI_CurrentTask = -8;
   
   WIN3D_Update = 1;  
     
@@ -46594,19 +46600,19 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("CreateFractal_TrunkSize", CreateFractal_TrunkSize);
   newChild1.setFloat("CreateFractal_LeafSize", CreateFractal_LeafSize);
   newChild1.setInt("Current_ObjectCategory", Current_ObjectCategory);
-  newChild1.setInt("Create_Mesh_as_Solid", Create_Mesh_as_Solid);
-  newChild1.setInt("View_Select_Create_Modify", View_Select_Create_Modify);
-  newChild1.setInt("View_XYZ_ChangeOption", View_XYZ_ChangeOption);
-  newChild1.setInt("Modify_Object_Parameters", Modify_Object_Parameters);  
+  newChild1.setInt("CreateInput_MeshOrSolid", CreateInput_MeshOrSolid);
+  newChild1.setInt("WIN3D_UI_CurrentTask", WIN3D_UI_CurrentTask);
+  newChild1.setInt("WIN3D_UI_OptionXorY", WIN3D_UI_OptionXorY);
+  newChild1.setInt("WIN3D_UI_TaskModifyParameter", WIN3D_UI_TaskModifyParameter);  
 
-  newChild1.setInt("Display_SWOB_points", Display_SWOB_points);
-  newChild1.setInt("Display_SWOB_nearest", Display_SWOB_nearest);
-  newChild1.setInt("Display_NAEFS_points", Display_NAEFS_points);
-  newChild1.setInt("Display_NAEFS_nearest", Display_NAEFS_nearest);
-  newChild1.setInt("Display_CWEEDS_points", Display_CWEEDS_points);
-  newChild1.setInt("Display_CWEEDS_nearest", Display_CWEEDS_nearest);
-  newChild1.setInt("Display_EPW_points", Display_EPW_points);
-  newChild1.setInt("Display_EPW_nearest", Display_EPW_nearest);
+  newChild1.setInt("Display_SWOB_Points", Display_SWOB_Points);
+  newChild1.setInt("Display_SWOB_Nearest", Display_SWOB_Nearest);
+  newChild1.setInt("Display_NAEFS_Points", Display_NAEFS_Points);
+  newChild1.setInt("Display_NAEFS_Nearest", Display_NAEFS_Nearest);
+  newChild1.setInt("Display_CWEEDS_Points", Display_CWEEDS_Points);
+  newChild1.setInt("Display_CWEEDS_Nearest", Display_CWEEDS_Nearest);
+  newChild1.setInt("Display_EPW_Points", Display_EPW_Points);
+  newChild1.setInt("Display_EPW_Nearest", Display_EPW_Nearest);
   newChild1.setInt("FRAME_record_AUTO", FRAME_record_AUTO);
   newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
   newChild1.setInt("FRAME_click_JPG", FRAME_click_JPG);
@@ -46615,17 +46621,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SolidImpact_record_JPG", SolidImpact_record_JPG);
   newChild1.setInt("SolarImpact_record_JPG", SolarImpact_record_JPG);
 
-  newChild1.setInt("Ensemble_Audio_Output", Ensemble_Audio_Output);
-  newChild1.setInt("Launch_External_Simulation", Launch_External_Simulation);
-  newChild1.setInt("Launch_External_Hardware", Launch_External_Hardware);
+  newChild1.setInt("RUN_AudioProduct", RUN_AudioProduct);
+  newChild1.setInt("RUN_ExternalSimulation", RUN_ExternalSimulation);
+  newChild1.setInt("RUN_ExternalHardware", RUN_ExternalHardware);
 
-  newChild1.setFloat("SolidImpact_Wspd", SolidImpact_Wspd); 
-  newChild1.setFloat("SolidImpact_Wdir", SolidImpact_Wdir);
+  newChild1.setFloat("SolidImpact_WindSpeed", SolidImpact_WindSpeed); 
+  newChild1.setFloat("SolidImpact_WindDirection", SolidImpact_WindDirection);
   newChild1.setFloat("SolidImpact_Power", SolidImpact_Power);
   newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
   newChild1.setFloat("MAX_SHADING_DIST", MAX_SHADING_DIST);
-  newChild1.setFloat("interpolation_weight", interpolation_weight);
-  newChild1.setFloat("GlobeRES", GlobeRES);
+  newChild1.setFloat("Interpolation_Weight", Interpolation_Weight);
+  newChild1.setFloat("GLOBE_calculatedResolution", GLOBE_calculatedResolution);
   newChild1.setInt("CLIMATIC_SolarForecast", CLIMATIC_SolarForecast);
   newChild1.setInt("CLIMATIC_WeatherForecast", CLIMATIC_WeatherForecast);
   newChild1.setInt("SOLARCHVISION_automated", SOLARCHVISION_automated);
@@ -46947,7 +46953,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("addToLastGroup3D", addToLastGroup3D);
   
-  newChild1.setFloat("BiosphereStep", BiosphereStep);
+  newChild1.setFloat("BIOSPHERE_drawResolution", BIOSPHERE_drawResolution);
   newChild1.setFloat("objExport_Scale", objExport_Scale);
   newChild1.setInt("objExport_FlipZYaxis", objExport_FlipZYaxis);
   newChild1.setInt("objExport_PrecisionVertex", objExport_PrecisionVertex);
@@ -47842,19 +47848,19 @@ void SOLARCHVISION_load_project (String myFile) {
       CreateFractal_TrunkSize = children0[L].getFloat("CreateFractal_TrunkSize");
       CreateFractal_LeafSize = children0[L].getFloat("CreateFractal_LeafSize");
       Current_ObjectCategory = children0[L].getInt("Current_ObjectCategory");
-      Create_Mesh_as_Solid = children0[L].getInt("Create_Mesh_as_Solid");
-      View_Select_Create_Modify = children0[L].getInt("View_Select_Create_Modify");
-      View_XYZ_ChangeOption = children0[L].getInt("View_XYZ_ChangeOption");
-      Modify_Object_Parameters = children0[L].getInt("Modify_Object_Parameters");      
+      CreateInput_MeshOrSolid = children0[L].getInt("CreateInput_MeshOrSolid");
+      WIN3D_UI_CurrentTask = children0[L].getInt("WIN3D_UI_CurrentTask");
+      WIN3D_UI_OptionXorY = children0[L].getInt("WIN3D_UI_OptionXorY");
+      WIN3D_UI_TaskModifyParameter = children0[L].getInt("WIN3D_UI_TaskModifyParameter");      
 
-      Display_SWOB_points = children0[L].getInt("Display_SWOB_points");
-      Display_SWOB_nearest = children0[L].getInt("Display_SWOB_nearest");
-      Display_NAEFS_points = children0[L].getInt("Display_NAEFS_points");
-      Display_NAEFS_nearest = children0[L].getInt("Display_NAEFS_nearest");
-      Display_CWEEDS_points = children0[L].getInt("Display_CWEEDS_points");
-      Display_CWEEDS_nearest = children0[L].getInt("Display_CWEEDS_nearest");
-      Display_EPW_points = children0[L].getInt("Display_EPW_points");
-      Display_EPW_nearest = children0[L].getInt("Display_EPW_nearest");
+      Display_SWOB_Points = children0[L].getInt("Display_SWOB_Points");
+      Display_SWOB_Nearest = children0[L].getInt("Display_SWOB_Nearest");
+      Display_NAEFS_Points = children0[L].getInt("Display_NAEFS_Points");
+      Display_NAEFS_Nearest = children0[L].getInt("Display_NAEFS_Nearest");
+      Display_CWEEDS_Points = children0[L].getInt("Display_CWEEDS_Points");
+      Display_CWEEDS_Nearest = children0[L].getInt("Display_CWEEDS_Nearest");
+      Display_EPW_Points = children0[L].getInt("Display_EPW_Points");
+      Display_EPW_Nearest = children0[L].getInt("Display_EPW_Nearest");
       FRAME_record_AUTO = children0[L].getInt("FRAME_record_AUTO");
       FRAME_record_JPG = children0[L].getInt("FRAME_record_JPG");
       FRAME_click_JPG = children0[L].getInt("FRAME_click_JPG");
@@ -47863,17 +47869,17 @@ void SOLARCHVISION_load_project (String myFile) {
       SolidImpact_record_JPG = children0[L].getInt("SolidImpact_record_JPG");
       SolarImpact_record_JPG = children0[L].getInt("SolarImpact_record_JPG");
 
-      Ensemble_Audio_Output = children0[L].getInt("Ensemble_Audio_Output");
-      Launch_External_Simulation = children0[L].getInt("Launch_External_Simulation");
-      Launch_External_Hardware = children0[L].getInt("Launch_External_Hardware");
+      RUN_AudioProduct = children0[L].getInt("RUN_AudioProduct");
+      RUN_ExternalSimulation = children0[L].getInt("RUN_ExternalSimulation");
+      RUN_ExternalHardware = children0[L].getInt("RUN_ExternalHardware");
 
-      SolidImpact_Wspd = children0[L].getFloat("SolidImpact_Wspd"); 
-      SolidImpact_Wdir = children0[L].getFloat("SolidImpact_Wdir");
+      SolidImpact_WindSpeed = children0[L].getFloat("SolidImpact_WindSpeed"); 
+      SolidImpact_WindDirection = children0[L].getFloat("SolidImpact_WindDirection");
       SolidImpact_Power = children0[L].getFloat("SolidImpact_Power");
       GlobalAlbedo = children0[L].getFloat("GlobalAlbedo");
       MAX_SHADING_DIST = children0[L].getFloat("MAX_SHADING_DIST");
-      interpolation_weight = children0[L].getFloat("interpolation_weight");
-      GlobeRES = children0[L].getFloat("GlobeRES");
+      Interpolation_Weight = children0[L].getFloat("Interpolation_Weight");
+      GLOBE_calculatedResolution = children0[L].getFloat("GLOBE_calculatedResolution");
       CLIMATIC_SolarForecast = children0[L].getInt("CLIMATIC_SolarForecast");
       CLIMATIC_WeatherForecast = children0[L].getInt("CLIMATIC_WeatherForecast");
       SOLARCHVISION_automated = children0[L].getInt("SOLARCHVISION_automated");
@@ -48194,7 +48200,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
       addToLastGroup3D = children0[L].getInt("addToLastGroup3D");      
 
-      BiosphereStep = children0[L].getFloat("BiosphereStep");
+      BIOSPHERE_drawResolution = children0[L].getFloat("BIOSPHERE_drawResolution");
       
       objExport_Scale = children0[L].getFloat("objExport_Scale");
       objExport_FlipZYaxis = children0[L].getInt("objExport_FlipZYaxis");
