@@ -118,21 +118,23 @@ int pre_MODEL3D_DisplayNormals;
       
 
 
-int pre_Impact_Layer;
+
 int pre_H_Layer_Option;
 int pre_F_Layer_Option;
 int pre_O_Layer_Option;
 int pre_Develop_Option;
 
-int pre_STUDY_Current_Layer;
-int pre_STUDY_Sky_Scenario;
-int pre_STUDY_Plot_Impacts;
+int pre_STUDY_ImpactLayer;
+int pre_STUDY_CurrentLayer;
+
+int pre_STUDY_SkyScenario;
+int pre_STUDY_PlotImpacts;
 
 int pre_SOLID_Pallet_CLR;
 int pre_SOLID_Pallet_DIR; 
 float pre_SOLID_Pallet_MLT; 
 
-float pre_Create_Input_powAll;
+
 
 
 
@@ -155,7 +157,7 @@ int pre_Process_subDivisions;
 
 int pre_Display_WindFlow;
 
-
+float pre_CreateInput_powAll;
  
  
  
@@ -167,28 +169,6 @@ int pre_Display_WindFlow;
  
  
  
-
-
-
-float BiosphereStep = 5.0; //2.5; // 5: 5 degrees
-float objExportScale = 1; //0.001; // 0.001: 1km --> 1
-int objFlipZYaxis = 0; //1; // 1: to fit in Unity3D
-
-int objExportPrecisionVertex = 6; 
-int objExportPrecisionVtexture = 4;
-int objExportPolyToPoly = 1; // 0: Exports each group3D to different individual faces, 1: Exports group3D to group3D 
-
-int objExportMaterialLibrary = 1; // 0-1
-int objExportBackSides = 1; // 0-1
-int objExportCombinedMaterial = 1; // 0-1
-int objExportBakingResolution = 16;
-int objExportPalletResolution = 256;
-int objExportUsePalletOrBakeFaces = 0; // 0-1
-
- 
-
-
-
 
 String STRING_undefined = "N/A";
 float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
@@ -196,24 +176,47 @@ float FLOAT_undefined = 2000000000; // it must be a positive big number that is 
 float CubePower = 16; //8; 
 float StarPower = 0.25; 
 
-float eyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
+float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
 
 float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
 
-double DOUBLE_R_earth = 6373000.0;
-float FLOAT_R_earth = (float) DOUBLE_R_earth;
+double DOUBLE_r_Earth = 6373000.0;
+float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
 
-int Display_EARTH3D_OBJECT = 0;
-int Display_EARTH3D_TEXTURE = 1;
 
-int Display_TROPO3D_OBJECT = 0;
-int Display_TROPO3D_TEXTURE = 1;
+float BiosphereStep = 5.0; //2.5; // 5: 5 degrees
 
-int Display_STAR3D_OBJECT = 0;
-int Display_STAR3D_TEXTURE = 1;
+float objExport_Scale = 1; //0.001; // 0.001: 1km --> 1
+int objExport_FlipZYaxis = 0; //1; // 1: to fit in Unity3D
 
-int Display_MOON3D_OBJECT = 0;
-int Display_MOON3D_TEXTURE = 1;
+int objExport_PrecisionVertex = 6; 
+int objExport_PrecisionVtexture = 4;
+int objExport_PolyToPoly = 1; // 0: Exports each group3D to different individual faces, 1: Exports group3D to group3D 
+
+int objExport_MaterialLibrary = 1; // 0-1
+int objExport_BackSides = 1; // 0-1
+int objExport_CombinedMaterial = 1; // 0-1
+int objExport_BakingResolution = 16;
+int objExport_PalletResolution = 256;
+int objExport_UsePalletOrBakeFaces = 0; // 0-1
+
+ 
+
+
+
+
+
+int Display_EARTH3D_Surface = 0;
+int Display_EARTH3D_Texture = 1;
+
+int Display_TROPO3D_Surface = 0;
+int Display_TROPO3D_Texture = 1;
+
+int Display_STAR3D_Surface = 0;
+int Display_STAR3D_Texture = 1;
+
+int Display_MOON3D_Surface = 0;
+int Display_MOON3D_Texture = 1;
 
 float planetary_magnification = 2.5; // <<<<<<<<<<
 
@@ -348,36 +351,36 @@ int Create_Default_ExtraType = 0; // reserved!
 
 int Create_Default_PivotType = 0;
 
-float Modify_Input_WeldTreshold = 0.1; 
+float ModifyInput_WeldTreshold = 0.1; 
 
-int Modify_Input_TessellateRows = 5;
-int Modify_Input_TessellateColumns = 3;
+int ModifyInput_TessellateRows = 5;
+int ModifyInput_TessellateColumns = 3;
 
-float Modify_Input_OffsetAmount = 1.0; // 1 = 1m
+float ModifyInput_OffsetAmount = 1.0; // 1 = 1m
 
-float Modify_Input_OpenningDepth = 1; // 1 = 1m 
-float Modify_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
-float Modify_Input_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
-
-
-float Create_Input_Length = 10;
-float Create_Input_Width = 10;
-float Create_Input_Height = 10;
+float ModifyInput_OpenningDepth = 1; // 1 = 1m 
+float ModifyInput_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
+float ModifyInput_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
 
 
-float Create_Input_Volume = 0; //3000;
-
-float Create_Input_Orientation = 360; //0; // 360: random
-
-
+float CreateInput_Length = 10;
+float CreateInput_Width = 10;
+float CreateInput_Height = 10;
 
 
-float Create_Input_powX = CubePower; 
-float Create_Input_powY = CubePower; 
-float Create_Input_powZ = CubePower; 
+float CreateInput_Volume = 0; //3000;
 
-float Create_Input_powAll = 8;
-int Create_Input_powRnd = 0;
+float CreateInput_Orientation = 360; //0; // 360: random
+
+
+
+
+float CreateInput_powX = CubePower; 
+float CreateInput_powY = CubePower; 
+float CreateInput_powZ = CubePower; 
+
+float CreateInput_powAll = 8;
+int CreateInput_powRnd = 0;
 
 int Create_Sphere_Degree = 2; //4;
 
@@ -798,9 +801,9 @@ float Angle_inclination = 45; // 90 = horizontal surface, 0 = Vertical surface
 float Angle_orientation = 0; // 0 = South, 90 = East
 
 
-int STUDY_Current_Layer = LAYER_dirnorrad; //LAYER_developed; //LAYER_drybulb; ; //LAYER_cloudcover; 
+int STUDY_CurrentLayer = LAYER_dirnorrad; //LAYER_developed; //LAYER_drybulb; ; //LAYER_cloudcover; 
 
-int develop_Layer = STUDY_Current_Layer;
+int develop_Layer = STUDY_CurrentLayer;
 
 int STUDY_print_title = 1;
 
@@ -1275,8 +1278,8 @@ String[] databaseString = {"SWOB", "NAEFS", "CWEEDS", "TMY"};
 
 int STUDY_impact_summary = 0;
 
-int STUDY_Impact_Layer = 1; // 4 = Median
-int STUDY_STUDY_Plot_Impacts = 4; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
+int STUDY_ImpactLayer = 1; // 4 = Median
+int STUDY_PlotImpacts = 4; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
 int STUDY_update_impacts = 1; 
 
 
@@ -1325,7 +1328,7 @@ int LoadButton_LandMesh = 1;
 
 int Display_LAND_MESH = 1; 
 int Display_LAND_POINTS = 0;
-int Display_LAND_TEXTURE = 1;
+int Display_LAND_Texture = 1;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
 
@@ -2267,7 +2270,7 @@ void draw () {
         pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
         pre_SOLID_Pallet_MLT = SOLID_Pallet_MLT;         
         
-        pre_Create_Input_powAll = Create_Input_powAll;
+        pre_CreateInput_powAll = CreateInput_powAll;
         
         pre_SolidImpact_scale_U = SolidImpact_scale_U;
         pre_SolidImpact_scale_V = SolidImpact_scale_V;
@@ -2340,7 +2343,7 @@ void draw () {
       
         pre_LoadButton_DefaultModels = LoadButton_DefaultModels;
 
-        pre_Impact_Layer = STUDY_Impact_Layer;
+        pre_STUDY_ImpactLayer = STUDY_ImpactLayer;
  
         pre_H_Layer_Option = H_Layer_Option;
         pre_F_Layer_Option = F_Layer_Option;
@@ -2348,15 +2351,15 @@ void draw () {
         
         pre_Develop_Option = Develop_Option;
         
-        pre_STUDY_Current_Layer = STUDY_Current_Layer;
+        pre_STUDY_CurrentLayer = STUDY_CurrentLayer;
         
-        pre_STUDY_Sky_Scenario = STUDY_skyScenario_Active;
+        pre_STUDY_SkyScenario = STUDY_skyScenario_Active;
         
-        pre_STUDY_Plot_Impacts = STUDY_STUDY_Plot_Impacts;
+        pre_STUDY_PlotImpacts = STUDY_PlotImpacts;
         
         SOLARCHVISION_draw_ROLLOUT();
         
-        if (abs(pre_STUDY_Plot_Impacts) % 2 != abs(STUDY_STUDY_Plot_Impacts) % 2) {
+        if (abs(pre_STUDY_PlotImpacts) % 2 != abs(STUDY_PlotImpacts) % 2) {
           rebuild_SolarProjection_array = 1;
         }
         
@@ -2762,10 +2765,10 @@ void draw () {
         }
         
         
-        if (pre_Create_Input_powAll != Create_Input_powAll) {
-          Create_Input_powX = Create_Input_powAll;
-          Create_Input_powY = Create_Input_powAll;
-          Create_Input_powZ = Create_Input_powAll;
+        if (pre_CreateInput_powAll != CreateInput_powAll) {
+          CreateInput_powX = CreateInput_powAll;
+          CreateInput_powY = CreateInput_powAll;
+          CreateInput_powZ = CreateInput_powAll;
           
           ROLLOUT_Update = 1;
         }
@@ -3029,8 +3032,8 @@ void SOLARCHVISION_draw_WIN3D () {
         float _lon = AERIAL_Locations[n][0]; 
         if (_lon > 180) _lon -= 360; // << important!
         
-        double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_R_earth);
-        double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_R_earth);
+        double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
+        double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
         
         float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
         float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
@@ -3923,7 +3926,7 @@ void SOLARCHVISION_draw_STUDY () {
     println("frame:", drawnFrame);    
     
     //if (update_DevelopDATA == 1) {
-      if (STUDY_Current_Layer == LAYER_developed) {
+      if (STUDY_CurrentLayer == LAYER_developed) {
         SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
         
         println("DevelopDATA updated!");
@@ -4095,19 +4098,19 @@ void SOLARCHVISION_Plot_Setup () {
     if (frame_variation == 2) {
 
       for (int p = 0; p < 3; p += 1) { 
-        STUDY_Impact_Layer = 3 * int(pre_Impact_Layer / 3) + p;
+        STUDY_ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
 
-        SOLARCHVISION_PlotIMPACT(0, (175 - p * 350) * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+        SOLARCHVISION_PlotIMPACT(0, (175 - p * 350) * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
       }
-      STUDY_Impact_Layer = pre_Impact_Layer;
+      STUDY_ImpactLayer = pre_STUDY_ImpactLayer;
     
-      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     }
     
     else {
 
-      if ((STUDY_STUDY_Plot_Impacts == 8) || (STUDY_STUDY_Plot_Impacts == 9)) {
+      if ((STUDY_PlotImpacts == 8) || (STUDY_PlotImpacts == 9)) {
         
         int keep_SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_BEGIN_DAY;
         float keep_STUDY_per_day = STUDY_per_day;
@@ -4119,7 +4122,7 @@ void SOLARCHVISION_Plot_Setup () {
         STUDY_j_End = 2;
         STUDY_U_scale = 18.0 / float(STUDY_j_End - STUDY_j_Start);
         
-        SOLARCHVISION_PlotIMPACT(0, 0 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+        SOLARCHVISION_PlotIMPACT(0, 0 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
         
         SOLARCHVISION_BEGIN_DAY = keep_SOLARCHVISION_BEGIN_DAY;
         STUDY_per_day = keep_STUDY_per_day;
@@ -4127,9 +4130,9 @@ void SOLARCHVISION_Plot_Setup () {
         STUDY_U_scale = keep_STUDY_U_scale;
       }
       else{
-        SOLARCHVISION_PlotIMPACT(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+        SOLARCHVISION_PlotIMPACT(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
         
-        SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+        SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
       }
       
     }
@@ -4144,28 +4147,28 @@ void SOLARCHVISION_Plot_Setup () {
       int keep_SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_BEGIN_DAY;
       int delta = 4;
       
-      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
       SOLARCHVISION_try_update_ENSEMBLE(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + delta) % 365;
-      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
       SOLARCHVISION_try_update_ENSEMBLE(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + 2 * delta) % 365;
-      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       SOLARCHVISION_BEGIN_DAY = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
       SOLARCHVISION_try_update_ENSEMBLE(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + 3 * delta) % 365;
-      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
       TIME_Date = pre_TIME_Date;
       SOLARCHVISION_update_date();
@@ -4185,13 +4188,13 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_normals = 0;
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
     
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0; 
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     IMPACTS_DataSource = databaseNumber_CLIMATE_WY2;
     
@@ -4200,13 +4203,13 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1;
     
-    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
     
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0; 
-    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
     IMPACTS_DataSource = pre_IMPACTS_DataSource;
   }
@@ -4217,16 +4220,16 @@ void SOLARCHVISION_Plot_Setup () {
       
       
       H_Layer_Option = 3;
-      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
   
       H_Layer_Option = 4;
-      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
   
       H_Layer_Option = 5;
-      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
   
       H_Layer_Option = 0;
-      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
       H_Layer_Option = pre_H_Layer_Option;
     }       
@@ -4234,16 +4237,16 @@ void SOLARCHVISION_Plot_Setup () {
       
       
       F_Layer_Option = 4;
-      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
   
       F_Layer_Option = 3;
-      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
   
       F_Layer_Option = 1;
-      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
   
       F_Layer_Option = 0;
-      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
       F_Layer_Option = pre_F_Layer_Option;
     } 
@@ -4252,111 +4255,111 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 1) {
     
-    develop_Layer = STUDY_Current_Layer;
-    STUDY_Current_Layer = LAYER_developed; 
+    develop_Layer = STUDY_CurrentLayer;
+    STUDY_CurrentLayer = LAYER_developed; 
     
     Develop_Option = DEV_OP_01;
     SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
     Develop_Option = DEV_OP_02;
     SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
     Develop_Option = DEV_OP_03;
     SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
     Develop_Option = DEV_OP_04;
     SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
     Develop_Option = pre_Develop_Option;
-    STUDY_Current_Layer = pre_STUDY_Current_Layer; 
+    STUDY_CurrentLayer = pre_STUDY_CurrentLayer; 
   }  
   
   
   if (STUDY_Setup == 2) {
-    if (STUDY_Current_Layer != LAYER_developed) {
+    if (STUDY_CurrentLayer != LAYER_developed) {
       
       
-      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
-      develop_Layer = STUDY_Current_Layer;
-      STUDY_Current_Layer = LAYER_developed;
+      develop_Layer = STUDY_CurrentLayer;
+      STUDY_CurrentLayer = LAYER_developed;
   
       Develop_Option = DEV_OP_06; 
       SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       Develop_Option = DEV_OP_07; 
       SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
       Develop_Option = DEV_OP_08; 
       SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
-      STUDY_Current_Layer = pre_STUDY_Current_Layer; 
+      STUDY_CurrentLayer = pre_STUDY_CurrentLayer; 
     }
   }  
   
   
   if (STUDY_Setup == 3) {
     
-    STUDY_Current_Layer = LAYER_windspd200hPa;
-    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_windspd200hPa;
+    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_pressure;
-    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_pressure;
+    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_heightp500hPa;
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_heightp500hPa;
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_thicknesses_1000_500;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_thicknesses_1000_500;
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = pre_STUDY_Current_Layer;
+    STUDY_CurrentLayer = pre_STUDY_CurrentLayer;
   }
   
   
   if (STUDY_Setup == 4) {
         
-    STUDY_Current_Layer = LAYER_windspd;
-    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_windspd;
+    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_A_precipitation;
-    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_A_precipitation;
+    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_relhum;
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_relhum;
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_drybulb;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_drybulb;
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = pre_STUDY_Current_Layer;
+    STUDY_CurrentLayer = pre_STUDY_CurrentLayer;
   }  
   
   
   if (STUDY_Setup == 5) {
     
-    STUDY_Current_Layer = LAYER_dirnorrad;
-    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_dirnorrad;
+    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_difhorrad;
-    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_difhorrad;
+    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_developed;
+    STUDY_CurrentLayer = LAYER_developed;
     Develop_Option = DEV_OP_01; 
     SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_developed;
+    STUDY_CurrentLayer = LAYER_developed;
     Develop_Option = DEV_OP_03; 
     SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = pre_STUDY_Current_Layer;
+    STUDY_CurrentLayer = pre_STUDY_CurrentLayer;
     Develop_Option = pre_Develop_Option;
   }
   
@@ -4364,18 +4367,18 @@ void SOLARCHVISION_Plot_Setup () {
   if (STUDY_Setup == 6) {
     
     STUDY_skyScenario_Active = 4;
-    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_skyScenario_Active = 3;
-    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_skyScenario_Active = 2;
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_skyScenario_Active = 1;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_skyScenario_Active = pre_STUDY_Sky_Scenario;
+    STUDY_skyScenario_Active = pre_STUDY_SkyScenario;
   }  
   
   
@@ -4385,21 +4388,21 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_normals = 0;
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1; 
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0;
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = -2;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = -2;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = -1;
-    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = -1;
+    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
    
-    STUDY_STUDY_Plot_Impacts = pre_STUDY_Plot_Impacts; 
+    STUDY_PlotImpacts = pre_STUDY_PlotImpacts; 
   }
   
 
@@ -4409,19 +4412,19 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_normals = 0;
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0; 
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = 3;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 3;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = pre_STUDY_Plot_Impacts; 
-    STUDY_Impact_Layer = pre_Impact_Layer;
+    STUDY_PlotImpacts = pre_STUDY_PlotImpacts; 
+    STUDY_ImpactLayer = pre_STUDY_ImpactLayer;
   }
 
 
@@ -4431,19 +4434,19 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_normals = 0;
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0; 
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = 2;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 2;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = pre_STUDY_Plot_Impacts;
-    STUDY_Impact_Layer = pre_Impact_Layer;
+    STUDY_PlotImpacts = pre_STUDY_PlotImpacts;
+    STUDY_ImpactLayer = pre_STUDY_ImpactLayer;
   }
 
   if (STUDY_Setup == 10) {
@@ -4452,19 +4455,19 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_normals = 0;
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0;
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = 4;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 4;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = pre_STUDY_Plot_Impacts; 
-    STUDY_Impact_Layer = pre_Impact_Layer;
+    STUDY_PlotImpacts = pre_STUDY_PlotImpacts; 
+    STUDY_ImpactLayer = pre_STUDY_ImpactLayer;
   }
   
   if (STUDY_Setup == 11) {
@@ -4473,19 +4476,19 @@ void SOLARCHVISION_Plot_Setup () {
     STUDY_draw_data_normals = 0;
     STUDY_draw_data_raws = 1;
     STUDY_draw_data_probs = 1;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_draw_data_sorted = 1;
     STUDY_draw_data_normals = 1;
     STUDY_draw_data_raws = 0;
     STUDY_draw_data_probs = 0;
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
     
-    STUDY_STUDY_Plot_Impacts = 5;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 5;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = pre_STUDY_Plot_Impacts; 
-    STUDY_Impact_Layer = pre_Impact_Layer;
+    STUDY_PlotImpacts = pre_STUDY_PlotImpacts; 
+    STUDY_ImpactLayer = pre_STUDY_ImpactLayer;
   }  
 
   if (STUDY_Setup == 12) {
@@ -4497,24 +4500,24 @@ void SOLARCHVISION_Plot_Setup () {
       STUDY_draw_data_probs = 1;
     }
 
-    STUDY_Current_Layer = LAYER_windspd; 
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    STUDY_CurrentLayer = LAYER_windspd; 
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    //STUDY_Current_Layer = LAYER_A_precipitation ; 
-    //develop_Layer = STUDY_Current_Layer;
-    //STUDY_Current_Layer = LAYER_developed; 
+    //STUDY_CurrentLayer = LAYER_A_precipitation ; 
+    //develop_Layer = STUDY_CurrentLayer;
+    //STUDY_CurrentLayer = LAYER_developed; 
     //Develop_Option = DEV_OP_09;
     //SOLARCHVISION_DevelopDATA(IMPACTS_DataSource); 
-    //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_drybulb; 
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_drybulb; 
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = 1;
-    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 1;
+    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = -2;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = -2;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
 
   }
@@ -4528,24 +4531,24 @@ void SOLARCHVISION_Plot_Setup () {
       STUDY_draw_data_probs = 0;
     }
 
-    STUDY_Current_Layer = STUDY_Current_Layer = LAYER_dirnorrad; 
-    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
+    STUDY_CurrentLayer = STUDY_CurrentLayer = LAYER_dirnorrad; 
+    SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    //STUDY_Current_Layer = LAYER_glohorrad; //LAYER_difhorrad; // <<<<<<<<<<<<<< 
-    //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    //STUDY_CurrentLayer = LAYER_glohorrad; //LAYER_difhorrad; // <<<<<<<<<<<<<< 
+    //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_Current_Layer = LAYER_cloudcover;
-    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_CurrentLayer = LAYER_cloudcover;
+    SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = 0;
-    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 0;
+    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_STUDY_Plot_Impacts = 2; //4;
-    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_Current_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    STUDY_PlotImpacts = 2; //4;
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
 
-    STUDY_STUDY_Plot_Impacts = pre_STUDY_Plot_Impacts; 
-    STUDY_Impact_Layer = pre_Impact_Layer;
+    STUDY_PlotImpacts = pre_STUDY_PlotImpacts; 
+    STUDY_ImpactLayer = pre_STUDY_ImpactLayer;
 
   }  
     
@@ -4632,7 +4635,7 @@ float dist_lon_lat (double lon1, double lat1, double lon2, double lat2) {
 
   float a = sin_ang(dLon / 2.0);
   float b = sin_ang(dLat / 2.0) * sin_ang(dLat / 2.0) + cos_ang((float) lat1) * cos_ang((float) lat2) * a * a;
-  float d = 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_R_earth; 
+  float d = 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth; 
 
   return(d);
 }
@@ -5925,11 +5928,11 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
     STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-    STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+    STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
 
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
     STUDY_Diagrams.textAlign(LEFT, CENTER); 
-    STUDY_Diagrams.text((LAYERS_Title[STUDY_Current_Layer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+    STUDY_Diagrams.text((LAYERS_Title[STUDY_CurrentLayer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
   
   }
   
@@ -5987,8 +5990,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
         //_FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
+      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
       File_output_node[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -5997,8 +6000,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
+      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       File_output_norm[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t"); 
@@ -6006,8 +6009,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
+      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
 
       File_output_prob[(j - STUDY_j_Start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_Start)].println("");
@@ -6063,7 +6066,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
             }
           }
 
-          Pa = ENSEMBLE_data[now_i][now_j][STUDY_Current_Layer][now_k]; 
+          Pa = ENSEMBLE_data[now_i][now_j][STUDY_CurrentLayer][now_k]; 
           if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
             
@@ -6075,30 +6078,30 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
             if (drw_count == 1) {
 
               _valuesA[k] = Pa;
-              _valuesA[k] += STUDY_V_offset[STUDY_Current_Layer];
+              _valuesA[k] += STUDY_V_offset[STUDY_CurrentLayer];
               
               _valuesSUM[k] += _valuesA[k];
               _valuesNUM[k] += 1;
 
-              if ((ENSEMBLE_flag[now_i][now_j][STUDY_Current_Layer][now_k] == 1) && ((STUDY_draw_data_raws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
+              if ((ENSEMBLE_flag[now_i][now_j][STUDY_CurrentLayer][now_k] == 1) && ((STUDY_draw_data_raws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
                 if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-                  if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_Current_Layer], 5, 5) + "\t"); 
+                  if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_Start)].print("[undefined]\t");
                 }
                             
               if (next_k < (1 + ENSEMBLE_end - ENSEMBLE_start)) {
                 
-                Pb = ENSEMBLE_data[next_i][next_j][STUDY_Current_Layer][next_k];
+                Pb = ENSEMBLE_data[next_i][next_j][STUDY_CurrentLayer][next_k];
                 if (Pb > 0.9 * FLOAT_undefined) {
                   _valuesB[k] = FLOAT_undefined;
                 }
                 else {
                   _valuesB[k] = Pb;
-                  _valuesB[k] += STUDY_V_offset[STUDY_Current_Layer];
+                  _valuesB[k] += STUDY_V_offset[STUDY_CurrentLayer];
                   
                   if (STUDY_draw_data_raws == 1) {
-                    if ((STUDY_Current_Layer == LAYER_winddir) && (abs(_valuesB[k] - _valuesA[k]) > 180)) {
+                    if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[k] - _valuesA[k]) > 180)) {
                       
                     }
                     else {
@@ -6153,26 +6156,26 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     }
 
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_Number][8] + "_" + LAYERS_ENSEMBLE[STUDY_Current_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
+      File_output_node[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_Number][8] + "_" + LAYERS_ENSEMBLE[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_node[(j - STUDY_j_Start)].println("Interpolated and processed by SOLARCHVISION 2016: www.solarchvision.com");
-      if (LAYERS_Unit[STUDY_Current_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_Current_Layer].equals("W/m²")) File_output_node[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
+      if (LAYERS_Unit[STUDY_CurrentLayer].equals("kW°C/m²") || LAYERS_Unit[STUDY_CurrentLayer].equals("W/m²")) File_output_node[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       File_output_node[(j - STUDY_j_Start)].flush(); 
       File_output_node[(j - STUDY_j_Start)].close(); 
     }
     
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_Number][8] + "_" + LAYERS_ENSEMBLE[STUDY_Current_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
+      File_output_norm[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_Number][8] + "_" + LAYERS_ENSEMBLE[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_norm[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_Start)].println("* : SOLARCHVISION internal algorithm");
-      if (LAYERS_Unit[STUDY_Current_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_Current_Layer].equals("W/m²")) File_output_norm[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
+      if (LAYERS_Unit[STUDY_CurrentLayer].equals("kW°C/m²") || LAYERS_Unit[STUDY_CurrentLayer].equals("W/m²")) File_output_norm[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       File_output_norm[(j - STUDY_j_Start)].flush(); 
       File_output_norm[(j - STUDY_j_Start)].close(); 
     }
 
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_Number][8] + "_" + LAYERS_ENSEMBLE[STUDY_Current_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
+      File_output_prob[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_Number][8] + "_" + LAYERS_ENSEMBLE[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_prob[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
-      if (LAYERS_Unit[STUDY_Current_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_Current_Layer].equals("W/m²")) File_output_prob[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
+      if (LAYERS_Unit[STUDY_CurrentLayer].equals("kW°C/m²") || LAYERS_Unit[STUDY_CurrentLayer].equals("W/m²")) File_output_prob[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       File_output_prob[(j - STUDY_j_Start)].flush(); 
       File_output_prob[(j - STUDY_j_Start)].close(); 
     }
@@ -6341,11 +6344,11 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(RIGHT, CENTER);
-      STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start) + "-" + String.valueOf(end_z + CLIMATE_WY2_start) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start) + "-" + String.valueOf(end_z + CLIMATE_WY2_start) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
   
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(LEFT, CENTER); 
-      STUDY_Diagrams.text((LAYERS_Title[STUDY_Current_Layer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.text((LAYERS_Title[STUDY_CurrentLayer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
     
   }   
 
@@ -6396,8 +6399,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
         _FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - STUDY_j_Start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6406,8 +6409,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_Start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t"); 
@@ -6415,8 +6418,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - STUDY_j_Start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_Start)].println("");
@@ -6469,7 +6472,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
               }
             }
 
-            Pa = CLIMATE_WY2_data[now_i][now_j][STUDY_Current_Layer][now_k]; 
+            Pa = CLIMATE_WY2_data[now_i][now_j][STUDY_CurrentLayer][now_k]; 
             if (Pa > 0.9 * FLOAT_undefined) {
               _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
               
@@ -6480,27 +6483,27 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
               if (drw_count == 1) {
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
-                _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_Current_Layer];
+                _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
                 
                 _valuesSUM[(k * STUDY_JoinDays + j_ADD)] += _valuesA[(k * STUDY_JoinDays + j_ADD)];
                 _valuesNUM[(k * STUDY_JoinDays + j_ADD)] += 1;
 
                 if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-                  if (_valuesA[(k * STUDY_JoinDays + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_Current_Layer], 5, 5) + "\t"); 
+                  if (_valuesA[(k * STUDY_JoinDays + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_Start)].print("[undefined]\t");
                 }
 
                 if (next_k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)) {
-                  Pb = CLIMATE_WY2_data[next_i][next_j][STUDY_Current_Layer][next_k];
+                  Pb = CLIMATE_WY2_data[next_i][next_j][STUDY_CurrentLayer][next_k];
                   if (Pb > 0.9 * FLOAT_undefined) {
                     _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
                   }
                   else {
                     _valuesB[(k * STUDY_JoinDays + j_ADD)] = Pb;
-                    _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_Current_Layer];
+                    _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
                     
                     if (STUDY_draw_data_raws == 1) {
-                      if ((STUDY_Current_Layer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
+                      if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
                       }
                       else {                        
                         Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
@@ -6740,11 +6743,11 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(RIGHT, CENTER);
-      STUDY_Diagrams.text(("[Typical Year] "), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.text(("[Typical Year] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
   
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(LEFT, CENTER); 
-      STUDY_Diagrams.text((LAYERS_Title[STUDY_Current_Layer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.text((LAYERS_Title[STUDY_CurrentLayer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
     
   }    
 
@@ -6795,8 +6798,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
         _FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - STUDY_j_Start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -6805,8 +6808,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - STUDY_j_Start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t"); 
@@ -6814,8 +6817,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - STUDY_j_Start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_Start)].println("");
@@ -6868,7 +6871,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
               }
             }
 
-            Pa = CLIMATE_EPW_data[now_i][now_j][STUDY_Current_Layer][now_k]; 
+            Pa = CLIMATE_EPW_data[now_i][now_j][STUDY_CurrentLayer][now_k]; 
             if (Pa > 0.9 * FLOAT_undefined) {
               _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
               
@@ -6879,27 +6882,27 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
               if (drw_count == 1) {
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
-                _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_Current_Layer];
+                _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
                 
                 _valuesSUM[(k * STUDY_JoinDays + j_ADD)] += _valuesA[(k * STUDY_JoinDays + j_ADD)];
                 _valuesNUM[(k * STUDY_JoinDays + j_ADD)] += 1;
 
                 if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-                  if (_valuesA[(k * STUDY_JoinDays + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_Current_Layer], 5, 5) + "\t"); 
+                  if (_valuesA[(k * STUDY_JoinDays + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_Start)].print("[undefined]\t");
                 }
 
                 if (next_k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)) {
-                  Pb = CLIMATE_EPW_data[next_i][next_j][STUDY_Current_Layer][next_k];
+                  Pb = CLIMATE_EPW_data[next_i][next_j][STUDY_CurrentLayer][next_k];
                   if (Pb > 0.9 * FLOAT_undefined) {
                     _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
                   }
                   else {
                     _valuesB[(k * STUDY_JoinDays + j_ADD)] = Pb;
-                    _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_Current_Layer];
+                    _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
                     
                     if (STUDY_draw_data_raws == 1) {
-                      if ((STUDY_Current_Layer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
+                      if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
                       }
                       else {                        
                         Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
@@ -7345,11 +7348,11 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
     STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-    //STUDY_Diagrams.text(("[Observations:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+    //STUDY_Diagrams.text(("[Observations:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
 
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
     STUDY_Diagrams.textAlign(LEFT, CENTER); 
-    STUDY_Diagrams.text((LAYERS_Title[STUDY_Current_Layer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale);
+    STUDY_Diagrams.text((LAYERS_Title[STUDY_CurrentLayer][Language_Active]), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
   
   }
   
@@ -7393,8 +7396,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
         //_FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
+      File_output_node[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_node[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
 
       File_output_node[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -7403,8 +7406,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
+      File_output_norm[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
       File_output_norm[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t"); 
@@ -7412,8 +7415,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_Current_Layer][Language_EN] + "(" + LAYERS_Unit[STUDY_Current_Layer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
+      File_output_prob[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + SOLARCHVISION_BEGIN_DAY) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
 
       File_output_prob[(j - STUDY_j_Start)].print("Hour:\t");
       File_output_prob[(j - STUDY_j_Start)].println("");
@@ -7469,7 +7472,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
             }
           }
 
-          Pa = OBSERVED_data[now_i][now_j][STUDY_Current_Layer][now_k]; 
+          Pa = OBSERVED_data[now_i][now_j][STUDY_CurrentLayer][now_k]; 
           if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
 
@@ -7481,30 +7484,30 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
             if (drw_count == 1) {
 
               _valuesA[k] = Pa;
-              _valuesA[k] += STUDY_V_offset[STUDY_Current_Layer];
+              _valuesA[k] += STUDY_V_offset[STUDY_CurrentLayer];
               
               _valuesSUM[k] += _valuesA[k];
               _valuesNUM[k] += 1;
 
-              //if ((OBSERVED_flag[now_i][now_j][STUDY_Current_Layer][now_k] == 1) && ((STUDY_draw_data_raws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
+              //if ((OBSERVED_flag[now_i][now_j][STUDY_CurrentLayer][now_k] == 1) && ((STUDY_draw_data_raws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
                 if ((Export_STUDY_info_node == 1) && (STUDY_draw_data_raws == 1)) {
-                  if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_Current_Layer], 5, 5) + "\t"); 
+                  if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - STUDY_j_Start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
                   else File_output_node[(j - STUDY_j_Start)].print("[undefined]\t");
                 }
                             
               if (next_k < (1 + OBSERVED_end - OBSERVED_start)) {
                 
-                Pb = OBSERVED_data[next_i][next_j][STUDY_Current_Layer][next_k];
+                Pb = OBSERVED_data[next_i][next_j][STUDY_CurrentLayer][next_k];
                 if (Pb > 0.9 * FLOAT_undefined) {
                   _valuesB[k] = FLOAT_undefined;
                 }
                 else {
                   _valuesB[k] = Pb;
-                  _valuesB[k] += STUDY_V_offset[STUDY_Current_Layer];
+                  _valuesB[k] += STUDY_V_offset[STUDY_CurrentLayer];
                   
                   if (STUDY_draw_data_raws == 1) {
-                    if ((STUDY_Current_Layer == LAYER_winddir) && (abs(_valuesB[k] - _valuesA[k]) > 180)) {
+                    if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[k] - _valuesA[k]) > 180)) {
                       
                     }
                     else {
@@ -7595,10 +7598,10 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
   STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
   
   float Shift_DOWN = 0;
-  if (STUDY_V_belowLine[STUDY_Current_Layer] != 0) Shift_DOWN = -100;
+  if (STUDY_V_belowLine[STUDY_CurrentLayer] != 0) Shift_DOWN = -100;
   
   for (int i = 100; i >= Shift_DOWN; i -= 25) {
-    if (-STUDY_V_offset[STUDY_Current_Layer] + roundTo(i / STUDY_V_scale[STUDY_Current_Layer], 0.1) != 0) {
+    if (-STUDY_V_offset[STUDY_CurrentLayer] + roundTo(i / STUDY_V_scale[STUDY_CurrentLayer], 0.1) != 0) {
       STUDY_Diagrams.stroke(0, 63);
       STUDY_Diagrams.fill(0, 63);
     }
@@ -7608,13 +7611,13 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
     }
     STUDY_Diagrams.line(STUDY_j_Start * sx_Plot, -i * STUDY_S_View, STUDY_j_End * sx_Plot, -i * STUDY_S_View); 
     
-    if ((i >= 0) || (STUDY_V_belowLine[STUDY_Current_Layer] != 0)) {  
+    if ((i >= 0) || (STUDY_V_belowLine[STUDY_CurrentLayer] != 0)) {  
       STUDY_Diagrams.stroke(0);
       STUDY_Diagrams.fill(0);
       STUDY_Diagrams.textSize(sx_Plot * 0.200 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(RIGHT, CENTER);
-      STUDY_Diagrams.text(((nf(-STUDY_V_offset[STUDY_Current_Layer] + roundTo(i / STUDY_V_scale[STUDY_Current_Layer], 0.1), 0, 1)) + LAYERS_Unit[STUDY_Current_Layer]), -5, -i * STUDY_S_View);
-      //STUDY_Diagrams.text(((String.valueOf(int(-STUDY_V_offset[STUDY_Current_Layer] + roundTo(i / STUDY_V_scale[STUDY_Current_Layer], 0.1)))) + LAYERS_Unit[STUDY_Current_Layer]), -5, -i * STUDY_S_View);
+      STUDY_Diagrams.text(((nf(-STUDY_V_offset[STUDY_CurrentLayer] + roundTo(i / STUDY_V_scale[STUDY_CurrentLayer], 0.1), 0, 1)) + LAYERS_Unit[STUDY_CurrentLayer]), -5, -i * STUDY_S_View);
+      //STUDY_Diagrams.text(((String.valueOf(int(-STUDY_V_offset[STUDY_CurrentLayer] + roundTo(i / STUDY_V_scale[STUDY_CurrentLayer], 0.1)))) + LAYERS_Unit[STUDY_CurrentLayer]), -5, -i * STUDY_S_View);
     }
   }
   
@@ -7645,7 +7648,7 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
     }
   }
 
-  SOLARCHVISION_print_other_info(sx_Plot, STUDY_V_belowLine[STUDY_Current_Layer]);
+  SOLARCHVISION_print_other_info(sx_Plot, STUDY_V_belowLine[STUDY_CurrentLayer]);
 }  
 
 
@@ -7703,7 +7706,7 @@ void SOLARCHVISION_draw_Grid_Spherical_POSITION (float x_Plot, float y_Plot, flo
     }
     
     float impact_scale = 1;
-    if ((STUDY_STUDY_Plot_Impacts == -2) || (STUDY_STUDY_Plot_Impacts == -1)) impact_scale = STUDY_V_scale[LAYER_windspd] * 45 / 50.0;
+    if ((STUDY_PlotImpacts == -2) || (STUDY_PlotImpacts == -1)) impact_scale = STUDY_V_scale[LAYER_windspd] * 45 / 50.0;
     
     for (int r = 90; r > 0; r -= 15) {
       if ((r % 90) != 0) {
@@ -7822,7 +7825,7 @@ void SOLARCHVISION_draw_dataProbs (int i, int j, int start_z, int end_z, float[]
     min_v = roundTo((min_v * abs(sy_Plot)), STUDY_pix) / STUDY_pix;
     max_v = roundTo((max_v * abs(sy_Plot)), STUDY_pix) / STUDY_pix;
     
-    if (STUDY_Current_Layer == LAYER_winddir) min_v = 0;
+    if (STUDY_CurrentLayer == LAYER_winddir) min_v = 0;
 
     int[] _probs;
     int total_probs = 0;
@@ -7833,7 +7836,7 @@ void SOLARCHVISION_draw_dataProbs (int i, int j, int start_z, int end_z, float[]
       if (_valuesSUM[k] < 0.9 * FLOAT_undefined) {
         float the_value = _valuesSUM[k];
         
-        if (STUDY_Current_Layer == LAYER_winddir) {
+        if (STUDY_CurrentLayer == LAYER_winddir) {
           if (roundTo((the_value * abs(sy_Plot)), STUDY_pix) >= (360 * abs(sy_Plot))) the_value -= 360;
         }
         
@@ -7876,7 +7879,7 @@ void SOLARCHVISION_draw_dataProbs (int i, int j, int start_z, int end_z, float[]
           STUDY_Diagrams.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (STUDY_sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, -((min_v + n) * STUDY_pix) - 0.05 * txt_max_height);
           
           if ((Export_STUDY_info_prob == 1) && (STUDY_draw_data_probs == 1)) {
-            File_output_prob[(j - STUDY_j_Start)].print(nfs((min_v + n) * STUDY_pix / abs(sy_Plot) - STUDY_V_offset[STUDY_Current_Layer], 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t"); 
+            File_output_prob[(j - STUDY_j_Start)].print(nfs((min_v + n) * STUDY_pix / abs(sy_Plot) - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t"); 
           }
         }
       }  
@@ -7903,7 +7906,7 @@ void SOLARCHVISION_draw_dataProbs (int i, int j, int start_z, int end_z, float[]
     
     STUDY_Diagrams.strokeWeight(0); 
     
-    float Y_OFFSET = (0.25 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale;
+    float Y_OFFSET = (0.25 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale;
  
     //STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, 125 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
     STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, Y_OFFSET, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View);
@@ -8003,7 +8006,7 @@ void SOLARCHVISION_draw_data_sorted (int i, int j, float[] _valuesA, float[] _va
     STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
     STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);     
      
-    float Y_OFFSET = (0.25 + STUDY_V_belowLine[STUDY_Current_Layer]) * sx_Plot / STUDY_U_scale;
+    float Y_OFFSET = (0.25 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale;
 
     //STUDY_Diagrams.strokeWeight(0.0);
     STUDY_Diagrams.stroke(255); STUDY_Diagrams.strokeWeight(0.5); 
@@ -8034,7 +8037,7 @@ void SOLARCHVISION_draw_data_normals (int i, int j, float[] _valuesA, float[] _v
   float[] NormalsA = SOLARCHVISION_NORMAL(_valuesA);
   float[] NormalsB = SOLARCHVISION_NORMAL(_valuesB);
   
-  if (STUDY_Current_Layer == LAYER_winddir) {
+  if (STUDY_CurrentLayer == LAYER_winddir) {
     float[] X_valuesA;
     float[] Y_valuesA;
     X_valuesA = new float [_valuesA.length];
@@ -8102,10 +8105,10 @@ void SOLARCHVISION_draw_data_normals (int i, int j, float[] _valuesA, float[] _v
   //for (int l = 3; l < 9; l += 1) {
   
   //for (int p = 0; p < 3; p += 1) { 
-    //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+    //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
 
   //for (int p = 0; p < 1; p += 1) { 
-    //int l = STUDY_Impact_Layer;
+    //int l = STUDY_ImpactLayer;
 
 
     if (l == STAT_N_Middle) {
@@ -8156,7 +8159,7 @@ void SOLARCHVISION_draw_data_normals (int i, int j, float[] _valuesA, float[] _v
 
 
 /*
-    if (l == STUDY_Impact_Layer) {
+    if (l == STUDY_ImpactLayer) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
       STUDY_Diagrams.stroke(0, 191, 0, _OPACITY);
       STUDY_Diagrams.fill(0, 191, 0, _OPACITY);
@@ -8205,7 +8208,7 @@ void SOLARCHVISION_draw_data_normals (int i, int j, float[] _valuesA, float[] _v
     } 
     
     if ((Export_STUDY_info_norm == 1) && (STUDY_draw_data_normals == 1)) {
-      if (NormalsA[l] < 0.9 * FLOAT_undefined) File_output_norm[(j - STUDY_j_Start)].print(nfs(NormalsA[l] - STUDY_V_offset[STUDY_Current_Layer], 5, 5) + "\t"); 
+      if (NormalsA[l] < 0.9 * FLOAT_undefined) File_output_norm[(j - STUDY_j_Start)].print(nfs(NormalsA[l] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
       else File_output_norm[(j - STUDY_j_Start)].print("[undefined]\t");
     }
 
@@ -9147,7 +9150,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   int layers_count = STUDY_get_startZ_endZ(IMPACTS_DataSource)[2]; 
 
 
-  if ((STUDY_STUDY_Plot_Impacts == -2) || (STUDY_STUDY_Plot_Impacts == -1)) {
+  if ((STUDY_PlotImpacts == -2) || (STUDY_PlotImpacts == -1)) {
     
     SOLARCHVISION_build_WindRose_Image_array(); 
     
@@ -9155,8 +9158,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     Rendered_WindRose_RES = RES;
     
-    if (STUDY_STUDY_Plot_Impacts == -2) Impact_TYPE = Impact_WIND_Overlay; 
-    if (STUDY_STUDY_Plot_Impacts == -1) Impact_TYPE = Impact_WIND_Temperature;
+    if (STUDY_PlotImpacts == -2) Impact_TYPE = Impact_WIND_Overlay; 
+    if (STUDY_PlotImpacts == -1) Impact_TYPE = Impact_WIND_Temperature;
     
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -9563,7 +9566,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
   
-  if ((STUDY_STUDY_Plot_Impacts == 0) || (STUDY_STUDY_Plot_Impacts == 1)) {
+  if ((STUDY_PlotImpacts == 0) || (STUDY_PlotImpacts == 1)) {
 
     if (STUDY_update_impacts == 1)  {
 
@@ -9572,8 +9575,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       int RES1 = SolarImpact_RES1;
       int RES2 = SolarImpact_RES2;
   
-      if (STUDY_STUDY_Plot_Impacts == 0) Impact_TYPE = Impact_ACTIVE; 
-      if (STUDY_STUDY_Plot_Impacts == 1) Impact_TYPE = Impact_PASSIVE;
+      if (STUDY_PlotImpacts == 0) Impact_TYPE = Impact_ACTIVE; 
+      if (STUDY_PlotImpacts == 1) Impact_TYPE = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
@@ -9606,7 +9609,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }        
   
       for (int p = 0; p < 1; p += 1) { 
-        int l = STUDY_Impact_Layer;
+        int l = STUDY_ImpactLayer;
 
         for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) {
  
@@ -9769,14 +9772,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((STUDY_STUDY_Plot_Impacts == 2) || (STUDY_STUDY_Plot_Impacts == 3)) {
+  if ((STUDY_PlotImpacts == 2) || (STUDY_PlotImpacts == 3)) {
     
     if (rebuild_SolarProjection_array != 0) {
       SOLARCHVISION_build_SolarProjection_array();
     }
     
-    if (STUDY_STUDY_Plot_Impacts == 2) Impact_TYPE = Impact_ACTIVE; 
-    if (STUDY_STUDY_Plot_Impacts == 3) Impact_TYPE = Impact_PASSIVE;
+    if (STUDY_PlotImpacts == 2) Impact_TYPE = Impact_ACTIVE; 
+    if (STUDY_PlotImpacts == 3) Impact_TYPE = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -9807,16 +9810,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
 
     //for (int p = 0; p < 3; p += 1) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
 
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
       
     for (int p = 0; p < 1; p += 1) { 
-      int l = STUDY_Impact_Layer;
+      int l = STUDY_ImpactLayer;
    
     //for (int p = 0; p < 1; p += 1) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + 1; //STUDY_Impact_Layer;    
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + 1; //STUDY_ImpactLayer;    
 
       float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
@@ -10228,9 +10231,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((STUDY_STUDY_Plot_Impacts == 4) || (STUDY_STUDY_Plot_Impacts == 5)) {
-    if (STUDY_STUDY_Plot_Impacts == 4) Impact_TYPE = Impact_ACTIVE; 
-    if (STUDY_STUDY_Plot_Impacts == 5) Impact_TYPE = Impact_PASSIVE;
+  if ((STUDY_PlotImpacts == 4) || (STUDY_PlotImpacts == 5)) {
+    if (STUDY_PlotImpacts == 4) Impact_TYPE = Impact_ACTIVE; 
+    if (STUDY_PlotImpacts == 5) Impact_TYPE = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -10263,16 +10266,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
     //for (int p = 0; p < 3; p += 1) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
 
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
       
     for (int p = 0; p < 1; p += 1) { 
-      int l = STUDY_Impact_Layer;
+      int l = STUDY_ImpactLayer;
       
     //for (int p = 0; p < 1; p += 1) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + 1; //STUDY_Impact_Layer;    
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + 1; //STUDY_ImpactLayer;    
  
       for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) {
 
@@ -10522,9 +10525,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((STUDY_STUDY_Plot_Impacts == 6) || (STUDY_STUDY_Plot_Impacts == 7)) {
-    if (STUDY_STUDY_Plot_Impacts == 6) Impact_TYPE = Impact_ACTIVE; 
-    if (STUDY_STUDY_Plot_Impacts == 7) Impact_TYPE = Impact_PASSIVE;
+  if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
+    if (STUDY_PlotImpacts == 6) Impact_TYPE = Impact_ACTIVE; 
+    if (STUDY_PlotImpacts == 7) Impact_TYPE = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -10747,19 +10750,19 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   } 
 
 
-  if ((STUDY_STUDY_Plot_Impacts == 8) || (STUDY_STUDY_Plot_Impacts == 9)) {
+  if ((STUDY_PlotImpacts == 8) || (STUDY_PlotImpacts == 9)) {
 
     //for (int p = 0; p < 3; p += 1) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
 
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + p;
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + p;
       
     for (int p = 0; p < 1; p += 1) { 
-      int l = STUDY_Impact_Layer;
+      int l = STUDY_ImpactLayer;
       
     //for (int p = 0; p < 1; p += 1) { 
-      //int l = 3 * int(STUDY_Impact_Layer / 3) + 1; //STUDY_Impact_Layer;    
+      //int l = 3 * int(STUDY_ImpactLayer / 3) + 1; //STUDY_ImpactLayer;    
     
       int target_window = 1;
       SOLARCHVISION_draw_SunPathCycles(x_Plot, y_Plot - (1 * p * sx_Plot / STUDY_U_scale), z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
@@ -10872,7 +10875,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((STUDY_STUDY_Plot_Impacts == 8) || (STUDY_STUDY_Plot_Impacts == 9)) {
+  if ((STUDY_PlotImpacts == 8) || (STUDY_PlotImpacts == 9)) {
     
   }
   else {
@@ -10900,7 +10903,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   
   int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
 
-  if (STUDY_STUDY_Plot_Impacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
+  if (STUDY_PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
   else Impact_TYPE = Impact_PASSIVE;
 
   float Pa1 = FLOAT_undefined;
@@ -10967,7 +10970,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
     num_vertices_added = 0;
     
-    if (objExportMaterialLibrary != 0) {
+    if (objExport_MaterialLibrary != 0) {
 
       the_filename = "sunPattern_Pallet.bmp";
 
@@ -10975,8 +10978,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       println("Saving texture:", TEXTURE_path);
       
-      int RES1 = objExportPalletResolution; 
-      int RES2 = objExportPalletResolution / 16;      
+      int RES1 = objExport_PalletResolution; 
+      int RES2 = objExport_PalletResolution / 16;      
   
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
    
@@ -11042,7 +11045,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         obj_lastGroupNumber += 1;
         objOutput.println("g sunPattern");
   
-        if (objExportMaterialLibrary != 0) {      
+        if (objExport_MaterialLibrary != 0) {      
           objOutput.println("usemtl " +  the_filename.replace('.', '_'));
         }
       }
@@ -11767,8 +11770,8 @@ void STUDY_keyPressed (KeyEvent e) {
         case LEFT  :SOLARCHVISION_BEGIN_DAY = (365 + SOLARCHVISION_BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; SOLARCHVISION_UI_BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case RIGHT :SOLARCHVISION_BEGIN_DAY = (SOLARCHVISION_BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; SOLARCHVISION_UI_BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
               
-        case UP   :STUDY_Current_Layer = (STUDY_Current_Layer + 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case DOWN :STUDY_Current_Layer = (STUDY_Current_Layer + num_layers - 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;         
+        case UP   :STUDY_CurrentLayer = (STUDY_CurrentLayer + 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN :STUDY_CurrentLayer = (STUDY_CurrentLayer + num_layers - 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;         
         
       }
     }
@@ -11832,17 +11835,17 @@ void STUDY_keyPressed (KeyEvent e) {
         case 114 : IMPACTS_DataSource = databaseNumber_CLIMATE_WY2; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 115 : IMPACTS_DataSource = databaseNumber_CLIMATE_EPW; STUDY_Update = 1; ROLLOUT_Update = 1; break;          
 
-        case 116 : if (((abs(STUDY_STUDY_Plot_Impacts) % 2 == 0) && (STUDY_STUDY_Plot_Impacts != 4)) || (STUDY_STUDY_Plot_Impacts == 5)) STUDY_STUDY_Plot_Impacts = 4;
-                   else STUDY_STUDY_Plot_Impacts = 5; 
+        case 116 : if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 4)) || (STUDY_PlotImpacts == 5)) STUDY_PlotImpacts = 4;
+                   else STUDY_PlotImpacts = 5; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 117 : if (((abs(STUDY_STUDY_Plot_Impacts) % 2 == 0) && (STUDY_STUDY_Plot_Impacts != 2)) || (STUDY_STUDY_Plot_Impacts == 3)) STUDY_STUDY_Plot_Impacts = 2;
-                   else STUDY_STUDY_Plot_Impacts = 3; 
+        case 117 : if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 2)) || (STUDY_PlotImpacts == 3)) STUDY_PlotImpacts = 2;
+                   else STUDY_PlotImpacts = 3; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;                   
-        case 118 : if (((abs(STUDY_STUDY_Plot_Impacts) % 2 == 0) && (STUDY_STUDY_Plot_Impacts != 0)) || (STUDY_STUDY_Plot_Impacts == 1)) STUDY_STUDY_Plot_Impacts = 0;
-                   else STUDY_STUDY_Plot_Impacts = 1; 
+        case 118 : if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 0)) || (STUDY_PlotImpacts == 1)) STUDY_PlotImpacts = 0;
+                   else STUDY_PlotImpacts = 1; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;           
-        case 119 : if (((abs(STUDY_STUDY_Plot_Impacts) % 2 == 0) && (STUDY_STUDY_Plot_Impacts != -2)) || (STUDY_STUDY_Plot_Impacts == -1)) STUDY_STUDY_Plot_Impacts = -2;
-                   else STUDY_STUDY_Plot_Impacts = -1; 
+        case 119 : if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != -2)) || (STUDY_PlotImpacts == -1)) STUDY_PlotImpacts = -2;
+                   else STUDY_PlotImpacts = -1; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;
         
       }
@@ -11936,20 +11939,20 @@ void STUDY_keyPressed (KeyEvent e) {
                   update_DevelopDATA = 1;
                   STUDY_Update = 1; ROLLOUT_Update = 1; break; 
       
-        case '>' :if ((STUDY_STUDY_Plot_Impacts == -2) || (STUDY_STUDY_Plot_Impacts == -1)) {
+        case '>' :if ((STUDY_PlotImpacts == -2) || (STUDY_PlotImpacts == -1)) {
                     STUDY_O_scale *= ROLLOUT_Update = 1; pow(2.0, (1.0 / 4.0)); 
                   }
                   else {
-                    STUDY_Impact_Layer = (STUDY_Impact_Layer + 1) % 9; 
+                    STUDY_ImpactLayer = (STUDY_ImpactLayer + 1) % 9; 
                   }
                   STUDY_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case '<' :if ((STUDY_STUDY_Plot_Impacts == -2) || (STUDY_STUDY_Plot_Impacts == -1)) {
+        case '<' :if ((STUDY_PlotImpacts == -2) || (STUDY_PlotImpacts == -1)) {
                     STUDY_O_scale *= ROLLOUT_Update = 1; pow(0.5, (1.0 / 4.0)); 
                   }
                   else {
-                    STUDY_Impact_Layer = (STUDY_Impact_Layer + 9 - 1) % 9;
+                    STUDY_ImpactLayer = (STUDY_ImpactLayer + 9 - 1) % 9;
                      
                   }
                   STUDY_Update = 1;
@@ -11964,8 +11967,8 @@ void STUDY_keyPressed (KeyEvent e) {
         //case 'g' :FILTER_Active = (FILTER_Active + 1) % 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         //case 'G' :FILTER_Active = (FILTER_Active + 2 - 1) % 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '=' :STUDY_V_scale[STUDY_Current_Layer] *= pow(2.0, (1.0 / 2.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case '_' :STUDY_V_scale[STUDY_Current_Layer] *= pow(0.5, (1.0 / 2.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '=' :STUDY_V_scale[STUDY_CurrentLayer] *= pow(2.0, (1.0 / 2.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case '_' :STUDY_V_scale[STUDY_CurrentLayer] *= pow(0.5, (1.0 / 2.0)); STUDY_Update = 1; ROLLOUT_Update = 1; break;
         
         case 'c' :COLOR_STYLE_Active = (COLOR_STYLE_Active + 1) % COLOR_STYLE_Number; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'C' :COLOR_STYLE_Active = (COLOR_STYLE_Active - 1 + COLOR_STYLE_Number) % COLOR_STYLE_Number; STUDY_Update = 1; ROLLOUT_Update = 1; break;
@@ -12122,7 +12125,7 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
     
     float previous_DATE = TIME_Date;
     
-    SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY_Impact_Layer, 3);
+    SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY_ImpactLayer, 3);
 
     STUDY_per_day = keep_STUDY_per_day;
     STUDY_JoinDays = keep_STUDY_JoinDays; 
@@ -12187,7 +12190,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
     
     for (int p = 0; p < 1; p += 1) { 
       
-      int l = STUDY_Impact_Layer;
+      int l = STUDY_ImpactLayer;
     
       int DATE_step = 1;
       
@@ -13555,7 +13558,7 @@ int WORLD_FindGoodViewport (float pointLongitude, float pointLatitude) {
   if (return_VIEWPORT != WORLD_VIEW_Number) {
     SOLARCHVISION_Load_WorldViewImage(return_VIEWPORT);
     
-    if (Display_EARTH3D_OBJECT != 0) WIN3D_Update = 1;    
+    if (Display_EARTH3D_Surface != 0) WIN3D_Update = 1;    
   }
 
   return (return_VIEWPORT);
@@ -14451,7 +14454,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
       float y = SOLARCHVISION_selection_BoundingBox[1 + selection_alignX][1];
       float z = SOLARCHVISION_selection_BoundingBox[1 + selection_alignX][2];
 
-      float rot = Create_Input_Orientation;
+      float rot = CreateInput_Orientation;
       if (rot == 360) rot = WIN3D_RZ_coordinate;
        
       SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
@@ -15470,7 +15473,7 @@ void SOLARCHVISION_selectNearVertices_Selection () {
             
             float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
             
-            if (d <= Modify_Input_WeldTreshold) { 
+            if (d <= ModifyInput_WeldTreshold) { 
   
               isNearEnough = 1;
               
@@ -15531,7 +15534,7 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
             
               float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
               
-              if (d <= Modify_Input_WeldTreshold) { 
+              if (d <= ModifyInput_WeldTreshold) { 
               
                 allFaces_PNT[i][j] = vNo;
   
@@ -15611,7 +15614,7 @@ void SOLARCHVISION_weldObjectsVertices_Selection () {
   
             float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
             
-            if (d <= Modify_Input_WeldTreshold) { 
+            if (d <= ModifyInput_WeldTreshold) { 
               
               for (int i = 0; i < selectedFace_numbers.length; i++) {
                 int f = selectedFace_numbers[i];
@@ -15831,7 +15834,7 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
                 for(int i = 0; i < allFaces_PNT[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
                     
-                    new_Vertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                    new_Vertices[i][j] = pow(ModifyInput_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(ModifyInput_OpenningArea, 0.5)) * G_face[j];
                   }
                 }
                 
@@ -16008,10 +16011,10 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
                   
                   for (int j = 0; j < 3; j++) {
                     
-                    new_A_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
-                    new_B_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
+                    new_A_EdgeVertices[s][j] = ModifyInput_OpenningDeviation * base_Vertices[s][j] + (1 - ModifyInput_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
+                    new_B_EdgeVertices[s][j] = ModifyInput_OpenningDeviation * base_Vertices[s][j] + (1 - ModifyInput_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
                     
-                    new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                    new_CenterVertices[s][j] = pow(ModifyInput_OpenningArea, 0.5) * base_Vertices[s][j] + (1 - pow(ModifyInput_OpenningArea, 0.5)) * G_face[j];
                   }
                 }
                 
@@ -16200,9 +16203,9 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
                   
                   for (int j = 0; j < 3; j++) {
                     
-                    new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
+                    new_EdgeVertices[s][j] = ModifyInput_OpenningDeviation * base_Vertices[s][j] + (1 - ModifyInput_OpenningDeviation) * base_Vertices[s_prev][j];
                     
-                    new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                    new_CenterVertices[s][j] = pow(ModifyInput_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(ModifyInput_OpenningArea, 0.5)) * G_face[j];
                   }
                 }
                 
@@ -16377,7 +16380,7 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
                   
                   for (int j = 0; j < 3; j++) {
                     
-                    new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
+                    new_EdgeVertices[s][j] = ModifyInput_OpenningDeviation * base_Vertices[s][j] + (1 - ModifyInput_OpenningDeviation) * base_Vertices[s_prev][j];
   
                   }
                 }
@@ -16503,17 +16506,17 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
               
                 for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                   for (int j = 0; j < 2; j++) {
-                    allGroup3Ds_Faces[i][j] += Modify_Input_TessellateColumns * Modify_Input_TessellateRows - 1;
+                    allGroup3Ds_Faces[i][j] += ModifyInput_TessellateColumns * ModifyInput_TessellateRows - 1;
                   }
                 }  
-                allGroup3Ds_Faces[OBJ_NUM][1] += Modify_Input_TessellateColumns * Modify_Input_TessellateRows - 1; // because adding the faces also changes the end pointer of the same object 
+                allGroup3Ds_Faces[OBJ_NUM][1] += ModifyInput_TessellateColumns * ModifyInput_TessellateRows - 1; // because adding the faces also changes the end pointer of the same object 
     
                 for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                   
                   if (new_selectedFace_numbers[p] != 0) {
                       
                     if (new_selectedFace_numbers[p] > f) {  
-                      new_selectedFace_numbers[p] += Modify_Input_TessellateColumns * Modify_Input_TessellateRows - 1;
+                      new_selectedFace_numbers[p] += ModifyInput_TessellateColumns * ModifyInput_TessellateRows - 1;
                     }
                   }
                 }             
@@ -16539,18 +16542,18 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                   
       
                   
-                  float[][] new_EdgeVertices = new float [(Modify_Input_TessellateColumns + 1) * (Modify_Input_TessellateRows + 1)][3];
+                  float[][] new_EdgeVertices = new float [(ModifyInput_TessellateColumns + 1) * (ModifyInput_TessellateRows + 1)][3];
                 
-                  for (int i = 0; i <= Modify_Input_TessellateColumns; i++) {
+                  for (int i = 0; i <= ModifyInput_TessellateColumns; i++) {
                     
-                    for (int j = 0; j <= Modify_Input_TessellateRows; j++) {
+                    for (int j = 0; j <= ModifyInput_TessellateRows; j++) {
                       
-                      int s = i * (Modify_Input_TessellateRows + 1) + j;
+                      int s = i * (ModifyInput_TessellateRows + 1) + j;
   
                       for (int k = 0; k < 3; k++) {
                         
-                        float u = i / float(Modify_Input_TessellateColumns);
-                        float v = j / float(Modify_Input_TessellateRows);
+                        float u = i / float(ModifyInput_TessellateColumns);
+                        float v = j / float(ModifyInput_TessellateRows);
                         
                         new_EdgeVertices[s][k] = Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
     
@@ -16558,24 +16561,24 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                     }
                   }
                   
-                  int[] new_EdgeVertex_numbers = new int [(Modify_Input_TessellateColumns + 1) * (Modify_Input_TessellateRows + 1)]; // on the edge
+                  int[] new_EdgeVertex_numbers = new int [(ModifyInput_TessellateColumns + 1) * (ModifyInput_TessellateRows + 1)]; // on the edge
                   
-                  for (int i = 0; i <= Modify_Input_TessellateColumns; i++) {
+                  for (int i = 0; i <= ModifyInput_TessellateColumns; i++) {
                     
-                    for (int j = 0; j <= Modify_Input_TessellateRows; j++) {
+                    for (int j = 0; j <= ModifyInput_TessellateRows; j++) {
                       
-                      int s = i * (Modify_Input_TessellateRows + 1) + j;
+                      int s = i * (ModifyInput_TessellateRows + 1) + j;
                     
                       if ((i == 0) && (j == 0)) {
                         new_EdgeVertex_numbers[s] = allFaces_PNT[f][0];
                       }
-                      else if ((i == Modify_Input_TessellateColumns) && (j == 0)) {
+                      else if ((i == ModifyInput_TessellateColumns) && (j == 0)) {
                         new_EdgeVertex_numbers[s] = allFaces_PNT[f][1];
                       }
-                      else if ((i == Modify_Input_TessellateColumns) && (j == Modify_Input_TessellateRows)) {
+                      else if ((i == ModifyInput_TessellateColumns) && (j == ModifyInput_TessellateRows)) {
                         new_EdgeVertex_numbers[s] = allFaces_PNT[f][2];
                       }
-                      else if ((i == 0) && (j == Modify_Input_TessellateRows)) {
+                      else if ((i == 0) && (j == ModifyInput_TessellateRows)) {
                         new_EdgeVertex_numbers[s] = allFaces_PNT[f][3];
                       }                    
                       else {
@@ -16590,17 +16593,17 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                   defaultLayer = allFaces_MTLV[f][2];
                   defaultVisibility = allFaces_MTLV[f][3];
                
-                  for (int i = 0; i < Modify_Input_TessellateColumns; i++) {
+                  for (int i = 0; i < ModifyInput_TessellateColumns; i++) {
                     
-                    for (int j = 0; j < Modify_Input_TessellateRows; j++) {
+                    for (int j = 0; j < ModifyInput_TessellateRows; j++) {
                       
-                      int s = i * Modify_Input_TessellateRows + j;  // number of face
+                      int s = i * ModifyInput_TessellateRows + j;  // number of face
                       
                       // number of vertices
-                      int s00 = i * (Modify_Input_TessellateRows + 1) + j; 
+                      int s00 = i * (ModifyInput_TessellateRows + 1) + j; 
                       int s01 = s00 + 1;
-                      int s10 = s00 + (Modify_Input_TessellateRows + 1);
-                      int s11 = s00 + (Modify_Input_TessellateRows + 1) + 1;
+                      int s10 = s00 + (ModifyInput_TessellateRows + 1);
+                      int s11 = s00 + (ModifyInput_TessellateRows + 1) + 1;
       
                       int[][] newFace = {{new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]}};
                       int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
@@ -17051,9 +17054,9 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                 float[] W = {UV.x, UV.y, UV.z};
                 W = SOLARCHVISION_fn_normalize(W);
       
-                top_Vertices[s][0] += W[0] * Modify_Input_OpenningDepth;
-                top_Vertices[s][1] += W[1] * Modify_Input_OpenningDepth;
-                top_Vertices[s][2] += W[2] * Modify_Input_OpenningDepth;
+                top_Vertices[s][0] += W[0] * ModifyInput_OpenningDepth;
+                top_Vertices[s][1] += W[1] * ModifyInput_OpenningDepth;
+                top_Vertices[s][2] += W[2] * ModifyInput_OpenningDepth;
               }  
               
               int[] base_Vertex_numbers = new int [allFaces_PNT[f].length];
@@ -17069,7 +17072,7 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                 
                 int s_next = (s + 1) % allFaces_PNT[f].length;
   
-                if (Modify_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
+                if (ModifyInput_OpenningDepth < 0) { // reverse direction for negative extrude heights
                   int[][] newFace = {{base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]}};  
                   allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
                 }
@@ -19076,14 +19079,14 @@ void SOLARCHVISION_export_objects_OBJ () {
   String mtlFilename = Model3DFolder + "/" + fileBasename + ".mtl";
 
 
-  if (objExportMaterialLibrary != 0) {
+  if (objExport_MaterialLibrary != 0) {
     mtlOutput = createWriter(mtlFilename);
     mtlOutput.println("#SOLARCHVISION");
   }
 
   objOutput = createWriter(objFilename);
   objOutput.println("#SOLARCHVISION");
-  if (objExportMaterialLibrary != 0) {
+  if (objExport_MaterialLibrary != 0) {
     objOutput.println("mtllib " + fileBasename + ".mtl");
   }
   
@@ -19096,11 +19099,11 @@ void SOLARCHVISION_export_objects_OBJ () {
 
 
 
-  if (Display_TROPO3D_OBJECT != 0) {
+  if (Display_TROPO3D_Surface != 0) {
     
     for (int TROPO_level = 0; TROPO_level < TROPO_IMAGES_Map.length; TROPO_level++) {    
       
-      if (objExportMaterialLibrary != 0) {
+      if (objExport_MaterialLibrary != 0) {
     
         mtlOutput.println("newmtl TropoSphere_" + nf(TROPO_level, 0));
         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -19114,21 +19117,21 @@ void SOLARCHVISION_export_objects_OBJ () {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-        if (Display_TROPO3D_TEXTURE != 0) {
+        if (Display_TROPO3D_Texture != 0) {
           
           //int n = 0;
           //if (IMPACTS_DisplayDay < TROPO_IMAGES_Map.length) n = IMPACTS_DisplayDay;
           
           int n = TROPO_level; // <<<<<<<<
                 
-          String old_TEXTURE_path = TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[n];
+          String old_Texture_path = TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[n];
           
-          String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+          String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
       
-          String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+          String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
       
-          println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-          saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+          println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+          saveBytes(new_Texture_path, loadBytes(old_Texture_path));
     
           //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
           mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
@@ -19137,12 +19140,12 @@ void SOLARCHVISION_export_objects_OBJ () {
       }
       
       
-      if (objExportPolyToPoly == 1) {
+      if (objExport_PolyToPoly == 1) {
         obj_lastGroupNumber += 1;  
         objOutput.println("g TropoSphere_" + nf(TROPO_level, 0)); 
       }
       
-      if (objExportMaterialLibrary != 0) {
+      if (objExport_MaterialLibrary != 0) {
         objOutput.println("usemtl TropoSphere_" + nf(TROPO_level, 0));
       }
       
@@ -19159,7 +19162,7 @@ void SOLARCHVISION_export_objects_OBJ () {
       float delta_Alpha = -BiosphereStep; 
       float delta_Beta = -BiosphereStep;
       
-      float r = FLOAT_R_earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
+      float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
   
   
       for (int _turn = 1; _turn < 4; _turn += 1) {
@@ -19209,7 +19212,7 @@ void SOLARCHVISION_export_objects_OBJ () {
               float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
     
               // move it down!
-              z2 -= FLOAT_R_earth;
+              z2 -= FLOAT_r_Earth;
     
               subFace[s][0] = x2;
               subFace[s][1] = y2;
@@ -19257,7 +19260,7 @@ void SOLARCHVISION_export_objects_OBJ () {
             String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
             String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
             
-            if (objExportPolyToPoly == 0) {
+            if (objExport_PolyToPoly == 0) {
               if (_turn == 3) {
                 obj_lastGroupNumber += 1;
                 objOutput.println("g TropoSphere_" + nf(TROPO_level, 0) + "_" + nf(f, 0));
@@ -19267,7 +19270,7 @@ void SOLARCHVISION_export_objects_OBJ () {
             if (_turn == 3) {
               obj_lastFaceNumber += 1;            
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              if (objExportBackSides != 0) {
+              if (objExport_BackSides != 0) {
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
               } 
@@ -19284,7 +19287,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
 
 
-  if (Display_EARTH3D_OBJECT != 0) {
+  if (Display_EARTH3D_Surface != 0) {
     
     float EARTH_IMAGES_OffsetX = 0;
     float EARTH_IMAGES_OffsetY = 0;
@@ -19295,7 +19298,7 @@ void SOLARCHVISION_export_objects_OBJ () {
     float CEN_lon = 0;
     float CEN_lat = 0;    
     
-    if (objExportMaterialLibrary != 0) {
+    if (objExport_MaterialLibrary != 0) {
   
       mtlOutput.println("newmtl EarthSphere");
       mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -19309,19 +19312,19 @@ void SOLARCHVISION_export_objects_OBJ () {
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
   
-      if (Display_EARTH3D_TEXTURE != 0) {
+      if (Display_EARTH3D_Texture != 0) {
         
         int n = 0;
         if (IMPACTS_DisplayDay < EARTH_IMAGES_Map.length) n = IMPACTS_DisplayDay;
               
-        String old_TEXTURE_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
+        String old_Texture_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
         
-        String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+        String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-        String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+        String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
     
-        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+        println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+        saveBytes(new_Texture_path, loadBytes(old_Texture_path));
   
         //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
         mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
@@ -19340,12 +19343,12 @@ void SOLARCHVISION_export_objects_OBJ () {
     }
     
     
-    if (objExportPolyToPoly == 1) {
+    if (objExport_PolyToPoly == 1) {
       obj_lastGroupNumber += 1;  
       objOutput.println("g EarthSphere"); 
     }
     
-    if (objExportMaterialLibrary != 0) {
+    if (objExport_MaterialLibrary != 0) {
       objOutput.println("usemtl EarthSphere");
     }
     
@@ -19355,7 +19358,7 @@ void SOLARCHVISION_export_objects_OBJ () {
     float delta_Alpha = -BiosphereStep;
     float delta_Beta = -BiosphereStep; 
     
-    float r = FLOAT_R_earth;
+    float r = FLOAT_r_Earth;
 
 
     for (int _turn = 1; _turn < 4; _turn += 1) {
@@ -19405,7 +19408,7 @@ void SOLARCHVISION_export_objects_OBJ () {
             float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
   
             // move it down!
-            z2 -= FLOAT_R_earth;
+            z2 -= FLOAT_r_Earth;
   
             subFace[s][0] = x2;
             subFace[s][1] = y2;
@@ -19453,7 +19456,7 @@ void SOLARCHVISION_export_objects_OBJ () {
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
-          if (objExportPolyToPoly == 0) {
+          if (objExport_PolyToPoly == 0) {
             if (_turn == 3) {
               obj_lastGroupNumber += 1;
               objOutput.println("g EarthSphere_" + nf(f, 0));
@@ -19463,7 +19466,7 @@ void SOLARCHVISION_export_objects_OBJ () {
           if (_turn == 3) {
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExportBackSides != 0) {
+            if (objExport_BackSides != 0) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             } 
@@ -19502,16 +19505,16 @@ void SOLARCHVISION_export_objects_OBJ () {
 
         String the_filename = "Impact_" + nf(f, 0) + ".bmp";
       
-        if (objExportMaterialLibrary != 0) {
+        if (objExport_MaterialLibrary != 0) {
         
-          String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+          String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
     
           if (Display_SolarImpactImage != 0) {
-            println("Saving texture:", new_TEXTURE_path);
-            allSections_SolarImpact[f][IMPACTS_DisplayDay].save(new_TEXTURE_path);
+            println("Saving texture:", new_Texture_path);
+            allSections_SolarImpact[f][IMPACTS_DisplayDay].save(new_Texture_path);
           } else if (Display_SolidImpactImage != 0) {
-            println("Saving texture:", new_TEXTURE_path);
-            allSections_SolidImpact[f].save(new_TEXTURE_path);              
+            println("Saving texture:", new_Texture_path);
+            allSections_SolidImpact[f].save(new_Texture_path);              
           }
     
           mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -19534,12 +19537,12 @@ void SOLARCHVISION_export_objects_OBJ () {
     
         if (Section_Type != 0) {
   
-          if (objExportPolyToPoly == 1) {
+          if (objExport_PolyToPoly == 1) {
             obj_lastGroupNumber += 1;  
             objOutput.println("g Impact_" + nf(f, 0));
           }
           
-          if (objExportMaterialLibrary != 0) {
+          if (objExport_MaterialLibrary != 0) {
             objOutput.println("usemtl " + the_filename.replace('.', '_'));
           }
           
@@ -19586,7 +19589,7 @@ void SOLARCHVISION_export_objects_OBJ () {
   
           obj_lastFaceNumber += 1;            
           objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-          if (objExportBackSides != 0) {
+          if (objExport_BackSides != 0) {
             obj_lastFaceNumber += 1;
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
           }          
@@ -19601,7 +19604,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
   if (Display_Trees_People != 0) {
 
-    if (objExportMaterialLibrary != 0) {
+    if (objExport_MaterialLibrary != 0) {
       
       int[] Object2D_ImageUsed = new int [Object2D_ImagePath.length];
       
@@ -19620,11 +19623,11 @@ void SOLARCHVISION_export_objects_OBJ () {
         
         if (Object2D_ImageUsed[i] != 0) {
         
-          String old_TEXTURE_path = Object2D_ImagePath[i];
+          String old_Texture_path = Object2D_ImagePath[i];
           
-          String new_TEXTURE_path = "";
+          String new_Texture_path = "";
           
-          String opacity_TEXTURE_path = "";
+          String opacity_Texture_path = "";
           
           String the_filename = "";
           
@@ -19632,15 +19635,15 @@ void SOLARCHVISION_export_objects_OBJ () {
           }  
           else {
     
-            the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+            the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
       
-            new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
-            opacity_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + "opacity_" + the_filename;
+            new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+            opacity_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + "opacity_" + the_filename;
       
-            println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-            saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+            println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(old_Texture_path));
             
-            println("Making opacity texture:", new_TEXTURE_path);
+            println("Making opacity texture:", new_Texture_path);
             
             int RES1 = Object2D_Images[i].width;
             int RES2 = Object2D_Images[i].height;
@@ -19663,7 +19666,7 @@ void SOLARCHVISION_export_objects_OBJ () {
             
             Opacity_Texture.updatePixels();
             
-            Opacity_Texture.save(opacity_TEXTURE_path);
+            Opacity_Texture.save(opacity_Texture_path);
             
             
             mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
@@ -19705,12 +19708,12 @@ void SOLARCHVISION_export_objects_OBJ () {
       
       if (allObject2Ds_MAP[f] < 0) t += PI;            
       
-      if (objExportPolyToPoly == 1) {
+      if (objExport_PolyToPoly == 1) {
         obj_lastGroupNumber += 1;  
         objOutput.println("g Object2D_" + nf(f, 0) + "_type" + nf(n, 0));
       }
 
-      if (objExportMaterialLibrary != 0) {
+      if (objExport_MaterialLibrary != 0) {
         objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
       }
       
@@ -19766,14 +19769,14 @@ void SOLARCHVISION_export_objects_OBJ () {
             String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
             String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);      
     
-            if (objExportPolyToPoly == 0) {
+            if (objExport_PolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println("g Object2D_" + nf(f, 0) + "_ver");
             } 
             
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExportBackSides != 0) {
+            if (objExport_BackSides != 0) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
@@ -19838,14 +19841,14 @@ void SOLARCHVISION_export_objects_OBJ () {
               String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
               String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);      
 
-              if (objExportPolyToPoly == 0) {
+              if (objExport_PolyToPoly == 0) {
                 obj_lastGroupNumber += 1;
                 objOutput.println("g Object2D_" + nf(f, 0) + "_hor" + nf(q, 0));
               } 
               
               obj_lastFaceNumber += 1;            
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              if (objExportBackSides != 0) {
+              if (objExport_BackSides != 0) {
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
               }
@@ -19872,7 +19875,7 @@ void SOLARCHVISION_export_objects_OBJ () {
     
     if (Create_Face_Texture == 0) {
 
-      if (objExportMaterialLibrary != 0) {
+      if (objExport_MaterialLibrary != 0) {
 
         int[] Materials_Used = new int [Materials_Number];
         
@@ -19916,14 +19919,14 @@ void SOLARCHVISION_export_objects_OBJ () {
         
         if (allGroup3Ds_Faces[OBJ_NUM][0] <= allGroup3Ds_Faces[OBJ_NUM][1]) {
           
-          for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
+          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
           
             num_vertices_added = 0;
             
             for (int _turn = 1; _turn < 4; _turn += 1) {
               
               if (_turn == 3) {
-                if (objExportPolyToPoly == 1) {
+                if (objExport_PolyToPoly == 1) {
                   obj_lastGroupNumber += 1;
                   objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
@@ -19934,7 +19937,7 @@ void SOLARCHVISION_export_objects_OBJ () {
               for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
                 
                 if (_turn == 3) {
-                  if (objExportMaterialLibrary != 0) {
+                  if (objExport_MaterialLibrary != 0) {
                     int mt = allFaces_MTLV[f][0];
                     if (prev_mt != mt) {
                       objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
@@ -19987,7 +19990,7 @@ void SOLARCHVISION_export_objects_OBJ () {
                     
                     num_vertices_added += subFace.length;
                     
-                    if (objExportPolyToPoly == 0) {
+                    if (objExport_PolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                     }                    
@@ -20039,16 +20042,16 @@ void SOLARCHVISION_export_objects_OBJ () {
       String the_filename = "";
       String TEXTURE_path = "";
 
-      if (objExportMaterialLibrary != 0) {
-        if (objExportUsePalletOrBakeFaces == 0) {
+      if (objExport_MaterialLibrary != 0) {
+        if (objExport_UsePalletOrBakeFaces == 0) {
           the_filename = "shade_Pallet.bmp";
     
           TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
     
           println("Saving texture:", TEXTURE_path);
           
-          int RES1 = objExportPalletResolution; 
-          int RES2 = objExportPalletResolution / 16;      
+          int RES1 = objExport_PalletResolution; 
+          int RES2 = objExport_PalletResolution / 16;      
       
           PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
        
@@ -20101,9 +20104,9 @@ void SOLARCHVISION_export_objects_OBJ () {
           
           int Number_Of_Face_Subdivisions = 0; // for combined materials we need to know this number before baking each object.
       
-          if (objExportUsePalletOrBakeFaces == 1) {
+          if (objExport_UsePalletOrBakeFaces == 1) {
         
-            if (objExportMaterialLibrary != 0) {
+            if (objExport_MaterialLibrary != 0) {
                   
               for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
     
@@ -20133,15 +20136,15 @@ void SOLARCHVISION_export_objects_OBJ () {
        
           
               
-          for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
+          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
           
             PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
             
             num_vertices_added = 0;
             
-            if (objExportMaterialLibrary != 0) {
-              if (objExportUsePalletOrBakeFaces == 1) {
-                if (objExportCombinedMaterial == 1) {            
+            if (objExport_MaterialLibrary != 0) {
+              if (objExport_UsePalletOrBakeFaces == 1) {
+                if (objExport_CombinedMaterial == 1) {            
     
                   the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + ".bmp";
     
@@ -20174,13 +20177,13 @@ void SOLARCHVISION_export_objects_OBJ () {
               
               if (_turn == 3) {
 
-                if (objExportPolyToPoly == 1) {
+                if (objExport_PolyToPoly == 1) {
                   obj_lastGroupNumber += 1;
                   objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
                 
-                if (objExportMaterialLibrary != 0) {
-                  if (objExportCombinedMaterial == 1) { 
+                if (objExport_MaterialLibrary != 0) {
+                  if (objExport_CombinedMaterial == 1) { 
                     objOutput.println("usemtl " +  the_filename.replace('.', '_'));
                   }
                 }                 
@@ -20235,11 +20238,11 @@ void SOLARCHVISION_export_objects_OBJ () {
                  
                   if (_turn == 1) {   
                    
-                    if (objExportMaterialLibrary != 0) {
+                    if (objExport_MaterialLibrary != 0) {
                       
                     
-                      if (objExportUsePalletOrBakeFaces == 1) {
-                        if (objExportCombinedMaterial == 0) { 
+                      if (objExport_UsePalletOrBakeFaces == 1) {
+                        if (objExport_CombinedMaterial == 0) { 
                           the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                           
                           TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
@@ -20248,10 +20251,10 @@ void SOLARCHVISION_export_objects_OBJ () {
                         }
                       }
                     
-                      int RES1 = objExportBakingResolution;
-                      int RES2 = objExportBakingResolution;                      
+                      int RES1 = objExport_BakingResolution;
+                      int RES2 = objExport_BakingResolution;                      
                       
-                      if (objExportUsePalletOrBakeFaces == 1) {
+                      if (objExport_UsePalletOrBakeFaces == 1) {
                         Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
     
                         Face_Texture[CurrentFaceTextureNumber].beginDraw();
@@ -20259,7 +20262,7 @@ void SOLARCHVISION_export_objects_OBJ () {
                       
 
               
-                      if (objExportUsePalletOrBakeFaces == 1) {
+                      if (objExport_UsePalletOrBakeFaces == 1) {
                         Face_Texture[CurrentFaceTextureNumber].noStroke();
                         Face_Texture[CurrentFaceTextureNumber].beginShape(QUADS);
                       }
@@ -20268,7 +20271,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
                         float[] COL = {255, 255, 255, 255};
                   
-                        if (objExportUsePalletOrBakeFaces == 1) {
+                        if (objExport_UsePalletOrBakeFaces == 1) {
                     
                           if (WIN3D_FacesShade == Shade_Global_Solar) {
                             int s_next = (s + 1) % subFace.length;
@@ -20297,7 +20300,7 @@ void SOLARCHVISION_export_objects_OBJ () {
                         }
                         
                         if (s == 0) {
-                          if (objExportUsePalletOrBakeFaces == 1) {
+                          if (objExport_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(0, 0);
                           }
                           x1 = subFace[s][0];
@@ -20305,7 +20308,7 @@ void SOLARCHVISION_export_objects_OBJ () {
                           z1 = subFace[s][2];
                         }
                         if (s == 1) {
-                          if (objExportUsePalletOrBakeFaces == 1) {
+                          if (objExport_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(RES1, 0);
                           }
                           x2 = subFace[s][0];
@@ -20313,7 +20316,7 @@ void SOLARCHVISION_export_objects_OBJ () {
                           z2 = subFace[s][2];
                         }            
                         if (s == 2) { 
-                          if (objExportUsePalletOrBakeFaces == 1) {
+                          if (objExport_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(RES1, RES2);
                           }
                           x3 = subFace[s][0];
@@ -20321,7 +20324,7 @@ void SOLARCHVISION_export_objects_OBJ () {
                           z3 = subFace[s][2];
                         }          
                         if (s == 3) {
-                          if (objExportUsePalletOrBakeFaces == 1) {
+                          if (objExport_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(0, RES2);
                           }
                           x4 = subFace[s][0];
@@ -20330,14 +20333,14 @@ void SOLARCHVISION_export_objects_OBJ () {
                         }
                       }
                       
-                      if (objExportUsePalletOrBakeFaces == 1) {
+                      if (objExport_UsePalletOrBakeFaces == 1) {
                     
                         //Face_Texture[CurrentFaceTextureNumber].endShape(CLOSE);
                         Face_Texture[CurrentFaceTextureNumber].endShape();
                    
                         Face_Texture[CurrentFaceTextureNumber].endDraw();
                         
-                        if (objExportCombinedMaterial == 0) {
+                        if (objExport_CombinedMaterial == 0) {
                           Face_Texture[CurrentFaceTextureNumber].save(TEXTURE_path);
     
                           mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -20379,16 +20382,16 @@ void SOLARCHVISION_export_objects_OBJ () {
                     float u4 = 0;
                     float v4 = 0;
                     
-                    if (objExportCombinedMaterial == 1) {
+                    if (objExport_CombinedMaterial == 1) {
                       
-                      if (objExportUsePalletOrBakeFaces == 1) {
+                      if (objExport_UsePalletOrBakeFaces == 1) {
                       
                         // also considering two pixles added to the left and right
                         
-                        u1 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
+                        u1 = (CurrentFaceTextureNumber * (2 + objExport_BakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExport_BakingResolution));
                         v1 = 1;
                         
-                        u2 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
+                        u2 = (CurrentFaceTextureNumber * (2 + objExport_BakingResolution) + objExport_BakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExport_BakingResolution));
                         v2 = 1;
                         
                         u3 = u2;
@@ -20475,13 +20478,13 @@ void SOLARCHVISION_export_objects_OBJ () {
 
                     num_vertices_added += 4;
   
-                    if (objExportPolyToPoly == 0) {
+                    if (objExport_PolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                     }
                     
-                    if (objExportMaterialLibrary != 0) {
-                      if (objExportCombinedMaterial == 0) {
+                    if (objExport_MaterialLibrary != 0) {
+                      if (objExport_CombinedMaterial == 0) {
                         objOutput.println("usemtl " +  the_filename.replace('.', '_'));
                       }
                     }
@@ -20510,14 +20513,14 @@ void SOLARCHVISION_export_objects_OBJ () {
             }
   
   
-            if (objExportMaterialLibrary != 0) {
+            if (objExport_MaterialLibrary != 0) {
               
-              if (objExportUsePalletOrBakeFaces == 1) {
+              if (objExport_UsePalletOrBakeFaces == 1) {
                 
-                if (objExportCombinedMaterial == 1) {            
+                if (objExport_CombinedMaterial == 1) {            
     
-                  int RES1 = (2 + objExportBakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
-                  int RES2 = objExportBakingResolution;      
+                  int RES1 = (2 + objExport_BakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
+                  int RES2 = objExport_BakingResolution;      
               
                   PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
             
@@ -20528,8 +20531,8 @@ void SOLARCHVISION_export_objects_OBJ () {
                     int w = Face_Texture[i].width;
                     int h = Face_Texture[i].height;
                     
-                    Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
-                    Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0); // then adding the original on top.
+                    Combined_Texture.image(Face_Texture[i], i * (2 + objExport_BakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
+                    Combined_Texture.image(Face_Texture[i], i * (2 + objExport_BakingResolution) + 1, 0); // then adding the original on top.
     
                   }
                   
@@ -20554,7 +20557,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
   if (Display_Fractals != 0) {
 
-    if (objExportMaterialLibrary != 0) {
+    if (objExport_MaterialLibrary != 0) {
       
       if (allFractals_num != 0) {
         
@@ -20613,7 +20616,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
         num_vertices_added = 0;
         
-        if (objExportPolyToPoly == 1) {
+        if (objExport_PolyToPoly == 1) {
           obj_lastGroupNumber += 1;
           objOutput.println("g Fractal_" + nf(f, 0));
           
@@ -20623,7 +20626,7 @@ void SOLARCHVISION_export_objects_OBJ () {
         float Beta = rot; 
         
         for (int _turn = 1; _turn < 4; _turn += 1) {
-          SOLARCHVISION_Plant_branch_objExport(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+          SOLARCHVISION_Plant_branch_objExport_(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
         }
 
         obj_lastVertexNumber += num_vertices_added;
@@ -20643,7 +20646,7 @@ void SOLARCHVISION_export_objects_OBJ () {
     
     String the_filename = "";
 
-    if (objExportMaterialLibrary != 0) {
+    if (objExport_MaterialLibrary != 0) {
       
       the_filename = "WindFlow_Pallet.bmp";
       
@@ -20651,8 +20654,8 @@ void SOLARCHVISION_export_objects_OBJ () {
         
       println("Saving texture:", TEXTURE_path);
       
-      int RES1 = objExportPalletResolution; 
-      int RES2 = objExportPalletResolution / 16;       
+      int RES1 = objExport_PalletResolution; 
+      int RES2 = objExport_PalletResolution / 16;       
   
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
    
@@ -20702,7 +20705,7 @@ void SOLARCHVISION_export_objects_OBJ () {
         obj_lastGroupNumber += 1;
         objOutput.println("g WindFlow");
         
-        if (objExportMaterialLibrary != 0) {
+        if (objExport_MaterialLibrary != 0) {
           objOutput.println("usemtl WindFlow");
         }               
       }        
@@ -20838,7 +20841,7 @@ void SOLARCHVISION_export_objects_OBJ () {
       String the_filename = "";
       String TEXTURE_path = "";  
       
-      if (objExportMaterialLibrary != 0) {
+      if (objExport_MaterialLibrary != 0) {
   
         the_filename = "skyPattern_Pallet.bmp";
   
@@ -20846,8 +20849,8 @@ void SOLARCHVISION_export_objects_OBJ () {
   
         println("Saving texture:", TEXTURE_path);
         
-        int RES1 = objExportPalletResolution; 
-        int RES2 = objExportPalletResolution / 16;      
+        int RES1 = objExport_PalletResolution; 
+        int RES2 = objExport_PalletResolution / 16;      
     
         PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
      
@@ -20894,7 +20897,7 @@ void SOLARCHVISION_export_objects_OBJ () {
       obj_lastGroupNumber += 1;
       objOutput.println("g skyPattern");
 
-      if (objExportMaterialLibrary != 0) {      
+      if (objExport_MaterialLibrary != 0) {      
         objOutput.println("usemtl " +  the_filename.replace('.', '_'));
       }      
 
@@ -20980,7 +20983,7 @@ void SOLARCHVISION_export_objects_OBJ () {
               String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
               
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);  
-              if (objExportBackSides != 0) {
+              if (objExport_BackSides != 0) {
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
               }            
@@ -21006,7 +21009,7 @@ void SOLARCHVISION_export_objects_OBJ () {
     
     float previous_DATE = TIME_Date;
     
-    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, STUDY_Impact_Layer, 4);
+    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, STUDY_ImpactLayer, 4);
 
     STUDY_per_day = keep_STUDY_per_day;
     STUDY_JoinDays = keep_STUDY_JoinDays; 
@@ -21015,7 +21018,7 @@ void SOLARCHVISION_export_objects_OBJ () {
   
   }
 
-  if (objExportMaterialLibrary != 0) {
+  if (objExport_MaterialLibrary != 0) {
     mtlOutput.flush(); 
     mtlOutput.close();
   }
@@ -21031,17 +21034,17 @@ void SOLARCHVISION_export_objects_OBJ () {
 
 void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
-  float a = x * objExportScale;
-  float b = y * objExportScale;
-  float c = z * objExportScale;
+  float a = x * objExport_Scale;
+  float b = y * objExport_Scale;
+  float c = z * objExport_Scale;
   
-  if (objFlipZYaxis == 0) {
+  if (objExport_FlipZYaxis == 0) {
     
-    objOutput.println("v " + nf(a, 0, objExportPrecisionVertex) + " " +  nf(b, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex));
+    objOutput.println("v " + nf(a, 0, objExport_PrecisionVertex) + " " +  nf(b, 0, objExport_PrecisionVertex) + " " +  nf(c, 0, objExport_PrecisionVertex));
   }
   else {
    
-   objOutput.println("v " + nf(-a, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex) + " " +  nf(b, 0, objExportPrecisionVertex));
+   objOutput.println("v " + nf(-a, 0, objExport_PrecisionVertex) + " " +  nf(c, 0, objExport_PrecisionVertex) + " " +  nf(b, 0, objExport_PrecisionVertex));
   } 
 
 }
@@ -21050,7 +21053,7 @@ void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
 void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
 
-  objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " " + nf(w, 0, objExportPrecisionVtexture));
+  objOutput.println("vt " + nf(u, 0, objExport_PrecisionVtexture) + " " + nf(v, 0, objExport_PrecisionVtexture) + " " + nf(w, 0, objExport_PrecisionVtexture));
 
 }  
 
@@ -21311,7 +21314,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
   
 
   
-  if ((Display_LAND_TEXTURE != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+  if ((Display_LAND_Texture != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
 
     for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -21339,14 +21342,14 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
           int n_Map = 0; 
-          for (int q = 1; q <= LAND_TEXTURE_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+          for (int q = 1; q <= LAND_Texture_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
         
             n_Map = q; 
             
             for (int s = 0; s < subFace.length; s++) {
               
-              float u = (subFace[s][0] / LAND_TEXTURE_scale_U[q] + 0.5);
-              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[q] + 0.5);
+              float u = (subFace[s][0] / LAND_Texture_scale_U[q] + 0.5);
+              float v = (-subFace[s][1] / LAND_Texture_scale_V[q] + 0.5);
          
               if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
                   
@@ -21378,13 +21381,13 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               float y = Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
               float z = Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
 
-              float u = (x / LAND_TEXTURE_scale_U[n_Map] + 0.5);
-              float v = (-y / LAND_TEXTURE_scale_V[n_Map] + 0.5);
+              float u = (x / LAND_Texture_scale_U[n_Map] + 0.5);
+              float v = (-y / LAND_Texture_scale_V[n_Map] + 0.5);
   
-              int uSTUDY_pixel = int(u * LAND_TEXTURE_Map[n_Map].width);
-              int vSTUDY_pixel = int(v * LAND_TEXTURE_Map[n_Map].height);
+              int uSTUDY_pixel = int(u * LAND_Texture_Map[n_Map].width);
+              int vSTUDY_pixel = int(v * LAND_Texture_Map[n_Map].height);
             
-              color COL = LAND_TEXTURE_Map[n_Map].get(uSTUDY_pixel, vSTUDY_pixel);
+              color COL = LAND_Texture_Map[n_Map].get(uSTUDY_pixel, vSTUDY_pixel);
               //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
               float r = COL >> 16 & 0xFF; 
               float g = COL >> 8 & 0xFF;
@@ -22501,7 +22504,7 @@ void Load_TROPO_IMAGES () {
 
 
 void SOLARCHVISION_draw_TROPO3D () {
-  if (Display_TROPO3D_OBJECT != 0) {
+  if (Display_TROPO3D_Surface != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
     
@@ -22519,7 +22522,7 @@ void SOLARCHVISION_draw_TROPO3D () {
       float delta_Alpha = -BiosphereStep;
       float delta_Beta = -BiosphereStep;
       
-      float r = FLOAT_R_earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
+      float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
       
       for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
         for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -22546,7 +22549,7 @@ void SOLARCHVISION_draw_TROPO3D () {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
             
-            if (Display_TROPO3D_TEXTURE != 0) {
+            if (Display_TROPO3D_Texture != 0) {
               // calculating u and v
               subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
@@ -22564,7 +22567,7 @@ void SOLARCHVISION_draw_TROPO3D () {
             float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
   
             // move it down!
-            z2 -= FLOAT_R_earth;
+            z2 -= FLOAT_r_Earth;
   
             subFace[s][0] = x2;
             subFace[s][1] = y2;
@@ -22576,7 +22579,7 @@ void SOLARCHVISION_draw_TROPO3D () {
           
           WIN3D_Diagrams.noStroke();
           
-          if (Display_TROPO3D_TEXTURE != 0) {
+          if (Display_TROPO3D_Texture != 0) {
   
             WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_level]);
           }
@@ -22634,7 +22637,7 @@ void Load_EARTH_IMAGES () {
 
 
 void SOLARCHVISION_draw_EARTH3D () {
-  if (Display_EARTH3D_OBJECT != 0) {
+  if (Display_EARTH3D_Surface != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
     
@@ -22653,7 +22656,7 @@ void SOLARCHVISION_draw_EARTH3D () {
     float delta_Alpha = -BiosphereStep;
     float delta_Beta = -BiosphereStep;
     
-    float r = FLOAT_R_earth;
+    float r = FLOAT_r_Earth;
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -22680,7 +22683,7 @@ void SOLARCHVISION_draw_EARTH3D () {
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
-          if (Display_EARTH3D_TEXTURE != 0) {
+          if (Display_EARTH3D_Texture != 0) {
             // calculating u and v
             subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
             subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
@@ -22698,7 +22701,7 @@ void SOLARCHVISION_draw_EARTH3D () {
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
 
           // move it down!
-          z2 -= FLOAT_R_earth;
+          z2 -= FLOAT_r_Earth;
 
           subFace[s][0] = x2;
           subFace[s][1] = y2;
@@ -22710,7 +22713,7 @@ void SOLARCHVISION_draw_EARTH3D () {
         
         WIN3D_Diagrams.noStroke();
         
-        if (Display_EARTH3D_TEXTURE != 0) {
+        if (Display_EARTH3D_Texture != 0) {
 
           WIN3D_Diagrams.texture(EARTH_IMAGES_Map[n]);
         }
@@ -22733,7 +22736,7 @@ String MOON_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Stand
 PImage MOON_IMAGE_Map; 
 
 void SOLARCHVISION_draw_MOON3D () {
-  if (Display_MOON3D_OBJECT != 0) {
+  if (Display_MOON3D_Surface != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
 
@@ -22750,7 +22753,7 @@ void SOLARCHVISION_draw_MOON3D () {
     float delta_Beta = -10;
     
     float r = 1737000.0 * planetary_magnification;
-    float d = 384400000.0 - FLOAT_R_earth;
+    float d = 384400000.0 - FLOAT_r_Earth;
 
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -22777,7 +22780,7 @@ void SOLARCHVISION_draw_MOON3D () {
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
-          if (Display_MOON3D_TEXTURE != 0) {
+          if (Display_MOON3D_Texture != 0) {
             // calculating u and v
             subFace[s][3] = (_lon / MOON_IMAGE_ScaleX / 360.0 + 0.5); 
             subFace[s][4] = (-_lat / MOON_IMAGE_ScaleY / 180.0 + 0.5);
@@ -22809,7 +22812,7 @@ void SOLARCHVISION_draw_MOON3D () {
         
         WIN3D_Diagrams.noStroke();
         
-        if (Display_MOON3D_TEXTURE != 0) {
+        if (Display_MOON3D_Texture != 0) {
 
           WIN3D_Diagrams.texture(MOON_IMAGE_Map);
         }
@@ -22831,7 +22834,7 @@ String STAR_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Stand
 PImage STAR_IMAGE_Map;
 
 void SOLARCHVISION_draw_STAR3D () {
-  if (Display_STAR3D_OBJECT != 0) {
+  if (Display_STAR3D_Surface != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
 
@@ -22875,7 +22878,7 @@ void SOLARCHVISION_draw_STAR3D () {
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
-          if (Display_STAR3D_TEXTURE != 0) {
+          if (Display_STAR3D_Texture != 0) {
             // calculating u and v
             subFace[s][3] = (_lon / STAR_IMAGE_ScaleX / 360.0 + 0.5); 
             subFace[s][4] = (-_lat / STAR_IMAGE_ScaleY / 180.0 + 0.5);
@@ -22911,7 +22914,7 @@ void SOLARCHVISION_draw_STAR3D () {
         
         WIN3D_Diagrams.noStroke();
         
-        if (Display_STAR3D_TEXTURE != 0) {
+        if (Display_STAR3D_Texture != 0) {
 
           WIN3D_Diagrams.texture(STAR_IMAGE_Map);
         }
@@ -22944,11 +22947,11 @@ void SOLARCHVISION_draw_land (int target_window) {
 
     if (target_window == 4) {
 
-      if (objExportMaterialLibrary != 0) {
+      if (objExport_MaterialLibrary != 0) {
         
-        if (Display_LAND_TEXTURE != 0) {           
+        if (Display_LAND_Texture != 0) {           
   
-          for (int n_Map = 0; n_Map <= LAND_TEXTURE_num; n_Map++) {
+          for (int n_Map = 0; n_Map <= LAND_Texture_num; n_Map++) {
   
             mtlOutput.println("newmtl LandMesh_" + nf(n_Map, 0));
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -22963,17 +22966,17 @@ void SOLARCHVISION_draw_land (int target_window) {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
             
             
-            if (Display_LAND_TEXTURE != 0) {
+            if (Display_LAND_Texture != 0) {
               if (n_Map != 0) {
                       
-                String old_TEXTURE_path = LAND_TEXTURE_ImagePath[n_Map]; 
+                String old_Texture_path = LAND_Texture_ImagePath[n_Map]; 
                 
-                String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+                String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
             
-                String new_TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+                String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
             
-                println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-                saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+                println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+                saveBytes(new_Texture_path, loadBytes(old_Texture_path));
           
                 //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
                 mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
@@ -23039,16 +23042,16 @@ void SOLARCHVISION_draw_land (int target_window) {
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
             
             int n_Map = 0; 
-            if (Display_LAND_TEXTURE != 0) { 
+            if (Display_LAND_Texture != 0) { 
               
-              for (int q = 1; q <= LAND_TEXTURE_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+              for (int q = 1; q <= LAND_Texture_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
             
                 n_Map = q; 
                 
                 for (int s = 0; s < subFace.length; s++) {
                   
-                  float u = (subFace[s][0] / LAND_TEXTURE_scale_U[q] + 0.5);
-                  float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[q] + 0.5);
+                  float u = (subFace[s][0] / LAND_Texture_scale_U[q] + 0.5);
+                  float v = (-subFace[s][1] / LAND_Texture_scale_V[q] + 0.5);
              
                   if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
                       
@@ -23070,11 +23073,11 @@ void SOLARCHVISION_draw_land (int target_window) {
               WIN3D_Diagrams.strokeWeight(1);
               WIN3D_Diagrams.stroke(0, 0, 0);
               if (MODEL3D_DisplayEdges == 0) WIN3D_Diagrams.noStroke();
-              if (Display_LAND_TEXTURE != 0) WIN3D_Diagrams.noStroke();
+              if (Display_LAND_Texture != 0) WIN3D_Diagrams.noStroke();
   
-              if (Display_LAND_TEXTURE != 0) {
+              if (Display_LAND_Texture != 0) {
                 if (n_Map != 0) {
-                  WIN3D_Diagrams.texture(LAND_TEXTURE_Map[n_Map]);
+                  WIN3D_Diagrams.texture(LAND_Texture_Map[n_Map]);
                 }
                 else {
                   WIN3D_Diagrams.noFill();   
@@ -23088,9 +23091,9 @@ void SOLARCHVISION_draw_land (int target_window) {
         
               if (_turn == 3) {
               
-                if (Display_LAND_TEXTURE != 0) {
+                if (Display_LAND_Texture != 0) {
   
-                  if (objExportMaterialLibrary != 0) {      
+                  if (objExport_MaterialLibrary != 0) {      
                     objOutput.println("usemtl LandMesh_" + nf(n_Map, 0));
                   }
                 }
@@ -23099,7 +23102,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             
             for (int s = 0; s < subFace.length; s++) {
               
-              if (Display_LAND_TEXTURE == 0) {
+              if (Display_LAND_Texture == 0) {
                 
                 if (WIN3D_FacesShade != Shade_Surface_Wire) {
                   
@@ -23151,11 +23154,11 @@ void SOLARCHVISION_draw_land (int target_window) {
               }              
               else {       
 
-                float u = (subFace[s][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
-                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
+                float u = (subFace[s][0] / LAND_Texture_scale_U[n_Map] + 0.5);
+                float v = (-subFace[s][1] / LAND_Texture_scale_V[n_Map] + 0.5);
                 
                 if (target_window == 3) {
-                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE_Map[n_Map].width, v * LAND_TEXTURE_Map[n_Map].height);
+                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_Texture_Map[n_Map].width, v * LAND_Texture_Map[n_Map].height);
                 }
                 
                 if (target_window == 4) {
@@ -23198,7 +23201,7 @@ void SOLARCHVISION_draw_land (int target_window) {
                 
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-                if (objExportBackSides != 0) {
+                if (objExport_BackSides != 0) {
                   obj_lastFaceNumber += 1;
                   objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                 }   
@@ -23206,7 +23209,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             }
             
   
-            if (Display_LAND_TEXTURE != 0) {
+            if (Display_LAND_Texture != 0) {
               
               if (Display_LAND_DEPTH != 0) {
               
@@ -23220,22 +23223,22 @@ void SOLARCHVISION_draw_land (int target_window) {
       
                   int s_next = (s + 1) % subFace.length;
                 
-                  float u = (subFace[s][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
-                  float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
+                  float u = (subFace[s][0] / LAND_Texture_scale_U[n_Map] + 0.5);
+                  float v = (-subFace[s][1] / LAND_Texture_scale_V[n_Map] + 0.5);
       
-                  float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
-                  float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
+                  float u_next = (subFace[s_next][0] / LAND_Texture_scale_U[n_Map] + 0.5);
+                  float v_next = (-subFace[s_next][1] / LAND_Texture_scale_V[n_Map] + 0.5);
                   
                   if (target_window == 3) {
                     
                     WIN3D_Diagrams.beginShape();
                     
-                    WIN3D_Diagrams.texture(LAND_TEXTURE_Map[n_Map]);                  
+                    WIN3D_Diagrams.texture(LAND_Texture_Map[n_Map]);                  
                     
-                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE_Map[n_Map].width, v * LAND_TEXTURE_Map[n_Map].height);
-                    WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE_Map[n_Map].width, v_next * LAND_TEXTURE_Map[n_Map].height);
-                    WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE_Map[n_Map].width, v_next * LAND_TEXTURE_Map[n_Map].height);
-                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE_Map[n_Map].width, v * LAND_TEXTURE_Map[n_Map].height);
+                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_Texture_Map[n_Map].width, v * LAND_Texture_Map[n_Map].height);
+                    WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_Texture_Map[n_Map].width, v_next * LAND_Texture_Map[n_Map].height);
+                    WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_Texture_Map[n_Map].width, v_next * LAND_Texture_Map[n_Map].height);
+                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_Texture_Map[n_Map].width, v * LAND_Texture_Map[n_Map].height);
         
                     WIN3D_Diagrams.endShape(CLOSE);
                   }
@@ -23792,7 +23795,7 @@ void SOLARCHVISION_draw_Group3Ds () {
         int layers_count = STUDY_get_startZ_endZ(IMPACTS_DataSource)[2]; 
           
         Impact_TYPE = Impact_ACTIVE; 
-        if (STUDY_STUDY_Plot_Impacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
+        if (STUDY_PlotImpacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
     
         float Pa = FLOAT_undefined;
         float Pb = FLOAT_undefined;
@@ -23864,7 +23867,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                   int _valuesNUM = 0; 
                   
                   
-                  int l = STUDY_Impact_Layer;
+                  int l = STUDY_ImpactLayer;
                   
                   for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) {
                   
@@ -26028,28 +26031,28 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
   
 // ---------------------------------------------------------
 
-int LAND_TEXTURE_num = 0;   
-float[] LAND_TEXTURE_scale_U = {1000}; // 1km
-float[] LAND_TEXTURE_scale_V = {1000}; // 1km
-PImage[] LAND_TEXTURE_Map = {createImage(2, 2, RGB)};
-String[] LAND_TEXTURE_ImagePath  = {""};
+int LAND_Texture_num = 0;   
+float[] LAND_Texture_scale_U = {1000}; // 1km
+float[] LAND_Texture_scale_V = {1000}; // 1km
+PImage[] LAND_Texture_Map = {createImage(2, 2, RGB)};
+String[] LAND_Texture_ImagePath  = {""};
 
 
-void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
+void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
 
-  LAND_TEXTURE_scale_U = new float [1];
-  LAND_TEXTURE_scale_V = new float [1];
-  LAND_TEXTURE_Map = new PImage [1]; 
-  LAND_TEXTURE_ImagePath  = new String [1];  
+  LAND_Texture_scale_U = new float [1];
+  LAND_Texture_scale_V = new float [1];
+  LAND_Texture_Map = new PImage [1]; 
+  LAND_Texture_ImagePath  = new String [1];  
   
-  LAND_TEXTURE_num = 0;
+  LAND_Texture_num = 0;
   
-  LAND_TEXTURE_scale_U[0] = 1000; // 1km
-  LAND_TEXTURE_scale_V[0] = 1000; // 1km  
-  LAND_TEXTURE_Map[0] = createImage(2, 2, RGB);
-  LAND_TEXTURE_ImagePath[0] = "";
+  LAND_Texture_scale_U[0] = 1000; // 1km
+  LAND_Texture_scale_V[0] = 1000; // 1km  
+  LAND_Texture_Map[0] = createImage(2, 2, RGB);
+  LAND_Texture_ImagePath[0] = "";
   
-  Display_LAND_TEXTURE = 0;
+  Display_LAND_Texture = 0;
 
   try {     
  
@@ -26075,13 +26078,13 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
               {
                 String[] new_item = {dir};
               
-                LAND_TEXTURE_ImagePath = (String[]) concat(LAND_TEXTURE_ImagePath, new_item);
+                LAND_Texture_ImagePath = (String[]) concat(LAND_Texture_ImagePath, new_item);
               }
               
               {
                 PImage[] new_item = {loadImage(dir)};
                 
-                LAND_TEXTURE_Map = (PImage[]) concat(LAND_TEXTURE_Map, new_item);
+                LAND_Texture_Map = (PImage[]) concat(LAND_Texture_Map, new_item);
               }
               
               float h = float(Parts[1]);
@@ -26089,19 +26092,19 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
               {
                 float[] new_item = {h * 1.16363};
                 
-                LAND_TEXTURE_scale_U = (float[]) concat(LAND_TEXTURE_scale_U, new_item);
+                LAND_Texture_scale_U = (float[]) concat(LAND_Texture_scale_U, new_item);
               }  
                 
               {
                 float[] new_item = {h * 0.66084};
                 
-                LAND_TEXTURE_scale_V = (float[]) concat(LAND_TEXTURE_scale_V, new_item);
+                LAND_Texture_scale_V = (float[]) concat(LAND_Texture_scale_V, new_item);
               }
               
-              LAND_TEXTURE_num += 1;
+              LAND_Texture_num += 1;
               
               
-              Display_LAND_TEXTURE = 1;
+              Display_LAND_Texture = 1;
   
             } 
           }
@@ -26110,7 +26113,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
     }
   }
   catch (Exception e) {
-    println("ERROR loading LAND_TEXTURE_Map!");  
+    println("ERROR loading LAND_Texture_Map!");  
   }
 }
 
@@ -26177,8 +26180,8 @@ void SOLARCHVISION_load_LandMesh (String ProjectSite) {
           double _lon = Double.parseDouble(txt_longitude); 
           double _lat = Double.parseDouble(txt_latitude); 
     
-          double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_R_earth);
-          double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_R_earth);
+          double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_r_Earth);
+          double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_r_Earth);
           
           float x = (float) du * cos_ang((float) _lat);
           float y = (float) dv; 
@@ -26213,7 +26216,7 @@ void SOLARCHVISION_load_LandMesh (String ProjectSite) {
   }
 
   
-  SOLARCHVISION_LoadLAND_TEXTURE(LandDirectory);
+  SOLARCHVISION_LoadLAND_Texture(LandDirectory);
 
 }
 
@@ -26252,8 +26255,8 @@ void SOLARCHVISION_download_LandMesh () {
       double _lon = LAND_mid_lon + stp_lon * r * cos_ang(t);
       double _lat = LAND_mid_lat + stp_lat * r * sin_ang(t);
       
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_R_earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_R_earth);
+      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_r_Earth);
+      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_r_Earth);
       
       float x = (float) du * cos_ang((float) LAND_mid_lat);
       float y = (float) dv; 
@@ -26300,8 +26303,8 @@ void SOLARCHVISION_download_LandMesh () {
       double _lon = Double.parseDouble(txt_longitude); 
       double _lat = Double.parseDouble(txt_latitude); 
 
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_R_earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_R_earth);
+      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_r_Earth);
+      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_r_Earth);
       
       float x = (float) du * cos_ang((float) _lat);
       float y = (float) dv; 
@@ -26968,8 +26971,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
     int RES1 = SolarImpact_RES1;
     int RES2 = SolarImpact_RES2;
 
-    if (STUDY_STUDY_Plot_Impacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
-    if (STUDY_STUDY_Plot_Impacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
+    if (STUDY_PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
+    if (STUDY_PlotImpacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -27002,7 +27005,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
     }             
 
     for (int p = 0; p < 1; p += 1) { 
-      int l = STUDY_Impact_Layer;
+      int l = STUDY_ImpactLayer;
 
       PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
       
@@ -29282,7 +29285,7 @@ void SOLARCHVISION_SolarProjection () {
 
 
 
-  if (STUDY_STUDY_Plot_Impacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
+  if (STUDY_PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
   else Impact_TYPE = Impact_PASSIVE;
 
 
@@ -29301,7 +29304,7 @@ void SOLARCHVISION_SolarProjection () {
   int now_i = 0;
   int now_j = 0;
 
-  int l = STUDY_Impact_Layer;
+  int l = STUDY_ImpactLayer;
 
   float[][] TOTAL_valuesSUM_RAD = new float [1 + int(180 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
   float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(180 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
@@ -31860,25 +31863,25 @@ void mouseReleased () {
                 float dz_rot = dz;
                 
                 if (Modify_Object_Parameters == 0) {
-                  Create_Input_Length = dist(x1, y1, z1, x2, y2, z2);
+                  CreateInput_Length = dist(x1, y1, z1, x2, y2, z2);
                 }
                 if (Modify_Object_Parameters == 1) {
-                  Create_Input_Width = dist(x1, y1, z1, x2, y2, z2);
+                  CreateInput_Width = dist(x1, y1, z1, x2, y2, z2);
                 }
                 if (Modify_Object_Parameters == 2) {
-                  Create_Input_Height = dist(x1, y1, z1, x2, y2, z2);
+                  CreateInput_Height = dist(x1, y1, z1, x2, y2, z2);
                 }
                 if (Modify_Object_Parameters == 3) {
-                  Create_Input_Length = abs(dx_rot);
-                  Create_Input_Width = abs(dy_rot);
-                  Create_Input_Height = abs(dz_rot);
+                  CreateInput_Length = abs(dx_rot);
+                  CreateInput_Width = abs(dy_rot);
+                  CreateInput_Height = abs(dz_rot);
                 }
                 if (Modify_Object_Parameters == 4) {
-                  Create_Input_Length = abs(dx_rot);
-                  Create_Input_Width = abs(dy_rot);
+                  CreateInput_Length = abs(dx_rot);
+                  CreateInput_Width = abs(dy_rot);
                 }
                 if (Modify_Object_Parameters == 5) {
-                  Create_Input_Orientation = atan2_ang(y2 - y1, x2 - x1) + 90;
+                  CreateInput_Orientation = atan2_ang(y2 - y1, x2 - x1) + 90;
                 }
                   
                 ROLLOUT_Update = 1;
@@ -32357,84 +32360,84 @@ void mouseClicked () {
   
      
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Wind pattern (active)")) {
-              STUDY_STUDY_Plot_Impacts = -2;
+              STUDY_PlotImpacts = -2;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 1;
               ROLLOUT_Update = 1;               
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Wind pattern (passive)")) {
-              STUDY_STUDY_Plot_Impacts = -1;
+              STUDY_PlotImpacts = -1;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 1;
               ROLLOUT_Update = 1;               
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Urban solar potential (active)")) {
-              STUDY_STUDY_Plot_Impacts = 0;
+              STUDY_PlotImpacts = 0;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;              
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Urban solar potential (passive)")) {
-              STUDY_STUDY_Plot_Impacts = 1;
+              STUDY_PlotImpacts = 1;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Orientation potential (active)")) {
-              STUDY_STUDY_Plot_Impacts = 2;
+              STUDY_PlotImpacts = 2;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Orientation potential (passive)")) {
-              STUDY_STUDY_Plot_Impacts = 3;
+              STUDY_PlotImpacts = 3;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Hourly sun position (active)")) {
-              STUDY_STUDY_Plot_Impacts = 4;
+              STUDY_PlotImpacts = 4;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Hourly sun position (passive)")) {
-              STUDY_STUDY_Plot_Impacts = 5;
+              STUDY_PlotImpacts = 5;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("View from sun & sky (active)")) {
-              STUDY_STUDY_Plot_Impacts = 6;
+              STUDY_PlotImpacts = 6;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("View from sun & sky (passive)")) {
-              STUDY_STUDY_Plot_Impacts = 7;
+              STUDY_PlotImpacts = 7;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
-              STUDY_STUDY_Plot_Impacts = 8;
+              STUDY_PlotImpacts = 8;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
               ROLLOUT_Update = 1;        
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
-              STUDY_STUDY_Plot_Impacts = 9;
+              STUDY_PlotImpacts = 9;
               STUDY_Setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               Display_WindRoseImage = 0;
@@ -32447,13 +32450,13 @@ void mouseClicked () {
             }         
        
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Process Active Impact")) {
-              STUDY_STUDY_Plot_Impacts = 0;         
+              STUDY_PlotImpacts = 0;         
               SOLARCHVISION_calculate_SolarImpact_selectedSections();              
               WIN3D_Update = 1;                         
             }   
             
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Process Passive Impact")) {
-              STUDY_STUDY_Plot_Impacts = 1;         
+              STUDY_PlotImpacts = 1;         
               SOLARCHVISION_calculate_SolarImpact_selectedSections();              
               WIN3D_Update = 1;                         
             }               
@@ -32624,13 +32627,13 @@ void mouseClicked () {
             
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][0].equals("Layer")) {
               if (SOLARCHVISION_UI_BAR_a_selected_child > 0) {
-                if (STUDY_Current_Layer != SOLARCHVISION_UI_BAR_a_selected_child - 1) {
+                if (STUDY_CurrentLayer != SOLARCHVISION_UI_BAR_a_selected_child - 1) {
                   
                   if (SOLARCHVISION_UI_BAR_a_selected_child < num_layers) {
                   
-                    STUDY_Current_Layer = SOLARCHVISION_UI_BAR_a_selected_child - 1;
+                    STUDY_CurrentLayer = SOLARCHVISION_UI_BAR_a_selected_child - 1;
                     
-                    develop_Layer = STUDY_Current_Layer;
+                    develop_Layer = STUDY_CurrentLayer;
                     
                     STUDY_Update = 1;  
                     
@@ -32639,9 +32642,9 @@ void mouseClicked () {
 
                     if ((Develop_Option == DEV_OP_06) || (Develop_Option == DEV_OP_07) || (Develop_Option == DEV_OP_08)) {
                       
-                      if (STUDY_Current_Layer == develop_Layer) {
+                      if (STUDY_CurrentLayer == develop_Layer) {
                     
-                        STUDY_Current_Layer = LAYER_developed; 
+                        STUDY_CurrentLayer = LAYER_developed; 
                       }
                       
                       Develop_Option = SOLARCHVISION_UI_BAR_a_selected_child - num_layers;
@@ -32652,9 +32655,9 @@ void mouseClicked () {
                     }   
                     else {
                       
-                      develop_Layer = STUDY_Current_Layer;
+                      develop_Layer = STUDY_CurrentLayer;
                     
-                      STUDY_Current_Layer = LAYER_developed; 
+                      STUDY_CurrentLayer = LAYER_developed; 
                       
                       Develop_Option = SOLARCHVISION_UI_BAR_a_selected_child - num_layers;
                       
@@ -32783,7 +32786,7 @@ void mouseClicked () {
               ROLLOUT_Update = 1;
             }             
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-              Display_LAND_TEXTURE = (Display_LAND_TEXTURE + 1) % 2;
+              Display_LAND_Texture = (Display_LAND_Texture + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -32875,25 +32878,25 @@ void mouseClicked () {
               ROLLOUT_Update = 1;
             }               
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Star")) {
-              Display_STAR3D_OBJECT = (Display_STAR3D_OBJECT + 1) % 2;
+              Display_STAR3D_Surface = (Display_STAR3D_Surface + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Moon")) {
-              Display_MOON3D_OBJECT = (Display_MOON3D_OBJECT + 1) % 2;
+              Display_MOON3D_Surface = (Display_MOON3D_Surface + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Earth")) {
-              Display_EARTH3D_OBJECT = (Display_EARTH3D_OBJECT + 1) % 2;
+              Display_EARTH3D_Surface = (Display_EARTH3D_Surface + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }   
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Troposphere")) {
-              Display_TROPO3D_OBJECT = (Display_TROPO3D_OBJECT + 1) % 2;
+              Display_TROPO3D_Surface = (Display_TROPO3D_Surface + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -33909,19 +33912,19 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             }    
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Offset(above) Vertices")) {
-              SOLARCHVISION_offsetVertices_Selection(0, abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(0, abs(ModifyInput_OffsetAmount));
               WIN3D_Update = 1;              
             }  
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Offset(below) Vertices")) {
-              SOLARCHVISION_offsetVertices_Selection(0, -abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(0, -abs(ModifyInput_OffsetAmount));
               WIN3D_Update = 1;              
             }             
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Offset(expand) Vertices")) {
-              SOLARCHVISION_offsetVertices_Selection(1, -abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(1, -abs(ModifyInput_OffsetAmount));
               WIN3D_Update = 1;              
             }   
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Offset(shrink) Vertices")) {
-              SOLARCHVISION_offsetVertices_Selection(1, abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(1, abs(ModifyInput_OffsetAmount));
               WIN3D_Update = 1;              
             }               
             
@@ -34930,36 +34933,36 @@ void mouseClicked () {
                 float y = RxP[1]; 
                 float z = RxP[2];             
   
-                float rot = Create_Input_Orientation;
+                float rot = CreateInput_Orientation;
                 if (rot == 360) rot = WIN3D_RZ_coordinate;
 
 
       
-                float rx = 0.5 * Create_Input_Length;
+                float rx = 0.5 * CreateInput_Length;
                 if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
       
-                float ry = 0.5 * Create_Input_Width;
+                float ry = 0.5 * CreateInput_Width;
                 if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
       
-                float rz = 0.5 * Create_Input_Height;
+                float rz = 0.5 * CreateInput_Height;
                 if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
       
                 
                   
-                float px = Create_Input_powX; 
-                float py = Create_Input_powY;
-                float pz = Create_Input_powZ;
+                float px = CreateInput_powX; 
+                float py = CreateInput_powY;
+                float pz = CreateInput_powZ;
                 
-                if (Create_Input_powRnd == 1) {
+                if (CreateInput_powRnd == 1) {
                   px = pow(2, int(random(5)) - 1);
                   py = px;
                   pz = px;
                 }
                   
-                if (Create_Input_Volume != 0) {
+                if (CreateInput_Volume != 0) {
                             
                   if ((rx != 0) && (ry != 0)) {
-                    rz = Create_Input_Volume / (8 * rx * ry);
+                    rz = CreateInput_Volume / (8 * rx * ry);
                   }
                   
                   //---------------------------------------------------
@@ -35123,7 +35126,7 @@ void mouseClicked () {
 
                     SOLARCHVISION_CAM_x = RxP[0];
                     SOLARCHVISION_CAM_y = RxP[1];
-                    SOLARCHVISION_CAM_z = RxP[2] + eyeLevel;       
+                    SOLARCHVISION_CAM_z = RxP[2] + EyeLevel;       
   
                     SOLARCHVISION_reverseTransform_3DViewport();
                     
@@ -35821,17 +35824,17 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Atmosphere
 
-      Display_TROPO3D_OBJECT = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_TROPO3D_OBJECT" , Display_TROPO3D_OBJECT, 0, 1, 1), 1));
-      Display_TROPO3D_TEXTURE = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_TROPO3D_TEXTURE" , Display_TROPO3D_TEXTURE, 0, 1, 1), 1));      
+      Display_TROPO3D_Surface = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_TROPO3D_Surface" , Display_TROPO3D_Surface, 0, 1, 1), 1));
+      Display_TROPO3D_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_TROPO3D_Texture" , Display_TROPO3D_Texture, 0, 1, 1), 1));      
 
-      Display_EARTH3D_OBJECT = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_EARTH3D_OBJECT" , Display_EARTH3D_OBJECT, 0, 1, 1), 1));
-      Display_EARTH3D_TEXTURE = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_EARTH3D_TEXTURE" , Display_EARTH3D_TEXTURE, 0, 1, 1), 1));
+      Display_EARTH3D_Surface = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_EARTH3D_Surface" , Display_EARTH3D_Surface, 0, 1, 1), 1));
+      Display_EARTH3D_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_EARTH3D_Texture" , Display_EARTH3D_Texture, 0, 1, 1), 1));
 
-      Display_MOON3D_OBJECT = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_MOON3D_OBJECT" , Display_MOON3D_OBJECT, 0, 1, 1), 1));
-      Display_MOON3D_TEXTURE = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_MOON3D_TEXTURE" , Display_MOON3D_TEXTURE, 0, 1, 1), 1));
+      Display_MOON3D_Surface = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_MOON3D_Surface" , Display_MOON3D_Surface, 0, 1, 1), 1));
+      Display_MOON3D_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_MOON3D_Texture" , Display_MOON3D_Texture, 0, 1, 1), 1));
 
-      Display_STAR3D_OBJECT = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_STAR3D_OBJECT" , Display_STAR3D_OBJECT, 0, 1, 1), 1));
-      Display_STAR3D_TEXTURE = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_STAR3D_TEXTURE" , Display_STAR3D_TEXTURE, 0, 1, 1), 1));      
+      Display_STAR3D_Surface = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_STAR3D_Surface" , Display_STAR3D_Surface, 0, 1, 1), 1));
+      Display_STAR3D_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_STAR3D_Texture" , Display_STAR3D_Texture, 0, 1, 1), 1));      
       
       planetary_magnification = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "planetary_magnification" , planetary_magnification, 1, 100, 1.0);
     
@@ -35895,28 +35898,28 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Create_Default_PivotType = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Default_PivotType" , Create_Default_PivotType, 0, 4, 1), 1));
   
-      Create_Input_Orientation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
+      CreateInput_Orientation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_Orientation" , CreateInput_Orientation, 0, 360, 15);
       
-      Create_Input_Length = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_Length" , Create_Input_Length, -50, 150, -2), 0.5); 
-      Create_Input_Width = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_Width" , Create_Input_Width, -50, 150, -2), 0.5); 
-      Create_Input_Height = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_Height" , Create_Input_Height, -50, 150, -2), 0.5);     
+      CreateInput_Length = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_Length" , CreateInput_Length, -50, 150, -2), 0.5); 
+      CreateInput_Width = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_Width" , CreateInput_Width, -50, 150, -2), 0.5); 
+      CreateInput_Height = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_Height" , CreateInput_Height, -50, 150, -2), 0.5);     
       
-      Create_Input_Volume = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);    
+      CreateInput_Volume = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_Volume" , CreateInput_Volume, 0, 25000, 1000);    
   
     }    
     
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Modify
     
-      Modify_Input_OpenningDepth = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_OpenningDepth" , Modify_Input_OpenningDepth, -10, 10, 0.1);
-      Modify_Input_OpenningArea = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_OpenningArea" , Modify_Input_OpenningArea, 0, 1, 0.05);
-      Modify_Input_OpenningDeviation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_OpenningDeviation" , Modify_Input_OpenningDeviation, 0, 1, 0.05);
+      ModifyInput_OpenningDepth = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_OpenningDepth" , ModifyInput_OpenningDepth, -10, 10, 0.1);
+      ModifyInput_OpenningArea = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_OpenningArea" , ModifyInput_OpenningArea, 0, 1, 0.05);
+      ModifyInput_OpenningDeviation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_OpenningDeviation" , ModifyInput_OpenningDeviation, 0, 1, 0.05);
  
-      Modify_Input_TessellateRows = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_TessellateRows" , Modify_Input_TessellateRows, 1, 100, 1), 1));
-      Modify_Input_TessellateColumns = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_TessellateColumns" , Modify_Input_TessellateColumns, 1, 100, 1), 1));
+      ModifyInput_TessellateRows = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_TessellateRows" , ModifyInput_TessellateRows, 1, 100, 1), 1));
+      ModifyInput_TessellateColumns = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_TessellateColumns" , ModifyInput_TessellateColumns, 1, 100, 1), 1));
       
-      Modify_Input_OffsetAmount = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
+      ModifyInput_OffsetAmount = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_OffsetAmount" , ModifyInput_OffsetAmount, 0, 25, 0.001);
       
-      Modify_Input_WeldTreshold = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);      
+      ModifyInput_WeldTreshold = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "ModifyInput_WeldTreshold" , ModifyInput_WeldTreshold, 0, 10, 0.001);      
 
       softSelection_Power = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "softSelection_Power" , softSelection_Power, 0.125, 8, -2);
       softSelection_Radius = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "softSelection_Radius" , softSelection_Radius, 0.01, 100, -2);
@@ -35939,11 +35942,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       Create_Mesh_SuperOBJ_Button = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Mesh_SuperOBJ_Button" , Create_Mesh_SuperOBJ_Button, 0, 1, 1), 1));
 
-      //Create_Input_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
-      Create_Input_powAll = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, CubePower, -2);
-      Create_Input_powX = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, CubePower, -2); 
-      Create_Input_powY = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, CubePower, -2); 
-      Create_Input_powZ = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, CubePower, -2);
+      //CreateInput_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powRnd" , CreateInput_powRnd, 0, 1, 1), 1));    
+      CreateInput_powAll = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powAll" , CreateInput_powAll, 0.5, CubePower, -2);
+      CreateInput_powX = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powX" , CreateInput_powX, 0.5, CubePower, -2); 
+      CreateInput_powY = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powY" , CreateInput_powY, 0.5, CubePower, -2); 
+      CreateInput_powZ = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powZ" , CreateInput_powZ, 0.5, CubePower, -2);
 
     }  
 
@@ -35978,7 +35981,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       LoadButton_LandMesh = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "LoadButton_LandMesh" , LoadButton_LandMesh, 0, 1, 1), 1));
       Skip_LAND_MESH_Center = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Skip_LAND_MESH_Center" , Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
       Display_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_LAND_MESH" , Display_LAND_MESH, 0, 1, 1), 1));
-      Display_LAND_TEXTURE = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));
+      Display_LAND_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_LAND_Texture" , Display_LAND_Texture, 0, 1, 1), 1));
       Display_LAND_POINTS = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_LAND_POINTS" , Display_LAND_POINTS, 0, 1, 1), 1));     
       Display_LAND_DEPTH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "Display_LAND_DEPTH" , Display_LAND_DEPTH, 0, 1, 1), 1));
 
@@ -36129,8 +36132,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       STUDY_Update = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Redraw scene", STUDY_Update, 0, 1, 1), 1));  
     
-      STUDY_Current_Layer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Layer", STUDY_Current_Layer, 0, (num_layers - 1), 1), 1));
-      STUDY_V_scale[STUDY_Current_Layer] = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "V_scale[" + nf(STUDY_Current_Layer, 2) + "]", STUDY_V_scale[STUDY_Current_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
+      STUDY_CurrentLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Layer", STUDY_CurrentLayer, 0, (num_layers - 1), 1), 1));
+      STUDY_V_scale[STUDY_CurrentLayer] = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "V_scale[" + nf(STUDY_CurrentLayer, 2) + "]", STUDY_V_scale[STUDY_CurrentLayer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
 
       STUDY_draw_data_raws = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Draw data", STUDY_draw_data_raws, 0, 1, 1), 1));
       STUDY_draw_data_sorted = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Draw sorted", STUDY_draw_data_sorted, 0, 1, 1), 1));
@@ -36260,7 +36263,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Impacts
       IMPACTS_DataSource = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Impacts Source", IMPACTS_DataSource, 0, 3, 1), 1));
-      STUDY_Impact_Layer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Impact Min/50%/Max", STUDY_Impact_Layer, 0, 8, 1), 1));
+      STUDY_ImpactLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Impact Min/50%/Max", STUDY_ImpactLayer, 0, 8, 1), 1));
       STUDY_update_impacts = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Update impacts", STUDY_update_impacts, 0, 1, 1), 1));    
     }
     
@@ -36276,19 +36279,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_prob = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
       
       
-      objExportScale = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportScale" , objExportScale, .000001, 1000000, -0.1), 1);
-      objFlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objFlipZYaxis" , objFlipZYaxis, 0, 1, 1), 1));
+      objExport_Scale = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_Scale" , objExport_Scale, .000001, 1000000, -0.1), 1);
+      objExport_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_FlipZYaxis" , objExport_FlipZYaxis, 0, 1, 1), 1));
 
-      objExportPrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 6, 1), 1));
-      objExportPrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportPrecisionVtexture" , objExportPrecisionVtexture, 0, 6, 1), 1));
-      objExportPolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportPolyToPoly" , objExportPolyToPoly, 0, 1, 1), 1));
+      objExport_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_PrecisionVertex" , objExport_PrecisionVertex, 0, 6, 1), 1));
+      objExport_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_PrecisionVtexture" , objExport_PrecisionVtexture, 0, 6, 1), 1));
+      objExport_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_PolyToPoly" , objExport_PolyToPoly, 0, 1, 1), 1));
       
-      objExportMaterialLibrary = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportMaterialLibrary" , objExportMaterialLibrary, 0, 1, 1), 1));
-      objExportBackSides = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportBackSides" , objExportBackSides, 0, 1, 1), 1));
-      objExportCombinedMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportCombinedMaterial" , objExportCombinedMaterial, 0, 1, 1), 1));      
-      objExportBakingResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportBakingResolution" , objExportBakingResolution, 4, 256, -2), 1));
-      objExportPalletResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportPalletResolution" , objExportPalletResolution, 32, 2048, -2), 1));
-      objExportUsePalletOrBakeFaces = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExportUsePalletOrBakeFaces" , objExportUsePalletOrBakeFaces, 0, 1, 1), 1));
+      objExport_MaterialLibrary = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_MaterialLibrary" , objExport_MaterialLibrary, 0, 1, 1), 1));
+      objExport_BackSides = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_BackSides" , objExport_BackSides, 0, 1, 1), 1));
+      objExport_CombinedMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_CombinedMaterial" , objExport_CombinedMaterial, 0, 1, 1), 1));      
+      objExport_BakingResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_BakingResolution" , objExport_BakingResolution, 4, 256, -2), 1));
+      objExport_PalletResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_PalletResolution" , objExport_PalletResolution, 32, 2048, -2), 1));
+      objExport_UsePalletOrBakeFaces = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "objExport_UsePalletOrBakeFaces" , objExport_UsePalletOrBakeFaces, 0, 1, 1), 1));
       
 
       Display_Output_in_Explorer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
@@ -40020,7 +40023,7 @@ void SOLARCHVISION_draw_Fractals () {
 
 
 
-void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
+void SOLARCHVISION_Plant_branch_objExport_ (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -40111,12 +40114,12 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
             String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
             String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
             
-            if (objExportPolyToPoly == 0) {
+            if (objExport_PolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println(("g Fractal_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
             }
           
-            if (objExportMaterialLibrary != 0) {
+            if (objExport_MaterialLibrary != 0) {
               objOutput.println("usemtl Fractal_Trunk");
             }
             
@@ -40127,7 +40130,7 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
         }
       }
 
-      SOLARCHVISION_Plant_branch_objExport(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
+      SOLARCHVISION_Plant_branch_objExport_(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
 
     }
   } else {
@@ -40199,18 +40202,18 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
           String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);        
   
-          if (objExportPolyToPoly == 0) {
+          if (objExport_PolyToPoly == 0) {
             obj_lastGroupNumber += 1;
             objOutput.println(("g Fractal_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
           }
           
-          if (objExportMaterialLibrary != 0) {
+          if (objExport_MaterialLibrary != 0) {
             objOutput.println("usemtl Fractal_Leaf");
           }
           
           obj_lastFaceNumber += 1;
           objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-          if (objExportBackSides != 0) {
+          if (objExport_BackSides != 0) {
             obj_lastFaceNumber += 1;
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
           }    
@@ -44622,7 +44625,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 if (Display_LAND_MESH == 0) {stroke(127); fill(127);}
               }       
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (Display_LAND_TEXTURE == 0) {stroke(127); fill(127);}
+                if (Display_LAND_Texture == 0) {stroke(127); fill(127);}
               }    
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
                 if (Display_LAND_POINTS == 0) {stroke(127); fill(127);}
@@ -44669,16 +44672,16 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 if (Display_SUN3D_Pattern == 0) {stroke(127); fill(127);}
               }              
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Star")) {
-                if (Display_STAR3D_OBJECT == 0) {stroke(127); fill(127);}
+                if (Display_STAR3D_Surface == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Moon")) {
-                if (Display_MOON3D_OBJECT == 0) {stroke(127); fill(127);}
+                if (Display_MOON3D_Surface == 0) {stroke(127); fill(127);}
               }
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Earth")) {
-                if (Display_EARTH3D_OBJECT == 0) {stroke(127); fill(127);}
+                if (Display_EARTH3D_Surface == 0) {stroke(127); fill(127);}
               }    
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Troposphere")) {
-                if (Display_TROPO3D_OBJECT == 0) {stroke(127); fill(127);}
+                if (Display_TROPO3D_Surface == 0) {stroke(127); fill(127);}
               }  
               if (SOLARCHVISION_UI_BAR_a_Items[i][j].equals("Display/Hide Solar Section")) {
                 if (Display_SolarImpactImage == 0) {stroke(127); fill(127);}
@@ -45309,9 +45312,9 @@ void SOLARCHVISION_UI_set_to_Create_Box () {
   
   Create_Mesh_SuperOBJ_Button = 1;
 
-  Create_Input_powX = CubePower;   
-  Create_Input_powY = CubePower; 
-  Create_Input_powZ = CubePower;             
+  CreateInput_powX = CubePower;   
+  CreateInput_powY = CubePower; 
+  CreateInput_powZ = CubePower;             
   
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
@@ -45321,9 +45324,9 @@ void SOLARCHVISION_UI_set_to_Create_Octahedron () {
   
   Create_Mesh_SuperOBJ_Button = 1;
 
-  Create_Input_powX = 1;  
-  Create_Input_powY = 1; 
-  Create_Input_powZ = 1;            
+  CreateInput_powX = 1;  
+  CreateInput_powY = 1; 
+  CreateInput_powZ = 1;            
   
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
@@ -45333,9 +45336,9 @@ void SOLARCHVISION_UI_set_to_Create_Sphere () {
   
   Create_Mesh_SuperOBJ_Button = 1;
 
-  Create_Input_powX = 2;  
-  Create_Input_powY = 2; 
-  Create_Input_powZ = 2;            
+  CreateInput_powX = 2;  
+  CreateInput_powY = 2; 
+  CreateInput_powZ = 2;            
   
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
@@ -45345,9 +45348,9 @@ void SOLARCHVISION_UI_set_to_Create_Cylinder () {
   
   Create_Mesh_SuperOBJ_Button = 1;
 
-  Create_Input_powX = 2;  
-  Create_Input_powY = 2; 
-  Create_Input_powZ = CubePower;             
+  CreateInput_powX = 2;  
+  CreateInput_powY = 2; 
+  CreateInput_powZ = CubePower;             
   
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
@@ -45357,9 +45360,9 @@ void SOLARCHVISION_UI_set_to_Create_Cushion () {
   
   Create_Mesh_SuperOBJ_Button = 1;
 
-  Create_Input_powX = CubePower;   
-  Create_Input_powY = CubePower;  
-  Create_Input_powZ = 2;            
+  CreateInput_powX = CubePower;   
+  CreateInput_powY = CubePower;  
+  CreateInput_powZ = 2;            
   
   Current_ObjectCategory = ObjectCategory_Group3Ds;  
 }
@@ -46295,7 +46298,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
       if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
 
-        STUDY_Impact_Layer = n;
+        STUDY_ImpactLayer = n;
 
         ROLLOUT_Update = 1;
         STUDY_Update = 1;
@@ -46318,11 +46321,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
       float y1 = temp_offsetY + (ry - 0.15) * displayBarHeight;
       float y2 = temp_offsetY + (ry + 0.15) * displayBarHeight;
 
-      if (n == STUDY_Impact_Layer) { 
+      if (n == STUDY_ImpactLayer) { 
         fill(255,127,0);
         noStroke();
       }
-      else if (n / 3 == STUDY_Impact_Layer / 3) {
+      else if (n / 3 == STUDY_ImpactLayer / 3) {
         fill(127,63,0);
         noStroke();        
       }
@@ -46333,11 +46336,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
       rect(x1, y1, x2 - x1, y2 - y1);      
       
       textAlign(CENTER, CENTER);   
-      if (n == STUDY_Impact_Layer) { 
+      if (n == STUDY_ImpactLayer) { 
         stroke(0); 
         fill(0); 
       }
-      else if (n / 3 == STUDY_Impact_Layer / 3) {
+      else if (n / 3 == STUDY_ImpactLayer / 3) {
         stroke(191); 
         fill(191);        
       }      
@@ -46346,7 +46349,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         fill(255); 
       }        
 
-      if (n == STUDY_Impact_Layer) { 
+      if (n == STUDY_ImpactLayer) { 
         textSize(1.25 * MESSAGE_S_View);
       }
       else {
@@ -46558,26 +46561,26 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Create_Default_ExtraType", Create_Default_ExtraType);
   newChild1.setInt("Create_Default_PivotType", Create_Default_PivotType);
   
-  newChild1.setFloat("Modify_Input_WeldTreshold", Modify_Input_WeldTreshold);
+  newChild1.setFloat("ModifyInput_WeldTreshold", ModifyInput_WeldTreshold);
   
-  newChild1.setFloat("Modify_Input_OffsetAmount", Modify_Input_OffsetAmount);
+  newChild1.setFloat("ModifyInput_OffsetAmount", ModifyInput_OffsetAmount);
   
-  newChild1.setInt("Modify_Input_TessellateRows", Modify_Input_TessellateRows);
-  newChild1.setInt("Modify_Input_TessellateColumns", Modify_Input_TessellateColumns);
+  newChild1.setInt("ModifyInput_TessellateRows", ModifyInput_TessellateRows);
+  newChild1.setInt("ModifyInput_TessellateColumns", ModifyInput_TessellateColumns);
   
-  newChild1.setFloat("Modify_Input_OpenningDepth", Modify_Input_OpenningDepth);
-  newChild1.setFloat("Modify_Input_OpenningArea", Modify_Input_OpenningArea);
-  newChild1.setFloat("Modify_Input_OpenningDeviation", Modify_Input_OpenningDeviation);
-  newChild1.setFloat("Create_Input_Length", Create_Input_Length);
-  newChild1.setFloat("Create_Input_Width", Create_Input_Width);
-  newChild1.setFloat("Create_Input_Height", Create_Input_Height);
-  newChild1.setFloat("Create_Input_Volume", Create_Input_Volume);
-  newChild1.setFloat("Create_Input_Orientation", Create_Input_Orientation);
-  newChild1.setFloat("Create_Input_powX", Create_Input_powX);
-  newChild1.setFloat("Create_Input_powY", Create_Input_powY);
-  newChild1.setFloat("Create_Input_powZ", Create_Input_powZ);
-  newChild1.setFloat("Create_Input_powAll", Create_Input_powAll);
-  newChild1.setInt("Create_Input_powRnd", Create_Input_powRnd);
+  newChild1.setFloat("ModifyInput_OpenningDepth", ModifyInput_OpenningDepth);
+  newChild1.setFloat("ModifyInput_OpenningArea", ModifyInput_OpenningArea);
+  newChild1.setFloat("ModifyInput_OpenningDeviation", ModifyInput_OpenningDeviation);
+  newChild1.setFloat("CreateInput_Length", CreateInput_Length);
+  newChild1.setFloat("CreateInput_Width", CreateInput_Width);
+  newChild1.setFloat("CreateInput_Height", CreateInput_Height);
+  newChild1.setFloat("CreateInput_Volume", CreateInput_Volume);
+  newChild1.setFloat("CreateInput_Orientation", CreateInput_Orientation);
+  newChild1.setFloat("CreateInput_powX", CreateInput_powX);
+  newChild1.setFloat("CreateInput_powY", CreateInput_powY);
+  newChild1.setFloat("CreateInput_powZ", CreateInput_powZ);
+  newChild1.setFloat("CreateInput_powAll", CreateInput_powAll);
+  newChild1.setInt("CreateInput_powRnd", CreateInput_powRnd);
   newChild1.setInt("Create_Sphere_Degree", Create_Sphere_Degree);
   newChild1.setInt("Create_Cylinder_Degree", Create_Cylinder_Degree);
   newChild1.setInt("Create_Poly_Degree", Create_Poly_Degree);
@@ -46722,7 +46725,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("LAYER_developed", LAYER_developed);
   newChild1.setFloat("Angle_inclination", Angle_inclination);
   newChild1.setFloat("Angle_orientation", Angle_orientation);
-  newChild1.setInt("STUDY_Current_Layer", STUDY_Current_Layer);
+  newChild1.setInt("STUDY_CurrentLayer", STUDY_CurrentLayer);
   newChild1.setInt("develop_Layer", develop_Layer);
   newChild1.setInt("STUDY_print_title", STUDY_print_title);
   newChild1.setFloat("STUDY_T_scale", STUDY_T_scale);
@@ -46793,8 +46796,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("databaseNumber_CLIMATE_EPW", databaseNumber_CLIMATE_EPW);
   newChild1.setInt("IMPACTS_DataSource", IMPACTS_DataSource);
   newChild1.setInt("STUDY_impact_summary", STUDY_impact_summary);
-  newChild1.setInt("STUDY_Impact_Layer", STUDY_Impact_Layer);
-  newChild1.setInt("STUDY_STUDY_Plot_Impacts", STUDY_STUDY_Plot_Impacts);
+  newChild1.setInt("STUDY_ImpactLayer", STUDY_ImpactLayer);
+  newChild1.setInt("STUDY_PlotImpacts", STUDY_PlotImpacts);
   newChild1.setInt("STUDY_update_impacts", STUDY_update_impacts);
   newChild1.setInt("drawnFrame", drawnFrame);
 
@@ -46809,19 +46812,19 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_SUN3D_Path", Display_SUN3D_Path);
   newChild1.setInt("Display_SUN3D_Pattern", Display_SUN3D_Pattern);
   newChild1.setInt("Display_SKY3D", Display_SKY3D);
-  newChild1.setInt("Display_STAR3D_OBJECT", Display_STAR3D_OBJECT);
-  newChild1.setInt("Display_STAR3D_TEXTURE", Display_STAR3D_TEXTURE);
-  newChild1.setInt("Display_MOON3D_OBJECT", Display_MOON3D_OBJECT);
-  newChild1.setInt("Display_MOON3D_TEXTURE", Display_MOON3D_TEXTURE);
-  newChild1.setInt("Display_TROPO3D_OBJECT", Display_TROPO3D_OBJECT);
-  newChild1.setInt("Display_TROPO3D_TEXTURE", Display_TROPO3D_TEXTURE);
-  newChild1.setInt("Display_EARTH3D_OBJECT", Display_EARTH3D_OBJECT);
-  newChild1.setInt("Display_EARTH3D_TEXTURE", Display_EARTH3D_TEXTURE);
+  newChild1.setInt("Display_STAR3D_Surface", Display_STAR3D_Surface);
+  newChild1.setInt("Display_STAR3D_Texture", Display_STAR3D_Texture);
+  newChild1.setInt("Display_MOON3D_Surface", Display_MOON3D_Surface);
+  newChild1.setInt("Display_MOON3D_Texture", Display_MOON3D_Texture);
+  newChild1.setInt("Display_TROPO3D_Surface", Display_TROPO3D_Surface);
+  newChild1.setInt("Display_TROPO3D_Texture", Display_TROPO3D_Texture);
+  newChild1.setInt("Display_EARTH3D_Surface", Display_EARTH3D_Surface);
+  newChild1.setInt("Display_EARTH3D_Texture", Display_EARTH3D_Texture);
   newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
   newChild1.setInt("LoadButton_LandMesh", LoadButton_LandMesh);
   newChild1.setInt("Display_LAND_MESH", Display_LAND_MESH);
   newChild1.setInt("Display_LAND_POINTS", Display_LAND_POINTS);
-  newChild1.setInt("Display_LAND_TEXTURE", Display_LAND_TEXTURE);
+  newChild1.setInt("Display_LAND_Texture", Display_LAND_Texture);
   newChild1.setInt("Display_LAND_DEPTH", Display_LAND_DEPTH);
   newChild1.setInt("Skip_LAND_MESH_Center", Skip_LAND_MESH_Center);
   newChild1.setInt("LoadButton_UrbanMesh", LoadButton_UrbanMesh);
@@ -46945,17 +46948,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("addToLastGroup3D", addToLastGroup3D);
   
   newChild1.setFloat("BiosphereStep", BiosphereStep);
-  newChild1.setFloat("objExportScale", objExportScale);
-  newChild1.setInt("objFlipZYaxis", objFlipZYaxis);
-  newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
-  newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
-  newChild1.setInt("objExportPolyToPoly", objExportPolyToPoly);
-  newChild1.setInt("objExportMaterialLibrary", objExportMaterialLibrary);
-  newChild1.setInt("objExportBackSides", objExportBackSides);
-  newChild1.setInt("objExportCombinedMaterial", objExportCombinedMaterial);
-  newChild1.setInt("objExportBakingResolution", objExportBakingResolution);
-  newChild1.setInt("objExportPalletResolution", objExportPalletResolution);
-  newChild1.setInt("objExportUsePalletOrBakeFaces", objExportUsePalletOrBakeFaces);
+  newChild1.setFloat("objExport_Scale", objExport_Scale);
+  newChild1.setInt("objExport_FlipZYaxis", objExport_FlipZYaxis);
+  newChild1.setInt("objExport_PrecisionVertex", objExport_PrecisionVertex);
+  newChild1.setInt("objExport_PrecisionVtexture", objExport_PrecisionVtexture);
+  newChild1.setInt("objExport_PolyToPoly", objExport_PolyToPoly);
+  newChild1.setInt("objExport_MaterialLibrary", objExport_MaterialLibrary);
+  newChild1.setInt("objExport_BackSides", objExport_BackSides);
+  newChild1.setInt("objExport_CombinedMaterial", objExport_CombinedMaterial);
+  newChild1.setInt("objExport_BakingResolution", objExport_BakingResolution);
+  newChild1.setInt("objExport_PalletResolution", objExport_PalletResolution);
+  newChild1.setInt("objExport_UsePalletOrBakeFaces", objExport_UsePalletOrBakeFaces);
   
   newChild1.setString("Default_Font", Default_Font);
   
@@ -46964,15 +46967,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
 
-  newChild1.setInt("LAND_TEXTURE_num", LAND_TEXTURE_num);
+  newChild1.setInt("LAND_Texture_num", LAND_Texture_num);
 
   {
-    newChild1 = my_xml.addChild("LAND_TEXTURE_scale_U");
-    int ni = LAND_TEXTURE_scale_U.length;
+    newChild1 = my_xml.addChild("LAND_Texture_scale_U");
+    int ni = LAND_Texture_scale_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAND_TEXTURE_scale_U[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(LAND_Texture_scale_U[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -46980,12 +46983,12 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("LAND_TEXTURE_scale_V");
-    int ni = LAND_TEXTURE_scale_V.length;
+    newChild1 = my_xml.addChild("LAND_Texture_scale_V");
+    int ni = LAND_Texture_scale_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAND_TEXTURE_scale_V[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(LAND_Texture_scale_V[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -46997,25 +47000,25 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
     String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
 
-    for (int q = 1; q <= LAND_TEXTURE_num; q++) {
+    for (int q = 1; q <= LAND_Texture_num; q++) {
   
       int n_Map = q; 
   
-      String the_filename = LAND_TEXTURE_ImagePath[n_Map].substring(LAND_TEXTURE_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
+      String the_filename = LAND_Texture_ImagePath[n_Map].substring(LAND_Texture_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
 
-      String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
+      String new_Texture_path = the_dir + "/Textures/" +  the_filename;
       
-      //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath[n_Map]);
-      //println("new_TEXTURE_path", new_TEXTURE_path);
+      //println("pre_LAND_Texture_ImagePath", LAND_Texture_ImagePath[n_Map]);
+      //println("new_Texture_path", new_Texture_path);
   
-      if (LAND_TEXTURE_ImagePath[n_Map].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+      if (LAND_Texture_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         TEXTURE_copied = -1;
       }
       else {
 
-        println("Copying texture:", LAND_TEXTURE_ImagePath[n_Map], ">", new_TEXTURE_path);
-        saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath[n_Map]));
-        LAND_TEXTURE_ImagePath[n_Map] = new_TEXTURE_path;
+        println("Copying texture:", LAND_Texture_ImagePath[n_Map], ">", new_Texture_path);
+        saveBytes(new_Texture_path, loadBytes(LAND_Texture_ImagePath[n_Map]));
+        LAND_Texture_ImagePath[n_Map] = new_Texture_path;
         
         TEXTURE_copied = 1;
 
@@ -47023,19 +47026,19 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       
       //if (TEXTURE_copied == 0) {
       //  println("Saving texture from the scene.");
-      //  LAND_TEXTURE_Map[n_Map].save(new_TEXTURE_path);
+      //  LAND_Texture_Map[n_Map].save(new_Texture_path);
       //}    
 
     }
   }
 
   {
-    newChild1 = my_xml.addChild("LAND_TEXTURE_ImagePath");
-    int ni = LAND_TEXTURE_ImagePath.length;
+    newChild1 = my_xml.addChild("LAND_Texture_ImagePath");
+    int ni = LAND_Texture_ImagePath.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += LAND_TEXTURE_ImagePath[i];
+      lineSTR += LAND_Texture_ImagePath[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -47060,21 +47063,21 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
         the_filename = Object2D_ImagePath[i].substring(Object2D_ImagePath[i].lastIndexOf("/") + 1); // image name
 
       
-        String new_TEXTURE_path = the_dir + "/Textures/" + the_filename;
+        String new_Texture_path = the_dir + "/Textures/" + the_filename;
         
         //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
         //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
           
-        if (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+        if (Object2D_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
           TEXTURE_copied = -1;
         }
         else {
           if (Object2D_ImagePath[i].equals("")) {
           }  
           else {
-            println("Copying texture:", Object2D_ImagePath[i], ">", new_TEXTURE_path);
-            saveBytes(new_TEXTURE_path, loadBytes(Object2D_ImagePath[i]));
-            Object2D_ImagePath[i] = new_TEXTURE_path;
+            println("Copying texture:", Object2D_ImagePath[i], ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(Object2D_ImagePath[i]));
+            Object2D_ImagePath[i] = new_Texture_path;
             
             TEXTURE_copied = 1;
           }      
@@ -47082,7 +47085,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
         //if (TEXTURE_copied == 0) {
         //  println("Saving texture from the scene.");
-        //  Object2D_Images[i].save(new_TEXTURE_path);
+        //  Object2D_Images[i].save(new_Texture_path);
         //}    
       }
 
@@ -47806,26 +47809,26 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Default_ExtraType = children0[L].getInt("Create_Default_ExtraType");
       Create_Default_PivotType = children0[L].getInt("Create_Default_PivotType");
       
-      Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
+      ModifyInput_WeldTreshold = children0[L].getFloat("ModifyInput_WeldTreshold");
       
-      Modify_Input_OffsetAmount = children0[L].getFloat("Modify_Input_OffsetAmount");
+      ModifyInput_OffsetAmount = children0[L].getFloat("ModifyInput_OffsetAmount");
       
-      Modify_Input_TessellateRows = children0[L].getInt("Modify_Input_TessellateRows");
-      Modify_Input_TessellateColumns = children0[L].getInt("Modify_Input_TessellateColumns");
+      ModifyInput_TessellateRows = children0[L].getInt("ModifyInput_TessellateRows");
+      ModifyInput_TessellateColumns = children0[L].getInt("ModifyInput_TessellateColumns");
       
-      Modify_Input_OpenningDepth = children0[L].getFloat("Modify_Input_OpenningDepth");
-      Modify_Input_OpenningArea = children0[L].getFloat("Modify_Input_OpenningArea");
-      Modify_Input_OpenningDeviation = children0[L].getFloat("Modify_Input_OpenningDeviation");
-      Create_Input_Length = children0[L].getFloat("Create_Input_Length");
-      Create_Input_Width = children0[L].getFloat("Create_Input_Width");
-      Create_Input_Height = children0[L].getFloat("Create_Input_Height");
-      Create_Input_Volume = children0[L].getFloat("Create_Input_Volume");
-      Create_Input_Orientation = children0[L].getFloat("Create_Input_Orientation");
-      Create_Input_powX = children0[L].getFloat("Create_Input_powX");
-      Create_Input_powY = children0[L].getFloat("Create_Input_powY");
-      Create_Input_powZ = children0[L].getFloat("Create_Input_powZ");
-      Create_Input_powAll = children0[L].getFloat("Create_Input_powAll");
-      Create_Input_powRnd = children0[L].getInt("Create_Input_powRnd");
+      ModifyInput_OpenningDepth = children0[L].getFloat("ModifyInput_OpenningDepth");
+      ModifyInput_OpenningArea = children0[L].getFloat("ModifyInput_OpenningArea");
+      ModifyInput_OpenningDeviation = children0[L].getFloat("ModifyInput_OpenningDeviation");
+      CreateInput_Length = children0[L].getFloat("CreateInput_Length");
+      CreateInput_Width = children0[L].getFloat("CreateInput_Width");
+      CreateInput_Height = children0[L].getFloat("CreateInput_Height");
+      CreateInput_Volume = children0[L].getFloat("CreateInput_Volume");
+      CreateInput_Orientation = children0[L].getFloat("CreateInput_Orientation");
+      CreateInput_powX = children0[L].getFloat("CreateInput_powX");
+      CreateInput_powY = children0[L].getFloat("CreateInput_powY");
+      CreateInput_powZ = children0[L].getFloat("CreateInput_powZ");
+      CreateInput_powAll = children0[L].getFloat("CreateInput_powAll");
+      CreateInput_powRnd = children0[L].getInt("CreateInput_powRnd");
       Create_Sphere_Degree = children0[L].getInt("Create_Sphere_Degree");
       Create_Cylinder_Degree = children0[L].getInt("Create_Cylinder_Degree");
       Create_Poly_Degree = children0[L].getInt("Create_Poly_Degree");
@@ -47970,7 +47973,7 @@ void SOLARCHVISION_load_project (String myFile) {
       LAYER_developed = children0[L].getInt("LAYER_developed");
       Angle_inclination = children0[L].getFloat("Angle_inclination");
       Angle_orientation = children0[L].getFloat("Angle_orientation");
-      STUDY_Current_Layer = children0[L].getInt("STUDY_Current_Layer");
+      STUDY_CurrentLayer = children0[L].getInt("STUDY_CurrentLayer");
       develop_Layer = children0[L].getInt("develop_Layer");
       STUDY_print_title = children0[L].getInt("STUDY_print_title");
       STUDY_T_scale = children0[L].getFloat("STUDY_T_scale");
@@ -48041,8 +48044,8 @@ void SOLARCHVISION_load_project (String myFile) {
       databaseNumber_CLIMATE_EPW = children0[L].getInt("databaseNumber_CLIMATE_EPW");
       IMPACTS_DataSource = children0[L].getInt("IMPACTS_DataSource");
       STUDY_impact_summary = children0[L].getInt("STUDY_impact_summary");
-      STUDY_Impact_Layer = children0[L].getInt("STUDY_Impact_Layer");
-      STUDY_STUDY_Plot_Impacts = children0[L].getInt("STUDY_STUDY_Plot_Impacts");
+      STUDY_ImpactLayer = children0[L].getInt("STUDY_ImpactLayer");
+      STUDY_PlotImpacts = children0[L].getInt("STUDY_PlotImpacts");
       STUDY_update_impacts = children0[L].getInt("STUDY_update_impacts");
       drawnFrame = children0[L].getInt("drawnFrame");
 
@@ -48057,19 +48060,19 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_SUN3D_Path = children0[L].getInt("Display_SUN3D_Path");
       Display_SUN3D_Pattern = children0[L].getInt("Display_SUN3D_Pattern");
       Display_SKY3D = children0[L].getInt("Display_SKY3D");
-      Display_STAR3D_OBJECT = children0[L].getInt("Display_STAR3D_OBJECT");
-      Display_STAR3D_TEXTURE = children0[L].getInt("Display_STAR3D_TEXTURE");            
-      Display_MOON3D_OBJECT = children0[L].getInt("Display_MOON3D_OBJECT");
-      Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");
-      Display_TROPO3D_OBJECT = children0[L].getInt("Display_TROPO3D_OBJECT");
-      Display_TROPO3D_TEXTURE = children0[L].getInt("Display_TROPO3D_TEXTURE");
-      Display_EARTH3D_OBJECT = children0[L].getInt("Display_EARTH3D_OBJECT");
-      Display_EARTH3D_TEXTURE = children0[L].getInt("Display_EARTH3D_TEXTURE");
+      Display_STAR3D_Surface = children0[L].getInt("Display_STAR3D_Surface");
+      Display_STAR3D_Texture = children0[L].getInt("Display_STAR3D_Texture");            
+      Display_MOON3D_Surface = children0[L].getInt("Display_MOON3D_Surface");
+      Display_MOON3D_Texture = children0[L].getInt("Display_MOON3D_Texture");
+      Display_TROPO3D_Surface = children0[L].getInt("Display_TROPO3D_Surface");
+      Display_TROPO3D_Texture = children0[L].getInt("Display_TROPO3D_Texture");
+      Display_EARTH3D_Surface = children0[L].getInt("Display_EARTH3D_Surface");
+      Display_EARTH3D_Texture = children0[L].getInt("Display_EARTH3D_Texture");
       Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
       LoadButton_LandMesh = children0[L].getInt("LoadButton_LandMesh");
       Display_LAND_MESH = children0[L].getInt("Display_LAND_MESH");
       Display_LAND_POINTS = children0[L].getInt("Display_LAND_POINTS");
-      Display_LAND_TEXTURE = children0[L].getInt("Display_LAND_TEXTURE");
+      Display_LAND_Texture = children0[L].getInt("Display_LAND_Texture");
       Display_LAND_DEPTH = children0[L].getInt("Display_LAND_DEPTH");
       Skip_LAND_MESH_Center = children0[L].getInt("Skip_LAND_MESH_Center");
       LoadButton_UrbanMesh = children0[L].getInt("LoadButton_UrbanMesh");
@@ -48193,17 +48196,17 @@ void SOLARCHVISION_load_project (String myFile) {
 
       BiosphereStep = children0[L].getFloat("BiosphereStep");
       
-      objExportScale = children0[L].getFloat("objExportScale");
-      objFlipZYaxis = children0[L].getInt("objFlipZYaxis");
-      objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
-      objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
-      objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
-      objExportMaterialLibrary  = children0[L].getInt("objExportMaterialLibrary");
-      objExportBackSides = children0[L].getInt("objExportBackSides");
-      objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
-      objExportBakingResolution = children0[L].getInt("objExportBakingResolution");
-      objExportPalletResolution = children0[L].getInt("objExportPalletResolution");
-      objExportUsePalletOrBakeFaces = children0[L].getInt("objExportUsePalletOrBakeFaces");
+      objExport_Scale = children0[L].getFloat("objExport_Scale");
+      objExport_FlipZYaxis = children0[L].getInt("objExport_FlipZYaxis");
+      objExport_PrecisionVertex = children0[L].getInt("objExport_PrecisionVertex");
+      objExport_PrecisionVtexture = children0[L].getInt("objExport_PrecisionVtexture");
+      objExport_PolyToPoly = children0[L].getInt("objExport_PolyToPoly");
+      objExport_MaterialLibrary  = children0[L].getInt("objExport_MaterialLibrary");
+      objExport_BackSides = children0[L].getInt("objExport_BackSides");
+      objExport_CombinedMaterial = children0[L].getInt("objExport_CombinedMaterial");      
+      objExport_BakingResolution = children0[L].getInt("objExport_BakingResolution");
+      objExport_PalletResolution = children0[L].getInt("objExport_PalletResolution");
+      objExport_UsePalletOrBakeFaces = children0[L].getInt("objExport_UsePalletOrBakeFaces");
 
 
       {
@@ -48222,25 +48225,25 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_n_J = children0[L].getInt("LAND_n_J");
 
 
-      int pre_LAND_TEXTURE_num = LAND_TEXTURE_num;
-      LAND_TEXTURE_num = children0[L].getInt("LAND_TEXTURE_num");
+      int pre_LAND_Texture_num = LAND_Texture_num;
+      LAND_Texture_num = children0[L].getInt("LAND_Texture_num");
       
-      if (pre_LAND_TEXTURE_num != LAND_TEXTURE_num) {
+      if (pre_LAND_Texture_num != LAND_Texture_num) {
       
-        int ni = 1 + LAND_TEXTURE_num;
+        int ni = 1 + LAND_Texture_num;
         
-        LAND_TEXTURE_ImagePath = new String [ni];
-        LAND_TEXTURE_Map = new PImage [ni];
+        LAND_Texture_ImagePath = new String [ni];
+        LAND_Texture_Map = new PImage [ni];
         
         for (int i = 0; i < ni; i++) {
           
-          LAND_TEXTURE_ImagePath[i] = "";
-          LAND_TEXTURE_Map[i] = createImage(2, 2, RGB);
+          LAND_Texture_ImagePath[i] = "";
+          LAND_Texture_Map[i] = createImage(2, 2, RGB);
         }      
       }
     }
 
-    children0 = FileAll.getChildren("LAND_TEXTURE_ImagePath");
+    children0 = FileAll.getChildren("LAND_Texture_ImagePath");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
@@ -48248,44 +48251,44 @@ void SOLARCHVISION_load_project (String myFile) {
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
 
-        String new_TEXTURE_path = parts[i];
+        String new_Texture_path = parts[i];
 
-        if (LAND_TEXTURE_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+        if (LAND_Texture_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         }
         else {
           
-          LAND_TEXTURE_ImagePath[i] = new_TEXTURE_path;
+          LAND_Texture_ImagePath[i] = new_Texture_path;
 
-          if (LAND_TEXTURE_ImagePath[i].equals("")) {
+          if (LAND_Texture_ImagePath[i].equals("")) {
           }
           else {
-            println("Loading texture:", LAND_TEXTURE_ImagePath[i]);
-            LAND_TEXTURE_Map[i] = loadImage(LAND_TEXTURE_ImagePath[i]);
+            println("Loading texture:", LAND_Texture_ImagePath[i]);
+            LAND_Texture_Map[i] = loadImage(LAND_Texture_ImagePath[i]);
           }
         }
              
       }
     }
 
-    children0 = FileAll.getChildren("LAND_TEXTURE_scale_U");
+    children0 = FileAll.getChildren("LAND_Texture_scale_U");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      LAND_TEXTURE_scale_U = new float [ni];
+      LAND_Texture_scale_U = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        LAND_TEXTURE_scale_U[i] = float(parts[i]);
+        LAND_Texture_scale_U[i] = float(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("LAND_TEXTURE_scale_V");
+    children0 = FileAll.getChildren("LAND_Texture_scale_V");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      LAND_TEXTURE_scale_V = new float [ni];
+      LAND_Texture_scale_V = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        LAND_TEXTURE_scale_V[i] = float(parts[i]);
+        LAND_Texture_scale_V[i] = float(parts[i]);
       }
     }
 
@@ -48307,11 +48310,11 @@ void SOLARCHVISION_load_project (String myFile) {
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
       
-          String new_TEXTURE_path = children1[i].getContent();
-          if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
+          String new_Texture_path = children1[i].getContent();
+          if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
           }
           else {
-            Object2D_ImagePath[i] = new_TEXTURE_path;
+            Object2D_ImagePath[i] = new_Texture_path;
             Object2D_Images[i] = createImage(2, 2, RGB);
             if (Object2D_ImagePath[i].equals("")) {
             }
