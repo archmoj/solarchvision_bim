@@ -19966,6 +19966,10 @@ void SOLARCHVISION_export_objects_RAD () {
           Tessellation += MODEL3D_Tessellation;
         }
 
+        if ((allFaces_PNT[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
+          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+        }
+
         if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
         float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -19982,29 +19986,51 @@ void SOLARCHVISION_export_objects_RAD () {
           
           for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
 
-            radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE_" + nf(f, 0));
-            radOutput.println("0");
-            radOutput.println("0");
-            radOutput.println(nf(3 * allFaces_PNT[f].length, 0));
-        
-  
             if (back_or_front == 1) {
-              for (int s = 0; s < subFace.length; s++) {
+
+              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+              radOutput.println("0");
+              radOutput.println("0");
+              radOutput.println("9");      
+              
+              radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));                
+              radOutput.println(" " + nf(subFace[1][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][2], 0, objExport_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));
+              
+              if (subFace.length == 4) {
+
+                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+                radOutput.println("0");
+                radOutput.println("0");
+                radOutput.println("9");      
                 
-                float x = subFace[s][0];
-                float y = subFace[s][1];
-                float z = subFace[s][2];
-        
-                radOutput.println(" " + nf(x, 0, objExport_PrecisionVertex) + " " + nf(y, 0, objExport_PrecisionVertex) + " " + nf(z, 0, objExport_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[3][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][2], 0, objExport_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));
               }
+              
+              
             } else {
-              for (int s = subFace.length - 1; s >= 0; s--) {
+
+              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+              radOutput.println("0");
+              radOutput.println("0");
+              radOutput.println("9");    
+              
+              radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));                
+              radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[1][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][2], 0, objExport_PrecisionVertex));
+              
+              if (subFace.length == 4) { 
                 
-                float x = subFace[s][0];
-                float y = subFace[s][1];
-                float z = subFace[s][2];
-        
-                radOutput.println(" " + nf(x, 0, objExport_PrecisionVertex) + " " + nf(y, 0, objExport_PrecisionVertex) + " " + nf(z, 0, objExport_PrecisionVertex));                
+                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+                radOutput.println("0");
+                radOutput.println("0");
+                radOutput.println("9");                   
+                
+                radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[3][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][2], 0, objExport_PrecisionVertex));
               }
             }
           }
