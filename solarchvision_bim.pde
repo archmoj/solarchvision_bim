@@ -19890,7 +19890,7 @@ void SOLARCHVISION_export_objects_SCR () {
          }
          */
 
-        scrOutput.println(x + "," + y + "," + z);
+        scrOutput.println(nf(x, 0, objExport_PrecisionVertex) + "," + nf(y, 0, objExport_PrecisionVertex) + "," + nf(z, 0, objExport_PrecisionVertex));
       }
       scrOutput.println();
       scrOutput.println();
@@ -19920,36 +19920,69 @@ void SOLARCHVISION_export_objects_RAD () {
 
   radOutput.println("#SOLARCHVISION");
   radOutput.println();
+
+  if (Display_Model3Ds != 0) {
+
   
-  String materialName = "white";
   
-  radOutput.println("void plastic " + materialName);
-  radOutput.println("0");
-  radOutput.println("0");
-  radOutput.println("5 .5 .5 .5 0 0");
+    
 
-  for (int f = 1; f < allFaces_PNT.length; f++) {
+    
 
-    if (allFaces_PNT[f].length > 2) {
+    int[] Materials_Used = new int [Materials_Number];
 
-      radOutput.println(materialName + " polygon " + "FACE_" + nf(f, 0));
-      radOutput.println("0");
-      radOutput.println("0");
-      radOutput.println(nf(3 * allFaces_PNT[f].length, 0));
+    for (int i = 0; i < Materials_Used.length; i++) {
+      Materials_Used[i] = 0;
+    }
 
-      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+    for (int f = 1; f < allFaces_PNT.length; f++) {
 
-        float x = allVertices[allFaces_PNT[f][j]][0];
-        float y = allVertices[allFaces_PNT[f][j]][1];
-        float z = allVertices[allFaces_PNT[f][j]][2];
+      int mt = allFaces_MTLV[f][0];
 
-        radOutput.println(" " + x + " " + y + " " + z);
+      Materials_Used[mt] += 1;
+    }    
+
+    for (int mt = 0; mt < Materials_Number; mt++) {
+
+      if (Materials_Used[mt] != 0) {
+
+        float a = Materials_Color[mt][0] / 255.0; 
+        float r = Materials_Color[mt][1] / 255.0; 
+        float g = Materials_Color[mt][2] / 255.0; 
+        float b = Materials_Color[mt][3] / 255.0; 
+
+        radOutput.println("void plastic " + "SurfaceMaterial_" + nf(mt, 0));
+        radOutput.println("0");
+        radOutput.println("0");
+        radOutput.println("5 " + nf(r, 0, objExport_PrecisionVtexture) + " " + nf(g, 0, objExport_PrecisionVtexture) + " " + nf(b, 0, objExport_PrecisionVtexture) + " 0 0");
+
       }
-      
-      radOutput.println();
+    }
+  
+    for (int f = 1; f < allFaces_PNT.length; f++) {
+  
+      if (allFaces_PNT[f].length > 2) {
+
+        int mt = allFaces_MTLV[f][0];
+        
+        radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE_" + nf(f, 0));
+        radOutput.println("0");
+        radOutput.println("0");
+        radOutput.println(nf(3 * allFaces_PNT[f].length, 0));
+  
+        for (int j = 0; j < allFaces_PNT[f].length; j++) {
+  
+          float x = allVertices[allFaces_PNT[f][j]][0];
+          float y = allVertices[allFaces_PNT[f][j]][1];
+          float z = allVertices[allFaces_PNT[f][j]][2];
+  
+          radOutput.println(" " + nf(x, 0, objExport_PrecisionVertex) + " " + nf(y, 0, objExport_PrecisionVertex) + " " + nf(z, 0, objExport_PrecisionVertex));
+        }
+        
+        radOutput.println();
+      }
     }
   }
-
 
   radOutput.flush(); 
   radOutput.close();   
