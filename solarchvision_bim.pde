@@ -19923,12 +19923,6 @@ void SOLARCHVISION_export_objects_RAD () {
 
   if (Display_Model3Ds != 0) {
 
-  
-  
-    
-
-    
-
     int[] Materials_Used = new int [Materials_Number];
 
     for (int i = 0; i < Materials_Used.length; i++) {
@@ -19964,21 +19958,58 @@ void SOLARCHVISION_export_objects_RAD () {
       if (allFaces_PNT[f].length > 2) {
 
         int mt = allFaces_MTLV[f][0];
-        
-        radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE_" + nf(f, 0));
-        radOutput.println("0");
-        radOutput.println("0");
-        radOutput.println(nf(3 * allFaces_PNT[f].length, 0));
-  
-        for (int j = 0; j < allFaces_PNT[f].length; j++) {
-  
-          float x = allVertices[allFaces_PNT[f][j]][0];
-          float y = allVertices[allFaces_PNT[f][j]][1];
-          float z = allVertices[allFaces_PNT[f][j]][2];
-  
-          radOutput.println(" " + nf(x, 0, objExport_PrecisionVertex) + " " + nf(y, 0, objExport_PrecisionVertex) + " " + nf(z, 0, objExport_PrecisionVertex));
+
+        int Tessellation = allFaces_MTLV[f][1];
+
+        int TotalSubNo = 1;  
+        if (allFaces_MTLV[f][0] == 0) {
+          Tessellation += MODEL3D_Tessellation;
         }
+
+        if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+        float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+        for (int j = 0; j < allFaces_PNT[f].length; j++) {
+          int vNo = allFaces_PNT[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
+
+        for (int n = 0; n < TotalSubNo; n++) {
+
+          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+          
+          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
+
+            radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE_" + nf(f, 0));
+            radOutput.println("0");
+            radOutput.println("0");
+            radOutput.println(nf(3 * allFaces_PNT[f].length, 0));
         
+  
+            if (back_or_front == 1) {
+              for (int s = 0; s < subFace.length; s++) {
+                
+                float x = subFace[s][0];
+                float y = subFace[s][1];
+                float z = subFace[s][2];
+        
+                radOutput.println(" " + nf(x, 0, objExport_PrecisionVertex) + " " + nf(y, 0, objExport_PrecisionVertex) + " " + nf(z, 0, objExport_PrecisionVertex));                
+              }
+            } else {
+              for (int s = subFace.length - 1; s >= 0; s--) {
+                
+                float x = subFace[s][0];
+                float y = subFace[s][1];
+                float z = subFace[s][2];
+        
+                radOutput.println(" " + nf(x, 0, objExport_PrecisionVertex) + " " + nf(y, 0, objExport_PrecisionVertex) + " " + nf(z, 0, objExport_PrecisionVertex));                
+              }
+            }
+          }
+        }
+          
         radOutput.println();
       }
     }
