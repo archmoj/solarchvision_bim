@@ -19930,13 +19930,12 @@ void SOLARCHVISION_export_objects_RAD () {
 
   for (int f = 1; f < allFaces_PNT.length; f++) {
 
-    if ((allFaces_PNT[f].length == 3) || (allFaces_PNT[f].length == 4)) {
+    if (allFaces_PNT[f].length > 2) {
 
       radOutput.println(materialName + " polygon " + "FACE_" + nf(f, 0));
       radOutput.println("0");
       radOutput.println("0");
-      radOutput.println("12");
-      radOutput.println();
+      radOutput.println(nf(3 * allFaces_PNT[f].length, 0));
 
       for (int j = 0; j < allFaces_PNT[f].length; j++) {
 
