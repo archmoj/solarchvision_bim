@@ -20041,9 +20041,6 @@ void SOLARCHVISION_export_objects_RAD () {
     }
   }
   
-
-
-
   radOutput.flush(); 
   radOutput.close();   
 
@@ -20051,34 +20048,31 @@ void SOLARCHVISION_export_objects_RAD () {
 
   SOLARCHVISION_explore_output(radFilename);
   
-  String octFilename = radFilename.replace(".rad", ".oct");
   
-  
-  
+  String batFilename = radFilename.replace(".rad", ".bat");
+  PrintWriter batOutput = createWriter(batFilename);
   String Command1 = "oconv " + radFilename;
-  
   for (int i = 15; i < 180; i += 15) {
-    
-    String skyFilename = Model3DFolder + "/" + "sky" + nf(i, 0) + ".rad"; 
-    
-    String Command0 = "gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0 > " + skyFilename;
-    println(Command0);
-    launch(Command0);
-    
+    String skyFilename = "sky" + nf(i, 0) + ".rad"; 
+    batOutput.println("gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0 > " + skyFilename);
     Command1 += " " + skyFilename;
-    
-    
   }  
-  
+
+  String octFilename = radFilename.replace(".rad", ".oct");
   Command1 += " > " + octFilename;
-  Command1 = Command1.replace('/', char(92));
+  batOutput.println(Command1);
   
-  println(Command1);
-  launch(Command1);
-  
-  String Command2 = "rvu -vp -100 100 100 -vd 1 -1 -1 -av 1 1 1 -pe 0.001 -vth -vv 120 -vh 120 -ab 0 " + octFilename.replace('/', char(92));
-  println(Command2);
-  launch(Command2);
+  String Command2 = "rvu";
+  Command2 += " -vp " + nf(SOLARCHVISION_CAM_x, 0, 0) + " " + nf(SOLARCHVISION_CAM_y, 0, 0) + " " + nf(SOLARCHVISION_CAM_z, 0, 0);
+  Command2 += " -vd " + nf(WIN3D_RX_Coordinate, 0, 0) + " " + nf(WIN3D_RZ_Coordinate, 0, 0) + " " + nf(WIN3D_RY_Coordinate, 0, 0);
+  Command2 += " -av 1 1 1";
+  Command2 += " -pe 0.001 -vth -vv 120 -vh 120 -ab 0";
+  Command2 += " " + octFilename.replace('/', char(92));
+  batOutput.println(Command2);
+
+  batOutput.flush(); 
+  batOutput.close();   
+
 
 }
 
