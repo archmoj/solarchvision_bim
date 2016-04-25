@@ -20040,6 +20040,9 @@ void SOLARCHVISION_export_objects_RAD () {
       }
     }
   }
+  
+
+
 
   radOutput.flush(); 
   radOutput.close();   
@@ -20047,6 +20050,36 @@ void SOLARCHVISION_export_objects_RAD () {
   println("End of creating rad file."); 
 
   SOLARCHVISION_explore_output(radFilename);
+  
+  String octFilename = radFilename.replace(".rad", ".oct");
+  
+  
+  
+  String Command1 = "oconv " + radFilename;
+  
+  for (int i = 15; i < 180; i += 15) {
+    
+    String skyFilename = Model3DFolder + "/" + "sky" + nf(i, 0) + ".rad"; 
+    
+    String Command0 = "gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0 > " + skyFilename;
+    println(Command0);
+    launch(Command0);
+    
+    Command1 += " " + skyFilename;
+    
+    
+  }  
+  
+  Command1 += " > " + octFilename;
+  Command1 = Command1.replace('/', char(92));
+  
+  println(Command1);
+  launch(Command1);
+  
+  String Command2 = "rvu -vp -100 100 100 -vd 1 -1 -1 -av 1 1 1 -pe 0.001 -vth -vv 120 -vh 120 -ab 0 " + octFilename.replace('/', char(92));
+  println(Command2);
+  launch(Command2);
+
 }
 
 
