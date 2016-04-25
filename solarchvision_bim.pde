@@ -20063,8 +20063,13 @@ void SOLARCHVISION_export_objects_RAD () {
   batOutput.println(Command1);
   
   String Command2 = "rvu";
+
+  float dx = cos_ang(WIN3D_RX_Coordinate) * cos_ang(WIN3D_RZ_Coordinate);
+  float dy = sin_ang(WIN3D_RX_Coordinate) * cos_ang(WIN3D_RZ_Coordinate);
+  float dz = sin_ang(WIN3D_RZ_Coordinate);
+  
+  Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(dz, 0, 0);
   Command2 += " -vp " + nf(SOLARCHVISION_CAM_x, 0, 0) + " " + nf(SOLARCHVISION_CAM_y, 0, 0) + " " + nf(SOLARCHVISION_CAM_z, 0, 0);
-  Command2 += " -vd " + nf(WIN3D_RX_Coordinate, 0, 0) + " " + nf(WIN3D_RZ_Coordinate, 0, 0) + " " + nf(WIN3D_RY_Coordinate, 0, 0);
   Command2 += " -av 1 1 1";
   Command2 += " -pe 0.001 -vth -vv 120 -vh 120 -ab 0";
   Command2 += " " + octFilename.replace('/', char(92));
