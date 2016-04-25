@@ -20064,16 +20064,22 @@ void SOLARCHVISION_export_objects_RAD () {
   
   String Command2 = "rvu";
 
-  float dx = cos_ang(-WIN3D_RX_Coordinate) * cos_ang(WIN3D_RZ_Coordinate);
-  float dy = sin_ang(-WIN3D_RX_Coordinate) * cos_ang(WIN3D_RZ_Coordinate);
-  float dz = sin_ang(WIN3D_RZ_Coordinate);
+  println("WIN3D_RX_Coordinate", WIN3D_RX_Coordinate);
+  println("WIN3D_RZ_Coordinate", WIN3D_RZ_Coordinate);
+
+  float dx = cos_ang(90 - WIN3D_RX_Coordinate) * cos_ang(90 - WIN3D_RZ_Coordinate);
+  float dy = cos_ang(90 - WIN3D_RX_Coordinate) * sin_ang(90 - WIN3D_RZ_Coordinate);
+  float dz = sin_ang(90 - WIN3D_RX_Coordinate);
   
-  Command2 += " -vd " + nf(-dz , 0, 0) + " " + nf(-dy, 0, 0) + " " + nf(dx, 0, 0);
+  Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
+  Command2 += " -vu " + nf(0 , 0, 0) + " " + nf(0, 0, 0) + " " + nf(1, 0, 0);
   Command2 += " -vp " + nf(SOLARCHVISION_CAM_x, 0, 0) + " " + nf(SOLARCHVISION_CAM_y, 0, 0) + " " + nf(SOLARCHVISION_CAM_z, 0, 0);
   Command2 += " -av 1 1 1";
   Command2 += " -pe 0.001 -vth -vv 120 -vh 120 -ab 0";
   Command2 += " " + octFilename.replace('/', char(92));
   batOutput.println(Command2);
+  
+  batOutput.println("cmd /k"); // leave command prompt open
 
   batOutput.flush(); 
   batOutput.close();   
