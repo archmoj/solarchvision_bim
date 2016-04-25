@@ -20072,10 +20072,21 @@ void SOLARCHVISION_export_objects_RAD () {
   float dz = sin_ang(90 - WIN3D_RX_Coordinate);
   
   Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
-  Command2 += " -vu " + nf(0 , 0, 0) + " " + nf(0, 0, 0) + " " + nf(1, 0, 0);
+  Command2 += " -vu " + nf(0, 0, 0) + " " + nf(0, 0, 0) + " " + nf(1, 0, 0);
   Command2 += " -vp " + nf(SOLARCHVISION_CAM_x, 0, 0) + " " + nf(SOLARCHVISION_CAM_y, 0, 0) + " " + nf(SOLARCHVISION_CAM_z, 0, 0);
-  Command2 += " -av 1 1 1";
-  Command2 += " -pe 0.001 -vth -vv 120 -vh 120 -ab 0";
+  Command2 += " -vv " + nf(WIN3D_ZOOM_Coordinate, 0, 0) + " -vh " + nf(WIN3D_ZOOM_Coordinate, 0, 0);
+  
+  //Command2 += " -vtl"; //parallel
+  Command2 += " -vtv"; //perspective
+  //Command2 += " -vth"; //hemispherical
+  //Command2 += " -vtc"; //cylindrical
+  //Command2 += " -vta"; //angular
+  //Command2 += " -vts"; //stereographic 
+ 
+  
+  Command2 += " -av 0.5 0.5 0.5";
+  Command2 += " -pe 0.001";
+  Command2 += " -ab 1";
   Command2 += " " + octFilename.replace('/', char(92));
   batOutput.println(Command2);
   
