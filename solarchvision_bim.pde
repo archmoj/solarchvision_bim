@@ -20064,27 +20064,38 @@ void SOLARCHVISION_export_objects_RAD () {
   
   String Command2 = "rvu";
 
-  println("WIN3D_RX_Coordinate", WIN3D_RX_Coordinate);
-  println("WIN3D_RZ_Coordinate", WIN3D_RZ_Coordinate);
-
-  float dx = cos_ang(90 - WIN3D_RX_Coordinate) * cos_ang(90 - WIN3D_RZ_Coordinate);
-  float dy = cos_ang(90 - WIN3D_RX_Coordinate) * sin_ang(90 - WIN3D_RZ_Coordinate);
-  float dz = sin_ang(90 - WIN3D_RX_Coordinate);
-  
-  Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
-  Command2 += " -vu " + nf(0, 0, 0) + " " + nf(0, 0, 0) + " " + nf(1, 0, 0);
-  Command2 += " -vp " + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0);
-  
-  float zoom = 45 * WIN3D_Zoom / atan2_ang(WIN3D_Y_View, WIN3D_X_View);
-  
-  Command2 += " -vv " + nf(zoom, 0, 0) + " -vh " + nf(zoom, 0, 0);
-  
   //Command2 += " -vtl"; //parallel
   Command2 += " -vtv"; //perspective
   //Command2 += " -vth"; //hemispherical
   //Command2 += " -vtc"; //cylindrical
   //Command2 += " -vta"; //angular
   //Command2 += " -vts"; //stereographic 
+  
+  Command2 += " -vv " + nf(WIN3D_Zoom, 0, 0);
+  Command2 += " -vh " + nf(2 * atan_ang((WIN3D_X_View / float(WIN3D_Y_View)) * tan_ang(0.5 * WIN3D_Zoom)), 0, 0);  
+
+  Command2 += " -vp " + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0);
+
+  float dx = cos_ang(90 - WIN3D_RX_Coordinate) * cos_ang(90 - WIN3D_RZ_Coordinate);
+  float dy = cos_ang(90 - WIN3D_RX_Coordinate) * sin_ang(90 - WIN3D_RZ_Coordinate);
+  float dz = sin_ang(90 - WIN3D_RX_Coordinate);
+  
+  Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
+
+  float ux = 0;
+  float uy = 0;
+  float uz = 1;
+  if (abs(dz) > 0.99) {
+    ux = cos_ang(90 + WIN3D_RZ_Coordinate);
+    uy = sin_ang(90 + WIN3D_RZ_Coordinate);
+    uz = 0; 
+  }
+  Command2 += " -vu " + nf(ux, 0, 0) + " " + nf(uy, 0, 0) + " " + nf(uz, 0, 0);
+
+
+
+  
+
  
   
   Command2 += " -av 0.5 0.5 0.5";
