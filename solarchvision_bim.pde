@@ -20075,7 +20075,7 @@ void SOLARCHVISION_export_objects_RAD () {
   Command2 += " -vu " + nf(0, 0, 0) + " " + nf(0, 0, 0) + " " + nf(1, 0, 0);
   Command2 += " -vp " + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0);
   
-  float zoom = WIN3D_Zoom * WIN3D_X_View / float(WIN3D_Y_View);
+  float zoom = 45 * WIN3D_Zoom / atan2_ang(WIN3D_Y_View, WIN3D_X_View);
   
   Command2 += " -vv " + nf(zoom, 0, 0) + " -vh " + nf(zoom, 0, 0);
   
