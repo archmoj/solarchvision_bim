@@ -1841,7 +1841,7 @@ float WIN3D_RY_Coordinate = 0;
 float WIN3D_RZ_Coordinate = 0; //0; //180; //135;
 float WIN3D_RS_Coordinate = 5.0;
 
-float WIN3D_ZOOM_Coordinate = 60; // / (SOLARCHVISION_H_Pixel / 300.0);
+float WIN3D_ZOOM = 60; // / (SOLARCHVISION_H_Pixel / 300.0);
 
 int WIN3D_ViewType = 1; // 0: Ortho 1: Perspective
 
@@ -1917,14 +1917,14 @@ int MESSAGE_X_View = 2 * SOLARCHVISION_W_Pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MessageSize);
 
 
-float SOLARCHVISION_CAM_x;
-float SOLARCHVISION_CAM_y;
-float SOLARCHVISION_CAM_z;
-float SOLARCHVISION_CAM_fov;
-float SOLARCHVISION_CAM_dist;
+float WIN3D_CAM_x;
+float WIN3D_CAM_y;
+float WIN3D_CAM_z;
+float WIN3D_CAM_fov;
+float WIN3D_CAM_dist;
 
-float SOLARCHVISION_CAM_clipNear = 0.01;
-float SOLARCHVISION_CAM_clipFar = 2000000000.0;
+float WIN3D_CAM_clipNear = 0.01;
+float WIN3D_CAM_clipFar = 2000000000.0;
 
 
 
@@ -2058,7 +2058,7 @@ PImage[][] allSections_SolarImpact = new PImage[1][(1 + STUDY_j_End - STUDY_j_St
 
 float[][] allCameras_PPPSRRRF = {
   {
-    WIN3D_X_Coordinate, WIN3D_Y_Coordinate, WIN3D_Z_Coordinate, WIN3D_S_Coordinate, WIN3D_RX_Coordinate, WIN3D_RY_Coordinate, WIN3D_RZ_Coordinate, WIN3D_ZOOM_Coordinate
+    WIN3D_X_Coordinate, WIN3D_Y_Coordinate, WIN3D_Z_Coordinate, WIN3D_S_Coordinate, WIN3D_RX_Coordinate, WIN3D_RY_Coordinate, WIN3D_RZ_Coordinate, WIN3D_ZOOM
   }
 };
 int[] allCameras_Type = {
@@ -3635,8 +3635,8 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
     if (WIN3D_ViewType == 1) {
 
-      //the_scale *= (0.5 * WIN3D_Scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale;
-      the_scale *= (0.5 / tan(0.5 * SOLARCHVISION_CAM_fov));
+      //the_scale *= (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale;
+      the_scale *= (0.5 / tan(0.5 * WIN3D_CAM_fov));
     } else {
       float ZOOM = Orthographic_ZOOM();
 
@@ -3646,16 +3646,16 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
     WIN3D_Diagrams.pushMatrix();
 
-    SOLARCHVISION_CAM_fov = WIN3D_ZOOM_Coordinate * PI / 180;
+    WIN3D_CAM_fov = WIN3D_ZOOM * PI / 180;
 
-    SOLARCHVISION_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
+    WIN3D_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * WIN3D_CAM_fov);
 
     if (WIN3D_ViewType == 1) {
 
       float aspect = 1.0 / WIN3D_R_View;
 
-      float zFar = SOLARCHVISION_CAM_dist * 1000;
-      float zNear = SOLARCHVISION_CAM_dist * 0.001;
+      float zFar = WIN3D_CAM_dist * 1000;
+      float zNear = WIN3D_CAM_dist * 0.001;
 
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
     } else {
@@ -13031,7 +13031,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '.' :
         WIN3D_X_Coordinate = 0;
         WIN3D_Y_Coordinate = 0;
-        //WIN3D_ZOOM_Coordinate = 60;
+        //WIN3D_ZOOM = 60;
         WIN3D_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
@@ -13055,7 +13055,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         WIN3D_S_Coordinate = 1;
 
-        WIN3D_ZOOM_Coordinate = 60;        
+        WIN3D_ZOOM = 60;        
 
         WIN3D_CurrentCamera = 0;
         SOLARCHVISION_modify_Viewport_Title();
@@ -13374,7 +13374,7 @@ void WIN3D_keyPressed (KeyEvent e) {
           WIN3D_Update = 1; 
           ROLLOUT_Update = 1;
         } else {
-          WIN3D_ZOOM_Coordinate /= pow(2.0, 0.25); 
+          WIN3D_ZOOM /= pow(2.0, 0.25); 
           WIN3D_Update = 1; 
           ROLLOUT_Update = 1;
         }
@@ -13386,7 +13386,7 @@ void WIN3D_keyPressed (KeyEvent e) {
           WIN3D_Update = 1; 
           ROLLOUT_Update = 1;
         } else {
-          WIN3D_ZOOM_Coordinate *= pow(2.0, 0.25); 
+          WIN3D_ZOOM *= pow(2.0, 0.25); 
           WIN3D_Update = 1; 
           ROLLOUT_Update = 1;
         }
@@ -13398,7 +13398,7 @@ void WIN3D_keyPressed (KeyEvent e) {
           WIN3D_Update = 1; 
           ROLLOUT_Update = 1;
         } else {
-          WIN3D_ZOOM_Coordinate /= pow(2.0, 0.25); 
+          WIN3D_ZOOM /= pow(2.0, 0.25); 
           WIN3D_Update = 1; 
           ROLLOUT_Update = 1;
         }
@@ -13470,12 +13470,12 @@ void WIN3D_keyPressed (KeyEvent e) {
 
 
       case '+' :
-        WIN3D_ZOOM_Coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_Coordinate)); 
+        WIN3D_ZOOM = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM)); 
         WIN3D_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case '-' :
-        WIN3D_ZOOM_Coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_Coordinate)); 
+        WIN3D_ZOOM = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM)); 
         WIN3D_Update = 1; 
         ROLLOUT_Update = 1; 
         break; 
@@ -13493,12 +13493,12 @@ void WIN3D_keyPressed (KeyEvent e) {
         ROLLOUT_Update = 1; 
         break;
 
-      case 'P' ://WIN3D_ZOOM_Coordinate = 60;
+      case 'P' ://WIN3D_ZOOM = 60;
         WIN3D_ViewType = 1; 
         WIN3D_Update = 1; 
         ROLLOUT_Update = 1; 
         break; 
-      case 'p' ://WIN3D_ZOOM_Coordinate = 60;
+      case 'p' ://WIN3D_ZOOM = 60;
         WIN3D_ViewType = 1; 
         WIN3D_Update = 1; 
         ROLLOUT_Update = 1; 
@@ -20073,8 +20073,8 @@ void SOLARCHVISION_export_objects_RAD () {
   
   Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
   Command2 += " -vu " + nf(0, 0, 0) + " " + nf(0, 0, 0) + " " + nf(1, 0, 0);
-  Command2 += " -vp " + nf(SOLARCHVISION_CAM_x, 0, 0) + " " + nf(SOLARCHVISION_CAM_y, 0, 0) + " " + nf(SOLARCHVISION_CAM_z, 0, 0);
-  Command2 += " -vv " + nf(WIN3D_ZOOM_Coordinate, 0, 0) + " -vh " + nf(WIN3D_ZOOM_Coordinate, 0, 0);
+  Command2 += " -vp " + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0);
+  Command2 += " -vv " + nf(WIN3D_ZOOM, 0, 0) + " -vh " + nf(WIN3D_ZOOM, 0, 0);
   
   //Command2 += " -vtl"; //parallel
   Command2 += " -vtv"; //perspective
@@ -20742,7 +20742,7 @@ void SOLARCHVISION_export_objects_OBJ () {
       float rw = rh * Object2D_ImageRatios[n];
 
       float t = 0; //WIN3D_RZ_Coordinate * PI / 180.0;
-      //if (WIN3D_ViewType == 1) t = atan2(y - SOLARCHVISION_CAM_y, x - SOLARCHVISION_CAM_x) + 0.5 * PI; 
+      //if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
 
       if (allObject2Ds_MAP[f] < 0) t += PI;            
 
@@ -22592,7 +22592,7 @@ void SOLARCHVISION_delete_Cameras () {
   allCameras_PPPSRRRF[0][4] = WIN3D_RX_Coordinate;
   allCameras_PPPSRRRF[0][5] = WIN3D_RY_Coordinate;
   allCameras_PPPSRRRF[0][6] = WIN3D_RZ_Coordinate;
-  allCameras_PPPSRRRF[0][7] = WIN3D_ZOOM_Coordinate;
+  allCameras_PPPSRRRF[0][7] = WIN3D_ZOOM;
 
   allCameras_Type = new int [1];
   allCameras_Type[0] = WIN3D_ViewType;
@@ -25062,7 +25062,7 @@ void SOLARCHVISION_draw_Group3Ds () {
 
 float Orthographic_ZOOM () {
 
-  float ZOOM = 0.5 * WIN3D_ZOOM_Coordinate * PI / 180;
+  float ZOOM = 0.5 * WIN3D_ZOOM * PI / 180;
 
   return ZOOM;
 }
@@ -25076,9 +25076,9 @@ void SOLARCHVISION_look_3DViewport_towards_Selection () {
 
 void SOLARCHVISION_lookXY_3DViewport_towards_Selection () {
 
-  float xO = SOLARCHVISION_CAM_x / OBJECTS_scale;
-  float yO = SOLARCHVISION_CAM_y / OBJECTS_scale;
-  float zO = SOLARCHVISION_CAM_z / OBJECTS_scale;
+  float xO = WIN3D_CAM_x / OBJECTS_scale;
+  float yO = WIN3D_CAM_y / OBJECTS_scale;
+  float zO = WIN3D_CAM_z / OBJECTS_scale;
 
   float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
   float xA = ray_end[0] / OBJECTS_scale;
@@ -25100,9 +25100,9 @@ void SOLARCHVISION_lookXY_3DViewport_towards_Selection () {
 
 void SOLARCHVISION_lookZ_3DViewport_towards_Selection () {
 
-  float xO = SOLARCHVISION_CAM_x / OBJECTS_scale;
-  float yO = SOLARCHVISION_CAM_y / OBJECTS_scale;
-  float zO = SOLARCHVISION_CAM_z / OBJECTS_scale;
+  float xO = WIN3D_CAM_x / OBJECTS_scale;
+  float yO = WIN3D_CAM_y / OBJECTS_scale;
+  float zO = WIN3D_CAM_z / OBJECTS_scale;
 
   float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
   float xA = ray_end[0] / OBJECTS_scale;
@@ -25122,9 +25122,9 @@ void SOLARCHVISION_lookZ_3DViewport_towards_Selection () {
 
 void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
 
-  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
-  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
-  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
+  float xA = WIN3D_CAM_x / OBJECTS_scale;
+  float yA = WIN3D_CAM_y / OBJECTS_scale;
+  float zA = WIN3D_CAM_z / OBJECTS_scale;
 
   float Image_X = mouseX - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
   float Image_Y = mouseY - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
@@ -25142,9 +25142,9 @@ void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
   float yB = yO + t * dy;
   float zB = zO + t * dz;
 
-  SOLARCHVISION_CAM_x = xB * OBJECTS_scale;           
-  SOLARCHVISION_CAM_y = yB * OBJECTS_scale;
-  SOLARCHVISION_CAM_z = zB * OBJECTS_scale;     
+  WIN3D_CAM_x = xB * OBJECTS_scale;           
+  WIN3D_CAM_y = yB * OBJECTS_scale;
+  WIN3D_CAM_z = zB * OBJECTS_scale;     
 
   SOLARCHVISION_reverseTransform_3DViewport();
 
@@ -25154,9 +25154,9 @@ void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
 
 void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
 
-  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
-  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
-  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
+  float xA = WIN3D_CAM_x / OBJECTS_scale;
+  float yA = WIN3D_CAM_y / OBJECTS_scale;
+  float zA = WIN3D_CAM_z / OBJECTS_scale;
 
   float[] P = SOLARCHVISION_getPivot();
 
@@ -25172,9 +25172,9 @@ void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
   float yB = yO + t * dy;
   float zB = zO + t * dz;
 
-  SOLARCHVISION_CAM_x = xB * OBJECTS_scale;           
-  SOLARCHVISION_CAM_y = yB * OBJECTS_scale;
-  SOLARCHVISION_CAM_z = zB * OBJECTS_scale;     
+  WIN3D_CAM_x = xB * OBJECTS_scale;           
+  WIN3D_CAM_y = yB * OBJECTS_scale;
+  WIN3D_CAM_z = zB * OBJECTS_scale;     
 
   SOLARCHVISION_reverseTransform_3DViewport();
 
@@ -25186,9 +25186,9 @@ void SOLARCHVISION_rotateZ_3DViewport_around_Selection (float t) {
 
   WIN3D_RX_Coordinate += t;
 
-  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
-  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
-  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
+  float xA = WIN3D_CAM_x / OBJECTS_scale;
+  float yA = WIN3D_CAM_y / OBJECTS_scale;
+  float zA = WIN3D_CAM_z / OBJECTS_scale;
 
   float[] P = SOLARCHVISION_getPivot();
 
@@ -25222,9 +25222,9 @@ void SOLARCHVISION_rotateZ_3DViewport_around_Selection (float t) {
   float yF = yE + yO;
   float zF = zE + zO;
 
-  SOLARCHVISION_CAM_x = xF * OBJECTS_scale;           
-  SOLARCHVISION_CAM_y = yF * OBJECTS_scale;
-  SOLARCHVISION_CAM_z = zF * OBJECTS_scale; 
+  WIN3D_CAM_x = xF * OBJECTS_scale;           
+  WIN3D_CAM_y = yF * OBJECTS_scale;
+  WIN3D_CAM_z = zF * OBJECTS_scale; 
 
   SOLARCHVISION_reverseTransform_3DViewport();
 }
@@ -25234,9 +25234,9 @@ void SOLARCHVISION_rotateXY_3DViewport_around_Selection (float t) {
 
   WIN3D_RZ_Coordinate += t;
 
-  float xA = SOLARCHVISION_CAM_x / OBJECTS_scale;
-  float yA = SOLARCHVISION_CAM_y / OBJECTS_scale;
-  float zA = SOLARCHVISION_CAM_z / OBJECTS_scale;
+  float xA = WIN3D_CAM_x / OBJECTS_scale;
+  float yA = WIN3D_CAM_y / OBJECTS_scale;
+  float zA = WIN3D_CAM_z / OBJECTS_scale;
 
   float[] P = SOLARCHVISION_getPivot();
 
@@ -25251,9 +25251,9 @@ void SOLARCHVISION_rotateXY_3DViewport_around_Selection (float t) {
   float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
   float zB = zA;
 
-  SOLARCHVISION_CAM_x = xB * OBJECTS_scale;           
-  SOLARCHVISION_CAM_y = yB * OBJECTS_scale;
-  SOLARCHVISION_CAM_z = zB * OBJECTS_scale;   
+  WIN3D_CAM_x = xB * OBJECTS_scale;           
+  WIN3D_CAM_y = yB * OBJECTS_scale;
+  WIN3D_CAM_z = zB * OBJECTS_scale;   
 
   SOLARCHVISION_reverseTransform_3DViewport();
 }
@@ -25263,9 +25263,9 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_Coordin
 
   float px, py, pz;
 
-  px = SOLARCHVISION_CAM_x;
-  py = SOLARCHVISION_CAM_y;
-  pz = SOLARCHVISION_CAM_z;  
+  px = WIN3D_CAM_x;
+  py = WIN3D_CAM_y;
+  pz = WIN3D_CAM_z;  
 
   float CAM_x1, CAM_y1, CAM_z1;
 
@@ -25284,17 +25284,17 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_Coordin
 
   float CAM_x2, CAM_y2, CAM_z2;
 
-  SOLARCHVISION_CAM_fov = WIN3D_ZOOM_Coordinate * PI / 180;
+  WIN3D_CAM_fov = WIN3D_ZOOM * PI / 180;
 
-  SOLARCHVISION_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
+  WIN3D_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * WIN3D_CAM_fov);
 
   CAM_x2 = 0;
   CAM_y2 = 0;
-  CAM_z2 = SOLARCHVISION_CAM_dist;
+  CAM_z2 = WIN3D_CAM_dist;
 
-  CAM_x2 *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
-  CAM_y2 *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
-  CAM_z2 *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);  
+  CAM_x2 *= tan(0.5 * WIN3D_CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_y2 *= tan(0.5 * WIN3D_CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_z2 *= tan(0.5 * WIN3D_CAM_fov) / tan(0.5 * PI / 3.0);  
 
 
   WIN3D_X_Coordinate = CAM_x2 - CAM_x1; 
@@ -25312,7 +25312,7 @@ void SOLARCHVISION_record_last3DViewport () {
   allCameras_PPPSRRRF[WIN3D_CurrentCamera][4] = WIN3D_RX_Coordinate;
   allCameras_PPPSRRRF[WIN3D_CurrentCamera][5] = WIN3D_RY_Coordinate;
   allCameras_PPPSRRRF[WIN3D_CurrentCamera][6] = WIN3D_RZ_Coordinate;
-  allCameras_PPPSRRRF[WIN3D_CurrentCamera][7] = WIN3D_ZOOM_Coordinate;
+  allCameras_PPPSRRRF[WIN3D_CurrentCamera][7] = WIN3D_ZOOM;
 
   allCameras_Type[WIN3D_CurrentCamera] = WIN3D_ViewType;
 }  
@@ -25327,7 +25327,7 @@ void SOLARCHVISION_apply_currentCamera () {
   WIN3D_RX_Coordinate = allCameras_PPPSRRRF[WIN3D_CurrentCamera][4];
   WIN3D_RY_Coordinate = allCameras_PPPSRRRF[WIN3D_CurrentCamera][5];
   WIN3D_RZ_Coordinate = allCameras_PPPSRRRF[WIN3D_CurrentCamera][6];
-  WIN3D_ZOOM_Coordinate = allCameras_PPPSRRRF[WIN3D_CurrentCamera][7];
+  WIN3D_ZOOM = allCameras_PPPSRRRF[WIN3D_CurrentCamera][7];
 
   WIN3D_ViewType = allCameras_Type[WIN3D_CurrentCamera];
 }  
@@ -25335,42 +25335,42 @@ void SOLARCHVISION_apply_currentCamera () {
 
 void SOLARCHVISION_transform_3DViewport () {
 
-  SOLARCHVISION_CAM_fov = WIN3D_ZOOM_Coordinate * PI / 180;
+  WIN3D_CAM_fov = WIN3D_ZOOM * PI / 180;
 
-  SOLARCHVISION_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * SOLARCHVISION_CAM_fov);
+  WIN3D_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * WIN3D_CAM_fov);
 
-  SOLARCHVISION_CAM_x = 0;
-  SOLARCHVISION_CAM_y = 0;
-  SOLARCHVISION_CAM_z = SOLARCHVISION_CAM_dist;
+  WIN3D_CAM_x = 0;
+  WIN3D_CAM_y = 0;
+  WIN3D_CAM_z = WIN3D_CAM_dist;
 
 
-  SOLARCHVISION_CAM_x *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
-  SOLARCHVISION_CAM_y *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
-  SOLARCHVISION_CAM_z *= tan(0.5 * SOLARCHVISION_CAM_fov) / tan(0.5 * PI / 3.0);
+  WIN3D_CAM_x *= tan(0.5 * WIN3D_CAM_fov) / tan(0.5 * PI / 3.0);
+  WIN3D_CAM_y *= tan(0.5 * WIN3D_CAM_fov) / tan(0.5 * PI / 3.0);
+  WIN3D_CAM_z *= tan(0.5 * WIN3D_CAM_fov) / tan(0.5 * PI / 3.0);
 
-  SOLARCHVISION_CAM_x -= WIN3D_X_Coordinate;
-  SOLARCHVISION_CAM_y += WIN3D_Y_Coordinate;
-  SOLARCHVISION_CAM_z -= WIN3D_Z_Coordinate;
+  WIN3D_CAM_x -= WIN3D_X_Coordinate;
+  WIN3D_CAM_y += WIN3D_Y_Coordinate;
+  WIN3D_CAM_z -= WIN3D_Z_Coordinate;
 
   float px, py, pz;
 
-  px = SOLARCHVISION_CAM_x;
-  py = SOLARCHVISION_CAM_y * cos_ang(WIN3D_RX_Coordinate) - SOLARCHVISION_CAM_z * sin_ang(WIN3D_RX_Coordinate);
-  pz = SOLARCHVISION_CAM_y * sin_ang(WIN3D_RX_Coordinate) + SOLARCHVISION_CAM_z * cos_ang(WIN3D_RX_Coordinate);
+  px = WIN3D_CAM_x;
+  py = WIN3D_CAM_y * cos_ang(WIN3D_RX_Coordinate) - WIN3D_CAM_z * sin_ang(WIN3D_RX_Coordinate);
+  pz = WIN3D_CAM_y * sin_ang(WIN3D_RX_Coordinate) + WIN3D_CAM_z * cos_ang(WIN3D_RX_Coordinate);
 
-  SOLARCHVISION_CAM_x = px;
-  SOLARCHVISION_CAM_y = py;
-  SOLARCHVISION_CAM_z = pz;
+  WIN3D_CAM_x = px;
+  WIN3D_CAM_y = py;
+  WIN3D_CAM_z = pz;
 
-  pz = SOLARCHVISION_CAM_z;
-  px = SOLARCHVISION_CAM_x * cos_ang(WIN3D_RZ_Coordinate) - SOLARCHVISION_CAM_y * sin_ang(WIN3D_RZ_Coordinate);
-  py = SOLARCHVISION_CAM_x * sin_ang(WIN3D_RZ_Coordinate) + SOLARCHVISION_CAM_y * cos_ang(WIN3D_RZ_Coordinate);
+  pz = WIN3D_CAM_z;
+  px = WIN3D_CAM_x * cos_ang(WIN3D_RZ_Coordinate) - WIN3D_CAM_y * sin_ang(WIN3D_RZ_Coordinate);
+  py = WIN3D_CAM_x * sin_ang(WIN3D_RZ_Coordinate) + WIN3D_CAM_y * cos_ang(WIN3D_RZ_Coordinate);
 
-  SOLARCHVISION_CAM_x = px;
-  SOLARCHVISION_CAM_y = py;
-  SOLARCHVISION_CAM_z = pz;   
+  WIN3D_CAM_x = px;
+  WIN3D_CAM_y = py;
+  WIN3D_CAM_z = pz;   
 
-  //println("Camera:", nf(SOLARCHVISION_CAM_x,0,4), nf(SOLARCHVISION_CAM_y,0,4), nf(SOLARCHVISION_CAM_z,0,4));
+  //println("Camera:", nf(WIN3D_CAM_x,0,4), nf(WIN3D_CAM_y,0,4), nf(WIN3D_CAM_z,0,4));
 }
 
 
@@ -25381,10 +25381,10 @@ void SOLARCHVISION_put_3DViewport () {
 
     float aspect = 1.0 / WIN3D_R_View;
 
-    float zFar = SOLARCHVISION_CAM_dist * SOLARCHVISION_CAM_clipFar;
-    float zNear = SOLARCHVISION_CAM_dist * SOLARCHVISION_CAM_clipNear;
+    float zFar = WIN3D_CAM_dist * WIN3D_CAM_clipFar;
+    float zNear = WIN3D_CAM_dist * WIN3D_CAM_clipNear;
 
-    WIN3D_Diagrams.perspective(SOLARCHVISION_CAM_fov, aspect, zNear, zFar);
+    WIN3D_Diagrams.perspective(WIN3D_CAM_fov, aspect, zNear, zFar);
 
     WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   } else {
@@ -25427,7 +25427,7 @@ void SOLARCHVISION_draw_Object2Ds () {
       float y = allObject2Ds_XYZS[f][1] * OBJECTS_scale;
       float z = allObject2Ds_XYZS[f][2] * OBJECTS_scale;
 
-      DistZ[f] = dist(x, y, z, SOLARCHVISION_CAM_x, SOLARCHVISION_CAM_y, SOLARCHVISION_CAM_z);
+      DistZ[f] = dist(x, y, z, WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z);
     }
 
     for (int g = 1; g <= allObject2Ds_num; g++) {
@@ -25461,7 +25461,7 @@ void SOLARCHVISION_draw_Object2Ds () {
         float rw = rh * Object2D_ImageRatios[n];
 
         float t = WIN3D_RZ_Coordinate * PI / 180.0;
-        if (WIN3D_ViewType == 1) t = atan2(y - SOLARCHVISION_CAM_y, x - SOLARCHVISION_CAM_x) + 0.5 * PI; 
+        if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
 
         if (allObject2Ds_MAP[f] < 0) t += PI;         
 
@@ -32651,7 +32651,7 @@ void mouseWheel (MouseEvent event) {
                 if (WIN3D_ViewType == 1) {
                   WIN3D_Z_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
                 } else {
-                  WIN3D_ZOOM_Coordinate /= pow(2.0, Wheel_Value);
+                  WIN3D_ZOOM /= pow(2.0, Wheel_Value);
                 }
 
                 WIN3D_Update = 1;
@@ -32659,8 +32659,8 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D_UI_CurrentTask == -4) { // viewport:elevation
 
-                if (Wheel_Value > 0) WIN3D_ZOOM_Coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_Coordinate)); 
-                if (Wheel_Value < 0) WIN3D_ZOOM_Coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_Coordinate));
+                if (Wheel_Value > 0) WIN3D_ZOOM = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM)); 
+                if (Wheel_Value < 0) WIN3D_ZOOM = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM));
 
                 WIN3D_Update = 1;
               }  
@@ -32932,7 +32932,7 @@ void mouseReleased () {
                   float[] ray_direction = new float [3];
 
                   float[] ray_start = {
-                    SOLARCHVISION_CAM_x, SOLARCHVISION_CAM_y, SOLARCHVISION_CAM_z
+                    WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
                   };
 
                   float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
@@ -34490,7 +34490,7 @@ void mouseClicked () {
               float Camera_RX = WIN3D_RX_Coordinate;
               float Camera_RY = WIN3D_RY_Coordinate;
               float Camera_RZ = WIN3D_RZ_Coordinate;
-              float Camera_ZOOM = WIN3D_ZOOM_Coordinate;
+              float Camera_ZOOM = WIN3D_ZOOM;
 
               int Camera_Type = WIN3D_ViewType;
 
@@ -35563,7 +35563,7 @@ void mouseClicked () {
             float[] ray_direction = new float [3];
 
             float[] ray_start = {
-              SOLARCHVISION_CAM_x, SOLARCHVISION_CAM_y, SOLARCHVISION_CAM_z
+              WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
             };
 
             float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
@@ -36201,9 +36201,9 @@ void mouseClicked () {
 
                     int f = int(RxP[4]);
 
-                  float keep_CAM_x = SOLARCHVISION_CAM_x;
-                  float keep_CAM_y = SOLARCHVISION_CAM_y;
-                  float keep_CAM_z = SOLARCHVISION_CAM_z;
+                  float keep_CAM_x = WIN3D_CAM_x;
+                  float keep_CAM_y = WIN3D_CAM_y;
+                  float keep_CAM_z = WIN3D_CAM_z;
                   float keep_WIN3D_X_Coordinate = WIN3D_X_Coordinate; 
                   float keep_WIN3D_Y_Coordinate = WIN3D_Y_Coordinate;
                   float keep_WIN3D_Z_Coordinate = WIN3D_Z_Coordinate;
@@ -36211,13 +36211,13 @@ void mouseClicked () {
                   float keep_WIN3D_RX_Coordinate = WIN3D_RX_Coordinate; 
                   float keep_WIN3D_RY_Coordinate = WIN3D_RY_Coordinate;
                   float keep_WIN3D_RZ_Coordinate = WIN3D_RZ_Coordinate;
-                  float keep_WIN3D_ZOOM_Coordinate = WIN3D_ZOOM_Coordinate;
+                  float keep_WIN3D_ZOOM = WIN3D_ZOOM;
 
                   {
 
-                    SOLARCHVISION_CAM_x = RxP[0];
-                    SOLARCHVISION_CAM_y = RxP[1];
-                    SOLARCHVISION_CAM_z = RxP[2] + EyeLevel;       
+                    WIN3D_CAM_x = RxP[0];
+                    WIN3D_CAM_y = RxP[1];
+                    WIN3D_CAM_z = RxP[2] + EyeLevel;       
 
                     SOLARCHVISION_reverseTransform_3DViewport();
 
@@ -36228,7 +36228,7 @@ void mouseClicked () {
                     float Camera_RX = WIN3D_RX_Coordinate;
                     float Camera_RY = WIN3D_RY_Coordinate;
                     float Camera_RZ = WIN3D_RZ_Coordinate;
-                    float Camera_ZOOM = WIN3D_ZOOM_Coordinate;
+                    float Camera_ZOOM = WIN3D_ZOOM;
 
                     int Camera_Type = WIN3D_ViewType;
 
@@ -36237,9 +36237,9 @@ void mouseClicked () {
                     WIN3D_Update = 1;
                   }  
 
-                  SOLARCHVISION_CAM_x = keep_CAM_x;
-                  SOLARCHVISION_CAM_y = keep_CAM_y;
-                  SOLARCHVISION_CAM_z = keep_CAM_z;
+                  WIN3D_CAM_x = keep_CAM_x;
+                  WIN3D_CAM_y = keep_CAM_y;
+                  WIN3D_CAM_z = keep_CAM_z;
                   WIN3D_X_Coordinate = keep_WIN3D_X_Coordinate; 
                   WIN3D_Y_Coordinate = keep_WIN3D_Y_Coordinate;
                   WIN3D_Z_Coordinate = keep_WIN3D_Z_Coordinate;
@@ -36247,7 +36247,7 @@ void mouseClicked () {
                   WIN3D_RX_Coordinate = keep_WIN3D_RX_Coordinate; 
                   WIN3D_RY_Coordinate = keep_WIN3D_RY_Coordinate;
                   WIN3D_RZ_Coordinate = keep_WIN3D_RZ_Coordinate;
-                  WIN3D_ZOOM_Coordinate = keep_WIN3D_ZOOM_Coordinate;
+                  WIN3D_ZOOM = keep_WIN3D_ZOOM;
                 }
 
                 if (Current_ObjectCategory == ObjectCategory_Sections) { // working with sections              
@@ -37106,8 +37106,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       WIN3D_CurrentCamera = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "WIN3D_CurrentCamera", WIN3D_CurrentCamera, 0, allCameras_num, 1), 1));
 
-      SOLARCHVISION_CAM_clipNear = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "SOLARCHVISION_CAM_clipNear", SOLARCHVISION_CAM_clipNear, 0.01, 100, -2);
-      SOLARCHVISION_CAM_clipFar = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "SOLARCHVISION_CAM_clipFar", SOLARCHVISION_CAM_clipFar, 1000, 2000000000, -2);
+      WIN3D_CAM_clipNear = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "WIN3D_CAM_clipNear", WIN3D_CAM_clipNear, 0.01, 100, -2);
+      WIN3D_CAM_clipFar = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "WIN3D_CAM_clipFar", WIN3D_CAM_clipFar, 1000, 2000000000, -2);
 
       //WIN3D_FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "WIN3D_FacesShade", WIN3D_FacesShade, 0, Shade_Options_num - 1, 1), 1));
 
@@ -38155,9 +38155,9 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
   float px, py, pz;
 
-  x -= SOLARCHVISION_CAM_x;
-  y -= SOLARCHVISION_CAM_y;
-  z += SOLARCHVISION_CAM_z;
+  x -= WIN3D_CAM_x;
+  y -= WIN3D_CAM_y;
+  z += WIN3D_CAM_z;
 
   pz = z;
   px = x * cos_ang(-WIN3D_RZ_Coordinate) - y * sin_ang(-WIN3D_RZ_Coordinate);
@@ -38179,8 +38179,8 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
   if (z > 0) {
     if (WIN3D_ViewType == 1) {
 
-      Image_X = (x / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale;
-      Image_Y = -(y / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale;
+      Image_X = (x / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale;
+      Image_Y = -(y / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale;
       Image_Z = z;
     } else {
 
@@ -39266,8 +39266,8 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
     PNT_z = (0.5 * WIN3D_refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
 
-    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_Scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale);
-    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_Scale3D / tan(0.5 * SOLARCHVISION_CAM_fov)) * WIN3D_refScale);
+    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale);
+    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale);
   } else {
     float ZOOM = Orthographic_ZOOM();
 
@@ -39295,9 +39295,9 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   PNT_y = py;
   PNT_z = pz;    
 
-  PNT_x += SOLARCHVISION_CAM_x;
-  PNT_y += SOLARCHVISION_CAM_y;
-  PNT_z -= SOLARCHVISION_CAM_z;  
+  PNT_x += WIN3D_CAM_x;
+  PNT_y += WIN3D_CAM_y;
+  PNT_z -= WIN3D_CAM_z;  
 
   float[] return_array = {
     PNT_x, PNT_y, -PNT_z
@@ -40676,9 +40676,9 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
 
     float x = 0, y = 0, z = 0;
 
-    float keep_CAM_x = SOLARCHVISION_CAM_x;
-    float keep_CAM_y = SOLARCHVISION_CAM_y;
-    float keep_CAM_z = SOLARCHVISION_CAM_z;
+    float keep_CAM_x = WIN3D_CAM_x;
+    float keep_CAM_y = WIN3D_CAM_y;
+    float keep_CAM_z = WIN3D_CAM_z;
     float keep_WIN3D_X_Coordinate = WIN3D_X_Coordinate; 
     float keep_WIN3D_Y_Coordinate = WIN3D_Y_Coordinate;
     float keep_WIN3D_Z_Coordinate = WIN3D_Z_Coordinate;
@@ -40686,7 +40686,7 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
     float keep_WIN3D_RX_Coordinate = WIN3D_RX_Coordinate; 
     float keep_WIN3D_RY_Coordinate = WIN3D_RY_Coordinate;
     float keep_WIN3D_RZ_Coordinate = WIN3D_RZ_Coordinate;
-    float keep_WIN3D_ZOOM_Coordinate = WIN3D_ZOOM_Coordinate;
+    float keep_WIN3D_ZOOM = WIN3D_ZOOM;
 
     {
 
@@ -40697,7 +40697,7 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       WIN3D_RX_Coordinate = Camera_RX; 
       WIN3D_RY_Coordinate = Camera_RY;
       WIN3D_RZ_Coordinate = Camera_RZ;
-      WIN3D_ZOOM_Coordinate = Camera_ZOOM;
+      WIN3D_ZOOM = Camera_ZOOM;
 
       SOLARCHVISION_transform_3DViewport();
 
@@ -40713,14 +40713,14 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       float y3 = x2 * sin_ang(Camera_RZ) + y2 * cos_ang(Camera_RZ);
       float z3 = z2;
 
-      x = SOLARCHVISION_CAM_x + x3;
-      y = SOLARCHVISION_CAM_y + y3;
-      z = SOLARCHVISION_CAM_z + z3;
+      x = WIN3D_CAM_x + x3;
+      y = WIN3D_CAM_y + y3;
+      z = WIN3D_CAM_z + z3;
     }
 
-    SOLARCHVISION_CAM_x = keep_CAM_x;
-    SOLARCHVISION_CAM_y = keep_CAM_y;
-    SOLARCHVISION_CAM_z = keep_CAM_z;
+    WIN3D_CAM_x = keep_CAM_x;
+    WIN3D_CAM_y = keep_CAM_y;
+    WIN3D_CAM_z = keep_CAM_z;
     WIN3D_X_Coordinate = keep_WIN3D_X_Coordinate; 
     WIN3D_Y_Coordinate = keep_WIN3D_Y_Coordinate;
     WIN3D_Z_Coordinate = keep_WIN3D_Z_Coordinate;
@@ -40728,7 +40728,7 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
     WIN3D_RX_Coordinate = keep_WIN3D_RX_Coordinate; 
     WIN3D_RY_Coordinate = keep_WIN3D_RY_Coordinate;
     WIN3D_RZ_Coordinate = keep_WIN3D_RZ_Coordinate;
-    WIN3D_ZOOM_Coordinate = keep_WIN3D_ZOOM_Coordinate;
+    WIN3D_ZOOM = keep_WIN3D_ZOOM;
 
     ImageVertex[q][0] = x;
     ImageVertex[q][1] = y;
@@ -41250,7 +41250,7 @@ void SOLARCHVISION_draw_Fractals () {
         // ----------------        
 
         float t = WIN3D_RZ_Coordinate * PI / 180.0;
-        if (WIN3D_ViewType == 1) t = atan2(y - SOLARCHVISION_CAM_y, x - SOLARCHVISION_CAM_x) + 0.5 * PI; 
+        if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
 
         {
           allFractals_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
@@ -47349,7 +47349,7 @@ void SOLARCHVISION_UI_set_to_View_ZOOM (int n) {
   WIN3D_UI_CurrentTask = -4;
 
   if (n == 1) {
-    WIN3D_ZOOM_Coordinate = 60;
+    WIN3D_ZOOM = 60;
     WIN3D_Update = 1;
   }
 
@@ -48442,16 +48442,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Shade_Vertex_Solar", Shade_Vertex_Solar);
   newChild1.setInt("Shade_Vertex_Solid", Shade_Vertex_Solid);
   newChild1.setInt("Shade_Vertex_Elevation", Shade_Vertex_Elevation);
-  newChild1.setFloat("SOLARCHVISION_CAM_x", SOLARCHVISION_CAM_x);
-  newChild1.setFloat("SOLARCHVISION_CAM_y", SOLARCHVISION_CAM_y);
-  newChild1.setFloat("SOLARCHVISION_CAM_z", SOLARCHVISION_CAM_z);
-  newChild1.setFloat("SOLARCHVISION_CAM_fov", SOLARCHVISION_CAM_fov);
-  newChild1.setFloat("SOLARCHVISION_CAM_dist", SOLARCHVISION_CAM_dist);
-  newChild1.setFloat("SOLARCHVISION_CAM_clipNear", SOLARCHVISION_CAM_clipNear);
-  newChild1.setFloat("SOLARCHVISION_CAM_clipFar", SOLARCHVISION_CAM_clipFar);
+  newChild1.setFloat("WIN3D_CAM_x", WIN3D_CAM_x);
+  newChild1.setFloat("WIN3D_CAM_y", WIN3D_CAM_y);
+  newChild1.setFloat("WIN3D_CAM_z", WIN3D_CAM_z);
+  newChild1.setFloat("WIN3D_CAM_fov", WIN3D_CAM_fov);
+  newChild1.setFloat("WIN3D_CAM_dist", WIN3D_CAM_dist);
+  newChild1.setFloat("WIN3D_CAM_clipNear", WIN3D_CAM_clipNear);
+  newChild1.setFloat("WIN3D_CAM_clipFar", WIN3D_CAM_clipFar);
   newChild1.setInt("WIN3D_CurrentCamera", WIN3D_CurrentCamera);
   newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
   newChild1.setFloat("WIN3D_refScale", WIN3D_refScale);
+  newChild1.setFloat("WIN3D_X_Coordinate", WIN3D_X_Coordinate);
   newChild1.setFloat("WIN3D_Y_Coordinate", WIN3D_Y_Coordinate);
   newChild1.setFloat("WIN3D_Z_Coordinate", WIN3D_Z_Coordinate);
   newChild1.setFloat("WIN3D_S_Coordinate", WIN3D_S_Coordinate);
@@ -48459,7 +48460,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("WIN3D_RY_Coordinate", WIN3D_RY_Coordinate);
   newChild1.setFloat("WIN3D_RZ_Coordinate", WIN3D_RZ_Coordinate);
   newChild1.setFloat("WIN3D_RS_Coordinate", WIN3D_RS_Coordinate);
-  newChild1.setFloat("WIN3D_ZOOM_Coordinate", WIN3D_ZOOM_Coordinate);
+  newChild1.setFloat("WIN3D_ZOOM", WIN3D_ZOOM);
   newChild1.setInt("WIN3D_ViewType", WIN3D_ViewType);
   newChild1.setInt("WIN3D_FacesShade", WIN3D_FacesShade);
   newChild1.setInt("selected_posVector", selected_posVector);
@@ -49683,16 +49684,17 @@ void SOLARCHVISION_load_project (String myFile) {
       Shade_Vertex_Solar = children0[L].getInt("Shade_Vertex_Solar");
       Shade_Vertex_Solid = children0[L].getInt("Shade_Vertex_Solid");
       Shade_Vertex_Elevation = children0[L].getInt("Shade_Vertex_Elevation");
-      SOLARCHVISION_CAM_x = children0[L].getFloat("SOLARCHVISION_CAM_x");
-      SOLARCHVISION_CAM_y = children0[L].getFloat("SOLARCHVISION_CAM_y");
-      SOLARCHVISION_CAM_z = children0[L].getFloat("SOLARCHVISION_CAM_z");
-      SOLARCHVISION_CAM_fov = children0[L].getFloat("SOLARCHVISION_CAM_fov");
-      SOLARCHVISION_CAM_dist = children0[L].getFloat("SOLARCHVISION_CAM_dist");
-      SOLARCHVISION_CAM_clipNear = children0[L].getFloat("SOLARCHVISION_CAM_clipNear");
-      SOLARCHVISION_CAM_clipFar = children0[L].getFloat("SOLARCHVISION_CAM_clipFar");
+      WIN3D_CAM_x = children0[L].getFloat("WIN3D_CAM_x");
+      WIN3D_CAM_y = children0[L].getFloat("WIN3D_CAM_y");
+      WIN3D_CAM_z = children0[L].getFloat("WIN3D_CAM_z");
+      WIN3D_CAM_fov = children0[L].getFloat("WIN3D_CAM_fov");
+      WIN3D_CAM_dist = children0[L].getFloat("WIN3D_CAM_dist");
+      WIN3D_CAM_clipNear = children0[L].getFloat("WIN3D_CAM_clipNear");
+      WIN3D_CAM_clipFar = children0[L].getFloat("WIN3D_CAM_clipFar");
       WIN3D_CurrentCamera = children0[L].getInt("WIN3D_CurrentCamera");
       OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
       WIN3D_refScale = children0[L].getFloat("WIN3D_refScale");
+      WIN3D_X_Coordinate = children0[L].getFloat("WIN3D_X_Coordinate");
       WIN3D_Y_Coordinate = children0[L].getFloat("WIN3D_Y_Coordinate");
       WIN3D_Z_Coordinate = children0[L].getFloat("WIN3D_Z_Coordinate");
       WIN3D_S_Coordinate = children0[L].getFloat("WIN3D_S_Coordinate");
@@ -49700,7 +49702,7 @@ void SOLARCHVISION_load_project (String myFile) {
       WIN3D_RY_Coordinate = children0[L].getFloat("WIN3D_RY_Coordinate");
       WIN3D_RZ_Coordinate = children0[L].getFloat("WIN3D_RZ_Coordinate");
       WIN3D_RS_Coordinate = children0[L].getFloat("WIN3D_RS_Coordinate");
-      WIN3D_ZOOM_Coordinate = children0[L].getFloat("WIN3D_ZOOM_Coordinate");
+      WIN3D_ZOOM = children0[L].getFloat("WIN3D_ZOOM");
       WIN3D_ViewType = children0[L].getInt("WIN3D_ViewType");
       WIN3D_FacesShade = children0[L].getInt("WIN3D_FacesShade");
 
