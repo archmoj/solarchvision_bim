@@ -333,10 +333,14 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 1; 
+int STATION_Number = 0; 
 
 String[][] Defined_Stations = {
 
+  {
+    "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
+  }  
+  ,
 
 
   {
@@ -19908,7 +19912,7 @@ void SOLARCHVISION_export_objects_SCR () {
 }
 
 
-
+PrintWriter radOutput;
 
 void SOLARCHVISION_export_objects_RAD () {
 
@@ -19916,10 +19920,16 @@ void SOLARCHVISION_export_objects_RAD () {
 
   String radFilename = Model3DFolder + "/" + fileBasename + ".rad";  
 
-  PrintWriter radOutput = createWriter(radFilename);
+  radOutput = createWriter(radFilename);
 
   radOutput.println("#SOLARCHVISION");
   radOutput.println();
+
+
+  if (Display_LAND_MESH != 0) {
+
+    SOLARCHVISION_draw_land(5);
+  }
 
   if (Display_Model3Ds != 0) {
 
@@ -23899,7 +23909,7 @@ void SOLARCHVISION_draw_STAR3D () {
 
 void SOLARCHVISION_draw_land (int target_window) {
 
-  // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export
+  // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export 5:RAD-export
 
   if ((Display_LAND_MESH == 1) && (LoadButton_LandMesh == 1)) {
 
@@ -23908,7 +23918,41 @@ void SOLARCHVISION_draw_land (int target_window) {
     int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
     float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
 
+    if (target_window == 5) {
 
+      if (objExport_MaterialLibrary != 0) {
+
+        //if (Display_LAND_Texture != 0) {           
+
+          //for (int n_Map = 0; n_Map <= LAND_Texture_num; n_Map++) {
+          for (int n_Map = 0; n_Map < 1; n_Map++) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+            
+// Just to test!
+
+            int mt = n_Map;
+
+            float a = Materials_Color[mt][0] / 255.0; 
+            float r = Materials_Color[mt][1] / 255.0; 
+            float g = Materials_Color[mt][2] / 255.0; 
+            float b = Materials_Color[mt][3] / 255.0; 
+    
+            radOutput.println("void plastic " + "LandMesh_" + nf(n_Map, 0));
+            radOutput.println("0");
+            radOutput.println("0");
+            radOutput.println("5 " + nf(r, 0, objExport_PrecisionVtexture) + " " + nf(g, 0, objExport_PrecisionVtexture) + " " + nf(b, 0, objExport_PrecisionVtexture) + " 0 0");
+
+            if (Display_LAND_Texture != 0) {
+              if (n_Map != 0) {
+/*
+    copy the map!
+*/                
+              }
+            }
+          }
+        //}
+      }
+    }
 
     if (target_window == 4) {
 
@@ -24062,7 +24106,7 @@ void SOLARCHVISION_draw_land (int target_window) {
                 }
               }
             }    
-
+            
             for (int s = 0; s < subFace.length; s++) {
 
               if (Display_LAND_Texture == 0) {
@@ -24114,6 +24158,33 @@ void SOLARCHVISION_draw_land (int target_window) {
                 if (target_window == 3) {
                   WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
                 }
+                
+                
+                
+                if (target_window == 5) {
+
+                  radOutput.println("LandMesh_0" + " polygon " + "LAND");
+                  radOutput.println("0");
+                  radOutput.println("0");
+                  radOutput.println("9");      
+                  
+                  radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[1][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][2], 0, objExport_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));
+                  
+                  radOutput.println("LandMesh_0" + " polygon " + "LAND");
+                  radOutput.println("0");
+                  radOutput.println("0");
+                  radOutput.println("9");      
+                  
+                  radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[3][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][2], 0, objExport_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));
+
+                }
+                                
+
+                
               } else {       
 
                 float u = (subFace[s][0] / LAND_Texture_scale_U[n_Map] + 0.5);
@@ -24137,6 +24208,10 @@ void SOLARCHVISION_draw_land (int target_window) {
                     num_vertices_added += 1;
                   }
                 }
+
+
+
+             
               }
             }
 
