@@ -272,6 +272,9 @@ float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = squar
 String STRING_undefined = "N/A";
 float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
 
+float FLOAT_huge = 1000000000;
+float FLOAT_tiny = 0.0000001;
+
 float CubePower = 16; //8; 
 float StarPower = 0.25; 
 
@@ -5059,6 +5062,12 @@ float SOLARCHVISION_fn_dot (float[] a, float b[]) {
   }
   return d;
 }
+
+float SOLARCHVISION_fn3dot (float[] a, float b[]) {
+  
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
 
 
 
@@ -25748,7 +25757,46 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
+  
+  for (int f = 1; f < allFaces_PNT.length; f++) {
 
+    int vsb = allFaces_MTLV[f][3];
+
+    if (vsb > 0) {    
+
+      int nA = 0;
+      int nB = 1;
+      int nC = allFaces_PNT[f].length - 2;
+      int nD = allFaces_PNT[f].length - 1;
+      
+      PVector AC = new PVector(allVertices[nA][0] - allVertices[nC][0], allVertices[nA][1] - allVertices[nC][1], allVertices[nA][2] - allVertices[nC][2]); 
+      PVector BD = new PVector(allVertices[nB][0] - allVertices[nD][0], allVertices[nB][1] - allVertices[nD][1], allVertices[nB][2] - allVertices[nD][2]); 
+
+      PVector ACxBD = AC.cross(BD);      
+      
+      float[] face_norm = {ACxBD.x, ACxBD.y, ACxBD.z};
+      
+      float[] face_offset = ?
+
+      
+      
+    
+      rdot = -SOLARCHVISION_fn3dot(ray_dir, face_norm);
+
+      if (rdot < FLOAT_tiny && rdot > -FLOAT_tiny) { // parallel to plane
+        dist2intersect = FLOAT_huge;
+      }
+      else {
+        dist2intersect = (SOLARCHVISION_fn3dot(ray_pnt, face_norm) - face_offset) / rdot;
+        
+
+      }
+
+      
+    }
+  }  
+  
+/*
   float[] pre_angle_to_allFaces = new float [allFaces_PNT.length];
 
   for (int f = 1; f < allFaces_PNT.length; f++) {
@@ -25907,9 +25955,15 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
     //}
   }
+*/
+
+
 
   return return_point;
 }
+
+
+
 
 
 
