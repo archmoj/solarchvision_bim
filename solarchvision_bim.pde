@@ -20051,6 +20051,10 @@ void SOLARCHVISION_export_objects_RAD () {
     }
   }
   
+  for (int i = 15; i < 180; i += 15) {
+    radOutput.println("!gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0");
+  }   
+  
   radOutput.flush(); 
   radOutput.close();   
 
@@ -20061,13 +20065,8 @@ void SOLARCHVISION_export_objects_RAD () {
   
   String batFilename = radFilename.replace(".rad", ".bat");
   PrintWriter batOutput = createWriter(batFilename);
-  String Command1 = "oconv " + radFilename;
-  for (int i = 15; i < 180; i += 15) {
-    String skyFilename = "sky" + nf(i, 0) + ".rad"; 
-    batOutput.println("gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0 > " + skyFilename);
-    Command1 += " " + skyFilename;
-  }  
 
+  String Command1 = "oconv " + radFilename;
   String octFilename = radFilename.replace(".rad", ".oct");
   Command1 += " > " + octFilename;
   batOutput.println(Command1);
