@@ -25770,7 +25770,8 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allFaces_PNT.length; f++) {
+  //for (int f = 1; f < allFaces_PNT.length; f++) {
+  for (int f = 1; f <= 1; f++) {
 
     int vsb = allFaces_MTLV[f][3];
 
@@ -25781,8 +25782,13 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
       int nC = allFaces_PNT[f].length - 2;
       int nD = allFaces_PNT[f].length - 1;
       
-      float[] AC = {allVertices[nA][0] - allVertices[nC][0], allVertices[nA][1] - allVertices[nC][1], allVertices[nA][2] - allVertices[nC][2]}; 
-      float[] BD = {allVertices[nB][0] - allVertices[nD][0], allVertices[nB][1] - allVertices[nD][1], allVertices[nB][2] - allVertices[nD][2]}; 
+      //float[] AC = {allVertices[nA][0] - allVertices[nC][0], allVertices[nA][1] - allVertices[nC][1], allVertices[nA][2] - allVertices[nC][2]}; 
+      //float[] BD = {allVertices[nB][0] - allVertices[nD][0], allVertices[nB][1] - allVertices[nD][1], allVertices[nB][2] - allVertices[nD][2]}; 
+
+      float[] AC = {-200,-200,0}; // <<<<<<<<<<<
+      float[] BD = {-200,200,0};
+      
+      ??????
 
       float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
       
