@@ -5063,9 +5063,21 @@ float SOLARCHVISION_fn_dot (float[] a, float b[]) {
   return d;
 }
 
-float SOLARCHVISION_fn3dot (float[] a, float b[]) {
+float SOLARCHVISION_3xDot (float[] a, float b[]) {
   
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+float[] SOLARCHVISION_3xCross (float[] a, float b[]) {
+  
+  float[] c = new float [3];
+  
+  c[0] = a[1] * b[2] - a[2] * b[1];
+  c[1] = a[2] * b[0] - a[0] * b[2];
+  c[2] = a[0] * b[1] - a[1] * b[0];
+  
+  return c;
+  
 }
 
 
@@ -25769,30 +25781,32 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
       int nC = allFaces_PNT[f].length - 2;
       int nD = allFaces_PNT[f].length - 1;
       
-      PVector AC = new PVector(allVertices[nA][0] - allVertices[nC][0], allVertices[nA][1] - allVertices[nC][1], allVertices[nA][2] - allVertices[nC][2]); 
-      PVector BD = new PVector(allVertices[nB][0] - allVertices[nD][0], allVertices[nB][1] - allVertices[nD][1], allVertices[nB][2] - allVertices[nD][2]); 
+      float[] AC = {allVertices[nA][0] - allVertices[nC][0], allVertices[nA][1] - allVertices[nC][1], allVertices[nA][2] - allVertices[nC][2]}; 
+      float[] BD = {allVertices[nB][0] - allVertices[nD][0], allVertices[nB][1] - allVertices[nD][1], allVertices[nB][2] - allVertices[nD][2]}; 
 
-      PVector ACxBD = AC.cross(BD);      
+      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
       
-      float[] face_norm = {ACxBD.x, ACxBD.y, ACxBD.z};
-      
-      float[] face_offset = ?
+      float face_offset = 0.5 * ((AC[0] + BD[0]) * face_norm[0] + (AC[1] + BD[1]) * face_norm[1] + (AC[2] + BD[2]) * face_norm[2]);  
 
       
-      
+      float dist2intersect = FLOAT_undefined;
     
-      rdot = -SOLARCHVISION_fn3dot(ray_dir, face_norm);
+      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
-      if (rdot < FLOAT_tiny && rdot > -FLOAT_tiny) { // parallel to plane
+      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_fn3dot(ray_pnt, face_norm) - face_offset) / rdot;
-        
-
+        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
       }
-
       
+      println("hello!", dist2intersect);
+      
+      hitPoint[f][0] = dist2intersect * ray_dir[0] + ray_pnt[0];
+      hitPoint[f][1] = dist2intersect * ray_dir[1] + ray_pnt[1];
+      hitPoint[f][2] = dist2intersect * ray_dir[2] + ray_pnt[2];
+      hitPoint[f][3] = dist2intersect;
+
     }
   }  
   
@@ -25923,6 +25937,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     }
   }
 
+*/
   float[] return_point = {
     FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
   };
@@ -25955,7 +25970,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
     //}
   }
-*/
+
 
 
 
