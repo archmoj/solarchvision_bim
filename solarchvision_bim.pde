@@ -25833,12 +25833,8 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
       for (int i = 0; i < allFaces_PNT[f].length; i++) {
         int next_i = (i + 1) % allFaces_PNT[f].length;
 
-        float[] vectA = {
-          allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect
-        }; 
-        float[] vectB = {
-          allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect
-        };
+        float[] vectA = {allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect};
+        float[] vectB = {allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect};
 
         float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
 
@@ -25851,48 +25847,31 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         hitPoint[f][1] = Y_intersect;
         hitPoint[f][2] = Z_intersect;
         hitPoint[f][3] = dist2intersect;
-      
       }
-
     }
   }  
-  
 
-  float[] return_point = {
-    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
-  };
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allFaces_PNT.length; f++) {
-
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
-
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
-
-    float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-
-    //if (hd < pre_dist) {
-    //if ((hd < pre_dist) && (hd > 0.02)) {
-    if ((hd < pre_dist) && (h_delta > 0.005)) {
-
-      pre_dist = hd;
-
-      return_point[0] = hx;
-      return_point[1] = hy;
-      return_point[2] = hz;
-      return_point[3] = hd;
-      return_point[4] = f;
-    }
-
+    
+    //if (dist(hitPoint[f][0], hitPoint[f][1], hitPoint[f][2], ray_pnt[0], ray_pnt[1], ray_pnt[2]) > FLOAT_tiny) {
+????????????????????      
+      if (pre_dist > hitPoint[f][3]) {
+  
+        pre_dist = hitPoint[f][3];
+  
+        return_point[0] = hitPoint[f][0];
+        return_point[1] = hitPoint[f][1];
+        return_point[2] = hitPoint[f][2];
+        return_point[3] = hitPoint[f][3];
+        return_point[4] = f;
+      }
+      
     //}
   }
-
-
-
 
   return return_point;
 }
