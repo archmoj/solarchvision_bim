@@ -5081,6 +5081,31 @@ float[] SOLARCHVISION_3xCross (float[] a, float b[]) {
 }
 
 
+float[] SOLARCHVISION_3xSub (float[] a, float b[]) {
+  
+  float[] c = new float [3];
+  
+  c[0] = a[0] - b[0];
+  c[1] = a[1] - b[1];
+  c[2] = a[2] - b[2];
+  
+  return c;
+  
+}
+
+
+float[] SOLARCHVISION_3xSum (float[] a, float b[]) {
+  
+  float[] c = new float [3];
+  
+  c[0] = a[0] + b[0];
+  c[1] = a[1] + b[1];
+  c[2] = a[2] + b[2];
+  
+  return c;
+  
+}
+
 
 
 float[] SOLARCHVISION_WBGRW (float _variable) {
@@ -25777,22 +25802,22 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
     if (vsb > 0) {    
 
-      int nA = 0;
-      int nB = 1;
-      int nC = allFaces_PNT[f].length - 2;
-      int nD = allFaces_PNT[f].length - 1;
+      //float[] A = allVertices[0];
+      //float[] B = allVertices[1];
+      //float[] C = allVertices[allFaces_PNT[f].length - 2];
+      //float[] D = allVertices[allFaces_PNT[f].length - 1];
       
-      //float[] AC = {allVertices[nA][0] - allVertices[nC][0], allVertices[nA][1] - allVertices[nC][1], allVertices[nA][2] - allVertices[nC][2]}; 
-      //float[] BD = {allVertices[nB][0] - allVertices[nD][0], allVertices[nB][1] - allVertices[nD][1], allVertices[nB][2] - allVertices[nD][2]}; 
-
-      float[] AC = {-200,-200,0}; // <<<<<<<<<<<
-      float[] BD = {-200,200,0};
+      float[] A = {-100,-100,0};
+      float[] B = { 100,-100,0};
+      float[] C = { 100, 100,0};
+      float[] D = {-100, 100,0};
       
-      ??????
-
+      float[] AC = SOLARCHVISION_3xSub(A, C);
+      float[] BD = SOLARCHVISION_3xSub(B, D);
+      
       float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
       
-      float face_offset = 0.5 * ((AC[0] + BD[0]) * face_norm[0] + (AC[1] + BD[1]) * face_norm[1] + (AC[2] + BD[2]) * face_norm[2]);  
+      float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
 
       
       float dist2intersect = FLOAT_undefined;
