@@ -25831,8 +25831,6 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-
-
 float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
@@ -25845,163 +25843,83 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
-
-  float[] pre_angle_to_allObject2Ds_Faces = new float [allObject2Ds_Faces.length];
-
-  for (int f = 1; f < allObject2Ds_Faces.length; f++) {
-    pre_angle_to_allObject2Ds_Faces[f] = FLOAT_undefined;
-  }
-
+  
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
 
-    float backAngles = FLOAT_undefined;  
-    float foreAngles = FLOAT_undefined;
+    float[] A = allObject2Ds_Vertices[allObject2Ds_Faces[f][0]];
+    float[] B = allObject2Ds_Vertices[allObject2Ds_Faces[f][1]];
+    float[] C = allObject2Ds_Vertices[allObject2Ds_Faces[f][allObject2Ds_Faces[f].length - 2]];
+    float[] D = allObject2Ds_Vertices[allObject2Ds_Faces[f][allObject2Ds_Faces[f].length - 1]];
+    
+    float[] AC = SOLARCHVISION_3xSub(A, C);
+    float[] BD = SOLARCHVISION_3xSub(B, D);
+    
+    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+    
+    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+    float dist2intersect = FLOAT_undefined;
+  
+    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
-    float delta = 0.5; 
-    float delta_step = 0.5;
+    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+      dist2intersect = FLOAT_huge;
+    }
+    else {
+      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-    float delta_dir = -1;
-
-    float[] x = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] y = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] z = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-
-    float[] AnglesAll = {
-      0, 0
-    };   
-
-    float MAX_AnglesAll = 0;
-    int MAX_o = -1;
-
-    //for (int q = 0; q < 16; q++) {
-    for (int q = 0; q < 32; q++) {
-
-      for (int o = 0; o < 2; o++) {
-
-        float delta_test = delta;
-
-        if (o == 0) delta_test -= delta_step;
-        else delta_test += delta_step;
-
-        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
-        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
-        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
-
-        AnglesAll[o] = 0;      
-
+      if (dist2intersect > 0) {
+      
+        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+  
+        float AnglesAll = 0;      
+  
         for (int i = 0; i < allObject2Ds_Faces[f].length; i++) {
           int next_i = (i + 1) % allObject2Ds_Faces[f].length;
-
-          float[] vectA = {
-            allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][0] - x[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][1] - y[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][2] - z[o]
-          }; 
-          float[] vectB = {
-            allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][0] - x[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][1] - y[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][2] - z[o]
-          };
-
+  
+          float[] vectA = {allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][0] - X_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][1] - Y_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][2] - Z_intersect};
+          float[] vectB = {allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][0] - X_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][1] - Y_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][2] - Z_intersect};
+  
           float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
-
-          AnglesAll[o] += t;
+  
+          AnglesAll += t;
         }
-      }
-
-
-      if (q == 0) {
-        foreAngles = AnglesAll[0];
-        backAngles = AnglesAll[1];
-
-        //if (AnglesAll[0] < AnglesAll[1]) {
-        MAX_o = 1;
-        delta = 1;
-        //}
-        //else {
-        //  MAX_o = 0;
-        //  delta = 0;       
-        //}
-      } else {
-
-        if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;          
-          MAX_AnglesAll = AnglesAll[1];
-
-          backAngles = AnglesAll[1]; 
-
-          delta += delta_step;
-        } else {
-          MAX_o = 0;
-          MAX_AnglesAll = AnglesAll[0];
-
-          foreAngles = AnglesAll[0];
-
-          delta -= delta_step;
-        } 
-
-        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
-        delta_step *= 0.75;
-      }
-
-      //println(delta, delta_step);
-
-
-      //if (MAX_AnglesAll > 359) {
-      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allObject2Ds_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allObject2Ds_Faces[f] = MAX_AnglesAll;
-
-          hitPoint[f][0] = x[MAX_o];
-          hitPoint[f][1] = y[MAX_o];
-          hitPoint[f][2] = z[MAX_o];
-          hitPoint[f][3] = delta;
+        
+        if (AnglesAll > 359) { // <<<<<<<<<
+        
+          hitPoint[f][0] = X_intersect;
+          hitPoint[f][1] = Y_intersect;
+          hitPoint[f][2] = Z_intersect;
+          hitPoint[f][3] = dist2intersect;
         }
-      }
-
-      if (pre_angle_to_allObject2Ds_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allObject2Ds_Faces[f] = MAX_AnglesAll;
       }
     }
-  }
+  }  
 
-  float[] return_point = {
-    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
-  };
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
 
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
+    if (pre_dist > hitPoint[f][3]) {
 
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+      pre_dist = hitPoint[f][3];
 
-    float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-
-    //if (hd < pre_dist) {
-    //if ((hd < pre_dist) && (hd > 0.02)) {
-    if ((hd < pre_dist) && (h_delta > 0.005)) {
-
-      pre_dist = hd;
-
-      return_point[0] = hx;
-      return_point[1] = hy;
-      return_point[2] = hz;
-      return_point[3] = hd;
+      return_point[0] = hitPoint[f][0];
+      return_point[1] = hitPoint[f][1];
+      return_point[2] = hitPoint[f][2];
+      return_point[3] = hitPoint[f][3];
       return_point[4] = f;
     }
 
-    //}
   }
 
   return return_point;
 }
+
 
 
 float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
@@ -26016,163 +25934,83 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
-
-  float[] pre_angle_to_allFractals_Faces = new float [allFractals_Faces.length];
-
-  for (int f = 1; f < allFractals_Faces.length; f++) {
-    pre_angle_to_allFractals_Faces[f] = FLOAT_undefined;
-  }
-
+  
   for (int f = 1; f < allFractals_Faces.length; f++) {
 
-    float backAngles = FLOAT_undefined;  
-    float foreAngles = FLOAT_undefined;
+    float[] A = allFractals_Vertices[allFractals_Faces[f][0]];
+    float[] B = allFractals_Vertices[allFractals_Faces[f][1]];
+    float[] C = allFractals_Vertices[allFractals_Faces[f][allFractals_Faces[f].length - 2]];
+    float[] D = allFractals_Vertices[allFractals_Faces[f][allFractals_Faces[f].length - 1]];
+    
+    float[] AC = SOLARCHVISION_3xSub(A, C);
+    float[] BD = SOLARCHVISION_3xSub(B, D);
+    
+    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+    
+    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+    float dist2intersect = FLOAT_undefined;
+  
+    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
-    float delta = 0.5; 
-    float delta_step = 0.5;
+    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+      dist2intersect = FLOAT_huge;
+    }
+    else {
+      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-    float delta_dir = -1;
-
-    float[] x = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] y = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] z = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-
-    float[] AnglesAll = {
-      0, 0
-    };   
-
-    float MAX_AnglesAll = 0;
-    int MAX_o = -1;
-
-    //for (int q = 0; q < 16; q++) {
-    for (int q = 0; q < 32; q++) {
-
-      for (int o = 0; o < 2; o++) {
-
-        float delta_test = delta;
-
-        if (o == 0) delta_test -= delta_step;
-        else delta_test += delta_step;
-
-        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
-        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
-        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
-
-        AnglesAll[o] = 0;      
-
+      if (dist2intersect > 0) {
+      
+        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+  
+        float AnglesAll = 0;      
+  
         for (int i = 0; i < allFractals_Faces[f].length; i++) {
           int next_i = (i + 1) % allFractals_Faces[f].length;
-
-          float[] vectA = {
-            allFractals_Vertices[allFractals_Faces[f][i]][0] - x[o], allFractals_Vertices[allFractals_Faces[f][i]][1] - y[o], allFractals_Vertices[allFractals_Faces[f][i]][2] - z[o]
-          }; 
-          float[] vectB = {
-            allFractals_Vertices[allFractals_Faces[f][next_i]][0] - x[o], allFractals_Vertices[allFractals_Faces[f][next_i]][1] - y[o], allFractals_Vertices[allFractals_Faces[f][next_i]][2] - z[o]
-          };
-
+  
+          float[] vectA = {allFractals_Vertices[allFractals_Faces[f][i]][0] - X_intersect, allFractals_Vertices[allFractals_Faces[f][i]][1] - Y_intersect, allFractals_Vertices[allFractals_Faces[f][i]][2] - Z_intersect};
+          float[] vectB = {allFractals_Vertices[allFractals_Faces[f][next_i]][0] - X_intersect, allFractals_Vertices[allFractals_Faces[f][next_i]][1] - Y_intersect, allFractals_Vertices[allFractals_Faces[f][next_i]][2] - Z_intersect};
+  
           float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
-
-          AnglesAll[o] += t;
+  
+          AnglesAll += t;
         }
-      }
-
-
-      if (q == 0) {
-        foreAngles = AnglesAll[0];
-        backAngles = AnglesAll[1];
-
-        //if (AnglesAll[0] < AnglesAll[1]) {
-        MAX_o = 1;
-        delta = 1;
-        //}
-        //else {
-        //  MAX_o = 0;
-        //  delta = 0;       
-        //}
-      } else {
-
-        if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;          
-          MAX_AnglesAll = AnglesAll[1];
-
-          backAngles = AnglesAll[1]; 
-
-          delta += delta_step;
-        } else {
-          MAX_o = 0;
-          MAX_AnglesAll = AnglesAll[0];
-
-          foreAngles = AnglesAll[0];
-
-          delta -= delta_step;
-        } 
-
-        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
-        delta_step *= 0.75;
-      }
-
-      //println(delta, delta_step);
-
-
-      //if (MAX_AnglesAll > 359) {
-      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allFractals_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allFractals_Faces[f] = MAX_AnglesAll;
-
-          hitPoint[f][0] = x[MAX_o];
-          hitPoint[f][1] = y[MAX_o];
-          hitPoint[f][2] = z[MAX_o];
-          hitPoint[f][3] = delta;
+        
+        if (AnglesAll > 359) { // <<<<<<<<<
+        
+          hitPoint[f][0] = X_intersect;
+          hitPoint[f][1] = Y_intersect;
+          hitPoint[f][2] = Z_intersect;
+          hitPoint[f][3] = dist2intersect;
         }
-      }
-
-      if (pre_angle_to_allFractals_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allFractals_Faces[f] = MAX_AnglesAll;
       }
     }
-  }
+  }  
 
-  float[] return_point = {
-    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
-  };
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allFractals_Faces.length; f++) {
 
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
+    if (pre_dist > hitPoint[f][3]) {
 
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+      pre_dist = hitPoint[f][3];
 
-    float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-
-    //if (hd < pre_dist) {
-    //if ((hd < pre_dist) && (hd > 0.02)) {
-    if ((hd < pre_dist) && (h_delta > 0.005)) {
-
-      pre_dist = hd;
-
-      return_point[0] = hx;
-      return_point[1] = hy;
-      return_point[2] = hz;
-      return_point[3] = hd;
+      return_point[0] = hitPoint[f][0];
+      return_point[1] = hitPoint[f][1];
+      return_point[2] = hitPoint[f][2];
+      return_point[3] = hitPoint[f][3];
       return_point[4] = f;
     }
 
-    //}
   }
 
   return return_point;
 }
+
 
 
 float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
@@ -26187,163 +26025,83 @@ float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
-
-  float[] pre_angle_to_allCameras_Faces = new float [allCameras_Faces.length];
-
-  for (int f = 1; f < allCameras_Faces.length; f++) {
-    pre_angle_to_allCameras_Faces[f] = FLOAT_undefined;
-  }
-
+  
   for (int f = 1; f < allCameras_Faces.length; f++) {
 
-    float backAngles = FLOAT_undefined;  
-    float foreAngles = FLOAT_undefined;
+    float[] A = allCameras_Vertices[allCameras_Faces[f][0]];
+    float[] B = allCameras_Vertices[allCameras_Faces[f][1]];
+    float[] C = allCameras_Vertices[allCameras_Faces[f][allCameras_Faces[f].length - 2]];
+    float[] D = allCameras_Vertices[allCameras_Faces[f][allCameras_Faces[f].length - 1]];
+    
+    float[] AC = SOLARCHVISION_3xSub(A, C);
+    float[] BD = SOLARCHVISION_3xSub(B, D);
+    
+    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+    
+    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+    float dist2intersect = FLOAT_undefined;
+  
+    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
-    float delta = 0.5; 
-    float delta_step = 0.5;
+    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+      dist2intersect = FLOAT_huge;
+    }
+    else {
+      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-    float delta_dir = -1;
-
-    float[] x = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] y = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] z = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-
-    float[] AnglesAll = {
-      0, 0
-    };   
-
-    float MAX_AnglesAll = 0;
-    int MAX_o = -1;
-
-    //for (int q = 0; q < 16; q++) {
-    for (int q = 0; q < 32; q++) {
-
-      for (int o = 0; o < 2; o++) {
-
-        float delta_test = delta;
-
-        if (o == 0) delta_test -= delta_step;
-        else delta_test += delta_step;
-
-        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
-        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
-        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
-
-        AnglesAll[o] = 0;      
-
+      if (dist2intersect > 0) {
+      
+        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+  
+        float AnglesAll = 0;      
+  
         for (int i = 0; i < allCameras_Faces[f].length; i++) {
           int next_i = (i + 1) % allCameras_Faces[f].length;
-
-          float[] vectA = {
-            allCameras_Vertices[allCameras_Faces[f][i]][0] - x[o], allCameras_Vertices[allCameras_Faces[f][i]][1] - y[o], allCameras_Vertices[allCameras_Faces[f][i]][2] - z[o]
-          }; 
-          float[] vectB = {
-            allCameras_Vertices[allCameras_Faces[f][next_i]][0] - x[o], allCameras_Vertices[allCameras_Faces[f][next_i]][1] - y[o], allCameras_Vertices[allCameras_Faces[f][next_i]][2] - z[o]
-          };
-
+  
+          float[] vectA = {allCameras_Vertices[allCameras_Faces[f][i]][0] - X_intersect, allCameras_Vertices[allCameras_Faces[f][i]][1] - Y_intersect, allCameras_Vertices[allCameras_Faces[f][i]][2] - Z_intersect};
+          float[] vectB = {allCameras_Vertices[allCameras_Faces[f][next_i]][0] - X_intersect, allCameras_Vertices[allCameras_Faces[f][next_i]][1] - Y_intersect, allCameras_Vertices[allCameras_Faces[f][next_i]][2] - Z_intersect};
+  
           float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
-
-          AnglesAll[o] += t;
+  
+          AnglesAll += t;
         }
-      }
-
-
-      if (q == 0) {
-        foreAngles = AnglesAll[0];
-        backAngles = AnglesAll[1];
-
-        //if (AnglesAll[0] < AnglesAll[1]) {
-        MAX_o = 1;
-        delta = 1;
-        //}
-        //else {
-        //  MAX_o = 0;
-        //  delta = 0;       
-        //}
-      } else {
-
-        if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;          
-          MAX_AnglesAll = AnglesAll[1];
-
-          backAngles = AnglesAll[1]; 
-
-          delta += delta_step;
-        } else {
-          MAX_o = 0;
-          MAX_AnglesAll = AnglesAll[0];
-
-          foreAngles = AnglesAll[0];
-
-          delta -= delta_step;
-        } 
-
-        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
-        delta_step *= 0.75;
-      }
-
-      //println(delta, delta_step);
-
-
-      //if (MAX_AnglesAll > 359) {
-      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allCameras_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allCameras_Faces[f] = MAX_AnglesAll;
-
-          hitPoint[f][0] = x[MAX_o];
-          hitPoint[f][1] = y[MAX_o];
-          hitPoint[f][2] = z[MAX_o];
-          hitPoint[f][3] = delta;
+        
+        if (AnglesAll > 359) { // <<<<<<<<<
+        
+          hitPoint[f][0] = X_intersect;
+          hitPoint[f][1] = Y_intersect;
+          hitPoint[f][2] = Z_intersect;
+          hitPoint[f][3] = dist2intersect;
         }
-      }
-
-      if (pre_angle_to_allCameras_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allCameras_Faces[f] = MAX_AnglesAll;
       }
     }
-  }
+  }  
 
-  float[] return_point = {
-    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
-  };
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allCameras_Faces.length; f++) {
 
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
+    if (pre_dist > hitPoint[f][3]) {
 
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+      pre_dist = hitPoint[f][3];
 
-    float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-
-    //if (hd < pre_dist) {
-    //if ((hd < pre_dist) && (hd > 0.02)) {
-    if ((hd < pre_dist) && (h_delta > 0.005)) {
-
-      pre_dist = hd;
-
-      return_point[0] = hx;
-      return_point[1] = hy;
-      return_point[2] = hz;
-      return_point[3] = hd;
+      return_point[0] = hitPoint[f][0];
+      return_point[1] = hitPoint[f][1];
+      return_point[2] = hitPoint[f][2];
+      return_point[3] = hitPoint[f][3];
       return_point[4] = f;
     }
 
-    //}
   }
 
   return return_point;
 }
+
 
 
 
@@ -26359,163 +26117,83 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
-
-  float[] pre_angle_to_allSections_Faces = new float [allSections_Faces.length];
-
-  for (int f = 1; f < allSections_Faces.length; f++) {
-    pre_angle_to_allSections_Faces[f] = FLOAT_undefined;
-  }
-
+  
   for (int f = 1; f < allSections_Faces.length; f++) {
 
-    float backAngles = FLOAT_undefined;  
-    float foreAngles = FLOAT_undefined;
+    float[] A = allSections_Vertices[allSections_Faces[f][0]];
+    float[] B = allSections_Vertices[allSections_Faces[f][1]];
+    float[] C = allSections_Vertices[allSections_Faces[f][allSections_Faces[f].length - 2]];
+    float[] D = allSections_Vertices[allSections_Faces[f][allSections_Faces[f].length - 1]];
+    
+    float[] AC = SOLARCHVISION_3xSub(A, C);
+    float[] BD = SOLARCHVISION_3xSub(B, D);
+    
+    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+    
+    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+    float dist2intersect = FLOAT_undefined;
+  
+    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
-    float delta = 0.5; 
-    float delta_step = 0.5;
+    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+      dist2intersect = FLOAT_huge;
+    }
+    else {
+      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-    float delta_dir = -1;
-
-    float[] x = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] y = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] z = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-
-    float[] AnglesAll = {
-      0, 0
-    };   
-
-    float MAX_AnglesAll = 0;
-    int MAX_o = -1;
-
-    //for (int q = 0; q < 16; q++) {
-    for (int q = 0; q < 32; q++) {
-
-      for (int o = 0; o < 2; o++) {
-
-        float delta_test = delta;
-
-        if (o == 0) delta_test -= delta_step;
-        else delta_test += delta_step;
-
-        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
-        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
-        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
-
-        AnglesAll[o] = 0;      
-
+      if (dist2intersect > 0) {
+      
+        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+  
+        float AnglesAll = 0;      
+  
         for (int i = 0; i < allSections_Faces[f].length; i++) {
           int next_i = (i + 1) % allSections_Faces[f].length;
-
-          float[] vectA = {
-            allSections_Vertices[allSections_Faces[f][i]][0] - x[o], allSections_Vertices[allSections_Faces[f][i]][1] - y[o], allSections_Vertices[allSections_Faces[f][i]][2] - z[o]
-          }; 
-          float[] vectB = {
-            allSections_Vertices[allSections_Faces[f][next_i]][0] - x[o], allSections_Vertices[allSections_Faces[f][next_i]][1] - y[o], allSections_Vertices[allSections_Faces[f][next_i]][2] - z[o]
-          };
-
+  
+          float[] vectA = {allSections_Vertices[allSections_Faces[f][i]][0] - X_intersect, allSections_Vertices[allSections_Faces[f][i]][1] - Y_intersect, allSections_Vertices[allSections_Faces[f][i]][2] - Z_intersect};
+          float[] vectB = {allSections_Vertices[allSections_Faces[f][next_i]][0] - X_intersect, allSections_Vertices[allSections_Faces[f][next_i]][1] - Y_intersect, allSections_Vertices[allSections_Faces[f][next_i]][2] - Z_intersect};
+  
           float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
-
-          AnglesAll[o] += t;
+  
+          AnglesAll += t;
         }
-      }
-
-
-      if (q == 0) {
-        foreAngles = AnglesAll[0];
-        backAngles = AnglesAll[1];
-
-        //if (AnglesAll[0] < AnglesAll[1]) {
-        MAX_o = 1;
-        delta = 1;
-        //}
-        //else {
-        //  MAX_o = 0;
-        //  delta = 0;       
-        //}
-      } else {
-
-        if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;          
-          MAX_AnglesAll = AnglesAll[1];
-
-          backAngles = AnglesAll[1]; 
-
-          delta += delta_step;
-        } else {
-          MAX_o = 0;
-          MAX_AnglesAll = AnglesAll[0];
-
-          foreAngles = AnglesAll[0];
-
-          delta -= delta_step;
-        } 
-
-        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
-        delta_step *= 0.75;
-      }
-
-      //println(delta, delta_step);
-
-
-      //if (MAX_AnglesAll > 359) {
-      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allSections_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allSections_Faces[f] = MAX_AnglesAll;
-
-          hitPoint[f][0] = x[MAX_o];
-          hitPoint[f][1] = y[MAX_o];
-          hitPoint[f][2] = z[MAX_o];
-          hitPoint[f][3] = delta;
+        
+        if (AnglesAll > 359) { // <<<<<<<<<
+        
+          hitPoint[f][0] = X_intersect;
+          hitPoint[f][1] = Y_intersect;
+          hitPoint[f][2] = Z_intersect;
+          hitPoint[f][3] = dist2intersect;
         }
-      }
-
-      if (pre_angle_to_allSections_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allSections_Faces[f] = MAX_AnglesAll;
       }
     }
-  }
+  }  
 
-  float[] return_point = {
-    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
-  };
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allSections_Faces.length; f++) {
 
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
+    if (pre_dist > hitPoint[f][3]) {
 
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+      pre_dist = hitPoint[f][3];
 
-    float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-
-    //if (hd < pre_dist) {
-    //if ((hd < pre_dist) && (hd > 0.02)) {
-    if ((hd < pre_dist) && (h_delta > 0.005)) {
-
-      pre_dist = hd;
-
-      return_point[0] = hx;
-      return_point[1] = hy;
-      return_point[2] = hz;
-      return_point[3] = hd;
+      return_point[0] = hitPoint[f][0];
+      return_point[1] = hitPoint[f][1];
+      return_point[2] = hitPoint[f][2];
+      return_point[3] = hitPoint[f][3];
       return_point[4] = f;
     }
 
-    //}
   }
 
   return return_point;
 }
+
 
 
 float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
@@ -26530,163 +26208,83 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
-
-  float[] pre_angle_to_allSolids_Faces = new float [allSolids_Faces.length];
-
-  for (int f = 1; f < allSolids_Faces.length; f++) {
-    pre_angle_to_allSolids_Faces[f] = FLOAT_undefined;
-  }
-
+  
   for (int f = 1; f < allSolids_Faces.length; f++) {
 
-    float backAngles = FLOAT_undefined;  
-    float foreAngles = FLOAT_undefined;
+    float[] A = allSolids_Vertices[allSolids_Faces[f][0]];
+    float[] B = allSolids_Vertices[allSolids_Faces[f][1]];
+    float[] C = allSolids_Vertices[allSolids_Faces[f][allSolids_Faces[f].length - 2]];
+    float[] D = allSolids_Vertices[allSolids_Faces[f][allSolids_Faces[f].length - 1]];
+    
+    float[] AC = SOLARCHVISION_3xSub(A, C);
+    float[] BD = SOLARCHVISION_3xSub(B, D);
+    
+    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+    
+    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+    float dist2intersect = FLOAT_undefined;
+  
+    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
-    float delta = 0.5; 
-    float delta_step = 0.5;
+    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+      dist2intersect = FLOAT_huge;
+    }
+    else {
+      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-    float delta_dir = -1;
-
-    float[] x = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] y = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-    float[] z = {
-      FLOAT_undefined, FLOAT_undefined
-    };
-
-    float[] AnglesAll = {
-      0, 0
-    };   
-
-    float MAX_AnglesAll = 0;
-    int MAX_o = -1;
-
-    //for (int q = 0; q < 16; q++) {
-    for (int q = 0; q < 32; q++) {
-
-      for (int o = 0; o < 2; o++) {
-
-        float delta_test = delta;
-
-        if (o == 0) delta_test -= delta_step;
-        else delta_test += delta_step;
-
-        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
-        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
-        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
-
-        AnglesAll[o] = 0;      
-
+      if (dist2intersect > 0) {
+      
+        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+  
+        float AnglesAll = 0;      
+  
         for (int i = 0; i < allSolids_Faces[f].length; i++) {
           int next_i = (i + 1) % allSolids_Faces[f].length;
-
-          float[] vectA = {
-            allSolids_Vertices[allSolids_Faces[f][i]][0] - x[o], allSolids_Vertices[allSolids_Faces[f][i]][1] - y[o], allSolids_Vertices[allSolids_Faces[f][i]][2] - z[o]
-          }; 
-          float[] vectB = {
-            allSolids_Vertices[allSolids_Faces[f][next_i]][0] - x[o], allSolids_Vertices[allSolids_Faces[f][next_i]][1] - y[o], allSolids_Vertices[allSolids_Faces[f][next_i]][2] - z[o]
-          };
-
+  
+          float[] vectA = {allSolids_Vertices[allSolids_Faces[f][i]][0] - X_intersect, allSolids_Vertices[allSolids_Faces[f][i]][1] - Y_intersect, allSolids_Vertices[allSolids_Faces[f][i]][2] - Z_intersect};
+          float[] vectB = {allSolids_Vertices[allSolids_Faces[f][next_i]][0] - X_intersect, allSolids_Vertices[allSolids_Faces[f][next_i]][1] - Y_intersect, allSolids_Vertices[allSolids_Faces[f][next_i]][2] - Z_intersect};
+  
           float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vectA), SOLARCHVISION_fn_normalize(vectB)));
-
-          AnglesAll[o] += t;
+  
+          AnglesAll += t;
         }
-      }
-
-
-      if (q == 0) {
-        foreAngles = AnglesAll[0];
-        backAngles = AnglesAll[1];
-
-        //if (AnglesAll[0] < AnglesAll[1]) {
-        MAX_o = 1;
-        delta = 1;
-        //}
-        //else {
-        //  MAX_o = 0;
-        //  delta = 0;       
-        //}
-      } else {
-
-        if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;          
-          MAX_AnglesAll = AnglesAll[1];
-
-          backAngles = AnglesAll[1]; 
-
-          delta += delta_step;
-        } else {
-          MAX_o = 0;
-          MAX_AnglesAll = AnglesAll[0];
-
-          foreAngles = AnglesAll[0];
-
-          delta -= delta_step;
-        } 
-
-        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
-        delta_step *= 0.75;
-      }
-
-      //println(delta, delta_step);
-
-
-      //if (MAX_AnglesAll > 359) {
-      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allSolids_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allSolids_Faces[f] = MAX_AnglesAll;
-
-          hitPoint[f][0] = x[MAX_o];
-          hitPoint[f][1] = y[MAX_o];
-          hitPoint[f][2] = z[MAX_o];
-          hitPoint[f][3] = delta;
+        
+        if (AnglesAll > 359) { // <<<<<<<<<
+        
+          hitPoint[f][0] = X_intersect;
+          hitPoint[f][1] = Y_intersect;
+          hitPoint[f][2] = Z_intersect;
+          hitPoint[f][3] = dist2intersect;
         }
-      }
-
-      if (pre_angle_to_allSolids_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allSolids_Faces[f] = MAX_AnglesAll;
       }
     }
-  }
+  }  
 
-  float[] return_point = {
-    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1
-  };
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allSolids_Faces.length; f++) {
 
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
+    if (pre_dist > hitPoint[f][3]) {
 
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+      pre_dist = hitPoint[f][3];
 
-    float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-
-    //if (hd < pre_dist) {
-    //if ((hd < pre_dist) && (hd > 0.02)) {
-    if ((hd < pre_dist) && (h_delta > 0.005)) {
-
-      pre_dist = hd;
-
-      return_point[0] = hx;
-      return_point[1] = hy;
-      return_point[2] = hz;
-      return_point[3] = hd;
+      return_point[0] = hitPoint[f][0];
+      return_point[1] = hitPoint[f][1];
+      return_point[2] = hitPoint[f][2];
+      return_point[3] = hitPoint[f][3];
       return_point[4] = 1 + int((f - 1) / Solids_DisplayFaces);
     }
 
-    //}
   }
 
   return return_point;
 }
+
 
 
 
