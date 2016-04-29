@@ -24646,7 +24646,7 @@ void SOLARCHVISION_draw_Group3Ds () {
     int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
     float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
 
-    if (WIN3D_FacesShade == Shade_Global_Solar) {
+    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
       if (Impact_TYPE == Impact_ACTIVE) {
         PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
         PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
@@ -25720,6 +25720,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir) {
           if (AnglesAll > 359) { // <<<<<<<<<
           
             hit = 1;
+
           }
         }
       }
@@ -36479,7 +36480,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
 
       DEFAULT_CreateMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateMaterial", DEFAULT_CreateMaterial, -1, 8, 1), 1));
-      DEFAULT_CreateTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateTessellation", DEFAULT_CreateTessellation, 0, 4, 1), 1));
+      DEFAULT_CreateTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateTessellation", DEFAULT_CreateTessellation, 0, 6, 1), 1));
       DEFAULT_CreateLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateLayer", DEFAULT_CreateLayer, 0, 16, 1), 1));
       DEFAULT_CreateVisibility = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateVisibility", DEFAULT_CreateVisibility, -1, 1, 1), 1));
       //DEFAULT_CreateExtraType = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "DEFAULT_CreateExtraType" , DEFAULT_CreateExtraType, 0, 10, 1), 1));
