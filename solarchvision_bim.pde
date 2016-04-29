@@ -288,7 +288,6 @@ float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
 float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
 
 
-float MAX_SHADING_DIST = 250; // the biggest object should be 250
 
 
 float GlobalAlbedo = 0; // 0-100
@@ -25091,7 +25090,7 @@ void SOLARCHVISION_draw_Group3Ds () {
 
                                   if (SOLARCHVISION_fn_dot(W, ray_direction) > 0) { // removes backing faces
 
-                                    if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
+                                    if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) == 1) { 
                                       if (_values_E_dir < 0) {
                                         _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
                                         _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
@@ -25665,7 +25664,7 @@ void SOLARCHVISION_draw_Object2Ds () {
 }
 
 
-int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
+int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -25734,7 +25733,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_d
 }
 
 
-float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -25831,7 +25830,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -25922,7 +25921,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -26013,7 +26012,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -26105,7 +26104,7 @@ float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -26196,7 +26195,7 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -26289,7 +26288,7 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
-float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -32463,14 +32462,12 @@ void mouseReleased () {
                   ray_direction[1] = ray_end[1] - ray_start[1];
                   ray_direction[2] = ray_end[2] - ray_start[2];
 
-                  float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-
                   float[] RxP = new float [5]; 
 
                   if (mouseButton == RIGHT) {
-                    RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+                    RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
                   } else if (mouseButton == LEFT) {
-                    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+                    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
                   }
 
                   if (RxP[4] > 0) {
@@ -35094,32 +35091,28 @@ void mouseClicked () {
             ray_direction[1] = ray_end[1] - ray_start[1];
             ray_direction[2] = ray_end[2] - ray_start[2];
 
-            float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-
-
-
             float[] RxP = new float [5];
 
             if (mouseButton == RIGHT) {
-              RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+              RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
             } else if (mouseButton == LEFT) {
 
               if ((WIN3D_UI_CurrentTask == 0) || (WIN3D_UI_CurrentTask == 1)) {
-                RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+                RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
               } else {
 
                 if (Current_ObjectCategory == ObjectCategory_Cameras) {
-                  RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction, max_dist);
+                  RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction);
                 } else if (Current_ObjectCategory == ObjectCategory_Sections) {
-                  RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction, max_dist);
+                  RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction);
                 } else if (Current_ObjectCategory == ObjectCategory_Solids) {
-                  RxP = SOLARCHVISION_7Dintersect(ray_start, ray_direction, max_dist);
+                  RxP = SOLARCHVISION_7Dintersect(ray_start, ray_direction);
                 } else if (Current_ObjectCategory == ObjectCategory_Fractals) {
-                  RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
+                  RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction);
                 } else if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-                  RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
+                  RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction);
                 } else {
-                  RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+                  RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
                 }
               }
             }
@@ -43270,8 +43263,6 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
 void SOLARCHVISION_drop_Selection () {
 
-  float max_dist = 100; // <<<<<< 100m tolerance 
-
 
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
   }     
@@ -43317,9 +43308,9 @@ void SOLARCHVISION_drop_Selection () {
         float[] RxP = new float [5];
 
         if (WIN3D_UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
         } else if (WIN3D_UI_TaskModifyParameter == 1) {
-          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
         } else {
           RxP[4] = -1; // undefined
         }
@@ -43332,9 +43323,9 @@ void SOLARCHVISION_drop_Selection () {
           ray_direction[2] = 1; // <<<< going upwards
 
           if (WIN3D_UI_TaskModifyParameter == 0) { 
-            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
           } else if (WIN3D_UI_TaskModifyParameter == 2) {
-            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
           } else {
             RxP[4] = -1; // undefined
           }
@@ -43372,9 +43363,9 @@ void SOLARCHVISION_drop_Selection () {
         float[] RxP = new float [5];
 
         if (WIN3D_UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
         } else if (WIN3D_UI_TaskModifyParameter == 1) {
-          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
         } else {
           RxP[4] = -1; // undefined
         }
@@ -43387,9 +43378,9 @@ void SOLARCHVISION_drop_Selection () {
           ray_direction[2] = 1; // <<<< going upwards
 
           if (WIN3D_UI_TaskModifyParameter == 0) { 
-            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
           } else if (WIN3D_UI_TaskModifyParameter == 2) {
-            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
           } else {
             RxP[4] = -1; // undefined
           }
@@ -47715,7 +47706,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("SolidImpact_WindDirection", SolidImpact_WindDirection);
   newChild1.setFloat("SolidImpact_Power", SolidImpact_Power);
   newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
-  newChild1.setFloat("MAX_SHADING_DIST", MAX_SHADING_DIST);
   newChild1.setFloat("Interpolation_Weight", Interpolation_Weight);
   newChild1.setFloat("GLOBE_calculatedResolution", GLOBE_calculatedResolution);
   newChild1.setInt("CLIMATIC_SolarForecast", CLIMATIC_SolarForecast);
@@ -48957,7 +48947,6 @@ void SOLARCHVISION_load_project (String myFile) {
       SolidImpact_WindDirection = children0[L].getFloat("SolidImpact_WindDirection");
       SolidImpact_Power = children0[L].getFloat("SolidImpact_Power");
       GlobalAlbedo = children0[L].getFloat("GlobalAlbedo");
-      MAX_SHADING_DIST = children0[L].getFloat("MAX_SHADING_DIST");
       Interpolation_Weight = children0[L].getFloat("Interpolation_Weight");
       GLOBE_calculatedResolution = children0[L].getFloat("GLOBE_calculatedResolution");
       CLIMATIC_SolarForecast = children0[L].getInt("CLIMATIC_SolarForecast");
