@@ -273,7 +273,7 @@ String STRING_undefined = "N/A";
 float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
 
 float FLOAT_huge = 1000000000;
-float FLOAT_tiny = 0.0000001;
+float FLOAT_tiny = 0.001; // don't use very tiny values that could result is shading problems at the intersection of faces
 
 float CubePower = 16; //8; 
 float StarPower = 0.25; 
@@ -25698,7 +25698,8 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir) {
       else {
         dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-        if (dist2intersect > 0) {
+        //if (dist2intersect > 0) {
+        if (dist2intersect > FLOAT_tiny) {
         
           float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
           float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
@@ -25775,7 +25776,8 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
       else {
         dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-        if (dist2intersect > 0) {
+        //if (dist2intersect > 0) {
+        if (dist2intersect > FLOAT_tiny) {
         
           float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
           float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
@@ -25868,8 +25870,9 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir) {
     else {
       dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-      if (dist2intersect > 0) {
-      
+      //if (dist2intersect > 0) {
+      if (dist2intersect > FLOAT_tiny) {
+    
         float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
         float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
         float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
@@ -25959,7 +25962,8 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir) {
     else {
       dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-      if (dist2intersect > 0) {
+      //if (dist2intersect > 0) {
+      if (dist2intersect > FLOAT_tiny) {
       
         float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
         float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
@@ -26050,7 +26054,8 @@ float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir) {
     else {
       dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-      if (dist2intersect > 0) {
+      //if (dist2intersect > 0) {
+      if (dist2intersect > FLOAT_tiny) {
       
         float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
         float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
@@ -26142,7 +26147,8 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir) {
     else {
       dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-      if (dist2intersect > 0) {
+      //if (dist2intersect > 0) {
+      if (dist2intersect > FLOAT_tiny) {
       
         float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
         float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
@@ -26233,7 +26239,8 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir) {
     else {
       dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-      if (dist2intersect > 0) {
+      //if (dist2intersect > 0) {
+      if (dist2intersect > FLOAT_tiny) {
       
         float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
         float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
@@ -26329,7 +26336,8 @@ float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir) {
     else {
       dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
 
-      if (dist2intersect > 0) {
+      //if (dist2intersect > 0) {
+      if (dist2intersect > FLOAT_tiny) {
       
         float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
         float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
