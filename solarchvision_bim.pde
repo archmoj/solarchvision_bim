@@ -13590,6 +13590,11 @@ void WIN3D_keyPressed (KeyEvent e) {
         ROLLOUT_Update = 1; 
         break; 
 
+
+      case '?': 
+        SOLARCHVISION_RenderViewport();
+        break; 
+
       case ENTER: 
         if (WIN3D_FacesShade == Shade_Global_Solar) rebuild_SolarProjection_array = 1;   
         if (WIN3D_FacesShade == Shade_Vertex_Solar) WIN3D_VerticesSolarValue_Update = 1;
@@ -50365,3 +50370,85 @@ float[] SOLARCHVISION_getPivot () {
 }
 
 
+
+void SOLARCHVISION_RenderViewport () {
+
+  int RES1 = WIN3D_X_View;
+  int RES2 = WIN3D_Y_View;
+  
+  PImage Image_RGBA = createImage(RES1, RES2, ARGB);
+
+  Image_RGBA.loadPixels();
+
+  for (int np = 0; np < (RES1 * RES2); np++) {
+    int Image_X = np % RES1;
+    int Image_Y = np / RES1;
+    
+    Image_X -= 0.5 * WIN3D_X_View;
+    Image_Y -= 0.5 * WIN3D_Y_View;
+  
+
+    float[] ray_direction = new float [3];
+
+    float[] ray_start = {
+      WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
+    };
+
+    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+
+    ray_start[0] /= OBJECTS_scale;
+    ray_start[1] /= OBJECTS_scale;
+    ray_start[2] /= OBJECTS_scale;          
+
+    ray_end[0] /= OBJECTS_scale;
+    ray_end[1] /= OBJECTS_scale;
+    ray_end[2] /= OBJECTS_scale;
+
+    if (WIN3D_ViewType == 0) {
+      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+
+      ray_center[0] /= OBJECTS_scale;
+      ray_center[1] /= OBJECTS_scale;
+      ray_center[2] /= OBJECTS_scale;
+
+      ray_start[0] += ray_end[0] - ray_center[0];
+      ray_start[1] += ray_end[1] - ray_center[1];
+      ray_start[2] += ray_end[2] - ray_center[2];
+    }
+
+    ray_direction[0] = ray_end[0] - ray_start[0];
+    ray_direction[1] = ray_end[1] - ray_start[1];
+    ray_direction[2] = ray_end[2] - ray_start[2];
+
+
+
+         
+  
+    float[] RxP = new float [5]; 
+
+    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+
+    if (RxP[4] > 0) {        
+        
+      int f = int(RxP[4]);
+      int mt = allFaces_MTLV[f][0];
+  
+      float a = Materials_Color[mt][0];
+      float r = Materials_Color[mt][1]; 
+      float g = Materials_Color[mt][2]; 
+      float b = Materials_Color[mt][3];   
+  
+      Image_RGBA.pixels[np] = color(r, g, b, a);
+    }
+    else Image_RGBA.pixels[np] = color(0,0,0,0);
+  }
+
+  Image_RGBA.updatePixels();
+ 
+ 
+  Image_RGBA.save("Render.png");
+  
+  println("Render saved!");
+
+  
+}
