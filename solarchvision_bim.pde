@@ -336,7 +336,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 0; 
+int STATION_Number = 2; 
 
 String[][] Defined_Stations = {
 
@@ -345,11 +345,15 @@ String[][] Defined_Stations = {
   }  
   ,
 
-
   {
     "Isle_of_Man", "XX", "UK", "54.216539", "-4.683195", "0", "0", "240.0", "", "", "GBR_Aughton.033220_IWEC"
   }
   , 
+  
+  {
+    "Brossard_Oakland", "QC", "CA", "45.4337", "-73.4615", "-75", "13.4594707", "240.0", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
+  }
+  ,   
 
   {
     "Montreal_WestStation", "QC", "CA", "45.455158", "-73.640696", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
