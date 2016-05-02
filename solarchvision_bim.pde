@@ -1,7 +1,6 @@
-// Note: here changed intersection RxP[4] to RxP[0] ... 
 
 
-// writing export to rad.
+// writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
 
 // colud record Climate data flags later.
 
@@ -25830,7 +25829,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
     }
   }  
 
-  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
 
   float pre_dist = FLOAT_undefined;
 
@@ -25845,10 +25844,10 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
       return_point[2] = hitPoint[f][1];
       return_point[3] = hitPoint[f][2];
       return_point[4] = hitPoint[f][3];
+      return_point[5] = hitPoint[f][4];
+      return_point[6] = hitPoint[f][5];
+      return_point[7] = hitPoint[f][6];
 
-      //return_point[5] = return_point[4];
-      //return_point[6] = return_point[5];
-      //return_point[7] = return_point[6];
     }
 
   }
@@ -32492,7 +32491,7 @@ void mouseReleased () {
                   ray_direction[1] = ray_end[1] - ray_start[1];
                   ray_direction[2] = ray_end[2] - ray_start[2];
 
-                  float[] RxP = new float [5]; 
+                  float[] RxP = new float [8]; 
 
                   if (mouseButton == RIGHT) {
                     RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
@@ -35121,7 +35120,7 @@ void mouseClicked () {
             ray_direction[1] = ray_end[1] - ray_start[1];
             ray_direction[2] = ray_end[2] - ray_start[2];
 
-            float[] RxP = new float [5];
+            float[] RxP = new float [8];
 
             if (mouseButton == RIGHT) {
               RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
@@ -43335,7 +43334,7 @@ void SOLARCHVISION_drop_Selection () {
           0, 0, -1
         };
 
-        float[] RxP = new float [5];
+        float[] RxP = new float [8];
 
         if (WIN3D_UI_TaskModifyParameter == 0) { 
           RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
@@ -43390,7 +43389,7 @@ void SOLARCHVISION_drop_Selection () {
           0, 0, -1
         };
 
-        float[] RxP = new float [5];
+        float[] RxP = new float [8];
 
         if (WIN3D_UI_TaskModifyParameter == 0) { 
           RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
@@ -50396,8 +50395,26 @@ int rendererType = ANG_renderer; // <<<<<<<<<<<<<
 
 void SOLARCHVISION_RenderViewport () {
 
-  int RES1 = WIN3D_X_View;
-  int RES2 = WIN3D_Y_View;
+  println("Render started!");
+  
+  int PAL_TYPE = 0; 
+  int PAL_DIR = 1;
+  float PAL_Multiplier = 1;   
+
+  if (Impact_TYPE == Impact_ACTIVE) {
+    PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+    PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
+    PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
+  }
+  if (Impact_TYPE == Impact_PASSIVE) {  
+    PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+    PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+    PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
+  }     
+
+  
+  int RES1 = 200; //WIN3D_X_View;
+  int RES2 = 200; //WIN3D_Y_View;
   
   PImage Image_RGBA = createImage(RES1, RES2, ARGB);
 
@@ -50447,7 +50464,7 @@ void SOLARCHVISION_RenderViewport () {
 
          
   
-    float[] RxP = new float [5]; 
+    float[] RxP = new float [8]; 
 
     RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
 
@@ -50457,9 +50474,44 @@ void SOLARCHVISION_RenderViewport () {
       
       if (rendererType == ANG_renderer) {
 
+        float[] _c = {
+          0, 0, 0, 0
+        };
+        
+        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+        face_norm = SOLARCHVISION_fn_normalize(face_norm);
+        
+        float Alpha = 90 - acos_ang(face_norm[2]);
+        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
 
         
         
+        
+        float _valuesSUM = Alpha; //Beta; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+
+
+
+
+
+
+        
+        float _u = 0;
+
+        if (Impact_TYPE == Impact_ACTIVE) {
+          _u = (0.2 * PAL_Multiplier * _valuesSUM);
+        }
+
+        if (Impact_TYPE == Impact_PASSIVE) {
+          _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+        }
+
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+
+        _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+        
+        Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3], _c[0]);
         
       }
       else if (rendererType == MAT_renderer) {
