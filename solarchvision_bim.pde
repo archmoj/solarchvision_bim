@@ -5106,6 +5106,15 @@ float[] SOLARCHVISION_3xSum (float[] a, float b[]) {
 }
 
 
+float SOLARCHVISION_Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
+
+  float f_xy = f_00 * (1 - x) * (1 - y) + f_10 * x * (1 - y) + f_01 * (1 - x) * y + f_11 * x * y;
+
+  return f_xy;
+}
+
+
+
 
 float[] SOLARCHVISION_WBGRW (float _variable) {
   _variable *= 600.0;
@@ -17232,7 +17241,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                         float u = i / float(ModifyInput_TessellateColumns);
                         float v = j / float(ModifyInput_TessellateRows);
 
-                        new_EdgeVertices[s][k] = Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
+                        new_EdgeVertices[s][k] = SOLARCHVISION_Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
                       }
                     }
                   }
@@ -22425,9 +22434,9 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               float di = random(1);
               float dj = random(1);
 
-              float x = Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-              float y = Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-              float z = Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+              float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+              float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+              float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
 
               float u = (x / LAND_Texture_scale_U[n_Map] + 0.5);
               float v = (-y / LAND_Texture_scale_V[n_Map] + 0.5);
@@ -22531,9 +22540,9 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             float di = random(1);
             float dj = random(1);
 
-            float x = Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-            float y = Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-            float z = Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+            float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+            float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+            float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
 
             if (z + LocationElevation > 0) { // i.e. above sea level 
 
@@ -25744,13 +25753,16 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allFaces_PNT.length][4];
+  float[][] hitPoint = new float [allFaces_PNT.length][7];
 
   for (int f = 1; f < allFaces_PNT.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
+    hitPoint[f][4] = FLOAT_undefined;
+    hitPoint[f][5] = FLOAT_undefined;
+    hitPoint[f][6] = FLOAT_undefined;
   }
   
   for (int f = 1; f < allFaces_PNT.length; f++) {
@@ -25807,6 +25819,9 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
             hitPoint[f][1] = Y_intersect;
             hitPoint[f][2] = Z_intersect;
             hitPoint[f][3] = dist2intersect;
+            hitPoint[f][4] = face_norm[0];
+            hitPoint[f][5] = face_norm[1];
+            hitPoint[f][6] = face_norm[2];
           }
         }
       }
@@ -25828,6 +25843,9 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
       return_point[2] = hitPoint[f][2];
       return_point[3] = hitPoint[f][3];
       return_point[4] = f;
+      return_point[5] = return_point[4];
+      return_point[6] = return_point[5];
+      return_point[7] = return_point[6];
     }
 
   }
@@ -26493,10 +26511,10 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
       };
 
       for (int i = 0; i < 3; i++) {
-        P0[i] = Bilinear(A[i], B[i], C[i], D[i], x1, y1); 
-        P1[i] = Bilinear(A[i], B[i], C[i], D[i], x2, y1); 
-        P2[i] = Bilinear(A[i], B[i], C[i], D[i], x2, y2); 
-        P3[i] = Bilinear(A[i], B[i], C[i], D[i], x1, y2);
+        P0[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y1); 
+        P1[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y1); 
+        P2[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y2); 
+        P3[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y2);
       }      
 
       //return_vertices[0] = P0; 
@@ -26526,12 +26544,6 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 }
 
 
-float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
-
-  float f_xy = f_00 * (1 - x) * (1 - y) + f_10 * x * (1 - y) + f_01 * (1 - x) * y + f_11 * x * y;
-
-  return f_xy;
-}
 
 
 
@@ -28236,9 +28248,9 @@ void SOLARCHVISION_calculate_WindFlow () {
    for (int i = 0; i < SolidImpact_RES1; i += 10) {
    for (int j = 0; j < SolidImpact_RES2; j += 10) {
    
-   float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
-   float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
-   float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+   float x = SOLARCHVISION_Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+   float y = SOLARCHVISION_Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+   float z = SOLARCHVISION_Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
    
    */
 
@@ -28696,9 +28708,9 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
     for (int i = 0; i < SolidImpact_RES1; i++) {
       for (int j = 0; j < SolidImpact_RES2; j++) {
 
-        float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
-        float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
-        float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+        float x = SOLARCHVISION_Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+        float y = SOLARCHVISION_Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+        float z = SOLARCHVISION_Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
 
         SolidImpactType = 0;
         float val = SOLARCHVISION_get_SolidImpact_atXYZ(x, y, z);     
@@ -50371,6 +50383,13 @@ float[] SOLARCHVISION_getPivot () {
 
 
 
+int MAT_renderer = 1;
+int ANG_renderer = 2;
+int SHD_renderer = 3;
+
+int rendererType = ANG_renderer; // <<<<<<<<<<<<< 
+
+
 void SOLARCHVISION_RenderViewport () {
 
   int RES1 = WIN3D_X_View;
@@ -50431,14 +50450,24 @@ void SOLARCHVISION_RenderViewport () {
     if (RxP[4] > 0) {        
         
       int f = int(RxP[4]);
-      int mt = allFaces_MTLV[f][0];
-  
-      float a = Materials_Color[mt][0];
-      float r = Materials_Color[mt][1]; 
-      float g = Materials_Color[mt][2]; 
-      float b = Materials_Color[mt][3];   
-  
-      Image_RGBA.pixels[np] = color(r, g, b, a);
+      
+      if (rendererType == ANG_renderer) {
+
+
+        
+        
+        
+      }
+      else if (rendererType == MAT_renderer) {
+        int mt = allFaces_MTLV[f][0];
+    
+        float a = Materials_Color[mt][0];
+        float r = Materials_Color[mt][1]; 
+        float g = Materials_Color[mt][2]; 
+        float b = Materials_Color[mt][3];   
+    
+        Image_RGBA.pixels[np] = color(r, g, b, a);
+      }
     }
     else Image_RGBA.pixels[np] = color(0,0,0,0);
   }
