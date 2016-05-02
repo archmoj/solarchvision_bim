@@ -26923,7 +26923,26 @@ void SOLARCHVISION_add_Model_CMC () { //CMC
 }
 
 
-void SOLARCHVISION_add_Model_Main () { //Home
+
+void SOLARCHVISION_add_Model_Main () {
+
+  {
+    float dx = 10;
+    float dy = 10;
+    float dz = 10;
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float rot = 0;
+   
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);    
+    SOLARCHVISION_add_House_Core(-1,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house
+  } 
+  
+}
+
+
+void SOLARCHVISION_add_Model_Home () { //Home
 
 
 
@@ -26988,7 +27007,9 @@ void SOLARCHVISION_add_Model_Main () { //Home
 }
 
 
-void SOLARCHVISION_add_Model_BASIC () {
+
+
+void SOLARCHVISION_add_Model_Basic () {
 
   /*
   {
@@ -50390,7 +50411,7 @@ int MAT_renderer = 1;
 int ANG_renderer = 2;
 int SHD_renderer = 3;
 
-int rendererType = ANG_renderer; // <<<<<<<<<<<<< 
+int rendererType = 1; //ANG_renderer; // <<<<<<<<<<<<< 
 
 
 void SOLARCHVISION_RenderViewport () {
@@ -50413,8 +50434,8 @@ void SOLARCHVISION_RenderViewport () {
   }     
 
   
-  int RES1 = 200; //WIN3D_X_View;
-  int RES2 = 200; //WIN3D_Y_View;
+  int RES1 = WIN3D_X_View;
+  int RES2 = WIN3D_Y_View;
   
   PImage Image_RGBA = createImage(RES1, RES2, ARGB);
 
