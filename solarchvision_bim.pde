@@ -7078,22 +7078,66 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
   }
 
 
+
   if (LoadButton_CLIMATE_CLMREC == 1) {
 
-    String FN = Defined_Stations[STATION_Number][9] + ".wy2";
-
-    int File_Found = -1;
-
-    //println(FN);
-    for (int i = 0; i < CLIMATE_CLMREC_Files.length; i++) {
-
-      if (CLIMATE_CLMREC_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-        //println("FILE FOUND:", FN);
-        File_Found = i;
-
-        break; // <<<<<<<<<<
-      }
+    for (int q = 0; q < numberOfNearestStations_CLMREC; q++) {
+      nearest_Station_CLMREC_id[q] = -1;
+      nearest_Station_CLMREC_dist[q] = FLOAT_undefined;
     }
+
+    for (int q = 0; q < numberOfNearestStations_CLMREC; q++) {
+      for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+
+        float _lat = float(STATION_CLMREC_INFO[f][3]);
+        float _lon = float(STATION_CLMREC_INFO[f][4]); 
+        if (_lon > 180) _lon -= 360; // << important!
+
+
+        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+
+        if (nearest_Station_CLMREC_dist[q] > d) {
+
+          int added_before = 0;
+
+          for (int p = 0; p < q; p++) {
+            if (nearest_Station_CLMREC_id[p] == f) added_before = 1;
+          }
+
+          if (added_before == 0) {
+            nearest_Station_CLMREC_dist[q] = d;
+            nearest_Station_CLMREC_id[q] = f;
+          }
+        }
+      }
+
+      nearest_Station_CLMREC_id[q] = nearest_Station_CLMREC_id[q];
+    }    
+
+
+    if ((File_Found == -1) && (Download_CLMREC != 0)) {
+      
+      String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[f][2] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+      String the_target = CLMREC_directory + "/" + FN;
+
+      println("Try downloading: " + the_link);
+/*
+      try {
+        saveBytes(the_target, loadBytes(the_link));
+
+        String[] new_file = {
+          FN
+        };
+        CLMREC_CSV_Files = concat(CLMREC_CSV_Files, new_file);
+
+        File_Found = CLMREC_CSV_Files.length - 1;
+        println("Added:", File_Found);
+      } 
+      catch (Exception e) {
+      }
+*/      
+    }    
+    
 
     if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
     else println("FILE NOT FOUND:", FN);
@@ -14870,81 +14914,7 @@ void SOLARCHVISION_Load_WorldViewImage (int n) {
 
 
 
-int STATION_SWOB_NUMBER = 0;
-String[][] STATION_SWOB_INFO;
 
-void SOLARCHVISION_getSWOB_Coordinates () {
-  try {
-    String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
-
-    String lineSTR;
-    String[] input;
-
-    STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
-
-    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][12]; 
-
-    int n_Locations = 0;
-
-    for (int f = 0; f < STATION_SWOB_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-
-      String StationNameEnglish = "";
-      String StationNameFrench = "";
-      String StationProvince = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationICAO = "";
-      String StationWMO = ""; 
-      String StationClimate = "";
-      String StationDST = ""; //Daylight saving time
-      String StationSTD = ""; //Standard Time      
-      String StationType = ""; // MAN/AUTO
-
-      String[] parts = split(lineSTR, '\t');
-
-      if (12 < parts.length) {
-
-        StationNameFrench = parts[1];
-        StationNameEnglish = parts[2];
-        StationProvince = parts[3];
-
-        StationType = parts[4];
-        if (StationType.equals("Manned")) StationType = "MAN";
-        if (StationType.equals("Auto")) StationType = "AUTO";
-
-        StationLatitude = float(parts[5]);
-        StationLongitude = float(parts[6]);
-        StationElevation = float(parts[7]);
-
-        StationICAO = parts[8];
-        StationWMO = parts[9];
-        StationClimate = parts[10];
-        StationDST = parts[11];
-        StationSTD = parts[12]; 
-
-        STATION_SWOB_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
-        STATION_SWOB_INFO[n_Locations][2] = StationProvince;
-        STATION_SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
-        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
-        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
-        STATION_SWOB_INFO[n_Locations][9] = StationDST;
-        STATION_SWOB_INFO[n_Locations][10] = StationSTD;
-        STATION_SWOB_INFO[n_Locations][11] = StationType;
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading SWOB coordinates.");
-  }
-}
 
 
 
@@ -15098,7 +15068,7 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
 
     STATION_CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
 
-    STATION_CLMREC_INFO = new String [STATION_CLMREC_NUMBER][7]; 
+    STATION_CLMREC_INFO = new String [STATION_CLMREC_NUMBER][9]; 
 
     int n_Locations = 0;
 
@@ -15111,7 +15081,9 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
       float StationElevation = 0.0; 
-      String StationFilename = "";
+      String StationICAO = "";
+      String StationWMO = ""; 
+      String StationClimate = "";
 
       String[] parts = split(lineSTR, ',');
 
@@ -15127,6 +15099,10 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
         StationLatitude = float(parts[6]);
         StationLongitude = float(parts[7]);
         StationElevation = float(parts[10]);
+        
+        StationICAO = parts[3];
+        StationWMO = parts[4];
+        StationClimate = parts[2];        
 
         STATION_CLMREC_INFO[n_Locations][0] = StationNameEnglish;
         STATION_CLMREC_INFO[n_Locations][1] = StationProvince;
@@ -15134,7 +15110,9 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
         STATION_CLMREC_INFO[n_Locations][3] = String.valueOf(StationLatitude);
         STATION_CLMREC_INFO[n_Locations][4] = String.valueOf(StationLongitude);
         STATION_CLMREC_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_CLMREC_INFO[n_Locations][6] = StationFilename;
+        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
+        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
+        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
 
         n_Locations += 1;
       }
@@ -15145,6 +15123,83 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
   }
 }
 
+
+
+int STATION_SWOB_NUMBER = 0;
+String[][] STATION_SWOB_INFO;
+
+void SOLARCHVISION_getSWOB_Coordinates () {
+  try {
+    String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
+
+    String lineSTR;
+    String[] input;
+
+    STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
+
+    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][12]; 
+
+    int n_Locations = 0;
+
+    for (int f = 0; f < STATION_SWOB_NUMBER; f += 1) {
+      lineSTR = FileALL[f + 1]; // to skip the first description line  
+
+      String StationNameEnglish = "";
+      String StationNameFrench = "";
+      String StationProvince = "";
+      float StationLatitude = 0.0;
+      float StationLongitude = 0.0;
+      float StationElevation = 0.0; 
+      String StationICAO = "";
+      String StationWMO = ""; 
+      String StationClimate = "";
+      String StationDST = ""; //Daylight saving time
+      String StationSTD = ""; //Standard Time      
+      String StationType = ""; // MAN/AUTO
+
+      String[] parts = split(lineSTR, '\t');
+
+      if (12 < parts.length) {
+
+        StationNameFrench = parts[1];
+        StationNameEnglish = parts[2];
+        StationProvince = parts[3];
+
+        StationType = parts[4];
+        if (StationType.equals("Manned")) StationType = "MAN";
+        if (StationType.equals("Auto")) StationType = "AUTO";
+
+        StationLatitude = float(parts[5]);
+        StationLongitude = float(parts[6]);
+        StationElevation = float(parts[7]);
+
+        StationICAO = parts[8];
+        StationWMO = parts[9];
+        StationClimate = parts[10];
+        StationDST = parts[11];
+        StationSTD = parts[12]; 
+
+        STATION_SWOB_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
+        STATION_SWOB_INFO[n_Locations][2] = StationProvince;
+        STATION_SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
+        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
+        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
+        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
+        STATION_SWOB_INFO[n_Locations][9] = StationDST;
+        STATION_SWOB_INFO[n_Locations][10] = StationSTD;
+        STATION_SWOB_INFO[n_Locations][11] = StationType;
+
+        n_Locations += 1;
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR reading SWOB coordinates.");
+  }
+}
 
 
 int STATION_EPW_NUMBER = 0;
