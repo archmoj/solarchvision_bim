@@ -7101,58 +7101,60 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
       }
     }
 
-    // this line tries to update the most recent files! << 
-    int THE_YEAR = year(); 
-    int THE_MONTH = month();
-    int THE_DAY = day();
-    int THE_HOUR = hour(); 
+
+    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k += 1) {
+      for (int m = 0; m < 12; m++) {
+      
+        int THE_YEAR = k + CLIMATE_CLMREC_start;
+        int THE_MONTH = m + 1;
+  
+        int File_Found = -1;    
     
-
-    int File_Found = -1;    
-
-    String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
-
-    println(FN);
-    for (int i = 0; i < CLIMATE_CLMREC_Files.length; i++) {
-
-      if (CLIMATE_CLMREC_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-        //println("FILE FOUND:", FN);
-        File_Found = i;
-
-        break; // <<<<<<<<<<
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
+    
+        println(FN);
+        for (int i = 0; i < CLIMATE_CLMREC_Files.length; i++) {
+    
+          if (CLIMATE_CLMREC_Files[i].toLowerCase().equals(FN.toLowerCase())) {
+            //println("FILE FOUND:", FN);
+            File_Found = i;
+    
+            break; // <<<<<<<<<<
+          }
+        }
+    
+        println("File_Found", File_Found);
+        println("Download_CLMREC", Download_CLMREC);
+    
+    
+        if ((File_Found == -1) && (Download_CLMREC != 0)) {
+          
+          String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_target = CLIMATE_CLMREC_directory + "/" + FN;
+    
+          println("Try downloading: " + the_link);
+    
+          try {
+            saveBytes(the_target, loadBytes(the_link));
+    
+            String[] new_file = {
+              FN
+            };
+            CLIMATE_CLMREC_Files = concat(CLIMATE_CLMREC_Files, new_file);
+    
+            File_Found = CLIMATE_CLMREC_Files.length - 1;
+            println("Added:", File_Found);
+          } 
+          catch (Exception e) {
+          }
+          
+        }    
+        
+    
+        //if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
+        //else println("FILE NOT FOUND:", FN);
       }
     }
-
-    println("File_Found", File_Found);
-    println("Download_CLMREC", Download_CLMREC);
-
-
-    if ((File_Found == -1) && (Download_CLMREC != 0)) {
-      
-      String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
-      String the_target = CLIMATE_CLMREC_directory + "/" + FN;
-
-      println("Try downloading: " + the_link);
-
-      try {
-        saveBytes(the_target, loadBytes(the_link));
-
-        String[] new_file = {
-          FN
-        };
-        CLIMATE_CLMREC_Files = concat(CLIMATE_CLMREC_Files, new_file);
-
-        File_Found = CLIMATE_CLMREC_Files.length - 1;
-        println("Added:", File_Found);
-      } 
-      catch (Exception e) {
-      }
-      
-    }    
-    
-
-    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
-    else println("FILE NOT FOUND:", FN);
   }
 }
 
