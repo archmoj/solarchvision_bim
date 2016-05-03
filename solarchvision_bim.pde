@@ -913,6 +913,7 @@ int LoadButton_ENSEMBLE = 0;
 int LoadButton_OBSERVED = 0;
 int Download_OBSERVED = 0;
 int Download_ENSEMBLE = 1;
+int Download_CMLREC = 0;
 
 int Download_AERIAL = 0;
 
@@ -4235,17 +4236,17 @@ void SOLARCHVISION_draw_WORLD () {
         float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
         float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
-        WORLD_Diagrams.strokeWeight(2 * WORLD_ImageScale);
+        WORLD_Diagrams.strokeWeight(1 * WORLD_ImageScale);
         WORLD_Diagrams.stroke(0, 0, 0, 191);
         WORLD_Diagrams.noFill();
-        WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+        WORLD_Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
 
         if (Display_CLMREC_Points > 1) {
           WORLD_Diagrams.strokeWeight(0);
           WORLD_Diagrams.stroke(0);
           WORLD_Diagrams.fill(0);      
           WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
+          WORLD_Diagrams.textSize(0.1 * MessageSize * WORLD_ImageScale);
           WORLD_Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
         }
       }
@@ -7101,6 +7102,8 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
 
 
 void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
+  
+  /*
   String[] FileALL = loadStrings(FileName);
 
   String lineSTR;
@@ -7189,6 +7192,7 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
       }
     }
   }
+  */
 }
 
 
@@ -15109,20 +15113,20 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
       float StationElevation = 0.0; 
       String StationFilename = "";
 
-      String[] parts = split(lineSTR, '_');
+      String[] parts = split(lineSTR, ',');
 
       if (4 < parts.length) {
 
         StationFilename = lineSTR; 
 
         StationCountry = "CA";
-        StationProvince = parts[0];
-        StationNameEnglish = parts[1];
+        StationProvince = parts[1];
+        StationNameEnglish = parts[0];
 
 
-        StationLatitude = float(parts[2]) * 0.01;
-        StationLongitude = float(parts[3]) * -0.01;
-        StationElevation = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        StationLatitude = float(parts[6]);
+        StationLongitude = float(parts[7]);
+        StationElevation = float(parts[10]);
 
         STATION_CLMREC_INFO[n_Locations][0] = StationNameEnglish;
         STATION_CLMREC_INFO[n_Locations][1] = StationProvince;
@@ -33993,7 +33997,7 @@ void mouseClicked () {
               WORLD_Update = 1;
             }   
 
-            if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("JPG Solid Graph")) { 
+            if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("JPG 3D Graph")) { 
               WIN3D_record_JPG = 1;
               WIN3D_Update = 1;
             } 
@@ -35707,7 +35711,7 @@ void mouseClicked () {
 
                   STATION_Number = 0; // <<<<<<<<<< overwrite station 0
 
-                    Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
                   Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
 
                   Defined_Stations[STATION_Number][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
@@ -35766,7 +35770,7 @@ void mouseClicked () {
 
                   STATION_Number = 0; // <<<<<<<<<< overwrite station 0
 
-                    Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
                   Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
 
                   Defined_Stations[STATION_Number][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
@@ -35825,7 +35829,7 @@ void mouseClicked () {
 
                   STATION_Number = 0; // <<<<<<<<<< overwrite station 0
 
-                    Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
                   Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
 
                   Defined_Stations[STATION_Number][9] = STATION_CLMREC_INFO[f][6]; // CLMREC filename
@@ -35885,7 +35889,7 @@ void mouseClicked () {
 
                   STATION_Number = 0; // <<<<<<<<<< overwrite station 0
 
-                    Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
                   Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
 
                   Defined_Stations[STATION_Number][10] = STATION_EPW_INFO[f][8]; // epw filename
@@ -46190,7 +46194,7 @@ String[][] SOLARCHVISION_UI_BAR_a_Items = {
   }
   , 
   {
-    "Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."
+    "Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG 3D Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."
   }
 };
 
