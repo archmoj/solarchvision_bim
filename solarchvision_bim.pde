@@ -4248,7 +4248,7 @@ void SOLARCHVISION_draw_WORLD () {
           WORLD_Diagrams.stroke(0);
           WORLD_Diagrams.fill(0);      
           WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(0.1 * MessageSize * WORLD_ImageScale);
+          WORLD_Diagrams.textSize(0.5 * MessageSize * WORLD_ImageScale);
           WORLD_Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
         }
       }
@@ -7110,7 +7110,7 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
 
     int File_Found = -1;    
 
-    String FN = "eng-hourly-04012016-04302016" + ".csv";
+    String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
 
     println(FN);
     for (int i = 0; i < CLIMATE_CLMREC_Files.length; i++) {
@@ -15103,7 +15103,7 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
 
         StationCountry = "CA";
         StationProvince = parts[1];
-        StationNameEnglish = parts[0];
+        StationNameEnglish = parts[0].replace('/', '_');
 
         StationLatitude = float(parts[6]);
         StationLongitude = float(parts[7]);
