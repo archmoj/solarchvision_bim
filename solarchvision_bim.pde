@@ -911,9 +911,11 @@ int LoadButton_CLIMATE_CWEEDS = 0;
 int LoadButton_CLIMATE_CLMREC = 0;
 int LoadButton_ENSEMBLE = 0;
 int LoadButton_OBSERVED = 0;
+
 int Download_OBSERVED = 0;
+int Download_CLMREC = 0;
 int Download_ENSEMBLE = 1;
-int Download_CMLREC = 0;
+
 
 int Download_AERIAL = 0;
 
@@ -7081,61 +7083,71 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
 
   if (LoadButton_CLIMATE_CLMREC == 1) {
 
-    for (int q = 0; q < numberOfNearestStations_CLMREC; q++) {
-      nearest_Station_CLMREC_id[q] = -1;
-      nearest_Station_CLMREC_dist[q] = FLOAT_undefined;
+    int nearest_Station_CLMREC_id = -1;
+    float nearest_Station_CLMREC_dist = FLOAT_undefined;
+    
+    for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+
+      float _lat = float(STATION_CLMREC_INFO[f][3]);
+      float _lon = float(STATION_CLMREC_INFO[f][4]); 
+      if (_lon > 180) _lon -= 360; // << important!
+
+      float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+
+      if (nearest_Station_CLMREC_dist > d) {
+
+        nearest_Station_CLMREC_dist = d;
+        nearest_Station_CLMREC_id = f;
+      }
     }
 
-    for (int q = 0; q < numberOfNearestStations_CLMREC; q++) {
-      for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+    // this line tries to update the most recent files! << 
+    int THE_YEAR = year(); 
+    int THE_MONTH = month();
+    int THE_DAY = day();
+    int THE_HOUR = hour(); 
+    
 
-        float _lat = float(STATION_CLMREC_INFO[f][3]);
-        float _lon = float(STATION_CLMREC_INFO[f][4]); 
-        if (_lon > 180) _lon -= 360; // << important!
+    int File_Found = -1;    
 
+    String FN = "eng-hourly-04012016-04302016" + ".csv";
 
-        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+    println(FN);
+    for (int i = 0; i < CLIMATE_CLMREC_Files.length; i++) {
 
-        if (nearest_Station_CLMREC_dist[q] > d) {
+      if (CLIMATE_CLMREC_Files[i].toLowerCase().equals(FN.toLowerCase())) {
+        //println("FILE FOUND:", FN);
+        File_Found = i;
 
-          int added_before = 0;
-
-          for (int p = 0; p < q; p++) {
-            if (nearest_Station_CLMREC_id[p] == f) added_before = 1;
-          }
-
-          if (added_before == 0) {
-            nearest_Station_CLMREC_dist[q] = d;
-            nearest_Station_CLMREC_id[q] = f;
-          }
-        }
+        break; // <<<<<<<<<<
       }
+    }
 
-      nearest_Station_CLMREC_id[q] = nearest_Station_CLMREC_id[q];
-    }    
+    println("File_Found", File_Found);
+    println("Download_CLMREC", Download_CLMREC);
 
 
     if ((File_Found == -1) && (Download_CLMREC != 0)) {
       
-      String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[f][2] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
-      String the_target = CLMREC_directory + "/" + FN;
+      String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+      String the_target = CLIMATE_CLMREC_directory + "/" + FN;
 
       println("Try downloading: " + the_link);
-/*
+
       try {
         saveBytes(the_target, loadBytes(the_link));
 
         String[] new_file = {
           FN
         };
-        CLMREC_CSV_Files = concat(CLMREC_CSV_Files, new_file);
+        CLIMATE_CLMREC_Files = concat(CLIMATE_CLMREC_Files, new_file);
 
-        File_Found = CLMREC_CSV_Files.length - 1;
+        File_Found = CLIMATE_CLMREC_Files.length - 1;
         println("Added:", File_Found);
       } 
       catch (Exception e) {
       }
-*/      
+      
     }    
     
 
@@ -15089,20 +15101,17 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
 
       if (4 < parts.length) {
 
-        StationFilename = lineSTR; 
-
         StationCountry = "CA";
         StationProvince = parts[1];
         StationNameEnglish = parts[0];
 
-
         StationLatitude = float(parts[6]);
         StationLongitude = float(parts[7]);
         StationElevation = float(parts[10]);
-        
+
         StationICAO = parts[3];
         StationWMO = parts[4];
-        StationClimate = parts[2];        
+        StationClimate = parts[2];
 
         STATION_CLMREC_INFO[n_Locations][0] = StationNameEnglish;
         STATION_CLMREC_INFO[n_Locations][1] = StationProvince;
@@ -15110,9 +15119,9 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
         STATION_CLMREC_INFO[n_Locations][3] = String.valueOf(StationLatitude);
         STATION_CLMREC_INFO[n_Locations][4] = String.valueOf(StationLongitude);
         STATION_CLMREC_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
-        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
-        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
+        STATION_CLMREC_INFO[n_Locations][6] = StationICAO;
+        STATION_CLMREC_INFO[n_Locations][7] = StationWMO;
+        STATION_CLMREC_INFO[n_Locations][8] = StationClimate;
 
         n_Locations += 1;
       }
@@ -37339,7 +37348,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       STUDY_max_j_end_observations = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Days of recent observations to load", STUDY_max_j_end_observations, 0, 31, 1), 1));
       Download_OBSERVED = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Download_OBSERVED", Download_OBSERVED, 0, 1, 1), 1));
+      Download_CLMREC = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Download_CLMREC", Download_CLMREC, 0, 1, 1), 1));
       Download_ENSEMBLE = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Download_ENSEMBLE", Download_ENSEMBLE, 0, 1, 1), 1));
+      
 
       Download_AERIAL = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Download_AERIAL", Download_AERIAL, 0, 1, 1), 1));
 
@@ -48778,6 +48789,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("LoadButton_ENSEMBLE", LoadButton_ENSEMBLE);
   newChild1.setInt("LoadButton_OBSERVED", LoadButton_OBSERVED);
   newChild1.setInt("Download_OBSERVED", Download_OBSERVED);
+  newChild1.setInt("Download_CLMREC", Download_CLMREC);  
   newChild1.setInt("Download_ENSEMBLE", Download_ENSEMBLE);
   newChild1.setInt("Download_AERIAL", Download_AERIAL);
   newChild1.setInt("GRIB2_Month", GRIB2_Month);
@@ -50025,6 +50037,7 @@ void SOLARCHVISION_load_project (String myFile) {
       LoadButton_ENSEMBLE = children0[L].getInt("LoadButton_ENSEMBLE");
       LoadButton_OBSERVED = children0[L].getInt("LoadButton_OBSERVED");
       Download_OBSERVED = children0[L].getInt("Download_OBSERVED");
+      Download_CLMREC = children0[L].getInt("Download_CLMREC");
       Download_ENSEMBLE = children0[L].getInt("Download_ENSEMBLE");
       Download_AERIAL = children0[L].getInt("Download_AERIAL");
       GRIB2_Month = children0[L].getInt("GRIB2_Month");
