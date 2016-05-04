@@ -339,7 +339,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 0; 
+int STATION_Number = 4; 
 
 String[][] Defined_Stations = {
 
@@ -5920,34 +5920,198 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
 
 void SOLARCHVISION_postProcess_ENSEMBLE () {
 
-  if (LoadButton_ENSEMBLE == 1) {
+  int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
 
-    int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
+  for (int l = 0; l < num_Layers; l += 1) {
 
-    for (int l = 0; l < num_Layers; l += 1) {
+    if (LAYERS_Text[l].equals("")) {  // <<<<<<<<<< to make it faster but this won't process the HRDPS layers those not available in NAEFS layers!
+    } else 
+    {
+      //////////////////////////////////////  PASS 1  //////////////////////////////////////  
 
-      if (LAYERS_Text[l].equals("")) {  // <<<<<<<<<< to make it faster but this won't process the HRDPS layers those not available in NAEFS layers!
-      } else 
-      {
-        //////////////////////////////////////  PASS 1  //////////////////////////////////////  
+      for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
+        float pre_v = FLOAT_undefined;
+        int pre_num = 0;
+
+        for (int j_for = 0; j_for < STUDY_max_j_end_parameters; j_for += 1) { 
+          int j = (int(j_for + TIME_Date + 365 - 286) % 365);
+
+          for (int i = 0; i < 24; i += 1) {
+
+            if (ENSEMBLE_Data[i][j][l][k] > 0.9 * FLOAT_undefined) {
+              if (pre_v < 0.9 * FLOAT_undefined) {
+                pre_num += 1;
+
+                float next_v = FLOAT_undefined;
+                int next_i = i;
+                int next_j = j;
+                int next_num = 0;
+                while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+                  next_num += 1;
+                  next_i += 1;
+                  if (next_i == 24) {
+                    next_i -= 24;
+                    next_j += 1;
+                  }
+                  if (next_j == 365) {
+                    next_j = 0;
+                  }
+                  if (ENSEMBLE_Data[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
+                  } else {
+                    next_v = ENSEMBLE_Data[next_i][next_j][l][k];
+
+                    if (l == LAYER_winddir) {
+                      if ((next_v - pre_v) > 180) next_v -= 360;
+                      if ((next_v - pre_v) < -180) next_v += 360;
+                    }
+                  }
+                }
+                if (next_num < MAX_SEARCH) {
+                  //if (l == LAYER_winddir) ENSEMBLE_Data[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  //else ENSEMBLE_Data[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+
+                  float interpolation_pow = pow(2.0, Interpolation_Weight);
+
+                  ENSEMBLE_Data[i][j][l][k] = (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow));
+                  if (l == LAYER_winddir) ENSEMBLE_Data[i][j][l][k] = (ENSEMBLE_Data[i][j][l][k] + 360) % 360;
+
+
+                  //println("[i][j][l][k]", i, j, l, k);
+                  ENSEMBLE_Flags[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with TIME_ModelRun == 12!!!!!!!!!!!!!!!!!!??????????
+                } else {
+                  ENSEMBLE_Flags[i][j][l][k] = -1;
+                }
+              }
+            } else {
+              ENSEMBLE_Flags[i][j][l][k] = 1;
+              pre_v = ENSEMBLE_Data[i][j][l][k];
+              pre_num = 0;
+            }
+
+            //if ((k == 43) && (ENSEMBLE_Data[i][j][l][k] < 0.9 * FLOAT_undefined)) println(GRIB2_Domains[GRIB2_DomainSelection][0] + ":", i, j, l, ENSEMBLE_Data[i][j][l][k]);
+          }
+        }
+      }
+
+      //////////////////////////////////////  PASS 2  //////////////////////////////////////      
+
+      if (CLIMATIC_WeatherForecast != 0) {
+
+        int keep_STUDY_JoinDays = STUDY_JoinDays;
+
+        STUDY_JoinDays = 7; // 1; for faster results      
+
+        float[][][] _valuesO;
+        float[][][] _valuesO_overcast;
+        float[][][] _valuesO_scattered;
+        float[][][] _valuesO_clear;
+
+        _valuesO           = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
+        _valuesO_overcast  = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
+        _valuesO_scattered = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
+        _valuesO_clear     = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
+
+        for (int i = 0; i < 24; i += 1) {      
+
+          for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k += 1) {
+            for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
+
+              for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {
+
+                int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
+                }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }           
+
+
+                _valuesO          [i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+                _valuesO_overcast [i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+                _valuesO_scattered[i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+                _valuesO_clear    [i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined; 
+
+                float Pa = CLIMATE_CWEEDS_Data[i][now_j][l][k];
+
+                if (Pa > 0.9 * FLOAT_undefined) {
+                } else {
+                  _valuesO[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
+
+                  if (SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k) == 1) {
+                    _valuesO_overcast[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
+                  }
+
+                  if (SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k) == 1) {
+                    _valuesO_scattered[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
+                  }
+
+                  if (SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k) == 1) {
+                    _valuesO_clear[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        float[][] _valuesH;
+        float[][] _valuesH_overcast;
+        float[][] _valuesH_scattered;
+        float[][] _valuesH_clear;
+
+        _valuesH           = new float [24][STUDY_max_j_end_parameters];
+        _valuesH_overcast  = new float [24][STUDY_max_j_end_parameters];
+        _valuesH_scattered = new float [24][STUDY_max_j_end_parameters];
+        _valuesH_clear     = new float [24][STUDY_max_j_end_parameters];
+
+        for (int i = 0; i < 24; i += 1) {
+          for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {      
+            _valuesH          [i][j] = SOLARCHVISION_NORMAL(_valuesO          [i][j])[STAT_N_Middle];
+            _valuesH_overcast [i][j] = SOLARCHVISION_NORMAL(_valuesO_overcast [i][j])[STAT_N_Middle];
+            _valuesH_scattered[i][j] = SOLARCHVISION_NORMAL(_valuesO_scattered[i][j])[STAT_N_Middle];
+            _valuesH_clear    [i][j] = SOLARCHVISION_NORMAL(_valuesO_clear    [i][j])[STAT_N_Middle];
+
+            //if (l == LAYER_drybulb) println("Average at hour", i, ", day", j, "=", _valuesH[i][j]);
+          }
+        }
+
+        STUDY_JoinDays = keep_STUDY_JoinDays;
+
+
+
 
         for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
-          float pre_v = FLOAT_undefined;
           int pre_num = 0;
 
+          float pre_v = FLOAT_undefined;
+          int pre_TIME_Hour = -1; // that means it is undefined.
+          int pre_TIME_Day = -1; // that means it is undefined.
+
           for (int j_for = 0; j_for < STUDY_max_j_end_parameters; j_for += 1) { 
-            int j = (int(j_for + TIME_Date + 365 - 286) % 365);
+            int now_j = (int(j_for + TIME_Date + 365 - 286) % 365);
+            if (now_j >= 365) {
+              now_j = now_j % 365;
+            }
+            if (now_j < 0) {
+              now_j = (now_j + 365) % 365;
+            }        
 
             for (int i = 0; i < 24; i += 1) {
+              if (ENSEMBLE_Flags[i][now_j][l][k] == 0) { // if it was interpolated then ...
 
-              if (ENSEMBLE_Data[i][j][l][k] > 0.9 * FLOAT_undefined) {
                 if (pre_v < 0.9 * FLOAT_undefined) {
                   pre_num += 1;
 
                   float next_v = FLOAT_undefined;
+                  int next_hour = -1; // that means it is undefined.
+                  int next_day = -1; // that means it is undefined.
+
                   int next_i = i;
-                  int next_j = j;
+                  int next_j = now_j;
                   int next_num = 0;
+
                   while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
                     next_num += 1;
                     next_i += 1;
@@ -5958,9 +6122,44 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                     if (next_j == 365) {
                       next_j = 0;
                     }
-                    if (ENSEMBLE_Data[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
-                    } else {
+                    if (ENSEMBLE_Flags[next_i][next_j][l][k] != 0) { // if it wasn't interpolated then ...
                       next_v = ENSEMBLE_Data[next_i][next_j][l][k];
+                      next_hour = next_i;
+                      next_day = (int(next_j - TIME_Date + 286 + 365) % 365); 
+
+
+                      // non-linear post processing for some parameters
+                      if ((l == LAYER_drybulb) || (l == LAYER_relhum)) {
+
+                        if ((pre_v < 0.9 * FLOAT_undefined) && (next_v < 0.9 * FLOAT_undefined)) {
+                          // replacing linear interpolated forecast with new values based on hourly patterns of observations in recent days.
+
+                          float linear_climate = 0;
+                          float current_dist = 0;
+
+                          if (CLIMATIC_WeatherForecast == 1) {
+                            linear_climate = (next_num * _valuesH[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH[next_hour][next_day]) / (pre_num + next_num);
+                            current_dist = _valuesH[i][j_for] - linear_climate;
+                          } else {                    
+                            if ((SOLARCHVISION_filter("ENSEMBLE_Data", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k)) == 1) {
+                              linear_climate = (next_num * _valuesH_overcast[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_overcast[next_hour][next_day]) / (pre_num + next_num);
+                              current_dist = _valuesH_overcast[i][j_for] - linear_climate;
+                            } else if ((SOLARCHVISION_filter("ENSEMBLE_Data", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k)) == 1) {
+                              linear_climate = (next_num * _valuesH_scattered[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_scattered[next_hour][next_day]) / (pre_num + next_num);
+                              current_dist = _valuesH_scattered[i][j_for] - linear_climate;
+                            }
+                            //else if ((SOLARCHVISION_filter("ENSEMBLE_Data", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k)) == 1) {
+                            else {
+                              linear_climate = (next_num * _valuesH_clear[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_clear[next_hour][next_day]) / (pre_num + next_num);
+                              current_dist = _valuesH_clear[i][j_for] - linear_climate;
+                            }
+                          }                          
+
+
+                          ENSEMBLE_Data[i][now_j][l][k] = ENSEMBLE_Data[i][now_j][l][k] + current_dist;
+                        }
+                      }       
+
 
                       if (l == LAYER_winddir) {
                         if ((next_v - pre_v) > 180) next_v -= 360;
@@ -5968,332 +6167,130 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                       }
                     }
                   }
-                  if (next_num < MAX_SEARCH) {
-                    //if (l == LAYER_winddir) ENSEMBLE_Data[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
-                    //else ENSEMBLE_Data[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
 
-                    float interpolation_pow = pow(2.0, Interpolation_Weight);
-
-                    ENSEMBLE_Data[i][j][l][k] = (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow));
-                    if (l == LAYER_winddir) ENSEMBLE_Data[i][j][l][k] = (ENSEMBLE_Data[i][j][l][k] + 360) % 360;
-
-
-                    //println("[i][j][l][k]", i, j, l, k);
-                    ENSEMBLE_Flags[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with TIME_ModelRun == 12!!!!!!!!!!!!!!!!!!??????????
-                  } else {
-                    ENSEMBLE_Flags[i][j][l][k] = -1;
-                  }
-                }
-              } else {
-                ENSEMBLE_Flags[i][j][l][k] = 1;
-                pre_v = ENSEMBLE_Data[i][j][l][k];
-                pre_num = 0;
-              }
-
-              //if ((k == 43) && (ENSEMBLE_Data[i][j][l][k] < 0.9 * FLOAT_undefined)) println(GRIB2_Domains[GRIB2_DomainSelection][0] + ":", i, j, l, ENSEMBLE_Data[i][j][l][k]);
-            }
-          }
-        }
-
-        //////////////////////////////////////  PASS 2  //////////////////////////////////////      
-
-        if (CLIMATIC_WeatherForecast != 0) {
-
-          int keep_STUDY_JoinDays = STUDY_JoinDays;
-
-          STUDY_JoinDays = 7; // 1; for faster results      
-
-          float[][][] _valuesO;
-          float[][][] _valuesO_overcast;
-          float[][][] _valuesO_scattered;
-          float[][][] _valuesO_clear;
-
-          _valuesO           = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
-          _valuesO_overcast  = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
-          _valuesO_scattered = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
-          _valuesO_clear     = new float [24][STUDY_max_j_end_parameters][((1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start) * STUDY_JoinDays)];
-
-          for (int i = 0; i < 24; i += 1) {      
-
-            for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k += 1) {
-              for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
-
-                for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {
-
-                  int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
-
-                  if (now_j >= 365) {
-                    now_j = now_j % 365;
-                  }
-                  if (now_j < 0) {
-                    now_j = (now_j + 365) % 365;
-                  }           
-
-
-                  _valuesO          [i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
-                  _valuesO_overcast [i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
-                  _valuesO_scattered[i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
-                  _valuesO_clear    [i][j][(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined; 
-
-                  float Pa = CLIMATE_CWEEDS_Data[i][now_j][l][k];
-
-                  if (Pa > 0.9 * FLOAT_undefined) {
-                  } else {
-                    _valuesO[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
-
-                    if (SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k) == 1) {
-                      _valuesO_overcast[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
-                    }
-
-                    if (SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k) == 1) {
-                      _valuesO_scattered[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
-                    }
-
-                    if (SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k) == 1) {
-                      _valuesO_clear[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-          float[][] _valuesH;
-          float[][] _valuesH_overcast;
-          float[][] _valuesH_scattered;
-          float[][] _valuesH_clear;
-
-          _valuesH           = new float [24][STUDY_max_j_end_parameters];
-          _valuesH_overcast  = new float [24][STUDY_max_j_end_parameters];
-          _valuesH_scattered = new float [24][STUDY_max_j_end_parameters];
-          _valuesH_clear     = new float [24][STUDY_max_j_end_parameters];
-
-          for (int i = 0; i < 24; i += 1) {
-            for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {      
-              _valuesH          [i][j] = SOLARCHVISION_NORMAL(_valuesO          [i][j])[STAT_N_Middle];
-              _valuesH_overcast [i][j] = SOLARCHVISION_NORMAL(_valuesO_overcast [i][j])[STAT_N_Middle];
-              _valuesH_scattered[i][j] = SOLARCHVISION_NORMAL(_valuesO_scattered[i][j])[STAT_N_Middle];
-              _valuesH_clear    [i][j] = SOLARCHVISION_NORMAL(_valuesO_clear    [i][j])[STAT_N_Middle];
-
-              //if (l == LAYER_drybulb) println("Average at hour", i, ", day", j, "=", _valuesH[i][j]);
-            }
-          }
-
-          STUDY_JoinDays = keep_STUDY_JoinDays;
-
-
-
-
-          for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
-            int pre_num = 0;
-
-            float pre_v = FLOAT_undefined;
-            int pre_TIME_Hour = -1; // that means it is undefined.
-            int pre_TIME_Day = -1; // that means it is undefined.
-
-            for (int j_for = 0; j_for < STUDY_max_j_end_parameters; j_for += 1) { 
-              int now_j = (int(j_for + TIME_Date + 365 - 286) % 365);
-              if (now_j >= 365) {
-                now_j = now_j % 365;
-              }
-              if (now_j < 0) {
-                now_j = (now_j + 365) % 365;
-              }        
-
-              for (int i = 0; i < 24; i += 1) {
-                if (ENSEMBLE_Flags[i][now_j][l][k] == 0) { // if it was interpolated then ...
-
-                  if (pre_v < 0.9 * FLOAT_undefined) {
-                    pre_num += 1;
-
-                    float next_v = FLOAT_undefined;
-                    int next_hour = -1; // that means it is undefined.
-                    int next_day = -1; // that means it is undefined.
-
-                    int next_i = i;
-                    int next_j = now_j;
-                    int next_num = 0;
-
-                    while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
-                      next_num += 1;
-                      next_i += 1;
-                      if (next_i == 24) {
-                        next_i -= 24;
-                        next_j += 1;
-                      }
-                      if (next_j == 365) {
-                        next_j = 0;
-                      }
-                      if (ENSEMBLE_Flags[next_i][next_j][l][k] != 0) { // if it wasn't interpolated then ...
-                        next_v = ENSEMBLE_Data[next_i][next_j][l][k];
-                        next_hour = next_i;
-                        next_day = (int(next_j - TIME_Date + 286 + 365) % 365); 
-
-
-                        // non-linear post processing for some parameters
-                        if ((l == LAYER_drybulb) || (l == LAYER_relhum)) {
-
-                          if ((pre_v < 0.9 * FLOAT_undefined) && (next_v < 0.9 * FLOAT_undefined)) {
-                            // replacing linear interpolated forecast with new values based on hourly patterns of observations in recent days.
-
-                            float linear_climate = 0;
-                            float current_dist = 0;
-
-                            if (CLIMATIC_WeatherForecast == 1) {
-                              linear_climate = (next_num * _valuesH[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH[next_hour][next_day]) / (pre_num + next_num);
-                              current_dist = _valuesH[i][j_for] - linear_climate;
-                            } else {                    
-                              if ((SOLARCHVISION_filter("ENSEMBLE_Data", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k)) == 1) {
-                                linear_climate = (next_num * _valuesH_overcast[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_overcast[next_hour][next_day]) / (pre_num + next_num);
-                                current_dist = _valuesH_overcast[i][j_for] - linear_climate;
-                              } else if ((SOLARCHVISION_filter("ENSEMBLE_Data", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k)) == 1) {
-                                linear_climate = (next_num * _valuesH_scattered[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_scattered[next_hour][next_day]) / (pre_num + next_num);
-                                current_dist = _valuesH_scattered[i][j_for] - linear_climate;
-                              }
-                              //else if ((SOLARCHVISION_filter("ENSEMBLE_Data", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k)) == 1) {
-                              else {
-                                linear_climate = (next_num * _valuesH_clear[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_clear[next_hour][next_day]) / (pre_num + next_num);
-                                current_dist = _valuesH_clear[i][j_for] - linear_climate;
-                              }
-                            }                          
-
-
-                            ENSEMBLE_Data[i][now_j][l][k] = ENSEMBLE_Data[i][now_j][l][k] + current_dist;
-                          }
-                        }       
-
-
-                        if (l == LAYER_winddir) {
-                          if ((next_v - pre_v) > 180) next_v -= 360;
-                          if ((next_v - pre_v) < -180) next_v += 360;
-                        }
-                      }
-                    }
-
-                    ENSEMBLE_Flags[i][now_j][l][k] = 0;
-                  } else {
-                    ENSEMBLE_Flags[i][now_j][l][k] = -1;
-                  }
+                  ENSEMBLE_Flags[i][now_j][l][k] = 0;
                 } else {
-                  ENSEMBLE_Flags[i][now_j][l][k] = 1;
-                  pre_v = ENSEMBLE_Data[i][now_j][l][k];
-                  pre_num = 0;
-
-                  pre_TIME_Hour = i;
-                  pre_TIME_Day = j_for;
+                  ENSEMBLE_Flags[i][now_j][l][k] = -1;
                 }
+              } else {
+                ENSEMBLE_Flags[i][now_j][l][k] = 1;
+                pre_v = ENSEMBLE_Data[i][now_j][l][k];
+                pre_num = 0;
+
+                pre_TIME_Hour = i;
+                pre_TIME_Day = j_for;
               }
             }
           }
         }
-
-        //////////////////////////////////////  END PASS 2  //////////////////////////////////////
       }
+
+      //////////////////////////////////////  END PASS 2  //////////////////////////////////////
     }
+  }
 
-    println("Post-processing solar components ...");
+  println("Post-processing solar components ...");
 
-    int num_count = (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start);
+  int num_count = (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start);
 
-    for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
-      for (int j_for = 0; j_for < STUDY_max_j_end_parameters; j_for += 1) { 
-        int j = ((j_for + TIME_BeginDay) % 365);
-        for (int i = 0; i < 24; i += 1) {
-          if (ENSEMBLE_Data[i][j][LAYER_cloudcover][k] > 0.9 * FLOAT_undefined) {
-          } else {
-            float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
-            float HOUR_ANGLE = i; 
+  for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
+    for (int j_for = 0; j_for < STUDY_max_j_end_parameters; j_for += 1) { 
+      int j = ((j_for + TIME_BeginDay) % 365);
+      for (int i = 0; i < 24; i += 1) {
+        if (ENSEMBLE_Data[i][j][LAYER_cloudcover][k] > 0.9 * FLOAT_undefined) {
+        } else {
+          float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
+          float HOUR_ANGLE = i; 
 
-            float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
-            float T = ENSEMBLE_Data[i][j][LAYER_drybulb][k];
+          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
+          float T = ENSEMBLE_Data[i][j][LAYER_drybulb][k];
 
-            ENSEMBLE_Data[i][j][LAYER_dirnorrad][k] = SunR[4];
-            ENSEMBLE_Flags[i][j][LAYER_dirnorrad][k] = 0;
+          ENSEMBLE_Data[i][j][LAYER_dirnorrad][k] = SunR[4];
+          ENSEMBLE_Flags[i][j][LAYER_dirnorrad][k] = 0;
 
-            ENSEMBLE_Data[i][j][LAYER_difhorrad][k] = SunR[5];
-            ENSEMBLE_Flags[i][j][LAYER_difhorrad][k] = 0;
+          ENSEMBLE_Data[i][j][LAYER_difhorrad][k] = SunR[5];
+          ENSEMBLE_Flags[i][j][LAYER_difhorrad][k] = 0;
 
-            ENSEMBLE_Data[i][j][LAYER_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
-            ENSEMBLE_Flags[i][j][LAYER_glohorrad][k] = 0;
-
-
-            //---------------------------------------------------------------------
-            if (CLIMATIC_SolarForecast == 1) {
-
-              float Forecast_CC = ENSEMBLE_Data[i][j][LAYER_cloudcover][k];
-              float Forecast_AP = ENSEMBLE_Data[i][j][LAYER_pressure][k];
-
-              float CC_epsilon = 1.0; // defines a range for finding near previous results: 1.0 results in e.g. 2 < CC < 4 for CC at 3  
-              float AP_epsilon = 50.0;
-
-              float _valuesSUM_DIR = 0;
-              float _valuesSUM_DIF = 0;
-              float _valuesSUM_GLO = 0;
-              float sum_count = 0;
-
-              float process_add_days = 11;
-
-              for (int q = 0; q < num_count; q += 1) {
-
-                for (int j_ADD = 0; j_ADD < process_add_days; j_ADD += 1) { 
-
-                  int now_i = i;
-                  int now_j = int(j + (j_ADD - int(0.5 * process_add_days)) + 365) % 365;
-
-                  if (now_j >= 365) {
-                    now_j = now_j % 365;
-                  }
-                  if (now_j < 0) {
-                    now_j = (now_j + 365) % 365;
-                  }
+          ENSEMBLE_Data[i][j][LAYER_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
+          ENSEMBLE_Flags[i][j][LAYER_glohorrad][k] = 0;
 
 
-                  if ((CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_cloudcover][q] > 0.9 * FLOAT_undefined) || (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_pressure][q] > 0.9 * FLOAT_undefined)) {
-                  } else {
-                    float CC_dist = abs(Forecast_CC - CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_cloudcover][q]);
-                    float AP_dist = abs(Forecast_AP - CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_pressure][q]);
-                    if ((CC_dist < CC_epsilon) && (AP_dist < AP_epsilon)) {
+          //---------------------------------------------------------------------
+          if (CLIMATIC_SolarForecast == 1) {
 
-                      float _weight;
+            float Forecast_CC = ENSEMBLE_Data[i][j][LAYER_cloudcover][k];
+            float Forecast_AP = ENSEMBLE_Data[i][j][LAYER_pressure][k];
 
-                      _weight = 1; 
-                      _weight *= pow(abs(1 - pow(CC_dist/CC_epsilon, 2)), 2); // to add more wights to closer cases
-                      _weight *= pow(abs(1 - pow(AP_dist/AP_epsilon, 2)), 2);
+            float CC_epsilon = 1.0; // defines a range for finding near previous results: 1.0 results in e.g. 2 < CC < 4 for CC at 3  
+            float AP_epsilon = 50.0;
 
-                      sum_count += _weight;
+            float _valuesSUM_DIR = 0;
+            float _valuesSUM_DIF = 0;
+            float _valuesSUM_GLO = 0;
+            float sum_count = 0;
 
-                      if (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_dirnorrad][q] > 0.9 * FLOAT_undefined) {
-                      } else _valuesSUM_DIR += _weight * CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_dirnorrad][q]; 
-                      if (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_difhorrad][q] > 0.9 * FLOAT_undefined) {
-                      } else _valuesSUM_DIF += _weight * CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_difhorrad][q]; 
-                      if (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_glohorrad][q] > 0.9 * FLOAT_undefined) {
-                      } else _valuesSUM_GLO += _weight * CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_glohorrad][q];
-                    }
+            float process_add_days = 11;
+
+            for (int q = 0; q < num_count; q += 1) {
+
+              for (int j_ADD = 0; j_ADD < process_add_days; j_ADD += 1) { 
+
+                int now_i = i;
+                int now_j = int(j + (j_ADD - int(0.5 * process_add_days)) + 365) % 365;
+
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
+                }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }
+
+
+                if ((CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_cloudcover][q] > 0.9 * FLOAT_undefined) || (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_pressure][q] > 0.9 * FLOAT_undefined)) {
+                } else {
+                  float CC_dist = abs(Forecast_CC - CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_cloudcover][q]);
+                  float AP_dist = abs(Forecast_AP - CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_pressure][q]);
+                  if ((CC_dist < CC_epsilon) && (AP_dist < AP_epsilon)) {
+
+                    float _weight;
+
+                    _weight = 1; 
+                    _weight *= pow(abs(1 - pow(CC_dist/CC_epsilon, 2)), 2); // to add more wights to closer cases
+                    _weight *= pow(abs(1 - pow(AP_dist/AP_epsilon, 2)), 2);
+
+                    sum_count += _weight;
+
+                    if (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_dirnorrad][q] > 0.9 * FLOAT_undefined) {
+                    } else _valuesSUM_DIR += _weight * CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_dirnorrad][q]; 
+                    if (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_difhorrad][q] > 0.9 * FLOAT_undefined) {
+                    } else _valuesSUM_DIF += _weight * CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_difhorrad][q]; 
+                    if (CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_glohorrad][q] > 0.9 * FLOAT_undefined) {
+                    } else _valuesSUM_GLO += _weight * CLIMATE_CWEEDS_Data[now_i][now_j][LAYER_glohorrad][q];
                   }
                 }
               }
+            }
 
-              if (sum_count != 0) {
-                _valuesSUM_DIR /= sum_count;
-                _valuesSUM_DIF /= sum_count;
-                _valuesSUM_GLO /= sum_count;
+            if (sum_count != 0) {
+              _valuesSUM_DIR /= sum_count;
+              _valuesSUM_DIF /= sum_count;
+              _valuesSUM_GLO /= sum_count;
 
-                ENSEMBLE_Data[i][j][LAYER_dirnorrad][k] = _valuesSUM_DIR;
-                ENSEMBLE_Data[i][j][LAYER_difhorrad][k] = _valuesSUM_DIF;
-                ENSEMBLE_Data[i][j][LAYER_glohorrad][k] = _valuesSUM_GLO;
-              } else {
-                //println("Cannot find simillar conditions in climate file at i:", i, ", j:", j, ", k:", k);
-              }
-            }      
+              ENSEMBLE_Data[i][j][LAYER_dirnorrad][k] = _valuesSUM_DIR;
+              ENSEMBLE_Data[i][j][LAYER_difhorrad][k] = _valuesSUM_DIF;
+              ENSEMBLE_Data[i][j][LAYER_glohorrad][k] = _valuesSUM_GLO;
+            } else {
+              //println("Cannot find simillar conditions in climate file at i:", i, ", j:", j, ", k:", k);
+            }
+          }      
 
-            //---------------------------------------------------------------------
+          //---------------------------------------------------------------------
 
-            ENSEMBLE_Data[i][j][LAYER_direffect][k] = ENSEMBLE_Data[i][j][LAYER_dirnorrad][k] * (18 - T);
-            ENSEMBLE_Flags[i][j][LAYER_direffect][k] = 0;
+          ENSEMBLE_Data[i][j][LAYER_direffect][k] = ENSEMBLE_Data[i][j][LAYER_dirnorrad][k] * (18 - T);
+          ENSEMBLE_Flags[i][j][LAYER_direffect][k] = 0;
 
-            ENSEMBLE_Data[i][j][LAYER_difeffect][k] = ENSEMBLE_Data[i][j][LAYER_difhorrad][k] * (18 - T);
-            ENSEMBLE_Flags[i][j][LAYER_difeffect][k] = 0;
-          }
+          ENSEMBLE_Data[i][j][LAYER_difeffect][k] = ENSEMBLE_Data[i][j][LAYER_difhorrad][k] * (18 - T);
+          ENSEMBLE_Flags[i][j][LAYER_difeffect][k] = 0;
         }
       }
     }
@@ -7152,7 +7149,7 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
   }
   
 
-  SOLARCHVISION_PostProcessCLIMATE_CLMREC();
+  SOLARCHVISION_postProcess_CLIMATE_CLMREC();
 }
 
 
@@ -7192,6 +7189,8 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
       String str = "";
       
       str = parts[24];
+      
+      println(str);
        
       if (str.equals("NA")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
       else if (str.equals("Clear")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 0;
@@ -7199,6 +7198,8 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
       else if (str.equals("Mostly Cloudy")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 5;
       else if (str.equals("Cloudy")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 7.5;
       else CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 10;
+      
+      println(CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k]);
     
       str = parts[6];
       if (!str.equals("")) CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(str); // °C
@@ -7221,30 +7222,118 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
   
 }
 
-void SOLARCHVISION_PostProcessCLIMATE_CLMREC () {  
 
-  float Pa, Pb, Pc;
-  float T, R_dir, R_dif;
-  for (int i = 0; i < 24; i += 1) {
-    for (int j = 0; j < 365; j += 1) {
+
+void SOLARCHVISION_postProcess_CLIMATE_CLMREC () {
+
+  int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
+
+  for (int l = 0; l < num_Layers; l += 1) {
+
+    if (LAYERS_Text[l].equals("")) {  // <<<<<<<<<< to make it faster but this won't process the HRDPS layers those not available in NAEFS layers!
+    } else 
+    {
+      
       for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k += 1) {
-        Pa = CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k];
-        Pb = CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k];
-        Pc = CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k];
+        float pre_v = FLOAT_undefined;
+        int pre_num = 0;
 
-        if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined)) {
+        for (int j = 0; j < 365; j += 1) { 
+
+          for (int i = 0; i < 24; i += 1) {
+
+            if (CLIMATE_CLMREC_Data[i][j][l][k] > 0.9 * FLOAT_undefined) {
+              if (pre_v < 0.9 * FLOAT_undefined) {
+                pre_num += 1;
+
+                float next_v = FLOAT_undefined;
+                int next_i = i;
+                int next_j = j;
+                int next_num = 0;
+                while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+                  next_num += 1;
+                  next_i += 1;
+                  if (next_i == 24) {
+                    next_i -= 24;
+                    next_j += 1;
+                  }
+                  if (next_j == 365) {
+                    next_j = 0;
+                  }
+                  if (CLIMATE_CLMREC_Data[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
+                  } else {
+                    next_v = CLIMATE_CLMREC_Data[next_i][next_j][l][k];
+
+                    if (l == LAYER_winddir) {
+                      if ((next_v - pre_v) > 180) next_v -= 360;
+                      if ((next_v - pre_v) < -180) next_v += 360;
+                    }
+                  }
+                }
+                if (next_num < MAX_SEARCH) {
+                  //if (l == LAYER_winddir) CLIMATE_CLMREC_Data[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  //else CLIMATE_CLMREC_Data[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+
+                  float interpolation_pow = pow(2.0, Interpolation_Weight);
+
+                  CLIMATE_CLMREC_Data[i][j][l][k] = (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow));
+                  if (l == LAYER_winddir) CLIMATE_CLMREC_Data[i][j][l][k] = (CLIMATE_CLMREC_Data[i][j][l][k] + 360) % 360;
+
+
+                  //println("[i][j][l][k]", i, j, l, k);
+                  //CLIMATE_CLMREC_Flags[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with TIME_ModelRun == 12!!!!!!!!!!!!!!!!!!??????????
+                } else {
+                  //CLIMATE_CLMREC_Flags[i][j][l][k] = -1;
+                }
+              }
+            } else {
+              //CLIMATE_CLMREC_Flags[i][j][l][k] = 1;
+              pre_v = CLIMATE_CLMREC_Data[i][j][l][k];
+              pre_num = 0;
+            }
+
+            //if ((k == 43) && (CLIMATE_CLMREC_Data[i][j][l][k] < 0.9 * FLOAT_undefined)) println(GRIB2_Domains[GRIB2_DomainSelection][0] + ":", i, j, l, CLIMATE_CLMREC_Data[i][j][l][k]);
+          }
+        }
+      }
+
+    }
+  }
+
+  println("Post-processing solar components ...");
+
+  for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k += 1) {
+    for (int j = 0; j < 365; j += 1) { 
+      for (int i = 0; i < 24; i += 1) {
+        if (CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] > 0.9 * FLOAT_undefined) {
         } else {
-          T = Pa;
-          R_dir = Pb;
-          R_dif = Pc;
-          CLIMATE_CLMREC_Data[i][j][LAYER_direffect][k] = (18 - T) * R_dir;
-          CLIMATE_CLMREC_Data[i][j][LAYER_difeffect][k] = (18 - T) * R_dif;
+          float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
+          float HOUR_ANGLE = i; 
+
+          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k]);
+          float T = CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k];
+
+          CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] = SunR[4];
+          //CLIMATE_CLMREC_Flags[i][j][LAYER_dirnorrad][k] = 0;
+
+          CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] = SunR[5];
+          //CLIMATE_CLMREC_Flags[i][j][LAYER_difhorrad][k] = 0;
+
+          CLIMATE_CLMREC_Data[i][j][LAYER_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
+          //CLIMATE_CLMREC_Flags[i][j][LAYER_glohorrad][k] = 0;
+
+          CLIMATE_CLMREC_Data[i][j][LAYER_direffect][k] = CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] * (18 - T);
+          //CLIMATE_CLMREC_Flags[i][j][LAYER_direffect][k] = 0;
+
+          CLIMATE_CLMREC_Data[i][j][LAYER_difeffect][k] = CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] * (18 - T);
+          //CLIMATE_CLMREC_Flags[i][j][LAYER_difeffect][k] = 0;
         }
       }
     }
   }
 
 }
+
 
 
 void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
