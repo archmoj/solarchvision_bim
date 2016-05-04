@@ -5948,7 +5948,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                   int next_i = i;
                   int next_j = j;
                   int next_num = 0;
-                  while ( (next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+                  while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
                     next_num += 1;
                     next_i += 1;
                     if (next_i == 24) {
@@ -6114,7 +6114,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                     int next_j = now_j;
                     int next_num = 0;
 
-                    while ( (next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+                    while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
                       next_num += 1;
                       next_i += 1;
                       if (next_i == 24) {
@@ -7187,19 +7187,34 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
 
     //println(i);
     
-    if (parts.length > 5) {
+    if (parts.length > 24) {
       
-      CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 0.5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      String str = "";
+      
+      str = parts[24];
+       
+      if (str.equals("NA")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
+      else if (str.equals("Clear")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 0;
+      else if (str.equals("Mainly Clear")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 2.5;
+      else if (str.equals("Mostly Cloudy")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 5;
+      else if (str.equals("Cloudy")) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 7.5;
+      else CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 10;
     
-      CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(parts[6]); // °C
+      str = parts[6];
+      if (!str.equals("")) CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(str); // °C
 
-      CLIMATE_CLMREC_Data[i][j][LAYER_relhum][k] = float(parts[10]); // %
-      CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] = float(parts[12]); // °
-      CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = float(parts[14]); // km/h
+      str = parts[10];
+      if (!str.equals("")) CLIMATE_CLMREC_Data[i][j][LAYER_relhum][k] = float(str); // %
 
-      CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = float(parts[18]) * 100; // hPa
-      
-      println(parts[12]);
+      str = parts[12];
+      if (!str.equals("")) CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] = float(str); // °
+
+      str = parts[14];
+      if (!str.equals("")) CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = float(str); // km/h
+
+      str = parts[18];
+      if (!str.equals("")) CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = float(str) * 100; // hPa
+
 
     }
   }
@@ -8078,7 +8093,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
                 int next_i = i;
                 int next_j = j;
                 int next_num = 0;
-                while ( (next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+                while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
                   next_num += 1;
                   next_i += 1;
                   if (next_i == 24) {
@@ -38345,7 +38360,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
     int _stay = 1;
 
-    while ( (_stay != 0) && (_stay < 100000)) {
+    while ((_stay != 0) && (_stay < 100000)) {
 
       //println(_stay);
 
@@ -38510,7 +38525,7 @@ float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
 
   int _stay = 1;
 
-  while ( (_stay != 0) && (_stay < 100000)) {
+  while ((_stay != 0) && (_stay < 100000)) {
 
     //println(_stay);
 
