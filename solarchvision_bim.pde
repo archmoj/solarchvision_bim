@@ -7151,17 +7151,19 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
         }    
         
     
-        //if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
-        //else println("FILE NOT FOUND:", FN);
+        if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
+        else println("FILE NOT FOUND:", FN);
       }
     }
   }
+  
+
+  SOLARCHVISION_PostProcessCLIMATE_CLMREC();
 }
 
 
 void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
-  
-  /*
+
   String[] FileALL = loadStrings(FileName);
 
   String lineSTR;
@@ -7170,63 +7172,43 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
 
   println("lines = ", FileALL.length);
 
-  for (int f = 0; f < FileALL.length; f += 1) {
+  for (int f = 18; f < FileALL.length; f += 1) {
 
     lineSTR = FileALL[f];
     //println(lineSTR);
+    
+    lineSTR = lineSTR.replace("\"", ""); 
+    String[] parts = split(lineSTR, ',');
 
-    int CLIMATE_YEAR = int(lineSTR.substring(6, 10));
-    int CLIMATE_MONTH = int(lineSTR.substring(10, 12));
-    int CLIMATE_DAY = int(lineSTR.substring(12, 14));
-    int CLIMATE_HOUR = int(lineSTR.substring(14, 16));
+    int CLIMATE_YEAR = int(parts[1]);
+    int CLIMATE_MONTH = int(parts[2]);
+    int CLIMATE_DAY = int(parts[3]);
+    int CLIMATE_HOUR = int(parts[4].substring(0, 2));
 
     //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
 
-    int i = int(CLIMATE_HOUR) - 1;
+    int i = int(CLIMATE_HOUR);
     int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
     int k = (CLIMATE_YEAR - CLIMATE_CLMREC_start);
 
     //println(i);
+    
+    if (parts.length > 5) {
+    
+      CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(parts[6]); // °C
+      
+      CLIMATE_CLMREC_Data[i][j][LAYER_relhum][k] = float(parts[10]); // %
+      CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] = float(parts[12]); // °
+      CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = float(parts[14]); // km/h
 
-    CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = float(lineSTR.substring(85, 90)); // 10 times in Pa
-    CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(lineSTR.substring(91, 95)); // 10 times in °C
-    //CLIMATE_CLMREC_Data[i][j][LAYER_relhum][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
-    CLIMATE_CLMREC_Data[i][j][LAYER_glohorrad][k] = float(lineSTR.substring(20, 24)); // Wh/m²
-    CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] = float(lineSTR.substring(26, 30)); // Wh/m²
-    CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] = float(lineSTR.substring(32, 36)); // Wh/m²
-    CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = float(lineSTR.substring(105, 109)); // 10 times in m/s
-    CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] = float(lineSTR.substring(101, 104)); // °
-    CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
-    CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] = float(lineSTR.substring(61, 65)); // 0.1 times in m
+      CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = float(parts[18]) * 100; // hPa
 
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] == 99999) CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = 0.1 * CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k];
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] == 9999) CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = 0.1 * CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k];
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_glohorrad][k] == 9999) CLIMATE_CLMREC_Data[i][j][LAYER_glohorrad][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_glohorrad][k] = CLIMATE_CLMREC_Data[i][j][LAYER_glohorrad][k] / 3.6; // Wh/m²
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] == 9999) CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] = CLIMATE_CLMREC_Data[i][j][LAYER_dirnorrad][k] / 3.6; // Wh/m²
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] == 9999) CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] = CLIMATE_CLMREC_Data[i][j][LAYER_difhorrad][k] / 3.6; // Wh/m²
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] == 9999) CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = 0.1 * 3.6 * CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k];
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] == 999) CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] = FLOAT_undefined;
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] == 99) CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] == 7777) CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] = 1000;
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] >= 1000) CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] = 1000; // <<<<<<<<<
-
-    if (CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] == 9999) CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] = FLOAT_undefined;
-    else CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k] = 10 * CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k];
+    }
   }
+  
+}
+
+void SOLARCHVISION_PostProcessCLIMATE_CLMREC () {  
 
   float Pa, Pb, Pc;
   float T, R_dir, R_dif;
@@ -7250,7 +7232,7 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
       }
     }
   }
-  */
+
 }
 
 
