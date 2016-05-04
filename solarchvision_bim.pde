@@ -6783,8 +6783,6 @@ void SOLARCHVISION_LoadCLIMATE_CWEEDS (String FileName) {
           CLIMATE_CWEEDS_Data[i][j][LAYER_direffect][k] = (18 - T) * R_dir;
           CLIMATE_CWEEDS_Data[i][j][LAYER_difeffect][k] = (18 - T) * R_dif;
         }
-
-        Pa = CLIMATE_CWEEDS_Data[i][j][LAYER_ceilingsky][k];
       }
     }
   }
@@ -7190,6 +7188,8 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
     //println(i);
     
     if (parts.length > 5) {
+      
+      CLIMATE_CLMREC_Data[i][j][LAYER_cloudcover][k] = 0.5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
       CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(parts[6]); // °C
 
@@ -7198,6 +7198,8 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
       CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = float(parts[14]); // km/h
 
       CLIMATE_CLMREC_Data[i][j][LAYER_pressure][k] = float(parts[18]) * 100; // hPa
+      
+      println(parts[12]);
 
     }
   }
@@ -7223,8 +7225,6 @@ void SOLARCHVISION_PostProcessCLIMATE_CLMREC () {
           CLIMATE_CLMREC_Data[i][j][LAYER_direffect][k] = (18 - T) * R_dir;
           CLIMATE_CLMREC_Data[i][j][LAYER_difeffect][k] = (18 - T) * R_dif;
         }
-
-        Pa = CLIMATE_CLMREC_Data[i][j][LAYER_ceilingsky][k];
       }
     }
   }
@@ -7627,8 +7627,6 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
           CLIMATE_EPW_Data[i][j][LAYER_direffect][k] = (18 - T) * R_dir;
           CLIMATE_EPW_Data[i][j][LAYER_difeffect][k] = (18 - T) * R_dif;
         }
-
-        Pa = CLIMATE_EPW_Data[i][j][LAYER_ceilingsky][k];
       }
     }
   }
