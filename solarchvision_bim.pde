@@ -7123,10 +7123,6 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
           }
         }
     
-        println("File_Found", File_Found);
-        println("Download_CLMREC", Download_CLMREC);
-    
-    
         if ((File_Found == -1) && (Download_CLMREC != 0)) {
           
           String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
@@ -7196,7 +7192,7 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
     if (parts.length > 5) {
     
       CLIMATE_CLMREC_Data[i][j][LAYER_drybulb][k] = float(parts[6]); // °C
-      
+
       CLIMATE_CLMREC_Data[i][j][LAYER_relhum][k] = float(parts[10]); // %
       CLIMATE_CLMREC_Data[i][j][LAYER_winddir][k] = float(parts[12]); // °
       CLIMATE_CLMREC_Data[i][j][LAYER_windspd][k] = float(parts[14]); // km/h
