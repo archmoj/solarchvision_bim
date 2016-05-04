@@ -24,7 +24,6 @@
 // Note: different tropo layer exported in obj format but only at frame 0.
 // Note: still cannot use regional layers as tropo.
 
-// should check if we load models correct?
 
 import processing.pdf.*;
 
