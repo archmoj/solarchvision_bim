@@ -860,7 +860,7 @@ int CLIMATE_TMYEPW_end = 1;
 int CLIMATE_CWEEDS_start = 1953;
 int CLIMATE_CWEEDS_end = 2005;
 
-int CLIMATE_CLMREC_start = 2006;
+int CLIMATE_CLMREC_start = 2000;
 int CLIMATE_CLMREC_end = 2016;
 
 int FORECAST_ENSEMBLE_start = 1; 
@@ -4222,41 +4222,44 @@ void SOLARCHVISION_draw_WORLD () {
       float draw_info = 0;
 
       if (Display_CLMREC_Points != 0) draw_info = 1;
+      
+      if (int(STATION_CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
 
-      float _lat = float(STATION_CLMREC_INFO[f][3]);
-      float _lon = float(STATION_CLMREC_INFO[f][4]); 
-      if (_lon > 180) _lon -= 360; // << important!
-
-      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
-
-      if (draw_info == 1) {
-
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-
-        WORLD_Diagrams.strokeWeight(1 * WORLD_ImageScale);
-        WORLD_Diagrams.stroke(0, 0, 0, 191);
-        WORLD_Diagrams.noFill();
-        WORLD_Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
-
-        if (Display_CLMREC_Points > 1) {
-          WORLD_Diagrams.strokeWeight(0);
-          WORLD_Diagrams.stroke(0);
-          WORLD_Diagrams.fill(0);      
-          WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(0.5 * MessageSize * WORLD_ImageScale);
-          WORLD_Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
+        float _lat = float(STATION_CLMREC_INFO[f][3]);
+        float _lon = float(STATION_CLMREC_INFO[f][4]); 
+        if (_lon > 180) _lon -= 360; // << important!
+  
+        if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+        if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+        if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+        if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+  
+        if (draw_info == 1) {
+  
+          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+  
+          WORLD_Diagrams.strokeWeight(1 * WORLD_ImageScale);
+          WORLD_Diagrams.stroke(0, 0, 0, 191);
+          WORLD_Diagrams.noFill();
+          WORLD_Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
+  
+          if (Display_CLMREC_Points > 1) {
+            WORLD_Diagrams.strokeWeight(0);
+            WORLD_Diagrams.stroke(0);
+            WORLD_Diagrams.fill(0);      
+            WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+            WORLD_Diagrams.textSize(0.5 * MessageSize * WORLD_ImageScale);
+            WORLD_Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
+          }
         }
-      }
-
-      float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
-
-      if (nearest_STATION_CLMREC_dist > d) {
-        nearest_STATION_CLMREC_dist = d;
-        nearest_STATION_CLMREC = f;
+  
+        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+  
+        if (nearest_STATION_CLMREC_dist > d) {
+          nearest_STATION_CLMREC_dist = d;
+          nearest_STATION_CLMREC = f;
+        }
       }
     } 
 
@@ -7080,17 +7083,20 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
     float nearest_Station_CLMREC_dist = FLOAT_undefined;
     
     for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+      
+      if (int(STATION_CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
 
-      float _lat = float(STATION_CLMREC_INFO[f][3]);
-      float _lon = float(STATION_CLMREC_INFO[f][4]); 
-      if (_lon > 180) _lon -= 360; // << important!
-
-      float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
-
-      if (nearest_Station_CLMREC_dist > d) {
-
-        nearest_Station_CLMREC_dist = d;
-        nearest_Station_CLMREC_id = f;
+        float _lat = float(STATION_CLMREC_INFO[f][3]);
+        float _lon = float(STATION_CLMREC_INFO[f][4]); 
+        if (_lon > 180) _lon -= 360; // << important!
+  
+        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+  
+        if (nearest_Station_CLMREC_dist > d) {
+  
+          nearest_Station_CLMREC_dist = d;
+          nearest_Station_CLMREC_id = f;
+        }
       }
     }
 
@@ -15152,6 +15158,7 @@ int STATION_CLMREC_NUMBER = 0;
 String[][] STATION_CLMREC_INFO;
 
 void SOLARCHVISION_getCLMREC_Coordinates () {
+  
   try {
     String[] FileALL = loadStrings(CLMRECFolder + "/CLMREC_UTF8.txt");
 
@@ -15160,7 +15167,7 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
 
     STATION_CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
 
-    STATION_CLMREC_INFO = new String [STATION_CLMREC_NUMBER][9]; 
+    STATION_CLMREC_INFO = new String [STATION_CLMREC_NUMBER][11]; 
 
     int n_Locations = 0;
 
@@ -15176,11 +15183,13 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
       String StationICAO = "";
       String StationWMO = ""; 
       String StationClimate = "";
+      int StationStart = -1;
+      int StationEnd = -1;
 
       String[] parts = split(lineSTR, ',');
 
-      if (4 < parts.length) {
-
+      if (12 < parts.length) {
+        
         StationCountry = "CA";
         StationProvince = parts[1];
         StationNameEnglish = parts[0].replace('/', '_');
@@ -15192,6 +15201,9 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
         StationICAO = parts[3];
         StationWMO = parts[4];
         StationClimate = parts[2];
+        
+        StationStart = int(parts[11]);
+        StationEnd = int(parts[12]);
 
         STATION_CLMREC_INFO[n_Locations][0] = StationNameEnglish;
         STATION_CLMREC_INFO[n_Locations][1] = StationProvince;
@@ -15202,6 +15214,8 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
         STATION_CLMREC_INFO[n_Locations][6] = StationICAO;
         STATION_CLMREC_INFO[n_Locations][7] = StationWMO;
         STATION_CLMREC_INFO[n_Locations][8] = StationClimate;
+        STATION_CLMREC_INFO[n_Locations][9] = String.valueOf(StationStart);
+        STATION_CLMREC_INFO[n_Locations][10] = String.valueOf(StationEnd);
 
         n_Locations += 1;
       }
@@ -35952,16 +35966,19 @@ void mouseClicked () {
               float nearest_STATION_CLMREC_dist = FLOAT_undefined;
 
               for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+                
+                if (int(STATION_CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
 
-                float _lat = float(STATION_CLMREC_INFO[f][3]);
-                float _lon = float(STATION_CLMREC_INFO[f][4]); 
-                if (_lon > 180) _lon -= 360; // << important!
-
-                float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
-
-                if (nearest_STATION_CLMREC_dist > d) {
-                  nearest_STATION_CLMREC_dist = d;
-                  nearest_STATION_CLMREC = f;
+                  float _lat = float(STATION_CLMREC_INFO[f][3]);
+                  float _lon = float(STATION_CLMREC_INFO[f][4]); 
+                  if (_lon > 180) _lon -= 360; // << important!
+  
+                  float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+  
+                  if (nearest_STATION_CLMREC_dist > d) {
+                    nearest_STATION_CLMREC_dist = d;
+                    nearest_STATION_CLMREC = f;
+                  }
                 }
               }
 
