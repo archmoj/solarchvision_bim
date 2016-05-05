@@ -7164,7 +7164,6 @@ void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
   String lineSTR;
   String[] input;
 
-
   println("lines = ", FileALL.length);
 
   for (int f = 18; f < FileALL.length; f += 1) {
