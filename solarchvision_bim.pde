@@ -352,11 +352,13 @@ String[][] Defined_Stations = {
   }
   , 
   
+  /*
   {
     "Brossard_Oakland", "QC", "CA", "45.4337", "-73.4615", "-75", "13.4594707", "240.0", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   }
   ,   
-
+  */
+  
   {
     "Montreal_WestStation", "QC", "CA", "45.455158", "-73.640696", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
   }
@@ -1647,7 +1649,7 @@ int LAND_TESSELLATION = 0; //2;
 
 int MODEL3D_Tessellation = 2;
 
-int SKY3D_TESSELLATION = 0; //3;
+int SKY3D_TESSELLATION = 3; //3;
 float SKY3D_scale = 25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 float WindRose3D_scale = 400;
@@ -2607,9 +2609,9 @@ void draw () {
     text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 24) {
 
-    SOLARCHVISION_build_SkySphere(3); //1 - 3 
+    SOLARCHVISION_build_SkySphere(1); //1 - 3 
 
-      stroke(0);
+    stroke(0);
     fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
@@ -18145,7 +18147,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                       midList_Faces = (int[][]) concat(midList_Faces, newFace);
                       midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
 
-                      if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                      if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                         int[] newFace_number = {
                           f + s
                         }; 
@@ -18324,7 +18326,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
                   midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
 
-                  if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                  if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                     int[] newFace_number = {
                       f + s
                     }; 
@@ -18484,7 +18486,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
                   midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
 
-                  if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                  if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                     int[] newFace_number = {
                       f + s
                     }; 
@@ -36634,94 +36636,95 @@ void mouseClicked () {
                 }
 
 
-
-
-                if (CreateButton_3DSuperOBJ == 1) {
-
-                  if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
-
-                    SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, 2, rot);
-                  } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
-
-                    SOLARCHVISION_add_SuperCylinder(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, CreateInput_CylinderDegree, rot);
-                  } else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
-
-                    SOLARCHVISION_add_Box_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, rot);
-                  } else if ((px == 1) && (py == 1) && (pz == 1)) {
-
-                    SOLARCHVISION_add_Octahedron(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, rot);
-                  } else {
-
-                    SOLARCHVISION_add_SuperSphere(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, pz, py, pz, rx, ry, rz, CreateInput_SphereDegree, rot);
+                if (Current_ObjectCategory == ObjectCategory_Group3Ds) { // working with meshes
+  
+                  if (CreateButton_3DSuperOBJ == 1) {
+  
+                    if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
+  
+                      SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, 2, rot);
+                    } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
+  
+                      SOLARCHVISION_add_SuperCylinder(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, CreateInput_CylinderDegree, rot);
+                    } else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
+  
+                      SOLARCHVISION_add_Box_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, rot);
+                    } else if ((px == 1) && (py == 1) && (pz == 1)) {
+  
+                      SOLARCHVISION_add_Octahedron(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, rot);
+                    } else {
+  
+                      SOLARCHVISION_add_SuperSphere(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, pz, py, pz, rx, ry, rz, CreateInput_SphereDegree, rot);
+                    }
+  
+  
+  
+  
+                    if (CreateInput_MeshOrSolid == 1) {
+  
+                      SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+                    }
                   }
+  
 
-
-
-
-                  if (CreateInput_MeshOrSolid == 1) {
-
-                    SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+  
+                  if (CreateButton_3DTri == 1) {
+  
+                    SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                    SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                    SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                    SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                  }
+  
+                  if (CreateButton_3DQuad == 1) {
+  
+                    SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+                  }
+  
+                  if (CreateButton_3DPoly == 1) {
+  
+                    SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
+                  }
+  
+                  if (CreateButton_3DExtrude == 1) {       
+  
+                    SOLARCHVISION_add_PolygonExtrude(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
+                  }
+  
+                  if (CreateButton_3DHouse == 1) {   
+  
+                    SOLARCHVISION_add_House_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, ry, rot);
+                  }
+  
+                  if (CreateButton_3DParametric != 0) {
+  
+                    SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, CreateParametric_Type, rot);
                   }
                 }
 
-
-
-
-
-
-                if (CreateButton_3DTri == 1) {
-
-                  SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
-                }
-
-                if (CreateButton_3DQuad == 1) {
-
-                  SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
-                }
-
-                if (CreateButton_3DPoly == 1) {
-
-                  SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
-                }
-
-                if (CreateButton_3DExtrude == 1) {       
-
-                  SOLARCHVISION_add_PolygonExtrude(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
-                }
-
-                if (CreateButton_3DHouse == 1) {   
-
-                  SOLARCHVISION_add_House_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, ry, rot);
-                }
-
-                if (CreateButton_3DParametric != 0) {
-
-                  SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateExtraType, x, y, z, rx, ry, rz, CreateParametric_Type, rot);
-                }
-
-
-                if (CreateButton_2DPerson != 0) {
-
-                  randomSeed(millis());
-                  SOLARCHVISION_add_Object2D_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
-                }
-
-                if (CreateButton_2DPlant != 0) {
-                  int n = 0;
-                  if (CreatePlant_Type > 0) n = CreatePlant_Type + Object2D_PEOPLE_Files_Num;
-
-                  randomSeed(millis());
-                  SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, 2 * rz);
+                if (Current_ObjectCategory == ObjectCategory_Object2Ds) { // working with object2Ds
+                  if (CreateButton_2DPerson != 0) {
+  
+                    randomSeed(millis());
+                    SOLARCHVISION_add_Object2D_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
+                  }
+  
+                  if (CreateButton_2DPlant != 0) {
+                    int n = 0;
+                    if (CreatePlant_Type > 0) n = CreatePlant_Type + Object2D_PEOPLE_Files_Num;
+  
+                    randomSeed(millis());
+                    SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, 2 * rz);
+                  }
                 }    
+                
+                if (Current_ObjectCategory == ObjectCategory_Fractals) { // working with fractals
+                  if (CreateButton_Fractal != 0) {
 
-                if (CreateButton_Fractal != 0) {
-
-                  randomSeed(millis());
-                  SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 2 * rz, rot, CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
-                }        
+                    randomSeed(millis());
+                    SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 2 * rz, rot, CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
+                  }        
+                }
 
 
                 if (Current_ObjectCategory == ObjectCategory_Solids) { // working with solids
