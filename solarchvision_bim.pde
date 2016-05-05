@@ -299,8 +299,8 @@ float GLOBE_calculatedResolution = 2.5; //1, 2.5, 5
 
 float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
-float objExport_Scale = 1; //0.001; // 0.001: 1km --> 1
-int objExport_FlipZYaxis = 0; //1; // 1: to fit in Unity3D
+float objExport_Scale = 0.001; // 0.001: 1km --> 1
+int objExport_FlipZYaxis = 1; //1; // 1: to fit in Unity3D
 
 int objExport_PrecisionVertex = 6; 
 int objExport_PrecisionVtexture = 4;
@@ -338,7 +338,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 4; 
+int STATION_Number = 6; 
 
 String[][] Defined_Stations = {
 
@@ -27779,19 +27779,73 @@ void SOLARCHVISION_add_Model_CMC () { //CMC
 
 void SOLARCHVISION_add_Model_Main () {
 
-  {
-    float dx = 10;
-    float dy = 10;
-    float dz = 10;
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float rot = 0;
-   
-    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);    
-    SOLARCHVISION_add_House_Core(-1,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house
-  } 
+  int[][] block = {
+    {
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    }
+    , 
+    {
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1
+    }
+    , 
+    {
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    }
+    , 
+    {
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    }
+  };
+
+  for (int k = 0; k < 15; k++) {
+    for (int j = 0; j < 11; j++) {
+      for (int i = 0; i < 11; i++) {    
+
+        if (block[i][j] != 0) {
   
+          SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
+  
+          float dx = 6;
+          float dy = 6;
+          float dz = 2;
+          float rot = 55;
+          float x = 2 * (dx * (i - 5) * cos_ang(rot) - dy * (j - 5) * sin_ang(rot));
+          float y = 2 * (dx * (i - 5) * sin_ang(rot) + dy * (j - 5) * cos_ang(rot));
+          float z = 2 * (dz * k);    
+  
+          SOLARCHVISION_add_Box_Core(7, 0, 0, 1, 1, x, y, z, dx, dy, dz, rot);
+        }
+      }
+    }
+  }
 }
 
 
@@ -37879,7 +37933,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_prob = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
 
 
-      objExport_Scale = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_Scale", objExport_Scale, .000001, 1000000, -0.1), 1);
+      objExport_Scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_Scale", objExport_Scale, .001, 1000, -0.1);
       objExport_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_FlipZYaxis", objExport_FlipZYaxis, 0, 1, 1), 1));
 
       objExport_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_PrecisionVertex", objExport_PrecisionVertex, 0, 6, 1), 1));
