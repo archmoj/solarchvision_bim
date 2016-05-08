@@ -338,10 +338,16 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 6; 
+int STATION_Number = 0; 
 
 String[][] Defined_Stations = {
 
+  {
+    "FORT_MCMURRAY", "AB", "CA", "56.65", "-111.22", "-105", "369.10", "240.0", "FORT_MCMURRAY_AB_CA", "AB_FORT-MCMURRAY-A_5665_11122_10500", "CAN_AB_Fort.McMurray.719320_CWEC"
+  }  
+  ,
+  
+  
   {
     "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
   }  
