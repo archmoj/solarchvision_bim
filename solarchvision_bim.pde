@@ -338,7 +338,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 0; 
+int STATION_Number = 7; 
 
 String[][] Defined_Stations = {
 
@@ -358,12 +358,10 @@ String[][] Defined_Stations = {
   }
   , 
   
-  /*
   {
     "Brossard_Oakland", "QC", "CA", "45.4337", "-73.4615", "-75", "13.4594707", "240.0", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   }
   ,   
-  */
   
   {
     "Montreal_WestStation", "QC", "CA", "45.455158", "-73.640696", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
@@ -8306,7 +8304,7 @@ void SOLARCHVISION_LoadRECENT_OBSERVED (String FileName, int Load_Layer) {
     } 
 
     if (_a1.equals("tot_cld_amt")) {
-      RECENT_OBSERVED_Data[now_i][now_j][LAYER_cloudcover][Load_Layer] = Float.valueOf(_a2);
+      RECENT_OBSERVED_Data[now_i][now_j][LAYER_cloudcover][Load_Layer] = 0.1 * Float.valueOf(_a2);
       RECENT_OBSERVED_Flags[now_i][now_j][LAYER_cloudcover][Load_Layer] = 1;
     }    
 
