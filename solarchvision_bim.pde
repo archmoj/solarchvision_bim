@@ -338,7 +338,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 7; 
+int STATION_Number = 9; 
 
 String[][] Defined_Stations = {
 
@@ -383,6 +383,11 @@ String[][] Defined_Stations = {
   {
     "Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
   }
+  
+  , 
+  {
+    "OCPM_2016a", "QC", "CA", "45.489049", "-73.578942", "-75", "30", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
+  }  
   , 
   {
     "Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
@@ -620,8 +625,8 @@ int DEFAULT_CreatePivotType = 0;
 
 float ModifyInput_WeldTreshold = 0.1; 
 
-int ModifyInput_TessellateRows = 5;
-int ModifyInput_TessellateColumns = 3;
+int ModifyInput_TessellateRows = 6;
+int ModifyInput_TessellateColumns = 4;
 
 float ModifyInput_OffsetAmount = 1.0; // 1 = 1m
 
@@ -27780,8 +27785,42 @@ void SOLARCHVISION_add_Model_CMC () { //CMC
 }
 
 
-
 void SOLARCHVISION_add_Model_Main () {
+
+  {
+    float dx = 10;
+    float dy = 20;
+    float dz = 60;
+    float x = -20;
+    float y = 0;
+    float z = 0;    
+    float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
+    SOLARCHVISION_add_Box_Core(7, 0, 0, 1, 1, x, y, z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1);
+  }  
+
+
+  {
+    float dx = 10;
+    float dy = 20;
+    float dz = 60;
+    float x = 20;
+    float y = 0;
+    float z = 0;   
+    float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
+    SOLARCHVISION_add_Box_Core(7, 0, 0, 1, 1, x, y, z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1);
+  }
+
+  SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+  addToLastGroup3D = 0;
+}
+
+
+void SOLARCHVISION_add_Model_LabQC () {
 
   int[][] block = {
     {
@@ -29048,7 +29087,7 @@ float SOLARCHVISION_get_SolidImpact_atXYZ (float x, float y, float z) {
   float v = 0;
 
   if (SolidImpactType == 0) {
-    v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT(x, y, z);
+    v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple(x, y, z);
   } else {
     v = SOLARCHVISION_calculate_SolidImpact_atXYZ_complex(x, y, z);
   }
@@ -29058,7 +29097,7 @@ float SOLARCHVISION_get_SolidImpact_atXYZ (float x, float y, float z) {
 
 
 
-float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, float z) {
+float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float z) {
 
   float val = 1;
 
