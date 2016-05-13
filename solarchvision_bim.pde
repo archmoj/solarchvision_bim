@@ -25978,7 +25978,7 @@ void SOLARCHVISION_draw_Group3Ds () {
                                   float[] ray_start = subFace[s];     
                                   float[] ray_direction = {
                                     SunR[1], SunR[2], SunR[3]
-                                  }; // NOT SURE!
+                                  }; 
 
                                   if (SOLARCHVISION_fn_dot(W, ray_direction) > 0) { // removes backing faces
 
@@ -51902,10 +51902,10 @@ float[] SOLARCHVISION_getPivot () {
 
 /////////////////////// internal values <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 int MAT_renderer = 1;
-int ANG_renderer = 2;
+int GLB_renderer = 2;
 int SHD_renderer = 3;
 
-int rendererType = 2; //ANG_renderer; // <<<<<<<<<<<<< 
+int rendererType = 3; //GLB_renderer; // <<<<<<<<<<<<< 
 
 
 void SOLARCHVISION_RenderViewport () {
@@ -51986,8 +51986,119 @@ void SOLARCHVISION_RenderViewport () {
     if (RxP[0] > 0) {        
         
       int f = int(RxP[0]);
+
+      if (rendererType == SHD_renderer) {
+
+        float[] COL = {
+          0, 0, 0, 0
+        };
+        
+        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+        face_norm = SOLARCHVISION_fn_normalize(face_norm);
+        
+        float Alpha = 90 - acos_ang(face_norm[2]);
+        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+
+float _valuesSUM_RAD = 0;
+float _valuesSUM_EFF_P = 0;
+float _valuesSUM_EFF_N = 0;
+int _valuesNUM = 0; 
+
+                float _values_R_dir = 1;
+                float _values_R_dif = 1;
+                float _values_E_dir = 0.1;
+                float _values_E_dif = 0.1;
+
+
+//float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
+float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
+float[] VECT = {
+  0, 0, 0
+}; 
+
+if (abs(Alpha) > 89.99) {
+  VECT[0] = 0;
+  VECT[1] = 0;
+  VECT[2] = 1;
+} else if (Alpha < -89.99) {
+  VECT[0] = 0;
+  VECT[1] = 0;
+  VECT[2] = -1;
+} else {
+  VECT[0] = sin_ang(Beta);
+  VECT[1] = -cos_ang(Beta);
+  VECT[2] = tan_ang(Alpha);
+}   
+
+VECT = SOLARCHVISION_fn_normalize(VECT);
+
+
+float[] SunV = {
+  SunR[1], SunR[2], SunR[3]
+};
+
+float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+if (SunMask <= 0) SunMask = 0; // removes backing faces 
+
+float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+
+
+// new trace
+ray_start[0] = RxP[1];
+ray_start[1] = RxP[2];
+ray_start[2] = RxP[3];
+
+ray_direction[0] = SunR[1];
+ray_direction[1] = SunR[2];
+ray_direction[2] = SunR[3];
+
+if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
+
+  if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) == 1) { 
+    if (_values_E_dir < 0) {
+      _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
+      _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
+    } else {
+      _valuesSUM_EFF_N += (_values_E_dir * SunMask); 
+      _valuesSUM_EFF_P += (_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
+    }
+
+    _valuesSUM_RAD += (_values_R_dif * SkyMask); // only approximate diffuse radiation!
+  } else { 
+    if (_values_E_dir < 0) {
+      _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
+    } else {
+      _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
+    }
+
+    _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
+  }
+}
+_valuesNUM += 1;
+
+//-----------------------------
+float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//-----------------------------
       
-      if (rendererType == ANG_renderer) {
+        float _u = 0;
+      
+        if (_valuesSUM < 0.9 * FLOAT_undefined) {
+      
+          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+      
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
+        }
+      
+        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+
+        
+        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+        
+      }
+      else if (rendererType == GLB_renderer) {
 
         float[] COL = {
           0, 0, 0, 0
