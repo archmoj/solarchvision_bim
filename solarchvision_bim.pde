@@ -25819,7 +25819,17 @@ void SOLARCHVISION_draw_Group3Ds () {
 
                   int l = STUDY_ImpactLayer;
 
-                  for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) {
+                  int DATE_step = 1;
+            
+                  int J_START = STUDY_j_Start;
+                  int J_END = STUDY_j_End;
+            
+                  if (IMPACTS_DisplayDay > 0) {
+                    J_START = IMPACTS_DisplayDay - 1;
+                    J_END = IMPACTS_DisplayDay;
+                  }
+            
+                  for (int j = J_START; j < J_END; j += DATE_step) {
 
                     now_j = (j * int(STUDY_PerDays) + TIME_BeginDay + 365) % 365;
 
@@ -34455,7 +34465,12 @@ void mouseClicked () {
 
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }           
+            }      
+            if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Render Viewport")) {
+              
+              SOLARCHVISION_RenderViewport();            
+            }              
+            
 
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
               Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
@@ -46716,7 +46731,7 @@ String[][] SOLARCHVISION_UI_BAR_a_Items = {
   }
   , 
   {
-    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation"
+    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation", "Render Viewport"
   }
   , 
   {
@@ -51885,6 +51900,7 @@ float[] SOLARCHVISION_getPivot () {
 
 
 
+/////////////////////// internal values <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 int MAT_renderer = 1;
 int ANG_renderer = 2;
 int SHD_renderer = 3;
