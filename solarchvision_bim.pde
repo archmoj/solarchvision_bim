@@ -51905,7 +51905,7 @@ int MAT_renderer = 1;
 int ANG_renderer = 2;
 int SHD_renderer = 3;
 
-int rendererType = 1; //ANG_renderer; // <<<<<<<<<<<<< 
+int rendererType = 2; //ANG_renderer; // <<<<<<<<<<<<< 
 
 
 void SOLARCHVISION_RenderViewport () {
@@ -51999,12 +51999,9 @@ void SOLARCHVISION_RenderViewport () {
         float Alpha = 90 - acos_ang(face_norm[2]);
         float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
 
-        
-        
-        
-        float _valuesSUM = Alpha; //Beta; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+        float _valuesSUM = 10 * (Alpha) / 90.0; //Beta; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 
-
+        
 
 
 
@@ -52024,9 +52021,10 @@ void SOLARCHVISION_RenderViewport () {
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
 
-        _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+
         
-        Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3], _c[0]);
+        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
         
       }
       else if (rendererType == MAT_renderer) {
