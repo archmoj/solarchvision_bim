@@ -51989,7 +51989,7 @@ void SOLARCHVISION_RenderViewport () {
       
       if (rendererType == ANG_renderer) {
 
-        float[] _c = {
+        float[] COL = {
           0, 0, 0, 0
         };
         
@@ -51999,28 +51999,29 @@ void SOLARCHVISION_RenderViewport () {
         float Alpha = 90 - acos_ang(face_norm[2]);
         float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
 
-        float _valuesSUM = 10 * (Alpha) / 90.0; //Beta; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-
-        
-
-
-
-
-        
+       
+        int a = int((Alpha + 90) / SOLARCHVISION_GLOBE_stp_slp);
+        int b = int(Beta / SOLARCHVISION_GLOBE_stp_dir);
+      
+        if (a < 0) a += int(180 / SOLARCHVISION_GLOBE_stp_slp);
+        if (b < 0) b += int(360 / SOLARCHVISION_GLOBE_stp_dir);
+        if (a > int(180 / SOLARCHVISION_GLOBE_stp_slp)) a -= int(180 / SOLARCHVISION_GLOBE_stp_slp);
+        if (b > int(360 / SOLARCHVISION_GLOBE_stp_dir)) b -= int(360 / SOLARCHVISION_GLOBE_stp_dir);
+      
+        float _valuesSUM = LocationExposure[IMPACTS_DisplayDay][a][b];
+      
         float _u = 0;
-
-        if (Impact_TYPE == Impact_ACTIVE) {
-          _u = (0.2 * PAL_Multiplier * _valuesSUM);
+      
+        if (_valuesSUM < 0.9 * FLOAT_undefined) {
+      
+          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+      
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
         }
-
-        if (Impact_TYPE == Impact_PASSIVE) {
-          _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
-        }
-
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
-
+      
         COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
 
         
