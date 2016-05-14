@@ -52321,8 +52321,6 @@ void SOLARCHVISION_PreBakeViewport () {
       
       VECT = SOLARCHVISION_fn_normalize(VECT);
       
-
-
       n_Map = -1; 
       for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
         //for (int i = 0; i < 24; i += 1) {
@@ -52333,30 +52331,22 @@ void SOLARCHVISION_PreBakeViewport () {
     
           float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
 
-          
-    
-          
-          float[] SunV = {
+          float[] RayVector = {
             SunR[1], SunR[2], SunR[3]
           };
-    
-    
-    
-    
+
           // new trace
           ray_start[0] = RxP[1];
           ray_start[1] = RxP[2];
           ray_start[2] = RxP[3];
           
-          ray_direction[0] = SunR[1];
-          ray_direction[1] = SunR[2];
-          ray_direction[2] = SunR[3];
-          
+          ray_direction[0] = RayVector[0];
+          ray_direction[1] = RayVector[1];
+          ray_direction[2] = RayVector[2];
 
-          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(RayVector), SOLARCHVISION_fn_normalize(VECT));
           if (SunMask <= 0) SunMask = 0; // removes backing faces 
-          
-          
+
           // when SHD = 0;
           Direct_RGBA[n_Map][0].pixels[np] = color(255 * SunMask, 255);
             
@@ -52365,10 +52355,40 @@ void SOLARCHVISION_PreBakeViewport () {
             Direct_RGBA[n_Map][1].pixels[np] = color(255 * SunMask, 255);
           }
           else Direct_RGBA[n_Map][1].pixels[np] = color(0, 255);
-
-          
         }
       }
+     
+      {
+        float[] RayVectors = {{0,0,1}, {1,0,1}, {-1,0,1}, {0,1,1}, {0,-1,1}, {1,1,1}, {1,-1,1}, {-1,1,1}, {-1,-1,1}};
+        
+        for (int n_Ray = 0; n_Ray < RayVectors.length; n_Ray += 1) { 
+  
+          // new trace
+          ray_start[0] = RxP[1];
+          ray_start[1] = RxP[2];
+          ray_start[2] = RxP[3];
+          
+          ray_direction[0] = RayVectors[n_Ray][0];
+          ray_direction[1] = RayVectors[n_Ray][1];
+          ray_direction[2] = RayVectors[n_Ray][2];
+    
+          float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(RayVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
+          if (SkyMask <= 0) SkyMask = 0; // removes backing faces
+         
+          ..... should divide by RayVectors.length
+          .... then add values to pixel
+    
+          // when SHD = 0;
+          Diffuse_RGBA[n_Map][0].pixels[np] = color(255 * SkyMask, 255);
+            
+          // when SHD = 1;            
+          if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
+            Diffuse_RGBA[n_Map][1].pixels[np] = color(255 * SkyMask, 255);
+          }
+          else Diffuse_RGBA[n_Map][1].pixels[np] = color(0, 255);   
+        }
+      }      
+  
     }
     else {
       
@@ -52384,7 +52404,14 @@ void SOLARCHVISION_PreBakeViewport () {
           
           }
         }
-      }      
+      }     
+
+      for (int SHD = 0; SHD <= 1; SHD += 1) {
+
+        Diffuse_RGBA[SHD].pixels[np] = color(0,0,0,0);
+      
+      }     
+      
     }
     
   }
@@ -52398,7 +52425,6 @@ void SOLARCHVISION_PreBakeViewport () {
       n_Map += 1; 
 
       float HOUR_ANGLE = i;
-
 
       for (int SHD = 0; SHD <= 1; SHD += 1) {
 
