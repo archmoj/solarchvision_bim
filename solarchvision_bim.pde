@@ -14385,7 +14385,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
 
       case '?': 
-        SOLARCHVISION_RenderViewport();
+        SOLARCHVISION_PreBakeViewport();
         break; 
 
       case ENTER: 
@@ -52162,3 +52162,152 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   
 }
+
+
+
+
+void SOLARCHVISION_PreBakeViewport () {
+
+  println("PreBake started!");
+  
+  int RES1 = WIN3D_X_View;
+  int RES2 = WIN3D_Y_View;
+  
+  PImage Image_RGBA = createImage(RES1, RES2, ARGB);
+
+  Image_RGBA.loadPixels();
+
+  for (int np = 0; np < (RES1 * RES2); np++) {
+    int Image_X = np % RES1;
+    int Image_Y = np / RES1;
+    
+    Image_X -= 0.5 * WIN3D_X_View;
+    Image_Y -= 0.5 * WIN3D_Y_View;
+  
+
+    float[] ray_direction = new float [3];
+
+    float[] ray_start = {
+      WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
+    };
+
+    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+
+    ray_start[0] /= OBJECTS_scale;
+    ray_start[1] /= OBJECTS_scale;
+    ray_start[2] /= OBJECTS_scale;          
+
+    ray_end[0] /= OBJECTS_scale;
+    ray_end[1] /= OBJECTS_scale;
+    ray_end[2] /= OBJECTS_scale;
+
+    if (WIN3D_ViewType == 0) {
+      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+
+      ray_center[0] /= OBJECTS_scale;
+      ray_center[1] /= OBJECTS_scale;
+      ray_center[2] /= OBJECTS_scale;
+
+      ray_start[0] += ray_end[0] - ray_center[0];
+      ray_start[1] += ray_end[1] - ray_center[1];
+      ray_start[2] += ray_end[2] - ray_center[2];
+    }
+
+    ray_direction[0] = ray_end[0] - ray_start[0];
+    ray_direction[1] = ray_end[1] - ray_start[1];
+    ray_direction[2] = ray_end[2] - ray_start[2];
+
+
+
+         
+  
+    float[] RxP = new float [8]; 
+
+    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+
+    if (RxP[0] > 0) {        
+        
+      int f = int(RxP[0]);
+
+      float[] COL = {
+        0, 0, 0, 0
+      };
+      
+      float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+      face_norm = SOLARCHVISION_fn_normalize(face_norm);
+      
+      float Alpha = 90 - acos_ang(face_norm[2]);
+      float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+
+
+
+
+      //float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
+      float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
+      float[] VECT = {
+        0, 0, 0
+      }; 
+      
+      if (abs(Alpha) > 89.99) {
+        VECT[0] = 0;
+        VECT[1] = 0;
+        VECT[2] = 1;
+      } else if (Alpha < -89.99) {
+        VECT[0] = 0;
+        VECT[1] = 0;
+        VECT[2] = -1;
+      } else {
+        VECT[0] = sin_ang(Beta);
+        VECT[1] = -cos_ang(Beta);
+        VECT[2] = tan_ang(Alpha);
+      }   
+      
+      VECT = SOLARCHVISION_fn_normalize(VECT);
+      
+      
+      float[] SunV = {
+        SunR[1], SunR[2], SunR[3]
+      };
+
+
+
+
+      // new trace
+      ray_start[0] = RxP[1];
+      ray_start[1] = RxP[2];
+      ray_start[2] = RxP[3];
+      
+      ray_direction[0] = SunR[1];
+      ray_direction[1] = SunR[2];
+      ray_direction[2] = SunR[3];
+      
+      
+      // NOT SURE!
+      if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
+      
+        if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
+      
+          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+          // NOT SURE!
+          if (SunMask <= 0) SunMask = 0; // removes backing faces 
+      
+          Image_RGBA.pixels[np] = color(255 * SunMask, 255);
+      
+        }
+        else Image_RGBA.pixels[np] = color(0, 255);
+      }
+      
+    }
+    else Image_RGBA.pixels[np] = color(0,0,0,0);
+    
+  }
+      
+  Image_RGBA.updatePixels();
+ 
+ 
+  Image_RGBA.save("PreBake.png");
+  
+  println("PreBake saved!");
+  
+}
+
