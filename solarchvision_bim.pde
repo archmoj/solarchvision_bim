@@ -40040,6 +40040,8 @@ String Section_Stamp () {
 String Viewport_Stamp () {
 
   String s = "";
+  
+  /*
 
   s += "x" + nf(WIN3D_X_Coordinate, 0, 3);
   s += "y" + nf(WIN3D_Y_Coordinate, 0, 3);
@@ -40051,6 +40053,8 @@ String Viewport_Stamp () {
   
   s = s.replace('.', 'p');
   s = s.replace('-', 'n');
+  
+  */
 
   return s;
 }
@@ -52187,7 +52191,7 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 void SOLARCHVISION_PreBakeViewport () {
 
-  SceneName = "temp_" + Viewport_Stamp();
+  SceneName = "test_ " + Viewport_Stamp();
   
   println("PreBake started!");
 
@@ -52202,17 +52206,20 @@ void SOLARCHVISION_PreBakeViewport () {
     }
   } 
   
-  PImage[] Image_RGBA = new PImage [n_Map];
+  PImage[][] Image_RGBA = new PImage [n_Map][2];
 
   n_Map = -1; 
   for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
     //for (int i = 0; i < 24; i += 1) {
     for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
       n_Map += 1; 
-
-      Image_RGBA[n_Map] = createImage(RES1, RES2, ARGB);
       
-      Image_RGBA[n_Map].loadPixels();
+      for (int SHD = 0; SHD <= 1; SHD += 1) {
+
+        Image_RGBA[n_Map][SHD] = createImage(RES1, RES2, ARGB);
+        
+        Image_RGBA[n_Map][SHD].loadPixels();
+      }
     }
   }
 
@@ -52329,17 +52336,20 @@ void SOLARCHVISION_PreBakeViewport () {
           ray_direction[1] = SunR[2];
           ray_direction[2] = SunR[3];
           
+
+          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+          if (SunMask <= 0) SunMask = 0; // removes backing faces 
           
           
+          // when SHD = 0;
+          Image_RGBA[n_Map][0].pixels[np] = color(255 * SunMask, 255);
+            
+          // when SHD = 1;            
           if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
-        
-            float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces 
-        
-            Image_RGBA[n_Map].pixels[np] = color(255 * SunMask, 255);
-        
+            Image_RGBA[n_Map][1].pixels[np] = color(255 * SunMask, 255);
           }
-          else Image_RGBA[n_Map].pixels[np] = color(0, 255);
+          else Image_RGBA[n_Map][1].pixels[np] = color(0, 255);
+
           
         }
       }
@@ -52351,8 +52361,12 @@ void SOLARCHVISION_PreBakeViewport () {
         //for (int i = 0; i < 24; i += 1) {
         for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
           n_Map += 1; 
+          
+          for (int SHD = 0; SHD <= 1; SHD += 1) {
     
-          Image_RGBA[n_Map].pixels[np] = color(0,0,0,0);
+            Image_RGBA[n_Map][SHD].pixels[np] = color(0,0,0,0);
+          
+          }
         }
       }      
     }
@@ -52368,24 +52382,26 @@ void SOLARCHVISION_PreBakeViewport () {
 
       float HOUR_ANGLE = i;
 
-int SHD = 1; // <<<<<<<<<<<<<<<<<<<< ONLY SHADED NOW!
 
-      String[] STR_SHD = {
-        "F", "T"
-      };
-      String File_Name = "";
+      for (int SHD = 0; SHD <= 1; SHD += 1) {
 
-      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
-
-      File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-
-      File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
-
-      Image_RGBA[n_Map].updatePixels();
-      
-      Image_RGBA[n_Map].save(File_Name + ".PNG");
-      
-      println(File_Name + ".PNG");
+        String[] STR_SHD = {
+          "F", "T"
+        };
+        String File_Name = "";
+  
+        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+  
+        File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+  
+        File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
+  
+        Image_RGBA[n_Map][SHD].updatePixels();
+        
+        Image_RGBA[n_Map][SHD].save(File_Name + ".PNG");
+        
+        println(File_Name + ".PNG");
+      }
     }
   }  
       
