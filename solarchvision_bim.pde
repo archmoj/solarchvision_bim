@@ -2092,7 +2092,7 @@ int allSections_num = 0;
 PImage[] allSections_SolidImpact = {
   createImage(2, 2, RGB)
 };
-PImage[][] allSections_SolarImpact = new PImage[1][(1 + STUDY_j_End - STUDY_j_Start)];
+PImage[][] allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)];
 {
   int i = 0;
   for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
@@ -23566,7 +23566,7 @@ void SOLARCHVISION_delete_Sections () {
   allSections_SolidImpact = new PImage [1];
   allSections_SolidImpact[0] = createImage(2, 2, RGB);
 
-  allSections_SolarImpact = new PImage[1][(1 + STUDY_j_End - STUDY_j_Start)];
+  allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)];
   {
     int i = 0;
     for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
@@ -23607,7 +23607,7 @@ void SOLARCHVISION_delete_Solids () {
 
 void SOLARCHVISION_resize_allSections_Solar_Impact_Array () { // called when STUDY_j_End changes
 
-  allSections_SolarImpact = new PImage[1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)];
+  allSections_SolarImpact = new PImage [1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)];
   {
     for (int i = 0; i <= allSections_num; i++) {
       for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
@@ -28706,7 +28706,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                           EFF_VALUE = _values_E_dif * MULT_dif;
                         }
 
-                        PImage[] Shadings = new PImage[2];
+                        PImage[] Shadings = new PImage [2];
                         for (int SHD = 0; SHD <= 1; SHD += 1) {
                           String[] STR_SHD = {
                             "F", "T"
@@ -41739,7 +41739,7 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   }; 
   allSections_SolidImpact = (PImage[]) concat(allSections_SolidImpact, TempSection_SolidImpact);
 
-  PImage[][] TempSection_SolarImpact = new PImage[1][(1 + STUDY_j_End - STUDY_j_Start)];
+  PImage[][] TempSection_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)];
   {
     int i = 0;
     for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
@@ -52191,12 +52191,21 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 void SOLARCHVISION_PreBakeViewport () {
 
-  SceneName = "test_ " + Viewport_Stamp();
+  SceneName = "test" + Viewport_Stamp();
   
-  println("PreBake started!");
+  println("PreBaking Direct and Diffuse Models. Please wait...");
 
   int RES1 = WIN3D_X_View;
   int RES2 = WIN3D_Y_View;
+
+  PImage[] Diffuse_RGBA = new PImage [2];
+
+  for (int SHD = 0; SHD <= 1; SHD += 1) {
+
+    Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB); 
+    
+    Diffuse_RGBA[SHD].loadPixels();
+  } 
 
   int n_Map = 0; 
   for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
@@ -52206,8 +52215,8 @@ void SOLARCHVISION_PreBakeViewport () {
     }
   } 
   
-  PImage[][] Image_RGBA = new PImage [n_Map][2];
-
+  PImage[][] Direct_RGBA = new PImage [n_Map][2];
+  
   n_Map = -1; 
   for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
     //for (int i = 0; i < 24; i += 1) {
@@ -52216,16 +52225,23 @@ void SOLARCHVISION_PreBakeViewport () {
       
       for (int SHD = 0; SHD <= 1; SHD += 1) {
 
-        Image_RGBA[n_Map][SHD] = createImage(RES1, RES2, ARGB);
+        Direct_RGBA[n_Map][SHD] = createImage(RES1, RES2, ARGB);
         
-        Image_RGBA[n_Map][SHD].loadPixels();
+        Direct_RGBA[n_Map][SHD].loadPixels();
       }
     }
   }
+  
+  float Progress = 0;
 
   for (int np = 0; np < (RES1 * RES2); np++) {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
+    
+    if (10 + Progress < 100 * np / float(RES1 * RES2)) { 
+      Progress = 100 * np / float(RES1 * RES2);
+      println("Progress:", int(Progress), "%");
+    }
     
     Image_X -= 0.5 * WIN3D_X_View;
     Image_Y -= 0.5 * WIN3D_Y_View;
@@ -52342,13 +52358,13 @@ void SOLARCHVISION_PreBakeViewport () {
           
           
           // when SHD = 0;
-          Image_RGBA[n_Map][0].pixels[np] = color(255 * SunMask, 255);
+          Direct_RGBA[n_Map][0].pixels[np] = color(255 * SunMask, 255);
             
           // when SHD = 1;            
           if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
-            Image_RGBA[n_Map][1].pixels[np] = color(255 * SunMask, 255);
+            Direct_RGBA[n_Map][1].pixels[np] = color(255 * SunMask, 255);
           }
-          else Image_RGBA[n_Map][1].pixels[np] = color(0, 255);
+          else Direct_RGBA[n_Map][1].pixels[np] = color(0, 255);
 
           
         }
@@ -52364,7 +52380,7 @@ void SOLARCHVISION_PreBakeViewport () {
           
           for (int SHD = 0; SHD <= 1; SHD += 1) {
     
-            Image_RGBA[n_Map][SHD].pixels[np] = color(0,0,0,0);
+            Direct_RGBA[n_Map][SHD].pixels[np] = color(0,0,0,0);
           
           }
         }
@@ -52373,6 +52389,7 @@ void SOLARCHVISION_PreBakeViewport () {
     
   }
   
+  println("Progress: 100 %");
   
   n_Map = -1; 
   for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
@@ -52396,20 +52413,34 @@ void SOLARCHVISION_PreBakeViewport () {
   
         File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
   
-        Image_RGBA[n_Map][SHD].updatePixels();
+        Direct_RGBA[n_Map][SHD].updatePixels();
         
-        Image_RGBA[n_Map][SHD].save(File_Name + ".PNG");
+        Direct_RGBA[n_Map][SHD].save(File_Name + ".PNG");
         
         println(File_Name + ".PNG");
       }
     }
   }  
-      
+
+  for (int SHD = 0; SHD <= 1; SHD += 1) {
+
+    String[] STR_SHD = {
+      "F", "T"
+    };
+    String File_Name = "";
+
+    File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+
+    File_Name += "DIF_" + STR_SHD[SHD];
+    
+    Diffuse_RGBA[SHD].updatePixels();
+    
+    Diffuse_RGBA[SHD].save(File_Name + ".PNG");
+    
+    println(File_Name + ".PNG");    
+  }       
  
- 
-  
-  
-  println("PreBake saved!");
+
   
 }
 
