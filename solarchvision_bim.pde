@@ -52169,13 +52169,31 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 void SOLARCHVISION_PreBakeViewport () {
 
   println("PreBake started!");
-  
+
   int RES1 = WIN3D_X_View;
   int RES2 = WIN3D_Y_View;
-  
-  PImage Image_RGBA = createImage(RES1, RES2, ARGB);
 
-  Image_RGBA.loadPixels();
+  int n_Map = 0; 
+  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+    //for (int i = 0; i < 24; i += 1) {
+    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+      n_Map += 1;
+    }
+  } 
+  
+  PImage[] Image_RGBA = new PImage [n_Map];
+
+  n_Map = -1; 
+  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+    //for (int i = 0; i < 24; i += 1) {
+    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+      n_Map += 1; 
+
+      Image_RGBA[n_Map] = createImage(RES1, RES2, ARGB);
+      
+      Image_RGBA[n_Map].loadPixels();
+    }
+  }
 
   for (int np = 0; np < (RES1 * RES2); np++) {
     int Image_X = np % RES1;
@@ -52239,15 +52257,10 @@ void SOLARCHVISION_PreBakeViewport () {
       float Alpha = 90 - acos_ang(face_norm[2]);
       float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
 
-
-
-
-      //float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
-      float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
       float[] VECT = {
         0, 0, 0
       }; 
-      
+
       if (abs(Alpha) > 89.99) {
         VECT[0] = 0;
         VECT[1] = 0;
@@ -52264,44 +52277,98 @@ void SOLARCHVISION_PreBakeViewport () {
       
       VECT = SOLARCHVISION_fn_normalize(VECT);
       
-      
-      float[] SunV = {
-        SunR[1], SunR[2], SunR[3]
-      };
 
 
-
-
-      // new trace
-      ray_start[0] = RxP[1];
-      ray_start[1] = RxP[2];
-      ray_start[2] = RxP[3];
-      
-      ray_direction[0] = SunR[1];
-      ray_direction[1] = SunR[2];
-      ray_direction[2] = SunR[3];
-      
-      
-      
-      if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
+      n_Map = -1; 
+      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+        //for (int i = 0; i < 24; i += 1) {
+        for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+          n_Map += 1; 
+          
+          float HOUR_ANGLE = i;
     
-        float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
-        if (SunMask <= 0) SunMask = 0; // removes backing faces 
+          float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+
+          
     
-        Image_RGBA.pixels[np] = color(255 * SunMask, 255);
+          
+          float[] SunV = {
+            SunR[1], SunR[2], SunR[3]
+          };
     
+    
+    
+    
+          // new trace
+          ray_start[0] = RxP[1];
+          ray_start[1] = RxP[2];
+          ray_start[2] = RxP[3];
+          
+          ray_direction[0] = SunR[1];
+          ray_direction[1] = SunR[2];
+          ray_direction[2] = SunR[3];
+          
+          
+          
+          if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
+        
+            float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+            if (SunMask <= 0) SunMask = 0; // removes backing faces 
+        
+            Image_RGBA[n_Map].pixels[np] = color(255 * SunMask, 255);
+        
+          }
+          else Image_RGBA[n_Map].pixels[np] = color(0, 255);
+          
+        }
       }
-      else Image_RGBA.pixels[np] = color(0, 255);
-      
     }
-    else Image_RGBA.pixels[np] = color(0,0,0,0);
+    else {
+      
+      n_Map = -1; 
+      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+        //for (int i = 0; i < 24; i += 1) {
+        for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+          n_Map += 1; 
+    
+          Image_RGBA[n_Map].pixels[np] = color(0,0,0,0);
+        }
+      }      
+    }
     
   }
+  
+  
+  n_Map = -1; 
+  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+    //for (int i = 0; i < 24; i += 1) {
+    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+      n_Map += 1; 
+
+      float HOUR_ANGLE = i;
+
+int SHD = 1; // <<<<<<<<<<<<<<<<<<<< ONLY SHADED NOW!
+
+      String[] STR_SHD = {
+        "F", "T"
+      };
+      String File_Name = "";
+
+      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+
+      File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+
+      File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
+
+      Image_RGBA[n_Map].updatePixels();
       
-  Image_RGBA.updatePixels();
+      Image_RGBA[n_Map].save(File_Name + ".PNG");
+    }
+  }  
+      
  
  
-  Image_RGBA.save("PreBake.png");
+  
   
   println("PreBake saved!");
   
