@@ -40037,6 +40037,25 @@ String Section_Stamp () {
 }
 
 
+String Viewport_Stamp () {
+
+  String s = "";
+
+  s += "x" + nf(WIN3D_X_Coordinate, 0, 3);
+  s += "y" + nf(WIN3D_Y_Coordinate, 0, 3);
+  s += "z" + nf(WIN3D_Z_Coordinate, 0, 3);
+
+  s += "rx" + nf(WIN3D_RX_Coordinate, 0, 3);
+  s += "ry" + nf(WIN3D_RY_Coordinate, 0, 3);
+  s += "rz" + nf(WIN3D_RZ_Coordinate, 0, 3);
+  
+  s = s.replace('.', 'p');
+  s = s.replace('-', 'n');
+
+  return s;
+}
+
+
 PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
 
 String defaultSceneName = "Complex";
@@ -52168,15 +52187,17 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 void SOLARCHVISION_PreBakeViewport () {
 
+  SceneName = "temp_" + Viewport_Stamp();
+  
   println("PreBake started!");
 
   int RES1 = WIN3D_X_View;
   int RES2 = WIN3D_Y_View;
 
   int n_Map = 0; 
-  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+  for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
     //for (int i = 0; i < 24; i += 1) {
-    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+    for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
       n_Map += 1;
     }
   } 
@@ -52184,9 +52205,9 @@ void SOLARCHVISION_PreBakeViewport () {
   PImage[] Image_RGBA = new PImage [n_Map];
 
   n_Map = -1; 
-  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+  for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
     //for (int i = 0; i < 24; i += 1) {
-    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+    for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
       n_Map += 1; 
 
       Image_RGBA[n_Map] = createImage(RES1, RES2, ARGB);
@@ -52280,9 +52301,9 @@ void SOLARCHVISION_PreBakeViewport () {
 
 
       n_Map = -1; 
-      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+      for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
         //for (int i = 0; i < 24; i += 1) {
-        for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+        for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
           n_Map += 1; 
           
           float HOUR_ANGLE = i;
@@ -52326,9 +52347,9 @@ void SOLARCHVISION_PreBakeViewport () {
     else {
       
       n_Map = -1; 
-      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+      for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
         //for (int i = 0; i < 24; i += 1) {
-        for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+        for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
           n_Map += 1; 
     
           Image_RGBA[n_Map].pixels[np] = color(0,0,0,0);
@@ -52340,9 +52361,9 @@ void SOLARCHVISION_PreBakeViewport () {
   
   
   n_Map = -1; 
-  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+  for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
     //for (int i = 0; i < 24; i += 1) {
-    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
+    for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
       n_Map += 1; 
 
       float HOUR_ANGLE = i;
@@ -52363,6 +52384,8 @@ int SHD = 1; // <<<<<<<<<<<<<<<<<<<< ONLY SHADED NOW!
       Image_RGBA[n_Map].updatePixels();
       
       Image_RGBA[n_Map].save(File_Name + ".PNG");
+      
+      println(File_Name + ".PNG");
     }
   }  
       
