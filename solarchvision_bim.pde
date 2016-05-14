@@ -52283,7 +52283,7 @@ void SOLARCHVISION_PreBakeViewport () {
       
       
       // NOT SURE!
-      if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
+      //if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
       
         if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
       
@@ -52291,14 +52291,16 @@ void SOLARCHVISION_PreBakeViewport () {
           // NOT SURE!
           if (SunMask <= 0) SunMask = 0; // removes backing faces 
       
-          Image_RGBA.pixels[np] = color(255 * SunMask, 255);
+          //Image_RGBA.pixels[np] = color(255 * SunMask, 255);
+          Image_RGBA.pixels[np] = color(0,0,255,255);
       
         }
         else Image_RGBA.pixels[np] = color(0, 255);
-      }
+      //}
       
     }
-    else Image_RGBA.pixels[np] = color(0,0,0,0);
+    //else Image_RGBA.pixels[np] = color(0,0,0,0);
+    else Image_RGBA.pixels[np] = color(255,255,0,255);
     
   }
       
