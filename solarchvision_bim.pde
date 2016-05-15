@@ -1878,7 +1878,7 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_Coordinate = 0;
 float WIN3D_Y_Coordinate = 10;
-float WIN3D_Z_Coordinate = 0; 
+float WIN3D_Z_Coordinate = -100; 
 float WIN3D_S_Coordinate = 1;
 
 float WIN3D_RX_Coordinate = 90; //75; 
@@ -3402,7 +3402,6 @@ void draw () {
   }
 } 
 
-float WIN3D_refScale = 250;
 
 PGraphics WIN3D_Diagrams;
 
@@ -3431,7 +3430,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
     WIN3D_Diagrams.beginDraw();  
 
-    WIN3D_Scale3D = WIN3D_Y_View / WIN3D_refScale; // fits field of view to window's height
+    WIN3D_Scale3D = WIN3D_Y_View; // fits field of view to window's height
 
     WIN3D_Diagrams.background(233);
 
@@ -3702,13 +3701,9 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     float the_scale = 1;
 
     if (WIN3D_ViewType == 1) {
-
-      //the_scale *= (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale;
       the_scale *= (0.5 / tan(0.5 * WIN3D_CAM_fov));
     } else {
       float ZOOM = Orthographic_ZOOM();
-
-      //the_scale *= (1.0 / ZOOM) * (0.5 * WIN3D_Scale3D);
       the_scale *= (0.5 / ZOOM);
     }  
 
@@ -3716,7 +3711,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
     WIN3D_CAM_fov = WIN3D_Zoom * PI / 180;
 
-    WIN3D_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * WIN3D_CAM_fov);
+    WIN3D_CAM_dist = 0.5 / tan(0.5 * WIN3D_CAM_fov);
 
     if (WIN3D_ViewType == 1) {
 
@@ -13893,7 +13888,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         WIN3D_X_Coordinate = 0;
         WIN3D_Y_Coordinate = 0;
-        WIN3D_Z_Coordinate = 0;   
+        WIN3D_Z_Coordinate = -100;   
 
         WIN3D_S_Coordinate = 1;
 
@@ -26311,7 +26306,7 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_Coordin
 
   WIN3D_CAM_fov = WIN3D_Zoom * PI / 180;
 
-  WIN3D_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * WIN3D_CAM_fov);
+  WIN3D_CAM_dist = 0.5 / tan(0.5 * WIN3D_CAM_fov);
 
   CAM_x2 = 0;
   CAM_y2 = 0;
@@ -26362,7 +26357,7 @@ void SOLARCHVISION_transform_3DViewport () {
 
   WIN3D_CAM_fov = WIN3D_Zoom * PI / 180;
 
-  WIN3D_CAM_dist = (0.5 * WIN3D_refScale) / tan(0.5 * WIN3D_CAM_fov);
+  WIN3D_CAM_dist = 0.5 / tan(0.5 * WIN3D_CAM_fov);
 
   WIN3D_CAM_x = 0;
   WIN3D_CAM_y = 0;
@@ -38871,8 +38866,8 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
   if (z > 0) {
     if (WIN3D_ViewType == 1) {
 
-      Image_X = (x / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale;
-      Image_Y = -(y / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale;
+      Image_X = (x / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov));
+      Image_Y = -(y / z) * (0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov));
       Image_Z = z;
     } else {
 
@@ -39956,14 +39951,14 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
   if (WIN3D_ViewType == 1) {
 
-    PNT_z = (0.5 * WIN3D_refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
+    PNT_z = 0.5/ tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
 
-    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale);
-    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)) * WIN3D_refScale);
+    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)));
+    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_Scale3D / tan(0.5 * WIN3D_CAM_fov)));
   } else {
     float ZOOM = Orthographic_ZOOM();
 
-    PNT_z = (0.5 * WIN3D_refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
+    PNT_z = 0.5 / tan(0.5 * PI / 3.0); // for orthographic: should be this.
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_Scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_Scale3D);
@@ -49502,7 +49497,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("WIN3D_CAM_clipFar", WIN3D_CAM_clipFar);
   newChild1.setInt("WIN3D_CurrentCamera", WIN3D_CurrentCamera);
   newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
-  newChild1.setFloat("WIN3D_refScale", WIN3D_refScale);
   newChild1.setFloat("WIN3D_X_Coordinate", WIN3D_X_Coordinate);
   newChild1.setFloat("WIN3D_Y_Coordinate", WIN3D_Y_Coordinate);
   newChild1.setFloat("WIN3D_Z_Coordinate", WIN3D_Z_Coordinate);
@@ -50750,7 +50744,6 @@ void SOLARCHVISION_load_project (String myFile) {
       WIN3D_CAM_clipFar = children0[L].getFloat("WIN3D_CAM_clipFar");
       WIN3D_CurrentCamera = children0[L].getInt("WIN3D_CurrentCamera");
       OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
-      WIN3D_refScale = children0[L].getFloat("WIN3D_refScale");
       WIN3D_X_Coordinate = children0[L].getFloat("WIN3D_X_Coordinate");
       WIN3D_Y_Coordinate = children0[L].getFloat("WIN3D_Y_Coordinate");
       WIN3D_Z_Coordinate = children0[L].getFloat("WIN3D_Z_Coordinate");
