@@ -52203,6 +52203,8 @@ void SOLARCHVISION_PreBakeViewport () {
   
   println("PreBaking Direct and Diffuse Models. Please wait...");
 
+
+
   int pre_WIN3D_X_View = WIN3D_X_View; 
   int pre_WIN3D_Y_View = WIN3D_Y_View;
  
@@ -52215,7 +52217,7 @@ void SOLARCHVISION_PreBakeViewport () {
   //SOLARCHVISION_put_3DViewport();  //????????????
  
  
- 
+  float ScaleToFit = float(pre_WIN3D_Y_View) / float(WIN3D_Y_View); 
  
   
 
@@ -52282,7 +52284,7 @@ void SOLARCHVISION_PreBakeViewport () {
       WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
     };
 
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X * ScaleToFit, Image_Y * ScaleToFit);
 
     ray_start[0] /= OBJECTS_scale;
     ray_start[1] /= OBJECTS_scale;
