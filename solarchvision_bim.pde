@@ -52071,9 +52071,9 @@ ray_start[0] = RxP[1];
 ray_start[1] = RxP[2];
 ray_start[2] = RxP[3];
 
-ray_direction[0] = SunR[1];
-ray_direction[1] = SunR[2];
-ray_direction[2] = SunR[3];
+ray_direction[0] = SunV[0];
+ray_direction[1] = SunV[1];
+ray_direction[2] = SunV[2];
 
 if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
 
@@ -52190,13 +52190,49 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 void SOLARCHVISION_PreBakeViewport () {
+  
+
+  
+  
+  int DiffuseSamples = 8 ; //16;
+  
+  int start_DATE_ANGLE = 0;
+  int step_DATE_ANGLE = 90; //15;
+  int end_DATE_ANGLE = 360 - step_DATE_ANGLE;
+  
+  int start_HOUR = 8; //4; // to make it faster. Also the images are not needed out of this period.
+  int step_HOUR = 4; //1;
+  int end_HOUR = 16; //20; // to make it faster. Also the images are not needed out of this period.
+
+  
 
   SceneName = "test" + Viewport_Stamp();
   
   println("PreBaking Direct and Diffuse Models. Please wait...");
 
+  int pre_WIN3D_X_View = WIN3D_X_View; 
+  int pre_WIN3D_Y_View = WIN3D_Y_View;
+ 
+  WIN3D_X_View = SolarImpact_RES1;
+  WIN3D_Y_View = SolarImpact_RES2;
+  WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+
+  SOLARCHVISION_transform_3DViewport();
+  
+  //SOLARCHVISION_put_3DViewport();  //????????????
+ 
+ 
+ 
+ 
+  
+
   int RES1 = WIN3D_X_View;
-  int RES2 = WIN3D_Y_View;
+  int RES2 = WIN3D_Y_View;    
+
+
+
+
+
   
   float[][] Diffuse_Matrix = new float [2][(RES1 * RES2)]; 
   
@@ -52208,9 +52244,9 @@ void SOLARCHVISION_PreBakeViewport () {
 
 
   int n_Map = 0; 
-  for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
-    //for (int i = 0; i < 24; i += 1) {
-    for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
+  for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+    
+    for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) { 
       n_Map += 1;
     }
   } 
@@ -52218,9 +52254,9 @@ void SOLARCHVISION_PreBakeViewport () {
   PImage[][] Direct_RGBA = new PImage [n_Map][2];
   
   n_Map = -1; 
-  for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
-    //for (int i = 0; i < 24; i += 1) {
-    for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
+  for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+    
+    for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) { 
       n_Map += 1; 
       
       for (int SHD = 0; SHD <= 1; SHD += 1) {
@@ -52323,7 +52359,7 @@ void SOLARCHVISION_PreBakeViewport () {
       
       {
         
-        float[][] RayVectors = new float[20][3]; // <<<<<<<<<< 20 random directions 
+        float[][] RayVectors = new float[DiffuseSamples][3]; 
         
         for (int i = 0; i < RayVectors.length; i++) {
           RayVectors[i][0] = random(-1, 1);
@@ -52358,9 +52394,9 @@ void SOLARCHVISION_PreBakeViewport () {
       
       
       n_Map = -1; 
-      for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
-        //for (int i = 0; i < 24; i += 1) {
-        for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
+      for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+        
+        for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) { 
           n_Map += 1; 
           
           float HOUR_ANGLE = i;
@@ -52400,9 +52436,9 @@ void SOLARCHVISION_PreBakeViewport () {
     else {
       
       n_Map = -1; 
-      for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
-        //for (int i = 0; i < 24; i += 1) {
-        for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
+      for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+        
+        for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) { 
           n_Map += 1; 
           
           for (int SHD = 0; SHD <= 1; SHD += 1) {
@@ -52426,9 +52462,9 @@ void SOLARCHVISION_PreBakeViewport () {
   println("Progress: 100 %");
   
   n_Map = -1; 
-  for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
-    //for (int i = 0; i < 24; i += 1) {
-    for (int i = 9; i <= 15; i += 3) { // to make it faster. Also the images are not needed out of this period.
+  for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+    
+    for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) { 
       n_Map += 1; 
 
       float HOUR_ANGLE = i;
@@ -52493,6 +52529,9 @@ void SOLARCHVISION_PreBakeViewport () {
   }       
  
 
-  
+  WIN3D_X_View = pre_WIN3D_X_View;
+  WIN3D_Y_View = pre_WIN3D_Y_View;
+  WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+
 }
 
