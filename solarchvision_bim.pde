@@ -52322,7 +52322,14 @@ void SOLARCHVISION_PreBakeViewport () {
       VECT = SOLARCHVISION_fn_normalize(VECT);
       
       {
-        float[][] RayVectors = {{0,0,1}, {1,0,1}, {-1,0,1}, {0,1,1}, {0,-1,1}, {1,1,1}, {1,-1,1}, {-1,1,1}, {-1,-1,1}};
+        
+        float[][] RayVectors = new float[20][3]; // <<<<<<<<<< 20 random directions 
+        
+        for (int i = 0; i < RayVectors.length; i++) {
+          RayVectors[i][0] = random(-1, 1);
+          RayVectors[i][1] = random(-1, 1);
+          RayVectors[i][2] = random(0.1, 1);
+        }
         
         for (int n_Ray = 0; n_Ray < RayVectors.length; n_Ray += 1) { 
   
