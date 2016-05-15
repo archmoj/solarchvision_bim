@@ -52197,15 +52197,15 @@ void SOLARCHVISION_PreBakeViewport () {
 
   int RES1 = WIN3D_X_View;
   int RES2 = WIN3D_Y_View;
-
-  PImage[] Diffuse_RGBA = new PImage [2];
-
+  
+  float[][] Diffuse_Matrix = new float [2][(RES1 * RES2)]; 
+  
   for (int SHD = 0; SHD <= 1; SHD += 1) {
+    for (int np = 0; np < (RES1 * RES2); np++) {
+      Diffuse_Matrix[SHD][np] = 0; 
+    }
+  }
 
-    Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB); 
-    
-    Diffuse_RGBA[SHD].loadPixels();
-  } 
 
   int n_Map = 0; 
   for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
@@ -52321,6 +52321,35 @@ void SOLARCHVISION_PreBakeViewport () {
       
       VECT = SOLARCHVISION_fn_normalize(VECT);
       
+      {
+        float[][] RayVectors = {{0,0,1}, {1,0,1}, {-1,0,1}, {0,1,1}, {0,-1,1}, {1,1,1}, {1,-1,1}, {-1,1,1}, {-1,-1,1}};
+        
+        for (int n_Ray = 0; n_Ray < RayVectors.length; n_Ray += 1) { 
+  
+          // new trace
+          ray_start[0] = RxP[1];
+          ray_start[1] = RxP[2];
+          ray_start[2] = RxP[3];
+          
+          ray_direction[0] = RayVectors[n_Ray][0];
+          ray_direction[1] = RayVectors[n_Ray][1];
+          ray_direction[2] = RayVectors[n_Ray][2];
+    
+          float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(RayVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
+          if (SkyMask <= 0) SkyMask = 0; // removes backing faces
+         
+          // when SHD = 0;
+          Diffuse_Matrix[0][np] += SkyMask / float(RayVectors.length);
+            
+          // when SHD = 1;            
+          if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
+            Diffuse_Matrix[1][np] += SkyMask / float(RayVectors.length);
+          }
+          else Diffuse_Matrix[1][np] += 0;   
+        }
+      }      
+      
+      
       n_Map = -1; 
       for (int DATE_ANGLE = 90; DATE_ANGLE <= 270; DATE_ANGLE += 45) {
         //for (int i = 0; i < 24; i += 1) {
@@ -52358,36 +52387,7 @@ void SOLARCHVISION_PreBakeViewport () {
         }
       }
      
-      {
-        float[] RayVectors = {{0,0,1}, {1,0,1}, {-1,0,1}, {0,1,1}, {0,-1,1}, {1,1,1}, {1,-1,1}, {-1,1,1}, {-1,-1,1}};
-        
-        for (int n_Ray = 0; n_Ray < RayVectors.length; n_Ray += 1) { 
-  
-          // new trace
-          ray_start[0] = RxP[1];
-          ray_start[1] = RxP[2];
-          ray_start[2] = RxP[3];
-          
-          ray_direction[0] = RayVectors[n_Ray][0];
-          ray_direction[1] = RayVectors[n_Ray][1];
-          ray_direction[2] = RayVectors[n_Ray][2];
-    
-          float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(RayVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
-          if (SkyMask <= 0) SkyMask = 0; // removes backing faces
-         
-          ..... should divide by RayVectors.length
-          .... then add values to pixel
-    
-          // when SHD = 0;
-          Diffuse_RGBA[n_Map][0].pixels[np] = color(255 * SkyMask, 255);
             
-          // when SHD = 1;            
-          if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
-            Diffuse_RGBA[n_Map][1].pixels[np] = color(255 * SkyMask, 255);
-          }
-          else Diffuse_RGBA[n_Map][1].pixels[np] = color(0, 255);   
-        }
-      }      
   
     }
     else {
@@ -52408,7 +52408,7 @@ void SOLARCHVISION_PreBakeViewport () {
 
       for (int SHD = 0; SHD <= 1; SHD += 1) {
 
-        Diffuse_RGBA[SHD].pixels[np] = color(0,0,0,0);
+        Diffuse_Matrix[SHD][np] = FLOAT_undefined;
       
       }     
       
@@ -52448,8 +52448,10 @@ void SOLARCHVISION_PreBakeViewport () {
     }
   }  
 
-  for (int SHD = 0; SHD <= 1; SHD += 1) {
+  PImage[] Diffuse_RGBA = new PImage [2];
 
+  for (int SHD = 0; SHD <= 1; SHD += 1) {
+    
     String[] STR_SHD = {
       "F", "T"
     };
@@ -52459,7 +52461,24 @@ void SOLARCHVISION_PreBakeViewport () {
 
     File_Name += "DIF_" + STR_SHD[SHD];
     
+    Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB); 
+    
+    Diffuse_RGBA[SHD].loadPixels();
+
+    for (int np = 0; np < (RES1 * RES2); np++) {
+      
+      if (Diffuse_Matrix[SHD][np] < 0.9 * FLOAT_undefined) {
+      
+        Diffuse_RGBA[SHD].pixels[np] = color(255 * Diffuse_Matrix[SHD][np], 255);
+      }
+      else {
+        
+        Diffuse_RGBA[SHD].pixels[np] = color(0,0,0,0);
+      }
+    }    
+
     Diffuse_RGBA[SHD].updatePixels();
+    
     
     Diffuse_RGBA[SHD].save(File_Name + ".PNG");
     
