@@ -1,4 +1,3 @@
-//change from perspective to orthographic... zoom not working well!
 
 // writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
 
@@ -26083,6 +26082,8 @@ void SOLARCHVISION_draw_Group3Ds () {
 float Orthographic_ZOOM () {
 
   float ZOOM = 0.5 * WIN3D_Zoom * PI / 180;
+  
+  ZOOM *= pow(pow(WIN3D_X_Coordinate, 2) + pow(WIN3D_Y_Coordinate, 2) + pow(WIN3D_Z_Coordinate, 2), 0.5); // ????
 
   return ZOOM;
 }
