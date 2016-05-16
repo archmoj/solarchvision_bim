@@ -12936,46 +12936,46 @@ void STUDY_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
-      case 112 : 
+      case 112 : //F1
         IMPACTS_DataSource = databaseNumber_FORECAST_ENSEMBLE; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
-      case 113 : 
+      case 113 : //F2
         IMPACTS_DataSource = databaseNumber_RECENT_OBSERVED; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
-      case 114 : 
+      case 114 : //F3
         IMPACTS_DataSource = databaseNumber_CLIMATE_CWEEDS; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
-      case 115 : 
+      case 115 : //F4
         IMPACTS_DataSource = databaseNumber_CLIMATE_TMYEPW; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;          
 
-      case 116 : 
+      case 116 : //F5
         if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 4)) || (STUDY_PlotImpacts == 5)) STUDY_PlotImpacts = 4;
         else STUDY_PlotImpacts = 5; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
-      case 117 : 
+      case 117 : //F6
         if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 2)) || (STUDY_PlotImpacts == 3)) STUDY_PlotImpacts = 2;
         else STUDY_PlotImpacts = 3; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;                   
-      case 118 : 
+      case 118 : //F7
         if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 0)) || (STUDY_PlotImpacts == 1)) STUDY_PlotImpacts = 0;
         else STUDY_PlotImpacts = 1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;           
-      case 119 : 
+      case 119 : //F8
         if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != -2)) || (STUDY_PlotImpacts == -1)) STUDY_PlotImpacts = -2;
         else STUDY_PlotImpacts = -1; 
         STUDY_Update = 1; 
@@ -14532,35 +14532,35 @@ void keyPressed (KeyEvent e) {
 
         if (key == CODED) { 
           switch(keyCode) {
-          case 112 : 
+          case 112 : //F1
             SOLARCHVISION_ROLLOUT_parent = 0; 
             ROLLOUT_Update = 1; 
             break;
-          case 113 : 
+          case 113 : //F2
             SOLARCHVISION_ROLLOUT_parent = 1; 
             ROLLOUT_Update = 1; 
             break;
-          case 114 : 
+          case 114 : //F3
             SOLARCHVISION_ROLLOUT_parent = 2; 
             ROLLOUT_Update = 1; 
             break;
-          case 115 : 
+          case 115 : //F4
             SOLARCHVISION_ROLLOUT_parent = 3; 
             ROLLOUT_Update = 1; 
             break;
-          case 116 : 
+          case 116 : //F5
             SOLARCHVISION_ROLLOUT_parent = 4; 
             ROLLOUT_Update = 1; 
             break;
-          case 117 : 
+          case 117 : //F6
             SOLARCHVISION_ROLLOUT_parent = 5; 
             ROLLOUT_Update = 1; 
             break;
-          case 118 : 
+          case 118 : //F7
             SOLARCHVISION_ROLLOUT_parent = 6; 
             ROLLOUT_Update = 1; 
             break;
-          case 119 : 
+          case 119 : //F8
             SOLARCHVISION_ROLLOUT_parent = 7; 
             ROLLOUT_Update = 1; 
             break;
@@ -14591,35 +14591,35 @@ void keyPressed (KeyEvent e) {
 
         if (key == CODED) { 
           switch(keyCode) {
-          case 112 : 
+          case 112 : //F1
             SOLARCHVISION_ROLLOUT_child = 1; 
             ROLLOUT_Update = 1; 
             break;
-          case 113 : 
+          case 113 : //F2
             SOLARCHVISION_ROLLOUT_child = 2; 
             ROLLOUT_Update = 1; 
             break;
-          case 114 : 
+          case 114 : //F3
             SOLARCHVISION_ROLLOUT_child = 3; 
             ROLLOUT_Update = 1; 
             break;
-          case 115 : 
+          case 115 : //F4
             SOLARCHVISION_ROLLOUT_child = 4; 
             ROLLOUT_Update = 1; 
             break;
-          case 116 : 
+          case 116 : //F5
             SOLARCHVISION_ROLLOUT_child = 5; 
             ROLLOUT_Update = 1; 
             break;
-          case 117 : 
+          case 117 : //F6
             SOLARCHVISION_ROLLOUT_child = 6; 
             ROLLOUT_Update = 1; 
             break;
-          case 118 : 
+          case 118 : //F7
             SOLARCHVISION_ROLLOUT_child = 7; 
             ROLLOUT_Update = 1; 
             break;
-          case 119 : 
+          case 119 : //F8
             SOLARCHVISION_ROLLOUT_child = 8; 
             ROLLOUT_Update = 1; 
             break;
@@ -28488,8 +28488,8 @@ float SolarImpact_scale_V = float(Defined_Stations[STATION_Number][7]); // i.e. 
 float SolarImpact_offset_U = 0;
 float SolarImpact_offset_V = 0; 
 
-int SolarImpact_RES1 = 200;
-int SolarImpact_RES2 = 200;
+int SolarImpact_RES1 = 20; //200;
+int SolarImpact_RES2 = 20; //200;
 
 float SolarImpact_Elevation;
 
@@ -28500,9 +28500,13 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
   if (rebuild_SolarProjection_array != 0) {
     SOLARCHVISION_build_SolarImpact_Image_array();
   }
+  
+  println("AAA");
 
   if (SolarImpact_sectionType != 0) {
 
+    println("BBB");
+    
     cursor(WAIT);
 
     int start_z = STUDY_get_startZ_endZ(IMPACTS_DataSource)[0];
@@ -28746,7 +28750,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                             File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
                           }
 
-                          //println(File_Name);
+                          println(File_Name);
                           Shadings[SHD]  = loadImage(File_Name);
                         }   
 
@@ -34465,7 +34469,11 @@ void mouseClicked () {
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Render Viewport")) {
               
               SOLARCHVISION_RenderViewport();            
-            }              
+            }     
+            if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("PreBake Viewport")) {
+              
+              SOLARCHVISION_PreBakeViewport();            
+            }           
             
 
             if (SOLARCHVISION_UI_BAR_a_Items[SOLARCHVISION_UI_BAR_a_selected_parent][SOLARCHVISION_UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
@@ -46750,7 +46758,7 @@ String[][] SOLARCHVISION_UI_BAR_a_Items = {
   }
   , 
   {
-    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation", "Render Viewport"
+    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation", "Render Viewport", "PreBake Viewport"
   }
   , 
   {
@@ -52184,23 +52192,28 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 void SOLARCHVISION_PreBakeViewport () {
-  
 
+  Camera_Variation = 0;
+  
+  SolarImpact_sectionType = 1; // <<<<< so that it analyzed later!
+
+  
+  cursor(WAIT);  
   
   
   int DiffuseSamples = 8 ; //16;
   
   int start_DATE_ANGLE = 0;
-  int step_DATE_ANGLE = 90; //15;
+  int step_DATE_ANGLE = 15;
   int end_DATE_ANGLE = 360 - step_DATE_ANGLE;
   
-  int start_HOUR = 8; //4; // to make it faster. Also the images are not needed out of this period.
-  int step_HOUR = 4; //1;
-  int end_HOUR = 16; //20; // to make it faster. Also the images are not needed out of this period.
+  int start_HOUR = 4; // to make it faster. Also the images are not needed out of this period.
+  int step_HOUR = 1;
+  int end_HOUR = 20; // to make it faster. Also the images are not needed out of this period.
 
   
 
-  SceneName = "test" + Viewport_Stamp();
+  SceneName = "Test" + Viewport_Stamp();
   
   println("PreBaking Direct and Diffuse Models. Please wait...");
 
@@ -52476,7 +52489,7 @@ void SOLARCHVISION_PreBakeViewport () {
   
         File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
   
-        File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
+        File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2);
   
         Direct_RGBA[n_Map][SHD].updatePixels();
         
@@ -52499,6 +52512,8 @@ void SOLARCHVISION_PreBakeViewport () {
     File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
 
     File_Name += "DIF_" + STR_SHD[SHD];
+    
+    File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2);
     
     Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB); 
     
@@ -52528,6 +52543,9 @@ void SOLARCHVISION_PreBakeViewport () {
   WIN3D_X_View = pre_WIN3D_X_View;
   WIN3D_Y_View = pre_WIN3D_Y_View;
   WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+
+  cursor(ARROW);
+  
 
 }
 
