@@ -1625,6 +1625,51 @@ String[] databaseString = {
   "SWOB", "NAEFS", "CWEEDS", "CLMREC", "TMY"
 };
 
+float SOLARCHVISION_getParameterFromActiveDataSource (int now_i, int now_j, int now_k, int Parameter_ID) { 
+  
+  float return_value = FLOAT_undefined;
+  
+  if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) {
+    return_value = CLIMATE_CWEEDS_Data[now_i][now_j][Parameter_ID][now_k]; 
+  }
+  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) {
+    return_value = CLIMATE_CLMREC_Data[now_i][now_j][Parameter_ID][now_k]; 
+  }        
+  else if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) {
+    return_value = FORECAST_ENSEMBLE_Data[now_i][now_j][Parameter_ID][now_k]; 
+  }            
+  else if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) {
+    return_value = RECENT_OBSERVED_Data[now_i][now_j][Parameter_ID][now_k]; 
+  }   
+  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) {
+    return_value = CLIMATE_TMYEPW_Data[now_i][now_j][Parameter_ID][now_k]; 
+  }
+
+  return return_value;
+}  
+
+int SOLARCHVISION_getFilteredScenariosFromActiveDataSource (int now_i, int now_j, int now_k) {
+  
+  int memberCount = 0;
+  
+  if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) memberCount = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) memberCount = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) memberCount = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) memberCount = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) memberCount = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  
+  return memberCount;
+}
+
+
+
+
+
+
+
+
+
+
 int STUDY_impact_summary = 0;
 
 int STUDY_ImpactLayer = 1; // 4 = Median
@@ -1855,7 +1900,7 @@ void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
 
 
-int SOLARCHVISION_H_Pixel = 300; //325; //340; 
+int SOLARCHVISION_H_Pixel = 275; //300; 
 int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.5); 
 
 float MessageSize = SOLARCHVISION_W_Pixel / 40.0;
@@ -1863,7 +1908,7 @@ float MessageSize = SOLARCHVISION_W_Pixel / 40.0;
 
 int SOLARCHVISION_A_Pixel = int(1.5 * MessageSize); // menu bar
 int SOLARCHVISION_B_Pixel = int(2.75 * MessageSize); // 3D tool bar
-
+int SOLARCHVISION_C_Pixel = int(3.0 * MessageSize); // command bar
 int SOLARCHVISION_D_Pixel = int(4.5 * MessageSize); // time bar
 
 
@@ -2193,8 +2238,8 @@ int addNewSelectionToPreviousSelection = 0; // internal
 
 void setup () {
 
-  size(1200, 696, P2D);
-  //size(2 * SOLARCHVISION_W_Pixel + ROLLOUT_X_View, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_D_Pixel, P2D);
+  //size(1200, 696, P2D);
+  size(2 * SOLARCHVISION_W_Pixel + ROLLOUT_X_View, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel, P2D);
 
 
   SOLARCHVISION_draw_frameIcon();
@@ -3374,6 +3419,10 @@ void draw () {
         if (SOLARCHVISION_UI_BAR_b_Update == 1) {
           SOLARCHVISION_draw_window_BAR_b();
         }
+
+        if (SOLARCHVISION_UI_BAR_c_Update == 1) {
+          SOLARCHVISION_draw_window_BAR_c();
+        }  
 
         if (SOLARCHVISION_UI_BAR_d_Update == 1) {
           SOLARCHVISION_draw_window_BAR_d();
@@ -12809,7 +12858,7 @@ void STUDY_keyPressed (KeyEvent e) {
         ROLLOUT_Update = 1; 
         break;
 
-      case TAB :
+      case '?' :
         SOALRCHVISION_refreshDateTabs();                   
         Update_DevelopData = 1;
         SOLARCHVISION_UI_BAR_d_Update = 1; 
@@ -14150,8 +14199,8 @@ void WIN3D_keyPressed (KeyEvent e) {
         break; 
 
 
-      case '?': 
-        SOLARCHVISION_PreBakeViewport();
+      case TAB: 
+        typeUserCommand = (typeUserCommand + 1) % 2;
         break; 
 
       case ENTER: 
@@ -14254,6 +14303,9 @@ void SOLARCHVISION_update_frame_layout () {
 
 void keyPressed (KeyEvent e) {
 
+  //println("key: " + key);
+  //println("keyCode: " + keyCode);  
+  
   if (frameCount > Last_initializationStep) {
 
     if (SOLARCHVISION_automated == 0) {
@@ -14270,14 +14322,18 @@ void keyPressed (KeyEvent e) {
 
       addNewSelectionToPreviousSelection = 0;
 
-      //println("key: " + key);
-      //println("keyCode: " + keyCode);
 
+      if (typeUserCommand == 0) {
 
-
-      STUDY_keyPressed(e);
-
-      WIN3D_keyPressed(e);
+        STUDY_keyPressed(e);
+  
+        WIN3D_keyPressed(e);
+      }
+      else {
+        
+        COMIN_keyPressed(e);
+      }
+      
 
       if (e.isAltDown() == true) {
 
@@ -32508,7 +32564,7 @@ void mouseWheel (MouseEvent event) {
             float displayBarWidth = 2 * SOLARCHVISION_W_Pixel; 
 
             STUDY_X_control = 0.5 * displayBarWidth;
-            STUDY_Y_control = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + 0.5 * SOLARCHVISION_UI_BAR_d_tab;
+            STUDY_Y_control = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + 0.5 * SOLARCHVISION_UI_BAR_d_tab;
 
             for (int i = 0; i < SOLARCHVISION_UI_BAR_d_Items.length; i++) {
 
@@ -35615,7 +35671,7 @@ void mouseClicked () {
           SOLARCHVISION_UI_BAR_b_Update = 1;
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_D_Pixel) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel) == 1) {
           SOLARCHVISION_UI_BAR_d_Update = 1;
         }  
 
@@ -48127,6 +48183,11 @@ void SOLARCHVISION_UI_set_to_View_3DViewPoint (int n) {
 
 
 
+
+
+
+
+
 int SOLARCHVISION_UI_BAR_d_Update = 1;
 
 float SOLARCHVISION_UI_BAR_d_tab;
@@ -48158,7 +48219,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
     fill(191);
     noStroke();
-    rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_D_Pixel);
+    rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_D_Pixel);
 
 
 
@@ -48166,7 +48227,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
     float displayBarWidth = 2 * SOLARCHVISION_W_Pixel; 
 
     STUDY_X_control = 0.5 * displayBarWidth;
-    STUDY_Y_control = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + 0.5 * SOLARCHVISION_UI_BAR_d_tab;
+    STUDY_Y_control = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + 0.5 * SOLARCHVISION_UI_BAR_d_tab;
 
     for (int i = 0; i < SOLARCHVISION_UI_BAR_d_Items.length; i++) {
 
@@ -48549,7 +48610,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
     displayBarHeight = 4.5 * MessageSize;
 
     float temp_offsetX = ROLLOUT_CX_View + 0.5 * displayBarWidth;
-    float temp_offsetY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + 0.5 * displayBarHeight;
+    float temp_offsetY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + 0.5 * displayBarHeight;
 
     for (int n = 0; n < 9; n++) {
 
@@ -52235,39 +52296,135 @@ void SOLARCHVISION_PreBakeViewport () {
 
 
 
-float SOLARCHVISION_getParameterFromActiveDataSource (int now_i, int now_j, int now_k, int Parameter_ID) { 
-  
-  float return_value = FLOAT_undefined;
-  
-  if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) {
-    return_value = CLIMATE_CWEEDS_Data[now_i][now_j][Parameter_ID][now_k]; 
+int typeUserCommand = 0;
+
+int SOLARCHVISION_UI_BAR_c_Update = 1;
+
+float SOLARCHVISION_UI_BAR_c_tab;
+
+String[][] SOLARCHVISION_UI_BAR_c_Items = {
+
+  {
+    "Command"
   }
-  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) {
-    return_value = CLIMATE_CLMREC_Data[now_i][now_j][Parameter_ID][now_k]; 
-  }        
-  else if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) {
-    return_value = FORECAST_ENSEMBLE_Data[now_i][now_j][Parameter_ID][now_k]; 
-  }            
-  else if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) {
-    return_value = RECENT_OBSERVED_Data[now_i][now_j][Parameter_ID][now_k]; 
-  }   
-  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) {
-    return_value = CLIMATE_TMYEPW_Data[now_i][now_j][Parameter_ID][now_k]; 
+  , 
+  {
+    "Result"
   }
 
-  return return_value;
-}  
+};         
 
-int SOLARCHVISION_getFilteredScenariosFromActiveDataSource (int now_i, int now_j, int now_k) {
+
+String[] allCommands = {"SOLARCHVISION command line:", ""};
+
+
+void SOLARCHVISION_draw_window_BAR_c () {
+  if (SOLARCHVISION_UI_BAR_c_Update == 1) {
+
+    SOLARCHVISION_UI_BAR_c_tab = SOLARCHVISION_C_Pixel / float(SOLARCHVISION_UI_BAR_c_Items.length);
+
+    fill(0);
+    noStroke();
+    rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_C_Pixel);
+
+    fill(255);
+    textSize(1.5 * MessageSize);
+    textAlign(LEFT, CENTER);
+
+    pushMatrix();
+    translate(0.5 * MessageSize, 0.333 * MessageSize + SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel);
+
+    int maxDisplayLines = 2;
+
+    for (int q = 0; q < maxDisplayLines; q++) {
+      
+      int n = allCommands.length + q - maxDisplayLines;
+      
+      if ((0 <= n) && (n < allCommands.length)) {
+
+        text(allCommands[n], 0, q * 1.5 * MessageSize);
+      }
+    }
+    
+    popMatrix();
+
+    SOLARCHVISION_X_clicked = -1;
+    SOLARCHVISION_Y_clicked = -1;
+  }  
+}
+
+
+
+void COMIN_keyPressed (KeyEvent e) {
+
+
+
+  if (e.isAltDown() == true) {
+    if (key == CODED) { 
+      switch(keyCode) {
+      }
+    } else {
+      switch(key) {
+      }
+    }
+  } else if (e.isControlDown() == true) {
+    if (key == CODED) { 
+      switch(keyCode) {
+      }
+    } else {
+      switch(key) {
+      }
+    }
+  } else if (e.isShiftDown() == true) {
+    if (key == CODED) { 
+      switch(keyCode) {
+      }
+    }
+  }
+
+
+  if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
+
+    if (key == CODED) { 
+      switch(keyCode) {
+      }
+    }
+  }
+
+  if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+
+    if (key != CODED) { 
+      switch(key) {
+        
+       case ENTER:
+         SOLARCHVISION_executeCommand(allCommands[allCommands.length - 1]);
+         String[] newCommand = {""};
+         allCommands = concat(allCommands, newCommand);  
+         break;
+        
+       case BACKSPACE: 
+          if (allCommands[allCommands.length - 1].length() > 0) {
+            allCommands[allCommands.length - 1] = allCommands[allCommands.length - 1].substring(0, allCommands[allCommands.length - 1].length() - 1);
+          }
+          break;
+        
+        default: allCommands[allCommands.length - 1] += key;
+      }
+      
+      
+    }
+  }
+}
+
+String SOLARCHVISION_executeCommand (String s) {
+
+  String return_message = "";
+
+  println("userCommand:" + s);
   
-  int memberCount = 0;
   
-  if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) memberCount = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) memberCount = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) memberCount = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) memberCount = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) memberCount = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
   
-  return memberCount;
+  return return_message;
+  
 }
 
