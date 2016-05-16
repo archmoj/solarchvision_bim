@@ -6559,9 +6559,9 @@ void SOLARCHVISION_PlotFORECAST_ENSEMBLE (float x_Plot, float y_Plot, float z_Pl
 
             if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
           } else {
-            int drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+            int memberCount = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
-            if (drw_count == 1) {
+            if (memberCount == 1) {
 
               _valuesA[k] = Pa;
               _valuesA[k] += STUDY_V_offset[STUDY_CurrentLayer];
@@ -6964,9 +6964,9 @@ void SOLARCHVISION_PlotCLIMATE_CWEEDS (float x_Plot, float y_Plot, float z_Plot,
 
               if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
             } else {
-              int drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+              int memberCount = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
-              if (drw_count == 1) {
+              if (memberCount == 1) {
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
 
@@ -7516,9 +7516,9 @@ void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot,
 
               if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
             } else {
-              int drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+              int memberCount = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
-              if (drw_count == 1) {
+              if (memberCount == 1) {
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
 
@@ -7916,9 +7916,9 @@ void SOLARCHVISION_PlotCLIMATE_TMYEPW (float x_Plot, float y_Plot, float z_Plot,
 
               if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
             } else {
-              int drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+              int memberCount = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
-              if (drw_count == 1) {
+              if (memberCount == 1) {
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
                 _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
 
@@ -8514,9 +8514,9 @@ void SOLARCHVISION_PlotRECENT_OBSERVED (float x_Plot, float y_Plot, float z_Plot
 
             if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
           } else {
-            int drw_count = 1; //SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+            int memberCount = 1; //SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
 
-            if (drw_count == 1) {
+            if (memberCount == 1) {
 
               _valuesA[k] = Pa;
               _valuesA[k] += STUDY_V_offset[STUDY_CurrentLayer];
@@ -10129,14 +10129,9 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
         if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
         } else {
 
-          int drw_count = 0;
-          if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-          if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-          if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-          if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-          if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+          int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k); 
 
-          if (drw_count == 1) {
+          if (memberCount == 1) {
             _values_R_dir = 0.001 * Pa;
             _values_R_dif = 0.001 * Pb;
             _values_E_dir = 0.0001 * Pc;
@@ -10268,16 +10263,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _values_w_spd[k] = FLOAT_undefined;
                   _values_w_tmp[k] = FLOAT_undefined;
                 } else {
-                  int drw_count = 0;
-                  if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
 
-                  if ((IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) && (FORECAST_ENSEMBLE_Flags[now_i][now_j][LAYER_winddir][now_k] != 1)) drw_count = 0;
+                  if ((IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) && (FORECAST_ENSEMBLE_Flags[now_i][now_j][LAYER_winddir][now_k] != 1)) memberCount = 0;
 
-                  if (drw_count == 1) {
+                  if (memberCount == 1) {
 
                     _values_w_dir[k] = Pa;
                     _values_w_spd[k] = Pb;
@@ -10386,16 +10376,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _values_w_spd[k] = FLOAT_undefined;
                   _values_w_tmp[k] = FLOAT_undefined;
                 } else {
-                  int drw_count = 0;
-                  if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                  if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                  int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                  
+                  if ((IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) && (FORECAST_ENSEMBLE_Flags[now_i][now_j][LAYER_winddir][now_k] != 1)) memberCount = 0;
 
-                  if ((IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) && (FORECAST_ENSEMBLE_Flags[now_i][now_j][LAYER_winddir][now_k] != 1)) drw_count = 0;
-
-                  if (drw_count == 1) {
+                  if (memberCount == 1) {
 
                     _values_w_dir[k] = Pa;
                     _values_w_spd[k] = Pb;
@@ -10900,14 +10885,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         _values_E_dif = FLOAT_undefined;
                       } else {
 
-                        int drw_count = 0;
-                        if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                        if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                        if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                        if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                        if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-
-                        if (drw_count == 1) {
+                        int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                        
+                        if (memberCount == 1) {
                           _values_R_dir = 0.001 * Pa;
                           _values_R_dif = 0.001 * Pb;
                           _values_E_dir = 0.001 * Pc;
@@ -11315,14 +11295,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     _values_E_dif = FLOAT_undefined;
                   } else {
 
-                    int drw_count = 0;
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-
-                    if (drw_count == 1) {
+                    int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                    
+                    if (memberCount == 1) {
                       _values_R_dir = 0.001 * Pa;
                       _values_R_dif = 0.001 * Pb;
                       _values_E_dir = 0.001 * Pc;
@@ -12097,14 +12072,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                 _values_E_dif = FLOAT_undefined;
               } else {
 
-                int drw_count = 0;
-                if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
-                if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
-                if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
-                if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
-                if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i1, now_j, now_k);
-
-                if (drw_count == 1) {
+                int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i1, now_j, now_k);
+                
+                if (memberCount == 1) {
                   _values_R_dir = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
                   _values_R_dif = 0.001 * (Pb1 * (1 - i_ratio) + Pb2 * i_ratio);
                   _values_E_dir = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
@@ -25696,14 +25666,9 @@ void SOLARCHVISION_draw_Group3Ds () {
                               _values_E_dif = FLOAT_undefined;
                             } else {
 
-                              int drw_count = 0;
-                              if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                              if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                              if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                              if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                              if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-
-                              if (drw_count == 1) {
+                              int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                              
+                              if (memberCount == 1) {
                                 _values_R_dir = 0.001 * Pa; 
                                 _values_R_dif = 0.001 * Pb;  
                                 _values_E_dir = 0.001 * Pc;
@@ -28428,14 +28393,9 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                     _values_E_dif = FLOAT_undefined;
                   } else {
 
-                    int drw_count = 0;
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-
-                    if (drw_count == 1) {
+                    int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                    
+                    if (memberCount == 1) {
                       _values_R_dir = 0.001 * Pa;  
                       _values_R_dif = 0.001 * Pb; 
                       _values_E_dir = 0.001 * Pc;
@@ -30786,14 +30746,9 @@ void SOLARCHVISION_SolarProjection () {
                     _values_E_dif = FLOAT_undefined;
                   } else {
 
-                    int drw_count = 0;
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) drw_count = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) drw_count = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) drw_count = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) drw_count = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-                    if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) drw_count = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-
-                    if (drw_count == 1) {
+                    int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                    
+                    if (memberCount == 1) {
                       _values_R_dir = 0.001 * Pa;
                       _values_R_dif = 0.001 * Pb;
                       _values_E_dir = 0.001 * Pc;
@@ -52302,4 +52257,17 @@ float SOLARCHVISION_getParameterFromActiveDataSource (int now_i, int now_j, int 
 
   return return_value;
 }  
+
+int SOLARCHVISION_getFilteredScenariosFromActiveDataSource (int now_i, int now_j, int now_k) {
+  
+  int memberCount = 0;
+  
+  if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) memberCount = SOLARCHVISION_filter("CLIMATE_TMYEPW_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) memberCount = SOLARCHVISION_filter("CLIMATE_CWEEDS_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) memberCount = SOLARCHVISION_filter("CLIMATE_CLMREC_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) memberCount = SOLARCHVISION_filter("FORECAST_ENSEMBLE_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  else if (IMPACTS_DataSource == databaseNumber_RECENT_OBSERVED) memberCount = SOLARCHVISION_filter("RECENT_OBSERVED_Data", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+  
+  return memberCount;
+}
 
