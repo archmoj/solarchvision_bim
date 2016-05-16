@@ -27800,10 +27800,7 @@ void SOLARCHVISION_add_Model_CMC () { //CMC
 }
 
 
-void SOLARCHVISION_add_Model_Main () {
-  
-  
-}
+
 
 
 void SOLARCHVISION_add_Model_OCPM2016 () {
@@ -27981,7 +27978,7 @@ void SOLARCHVISION_add_Model_Home () { //Home
 
 
 
-void SOLARCHVISION_add_Model_Basic () {
+void SOLARCHVISION_add_Model_Main () {
 
   /*
   {
@@ -41803,6 +41800,7 @@ void SOLARCHVISION_draw_Sections () {
         WIN3D_Diagrams.beginShape();
 
         if (Display_SolarImpactImage != 0) { 
+          
           WIN3D_Diagrams.texture(allSections_SolarImpact[f][IMPACTS_DisplayDay]);
 
           WIN3D_Diagrams.noStroke();
