@@ -2001,7 +2001,7 @@ int ROLLOUT_Include = 1;
 
 
 int MESSAGE_CX_View = 0;
-int MESSAGE_CY_View = int(1 * SOLARCHVISION_H_Pixel - 0.75 * MessageSize + 0.5 * (SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_D_Pixel));
+int MESSAGE_CY_View = int(1 * SOLARCHVISION_H_Pixel - 0.75 * MessageSize + 0.5 * (SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel));
 int MESSAGE_X_View = 2 * SOLARCHVISION_W_Pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MessageSize);
 
@@ -14199,10 +14199,6 @@ void WIN3D_keyPressed (KeyEvent e) {
         break; 
 
 
-      case TAB: 
-        typeUserCommand = (typeUserCommand + 1) % 2;
-        break; 
-
       case ENTER: 
         if (WIN3D_FacesShade == Shade_Global_Solar) rebuild_SolarProjection_array = 1;   
         if (WIN3D_FacesShade == Shade_Vertex_Solar) WIN3D_VerticesSolarValue_Update = 1;
@@ -14325,11 +14321,15 @@ void keyPressed (KeyEvent e) {
 
       if (typeUserCommand == 0) {
 
+        SOLARCHVISION_UI_BAR_c_Update = 0;
+        
         STUDY_keyPressed(e);
   
         WIN3D_keyPressed(e);
       }
       else {
+        
+        SOLARCHVISION_UI_BAR_c_Update = 1;
         
         COMIN_keyPressed(e);
       }
@@ -14468,22 +14468,12 @@ void keyPressed (KeyEvent e) {
         if (key != CODED) { 
           switch(key) {
 
-
-
-          case 'g' :
-            AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
-            WORLD_Update = 1;
-            WIN3D_Update = 1; 
-            ROLLOUT_Update = 1; 
-            break;
-
-          case 'G' :
-            AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
-            WORLD_Update = 1;
-            WIN3D_Update = 1; 
-            ROLLOUT_Update = 1; 
-            break;
+            case TAB: 
+              typeUserCommand = (typeUserCommand + 1) % 2;
+              SOLARCHVISION_UI_BAR_c_Update = 1;
+              break; 
           }
+
         }
       }      
 
@@ -52300,28 +52290,15 @@ int typeUserCommand = 0;
 
 int SOLARCHVISION_UI_BAR_c_Update = 1;
 
-float SOLARCHVISION_UI_BAR_c_tab;
-
-String[][] SOLARCHVISION_UI_BAR_c_Items = {
-
-  {
-    "Command"
-  }
-  , 
-  {
-    "Result"
-  }
-
-};         
-
-
-String[] allCommands = {"SOLARCHVISION command line:", ""};
-
+String[] allCommands = {"SOLARCHVISION Command Input:", ""};
+String[] allMessages = {"SOLARCHVISION Command Output:", ""};
 
 void SOLARCHVISION_draw_window_BAR_c () {
   if (SOLARCHVISION_UI_BAR_c_Update == 1) {
-
-    SOLARCHVISION_UI_BAR_c_tab = SOLARCHVISION_C_Pixel / float(SOLARCHVISION_UI_BAR_c_Items.length);
+    
+    SOLARCHVISION_UI_BAR_c_Update = 0;
+    
+    int maxDisplayLines = 2;
 
     if (typeUserCommand == 1) {
       fill(0);
@@ -52333,22 +52310,27 @@ void SOLARCHVISION_draw_window_BAR_c () {
     rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_C_Pixel);
 
     noStroke();
-    fill(255);
+    
     textSize(1.5 * MessageSize);
-    textAlign(LEFT, CENTER);
+    
 
     pushMatrix();
-    translate(0.5 * MessageSize, 0.333 * MessageSize + SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel);
-
-    int maxDisplayLines = 2;
+    translate(0, 0.333 * MessageSize + SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel);
 
     for (int q = 0; q < maxDisplayLines; q++) {
       
       int n = allCommands.length + q - maxDisplayLines;
       
       if ((0 <= n) && (n < allCommands.length)) {
+        
+        textAlign(RIGHT, CENTER);
+        fill(255,127,0);
+        text(allMessages[n], width - 0.5 * MessageSize, q * 1.5 * MessageSize);
+        
+        textAlign(LEFT, CENTER);
+        fill(255);
+        text(allCommands[n], 0.5 * MessageSize, q * 1.5 * MessageSize);
 
-        text(allCommands[n], 0, q * 1.5 * MessageSize);
       }
     }
     
@@ -52401,11 +52383,15 @@ void COMIN_keyPressed (KeyEvent e) {
 
     if (key != CODED) { 
       switch(key) {
-        
+
        case ENTER:
-         SOLARCHVISION_executeCommand(allCommands[allCommands.length - 1]);
          String[] newCommand = {""};
+         String[] newMessage = {""};
+         
+         allMessages[allMessages.length - 1] = SOLARCHVISION_executeCommand(allCommands[allCommands.length - 1]);         
+         
          allCommands = concat(allCommands, newCommand);  
+         allMessages = concat(allMessages, newMessage);
          break;
         
        case BACKSPACE: 
@@ -52413,7 +52399,7 @@ void COMIN_keyPressed (KeyEvent e) {
             allCommands[allCommands.length - 1] = allCommands[allCommands.length - 1].substring(0, allCommands[allCommands.length - 1].length() - 1);
           }
           break;
-        
+
         default: allCommands[allCommands.length - 1] += key;
       }
       
@@ -52429,8 +52415,122 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   lineSTR = lineSTR.replace("\"", ""); 
   
   String[] parts = split(lineSTR, ' ');
+
+  if (parts[0].toUpperCase().equals("MOVE")) {
+    if (parts.length > 1) {
+      float dx = 0;
+      float dy = 0;
+      float dz = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+        }
+        else {
+               if (q == 1) dx = float(parameters[0]);
+          else if (q == 2) dy = float(parameters[0]);
+          else if (q == 3) dz = float(parameters[0]);
+        }
+      }
+      SOLARCHVISION_move_Selection(dx, dy, dz);
+      WIN3D_Update = 1;
+    }
+    else {
+      return_message = "Move dx=? dy=? dz=?";
+    }
+  }  
+  else if ((parts[0].toUpperCase().equals("ROTATE")) || (parts[0].toUpperCase().equals("ROTATEX")) || (parts[0].toUpperCase().equals("ROTATEY")) || (parts[0].toUpperCase().equals("ROTATEZ"))) {
+    if (parts.length > 1) {
+      int v = 2;
+      if (parts[0].toUpperCase().equals("ROTATEX")) v = 0;
+      if (parts[0].toUpperCase().equals("ROTATEY")) v = 1;
+      if (parts[0].toUpperCase().equals("ROTATEZ")) v = 2;
+      
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+        }
+        else {
+          if (q == 1) r = float(parameters[0]);
+        }      
+      }
+      SOLARCHVISION_rotate_Selection(x, y, z, r, v);
+      WIN3D_Update = 1;
+    }
+    else {
+      return_message = "Rotate|RotateX|RotateY|RotateZ r=? x=? y=? z=?";
+    }    
+  }    
+  else if (parts[0].toUpperCase().equals("SCALE")) {
+    if (parts.length > 1) {
+      float sx = 1;
+      float sy = 1;
+      float sz = 1;
+      
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("s")) {sx = float(parameters[1]); sy = sx; sz = sx;}
+          else if (parameters[0].toLowerCase().equals("sxy")) {sx = float(parameters[1]); sy = sx;}             
+          else if (parameters[0].toLowerCase().equals("syz")) {sy = float(parameters[1]); sz = sy;}
+          else if (parameters[0].toLowerCase().equals("szx")) {sz = float(parameters[1]); sx = sz;}
+          else if (parameters[0].toLowerCase().equals("sx")) sx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("sy")) sy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("sz")) sz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+        }
+        else {
+          if (q == 1) {sx = float(parameters[0]); sy = sx; sz = sx;}
+        }           
+      }
+      SOLARCHVISION_scale_Selection(x, y, z, sx, sy, sz);
+      WIN3D_Update = 1;
+    }
+    else {
+      return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
+    }        
+  }    
+  else if (parts[0].toUpperCase().equals("DELETE")) {
+    if (parts.length > 1) {
+           if (parts[1].toLowerCase().equals("all")) SOLARCHVISION_delete_All();
+      else if (parts[1].toLowerCase().equals("selection")) SOLARCHVISION_delete_Selection();
+      else if (parts[1].toLowerCase().equals("group3ds")) SOLARCHVISION_delete_Group3Ds();
+      else if (parts[1].toLowerCase().equals("object2ds")) SOLARCHVISION_delete_Object2Ds();
+      else if (parts[1].toLowerCase().equals("fractals")) SOLARCHVISION_delete_Fractals();
+      else if (parts[1].toLowerCase().equals("faces")) SOLARCHVISION_delete_Faces();
+      else if (parts[1].toLowerCase().equals("solids")) SOLARCHVISION_delete_Solids();
+      else if (parts[1].toLowerCase().equals("sections")) SOLARCHVISION_delete_Sections();
+      else if (parts[1].toLowerCase().equals("cameras")) SOLARCHVISION_delete_Cameras();
+      WIN3D_Update = 1;
+    }
+    else {
+      return_message = "Delete all/selection/group3Ds/object2Ds/fractals/faces/solids/sections/cameras";
+    }
+  }    
+
+
+
+
+
+
   
-  if (parts[0].toUpperCase().equals("CREATE")) {
+  else if (parts[0].toUpperCase().equals("CREATE")) {
 
     if (parts[1].toLowerCase().equals("person")) {
       String t = "PEOPLE";
@@ -52491,71 +52591,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }
   
   
-  else if (parts[0].toUpperCase().equals("MOVE")) {
-    float dx = 0;
-    float dy = 0;
-    float dz = 0;
-    for (int q = 1; q < parts.length; q++) {
-      String[] parameters = split(parts[q], '=');
-      if (parameters.length > 1) {
-             if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-      }
-    }
-    SOLARCHVISION_move_Selection(dx, dy, dz);
-    WIN3D_Update = 1;
-  }  
-  else if ((parts[0].toUpperCase().equals("ROTATE")) || (parts[0].toUpperCase().equals("ROTATEX")) || (parts[0].toUpperCase().equals("ROTATEY")) || (parts[0].toUpperCase().equals("ROTATEZ"))) {
-    int v = 2;
-    if (parts[0].toUpperCase().equals("ROTATEX")) v = 0;
-    if (parts[0].toUpperCase().equals("ROTATEY")) v = 1;
-    if (parts[0].toUpperCase().equals("ROTATEZ")) v = 2;
-    
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float r = 0;
-    for (int q = 1; q < parts.length; q++) {
-      String[] parameters = split(parts[q], '=');
-      if (parameters.length > 1) {
-             if (parameters[0].toLowerCase().equals("v")) v = int(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-      }
-    }
-    SOLARCHVISION_rotate_Selection(x, y, z, r, v);
-    WIN3D_Update = 1;
-  }    
-  else if (parts[0].toUpperCase().equals("SCALE")) {
-    float sx = 1;
-    float sy = 1;
-    float sz = 1;
-    
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float r = 0;
-    for (int q = 1; q < parts.length; q++) {
-      String[] parameters = split(parts[q], '=');
-      if (parameters.length > 1) {
-             if (parameters[0].toLowerCase().equals("s")) {sx = float(parameters[1]); sy = sx; sz = sx;}
-        else if (parameters[0].toLowerCase().equals("sxy")) {sx = float(parameters[1]); sy = sx;}             
-        else if (parameters[0].toLowerCase().equals("syz")) {sy = float(parameters[1]); sz = sy;}
-        else if (parameters[0].toLowerCase().equals("szx")) {sz = float(parameters[1]); sx = sz;}
-        else if (parameters[0].toLowerCase().equals("sx")) sx = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("sy")) sy = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("sz")) sz = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-        else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-      }
-    }
-    SOLARCHVISION_scale_Selection(x, y, z, sx, sy, sz);
-    WIN3D_Update = 1;
-  }    
   
   
   return return_message;
