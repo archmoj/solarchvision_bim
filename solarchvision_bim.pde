@@ -28488,8 +28488,8 @@ float SolarImpact_scale_V = float(Defined_Stations[STATION_Number][7]); // i.e. 
 float SolarImpact_offset_U = 0;
 float SolarImpact_offset_V = 0; 
 
-int SolarImpact_RES1 = 20; //200;
-int SolarImpact_RES2 = 20; //200;
+int SolarImpact_RES1 = 100; //200;
+int SolarImpact_RES2 = 100; //200;
 
 float SolarImpact_Elevation;
 
@@ -52190,6 +52190,17 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+int DiffuseSamples = 16; // internal now! 
+
+float[][] DiffuseVectors = new float[DiffuseSamples][3]; 
+
+{
+  for (int i = 0; i < DiffuseVectors.length; i++) {
+    DiffuseVectors[i][0] = random(-1, 1);
+    DiffuseVectors[i][1] = random(-1, 1);
+    DiffuseVectors[i][2] = random(0.1, 1);
+  }
+}
 
 void SOLARCHVISION_PreBakeViewport () {
 
@@ -52201,7 +52212,7 @@ void SOLARCHVISION_PreBakeViewport () {
   cursor(WAIT);  
   
   
-  int DiffuseSamples = 8 ; //16;
+  
   
   int start_DATE_ANGLE = 0;
   int step_DATE_ANGLE = 15;
@@ -52368,34 +52379,26 @@ void SOLARCHVISION_PreBakeViewport () {
       
       {
         
-        float[][] RayVectors = new float[DiffuseSamples][3]; 
-        
-        for (int i = 0; i < RayVectors.length; i++) {
-          RayVectors[i][0] = random(-1, 1);
-          RayVectors[i][1] = random(-1, 1);
-          RayVectors[i][2] = random(0.1, 1);
-        }
-        
-        for (int n_Ray = 0; n_Ray < RayVectors.length; n_Ray += 1) { 
+        for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray += 1) { 
   
           // new trace
           ray_start[0] = RxP[1];
           ray_start[1] = RxP[2];
           ray_start[2] = RxP[3];
           
-          ray_direction[0] = RayVectors[n_Ray][0];
-          ray_direction[1] = RayVectors[n_Ray][1];
-          ray_direction[2] = RayVectors[n_Ray][2];
+          ray_direction[0] = DiffuseVectors[n_Ray][0];
+          ray_direction[1] = DiffuseVectors[n_Ray][1];
+          ray_direction[2] = DiffuseVectors[n_Ray][2];
     
-          float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(RayVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
+          float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(DiffuseVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
           if (SkyMask <= 0) SkyMask = 0; // removes backing faces
          
           // when SHD = 0;
-          Diffuse_Matrix[0][np] += SkyMask / float(RayVectors.length);
+          Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
             
           // when SHD = 1;            
           if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction) != 1) { 
-            Diffuse_Matrix[1][np] += SkyMask / float(RayVectors.length);
+            Diffuse_Matrix[1][np] += SkyMask / float(DiffuseVectors.length);
           }
           else Diffuse_Matrix[1][np] += 0;   
         }
@@ -52412,7 +52415,7 @@ void SOLARCHVISION_PreBakeViewport () {
     
           float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
 
-          float[] RayVector = {
+          float[] DirectVector = {
             SunR[1], SunR[2], SunR[3]
           };
 
@@ -52421,11 +52424,11 @@ void SOLARCHVISION_PreBakeViewport () {
           ray_start[1] = RxP[2];
           ray_start[2] = RxP[3];
           
-          ray_direction[0] = RayVector[0];
-          ray_direction[1] = RayVector[1];
-          ray_direction[2] = RayVector[2];
+          ray_direction[0] = DirectVector[0];
+          ray_direction[1] = DirectVector[1];
+          ray_direction[2] = DirectVector[2];
 
-          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(RayVector), SOLARCHVISION_fn_normalize(VECT));
+          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(DirectVector), SOLARCHVISION_fn_normalize(VECT));
           if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
           // when SHD = 0;
