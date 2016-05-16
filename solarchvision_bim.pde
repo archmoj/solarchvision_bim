@@ -21678,7 +21678,7 @@ void SOLARCHVISION_export_objects_OBJ () {
       float rh = allObject2Ds_XYZS[f][3] * 0.5;
       float rw = rh * Object2D_ImageRatios[n];
 
-      float t = 0; //WIN3D_RZ_Coordinate * PI / 180.0;
+      float t = 0; //PI + WIN3D_RZ_Coordinate * PI / 180.0;
       //if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
 
       if (allObject2Ds_MAP[f] < 0) t += PI;            
@@ -26481,7 +26481,7 @@ void SOLARCHVISION_draw_Object2Ds () {
         float rh = allObject2Ds_XYZS[f][3] * 0.5 * OBJECTS_scale;
         float rw = rh * Object2D_ImageRatios[n];
 
-        float t = WIN3D_RZ_Coordinate * PI / 180.0;
+        float t = PI + WIN3D_RZ_Coordinate * PI / 180.0;
         if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
 
         if (allObject2Ds_MAP[f] < 0) t += PI;         
@@ -42220,7 +42220,7 @@ void SOLARCHVISION_draw_Fractals () {
         r *= OBJECTS_scale;
         // ----------------        
 
-        float t = WIN3D_RZ_Coordinate * PI / 180.0;
+        float t = PI + WIN3D_RZ_Coordinate * PI / 180.0;
         if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
 
         {
