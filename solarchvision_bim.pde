@@ -1,4 +1,4 @@
-
+//change from perspective to orthographic... zoom not working well!
 
 // writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
 
