@@ -52593,22 +52593,58 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }    
   else if (parts[0].toUpperCase().equals("DELETE")) {
     if (parts.length > 1) {
-           if (parts[1].toLowerCase().equals("all")) SOLARCHVISION_delete_All();
-      else if (parts[1].toLowerCase().equals("selection")) SOLARCHVISION_delete_Selection();
-      else if (parts[1].toLowerCase().equals("group3ds")) SOLARCHVISION_delete_Group3Ds();
-      else if (parts[1].toLowerCase().equals("object2ds")) SOLARCHVISION_delete_Object2Ds();
-      else if (parts[1].toLowerCase().equals("fractals")) SOLARCHVISION_delete_Fractals();
-      else if (parts[1].toLowerCase().equals("vertices")) SOLARCHVISION_deleteIsolatedVertices_Selection();
-      else if (parts[1].toLowerCase().equals("faces")) SOLARCHVISION_delete_Faces();
-      else if (parts[1].toLowerCase().equals("solids")) SOLARCHVISION_delete_Solids();
-      else if (parts[1].toLowerCase().equals("sections")) SOLARCHVISION_delete_Sections();
-      else if (parts[1].toLowerCase().equals("cameras")) SOLARCHVISION_delete_Cameras();
-      WIN3D_Update = 1;
+      for (int q = 1; q < parts.length; q++) {
+             if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_delete_All(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("selection")) {SOLARCHVISION_delete_Selection(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("group3ds")) {SOLARCHVISION_delete_Group3Ds(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {SOLARCHVISION_delete_Object2Ds(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("fractals")) {SOLARCHVISION_delete_Fractals(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("vertices")) {SOLARCHVISION_deleteIsolatedVertices_Selection(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("faces")) {SOLARCHVISION_delete_Faces(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("solids")) {SOLARCHVISION_delete_Solids(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("sections")) {SOLARCHVISION_delete_Sections(); WIN3D_Update = 1;}
+        else if (parts[q].toLowerCase().equals("cameras")) {SOLARCHVISION_delete_Cameras(); WIN3D_Update = 1;}
+      }
     }
     else {
       return_message = "Delete all/selection/group3Ds/object2Ds/fractals/vertices/faces/solids/sections/cameras";
     }
   }    
+  else if (parts[0].toUpperCase().equals("COPY")) {
+    if (parts.length > 1) {
+      int n = 1;
+      float dx = 0;
+      float dy = 0;
+      float dz = 0;
+      float rx = 0;
+      float ry = 0;
+      float rz = 0;      
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("n")) n = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rx")) rx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("ry")) ry = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rz")) rz = float(parameters[1]);          
+        }
+      }
+      
+      for (int q = 0; q < n; q++) {
+        SOLARCHVISION_duplicate_Selection(0); 
+        if ((dx != 0) || (dy != 0) || (dz != 0)) SOLARCHVISION_move_Selection(dx, dy, dz);
+        if (rx != 0) SOLARCHVISION_rotate_Selection(0, 0, 0, rx, 0);
+        if (ry != 0) SOLARCHVISION_rotate_Selection(0, 0, 0, ry, 1);
+        if (rz != 0) SOLARCHVISION_rotate_Selection(0, 0, 0, rz, 2);
+      }
+      WIN3D_Update = 1;
+    }
+    else {
+      return_message = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
+    }
+  }   
   else if (parts[0].toUpperCase().equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
@@ -52621,13 +52657,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory_Sections; UI_BAR_b_Update =1;}
         else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory_Cameras; UI_BAR_b_Update =1;}
         else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory_LandPoints; UI_BAR_b_Update =1;}
-
+      }
       
+      for (int q = 1; q < parts.length; q++) {
              if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_select_All(); WIN3D_Update = 1;}
         else if (parts[q].toLowerCase().equals("reverse")) {SOLARCHVISION_reverse_Selection(); WIN3D_Update = 1;}
         else if (parts[q].toLowerCase().equals("nothing")) {SOLARCHVISION_deselect_All(); WIN3D_Update = 1;}
         else if (parts[q].toLowerCase().equals("last")) {SOLARCHVISION_select_Last(); WIN3D_Update = 1;}
-
       }
     }
     else {
@@ -52689,16 +52725,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     
   }
   
-  else if (parts[0].toUpperCase().equals("SEL2D")) {
-    if (parts[1].toLowerCase().equals("last")) {
-      Current_ObjectCategory = ObjectCategory_Object2Ds;
-      selectedObject2D_numbers = new int [2];
-      selectedObject2D_numbers[0] = 0;
-      selectedObject2D_numbers[1] = allObject2Ds_num;
-    }
-    
-    WIN3D_Update = 1;
-  }
+
   
   
   
