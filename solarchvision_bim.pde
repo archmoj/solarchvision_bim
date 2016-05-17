@@ -52784,7 +52784,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (parts[0].toUpperCase().equals("BOX2P")) {
     if (parts.length > 1) {
-      int m = 0;
+      int m = -1;
       int tes = 0;
       int lyr = 0;
       int vsb = 1;
@@ -52825,7 +52825,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   
   else if (parts[0].toUpperCase().equals("BOX")) {
     if (parts.length > 1) {
-      int m = 0;
+      int m = -1;
       int tes = 0;
       int lyr = 0;
       int vsb = 1;
@@ -52868,7 +52868,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (parts[0].toUpperCase().equals("HOUSE")) {
     if (parts.length > 1) {
-      int m = 0;
+      int m = -1;
       int tes = 0;
       int lyr = 0;
       int vsb = 1;
@@ -52894,7 +52894,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dh")) h = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
         }
       }
@@ -52911,8 +52911,153 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }     
 
-  
+  else if (parts[0].toUpperCase().equals("CYLINDER")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 16;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_SuperCylinder(m, tes, lyr, vsb, xtr, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
+    }  
+  }   
+
+  else if (parts[0].toUpperCase().equals("SPHERE")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 3;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_SuperSphere(m, tes, lyr, vsb, xtr, x, y, z, 2, 2, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
+    }  
+  }   
+
+  else if (parts[0].toUpperCase().equals("OCTAHEDRON")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_Octahedron(m, tes, lyr, vsb, xtr, x, y, z, 2, 2, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+    }  
+  }  
+
+
+//void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, int Tessellation) {
+//void SOLARCHVISION_add_Icosahedron (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, float rot) {
+//void SOLARCHVISION_add_H_shade (int m, int tes, int lyr, int vsb, int xtr, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
+//void SOLARCHVISION_add_V_shade (int m, int tes, int lyr, int vsb, int xtr, float x0, float y0, float z0, float h, float d, float t, float t0) {
+//void SOLARCHVISION_add_Mesh2 (int m, int tes, int lyr, int vsb, int xtr, float x1, float y1, float z1, float x3, float y3, float z3) {
+//void SOLARCHVISION_add_Mesh4 (int m, int tes, int lyr, int vsb, int xtr, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
+//void SOLARCHVISION_add_Mesh3 (int m, int tes, int lyr, int vsb, int xtr, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
+//void SOLARCHVISION_add_Mesh5 (int m, int tes, int lyr, int vsb, int xtr, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
+//void SOLARCHVISION_add_PolygonMesh (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, int n, float rot) {
+//void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, float h, int n, float rot) {
+//void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float r, float h, int n, float rot) {
+
+
   return return_message;
-  
 }
 
