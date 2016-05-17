@@ -52468,7 +52468,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       WIN3D_Update = 1;
     }
     else {
-      return_message = "Rotate|RotateX|RotateY|RotateZ r=? x=? y=? z=?";
+      return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
     }    
   }    
   else if (parts[0].toUpperCase().equals("SCALE")) {
@@ -52513,6 +52513,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else if (parts[1].toLowerCase().equals("group3ds")) SOLARCHVISION_delete_Group3Ds();
       else if (parts[1].toLowerCase().equals("object2ds")) SOLARCHVISION_delete_Object2Ds();
       else if (parts[1].toLowerCase().equals("fractals")) SOLARCHVISION_delete_Fractals();
+      else if (parts[1].toLowerCase().equals("vertices")) SOLARCHVISION_deleteIsolatedVertices_Selection();
       else if (parts[1].toLowerCase().equals("faces")) SOLARCHVISION_delete_Faces();
       else if (parts[1].toLowerCase().equals("solids")) SOLARCHVISION_delete_Solids();
       else if (parts[1].toLowerCase().equals("sections")) SOLARCHVISION_delete_Sections();
@@ -52520,10 +52521,30 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       WIN3D_Update = 1;
     }
     else {
-      return_message = "Delete all/selection/group3Ds/object2Ds/fractals/faces/solids/sections/cameras";
+      return_message = "Delete all/selection/group3Ds/object2Ds/fractals/vertices/faces/solids/sections/cameras";
     }
   }    
+  else if (parts[0].toUpperCase().equals("SELECT")) {
+    if (parts.length > 1) {
+           if (parts[1].toLowerCase().equals("group3ds")) Current_ObjectCategory = ObjectCategory_Group3Ds;
+      else if (parts[1].toLowerCase().equals("object2ds")) Current_ObjectCategory = ObjectCategory_Object2Ds;
+      else if (parts[1].toLowerCase().equals("fractals")) Current_ObjectCategory = ObjectCategory_Fractals;
+      else if (parts[1].toLowerCase().equals("vertices")) Current_ObjectCategory = ObjectCategory_Vertices;
+      else if (parts[1].toLowerCase().equals("faces")) Current_ObjectCategory = ObjectCategory_Faces;
+      else if (parts[1].toLowerCase().equals("solids")) Current_ObjectCategory = ObjectCategory_Solids;
+      else if (parts[1].toLowerCase().equals("sections")) Current_ObjectCategory = ObjectCategory_Sections;
+      else if (parts[1].toLowerCase().equals("cameras")) Current_ObjectCategory = ObjectCategory_Cameras;
+      else if (parts[1].toLowerCase().equals("landpoints")) Current_ObjectCategory = ObjectCategory_LandPoints;
+      
+      SOLARCHVISION_select_All();
 
+      SOLARCHVISION_UI_BAR_b_Update =1;
+      WIN3D_Update = 1;
+    }
+    else {
+      return_message = "Select all/last/reverse group3Ds/object2Ds/fractals/vertices/faces/solids/sections/cameras/landpoint";
+    }
+  }
 
 
 
