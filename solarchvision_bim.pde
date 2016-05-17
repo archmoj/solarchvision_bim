@@ -52526,6 +52526,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Move dx=? dy=? dz=?";
     }
   }  
+  
   else if ((parts[0].toUpperCase().equals("ROTATE")) || (parts[0].toUpperCase().equals("ROTATEX")) || (parts[0].toUpperCase().equals("ROTATEY")) || (parts[0].toUpperCase().equals("ROTATEZ"))) {
     if (parts.length > 1) {
       int v = 2;
@@ -52556,6 +52557,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
     }    
   }    
+  
   else if (parts[0].toUpperCase().equals("SCALE")) {
     if (parts.length > 1) {
       float sx = 1;
@@ -52591,6 +52593,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
     }        
   }    
+  
   else if (parts[0].toUpperCase().equals("DELETE")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
@@ -52609,7 +52612,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "Delete all/selection/group3Ds/object2Ds/fractals/vertices/faces/solids/sections/cameras";
     }
-  }    
+  }   
+  
   else if (parts[0].toUpperCase().equals("COPY")) {
     if (parts.length > 1) {
       int n = 1;
@@ -52645,18 +52649,19 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
     }
   }   
+  
   else if (parts[0].toUpperCase().equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory_Group3Ds; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory_Object2Ds; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("fractals")) {Current_ObjectCategory = ObjectCategory_Fractals; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory_Vertices; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory_Faces; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("solids")) {Current_ObjectCategory = ObjectCategory_Solids; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory_Sections; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory_Cameras; UI_BAR_b_Update =1;}
-        else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory_LandPoints; UI_BAR_b_Update =1;}
+             if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory_Group3Ds; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory_Object2Ds; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("fractals")) {Current_ObjectCategory = ObjectCategory_Fractals; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory_Vertices; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory_Faces; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("solids")) {Current_ObjectCategory = ObjectCategory_Solids; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory_Sections; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory_Cameras; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory_LandPoints; UI_BAR_b_Update = 1;}
       }
       
       for (int q = 1; q < parts.length; q++) {
@@ -52676,17 +52681,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
   
-  else if (parts[0].toUpperCase().equals("CREATE")) {
-
-    if (parts[1].toLowerCase().equals("person")) {
+  else if (parts[0].toUpperCase().equals("2DMAN")) {
+    if (parts.length > 1) {
       String t = "PEOPLE";
       int m = 0;
       float x = 0;
       float y = 0;
       float z = 0;
-      float s = 2.5;
-      
-      for (int q = 2; q < parts.length; q++) {
+      for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
                if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
@@ -52695,40 +52697,220 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
         }
       }
-      SOLARCHVISION_add_Object2D_single(t, m, x, y, z, s);
+      SOLARCHVISION_add_Object2D_single(t, m, x, y, z, 2.5);
       WIN3D_Update = 1;  
-    }     
-    
-    else if (parts[1].toLowerCase().equals("tree")) {
+      Current_ObjectCategory = ObjectCategory_Object2Ds; 
+      UI_BAR_b_Update = 1;
+      //SOLARCHVISION_select_Last();
+    }
+    else {
+      return_message = "2Dman m=? x=? y=? z=?";
+    }  
+  }
+     
+  else if (parts[0].toUpperCase().equals("2DTREE")) {
+    if (parts.length > 1) {
       String t = "TREES";
       int m = 0;
       float x = 0;
       float y = 0;
       float z = 0;
-      float s = 0;
-      
-      for (int q = 2; q < parts.length; q++) {
+      float h = 5.0;
+      for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
                if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("s")) s = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
         }
       }
-      SOLARCHVISION_add_Object2D_single(t, Object2D_PEOPLE_Files_Num + m, x, y, z, s);
-      WIN3D_Update = 1;  
-    } 
-    
-    
-    
-  }
-  
+      if (h != 0) {
+        SOLARCHVISION_add_Object2D_single(t, m, x, y, z, h);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Object2Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "2Dtree m=? x=? y=? z=? h=?";
+    }  
+  }    
+ 
+  else if (parts[0].toUpperCase().equals("3DTREE")) {
+    if (parts.length > 1) {
+      int m = 0;
+      int Sd = 0; //PlantSeed
+      int Min = 2; //PlantDegreeMin
+      int Max = 5; //PlantDegreeMax
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float h = 5.0;
+      float r = 0;
+      float Tk = 1.0; //TrunkSize
+      float Lf = 1.0; //LeafSize
+       
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("sd")) Sd = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("min")) Min = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("max")) Max = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]) * PI / 180.0;
+          else if (parameters[0].toLowerCase().equals("tk")) Tk = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lf")) Lf = float(parameters[1]);
+        }
+      }
+      if (h != 0) {
+        SOLARCHVISION_add_Fractal(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Fractals; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? a=? b=? h=? Tk=? Lf=?";
+    }  
+  }     
 
+  else if (parts[0].toUpperCase().equals("BOX2P")) {
+    if (parts.length > 1) {
+      int m = 0;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x1 = 0;
+      float y1 = 0;
+      float z1 = 0;
+      float x2 = 0;
+      float y2 = 0;
+      float z2 = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
+        }
+      }
+      if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {   
+        SOLARCHVISION_add_Box_Corners(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
+    }  
+  }  
   
-  
-  
+  else if (parts[0].toUpperCase().equals("BOX")) {
+    if (parts.length > 1) {
+      int m = 0;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_Box_Core(m, tes, lyr, vsb, xtr, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+    }  
+  }     
+
+  else if (parts[0].toUpperCase().equals("HOUSE")) {
+    if (parts.length > 1) {
+      int m = 0;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float h = 3;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dh")) h = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_House_Core(m, tes, lyr, vsb, xtr, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "House m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+    }  
+  }     
+
   
   return return_message;
   
