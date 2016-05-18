@@ -33527,6 +33527,22 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 }     
 
 
+void SOLARCHVISION_SelectFile_Execute_CommandFile (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+  } else {
+    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
+
+    println("Executing:", Filename);
+
+    SOLARCHVISION_execute_commands_TXT(Filename);
+
+    WIN3D_Update = 1;
+  }
+} 
+
 
 void mouseClicked () {
 
@@ -33613,6 +33629,10 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Import 3D-Model...")) { 
               selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
             }   
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Execute CommandFile...")) { 
+              selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
+            }               
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Export 3D-Model > OBJ")) {
               SOLARCHVISION_export_objects_OBJ();
@@ -35533,6 +35553,7 @@ void mouseClicked () {
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel) == 1) {
           UI_BAR_c_Update = 1;
+          typeUserCommand = 1;
         }  
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel) == 1) {
@@ -46337,7 +46358,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > OBJ", "Import 3D-Model...", "Preferences", "Quit"
+    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > OBJ", "Import 3D-Model...", "Execute CommandFile...", "Preferences", "Quit"
   }
   , 
   {
@@ -52567,7 +52588,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? a=? b=? h=? Tk=? Lf=?";
+      return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
     }  
   }     
 
@@ -53404,6 +53425,20 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
+  
   return return_message;
 }
 
+
+void SOLARCHVISION_execute_commands_TXT (String FileName) {
+
+  String[] FileALL = loadStrings(FileName);
+
+  for (int f = 0; f < FileALL.length; f += 1) {
+
+    String lineSTR = FileALL[f];
+  
+    SOLARCHVISION_executeCommand(lineSTR);
+  } 
+  
+}
