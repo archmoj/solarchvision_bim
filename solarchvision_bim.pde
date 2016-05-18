@@ -35531,6 +35531,10 @@ void mouseClicked () {
           UI_BAR_b_Update = 1;
         }
 
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel) == 1) {
+          UI_BAR_c_Update = 1;
+        }  
+
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel) == 1) {
           UI_BAR_d_Update = 1;
         }  
@@ -53296,7 +53300,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("z5")) z5 = float(parameters[1]);            
           else if (parameters[0].toLowerCase().equals("x6")) x6 = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("y6")) y6 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z6")) z6 = float(parameters[1]);         }
+          else if (parameters[0].toLowerCase().equals("z6")) z6 = float(parameters[1]);         
+        }
       }
       {   
         SOLARCHVISION_add_Mesh6(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
@@ -53311,8 +53316,93 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }    
 
-//void SOLARCHVISION_add_H_shade (int m, int tes, int lyr, int vsb, int xtr, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
-//void SOLARCHVISION_add_V_shade (int m, int tes, int lyr, int vsb, int xtr, float x0, float y0, float z0, float h, float d, float t, float t0) {
+  else if (parts[0].toUpperCase().equals("H_SHADE")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 6;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float d = 0;
+      float w = 0;
+      float a = 0;
+      float b = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("w")) w = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("b")) b = float(parameters[1]);
+        }
+      }
+      if ((d != 0) && (w != 0)) {
+        SOLARCHVISION_add_H_shade(m, tes, lyr, vsb, xtr, x, y, z, d, w, a, b);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "H_Shade m=? tes=? lyr=? x=? y=? z=? d=? w=? a=? b=?";
+    }  
+  }
+  
+  else if (parts[0].toUpperCase().equals("V_SHADE")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 6;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float d = 0;
+      float h = 0;
+      float a = 0;
+      float b = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("w")) h = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("b")) b = float(parameters[1]);
+        }
+      }
+      if ((d != 0) && (h != 0)) {   
+        SOLARCHVISION_add_V_shade(m, tes, lyr, vsb, xtr, x, y, z, h, d, a, b);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "V_Shade m=? tes=? lyr=? x=? y=? z=? d=? h=? a=? b=?";
+    }  
+  }  
 
   return return_message;
 }
