@@ -32673,7 +32673,7 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D_UI_CurrentTask == 3) { // rotate
 
-                float r = (15 * Wheel_Value) * PI / 180.0;
+                float r = 5 * Wheel_Value;
 
                 int the_Vector = selected_rotVector;
 
@@ -44236,6 +44236,8 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
 
 void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int the_Vector) {
+  
+  r *= PI / 180; // <<<<<<<<
 
   float[] A = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
   float[] B = SOLARCHVISION_translateInside_ReferencePivot(x0, y0, z0);
@@ -53407,7 +53409,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("w")) h = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("b")) b = float(parameters[1]);
         }
