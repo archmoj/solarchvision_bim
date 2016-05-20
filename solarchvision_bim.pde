@@ -7185,7 +7185,7 @@ void SOLARCHVISION_try_update_CLIMATE_CLMREC () {
     
         if ((File_Found == -1) && (Download_CLMREC != 0)) {
           
-          String the_link = "http://climate.weather.gc.ca/climateData/bulkdata_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
           String the_target = CLIMATE_CLMREC_directory + "/" + FN;
     
           println("Try downloading: " + the_link);
@@ -14987,7 +14987,7 @@ String[][] STATION_CLMREC_INFO;
 void SOLARCHVISION_getCLMREC_Coordinates () {
   
   try {
-    String[] FileALL = loadStrings(CLMRECFolder + "/CLMREC_UTF8.txt");
+    String[] FileALL = loadStrings(CLMRECFolder + "/CLMREC_UTF8_EN.txt");
 
     String lineSTR;
     String[] input;
@@ -15029,8 +15029,8 @@ void SOLARCHVISION_getCLMREC_Coordinates () {
         StationWMO = parts[4];
         StationClimate = parts[2];
         
-        StationStart = int(parts[11]);
-        StationEnd = int(parts[12]);
+        StationStart = int(parts[13]);
+        StationEnd = int(parts[14]);
 
         STATION_CLMREC_INFO[n_Locations][0] = StationNameEnglish;
         STATION_CLMREC_INFO[n_Locations][1] = StationProvince;
