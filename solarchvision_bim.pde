@@ -342,6 +342,11 @@ int STATION_Number = 0;
 String[][] Defined_Stations = {
 
   {
+    "Tweed", "XX", "AT", "44.4763", "-77.3138", "-75", "0", "240.0", "", "", ""
+  }  
+  ,   
+  
+  {
     "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
   }  
   ,  
@@ -8121,6 +8126,8 @@ void SOLARCHVISION_try_update_RECENT_OBSERVED () {
           if (added_before == 0) {
             nearest_Station_RECENT_OBSERVED_dist[q] = d;
             nearest_Station_RECENT_OBSERVED_id[q] = f;
+            
+            println("nearest SWOB stations [" + nf(q + 1, 0) + "]" + STATION_SWOB_INFO[f][6]);
           }
         }
       }
