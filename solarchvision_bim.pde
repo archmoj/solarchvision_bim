@@ -342,6 +342,11 @@ int STATION_Number = 0;
 String[][] Defined_Stations = {
 
   {
+    "Tweed", "XX", "AT", "44.4763", "-77.3138", "-75", "0", "240.0", "", "", ""
+  }  
+  ,    
+  
+  {
     "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
   }  
   ,  
@@ -53440,6 +53445,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "V_Shade m=? tes=? lyr=? x=? y=? z=? d=? h=? a=? b=?";
     }  
   }  
+
+
+
+
+//SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+//SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+//SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
   
   return return_message;
