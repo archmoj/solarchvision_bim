@@ -342,11 +342,6 @@ int STATION_Number = 0;
 String[][] Defined_Stations = {
 
   {
-    "Tweed", "XX", "AT", "44.4763", "-77.3138", "-75", "0", "240.0", "", "", ""
-  }  
-  ,   
-  
-  {
     "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
   }  
   ,  
@@ -52304,7 +52299,11 @@ void COMIN_keyPressed (KeyEvent e) {
           }
           break;
 
-        default: allCommands[allCommands.length - 1] += key;
+        default:
+          if ((31 < key) && (key < 127)) { 
+            allCommands[allCommands.length - 1] += key;
+          }
+          break;
       }
       
       
@@ -52319,8 +52318,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   lineSTR = lineSTR.replace("\"", ""); 
   
   String[] parts = split(lineSTR, ' ');
+  
+  if (parts[0].toUpperCase().equals("CLS")) {
+    allCommands = new String[1];
+    allMessages = new String[1];
 
-  if (parts[0].toUpperCase().equals("MOVE")) {
+    allCommands[0] = "";
+    allMessages[0] = "";
+  }
+
+  else if (parts[0].toUpperCase().equals("MOVE")) {
     if (parts.length > 1) {
       float dx = 0;
       float dy = 0;
@@ -53087,9 +53094,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       float x1 = 0;
       float y1 = 0;
       float z1 = 0;
-      float x3 = 0;
-      float y3 = 0;
-      float z3 = 0;
+      float x2 = 0;
+      float y2 = 0;
+      float z2 = 0;
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
@@ -53100,13 +53107,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
           else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x3")) x3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y3")) y3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z3")) z3 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
         }
       }
-      if ((x1 == x3) || (y1 == y3) || (z1 == z3)) {   
-        SOLARCHVISION_add_Mesh2(m, tes, lyr, vsb, xtr, x1, y1, z1, x3, y3, z3);
+      if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
+        SOLARCHVISION_add_Mesh2(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2);
         WIN3D_Update = 1;  
         Current_ObjectCategory = ObjectCategory_Group3Ds; 
         UI_BAR_b_Update = 1;
@@ -53114,7 +53121,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x3=? y3=? z3=?";
+      return_message = "Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
     }  
   } 
  
