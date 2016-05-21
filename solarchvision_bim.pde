@@ -53037,7 +53037,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_PolygonHyper(m, tes, lyr, vsb, xtr, x, y, z, 0.5 * d, h, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53078,7 +53078,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (d != 0) {   
         SOLARCHVISION_add_PolygonMesh(m, tes, lyr, vsb, xtr, x, y, z, 0.5 * d, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53120,7 +53120,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
         SOLARCHVISION_add_Mesh2(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53168,7 +53168,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh3(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2, x3, y3, z3);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53222,7 +53222,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53282,7 +53282,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh5(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53348,7 +53348,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh6(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53392,7 +53392,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (w != 0)) {
         SOLARCHVISION_add_H_shade(m, tes, lyr, vsb, xtr, x, y, z, d, w, a, b);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53436,7 +53436,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_V_shade(m, tes, lyr, vsb, xtr, x, y, z, h, d, a, b);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory_Faces; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53446,12 +53446,130 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
+  else if (parts[0].toUpperCase().equals("SOLID")) {
+    if (parts.length > 1) {
+      float v = 1;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float px = 2;
+      float py = 2;
+      float pz = 2;
+      float sx = 1;
+      float sy = 1;
+      float sz = 1;
+      float rx = 0;
+      float ry = 0;
+      float rz = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("v")) v = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("px")) px = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("py")) py = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("pz")) pz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("sx")) sx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("sy")) sy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("sz")) sz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rx")) rx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("ry")) ry = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rz")) rz = float(parameters[1]);
+        }
+      }
+      if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {   
+        SOLARCHVISION_add_Solid(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Solids; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
+    }  
+  }  
+
+  else if (parts[0].toUpperCase().equals("SECTION")) {
+    if (parts.length > 1) {
+      int t = 1;
+      int i = 200;
+      int j = 200;
+      float w = 20;
+      float h = 20;      
+      float u = 0;
+      float v = 0;
+      float e = 0;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("t")) t = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("i")) i = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("j")) j = int(parameters[1]);  
+          else if (parameters[0].toLowerCase().equals("w")) w = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);          
+          else if (parameters[0].toLowerCase().equals("u")) u = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("v")) v = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("e")) e = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+        }
+      }
+      if ((t > 0) && (i > 0) && (j > 0) && (w > 0) && (h > 0)) {   
+        SOLARCHVISION_add_Section(t, u, v, e, r, w, h, i, j);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Sections; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Section t=? i=? j=? w=? h=? u=? v=? e=? r=?";
+    }  
+  }
+
+  else if (parts[0].toUpperCase().equals("CAMERA")) {
+    if (parts.length > 1) {
+      int t = 1;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float s = 1;
+      float rx = 0;
+      float ry = 0;
+      float rz = 0;
+      float a = 60;
+      
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("t")) t = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("s")) s = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rx")) rx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("ry")) ry = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rz")) rz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
+        }
+      }
+      if ((s != 0) && (a != 0)) {   
+        SOLARCHVISION_add_Camera(t, x, y, z, s, rx, ry, rz, a);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Cameras; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Camera t=? x=? y=? z=? s=? rx=? ry=? rz=? a=?";
+    }  
+  }  
 
 
-
-//SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
-//SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
-//SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
   
   return return_message;
