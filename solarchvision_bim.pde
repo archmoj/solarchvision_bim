@@ -55567,7 +55567,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-/*
   else if (parts[0].toUpperCase().equals("LINE2")) {
     if (parts.length > 1) {
       int m = 7;
@@ -55576,12 +55575,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       int lyr = 0;
       int vsb = 1;
       int xtr = 0;
-      float x1 = 0;
-      float y1 = 0;
-      float z1 = 0;
-      float x2 = 0;
-      float y2 = 0;
-      float z2 = 0;
+      float[][] points = new float [0][3];
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
@@ -55589,16 +55583,21 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
+          else {
+            
+            String[] xyz = split(parts[q], ',');
+            
+            if (xyz.length > 2) {
+           
+              float[][] new_point = {{float(xyz[0]), float(xyz[1]), float(xyz[2])}}; 
+  
+              points = (float[][]) concat(points, new_point);
+            }
+          }
         }
       }
       {   
-        SOLARCHVISION_add_Line2(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2);
+        SOLARCHVISION_add_Line(m, tes, lyr, vsb, xtr, points);
         WIN3D_Update = 1;  
         Current_ObjectCategory = ObjectCategory_Curves;
         UI_BAR_b_Update = 1;
@@ -55606,10 +55605,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Line2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
+      return_message = "Line m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.";
     }  
   }  
-*/
+
   
   return return_message;
 }
@@ -55629,7 +55628,7 @@ void SOLARCHVISION_execute_commands_TXT (String FileName) {
 }
 
 
-void SOLARCHVISION_add_Line2 (int m, int tes, int lyr, int vsb, int xtr, float x1, float y1, float z1, float x2, float y2, float z2) {
+void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int xtr, float[][] points) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
@@ -55637,13 +55636,11 @@ void SOLARCHVISION_add_Line2 (int m, int tes, int lyr, int vsb, int xtr, float x
   defaultVisibility = vsb;
   defaultExtraType = xtr;  
 
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-
-  {
-    int[] newCurve = {
-      v1, v2
-    };
-    SOLARCHVISION_add_Curve(newCurve);
+  int[] newCurve = new int[points.length];
+ 
+  for (int i = 0; i < points.length; i++) {
+    SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2]);
   }
+
+  SOLARCHVISION_add_Curve(newCurve);
 }
