@@ -40669,43 +40669,22 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           for (int f = allGroup3Ds_Lines[OBJ_NUM][0]; f <= allGroup3Ds_Lines[OBJ_NUM][1]; f++) {
             if ((0 < f) && (f < allLines_PNT.length)) { 
 
-              int Tessellation = allLines_MTLV[f][1];
-
-              int TotalSubNo = 1;  
-              if (allLines_MTLV[f][0] == 0) {
-                Tessellation += MODEL3D_Tessellation;
-              }
-              if (Tessellation > 0) TotalSubNo = allLines_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-              float[][] base_Vertices = new float [allLines_PNT[f].length][3];
-              for (int j = 0; j < allLines_PNT[f].length; j++) {
-                int vNo = allLines_PNT[f][j];
-                base_Vertices[j][0] = allVertices[vNo][0];
-                base_Vertices[j][1] = allVertices[vNo][1];
-                base_Vertices[j][2] = allVertices[vNo][2];
-              }
-
-              for (int n = 0; n < TotalSubNo; n++) {
-
-                float[][] subLine = getSubLine(base_Vertices, Tessellation, n);
-
-                beginShape();
-
-                for (int s = 0; s < subLine.length; s++) {
-
-                  float x = subLine[s][0] * OBJECTS_scale;
-                  float y = subLine[s][1] * OBJECTS_scale;            
-                  float z = -subLine[s][2] * OBJECTS_scale;
-
-                  float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
-
-                  if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                    if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
-                  }
+              beginShape();
+  
+              for (int vNo = 0; vNo < allLines_PNT[f].length; vNo++) {
+  
+                float x = allVertices[vNo][0] * OBJECTS_scale;
+                float y = allVertices[vNo][1] * OBJECTS_scale;            
+                float z = -allVertices[vNo][2] * OBJECTS_scale;
+  
+                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+  
+                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
                 }
-
-                endShape(CLOSE);
               }
+  
+              endShape(CLOSE);
             }
           }
           
@@ -48257,9 +48236,13 @@ String[][] UI_BAR_a_Items = {
   {
     "Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section", "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Line", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"
   }
-  , 
+  ,
+ 
+    //"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Line Edges",, "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Lines", "Hide All Lines", "Hide Selected Lines", "Unhide Selected Lines", "Unhide All Lines", "Flatten Selected LandPoints"
+    //"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Line Edges",, "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Isolate Selection", "Flatten Selected LandPoints"
+  
   {
-    "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Line Edges",, "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Lines", "Hide All Lines", "Hide Selected Lines", "Unhide Selected Lines", "Unhide All Lines", "Flatten Selected LandPoints"
+    "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection"
   }
   , 
   {
@@ -48321,7 +48304,7 @@ int N_Layer_in_Bar_a = 8;
 
 
 void SOLARCHVISION_draw_window_BAR_a () {
-
+  
   if (UI_BAR_a_Update == 1) {
 
     //println("Update BAR!");
@@ -48581,11 +48564,11 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }      
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Lines")) {
-                if (selectedLine_displayEdges == 0) {
+                if (selectedLine_displayVertices == 0) {
                   stroke(127); 
                   fill(127);
                 }
-              }                   
+              }         
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
                 if (selectedFace_displayVertexCount == 0) {
                   stroke(127); 
@@ -48707,6 +48690,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
     SOLARCHVISION_X_clicked = -1;
     SOLARCHVISION_Y_clicked = -1;
   }
+  
 }
 
 
