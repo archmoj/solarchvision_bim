@@ -55530,8 +55530,49 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
+/*
+  else if (parts[0].toUpperCase().equals("LINE2")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 6;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int xtr = 0;
+      float x1 = 0;
+      float y1 = 0;
+      float z1 = 0;
+      float x2 = 0;
+      float y2 = 0;
+      float z2 = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
 
-
+          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
+        }
+      }
+      {   
+        SOLARCHVISION_add_Line2(m, tes, lyr, vsb, xtr, x1, y1, z1, x2, y2, z2);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Lines;
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Line2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
+    }  
+  }  
+*/
   
   return return_message;
 }
