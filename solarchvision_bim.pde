@@ -3566,7 +3566,9 @@ void SOLARCHVISION_draw_WIN3D () {
 
     SOLARCHVISION_draw_land(3);
 
-    SOLARCHVISION_draw_Group3Ds();
+    SOLARCHVISION_draw_Faces();
+    
+    SOLARCHVISION_draw_Curves();
 
     SOLARCHVISION_draw_Fractals();
 
@@ -15304,7 +15306,7 @@ int SOLARCHVISION_add_Face (int[] f) {
 }
 
 
-int SOLARCHVISION_add_Curves (int[] f) {
+int SOLARCHVISION_add_Curve (int[] f) {
 
   if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
@@ -15665,7 +15667,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
         defaultLayer = allCurves_MTLV[f][2];
         defaultVisibility = allCurves_MTLV[f][3];        
 
-        SOLARCHVISION_add_Curves(newCurve);
+        SOLARCHVISION_add_Curve(newCurve);
       }
     }
 
@@ -16144,7 +16146,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
               defaultLayer = allCurves_MTLV[f][2];
               defaultVisibility = allCurves_MTLV[f][3];
 
-              SOLARCHVISION_add_Curves(newCurve);
+              SOLARCHVISION_add_Curve(newCurve);
             }
           }
         }        
@@ -16419,7 +16421,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
           defaultLayer = allCurves_MTLV[f][2];
           defaultVisibility = allCurves_MTLV[f][3];        
 
-          SOLARCHVISION_add_Curves(newCurve);
+          SOLARCHVISION_add_Curve(newCurve);
         }
       }
     }
@@ -26289,7 +26291,7 @@ int WIN3D_FacesShade = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
 
 
 
-void SOLARCHVISION_draw_Group3Ds () {
+void SOLARCHVISION_draw_Faces () {
 
   if (Display_Model3Ds != 0) {
 
@@ -26906,6 +26908,41 @@ void SOLARCHVISION_draw_Group3Ds () {
       }
     }
   }
+}
+
+
+void SOLARCHVISION_draw_Curves () {
+
+  WIN3D_Diagrams.strokeWeight(3);
+  
+  if (Display_Model3Ds != 0) {
+
+    if (MODEL3D_DisplayNormals != 0) {
+
+      for (int f = 1; f < allCurves_PNT.length; f++) {
+
+        int vsb = allCurves_MTLV[f][3];
+
+        if (vsb > 0) {
+          
+          
+          
+          WIN3D_Diagrams.beginShape();
+
+          for (int j = 0; j < allCurves_PNT[f].length; j++) {
+            int vNo = allCurves_PNT[f][j];
+            
+            WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
+
+          }
+          
+          WIN3D_Diagrams.endShape(CLOSE);
+        }
+      }
+    }
+  }
+  
+  WIN3D_Diagrams.strokeWeight(0);
 }
 
 
@@ -55589,4 +55626,24 @@ void SOLARCHVISION_execute_commands_TXT (String FileName) {
     SOLARCHVISION_executeCommand(lineSTR);
   } 
   
+}
+
+
+void SOLARCHVISION_add_Line2 (int m, int tes, int lyr, int vsb, int xtr, float x1, float y1, float z1, float x2, float y2, float z2) {
+
+  defaultMaterial = m;
+  defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultExtraType = xtr;  
+
+  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+
+  {
+    int[] newCurve = {
+      v1, v2
+    };
+    SOLARCHVISION_add_Curve(newCurve);
+  }
 }
