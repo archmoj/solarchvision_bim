@@ -26911,39 +26911,7 @@ void SOLARCHVISION_draw_Faces () {
 }
 
 
-void SOLARCHVISION_draw_Curves () {
 
-  WIN3D_Diagrams.strokeWeight(3);
-  
-  if (Display_Model3Ds != 0) {
-
-    if (MODEL3D_DisplayNormals != 0) {
-
-      for (int f = 1; f < allCurves_PNT.length; f++) {
-
-        int vsb = allCurves_MTLV[f][3];
-
-        if (vsb > 0) {
-          
-          
-          
-          WIN3D_Diagrams.beginShape();
-
-          for (int j = 0; j < allCurves_PNT[f].length; j++) {
-            int vNo = allCurves_PNT[f][j];
-            
-            WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
-
-          }
-          
-          WIN3D_Diagrams.endShape(CLOSE);
-        }
-      }
-    }
-  }
-  
-  WIN3D_Diagrams.strokeWeight(0);
-}
 
 
 float Orthographic_ZOOM () {
@@ -54312,6 +54280,19 @@ void COMIN_keyPressed (KeyEvent e) {
   }
 }
 
+void SOLARCHVISION_execute_commands_TXT (String FileName) {
+
+  String[] FileALL = loadStrings(FileName);
+
+  for (int f = 0; f < FileALL.length; f += 1) {
+
+    String lineSTR = FileALL[f];
+  
+    SOLARCHVISION_executeCommand(lineSTR);
+  } 
+  
+}
+
 String SOLARCHVISION_executeCommand (String lineSTR) {
 
   String return_message = "";
@@ -55567,7 +55548,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("LINE2")) {
+  else if (parts[0].toUpperCase().equals("LINE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55582,21 +55563,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
                if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
-
-          else {
-            
-            String[] xyz = split(parts[q], ',');
-            
-            if (xyz.length > 2) {
-           
-              float[][] new_point = {{float(xyz[0]), float(xyz[1]), float(xyz[2])}}; 
-  
-              points = (float[][]) concat(points, new_point);
-            }
-          }
         }
+        else {
+          
+          String[] xyz = split(parts[q], ',');
+          if (xyz.length > 2) {
+            float[][] newPoint = {{float(xyz[0]), float(xyz[1]), float(xyz[2])}}; 
+            points = (float[][]) concat(points, newPoint);
+          }
+        }        
       }
-      {   
+      if (points.length > 1) {   
         SOLARCHVISION_add_Line(m, tes, lyr, vsb, xtr, points);
         WIN3D_Update = 1;  
         Current_ObjectCategory = ObjectCategory_Curves;
@@ -55614,18 +55591,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 }
 
 
-void SOLARCHVISION_execute_commands_TXT (String FileName) {
 
-  String[] FileALL = loadStrings(FileName);
-
-  for (int f = 0; f < FileALL.length; f += 1) {
-
-    String lineSTR = FileALL[f];
-  
-    SOLARCHVISION_executeCommand(lineSTR);
-  } 
-  
-}
 
 
 void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int xtr, float[][] points) {
@@ -55639,8 +55605,42 @@ void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int xtr, float[][
   int[] newCurve = new int[points.length];
  
   for (int i = 0; i < points.length; i++) {
-    SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2]);
+    int[] newPoint = {SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2])};
+    
+    newCurve = concat(newCurve, newPoint);
   }
 
   SOLARCHVISION_add_Curve(newCurve);
+}
+
+
+void SOLARCHVISION_draw_Curves () {
+
+  WIN3D_Diagrams.strokeWeight(3);
+  WIN3D_Diagrams.stroke(0);
+  WIN3D_Diagrams.noFill();
+  
+  if (Display_Model3Ds != 0) {
+
+    for (int f = 1; f < allCurves_PNT.length; f++) {
+
+      int vsb = allCurves_MTLV[f][3];
+
+      if (vsb > 0) {
+
+        WIN3D_Diagrams.beginShape();
+
+        for (int j = 0; j < allCurves_PNT[f].length; j++) {
+          int vNo = allCurves_PNT[f][j];
+          
+          WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
+
+        }
+        
+        WIN3D_Diagrams.endShape();
+      }
+    }
+  }
+  
+  WIN3D_Diagrams.strokeWeight(0);
 }
