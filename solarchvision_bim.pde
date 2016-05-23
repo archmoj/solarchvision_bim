@@ -55614,10 +55614,10 @@ void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int xtr, float[][
 }
 
 
-void SOLARCHVISION_draw_Curves () {
+void SOLARCHVISION_draw_Curves_linear () {
 
   WIN3D_Diagrams.strokeWeight(3);
-  WIN3D_Diagrams.stroke(0);
+
   WIN3D_Diagrams.noFill();
   
   if (Display_Model3Ds != 0) {
@@ -55628,6 +55628,14 @@ void SOLARCHVISION_draw_Curves () {
 
       if (vsb > 0) {
 
+        int mt = allCurves_MTLV[f][0];
+    
+        float[] COL = {
+          Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+        };      
+        
+        WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);                  
+        
         WIN3D_Diagrams.beginShape();
 
         for (int j = 0; j < allCurves_PNT[f].length; j++) {
@@ -55644,3 +55652,221 @@ void SOLARCHVISION_draw_Curves () {
   
   WIN3D_Diagrams.strokeWeight(0);
 }
+
+
+void SOLARCHVISION_draw_Curves () {
+
+  WIN3D_Diagrams.strokeWeight(3);
+  
+  WIN3D_Diagrams.noFill();
+
+  if (Display_Model3Ds != 0) {
+    
+    for (int f = 1; f < allCurves_PNT.length; f++) {    
+      
+      int vsb = allCurves_MTLV[f][3];
+
+      if (vsb > 0) {      
+    
+        int mt = allCurves_MTLV[f][0];
+    
+        float[] COL = {
+          Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+        };      
+        
+        WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
+    
+    
+        int Tessellation = allCurves_MTLV[f][1];
+    
+        int TotalSubNo = 1;  
+    
+        if (Tessellation > 0) TotalSubNo = allCurves_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+        float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
+        for (int j = 0; j < allCurves_PNT[f].length; j++) {
+          int vNo = allCurves_PNT[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
+    
+        for (int n = 0; n < TotalSubNo; n++) {
+    
+          float[][] subCurve = getSubCurve(base_Vertices, Tessellation, n);
+    
+          WIN3D_Diagrams.beginShape();
+    
+          for (int s = 0; s < subCurve.length; s++) {
+    
+            WIN3D_Diagrams.vertex(subCurve[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subCurve[s][1] * OBJECTS_scale * WIN3D_Scale3D), subCurve[s][2] * OBJECTS_scale * WIN3D_Scale3D);
+          }
+    
+          WIN3D_Diagrams.endShape(CLOSE);
+        }
+      }
+    }
+  }
+  
+  WIN3D_Diagrams.strokeWeight(0);
+}
+
+
+float[][] getSubCurve (float[][] base_Vertices, int Tessellation, int n) {
+
+  float[][] return_vertices = {
+  };
+
+  int TotalSubNo = 1;
+  if (Tessellation > 0) TotalSubNo = base_Vertices.length * int(roundTo(pow(4, Tessellation - 1), 1));   
+
+  if ((Tessellation <= 0) || (n < 0) || (n >= TotalSubNo)) {
+    return_vertices = new float [base_Vertices.length][3];
+
+    for (int j = 0; j < base_Vertices.length; j++) {
+      return_vertices[j] = base_Vertices[j];
+    }
+  } else {
+    return_vertices = new float [4][3];
+
+    int div = base_Vertices.length;
+
+    int the_first = n % div;
+    int the_next = (the_first + 1) % div;
+    int the_previous = (the_first + div - 1) % div;
+
+    float[] A = {
+      0, 0, 0
+    };
+    float[] B = {
+      0, 0, 0
+    };
+    float[] C = {
+      0, 0, 0
+    };
+    float[] D = {
+      0, 0, 0
+    };
+
+    for (int i = 0; i < 3; i++) {
+
+      A[i] = base_Vertices[the_first][i];
+      B[i] = 0.5 * (A[i] + base_Vertices[the_next][i]);
+      D[i] = 0.5 * (A[i] + base_Vertices[the_previous][i]);
+
+      for (int j = 0; j < base_Vertices.length; j++) {
+        C[i] += base_Vertices[j][i] / (1.0 * base_Vertices.length);
+      }
+    }
+
+    if (Tessellation == 1) {
+      return_vertices[0] = A; 
+      return_vertices[1] = B; 
+      return_vertices[2] = C; 
+      return_vertices[3] = D;
+    } else {
+
+      int section = n / div;
+      int res = int(roundTo(pow(2, Tessellation - 1), 1));
+      int u = section / res;
+      int v = section % res;
+
+      float x1 = (1.0 * u) / (1.0 * res);
+      float y1 = (1.0 * v) / (1.0 * res);
+      float x2 = (1.0 * (u + 1)) / (1.0 * res);
+      float y2 = (1.0 * (v + 1)) / (1.0 * res);
+
+      float[] P0 = {
+        0, 0, 0
+      };
+      float[] P1 = {
+        0, 0, 0
+      };
+      float[] P2 = {
+        0, 0, 0
+      };
+      float[] P3 = {
+        0, 0, 0
+      };
+
+      for (int i = 0; i < 3; i++) {
+        P0[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y1); 
+        P1[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y1); 
+        P2[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y2); 
+        P3[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y2);
+      }      
+
+      //return_vertices[0] = P0; 
+      //return_vertices[1] = P1; 
+      //return_vertices[2] = P2; 
+      //return_vertices[3] = P3;
+
+      //to rotate tri-grid cells:
+
+      int d = ((u % 2) + ((v + 1) % 2)) % 2; 
+      if (d == 0) {
+        return_vertices[0] = P0; 
+        return_vertices[1] = P1; 
+        return_vertices[2] = P2; 
+        return_vertices[3] = P3;
+      } else {
+        return_vertices[0] = P1; 
+        return_vertices[1] = P2; 
+        return_vertices[2] = P3; 
+        return_vertices[3] = P0;
+      }
+    }
+  }
+
+
+  return return_vertices;
+}
+
+
+
+/*
+void SOLARCHVISION_export_objects_RAD () {
+if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
+
+//should add both add_face and add_line here!
+if (WIN3D_UI_CurrentTask == 0) { // create 
+
+
+search for ...
+if (selectedLine_displayVertices != 0) {
+
+
+
+void SOLARCHVISION_export_objects_OBJ () {
+
+void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int xtr, float cx, float cy, float cz, float sx, float sy, float sz) {
+float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
+
+PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_Coordinate, float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float SKY2D_Z_Coordinate, float SKY2D_RX_Coordinate, float SKY2D_RY_Coordinate, float SKY2D_RZ_Coordinate) {
+
+void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip FaceNormal")) {
+              UI_set_to_Modify_FaceNormal(1);
+              SOLARCHVISION_highlight_in_BAR_b("FNorm1");
+              UI_BAR_b_Update = 1;
+            }                
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out FaceNormal")) {
+              UI_set_to_Modify_FaceNormal(2);
+              SOLARCHVISION_highlight_in_BAR_b("FNorm2");
+              UI_BAR_b_Update = 1;
+            }   
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In FaceNormal")) {
+              UI_set_to_Modify_FaceNormal(3);
+              SOLARCHVISION_highlight_in_BAR_b("FNorm3");
+              UI_BAR_b_Update = 1;
+            }   
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get FaceFirstVertex")) {
+              UI_set_to_Modify_FaceFirstVertex(1);
+              SOLARCHVISION_highlight_in_BAR_b("F1stV");
+              UI_BAR_b_Update = 1;
+            }     
+*/
