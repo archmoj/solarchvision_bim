@@ -55563,6 +55563,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
                if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("xtr")) xtr = int(parameters[1]);
         }
         else {
           String[] xyz = split(parts[q], ',');
@@ -55581,7 +55582,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Line m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.";
+      return_message = "Line m=? tes=? lyr=? xtr=? x1,y1,z1 x2,y2,z2 etc.";
     }  
   }  
 
@@ -55665,11 +55666,13 @@ void SOLARCHVISION_draw_Curves () {
 
       if (vsb > 0) {      
     
-        int mt = allCurves_MTLV[f][0];
+        int mt = allCurves_MTLV[f][0];  
     
         float[] COL = {
           Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
         };      
+        
+        int xtr = allCurves_MTLV[f][3];  
         
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
@@ -55710,7 +55713,8 @@ void SOLARCHVISION_draw_Curves () {
             
             for (int i = 0; i < 3; i++) {
               ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
-              ANG_end[i] = base_Vertices[nB_after][i] - base_Vertices[nB][i];
+
+              ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
             }
             
             if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
@@ -55721,8 +55725,8 @@ void SOLARCHVISION_draw_Curves () {
             }
           
           
-            float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-            float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+            float dist_start = 0.5 * dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+            float dist_end = 0.5 * dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
             
             for (int i = 0; i < 3; i++) {
               ANG_start[i] *= dist_start;
@@ -55730,7 +55734,7 @@ void SOLARCHVISION_draw_Curves () {
             }
             
             for (int i = 0; i < 3; i++) {
-              P[i] += ((Tessellation + 1 - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation + 1);
+              P[i] += weight * ((Tessellation + 1 - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation + 1);
             }        
  
             
@@ -55743,7 +55747,7 @@ void SOLARCHVISION_draw_Curves () {
           
         }
         
-        WIN3D_Diagrams.endShape();
+        WIN3D_Diagrams.endShape(CLOSE);
       }
     }
   }
