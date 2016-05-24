@@ -55694,19 +55694,46 @@ void SOLARCHVISION_draw_Curves () {
           int nB = (j + 1) % div;
           int nB_after = (j + 2) % div;
           int nA_before = (j + div - 1) % div;        
-      
-          
+        
       
           for (int q = 0; q < Tessellation + 1; q++) {
-  
+
             float[] P = {0, 0, 0};
             
             for (int i = 0; i < 3; i++) {
               P[i] = ((Tessellation + 1 - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation + 1);
             }
-      
             
-      
+            
+            float[] ANG_start = {0, 0, 0};
+            float[] ANG_end = {0, 0, 0};
+            
+            for (int i = 0; i < 3; i++) {
+              ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+              ANG_end[i] = base_Vertices[nB_after][i] - base_Vertices[nB][i];
+            }
+            
+            if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
+              ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
+            }
+            if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
+              ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
+            }
+          
+          
+            float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+            float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+            
+            for (int i = 0; i < 3; i++) {
+              ANG_start[i] *= dist_start;
+              ANG_end[i] *= dist_end;
+            }
+            
+            for (int i = 0; i < 3; i++) {
+              P[i] += ((Tessellation + 1 - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation + 1);
+            }            
+            
+            
             WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
             
       
