@@ -339,7 +339,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 0; 
+int STATION_Number = 1; 
 
 String[][] Defined_Stations = {
 
@@ -55565,7 +55565,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
         }
         else {
-          
           String[] xyz = split(parts[q], ',');
           if (xyz.length > 2) {
             float[][] newPoint = {{float(xyz[0]), float(xyz[1]), float(xyz[2])}}; 
@@ -55595,7 +55594,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int xtr, float[][] points) {
-
+  
   defaultMaterial = m;
   defaultTessellation = tes;
   defaultLayer = lyr;
@@ -55605,9 +55604,7 @@ void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int xtr, float[][
   int[] newCurve = new int[points.length];
  
   for (int i = 0; i < points.length; i++) {
-    int[] newPoint = {SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2])};
-    
-    newCurve = concat(newCurve, newPoint);
+    newCurve[i] = SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2]);
   }
 
   SOLARCHVISION_add_Curve(newCurve);
@@ -55676,12 +55673,7 @@ void SOLARCHVISION_draw_Curves () {
         
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
-    
         int Tessellation = allCurves_MTLV[f][1];
-    
-        int TotalSubNo = 1;  
-    
-        if (Tessellation > 0) TotalSubNo = allCurves_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
     
         float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
         for (int j = 0; j < allCurves_PNT[f].length; j++) {
@@ -55690,20 +55682,40 @@ void SOLARCHVISION_draw_Curves () {
           base_Vertices[j][1] = allVertices[vNo][1];
           base_Vertices[j][2] = allVertices[vNo][2];
         }
-    
-        for (int n = 0; n < TotalSubNo; n++) {
-    
-          float[][] subCurve = getSubCurve(base_Vertices, Tessellation, n);
-    
-          WIN3D_Diagrams.beginShape();
-    
-          for (int s = 0; s < subCurve.length; s++) {
-    
-            WIN3D_Diagrams.vertex(subCurve[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subCurve[s][1] * OBJECTS_scale * WIN3D_Scale3D), subCurve[s][2] * OBJECTS_scale * WIN3D_Scale3D);
+        
+        
+        WIN3D_Diagrams.beginShape();
+        
+        int div = base_Vertices.length;
+        
+        for (int j = 0; j < base_Vertices.length; j++) {
+        
+          int nA = j % div;
+          int nB = (j + 1) % div;
+          int nB_after = (j + 2) % div;
+          int nA_before = (j + div - 1) % div;        
+      
+          
+      
+          for (int q = 0; q < Tessellation + 1; q++) {
+  
+            float[] P = {0, 0, 0};
+            
+            for (int i = 0; i < 3; i++) {
+              P[i] = ((Tessellation + 1 - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation + 1);
+            }
+      
+            
+      
+            WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
+            
+      
+            
           }
-    
-          WIN3D_Diagrams.endShape(CLOSE);
+          
         }
+        
+        WIN3D_Diagrams.endShape();
       }
     }
   }
@@ -55712,115 +55724,6 @@ void SOLARCHVISION_draw_Curves () {
 }
 
 
-float[][] getSubCurve (float[][] base_Vertices, int Tessellation, int n) {
-
-  float[][] return_vertices = {
-  };
-
-  int TotalSubNo = 1;
-  if (Tessellation > 0) TotalSubNo = base_Vertices.length * int(roundTo(pow(4, Tessellation - 1), 1));   
-
-  if ((Tessellation <= 0) || (n < 0) || (n >= TotalSubNo)) {
-    return_vertices = new float [base_Vertices.length][3];
-
-    for (int j = 0; j < base_Vertices.length; j++) {
-      return_vertices[j] = base_Vertices[j];
-    }
-  } else {
-    return_vertices = new float [4][3];
-
-    int div = base_Vertices.length;
-
-    int the_first = n % div;
-    int the_next = (the_first + 1) % div;
-    int the_previous = (the_first + div - 1) % div;
-
-    float[] A = {
-      0, 0, 0
-    };
-    float[] B = {
-      0, 0, 0
-    };
-    float[] C = {
-      0, 0, 0
-    };
-    float[] D = {
-      0, 0, 0
-    };
-
-    for (int i = 0; i < 3; i++) {
-
-      A[i] = base_Vertices[the_first][i];
-      B[i] = 0.5 * (A[i] + base_Vertices[the_next][i]);
-      D[i] = 0.5 * (A[i] + base_Vertices[the_previous][i]);
-
-      for (int j = 0; j < base_Vertices.length; j++) {
-        C[i] += base_Vertices[j][i] / (1.0 * base_Vertices.length);
-      }
-    }
-
-    if (Tessellation == 1) {
-      return_vertices[0] = A; 
-      return_vertices[1] = B; 
-      return_vertices[2] = C; 
-      return_vertices[3] = D;
-    } else {
-
-      int section = n / div;
-      int res = int(roundTo(pow(2, Tessellation - 1), 1));
-      int u = section / res;
-      int v = section % res;
-
-      float x1 = (1.0 * u) / (1.0 * res);
-      float y1 = (1.0 * v) / (1.0 * res);
-      float x2 = (1.0 * (u + 1)) / (1.0 * res);
-      float y2 = (1.0 * (v + 1)) / (1.0 * res);
-
-      float[] P0 = {
-        0, 0, 0
-      };
-      float[] P1 = {
-        0, 0, 0
-      };
-      float[] P2 = {
-        0, 0, 0
-      };
-      float[] P3 = {
-        0, 0, 0
-      };
-
-      for (int i = 0; i < 3; i++) {
-        P0[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y1); 
-        P1[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y1); 
-        P2[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y2); 
-        P3[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y2);
-      }      
-
-      //return_vertices[0] = P0; 
-      //return_vertices[1] = P1; 
-      //return_vertices[2] = P2; 
-      //return_vertices[3] = P3;
-
-      //to rotate tri-grid cells:
-
-      int d = ((u % 2) + ((v + 1) % 2)) % 2; 
-      if (d == 0) {
-        return_vertices[0] = P0; 
-        return_vertices[1] = P1; 
-        return_vertices[2] = P2; 
-        return_vertices[3] = P3;
-      } else {
-        return_vertices[0] = P1; 
-        return_vertices[1] = P2; 
-        return_vertices[2] = P3; 
-        return_vertices[3] = P0;
-      }
-    }
-  }
-
-
-  return return_vertices;
-}
 
 
 
