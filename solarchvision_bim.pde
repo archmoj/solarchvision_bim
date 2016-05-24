@@ -55723,19 +55723,16 @@ void SOLARCHVISION_draw_Curves () {
           
             float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
             float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
-            float dist_AB = dist(base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
             
-            if (dist_AB > 0) {
-              
-              for (int i = 0; i < 3; i++) {
-                ANG_start[i] *= dist_start / dist_AB;
-                ANG_end[i] *= dist_end / dist_AB;
-              }
-              
-              for (int i = 0; i < 3; i++) {
-                P[i] += dist_AB * ((Tessellation + 1 - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation + 1);
-              }        
-            }    
+            for (int i = 0; i < 3; i++) {
+              ANG_start[i] *= dist_start;
+              ANG_end[i] *= dist_end;
+            }
+            
+            for (int i = 0; i < 3; i++) {
+              P[i] += ((Tessellation + 1 - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation + 1);
+            }        
+ 
             
             
             WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
