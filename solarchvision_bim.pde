@@ -2039,22 +2039,22 @@ int[][] allFaces_PNT = {
     0, 0, 0
   }
 };
-int[][] allFaces_MTLV = {
+int[][] allFaces_MTLVG = {
   {
-    0, 0, 0, 0
+    0, 0, 0, 0, 0
   }
-}; // 0:material, 1:teselation, 2:layer, 3:visibility
+}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight
 
 int[][] allCurves_PNT = {
   {
     0, 0, 0
   }
 };
-int[][] allCurves_MTLVW = {
+int[][] allCurves_MTLVG = {
   {
-    0, 0, 0, 0
+    0, 0, 0, 0, 0
   }
-}; // 0:material, 1:teselation, 2:layer, 3:visibility
+}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight
 
 
 float[][] allSolids_DEF = {
@@ -15283,13 +15283,13 @@ int SOLARCHVISION_add_Face (int[] f) {
 
   {
 
-    int[][] newFace_MTLV = {
+    int[][] newFace_MTLVG = {
       {
-        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
       }
     }; 
 
-    allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+    allFaces_MTLVG =  (int[][]) concat(allFaces_MTLVG, newFace_MTLVG);
 
     int[][] newFace = {
       f
@@ -15312,13 +15312,13 @@ int SOLARCHVISION_add_Curve (int[] f) {
 
   {
 
-    int[][] newCurve_MTLV = {
+    int[][] newCurve_MTLVG = {
       {
         defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
       }
     }; 
 
-    allCurves_MTLVW =  (int[][]) concat(allCurves_MTLVW, newCurve_MTLV);
+    allCurves_MTLVG =  (int[][]) concat(allCurves_MTLVG, newCurve_MTLVG);
 
     int[][] newCurve = {
       f
@@ -15576,10 +15576,10 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
           newFace = concat(newFace, new_vertexItem);
         }
 
-        defaultMaterial = allFaces_MTLV[f][0];
-        defaultTessellation = allFaces_MTLV[f][1];
-        defaultLayer = allFaces_MTLV[f][2];
-        defaultVisibility = allFaces_MTLV[f][3];        
+        defaultMaterial = allFaces_MTLVG[f][0];
+        defaultTessellation = allFaces_MTLVG[f][1];
+        defaultLayer = allFaces_MTLVG[f][2];
+        defaultVisibility = allFaces_MTLVG[f][3];        
 
         SOLARCHVISION_add_Face(newFace);
       }
@@ -15662,10 +15662,10 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
           newCurve = concat(newCurve, new_vertexItem);
         }
 
-        defaultMaterial = allCurves_MTLVW[f][0];
-        defaultTessellation = allCurves_MTLVW[f][1];
-        defaultLayer = allCurves_MTLVW[f][2];
-        defaultVisibility = allCurves_MTLVW[f][3];        
+        defaultMaterial = allCurves_MTLVG[f][0];
+        defaultTessellation = allCurves_MTLVG[f][1];
+        defaultLayer = allCurves_MTLVG[f][2];
+        defaultVisibility = allCurves_MTLVG[f][3];        
 
         SOLARCHVISION_add_Curve(newCurve);
       }
@@ -15979,10 +15979,10 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                 newFace = concat(newFace, new_vertexItem);
               }
 
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];
+              defaultMaterial = allFaces_MTLVG[f][0];
+              defaultTessellation = allFaces_MTLVG[f][1];
+              defaultLayer = allFaces_MTLVG[f][2];
+              defaultVisibility = allFaces_MTLVG[f][3];
 
               SOLARCHVISION_add_Face(newFace);
             }
@@ -16141,10 +16141,10 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                 newCurve = concat(newCurve, new_vertexItem);
               }
 
-              defaultMaterial = allCurves_MTLVW[f][0];
-              defaultTessellation = allCurves_MTLVW[f][1];
-              defaultLayer = allCurves_MTLVW[f][2];
-              defaultVisibility = allCurves_MTLVW[f][3];
+              defaultMaterial = allCurves_MTLVG[f][0];
+              defaultTessellation = allCurves_MTLVG[f][1];
+              defaultLayer = allCurves_MTLVG[f][2];
+              defaultVisibility = allCurves_MTLVG[f][3];
 
               SOLARCHVISION_add_Curve(newCurve);
             }
@@ -16346,10 +16346,10 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
             newFace = concat(newFace, new_vertexItem);
           }
 
-          defaultMaterial = allFaces_MTLV[f][0];
-          defaultTessellation = allFaces_MTLV[f][1];
-          defaultLayer = allFaces_MTLV[f][2];
-          defaultVisibility = allFaces_MTLV[f][3];        
+          defaultMaterial = allFaces_MTLVG[f][0];
+          defaultTessellation = allFaces_MTLVG[f][1];
+          defaultLayer = allFaces_MTLVG[f][2];
+          defaultVisibility = allFaces_MTLVG[f][3];        
 
           SOLARCHVISION_add_Face(newFace);
         }
@@ -16416,10 +16416,10 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
             newCurve = concat(newCurve, new_vertexItem);
           }
 
-          defaultMaterial = allCurves_MTLVW[f][0];
-          defaultTessellation = allCurves_MTLVW[f][1];
-          defaultLayer = allCurves_MTLVW[f][2];
-          defaultVisibility = allCurves_MTLVW[f][3];        
+          defaultMaterial = allCurves_MTLVG[f][0];
+          defaultTessellation = allCurves_MTLVG[f][1];
+          defaultLayer = allCurves_MTLVG[f][2];
+          defaultVisibility = allCurves_MTLVG[f][3];        
 
           SOLARCHVISION_add_Curve(newCurve);
         }
@@ -16817,10 +16817,10 @@ void SOLARCHVISION_delete_Selection () {
         }
 
         {
-          int[][] startList = (int[][]) subset(allFaces_MTLV, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allFaces_MTLV, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allFaces_MTLVG, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allFaces_MTLVG, OBJ_NUM + 1);
 
-          allFaces_MTLV = (int[][]) concat(startList, endList);
+          allFaces_MTLVG = (int[][]) concat(startList, endList);
         }
       }
     }
@@ -16855,10 +16855,10 @@ void SOLARCHVISION_delete_Selection () {
         }
 
         {
-          int[][] startList = (int[][]) subset(allCurves_MTLVW, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allCurves_MTLVW, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allCurves_MTLVG, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allCurves_MTLVG, OBJ_NUM + 1);
 
-          allCurves_MTLVW = (int[][]) concat(startList, endList);
+          allCurves_MTLVG = (int[][]) concat(startList, endList);
         }
       }
     }
@@ -16909,10 +16909,10 @@ void SOLARCHVISION_delete_Selection () {
           }
 
           {
-            int[][] startList = (int[][]) subset(allFaces_MTLV, 0, startFace);
-            int[][] endList = (int[][]) subset(allFaces_MTLV, endFace + 1);
+            int[][] startList = (int[][]) subset(allFaces_MTLVG, 0, startFace);
+            int[][] endList = (int[][]) subset(allFaces_MTLVG, endFace + 1);
 
-            allFaces_MTLV = (int[][]) concat(startList, endList);
+            allFaces_MTLVG = (int[][]) concat(startList, endList);
           }
         }
 
@@ -16948,10 +16948,10 @@ void SOLARCHVISION_delete_Selection () {
           }
 
           {
-            int[][] startList = (int[][]) subset(allCurves_MTLVW, 0, startCurve);
-            int[][] endList = (int[][]) subset(allCurves_MTLVW, endCurve + 1);
+            int[][] startList = (int[][]) subset(allCurves_MTLVG, 0, startCurve);
+            int[][] endList = (int[][]) subset(allCurves_MTLVG, endCurve + 1);
 
-            allCurves_MTLVW = (int[][]) concat(startList, endList);
+            allCurves_MTLVG = (int[][]) concat(startList, endList);
           }
         }
 
@@ -17795,9 +17795,9 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
               int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+              int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+              int[][] midList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f, 1);
+              int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
               { 
                 float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -17834,10 +17834,10 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
                   new_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
                 } 
 
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];              
+                defaultMaterial = allFaces_MTLVG[f][0];
+                defaultTessellation = allFaces_MTLVG[f][1];
+                defaultLayer = allFaces_MTLVG[f][2];
+                defaultVisibility = allFaces_MTLVG[f][3];              
 
                 for (int s = 0; s < allFaces_PNT[f].length; s++) { 
 
@@ -17848,14 +17848,14 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
                       new_Vertex_numbers[s], allFaces_PNT[f][s], allFaces_PNT[f][s_next], new_Vertex_numbers[s_next]
                     }
                   };
-                  int[][] newFace_MTLV = {
+                  int[][] newFace_MTLVG = {
                     {
-                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                     }
                   }; 
 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                  midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG);
                 }
 
 
@@ -17867,10 +17867,10 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
               }
 
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+              startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
               allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -17967,9 +17967,9 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
               int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+              int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+              int[][] midList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f, 1);
+              int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
               { 
                 float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -18022,10 +18022,10 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
 
 
 
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];
+                defaultMaterial = allFaces_MTLVG[f][0];
+                defaultTessellation = allFaces_MTLVG[f][1];
+                defaultLayer = allFaces_MTLVG[f][2];
+                defaultVisibility = allFaces_MTLVG[f][3];
 
                 for (int s = 0; s < allFaces_PNT[f].length; s++) { 
 
@@ -18037,14 +18037,14 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
                         allFaces_PNT[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]
                       }
                     };
-                    int[][] newFace_MTLV = {
+                    int[][] newFace_MTLVG = {
                       {
-                        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                       }
                     }; 
 
                     midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                    midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                    midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG);
                   }   
 
                   {
@@ -18053,14 +18053,14 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
                         new_B_EdgeVertex_numbers[s], new_A_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]
                       }
                     };
-                    int[][] newFace_MTLV = {
+                    int[][] newFace_MTLVG = {
                       {
-                        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                       }
                     }; 
 
                     midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                    midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                    midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG);
                   }
                 }
 
@@ -18073,10 +18073,10 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
               }
 
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+              startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
               allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -18173,9 +18173,9 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
               int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+              int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+              int[][] midList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f, 1);
+              int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
               { 
                 float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -18222,10 +18222,10 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
 
 
 
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];
+                defaultMaterial = allFaces_MTLVG[f][0];
+                defaultTessellation = allFaces_MTLVG[f][1];
+                defaultLayer = allFaces_MTLVG[f][2];
+                defaultVisibility = allFaces_MTLVG[f][3];
 
                 for (int s = 0; s < allFaces_PNT[f].length; s++) { 
 
@@ -18236,14 +18236,14 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
                       new_EdgeVertex_numbers[s], allFaces_PNT[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]
                     }
                   };
-                  int[][] newFace_MTLV = {
+                  int[][] newFace_MTLVG = {
                     {
-                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                     }
                   }; 
 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                  midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG);
                 }
 
 
@@ -18255,10 +18255,10 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
               }
 
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+              startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
               allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -18355,9 +18355,9 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
               int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+              int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+              int[][] midList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f, 1);
+              int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
               { 
                 float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -18399,10 +18399,10 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
 
 
 
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];
+                defaultMaterial = allFaces_MTLVG[f][0];
+                defaultTessellation = allFaces_MTLVG[f][1];
+                defaultLayer = allFaces_MTLVG[f][2];
+                defaultVisibility = allFaces_MTLVG[f][3];
 
                 for (int s = 0; s < allFaces_PNT[f].length; s++) { 
 
@@ -18413,14 +18413,14 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
                       new_EdgeVertex_numbers[s], allFaces_PNT[f][s], new_EdgeVertex_numbers[s_next]
                     }
                   };
-                  int[][] newFace_MTLV = {
+                  int[][] newFace_MTLVG = {
                     {
-                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                     }
                   }; 
 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                  midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG);
                 }
 
 
@@ -18432,10 +18432,10 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
               }
 
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+              startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
               allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -18534,9 +18534,9 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                 int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-                int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-                int[][] midList_Faces_MTLV = new int [0][0];
-                int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+                int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+                int[][] midList_Faces_MTLVG = new int [0][0];
+                int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
                 { 
                   float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -18590,10 +18590,10 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                   }
 
 
-                  defaultMaterial = allFaces_MTLV[f][0];
-                  defaultTessellation = allFaces_MTLV[f][1];
-                  defaultLayer = allFaces_MTLV[f][2];
-                  defaultVisibility = allFaces_MTLV[f][3];
+                  defaultMaterial = allFaces_MTLVG[f][0];
+                  defaultTessellation = allFaces_MTLVG[f][1];
+                  defaultLayer = allFaces_MTLVG[f][2];
+                  defaultVisibility = allFaces_MTLVG[f][3];
 
                   for (int i = 0; i < ModifyInput_TessellateColumns; i++) {
 
@@ -18612,14 +18612,14 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                           new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]
                         }
                       };
-                      int[][] newFace_MTLV = {
+                      int[][] newFace_MTLVG = {
                         {
-                          defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                          defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                         }
                       }; 
 
                       midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                      midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+                      midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG); 
 
                       if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                         int[] newFace_number = {
@@ -18632,10 +18632,10 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                 }
 
                 startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-                startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+                startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
                 allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-                allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+                allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
                 { // to avoid processing the faces twice they should be deleted from the list.
                   for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -18732,9 +18732,9 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
               int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = new int [0][0];
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+              int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+              int[][] midList_Faces_MTLVG = new int [0][0];
+              int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
               { 
                 float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -18777,10 +18777,10 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
                 new_CenterVertex_number = SOLARCHVISION_add_Vertex(G_face[0], G_face[1], G_face[2]); 
 
 
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];              
+                defaultMaterial = allFaces_MTLVG[f][0];
+                defaultTessellation = allFaces_MTLVG[f][1];
+                defaultLayer = allFaces_MTLVG[f][2];
+                defaultVisibility = allFaces_MTLVG[f][3];              
 
                 for (int s = 0; s < allFaces_PNT[f].length; s++) { 
 
@@ -18791,14 +18791,14 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
                       new_EdgeVertex_numbers[s], allFaces_PNT[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number
                     }
                   };
-                  int[][] newFace_MTLV = {
+                  int[][] newFace_MTLVG = {
                     {
-                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                     }
                   }; 
 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+                  midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG); 
 
                   if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                     int[] newFace_number = {
@@ -18810,10 +18810,10 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
               }
 
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+              startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
               allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -18909,9 +18909,9 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
               int[][] endList_Faces = (int[][]) subset(allFaces_PNT, f + 1);
 
 
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = new int [0][0];
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+              int[][] startList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, 0, f);
+              int[][] midList_Faces_MTLVG = new int [0][0];
+              int[][] endList_Faces_MTLVG = (int[][]) subset(allFaces_MTLVG, f + 1);
 
               { 
                 float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -18937,10 +18937,10 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
                 new_CenterVertex_number = SOLARCHVISION_add_Vertex(G_face[0], G_face[1], G_face[2]); 
 
 
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];                
+                defaultMaterial = allFaces_MTLVG[f][0];
+                defaultTessellation = allFaces_MTLVG[f][1];
+                defaultLayer = allFaces_MTLVG[f][2];
+                defaultVisibility = allFaces_MTLVG[f][3];                
 
                 for (int s = 0; s < allFaces_PNT[f].length; s++) { 
 
@@ -18951,14 +18951,14 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
                       allFaces_PNT[f][s], allFaces_PNT[f][s_next], new_CenterVertex_number
                     }
                   };
-                  int[][] newFace_MTLV = {
+                  int[][] newFace_MTLVG = {
                     {
-                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+                      defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
                     }
                   }; 
 
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+                  midList_Faces_MTLVG = (int[][]) concat(midList_Faces_MTLVG, newFace_MTLVG); 
 
                   if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                     int[] newFace_number = {
@@ -18970,10 +18970,10 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
               }
 
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+              startList_Faces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, midList_Faces_MTLVG);  
 
               allFaces_PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              allFaces_MTLVG = (int[][]) concat(startList_Faces_MTLVG, endList_Faces_MTLVG);                      
 
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -19110,12 +19110,12 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                   allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
                 }       
 
-                int[][] newFace_MTLV = {
+                int[][] newFace_MTLVG = {
                   {
-                    allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]
+                    allFaces_MTLVG[f][0], allFaces_MTLVG[f][1], allFaces_MTLVG[f][2], allFaces_MTLVG[f][3]
                   }
                 }; 
-                allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+                allFaces_MTLVG =  (int[][]) concat(allFaces_MTLVG, newFace_MTLVG);
               }  
 
               { // adding the cap
@@ -19124,12 +19124,12 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
                 };  
                 allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);         
 
-                int[][] newFace_MTLV = {
+                int[][] newFace_MTLVG = {
                   {
-                    allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]
+                    allFaces_MTLVG[f][0], allFaces_MTLVG[f][1], allFaces_MTLVG[f][2], allFaces_MTLVG[f][3]
                   }
                 }; 
-                allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);  
+                allFaces_MTLVG =  (int[][]) concat(allFaces_MTLVG, newFace_MTLVG);  
 
                 int[] lastFace = {
                   allFaces_PNT.length - 1
@@ -19262,12 +19262,12 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
                   allCurves_PNT = (int[][]) concat(allCurves_PNT, newCurve);
                 }       
 
-                int[][] newCurve_MTLV = {
+                int[][] newCurve_MTLVG = {
                   {
-                    allCurves_MTLVW[f][0], allCurves_MTLVW[f][1], allCurves_MTLVW[f][2], allCurves_MTLVW[f][3]
+                    allCurves_MTLVG[f][0], allCurves_MTLVG[f][1], allCurves_MTLVG[f][2], allCurves_MTLVG[f][3]
                   }
                 }; 
-                allCurves_MTLVW =  (int[][]) concat(allCurves_MTLVW, newCurve_MTLV);
+                allCurves_MTLVG =  (int[][]) concat(allCurves_MTLVG, newCurve_MTLVG);
               }  
 
               { // adding the cap
@@ -19276,12 +19276,12 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
                 };  
                 allCurves_PNT = (int[][]) concat(allCurves_PNT, newCurve);         
 
-                int[][] newCurve_MTLV = {
+                int[][] newCurve_MTLVG = {
                   {
-                    allCurves_MTLVW[f][0], allCurves_MTLVW[f][1], allCurves_MTLVW[f][2], allCurves_MTLVW[f][3]
+                    allCurves_MTLVG[f][0], allCurves_MTLVG[f][1], allCurves_MTLVG[f][2], allCurves_MTLVG[f][3]
                   }
                 }; 
-                allCurves_MTLVW =  (int[][]) concat(allCurves_MTLVW, newCurve_MTLV);  
+                allCurves_MTLVG =  (int[][]) concat(allCurves_MTLVG, newCurve_MTLVG);  
 
                 int[] lastCurve = {
                   allCurves_PNT.length - 1
@@ -19478,7 +19478,7 @@ void SOLARCHVISION_changeVisibilityFaces_Selection (int new_vsb) {
       int f = selectedFace_numbers[o];
 
       if (f != 0) {
-        allFaces_MTLV[f][3] = new_vsb;
+        allFaces_MTLVG[f][3] = new_vsb;
       }
     }
   }
@@ -19488,7 +19488,7 @@ void SOLARCHVISION_changeVisibilityFaces_Selection (int new_vsb) {
 void SOLARCHVISION_changeVisibilityFaces_Scene (int new_vsb) {
 
   for (int f = allFaces_PNT.length - 1; f > 0; f--) { // the first node is null
-    allFaces_MTLV[f][3] = new_vsb;
+    allFaces_MTLVG[f][3] = new_vsb;
   }
 }
 
@@ -19497,13 +19497,13 @@ void SOLARCHVISION_reverseVisibilityFaces_Scene () {
 
   for (int f = allFaces_PNT.length - 1; f > 0; f--) { // the first node is null
 
-    int vsb = allFaces_MTLV[f][3];
+    int vsb = allFaces_MTLVG[f][3];
     int new_vsb = vsb;
 
     if (vsb == 0) new_vsb = 1;
     else if (vsb == 1) new_vsb = 0;
 
-    allFaces_MTLV[f][3] = new_vsb;
+    allFaces_MTLVG[f][3] = new_vsb;
   }
 }
 
@@ -19527,7 +19527,7 @@ void SOLARCHVISION_changeVisibilityCurves_Selection (int new_vsb) {
       int f = selectedCurve_numbers[o];
 
       if (f != 0) {
-        allCurves_MTLVW[f][3] = new_vsb;
+        allCurves_MTLVG[f][3] = new_vsb;
       }
     }
   }
@@ -19537,7 +19537,7 @@ void SOLARCHVISION_changeVisibilityCurves_Selection (int new_vsb) {
 void SOLARCHVISION_changeVisibilityCurves_Scene (int new_vsb) {
 
   for (int f = allCurves_PNT.length - 1; f > 0; f--) { // the first node is null
-    allCurves_MTLVW[f][3] = new_vsb;
+    allCurves_MTLVG[f][3] = new_vsb;
   }
 }
 
@@ -19546,13 +19546,13 @@ void SOLARCHVISION_reverseVisibilityCurves_Scene () {
 
   for (int f = allCurves_PNT.length - 1; f > 0; f--) { // the first node is null
 
-    int vsb = allCurves_MTLVW[f][3];
+    int vsb = allCurves_MTLVG[f][3];
     int new_vsb = vsb;
 
     if (vsb == 0) new_vsb = 1;
     else if (vsb == 1) new_vsb = 0;
 
-    allCurves_MTLVW[f][3] = new_vsb;
+    allCurves_MTLVG[f][3] = new_vsb;
   }
 }
 
@@ -21555,13 +21555,13 @@ void SOLARCHVISION_create_Face_afterSphericalTessellation (int m, int tes, int l
 
 
   {
-    int[][] newFace_MTLV = {
+    int[][] newFace_MTLVG = {
       {
-        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
       }
     }; 
 
-    allFaces_MTLV = (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+    allFaces_MTLVG = (int[][]) concat(allFaces_MTLVG, newFace_MTLVG);
 
 
     int[][] newFace = {
@@ -21574,13 +21574,13 @@ void SOLARCHVISION_create_Face_afterSphericalTessellation (int m, int tes, int l
   }
 
   {
-    int[][] newFace_MTLV = {
+    int[][] newFace_MTLVG = {
       {
-        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility
+        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight
       }
     }; 
 
-    //allFaces_MTLV = (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+    //allFaces_MTLVG = (int[][]) concat(allFaces_MTLVG, newFace_MTLVG);
 
 
     int[][] newFace = {
@@ -21638,7 +21638,7 @@ void SOLARCHVISION_export_objects_SCR () {
       scrOutput.println(nf(x, 0, objExport_PrecisionVertex) + "," + nf(y, 0, objExport_PrecisionVertex) + "," + nf(z, 0, objExport_PrecisionVertex));
     }
     
-    if (allCurves_MTLVW[f][0] == 1) {
+    if (allCurves_MTLVG[f][0] == 1) {
       scrOutput.println("c");
     }
     else {
@@ -21686,7 +21686,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
     for (int f = 1; f < allFaces_PNT.length; f++) {
 
-      int mt = allFaces_MTLV[f][0];
+      int mt = allFaces_MTLVG[f][0];
 
       Materials_Used[mt] += 1;
     }    
@@ -21712,12 +21712,12 @@ void SOLARCHVISION_export_objects_RAD () {
   
       if (allFaces_PNT[f].length > 2) {
 
-        int mt = allFaces_MTLV[f][0];
+        int mt = allFaces_MTLVG[f][0];
 
-        int Tessellation = allFaces_MTLV[f][1];
+        int Tessellation = allFaces_MTLVG[f][1];
 
         int TotalSubNo = 1;  
-        if (allFaces_MTLV[f][0] == 0) {
+        if (allFaces_MTLVG[f][0] == 0) {
           Tessellation += MODEL3D_Tessellation;
         }
 
@@ -22687,7 +22687,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
         for (int f = 1; f < allFaces_PNT.length; f++) {
 
-          int mt = allFaces_MTLV[f][0];
+          int mt = allFaces_MTLVG[f][0];
 
           Materials_Used[mt] += 1;
         }    
@@ -22740,7 +22740,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
                 if (_turn == 3) {
                   if (objExport_MaterialLibrary != 0) {
-                    int mt = allFaces_MTLV[f][0];
+                    int mt = allFaces_MTLVG[f][0];
                     if (prev_mt != mt) {
                       objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
                       prev_mt = mt;
@@ -22748,10 +22748,10 @@ void SOLARCHVISION_export_objects_OBJ () {
                   }
                 }                  
 
-                int Tessellation = allFaces_MTLV[f][1];
+                int Tessellation = allFaces_MTLVG[f][1];
 
                 int TotalSubNo = 1;  
-                if (allFaces_MTLV[f][0] == 0) {
+                if (allFaces_MTLVG[f][0] == 0) {
                   Tessellation += MODEL3D_Tessellation;
                 }
 
@@ -22906,10 +22906,10 @@ void SOLARCHVISION_export_objects_OBJ () {
 
               for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
 
-                int Tessellation = allFaces_MTLV[f][1];
+                int Tessellation = allFaces_MTLVG[f][1];
 
                 int TotalSubNo = 1;  
-                if (allFaces_MTLV[f][0] == 0) {
+                if (allFaces_MTLVG[f][0] == 0) {
                   Tessellation += MODEL3D_Tessellation;
                 }
 
@@ -22986,10 +22986,10 @@ void SOLARCHVISION_export_objects_OBJ () {
 
               for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
 
-                int Tessellation = allFaces_MTLV[f][1];
+                int Tessellation = allFaces_MTLVG[f][1];
 
                 int TotalSubNo = 1;  
-                if (allFaces_MTLV[f][0] == 0) {
+                if (allFaces_MTLVG[f][0] == 0) {
                   Tessellation += MODEL3D_Tessellation;
                 }
 
@@ -24509,11 +24509,12 @@ void SOLARCHVISION_delete_Faces () {
   allFaces_PNT[0][1] = 0;
   allFaces_PNT[0][2] = 0;
 
-  allFaces_MTLV = new int [1][4];
-  allFaces_MTLV[0][0] = 0;
-  allFaces_MTLV[0][1] = 0;
-  allFaces_MTLV[0][2] = 0;
-  allFaces_MTLV[0][3] = 0;
+  allFaces_MTLVG = new int [1][5];
+  allFaces_MTLVG[0][0] = 0;
+  allFaces_MTLVG[0][1] = 0;
+  allFaces_MTLVG[0][2] = 0;
+  allFaces_MTLVG[0][3] = 0;
+  allFaces_MTLVG[0][4] = 0;
 
   for (int q = 0; q < allGroup3Ds_num + 1; q++) {
     allGroup3Ds_Faces[q][0] = 0;
@@ -24530,11 +24531,12 @@ void SOLARCHVISION_delete_Curves () {
   allCurves_PNT[0][1] = 0;
   allCurves_PNT[0][2] = 0;
 
-  allCurves_MTLVW = new int [1][4];
-  allCurves_MTLVW[0][0] = 0;
-  allCurves_MTLVW[0][1] = 0;
-  allCurves_MTLVW[0][2] = 0;
-  allCurves_MTLVW[0][3] = 0;
+  allCurves_MTLVG = new int [1][5];
+  allCurves_MTLVG[0][0] = 0;
+  allCurves_MTLVG[0][1] = 0;
+  allCurves_MTLVG[0][2] = 0;
+  allCurves_MTLVG[0][3] = 0;
+  allCurves_MTLVG[0][4] = 0;
 
   for (int q = 0; q < allGroup3Ds_num + 1; q++) {
     allGroup3Ds_Curves[q][0] = 0;
@@ -24979,22 +24981,22 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_C
 
   for (int f = 1; f < allFaces_PNT.length; f++) {
 
-    int vsb = allFaces_MTLV[f][3];
+    int vsb = allFaces_MTLVG[f][3];
 
     if (vsb > 0) {
 
       color c = color(0, 0, 0);
 
-      int mt = allFaces_MTLV[f][0];
+      int mt = allFaces_MTLVG[f][0];
       c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
 
       SKY2D_Diagrams.stroke(c);
       SKY2D_Diagrams.fill(c);
 
-      int Tessellation = allFaces_MTLV[f][1];
+      int Tessellation = allFaces_MTLVG[f][1];
 
       int TotalSubNo = 1;  
-      if (allFaces_MTLV[f][0] == 0) {
+      if (allFaces_MTLVG[f][0] == 0) {
         Tessellation += MODEL3D_Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -26299,7 +26301,7 @@ void SOLARCHVISION_draw_Faces () {
 
       for (int f = 1; f < allFaces_PNT.length; f++) {
 
-        int vsb = allFaces_MTLV[f][3];
+        int vsb = allFaces_MTLVG[f][3];
 
         if (vsb > 0) {
 
@@ -26410,7 +26412,7 @@ void SOLARCHVISION_draw_Faces () {
     if (WIN3D_FacesShade != Shade_Vertex_Solar) {
       for (int f = 1; f < allFaces_PNT.length; f++) {
 
-        int vsb = allFaces_MTLV[f][3];
+        int vsb = allFaces_MTLVG[f][3];
 
         if (vsb > 0) {        
 
@@ -26432,12 +26434,12 @@ void SOLARCHVISION_draw_Faces () {
               WIN3D_Diagrams.endShape(CLOSE);
             } else {
 
-              int mt = allFaces_MTLV[f][0];
+              int mt = allFaces_MTLVG[f][0];
 
-              int Tessellation = allFaces_MTLV[f][1];
+              int Tessellation = allFaces_MTLVG[f][1];
 
               int TotalSubNo = 1;  
-              if (allFaces_MTLV[f][0] == 0) {
+              if (allFaces_MTLVG[f][0] == 0) {
                 Tessellation += MODEL3D_Tessellation;
               }
               if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -26512,17 +26514,17 @@ void SOLARCHVISION_draw_Faces () {
 
           for (int f = 1; f < allFaces_PNT.length; f++) {
 
-            int vsb = allFaces_MTLV[f][3];
+            int vsb = allFaces_MTLVG[f][3];
 
             if (vsb > 0) {
 
               if (((LoadButton_UrbanMesh == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
               } else {
 
-                int Tessellation = allFaces_MTLV[f][1];
+                int Tessellation = allFaces_MTLVG[f][1];
 
                 int TotalSubNo = 1;  
-                if (allFaces_MTLV[f][0] == 0) {
+                if (allFaces_MTLVG[f][0] == 0) {
                   Tessellation += MODEL3D_Tessellation;
                 }
                 if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -26623,17 +26625,17 @@ void SOLARCHVISION_draw_Faces () {
 
           println("calculating %", nf(100.0 * f / (1.0 * allFaces_PNT.length), 0, 2)); 
 
-          int vsb = allFaces_MTLV[f][3];
+          int vsb = allFaces_MTLVG[f][3];
 
           if (vsb > 0) {
 
             if (((LoadButton_UrbanMesh == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
             } else {    
 
-              int Tessellation = allFaces_MTLV[f][1];
+              int Tessellation = allFaces_MTLVG[f][1];
 
               int TotalSubNo = 1;  
-              if (allFaces_MTLV[f][0] == 0) {
+              if (allFaces_MTLVG[f][0] == 0) {
                 Tessellation += MODEL3D_Tessellation;
               }
               if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -27397,7 +27399,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir) {
 
   for (int f = 1; f < allFaces_PNT.length; f++) {
 
-    int vsb = allFaces_MTLV[f][3];
+    int vsb = allFaces_MTLVG[f][3];
 
     if (vsb > 0) {
 
@@ -27478,7 +27480,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
   
   for (int f = 1; f < allFaces_PNT.length; f++) {
 
-    int vsb = allFaces_MTLV[f][3];
+    int vsb = allFaces_MTLVG[f][3];
 
     if (vsb > 0) {    
 
@@ -27584,7 +27586,7 @@ float[] SOLARCHVISION_10Dintersect (float[] ray_pnt, float[] ray_dir) {
   
   for (int f = 1; f < allCurves_PNT.length; f++) {
 
-    int vsb = allCurves_MTLVW[f][3];
+    int vsb = allCurves_MTLVG[f][3];
 
     if (vsb > 0) {    
 
@@ -37561,16 +37563,16 @@ void mouseClicked () {
                     if ((WIN3D_UI_CurrentTask == 4) || (WIN3D_UI_CurrentTask == 5) || (WIN3D_UI_CurrentTask == 6) || (WIN3D_UI_CurrentTask == 7)) {
 
                       if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
-                        if (WIN3D_UI_CurrentTask == 4) DEFAULT_CreateMaterial = allFaces_MTLV[f][0];
-                        if (WIN3D_UI_CurrentTask == 5) DEFAULT_CreateTessellation = allFaces_MTLV[f][1];
-                        if (WIN3D_UI_CurrentTask == 6) DEFAULT_CreateLayer = allFaces_MTLV[f][2];
-                        if (WIN3D_UI_CurrentTask == 7) DEFAULT_CreateVisibility = allFaces_MTLV[f][3];
+                        if (WIN3D_UI_CurrentTask == 4) DEFAULT_CreateMaterial = allFaces_MTLVG[f][0];
+                        if (WIN3D_UI_CurrentTask == 5) DEFAULT_CreateTessellation = allFaces_MTLVG[f][1];
+                        if (WIN3D_UI_CurrentTask == 6) DEFAULT_CreateLayer = allFaces_MTLVG[f][2];
+                        if (WIN3D_UI_CurrentTask == 7) DEFAULT_CreateVisibility = allFaces_MTLVG[f][3];
                       } 
                       if (WIN3D_UI_TaskModifyParameter == 2) { // Assign(sub) 
-                        if (WIN3D_UI_CurrentTask == 4) allFaces_MTLV[f][0] = DEFAULT_CreateMaterial;
-                        if (WIN3D_UI_CurrentTask == 5) allFaces_MTLV[f][1] = DEFAULT_CreateTessellation;
-                        if (WIN3D_UI_CurrentTask == 6) allFaces_MTLV[f][2] = DEFAULT_CreateLayer;
-                        if (WIN3D_UI_CurrentTask == 7) allFaces_MTLV[f][3] = DEFAULT_CreateVisibility;
+                        if (WIN3D_UI_CurrentTask == 4) allFaces_MTLVG[f][0] = DEFAULT_CreateMaterial;
+                        if (WIN3D_UI_CurrentTask == 5) allFaces_MTLVG[f][1] = DEFAULT_CreateTessellation;
+                        if (WIN3D_UI_CurrentTask == 6) allFaces_MTLVG[f][2] = DEFAULT_CreateLayer;
+                        if (WIN3D_UI_CurrentTask == 7) allFaces_MTLVG[f][3] = DEFAULT_CreateVisibility;
                       }
                       if (WIN3D_UI_TaskModifyParameter == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
@@ -37582,10 +37584,10 @@ void mouseClicked () {
                         }
                         if (OBJ_NUM != 0) {
                           for (int q = allGroup3Ds_Faces[OBJ_NUM][0]; q <= allGroup3Ds_Faces[OBJ_NUM][1]; q++) {                    
-                            if (WIN3D_UI_CurrentTask == 4) allFaces_MTLV[q][0] = DEFAULT_CreateMaterial;
-                            if (WIN3D_UI_CurrentTask == 5) allFaces_MTLV[q][1] = DEFAULT_CreateTessellation;
-                            if (WIN3D_UI_CurrentTask == 6) allFaces_MTLV[q][2] = DEFAULT_CreateLayer;
-                            if (WIN3D_UI_CurrentTask == 7) allFaces_MTLV[q][3] = DEFAULT_CreateVisibility;
+                            if (WIN3D_UI_CurrentTask == 4) allFaces_MTLVG[q][0] = DEFAULT_CreateMaterial;
+                            if (WIN3D_UI_CurrentTask == 5) allFaces_MTLVG[q][1] = DEFAULT_CreateTessellation;
+                            if (WIN3D_UI_CurrentTask == 6) allFaces_MTLVG[q][2] = DEFAULT_CreateLayer;
+                            if (WIN3D_UI_CurrentTask == 7) allFaces_MTLVG[q][3] = DEFAULT_CreateVisibility;
                           }
                         }
                       }
@@ -40416,10 +40418,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         if (f != 0) {
 
-          int Tessellation = allFaces_MTLV[f][1];
+          int Tessellation = allFaces_MTLVG[f][1];
 
           int TotalSubNo = 1;  
-          if (allFaces_MTLV[f][0] == 0) {
+          if (allFaces_MTLVG[f][0] == 0) {
             Tessellation += MODEL3D_Tessellation;
           }
           if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -40630,10 +40632,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
             if ((0 < f) && (f < allFaces_PNT.length)) { 
 
-              int Tessellation = allFaces_MTLV[f][1];
+              int Tessellation = allFaces_MTLVG[f][1];
 
               int TotalSubNo = 1;  
-              if (allFaces_MTLV[f][0] == 0) {
+              if (allFaces_MTLVG[f][0] == 0) {
                 Tessellation += MODEL3D_Tessellation;
               }
               if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -41620,17 +41622,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
               for (int f = 1; f < allFaces_PNT.length; f++) {
   
-                int vsb = allFaces_MTLV[f][3];
+                int vsb = allFaces_MTLVG[f][3];
   
                 if (vsb > 0) {
   
-                  int  mt = allFaces_MTLV[f][0];
+                  int  mt = allFaces_MTLVG[f][0];
                   if (Materials_Color[mt][0] > 127) {
   
-                    int Tessellation = allFaces_MTLV[f][1];
+                    int Tessellation = allFaces_MTLVG[f][1];
   
                     int TotalSubNo = 1;  
-                    if (allFaces_MTLV[f][0] == 0) {
+                    if (allFaces_MTLVG[f][0] == 0) {
                       Tessellation += MODEL3D_Tessellation;
                     }
                     if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -42243,17 +42245,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             for (int f = 1; f < allFaces_PNT.length; f++) {
   
-              int vsb = allFaces_MTLV[f][3];
+              int vsb = allFaces_MTLVG[f][3];
   
               if (vsb > 0) {
   
-                int  mt = allFaces_MTLV[f][0];            
+                int  mt = allFaces_MTLVG[f][0];            
                 if (Materials_Color[mt][0] > 127) {
   
-                  int Tessellation = allFaces_MTLV[f][1];
+                  int Tessellation = allFaces_MTLVG[f][1];
   
                   int TotalSubNo = 1;  
-                  if (allFaces_MTLV[f][0] == 0) {
+                  if (allFaces_MTLVG[f][0] == 0) {
                     Tessellation += MODEL3D_Tessellation;
                   }
                   if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -46399,35 +46401,35 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         int f = OBJ_NUM;
 
         if (WIN3D_UI_CurrentTask == 4) {
-          int n = allFaces_MTLV[f][0];
+          int n = allFaces_MTLVG[f][0];
           n += p;
           if (n > 8) n = 0;
           if (n < 0) n = 8;
-          allFaces_MTLV[f][0] = n;
+          allFaces_MTLVG[f][0] = n;
         }
 
         if (WIN3D_UI_CurrentTask == 5) {
-          int n = allFaces_MTLV[f][1];
+          int n = allFaces_MTLVG[f][1];
           n += p;
           if (n > 4) n = 0;
           if (n < 0) n = 4;
-          allFaces_MTLV[f][1] = n;
+          allFaces_MTLVG[f][1] = n;
         }   
 
         if (WIN3D_UI_CurrentTask == 6) {
-          int n = allFaces_MTLV[f][2];
+          int n = allFaces_MTLVG[f][2];
           n += p;
           if (n > 16) n = 0;
           if (n < 0) n = 16;
-          allFaces_MTLV[f][2] = n;
+          allFaces_MTLVG[f][2] = n;
         }  
 
         if (WIN3D_UI_CurrentTask == 7) {
-          int n = allFaces_MTLV[f][3];
+          int n = allFaces_MTLVG[f][3];
           n += p;
           if (n > 2) n = 0;
           if (n < 0) n = 2;
-          allFaces_MTLV[f][3] = n;
+          allFaces_MTLVG[f][3] = n;
         }
       }
     }
@@ -46444,35 +46446,35 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         int f = OBJ_NUM;
 
         if (WIN3D_UI_CurrentTask == 4) {
-          int n = allCurves_MTLVW[f][0];
+          int n = allCurves_MTLVG[f][0];
           n += p;
           if (n > 8) n = 0;
           if (n < 0) n = 8;
-          allCurves_MTLVW[f][0] = n;
+          allCurves_MTLVG[f][0] = n;
         }
 
         if (WIN3D_UI_CurrentTask == 5) {
-          int n = allCurves_MTLVW[f][1];
+          int n = allCurves_MTLVG[f][1];
           n += p;
           if (n > 4) n = 0;
           if (n < 0) n = 4;
-          allCurves_MTLVW[f][1] = n;
+          allCurves_MTLVG[f][1] = n;
         }   
 
         if (WIN3D_UI_CurrentTask == 6) {
-          int n = allCurves_MTLVW[f][2];
+          int n = allCurves_MTLVG[f][2];
           n += p;
           if (n > 16) n = 0;
           if (n < 0) n = 16;
-          allCurves_MTLVW[f][2] = n;
+          allCurves_MTLVG[f][2] = n;
         }  
 
         if (WIN3D_UI_CurrentTask == 7) {
-          int n = allCurves_MTLVW[f][3];
+          int n = allCurves_MTLVG[f][3];
           n += p;
           if (n > 2) n = 0;
           if (n < 0) n = 2;
-          allCurves_MTLVW[f][3] = n;
+          allCurves_MTLVG[f][3] = n;
         }
       }
     }
@@ -46490,35 +46492,35 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if ((0 < f) && (f < allFaces_PNT.length)) {
 
             if (WIN3D_UI_CurrentTask == 4) {
-              int n = allFaces_MTLV[f][0];
+              int n = allFaces_MTLVG[f][0];
               n += p;
               if (n > 8) n = 0;
               if (n < 0) n = 8;
-              allFaces_MTLV[f][0] = n;
+              allFaces_MTLVG[f][0] = n;
             }
 
             if (WIN3D_UI_CurrentTask == 5) {
-              int n = allFaces_MTLV[f][1];
+              int n = allFaces_MTLVG[f][1];
               n += p;
               if (n > 4) n = 0;
               if (n < 0) n = 4;
-              allFaces_MTLV[f][1] = n;
+              allFaces_MTLVG[f][1] = n;
             }      
 
             if (WIN3D_UI_CurrentTask == 6) {
-              int n = allFaces_MTLV[f][2];
+              int n = allFaces_MTLVG[f][2];
               n += p;
               if (n > 16) n = 0;
               if (n < 0) n = 16;
-              allFaces_MTLV[f][2] = n;
+              allFaces_MTLVG[f][2] = n;
             }  
 
             if (WIN3D_UI_CurrentTask == 7) {
-              int n = allFaces_MTLV[f][3];
+              int n = allFaces_MTLVG[f][3];
               n += p;
               if (n > 2) n = 0;
               if (n < 0) n = 2;
-              allFaces_MTLV[f][3] = n;
+              allFaces_MTLVG[f][3] = n;
             }
           }
         }
@@ -46527,35 +46529,35 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if ((0 < f) && (f < allCurves_PNT.length)) {
 
             if (WIN3D_UI_CurrentTask == 4) {
-              int n = allCurves_MTLVW[f][0];
+              int n = allCurves_MTLVG[f][0];
               n += p;
               if (n > 8) n = 0;
               if (n < 0) n = 8;
-              allCurves_MTLVW[f][0] = n;
+              allCurves_MTLVG[f][0] = n;
             }
 
             if (WIN3D_UI_CurrentTask == 5) {
-              int n = allCurves_MTLVW[f][1];
+              int n = allCurves_MTLVG[f][1];
               n += p;
               if (n > 4) n = 0;
               if (n < 0) n = 4;
-              allCurves_MTLVW[f][1] = n;
+              allCurves_MTLVG[f][1] = n;
             }      
 
             if (WIN3D_UI_CurrentTask == 6) {
-              int n = allCurves_MTLVW[f][2];
+              int n = allCurves_MTLVG[f][2];
               n += p;
               if (n > 16) n = 0;
               if (n < 0) n = 16;
-              allCurves_MTLVW[f][2] = n;
+              allCurves_MTLVG[f][2] = n;
             }  
 
             if (WIN3D_UI_CurrentTask == 7) {
-              int n = allCurves_MTLVW[f][3];
+              int n = allCurves_MTLVG[f][3];
               n += p;
               if (n > 2) n = 0;
               if (n < 0) n = 2;
-              allCurves_MTLVW[f][3] = n;
+              allCurves_MTLVG[f][3] = n;
             }
           }
         }        
@@ -51440,15 +51442,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
 
     {
-      newChild1 = my_xml.addChild("allFaces_MTLV");
-      newChild1.setInt("ni", allFaces_MTLV.length);
-      for (int i = 0; i < allFaces_MTLV.length; i++) {
-        newChild2 = newChild1.addChild("Face_MTLV");
+      newChild1 = my_xml.addChild("allFaces_MTLVG");
+      newChild1.setInt("ni", allFaces_MTLVG.length);
+      for (int i = 0; i < allFaces_MTLVG.length; i++) {
+        newChild2 = newChild1.addChild("Face_MTLVG");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allFaces_MTLV[i].length; j++) {
-          lineSTR += nf(allFaces_MTLV[i][j], 0);
-          if (j < allFaces_MTLV[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allFaces_MTLVG[i].length; j++) {
+          lineSTR += nf(allFaces_MTLVG[i][j], 0);
+          if (j < allFaces_MTLVG[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       }
@@ -51473,15 +51475,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
 
     {
-      newChild1 = my_xml.addChild("allCurves_MTLVW");
-      newChild1.setInt("ni", allCurves_MTLVW.length);
-      for (int i = 0; i < allCurves_MTLVW.length; i++) {
-        newChild2 = newChild1.addChild("Curve_MTLV");
+      newChild1 = my_xml.addChild("allCurves_MTLVG");
+      newChild1.setInt("ni", allCurves_MTLVG.length);
+      for (int i = 0; i < allCurves_MTLVG.length; i++) {
+        newChild2 = newChild1.addChild("Curve_MTLVG");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allCurves_MTLVW[i].length; j++) {
-          lineSTR += nf(allCurves_MTLVW[i][j], 0);
-          if (j < allCurves_MTLVW[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allCurves_MTLVG[i].length; j++) {
+          lineSTR += nf(allCurves_MTLVG[i][j], 0);
+          if (j < allCurves_MTLVG[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       }
@@ -52744,16 +52746,16 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }   
 
-      children0 = FileAll.getChildren("allFaces_MTLV");
+      children0 = FileAll.getChildren("allFaces_MTLVG");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allFaces_MTLV = new int [ni][4];
-        XML[] children1 = children0[L].getChildren("Face_MTLV"); 
+        allFaces_MTLVG = new int [ni][5];
+        XML[] children1 = children0[L].getChildren("Face_MTLVG"); 
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
           for (int j = 0; j < parts.length; j++) {
-            allFaces_MTLV[i][j] = int(parts[j]);
+            allFaces_MTLVG[i][j] = int(parts[j]);
           }
         }
       }
@@ -52779,16 +52781,16 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }   
 
-      children0 = FileAll.getChildren("allCurves_MTLVW");
+      children0 = FileAll.getChildren("allCurves_MTLVG");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allCurves_MTLVW = new int [ni][4];
-        XML[] children1 = children0[L].getChildren("Curve_MTLV"); 
+        allCurves_MTLVG = new int [ni][5];
+        XML[] children1 = children0[L].getChildren("Curve_MTLVG"); 
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
           for (int j = 0; j < parts.length; j++) {
-            allCurves_MTLVW[i][j] = int(parts[j]);
+            allCurves_MTLVG[i][j] = int(parts[j]);
           }
         }
       }
@@ -53765,7 +53767,7 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
       }
       else if (rendererType == MAT_renderer) {
-        int mt = allFaces_MTLV[f][0];
+        int mt = allFaces_MTLVG[f][0];
     
         float a = Materials_Color[mt][0];
         float r = Materials_Color[mt][1]; 
@@ -55622,11 +55624,11 @@ void SOLARCHVISION_draw_Curves_linear () {
 
     for (int f = 1; f < allCurves_PNT.length; f++) {
 
-      int vsb = allCurves_MTLVW[f][3];
+      int vsb = allCurves_MTLVG[f][3];
 
       if (vsb > 0) {
 
-        int mt = allCurves_MTLVW[f][0];
+        int mt = allCurves_MTLVG[f][0];
     
         float[] COL = {
           Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
@@ -55662,21 +55664,21 @@ void SOLARCHVISION_draw_Curves () {
     
     for (int f = 1; f < allCurves_PNT.length; f++) {    
       
-      int vsb = allCurves_MTLVW[f][3];
+      int vsb = allCurves_MTLVG[f][3];
 
       if (vsb > 0) {      
     
-        int mt = allCurves_MTLVW[f][0];  
+        int mt = allCurves_MTLVG[f][0];  
     
         float[] COL = {
           Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
         };      
         
-        int weight = allCurves_MTLVW[f][4];  
+        int weight = allCurves_MTLVG[f][4];  
         
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
-        int Tessellation = int(pow(2, allCurves_MTLVW[f][1]));
+        int Tessellation = int(pow(2, allCurves_MTLVG[f][1]));
 
         float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
         for (int j = 0; j < allCurves_PNT[f].length; j++) {
