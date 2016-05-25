@@ -598,7 +598,7 @@ int STUDY_i_Start = 0;
 int STUDY_i_End = 23;
 
 int STUDY_j_Start = 0; // constant
-int STUDY_j_End = 6; //2; //16; // Variable
+int STUDY_j_End = 8; //6; //2; //16; // Variable
 
 
 
@@ -875,7 +875,7 @@ int WIN3D_record_AUTO = 0;
 int STUDY_max_j_end_parameters = 16; // Constant
 int STUDY_max_j_end_observations = 0; // Variable
 
-float STUDY_PerDays = 61; //1; //45; //61; //30.5;
+float STUDY_PerDays = 45; //61; //1; //45; //61; //30.5;
 int STUDY_JoinDays = 1; //30;//STUDY_PerDays; // it should be set up to 1 in order to plot only one day  
 
 int CLIMATE_TMYEPW_start = 1; 
@@ -1911,9 +1911,9 @@ void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
 
 int SOLARCHVISION_H_Pixel = 275; //300; 
-int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.5); 
+int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.75); 
 
-float MessageSize = SOLARCHVISION_W_Pixel / 40.0;
+float MessageSize = (2 * SOLARCHVISION_W_Pixel + SOLARCHVISION_H_Pixel) / 120.0; // screen width 
 
 
 int SOLARCHVISION_A_Pixel = int(1.5 * MessageSize); // menu bar
@@ -1926,7 +1926,7 @@ float WIN3D_Scale3D;
 
 int WIN3D_CX_View = 0;
 int WIN3D_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-int WIN3D_X_View = int(1.25 * SOLARCHVISION_H_Pixel);
+int WIN3D_X_View = int(1.5 * SOLARCHVISION_H_Pixel);
 int WIN3D_Y_View = SOLARCHVISION_H_Pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
@@ -1964,9 +1964,9 @@ int WIN3D_VerticesSolarValue_Update = 1;
 
 
 
-int WORLD_CX_View = int(1.25 * SOLARCHVISION_H_Pixel);
+int WORLD_CX_View = int(1.5 * SOLARCHVISION_H_Pixel);
 int WORLD_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-int WORLD_X_View = int(1.75 * SOLARCHVISION_H_Pixel);
+int WORLD_X_View = int(2.0 * SOLARCHVISION_H_Pixel);
 int WORLD_Y_View = SOLARCHVISION_H_Pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
@@ -14298,14 +14298,14 @@ void SOLARCHVISION_update_frame_layout () {
 
     WIN3D_CX_View = 0;
     WIN3D_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WIN3D_X_View = int(1.25 * SOLARCHVISION_H_Pixel);
+    WIN3D_X_View = int(1.5 * SOLARCHVISION_H_Pixel);
     WIN3D_Y_View = SOLARCHVISION_H_Pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
-    WORLD_CX_View = int(1.25 * SOLARCHVISION_H_Pixel);
+    WORLD_CX_View = int(1.5 * SOLARCHVISION_H_Pixel);
     WORLD_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WORLD_X_View = int(1.75 * SOLARCHVISION_H_Pixel);
+    WORLD_X_View = int(2.0 * SOLARCHVISION_H_Pixel);
     WORLD_Y_View = SOLARCHVISION_H_Pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
@@ -14324,7 +14324,7 @@ void SOLARCHVISION_update_frame_layout () {
 
     WIN3D_CX_View = 0;
     WIN3D_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WIN3D_X_View = 3 * SOLARCHVISION_H_Pixel;
+    WIN3D_X_View = 2 * SOLARCHVISION_W_Pixel;
     WIN3D_Y_View = 2 * SOLARCHVISION_H_Pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
