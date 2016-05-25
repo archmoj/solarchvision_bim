@@ -55676,8 +55676,8 @@ void SOLARCHVISION_draw_Curves () {
         
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
-        int Tessellation = allCurves_MTLVW[f][1];
-    
+        int Tessellation = int(pow(2, allCurves_MTLVW[f][1]));
+
         float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
         for (int j = 0; j < allCurves_PNT[f].length; j++) {
           int vNo = allCurves_PNT[f][j];
@@ -55699,12 +55699,12 @@ void SOLARCHVISION_draw_Curves () {
           int nA_before = (j + div - 1) % div;        
         
       
-          for (int q = 0; q < Tessellation + 1; q++) {
+          for (int q = 0; q < Tessellation; q++) {
 
             float[] P = {0, 0, 0};
             
             for (int i = 0; i < 3; i++) {
-              P[i] = ((Tessellation + 1 - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation + 1);
+              P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
             }
             
             
@@ -55734,7 +55734,7 @@ void SOLARCHVISION_draw_Curves () {
             }
             
             for (int i = 0; i < 3; i++) {
-              P[i] += weight * ((Tessellation + 1 - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation + 1);
+              P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
             }        
  
             
