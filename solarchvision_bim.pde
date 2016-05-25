@@ -714,7 +714,7 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
-int WIN3D_UI_CurrentTask = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:Pivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
+int WIN3D_UI_CurrentTask = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:Weight 9:DegreeMax 10:DegreeDif 11:DegreeMin 12:TrunkSize 13:LeafSize 14:AllFractalProps 15:Pivot 16:FaceNormal 17:FaceFirstVertex 18:Drop 19:GetLength 20:PowerX 21:PowerY 22:PowerZ 23:PowerXYZ 
 int WIN3D_UI_OptionXorY = 0; // 0-1
 int WIN3D_UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. Fractals
 
@@ -34594,7 +34594,7 @@ void mouseReleased () {
               }
 
 
-              if (WIN3D_UI_CurrentTask == 18) {      
+              if (WIN3D_UI_CurrentTask == 19) {      
 
                 float x1 = 0;
                 float y1 = 0;
@@ -36348,6 +36348,22 @@ void mouseClicked () {
               UI_BAR_b_Update = 1;
             }            
 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change Weight")) {
+              UI_set_to_Modify_Weight(0);
+              SOLARCHVISION_highlight_in_BAR_b("Wgt0");
+              UI_BAR_b_Update = 1;
+            }            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Weight")) {
+              UI_set_to_Modify_Weight(1);
+              SOLARCHVISION_highlight_in_BAR_b("Wgt1");
+              UI_BAR_b_Update = 1;
+            }            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Weight")) {
+              UI_set_to_Modify_Weight(2);
+              SOLARCHVISION_highlight_in_BAR_b("Wgt2");
+              UI_BAR_b_Update = 1;
+            } 
+
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip FaceNormal")) {
               UI_set_to_Modify_FaceNormal(1);
               SOLARCHVISION_highlight_in_BAR_b("FNorm1");
@@ -37560,19 +37576,21 @@ void mouseClicked () {
 
                     int f = int(RxP[0]);
 
-                    if ((WIN3D_UI_CurrentTask == 4) || (WIN3D_UI_CurrentTask == 5) || (WIN3D_UI_CurrentTask == 6) || (WIN3D_UI_CurrentTask == 7)) {
+                    if ((WIN3D_UI_CurrentTask == 4) || (WIN3D_UI_CurrentTask == 5) || (WIN3D_UI_CurrentTask == 6) || (WIN3D_UI_CurrentTask == 7) || (WIN3D_UI_CurrentTask == 8)) {
 
                       if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
                         if (WIN3D_UI_CurrentTask == 4) DEFAULT_CreateMaterial = allFaces_MTLVG[f][0];
                         if (WIN3D_UI_CurrentTask == 5) DEFAULT_CreateTessellation = allFaces_MTLVG[f][1];
                         if (WIN3D_UI_CurrentTask == 6) DEFAULT_CreateLayer = allFaces_MTLVG[f][2];
                         if (WIN3D_UI_CurrentTask == 7) DEFAULT_CreateVisibility = allFaces_MTLVG[f][3];
+                        if (WIN3D_UI_CurrentTask == 8) DEFAULT_CreateWeight = allFaces_MTLVG[f][4];
                       } 
                       if (WIN3D_UI_TaskModifyParameter == 2) { // Assign(sub) 
                         if (WIN3D_UI_CurrentTask == 4) allFaces_MTLVG[f][0] = DEFAULT_CreateMaterial;
                         if (WIN3D_UI_CurrentTask == 5) allFaces_MTLVG[f][1] = DEFAULT_CreateTessellation;
                         if (WIN3D_UI_CurrentTask == 6) allFaces_MTLVG[f][2] = DEFAULT_CreateLayer;
                         if (WIN3D_UI_CurrentTask == 7) allFaces_MTLVG[f][3] = DEFAULT_CreateVisibility;
+                        if (WIN3D_UI_CurrentTask == 8) allFaces_MTLVG[f][4] = DEFAULT_CreateWeight;
                       }
                       if (WIN3D_UI_TaskModifyParameter == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
@@ -37588,12 +37606,13 @@ void mouseClicked () {
                             if (WIN3D_UI_CurrentTask == 5) allFaces_MTLVG[q][1] = DEFAULT_CreateTessellation;
                             if (WIN3D_UI_CurrentTask == 6) allFaces_MTLVG[q][2] = DEFAULT_CreateLayer;
                             if (WIN3D_UI_CurrentTask == 7) allFaces_MTLVG[q][3] = DEFAULT_CreateVisibility;
+                            if (WIN3D_UI_CurrentTask == 8) allFaces_MTLVG[q][4] = DEFAULT_CreateWeight;
                           }
                         }
                       }
                     }
 
-                    if (WIN3D_UI_CurrentTask == 14) {
+                    if (WIN3D_UI_CurrentTask == 15) {
                       if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
                         //?????????????????????????????????????????????????
                       }     
@@ -37618,7 +37637,7 @@ void mouseClicked () {
                       }
                     }
 
-                    if (WIN3D_UI_CurrentTask == 15) { //FaceNormal
+                    if (WIN3D_UI_CurrentTask == 16) { //FaceNormal
 
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
 
@@ -37738,7 +37757,7 @@ void mouseClicked () {
                     }   
 
 
-                    if (WIN3D_UI_CurrentTask == 16) { //FaceFirstVertex
+                    if (WIN3D_UI_CurrentTask == 17) { //FaceFirstVertex
 
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
 
@@ -37824,15 +37843,15 @@ void mouseClicked () {
                     int OBJ_NUM = int(RxP[0]);
 
                     if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
-                      if (WIN3D_UI_CurrentTask == 8) CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
-                      if (WIN3D_UI_CurrentTask == 9) {
+                      if (WIN3D_UI_CurrentTask == 9) CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 10) {
                         CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM]; 
                         CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
                       }
-                      if (WIN3D_UI_CurrentTask == 10) CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
-                      if (WIN3D_UI_CurrentTask == 11) CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
-                      if (WIN3D_UI_CurrentTask == 12) CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
-                      if (WIN3D_UI_CurrentTask == 13) { // all properties
+                      if (WIN3D_UI_CurrentTask == 11) CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 12) CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 13) CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
+                      if (WIN3D_UI_CurrentTask == 14) { // all properties
                         CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
                         CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
                         CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
@@ -37840,15 +37859,15 @@ void mouseClicked () {
                       }
                     } 
                     if (WIN3D_UI_TaskModifyParameter == 2) { //Assign
-                      if (WIN3D_UI_CurrentTask == 8) allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;                    
-                      if (WIN3D_UI_CurrentTask == 9) {
+                      if (WIN3D_UI_CurrentTask == 9) allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;                    
+                      if (WIN3D_UI_CurrentTask == 10) {
                         allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax; 
                         allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;
                       }                 
-                      if (WIN3D_UI_CurrentTask == 10) allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
-                      if (WIN3D_UI_CurrentTask == 11) allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
-                      if (WIN3D_UI_CurrentTask == 12) allFractals_LeafSize[OBJ_NUM] = CreateFractal_LeafSize;
-                      if (WIN3D_UI_CurrentTask == 13) { // all properties
+                      if (WIN3D_UI_CurrentTask == 11) allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
+                      if (WIN3D_UI_CurrentTask == 12) allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
+                      if (WIN3D_UI_CurrentTask == 13) allFractals_LeafSize[OBJ_NUM] = CreateFractal_LeafSize;
+                      if (WIN3D_UI_CurrentTask == 14) { // all properties
                         allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;
                         allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
                         allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
@@ -46347,7 +46366,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         int f = OBJ_NUM;
 
-        if ((WIN3D_UI_CurrentTask == 19) ||  (WIN3D_UI_CurrentTask == 20) ||  (WIN3D_UI_CurrentTask == 21) ||  (WIN3D_UI_CurrentTask == 22)) {
+        if ((WIN3D_UI_CurrentTask == 20) ||  (WIN3D_UI_CurrentTask == 21) ||  (WIN3D_UI_CurrentTask == 22) ||  (WIN3D_UI_CurrentTask == 23)) {
 
 
           float Solid_powX = Solid_get_powX(f);
@@ -46357,10 +46376,10 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
           float n = 2;
 
-          if (WIN3D_UI_CurrentTask == 19) n = Solid_powX; 
-          if (WIN3D_UI_CurrentTask == 20) n = Solid_powY; 
-          if (WIN3D_UI_CurrentTask == 21) n = Solid_powZ; 
-          if (WIN3D_UI_CurrentTask == 22) {
+          if (WIN3D_UI_CurrentTask == 20) n = Solid_powX; 
+          if (WIN3D_UI_CurrentTask == 21) n = Solid_powY; 
+          if (WIN3D_UI_CurrentTask == 22) n = Solid_powZ; 
+          if (WIN3D_UI_CurrentTask == 23) {
             n = Solid_powX;
           }          
 
@@ -46370,10 +46389,10 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if (n > CubePower) n = StarPower;
           if (n < StarPower) n = CubePower;
 
-          if (WIN3D_UI_CurrentTask == 19) Solid_powX = n; 
-          if (WIN3D_UI_CurrentTask == 20) Solid_powY = n; 
-          if (WIN3D_UI_CurrentTask == 21) Solid_powZ = n; 
-          if (WIN3D_UI_CurrentTask == 22) {
+          if (WIN3D_UI_CurrentTask == 20) Solid_powX = n; 
+          if (WIN3D_UI_CurrentTask == 21) Solid_powY = n; 
+          if (WIN3D_UI_CurrentTask == 22) Solid_powZ = n; 
+          if (WIN3D_UI_CurrentTask == 23) {
             Solid_powX = n;
             Solid_powY = n;
             Solid_powZ = n;
@@ -46431,6 +46450,14 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if (n < 0) n = 2;
           allFaces_MTLVG[f][3] = n;
         }
+        
+        if (WIN3D_UI_CurrentTask == 8) {
+          int n = allFaces_MTLVG[f][4];
+          n += p;
+          if (n > 4) n = -4;
+          if (n < -4) n = 4;
+          allFaces_MTLVG[f][4] = n;
+        }        
       }
     }
   }  
@@ -46476,6 +46503,14 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if (n < 0) n = 2;
           allCurves_MTLVG[f][3] = n;
         }
+        
+        if (WIN3D_UI_CurrentTask == 8) {
+          int n = allCurves_MTLVG[f][4];
+          n += p;
+          if (n > 4) n = -4;
+          if (n < -4) n = 4;
+          allCurves_MTLVG[f][4] = n;
+        }        
       }
     }
   }
@@ -46522,6 +46557,14 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
               if (n < 0) n = 2;
               allFaces_MTLVG[f][3] = n;
             }
+            
+            if (WIN3D_UI_CurrentTask == 8) {
+              int n = allFaces_MTLVG[f][4];
+              n += p;
+              if (n > 4) n = -4;
+              if (n < -4) n = 4;
+              allFaces_MTLVG[f][4] = n;
+            }            
           }
         }
         
@@ -46559,6 +46602,14 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
               if (n < 0) n = 2;
               allCurves_MTLVG[f][3] = n;
             }
+            
+            if (WIN3D_UI_CurrentTask == 8) {
+              int n = allCurves_MTLVG[f][4];
+              n += p;
+              if (n > 4) n = -4;
+              if (n < -4) n = 4;
+              allCurves_MTLVG[f][4] = n;
+            }            
           }
         }        
       }
@@ -46630,7 +46681,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
           allFractals_Seed[OBJ_NUM] += p;
         } 
-        if (WIN3D_UI_CurrentTask == 8) {
+        if (WIN3D_UI_CurrentTask == 9) {
           int q = allFractals_DegreeMax[OBJ_NUM];
 
           q += p;
@@ -46642,7 +46693,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_DegreeMax = q;
           ROLLOUT_Update = 1;
         }
-        if (WIN3D_UI_CurrentTask == 9) {
+        if (WIN3D_UI_CurrentTask == 10) {
           int q1 = allFractals_DegreeMin[OBJ_NUM];
           int q2 = allFractals_DegreeMax[OBJ_NUM];
           q1 += p;
@@ -46670,7 +46721,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             ROLLOUT_Update = 1;
           }
         }
-        if (WIN3D_UI_CurrentTask == 10) {
+        if (WIN3D_UI_CurrentTask == 11) {
           int q = allFractals_DegreeMin[OBJ_NUM];
 
           q += p;
@@ -46682,7 +46733,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_DegreeMin = q;
           ROLLOUT_Update = 1;
         }        
-        if (WIN3D_UI_CurrentTask == 11) {
+        if (WIN3D_UI_CurrentTask == 12) {
           float q = allFractals_TrunkSize[OBJ_NUM];
 
           q += 0.25 * p;
@@ -46694,7 +46745,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_TrunkSize = q;
           ROLLOUT_Update = 1;
         }
-        if (WIN3D_UI_CurrentTask == 12) {
+        if (WIN3D_UI_CurrentTask == 13) {
           float q = allFractals_LeafSize[OBJ_NUM];
 
           q += 0.25 * p;
@@ -47337,6 +47388,53 @@ void UI_dessin_Visibility (int _type, float x, float y, float r) {
   vertex(0, -0.5 * d);
   vertex(-cos_ang(30) * d, 0);
   endShape(CLOSE);
+
+  stroke(0, 127, 255);
+  strokeWeight(3);
+  if (_type == 2) {
+    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
+  }
+  if (_type == 3) {
+    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+  } 
+  if (_type == 4) {
+    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
+    line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
+  }
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  UI_BAR_b_Display_Text = 0;
+}
+
+
+void UI_dessin_Weight (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(63);  
+  //rect(-0.5 * r, -0.5 * r, r, r);
+  
+  float d = r * pow(2, 0.5);
+  
+  strokeWeight(1);
+  noFill();  
+  ellipse(0, 0, d, d);
+
+  strokeWeight(1);
+  noFill();  
+  arc(0, -r, d, d, 0.25 * PI, 0.75 * PI);
+  arc(r, 0, d, d, 0.75 * PI, 1.25 * PI);
+  arc(0, r, d, d, 1.25 * PI, 1.75 * PI);
+  arc(-r, 0, d, d, 1.75 * PI, 2.25 * PI);
+
 
   stroke(0, 127, 255);
   strokeWeight(3);
@@ -48253,7 +48351,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
+    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
   }
   , 
   {
@@ -48860,6 +48958,10 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
+    "1", "Wgt0", "Wgt1", "Wgt2", "Wgt3", "Change Weight", "1.0"
+  }
+  ,   
+  {
     "1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"
   }
   , 
@@ -49060,7 +49162,14 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((UI_BAR_b_Items[i][j]).equals("Vsb1")) UI_set_to_Modify_Visibility(1);
           if ((UI_BAR_b_Items[i][j]).equals("Vsb2")) UI_set_to_Modify_Visibility(2);
           if ((UI_BAR_b_Items[i][j]).equals("Vsb3")) UI_set_to_Modify_Visibility(3);
-        }        
+        }    
+    
+        if (Bar_Switch.equals("Change Weight")) {
+          if ((UI_BAR_b_Items[i][j]).equals("Wgt0")) UI_set_to_Modify_Weight(0);
+          if ((UI_BAR_b_Items[i][j]).equals("Wgt1")) UI_set_to_Modify_Weight(1);
+          if ((UI_BAR_b_Items[i][j]).equals("Wgt2")) UI_set_to_Modify_Weight(2);
+          if ((UI_BAR_b_Items[i][j]).equals("Wgt3")) UI_set_to_Modify_Weight(3);
+        }           
 
         if (Bar_Switch.equals("FaceNormal")) {
           if ((UI_BAR_b_Items[i][j]).equals("FNorm1")) UI_set_to_Modify_FaceNormal(1);
@@ -49160,7 +49269,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }
         if (Bar_Switch.equals("Change Visibility")) {
           UI_dessin_Visibility(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }        
+        }       
+        if (Bar_Switch.equals("Change Weight")) {
+          UI_dessin_Weight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+        }          
         if (Bar_Switch.equals("FaceNormal")) {
           UI_dessin_FaceNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
         }           
@@ -49450,66 +49562,73 @@ void UI_set_to_Modify_Visibility (int n) {
   ROLLOUT_Update = 1;
 }
 
-// the same messages of WIN3D_UI_CurrentTask=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
-
-void UI_set_to_Modify_DegreeMax (int n) {
+void UI_set_to_Modify_Weight (int n) {
   WIN3D_UI_CurrentTask = 8;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_DegreeDif (int n) {
+// the same messages of WIN3D_UI_CurrentTask=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
+
+void UI_set_to_Modify_DegreeMax (int n) {
   WIN3D_UI_CurrentTask = 9;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_DegreeMin (int n) {
+void UI_set_to_Modify_DegreeDif (int n) {
   WIN3D_UI_CurrentTask = 10;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_TrunkSize (int n) {
+void UI_set_to_Modify_DegreeMin (int n) {
   WIN3D_UI_CurrentTask = 11;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_LeafSize (int n) {
+void UI_set_to_Modify_TrunkSize (int n) {
   WIN3D_UI_CurrentTask = 12;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_AllFractalProps (int n) {
+void UI_set_to_Modify_LeafSize (int n) {
   WIN3D_UI_CurrentTask = 13;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_Pivot (int n) {
+void UI_set_to_Modify_AllFractalProps (int n) {
   WIN3D_UI_CurrentTask = 14;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_FaceNormal (int n) {
+void UI_set_to_Modify_Pivot (int n) {
   WIN3D_UI_CurrentTask = 15;
+  WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT_Update = 1;
+}
+
+void UI_set_to_Modify_FaceNormal (int n) {
+  WIN3D_UI_CurrentTask = 16;
   WIN3D_UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_FaceFirstVertex (int n) {
-  WIN3D_UI_CurrentTask = 16;
+  WIN3D_UI_CurrentTask = 17;
   WIN3D_UI_TaskModifyParameter = n; // 1:default
 
   Current_ObjectCategory = ObjectCategory_Faces; // << because it only works with face sub-object
@@ -49520,7 +49639,7 @@ void UI_set_to_Modify_FaceFirstVertex (int n) {
 
 
 void UI_set_to_Modify_Drop (int n) {
-  WIN3D_UI_CurrentTask = 17;
+  WIN3D_UI_CurrentTask = 18;
 
   WIN3D_UI_TaskModifyParameter = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
 
@@ -49529,7 +49648,7 @@ void UI_set_to_Modify_Drop (int n) {
 
 
 void UI_set_to_Modify_GetLength (int n) {
-  WIN3D_UI_CurrentTask = 18;
+  WIN3D_UI_CurrentTask = 19;
 
   WIN3D_UI_TaskModifyParameter = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane) 
 
@@ -49538,15 +49657,17 @@ void UI_set_to_Modify_GetLength (int n) {
 
 void UI_set_to_Modify_Power (int n) {
 
-  if (n == 0) WIN3D_UI_CurrentTask = 19; // x 
-  if (n == 1) WIN3D_UI_CurrentTask = 20; // y 
-  if (n == 2) WIN3D_UI_CurrentTask = 21; // z 
-  if (n == 3) WIN3D_UI_CurrentTask = 22; // xyz
+  if (n == 0) WIN3D_UI_CurrentTask = 20; // x 
+  if (n == 1) WIN3D_UI_CurrentTask = 21; // y 
+  if (n == 2) WIN3D_UI_CurrentTask = 22; // z 
+  if (n == 3) WIN3D_UI_CurrentTask = 23; // xyz
 
   WIN3D_UI_TaskModifyParameter = 0; // 0:change
 
   ROLLOUT_Update = 1;
 }
+
+
 
 
 void UI_set_to_Create_Solid () {
@@ -55674,7 +55795,7 @@ void SOLARCHVISION_draw_Curves () {
           Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
         };      
         
-        int weight = allCurves_MTLVG[f][4];  
+        float weight = 0.25 * allCurves_MTLVG[f][4];  
         
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
@@ -55727,8 +55848,8 @@ void SOLARCHVISION_draw_Curves () {
             }
           
           
-            float dist_start = 0.5 * dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-            float dist_end = 0.5 * dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+            float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+            float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
             
             for (int i = 0; i < 3; i++) {
               ANG_start[i] *= dist_start;
