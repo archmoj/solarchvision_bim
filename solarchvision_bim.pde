@@ -2045,7 +2045,7 @@ int[][] allFaces_MTLVGC = {
   {
     0, 0, 0, 0, 0, 0
   }
-}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight
+}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight 5:close
 
 int[][] allCurves_PNT = {
   {
@@ -2056,7 +2056,7 @@ int[][] allCurves_MTLVGC = {
   {
     0, 0, 0, 0, 0
   }
-}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight
+}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight 5:close
 
 
 float[][] allSolids_DEF = {
@@ -15668,6 +15668,8 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
         defaultTessellation = allCurves_MTLVGC[f][1];
         defaultLayer = allCurves_MTLVGC[f][2];
         defaultVisibility = allCurves_MTLVGC[f][3];        
+        defaultWeight = allCurves_MTLVGC[f][4];
+        defaultClose = allCurves_MTLVGC[f][5];
 
         SOLARCHVISION_add_Curve(newCurve);
       }
@@ -16147,6 +16149,8 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
               defaultTessellation = allCurves_MTLVGC[f][1];
               defaultLayer = allCurves_MTLVGC[f][2];
               defaultVisibility = allCurves_MTLVGC[f][3];
+              defaultWeight = allCurves_MTLVGC[f][4];
+              defaultClose = allCurves_MTLVGC[f][5];
 
               SOLARCHVISION_add_Curve(newCurve);
             }
@@ -16421,7 +16425,9 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
           defaultMaterial = allCurves_MTLVGC[f][0];
           defaultTessellation = allCurves_MTLVGC[f][1];
           defaultLayer = allCurves_MTLVGC[f][2];
-          defaultVisibility = allCurves_MTLVGC[f][3];        
+          defaultVisibility = allCurves_MTLVGC[f][3];      
+          defaultWeight = allCurves_MTLVGC[f][4];
+          defaultClose = allCurves_MTLVGC[f][5];          
 
           SOLARCHVISION_add_Curve(newCurve);
         }
@@ -19114,7 +19120,7 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
 
                 int[][] newFace_MTLVGC = {
                   {
-                    allFaces_MTLVGC[f][0], allFaces_MTLVGC[f][1], allFaces_MTLVGC[f][2], allFaces_MTLVGC[f][3]
+                    allFaces_MTLVGC[f][0], allFaces_MTLVGC[f][1], allFaces_MTLVGC[f][2], allFaces_MTLVGC[f][3], allFaces_MTLVGC[f][4], allFaces_MTLVGC[f][5]
                   }
                 }; 
                 allFaces_MTLVGC =  (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);
@@ -19128,7 +19134,7 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
 
                 int[][] newFace_MTLVGC = {
                   {
-                    allFaces_MTLVGC[f][0], allFaces_MTLVGC[f][1], allFaces_MTLVGC[f][2], allFaces_MTLVGC[f][3]
+                    allFaces_MTLVGC[f][0], allFaces_MTLVGC[f][1], allFaces_MTLVGC[f][2], allFaces_MTLVGC[f][3], allFaces_MTLVGC[f][4], allFaces_MTLVGC[f][5]
                   }
                 }; 
                 allFaces_MTLVGC =  (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);  
@@ -19266,7 +19272,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
 
                 int[][] newCurve_MTLVGC = {
                   {
-                    allCurves_MTLVGC[f][0], allCurves_MTLVGC[f][1], allCurves_MTLVGC[f][2], allCurves_MTLVGC[f][3]
+                    allCurves_MTLVGC[f][0], allCurves_MTLVGC[f][1], allCurves_MTLVGC[f][2], allCurves_MTLVGC[f][3], allCurves_MTLVGC[f][4], allCurves_MTLVGC[f][5]
                   }
                 }; 
                 allCurves_MTLVGC =  (int[][]) concat(allCurves_MTLVGC, newCurve_MTLVGC);
@@ -19280,7 +19286,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
 
                 int[][] newCurve_MTLVGC = {
                   {
-                    allCurves_MTLVGC[f][0], allCurves_MTLVGC[f][1], allCurves_MTLVGC[f][2], allCurves_MTLVGC[f][3]
+                    allCurves_MTLVGC[f][0], allCurves_MTLVGC[f][1], allCurves_MTLVGC[f][2], allCurves_MTLVGC[f][3], allCurves_MTLVGC[f][4], allCurves_MTLVGC[f][5]
                   }
                 }; 
                 allCurves_MTLVGC =  (int[][]) concat(allCurves_MTLVGC, newCurve_MTLVGC);  
@@ -52933,7 +52939,7 @@ void SOLARCHVISION_load_project (String myFile) {
       children0 = FileAll.getChildren("allCurves_MTLVGC");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allCurves_MTLVGC = new int [ni][5];
+        allCurves_MTLVGC = new int [ni][6];
         XML[] children1 = children0[L].getChildren("Curve_MTLVGC"); 
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
@@ -55734,6 +55740,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
           else if (parameters[0].toLowerCase().equals("wgt")) wgt = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("clz")) clz = int(parameters[1]);
         }
         else {
           String[] xyz = split(parts[q], ',');
@@ -55752,7 +55759,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Line m=? tes=? lyr=? xtr=? x1,y1,z1 x2,y2,z2 etc.";
+      return_message = "Line m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
     }  
   }  
 
@@ -55783,44 +55790,6 @@ void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int wgt, int clz,
 }
 
 
-void SOLARCHVISION_draw_Curves_linear () {
-
-  WIN3D_Diagrams.strokeWeight(3);
-
-  WIN3D_Diagrams.noFill();
-  
-  if (Display_Model3Ds != 0) {
-
-    for (int f = 1; f < allCurves_PNT.length; f++) {
-
-      int vsb = allCurves_MTLVGC[f][3];
-
-      if (vsb > 0) {
-
-        int mt = allCurves_MTLVGC[f][0];
-    
-        float[] COL = {
-          Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
-        };      
-        
-        WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);                  
-        
-        WIN3D_Diagrams.beginShape();
-
-        for (int j = 0; j < allCurves_PNT[f].length; j++) {
-          int vNo = allCurves_PNT[f][j];
-          
-          WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
-
-        }
-        
-        WIN3D_Diagrams.endShape();
-      }
-    }
-  }
-  
-  WIN3D_Diagrams.strokeWeight(0);
-}
 
 
 void SOLARCHVISION_draw_Curves () {
@@ -55843,8 +55812,8 @@ void SOLARCHVISION_draw_Curves () {
           Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
         };      
         
-        float weight = 0.1 * allCurves_MTLVGC[f][4];  
-        
+        float weight = 0.1 * allCurves_MTLVGC[f][4];
+      
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
         int Tessellation = int(pow(2, allCurves_MTLVGC[f][1]));
@@ -55863,61 +55832,93 @@ void SOLARCHVISION_draw_Curves () {
         int div = base_Vertices.length;
         
         for (int j = 0; j < base_Vertices.length; j++) {
+          
+          int drawSegment = 1;
+          
+          int nA = j;
+          int nB = j + 1;
+          int nB_after = nB + 1;
+          int nA_before = nA - 1;        
+          
+          if (allCurves_MTLVGC[f][5] == 1) { // if closed
+            nA %= div;
+            nB %= div;
+            nB_after %= div;
+            nA_before %= div;   
+          }
+          else {
+            
+            nA %= div;
+            nB %= div;
+
+            nA_before += div - 1; // because it is negative
+            nA_before %= div;
         
-          int nA = j % div;
-          int nB = (j + 1) % div;
-          int nB_after = (j + 2) % div;
-          int nA_before = (j + div - 1) % div;        
+            nB_after %= div;      
 
-          for (int q = 0; q < Tessellation; q++) {
-
-            float[] P = {0, 0, 0};
+            if (nB_after < nB) nB_after = nB;
+            if (nA_before > nA) nA_before = nA;
             
-            for (int i = 0; i < 3; i++) {
-              P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
-            }
-            
-            
-            float[] ANG_start = {0, 0, 0};
-            float[] ANG_end = {0, 0, 0};
-            
-            for (int i = 0; i < 3; i++) {
-              ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
-
-              ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
-            }
-            
-            if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-              ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
-            }
-            if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-              ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
-            }
+            if (j == base_Vertices.length - 1) drawSegment = 0; 
+          }
           
-          
-            float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-            float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+          if (drawSegment == 1) {
+
+            for (int q = 0; q < Tessellation; q++) {
+  
+              float[] P = {0, 0, 0};
+              
+              for (int i = 0; i < 3; i++) {
+                P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
+              }
+              
+              
+              float[] ANG_start = {0, 0, 0};
+              float[] ANG_end = {0, 0, 0};
+              
+              for (int i = 0; i < 3; i++) {
+                ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+  
+                ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
+              }
+              
+              if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
+                ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
+              }
+              if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
+                ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
+              }
             
-            for (int i = 0; i < 3; i++) {
-              ANG_start[i] *= dist_start;
-              ANG_end[i] *= dist_end;
+            
+              float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+              float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+              
+              for (int i = 0; i < 3; i++) {
+                ANG_start[i] *= dist_start;
+                ANG_end[i] *= dist_end;
+              }
+              
+              for (int i = 0; i < 3; i++) {
+                P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
+              }        
+   
+              
+              
+              WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
+              
             }
-            
-            for (int i = 0; i < 3; i++) {
-              P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
-            }        
- 
-            
-            
-            WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
-            
-      
-            
           }
           
         }
         
-        WIN3D_Diagrams.endShape(CLOSE);
+        if (allCurves_MTLVGC[f][5] == 1) { // if closed
+          WIN3D_Diagrams.endShape(CLOSE);
+        }
+        else {
+          WIN3D_Diagrams.endShape();
+        }
+          
+          
       }
     }
   }
