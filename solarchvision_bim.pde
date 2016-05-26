@@ -55835,29 +55835,15 @@ void SOLARCHVISION_draw_Curves () {
           
           int drawSegment = 1;
           
-          int nA = j;
-          int nB = j + 1;
-          int nB_after = nB + 1;
-          int nA_before = nA - 1;        
+          int nA = j % div;
+          int nB = (j + 1)  % div;
+          int nB_after = (j + 2) % div;
+          int nA_before = (j - 1 + div) % div;        
           
-          if (allCurves_MTLVGC[f][5] == 1) { // if closed
-            nA %= div;
-            nB %= div;
-            nB_after %= div;
-            nA_before %= div;   
-          }
-          else {
-            
-            nA %= div;
-            nB %= div;
-
-            nA_before += div - 1; // because it is negative
-            nA_before %= div;
-        
-            nB_after %= div;      
+          if (allCurves_MTLVGC[f][5] == 0) { // if not closed
 
             if (nB_after < nB) nB_after = nB;
-            if (nA_before > nA) nA_before = nA;
+            if (nA_before > nA) nA_before = nA; 
             
             if (j == base_Vertices.length - 1) drawSegment = 0; 
           }
@@ -55911,11 +55897,11 @@ void SOLARCHVISION_draw_Curves () {
           
         }
         
-        if (allCurves_MTLVGC[f][5] == 1) { // if closed
-          WIN3D_Diagrams.endShape(CLOSE);
+        if (allCurves_MTLVGC[f][5] == 0) { // if not closed
+          WIN3D_Diagrams.endShape();
         }
         else {
-          WIN3D_Diagrams.endShape();
+          WIN3D_Diagrams.endShape(CLOSE);
         }
           
           
