@@ -46454,8 +46454,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if (WIN3D_UI_CurrentTask == 8) {
           int n = allFaces_MTLVG[f][4];
           n += p;
-          if (n > 4) n = -4;
-          if (n < -4) n = 4;
+          if (n > 20) n = -20;
+          if (n < -20) n = 20;
           allFaces_MTLVG[f][4] = n;
         }        
       }
@@ -46507,8 +46507,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if (WIN3D_UI_CurrentTask == 8) {
           int n = allCurves_MTLVG[f][4];
           n += p;
-          if (n > 4) n = -4;
-          if (n < -4) n = 4;
+          if (n > 20) n = -20;
+          if (n < -20) n = 20;
           allCurves_MTLVG[f][4] = n;
         }        
       }
@@ -46561,8 +46561,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             if (WIN3D_UI_CurrentTask == 8) {
               int n = allFaces_MTLVG[f][4];
               n += p;
-              if (n > 4) n = -4;
-              if (n < -4) n = 4;
+              if (n > 20) n = -20;
+              if (n < -20) n = 20;
               allFaces_MTLVG[f][4] = n;
             }            
           }
@@ -46606,8 +46606,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             if (WIN3D_UI_CurrentTask == 8) {
               int n = allCurves_MTLVG[f][4];
               n += p;
-              if (n > 4) n = -4;
-              if (n < -4) n = 4;
+              if (n > 20) n = -20;
+              if (n < -20) n = 20;
               allCurves_MTLVG[f][4] = n;
             }            
           }
@@ -55795,7 +55795,7 @@ void SOLARCHVISION_draw_Curves () {
           Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
         };      
         
-        float weight = 0.25 * allCurves_MTLVG[f][4];  
+        float weight = 0.1 * allCurves_MTLVG[f][4];  
         
         WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
     
