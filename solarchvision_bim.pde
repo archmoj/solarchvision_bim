@@ -1,4 +1,5 @@
-
+// export and import of curves
+// converting curves to faces, etc.
 
 //should add both add_face and add_line here!
 //if (WIN3D_UI_CurrentTask == UITASK_Create) { // create 
@@ -56106,6 +56107,13 @@ void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int wgt, int clz,
 
 void SOLARCHVISION_add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot, float TotalAngle) {
 
+  float AngleStep = TotalAngle / float(n);
+  int EndOfLoop = n;
+  if (TotalAngle % 360 == 0) {
+    EndOfLoop -= 1;
+    clz = 1; // for right closing of a circle 
+  }
+  
   defaultMaterial = m;
   defaultTessellation = tes;
   defaultLayer = lyr;
@@ -56113,11 +56121,13 @@ void SOLARCHVISION_add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, 
   defaultWeight = wgt;
   defaultClose = clz;
 
+  
+
   int[] newCurve = {
     SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
   };
-  for (int i = 1; i < n; i++) {
-    float t = i * TotalAngle / float(n) + rot;
+  for (int i = 1; i <= EndOfLoop; i++) {
+    float t = i * AngleStep + rot;
     int[] f = {
       SOLARCHVISION_add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
     };
@@ -56255,16 +56265,7 @@ void SOLARCHVISION_draw_Curves () {
 
 /*
 void SOLARCHVISION_export_objects_RAD () {
-if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
-
-
-
-
-
 void SOLARCHVISION_export_objects_OBJ () {
-
 void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
 float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
-
-
 */
