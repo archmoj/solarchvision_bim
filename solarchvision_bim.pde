@@ -1,4 +1,8 @@
 
+
+//should add both add_face and add_line here!
+//if (WIN3D_UI_CurrentTask == UITASK_Create) { // create 
+
 // Modify Normal at Curve level is not complete... 
 
 // writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
@@ -56072,8 +56076,6 @@ void SOLARCHVISION_draw_Curves () {
 void SOLARCHVISION_export_objects_RAD () {
 if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
 
-//should add both add_face and add_line here!
-if (WIN3D_UI_CurrentTask == UITASK_Create) { // create 
 
 
 
