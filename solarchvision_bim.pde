@@ -56031,6 +56031,51 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Line m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
     }  
   }  
+  
+  else if (parts[0].toUpperCase().equals("ARC")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 6;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int wgt = 0;
+      int clz = 1;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float r = 0;
+      float rot = 0;
+      float ang = 360; // complete circle
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("wgt")) wgt = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("clz")) clz = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("rot")) rot = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("ang")) ang = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+        }
+      }
+      if ((r != 0) && (deg > 2)) {   
+        SOLARCHVISION_add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Curves;
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
+    }  
+  }    
 
   
   return return_message;
@@ -56058,6 +56103,29 @@ void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int wgt, int clz,
   SOLARCHVISION_add_Curve(newCurve);
 }
 
+
+void SOLARCHVISION_add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot, float TotalAngle) {
+
+  defaultMaterial = m;
+  defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultWeight = wgt;
+  defaultClose = clz;
+
+  int[] newCurve = {
+    SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
+  };
+  for (int i = 1; i < n; i++) {
+    float t = i * TotalAngle / float(n) + rot;
+    int[] f = {
+      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
+    };
+    newCurve = concat(newCurve, f);
+  } 
+
+  SOLARCHVISION_add_Curve(newCurve);
+}
 
 
 
