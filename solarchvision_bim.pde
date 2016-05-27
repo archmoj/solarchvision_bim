@@ -1,5 +1,5 @@
 // export and import of curves
-// converting curves to faces, etc.
+// converting curves to faces e.g. Surface, Extrude, Connect
 
 //should add both add_face and add_line here!
 //if (WIN3D_UI_CurrentTask == UITASK_Create) { // create 
@@ -27032,9 +27032,9 @@ void SOLARCHVISION_lookXY_3DViewport_towards_Direction (float Image_X, float Ima
 
   float[] P = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
 
-  float xB = P[0];
-  float yB = P[1];
-  float zB = P[2];  
+  float xB = P[0] / OBJECTS_scale;
+  float yB = P[1] / OBJECTS_scale;
+  float zB = P[2] / OBJECTS_scale;  
 
 
   WIN3D_RZ_Coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
@@ -27056,9 +27056,9 @@ void SOLARCHVISION_lookZ_3DViewport_towards_Direction (float Image_X, float Imag
 
   float[] P = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
 
-  float xB = P[0];
-  float yB = P[1];
-  float zB = P[2];  
+  float xB = P[0] / OBJECTS_scale;
+  float yB = P[1] / OBJECTS_scale;
+  float zB = P[2] / OBJECTS_scale;  
 
   WIN3D_RX_Coordinate += atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
 
@@ -54581,6 +54581,188 @@ void SOLARCHVISION_PreBakeViewport () {
 
 
 
+
+
+
+
+
+
+void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
+  
+  defaultMaterial = m;
+  defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultWeight = wgt;  
+  defaultClose = clz;
+
+  int[] newCurve = new int[points.length];
+ 
+  for (int i = 0; i < points.length; i++) {
+    newCurve[i] = SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2]);
+  }
+
+  SOLARCHVISION_add_Curve(newCurve);
+}
+
+
+void SOLARCHVISION_add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot, float TotalAngle) {
+
+  float AngleStep = TotalAngle / float(n);
+  int EndOfLoop = n;
+  if (TotalAngle % 360 == 0) {
+    EndOfLoop -= 1;
+    clz = 1; // for right closing of a circle 
+  }
+  
+  defaultMaterial = m;
+  defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultWeight = wgt;
+  defaultClose = clz;
+
+  
+
+  int[] newCurve = {
+    SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
+  };
+  for (int i = 1; i <= EndOfLoop; i++) {
+    float t = i * AngleStep + rot;
+    int[] f = {
+      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
+    };
+    newCurve = concat(newCurve, f);
+  } 
+
+  SOLARCHVISION_add_Curve(newCurve);
+}
+
+
+
+void SOLARCHVISION_draw_Curves () {
+
+  WIN3D_Diagrams.strokeWeight(3);
+  
+  WIN3D_Diagrams.noFill();
+
+  if (Display_Model3Ds != 0) {
+    
+    for (int f = 1; f < allCurves_PNT.length; f++) {    
+      
+      int vsb = allCurves_MTLVGC[f][3];
+
+      if (vsb > 0) {      
+    
+        int mt = allCurves_MTLVGC[f][0];  
+    
+        float[] COL = {
+          Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+        };      
+        
+        float weight = 0.1 * allCurves_MTLVGC[f][4];
+      
+        WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
+    
+        int Tessellation = int(pow(2, allCurves_MTLVGC[f][1]));
+
+        float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
+        for (int j = 0; j < allCurves_PNT[f].length; j++) {
+          int vNo = allCurves_PNT[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
+        
+        
+        WIN3D_Diagrams.beginShape();
+        
+        int div = base_Vertices.length;
+        
+        for (int j = 0; j < base_Vertices.length; j++) {
+          
+          int drawSegment = 1;
+          
+          int nA = j % div;
+          int nB = (j + 1)  % div;
+          int nB_after = (j + 2) % div;
+          int nA_before = (j - 1 + div) % div;        
+          
+          if (allCurves_MTLVGC[f][5] == 0) { // if not closed
+
+            if (nB_after < nB) nB_after = nB;
+            if (nA_before > nA) nA_before = nA; 
+            
+            if (j == base_Vertices.length - 1) drawSegment = 0; 
+          }
+          
+          if (drawSegment == 1) {
+
+            for (int q = 0; q <= Tessellation; q++) {
+  
+              float[] P = {0, 0, 0};
+              
+              for (int i = 0; i < 3; i++) {
+                P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
+              }
+              
+              
+              float[] ANG_start = {0, 0, 0};
+              float[] ANG_end = {0, 0, 0};
+              
+              for (int i = 0; i < 3; i++) {
+                ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+  
+                ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
+              }
+              
+              if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
+                ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
+              }
+              if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
+                ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
+              }
+            
+            
+              float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+              float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+              
+              for (int i = 0; i < 3; i++) {
+                ANG_start[i] *= dist_start;
+                ANG_end[i] *= dist_end;
+              }
+              
+              for (int i = 0; i < 3; i++) {
+                P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
+              }        
+   
+              
+              
+              WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
+              
+            }
+          }
+          
+        }
+        
+        if (allCurves_MTLVGC[f][5] == 0) { // if not closed
+          WIN3D_Diagrams.endShape();
+        }
+        else {
+          WIN3D_Diagrams.endShape(CLOSE);
+        }
+          
+          
+      }
+    }
+  }
+  
+  WIN3D_Diagrams.strokeWeight(0);
+}
+
+
+
+
 int typeUserCommand = 0;
 
 int UI_BAR_c_Update = 1;
@@ -54735,6 +54917,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     allCommands[0] = "";
     allMessages[0] = "";
   }
+
 
   else if (parts[0].toUpperCase().equals("MOVE")) {
     if (parts.length > 1) {
@@ -56076,196 +56259,162 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
     }  
+  } 
+  
+  else if (parts[0].toUpperCase().equals("PIVOT")) {
+    if (parts.length > 1) {
+      for (int q = 1; q < parts.length; q++) {
+             if (parts[q].toLowerCase().equals("minx")) UI_set_to_View_PivotX(-1);
+        else if (parts[q].toLowerCase().equals("midx")) UI_set_to_View_PivotX(0);
+        else if (parts[q].toLowerCase().equals("maxx")) UI_set_to_View_PivotX(1);
+        else if (parts[q].toLowerCase().equals("miny")) UI_set_to_View_PivotY(-1);
+        else if (parts[q].toLowerCase().equals("midy")) UI_set_to_View_PivotY(0);
+        else if (parts[q].toLowerCase().equals("maxy")) UI_set_to_View_PivotY(1);
+        else if (parts[q].toLowerCase().equals("minz")) UI_set_to_View_PivotZ(-1);
+        else if (parts[q].toLowerCase().equals("midz")) UI_set_to_View_PivotZ(0);
+        else if (parts[q].toLowerCase().equals("maxz")) UI_set_to_View_PivotZ(1);
+      }
+    }
+    else {
+      return_message = "PIVOT minX midY maxZ or other variations";
+    }    
+  }
+
+  else if (parts[0].toUpperCase().equals("DISTZ")) {
+    UI_set_to_View_Truck(0);
+  } 
+  else if (parts[0].toUpperCase().equals("DISTC")) {
+    UI_set_to_View_CameraDistance(0);
+  } 
+  else if (parts[0].toUpperCase().equals("DISTP")) {
+    UI_set_to_View_DistMouseXY(0);
+  } 
+
+
+  else if (parts[0].toUpperCase().equals("SIZEALL")) {
+    UI_set_to_View_AllModelSize();
+  } 
+  else if (parts[0].toUpperCase().equals("SIZESKY")) {
+    UI_set_to_View_SkydomeSize();
+  } 
+  else if (parts[0].toUpperCase().equals("SIZE3D")) {
+    UI_set_to_View_3DModelSize();
+  } 
+
+  else if (parts[0].toUpperCase().equals("SHRINK3D")) {
+    UI_set_to_View_3DViewSpace(0);
+  }   
+  else if (parts[0].toUpperCase().equals("ENLARGE3D")) {
+    UI_set_to_View_3DViewSpace(1);
+  } 
+  
+  else if (parts[0].toUpperCase().equals("LOOKORG")) {
+    UI_set_to_View_LookAtOrigin(0);
+  }   
+  else if (parts[0].toUpperCase().equals("LOOKDIR")) {
+    UI_set_to_View_LookAtDirection(0);
+  }   
+  else if (parts[0].toUpperCase().equals("LOOKSEL")) {
+    UI_set_to_View_LookAtSelection(0);
+  }   
+  
+  else if (parts[0].toUpperCase().equals("TRUCKZ")) {
+    UI_set_to_View_Truck(0);
+  }   
+  else if (parts[0].toUpperCase().equals("TRUCKX")) {
+    UI_set_to_View_Truck(1);
+  }   
+  else if (parts[0].toUpperCase().equals("TRUCKY")) {
+    UI_set_to_View_Truck(2);
+  }   
+
+  else if (parts[0].toUpperCase().equals("TROLL")) {
+    UI_set_to_View_TargetRoll(0);
+  }   
+  else if (parts[0].toUpperCase().equals("TROLLZ")) {
+    UI_set_to_View_TargetRoll(1);
+  }   
+  else if (parts[0].toUpperCase().equals("TROLLXY")) {
+    UI_set_to_View_TargetRoll(2);
+  }     
+  
+  else if (parts[0].toUpperCase().equals("CROLL")) {
+    UI_set_to_View_CameraRoll(0);
+  }   
+  else if (parts[0].toUpperCase().equals("CROLLZ")) {
+    UI_set_to_View_CameraRoll(1);
+  }   
+  else if (parts[0].toUpperCase().equals("CROLLXY")) {
+    UI_set_to_View_CameraRoll(2);
+  }   
+  
+  
+  else if (parts[0].toUpperCase().equals("ORBIT")) {
+    UI_set_to_View_Orbit(0);
+  }   
+  else if (parts[0].toUpperCase().equals("ORBITZ")) {
+    UI_set_to_View_Orbit(1);
+  }   
+  else if (parts[0].toUpperCase().equals("ORBITXY")) {
+    UI_set_to_View_Orbit(2);
+  }
+  
+  else if (parts[0].toUpperCase().equals("PAN")) {
+    UI_set_to_View_Pan(0);
+  }  
+  else if (parts[0].toUpperCase().equals("PANX")) {
+    UI_set_to_View_Pan(1);
+  }  
+  else if (parts[0].toUpperCase().equals("PANY")) {
+    UI_set_to_View_Pan(2);
+  }  
+
+  else if (parts[0].toUpperCase().equals("ZOOM")) {
+    UI_set_to_View_ZOOM(0);
   }    
+  else if (parts[0].toUpperCase().equals("NORMALZOOM")) {
+    UI_set_to_View_ZOOM(1);
+  }  
+  else if (parts[0].toUpperCase().equals("ORTHOGRAPHIC")) {
+    UI_set_to_View_ProjectionType(0);
+  }  
+  else if (parts[0].toUpperCase().equals("PERSPECTIVE")) {
+    UI_set_to_View_ProjectionType(1);
+  }    
+  else if (parts[0].toUpperCase().equals("TOP")) {
+    UI_set_to_View_3DViewPoint(0);
+  }    
+  else if (parts[0].toUpperCase().equals("FRONT")) {
+    UI_set_to_View_3DViewPoint(1);
+  }  
+  else if (parts[0].toUpperCase().equals("LEFT")) {
+    UI_set_to_View_3DViewPoint(2);
+  }  
+  else if (parts[0].toUpperCase().equals("BACK")) {
+    UI_set_to_View_3DViewPoint(3);
+  }    
+  else if (parts[0].toUpperCase().equals("RIGHT")) {
+    UI_set_to_View_3DViewPoint(4);
+  }  
+  else if (parts[0].toUpperCase().equals("BOTTOM")) {
+    UI_set_to_View_3DViewPoint(5);
+  }  
+  else if (parts[0].toUpperCase().equals("S.W.")) {
+    UI_set_to_View_3DViewPoint(6);
+  }    
+  else if (parts[0].toUpperCase().equals("S.E.")) {
+    UI_set_to_View_3DViewPoint(7);
+  }  
+  else if (parts[0].toUpperCase().equals("N.E.")) {
+    UI_set_to_View_3DViewPoint(8);
+  }  
+  else if (parts[0].toUpperCase().equals("N.W.")) {
+    UI_set_to_View_3DViewPoint(9);
+  }    
+
+
+   
 
   
   return return_message;
 }
-
-
-
-
-
-void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
-  
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;  
-  defaultClose = clz;
-
-  int[] newCurve = new int[points.length];
- 
-  for (int i = 0; i < points.length; i++) {
-    newCurve[i] = SOLARCHVISION_add_Vertex(points[i][0], points[i][1], points[i][2]);
-  }
-
-  SOLARCHVISION_add_Curve(newCurve);
-}
-
-
-void SOLARCHVISION_add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot, float TotalAngle) {
-
-  float AngleStep = TotalAngle / float(n);
-  int EndOfLoop = n;
-  if (TotalAngle % 360 == 0) {
-    EndOfLoop -= 1;
-    clz = 1; // for right closing of a circle 
-  }
-  
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  
-
-  int[] newCurve = {
-    SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
-  };
-  for (int i = 1; i <= EndOfLoop; i++) {
-    float t = i * AngleStep + rot;
-    int[] f = {
-      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
-    };
-    newCurve = concat(newCurve, f);
-  } 
-
-  SOLARCHVISION_add_Curve(newCurve);
-}
-
-
-
-void SOLARCHVISION_draw_Curves () {
-
-  WIN3D_Diagrams.strokeWeight(3);
-  
-  WIN3D_Diagrams.noFill();
-
-  if (Display_Model3Ds != 0) {
-    
-    for (int f = 1; f < allCurves_PNT.length; f++) {    
-      
-      int vsb = allCurves_MTLVGC[f][3];
-
-      if (vsb > 0) {      
-    
-        int mt = allCurves_MTLVGC[f][0];  
-    
-        float[] COL = {
-          Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
-        };      
-        
-        float weight = 0.1 * allCurves_MTLVGC[f][4];
-      
-        WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);    
-    
-        int Tessellation = int(pow(2, allCurves_MTLVGC[f][1]));
-
-        float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
-        for (int j = 0; j < allCurves_PNT[f].length; j++) {
-          int vNo = allCurves_PNT[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-        
-        
-        WIN3D_Diagrams.beginShape();
-        
-        int div = base_Vertices.length;
-        
-        for (int j = 0; j < base_Vertices.length; j++) {
-          
-          int drawSegment = 1;
-          
-          int nA = j % div;
-          int nB = (j + 1)  % div;
-          int nB_after = (j + 2) % div;
-          int nA_before = (j - 1 + div) % div;        
-          
-          if (allCurves_MTLVGC[f][5] == 0) { // if not closed
-
-            if (nB_after < nB) nB_after = nB;
-            if (nA_before > nA) nA_before = nA; 
-            
-            if (j == base_Vertices.length - 1) drawSegment = 0; 
-          }
-          
-          if (drawSegment == 1) {
-
-            for (int q = 0; q <= Tessellation; q++) {
-  
-              float[] P = {0, 0, 0};
-              
-              for (int i = 0; i < 3; i++) {
-                P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
-              }
-              
-              
-              float[] ANG_start = {0, 0, 0};
-              float[] ANG_end = {0, 0, 0};
-              
-              for (int i = 0; i < 3; i++) {
-                ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
-  
-                ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
-              }
-              
-              if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-                ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
-              }
-              if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-                ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
-              }
-            
-            
-              float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-              float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
-              
-              for (int i = 0; i < 3; i++) {
-                ANG_start[i] *= dist_start;
-                ANG_end[i] *= dist_end;
-              }
-              
-              for (int i = 0; i < 3; i++) {
-                P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
-              }        
-   
-              
-              
-              WIN3D_Diagrams.vertex(P[0] * OBJECTS_scale * WIN3D_Scale3D, -(P[1] * OBJECTS_scale * WIN3D_Scale3D), P[2] * OBJECTS_scale * WIN3D_Scale3D);
-              
-            }
-          }
-          
-        }
-        
-        if (allCurves_MTLVGC[f][5] == 0) { // if not closed
-          WIN3D_Diagrams.endShape();
-        }
-        else {
-          WIN3D_Diagrams.endShape(CLOSE);
-        }
-          
-          
-      }
-    }
-  }
-  
-  WIN3D_Diagrams.strokeWeight(0);
-}
-
-
-
-
-
-/*
-void SOLARCHVISION_export_objects_RAD () {
-void SOLARCHVISION_export_objects_OBJ () {
-void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
-float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
-*/
