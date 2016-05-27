@@ -27648,7 +27648,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 float[] SOLARCHVISION_10Dintersect (float[] ray_pnt, float[] ray_dir) {
-
+  
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   float[][] hitPoint = new float [allCurves_PNT.length][7];
@@ -34383,6 +34383,11 @@ void mouseWheel (MouseEvent event) {
                   if (nextIndex != -1) selectedFace_numbers[selectedFace_numbers.length - 1] = nextIndex;
                 }
 
+                if (Current_ObjectCategory == ObjectCategory_Curves) {
+                  int nextIndex = SOLARCHVISION_nextUnselected(go_direction, selectedCurve_numbers.length - 1);
+                  if (nextIndex != -1) selectedCurve_numbers[selectedCurve_numbers.length - 1] = nextIndex;
+                }
+
                 if (Current_ObjectCategory == ObjectCategory_Vertices) {
                   int nextIndex = SOLARCHVISION_nextUnselected(go_direction, selectedVertex_numbers.length - 1);
                   if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
@@ -35111,16 +35116,16 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
     println("Importing:", Filename);
 
-    int NUM_allGroup3Ds_Faces_Before = allGroup3Ds_num + 1;
+    int NUM_allGroup3Ds_Before = allGroup3Ds_num + 1;
 
     //SOLARCHVISION_import_objects_OBJ(Filename, -1,0,0,1,0,0, 0,0,0, 1,1,1); // different objects: different materials
     SOLARCHVISION_import_objects_OBJ(Filename, DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, 0, 0, 0, 1, 1, 1); // apply default material
 
-    int NUM_allGroup3Ds_Faces_After = allGroup3Ds_num + 1;
+    int NUM_allGroup3Ds_After = allGroup3Ds_num + 1;
 
-    selectedGroup3D_numbers = new int [1 + NUM_allGroup3Ds_Faces_After - NUM_allGroup3Ds_Faces_Before];
+    selectedGroup3D_numbers = new int [1 + NUM_allGroup3Ds_After - NUM_allGroup3Ds_Before];
     for (int i = 0; i < selectedGroup3D_numbers.length - 1; i++) { 
-      selectedGroup3D_numbers[i] = i + NUM_allGroup3Ds_Faces_Before;
+      selectedGroup3D_numbers[i] = i + NUM_allGroup3Ds_Before;
       //println(selectedGroup3D_numbers[i]);
     }
 
@@ -37579,7 +37584,9 @@ void mouseClicked () {
                 RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
               } else {
 
-                if (Current_ObjectCategory == ObjectCategory_Cameras) {
+                if (Current_ObjectCategory == ObjectCategory_Curves) {
+                  RxP = SOLARCHVISION_10Dintersect(ray_start, ray_direction);
+                } else if (Current_ObjectCategory == ObjectCategory_Cameras) {
                   RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction);
                 } else if (Current_ObjectCategory == ObjectCategory_Sections) {
                   RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction);
@@ -56082,9 +56089,6 @@ if (mouseButton == LEFT) { // modify should work only with left click because th
 if (WIN3D_UI_CurrentTask == UITASK_Create) { // create 
 
 
-search for ...
-if (selectedLine_displayVertices != 0) {
-
 
 
 void SOLARCHVISION_export_objects_OBJ () {
@@ -56092,8 +56096,5 @@ void SOLARCHVISION_export_objects_OBJ () {
 void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
 float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
 
-PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_Coordinate, float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float SKY2D_Z_Coordinate, float SKY2D_RX_Coordinate, float SKY2D_RY_Coordinate, float SKY2D_RZ_Coordinate) {
-
-void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
 */
