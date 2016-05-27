@@ -27011,6 +27011,66 @@ float Orthographic_ZOOM () {
 }
 
 
+
+void SOLARCHVISION_look_3DViewport_towards_Direction () {
+
+  SOLARCHVISION_lookXY_3DViewport_towards_Direction();
+  SOLARCHVISION_lookZ_3DViewport_towards_Direction();
+}
+
+void SOLARCHVISION_lookXY_3DViewport_towards_Direction () {
+
+  float xO = WIN3D_CAM_x / OBJECTS_scale;
+  float yO = WIN3D_CAM_y / OBJECTS_scale;
+  float zO = WIN3D_CAM_z / OBJECTS_scale;
+
+  float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+  float xA = ray_end[0] / OBJECTS_scale;
+  float yA = ray_end[1] / OBJECTS_scale;
+  float zA = ray_end[2] / OBJECTS_scale;
+  
+  float Image_X = SOLARCHVISION_X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+  float Image_Y = SOLARCHVISION_Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+
+  float[] P = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
+
+  float xB = P[0];
+  float yB = P[1];
+  float zB = P[2];  
+
+
+  WIN3D_RZ_Coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
+
+  SOLARCHVISION_reverseTransform_3DViewport();
+}
+
+
+void SOLARCHVISION_lookZ_3DViewport_towards_Direction () {
+
+  float xO = WIN3D_CAM_x / OBJECTS_scale;
+  float yO = WIN3D_CAM_y / OBJECTS_scale;
+  float zO = WIN3D_CAM_z / OBJECTS_scale;
+
+  float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+  float xA = ray_end[0] / OBJECTS_scale;
+  float yA = ray_end[1] / OBJECTS_scale;
+  float zA = ray_end[2] / OBJECTS_scale;
+
+  float Image_X = SOLARCHVISION_X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+  float Image_Y = SOLARCHVISION_Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+
+  float[] P = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
+
+  float xB = P[0];
+  float yB = P[1];
+  float zB = P[2];  
+
+  WIN3D_RX_Coordinate += atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
+
+  SOLARCHVISION_reverseTransform_3DViewport();
+}
+
+
 void SOLARCHVISION_look_3DViewport_towards_Selection () {
 
   SOLARCHVISION_lookXY_3DViewport_towards_Selection();
@@ -37073,12 +37133,18 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("LAO");
               UI_BAR_b_Update = 1;
             }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Look at direction")) {
+              UI_set_to_View_LookAtDirection(0);
+              SOLARCHVISION_highlight_in_BAR_b("LAD");
+              UI_BAR_b_Update = 1;
+            }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Look at selection")) {
               UI_set_to_View_LookAtSelection(0);
               SOLARCHVISION_highlight_in_BAR_b("LAS");
               UI_BAR_b_Update = 1;
             }          
-
+ 
+            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("3DModelSize")) {
               UI_set_to_View_3DModelSize();
               SOLARCHVISION_highlight_in_BAR_b("±SZ");
@@ -48493,7 +48559,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
+    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at direction", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
   }
   , 
   {
@@ -49018,6 +49084,10 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
+    "1", "LAD", "LookAtDirection", "1.0"
+  }  
+  , 
+  {
     "1", "LAS", "LookAtSelection", "1.0"
   }
   , 
@@ -49389,6 +49459,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("TargetRoll")) UI_set_to_View_TargetRoll(j - 1);
 
         if (Bar_Switch.equals("LookAtOrigin")) UI_set_to_View_LookAtOrigin(j - 1);
+        if (Bar_Switch.equals("LookAtDirection")) UI_set_to_View_LookAtDirection(j - 1);
         if (Bar_Switch.equals("LookAtSelection")) UI_set_to_View_LookAtSelection(j - 1);
 
         if (Bar_Switch.equals("Pan")) {
@@ -50071,6 +50142,16 @@ void UI_set_to_View_LookAtSelection (int n) {
     SOLARCHVISION_highlight_in_BAR_b("±CDS");
     UI_BAR_b_Update = 1;
   }
+
+  WIN3D_Update = 1;
+
+  ROLLOUT_Update = 1;
+}  
+
+
+void UI_set_to_View_LookAtDirection (int n) {
+
+  SOLARCHVISION_look_3DViewport_towards_Direction();
 
   WIN3D_Update = 1;
 
