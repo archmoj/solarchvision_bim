@@ -717,23 +717,23 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
 
-int UITASK_N17 = -17; //DistMouseXY/TargetRollXY/TargetRollZ
-int UITASK_N16 = -16; //PanY/TargetRollXY/TargetRollZ
-int UITASK_N15 = -15; //PanX/TargetRollXY/TargetRollZ
-int UITASK_N14 = -14; //Pan/TargetRoll
-int UITASK_N13 = -13; //CameraDistance/TargetRollXY/TargetRollZ
-int UITASK_N12 = -12; //TargetRoll/Pan
-int UITASK_N11 = -11; //TargetRollXY/TargetRollZ
-int UITASK_N10 = -10; //TargetRoll/Pan
-int UITASK_N09 = -9; //TargetRollXY/TargetRollZ
-int UITASK_N08 = -8; //AllModelSize
-int UITASK_N07 = -7; //SkydomeSize
-int UITASK_N06 = -6; //Truck/Orbit
-int UITASK_N05 = -5; //3DModelSize/Pan/TargetRoll
-int UITASK_N04 = -4; //Pan/Height
-int UITASK_N03 = -3; //Zoom/Orbit/Pan
-int UITASK_N02 = -2; //RectSelect
-int UITASK_N01 = -1; //PickSelect
+int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; //DistMouseXY/TargetRollXY/TargetRollZ
+int UITASK_PanY_TargetRollXY_TargetRollZ = -16; //PanY/TargetRollXY/TargetRollZ
+int UITASK_PanX_TargetRollXY_TargetRollZ = -15; //PanX/TargetRollXY/TargetRollZ
+int UITASK_Pan_TargetRoll = -14; //Pan/TargetRoll
+int UITASK_CameraDistance_TargetRollXY_TargetRollZ = -13; //CameraDistance/TargetRollXY/TargetRollZ
+int UITASK_TargetRoll_Pan = -12; //TargetRoll/Pan
+int UITASK_TargetRollXY_TargetRollZ = -11; //TargetRollXY/TargetRollZ
+int UITASK_TargetRoll_Pan = -10; //TargetRoll/Pan
+int UITASK_TargetRollXY_TargetRollZ = -9; //TargetRollXY/TargetRollZ
+int UITASK_AllModelSize = -8; //AllModelSize
+int UITASK_SkydomeSize = -7; //SkydomeSize
+int UITASK_Truck_Orbit = -6; //Truck/Orbit
+int UITASK_3DModelSize_Pan_TargetRoll = -5; //3DModelSize/Pan/TargetRoll
+int UITASK_Pan_Height = -4; //Pan/Height
+int UITASK_Zoom_Orbit_Pan = -3; //Zoom/Orbit/Pan
+int UITASK_RectSelect = -2; //RectSelect
+int UITASK_PickSelect = -1; //PickSelect
 int UITASK_Create = 0; //Create
 int UITASK_Move = 1; //Move
 int UITASK_Scale = 2; //Scale
@@ -34348,7 +34348,7 @@ void mouseWheel (MouseEvent event) {
               }
 
 
-              if (WIN3D_UI_CurrentTask == UITASK_N01) { // PickSelect 
+              if (WIN3D_UI_CurrentTask == UITASK_PickSelect) { // PickSelect 
 
                 int go_direction = int(Wheel_Value);
 
@@ -34412,7 +34412,7 @@ void mouseWheel (MouseEvent event) {
               }
 
 
-              if ((WIN3D_UI_CurrentTask == UITASK_N03) || (WIN3D_UI_CurrentTask == UITASK_N10) || (WIN3D_UI_CurrentTask == UITASK_N12) || (WIN3D_UI_CurrentTask == UITASK_N14)) { // viewport:zoom
+              if ((WIN3D_UI_CurrentTask == UITASK_Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D_ViewType == 1) {
                   WIN3D_Z_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
@@ -34423,7 +34423,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_N04) { // viewport:elevation
+              if (WIN3D_UI_CurrentTask == UITASK_Pan_Height) { // viewport:elevation
 
                 if (Wheel_Value > 0) WIN3D_Zoom = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_Zoom)); 
                 if (Wheel_Value < 0) WIN3D_Zoom = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_Zoom));
@@ -34431,7 +34431,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }  
 
-              if (WIN3D_UI_CurrentTask == UITASK_N05) { // viewport:3DModelSize
+              if (WIN3D_UI_CurrentTask == UITASK_3DModelSize_Pan_TargetRoll) { // viewport:3DModelSize
 
                 if (Wheel_Value > 0) OBJECTS_scale *= pow(2.0, 0.25);
                 if (Wheel_Value < 0) OBJECTS_scale /= pow(2.0, 0.25);
@@ -34439,7 +34439,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }          
 
-              if (WIN3D_UI_CurrentTask == UITASK_N06) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == UITASK_Truck_Orbit) { // viewport:different functions with wheel
 
                 if (WIN3D_UI_TaskModifyParameter == 0) { // Truck
 
@@ -34481,7 +34481,7 @@ void mouseWheel (MouseEvent event) {
               }  
 
 
-              if (WIN3D_UI_CurrentTask == UITASK_N07) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == UITASK_SkydomeSize) { // viewport:different functions with wheel
 
                 if (WIN3D_UI_TaskModifyParameter == 0) { // SkydomeSize
 
@@ -34492,7 +34492,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_N08) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == UITASK_AllModelSize) { // viewport:different functions with wheel
 
                 if (WIN3D_UI_TaskModifyParameter == 0) { // AllModelSize
 
@@ -34510,7 +34510,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }    
 
-              if (WIN3D_UI_CurrentTask == UITASK_N09) { // viewport:TargetRollXY/TargetRoolZ
+              if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRoolZ
 
                 if (WIN3D_UI_OptionXorY == 0) {   
                   WIN3D_RX_Coordinate += Wheel_Value * WIN3D_RS_Coordinate;
@@ -34527,7 +34527,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_N11) { // viewport:CameraRollXY/CameraRoolZ
+              if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport:CameraRollXY/CameraRoolZ
 
                 if (WIN3D_UI_OptionXorY == 0) {   
 
@@ -34542,28 +34542,28 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }            
 
-              if (WIN3D_UI_CurrentTask == UITASK_N13) { // viewport:CameraDistance
+              if (WIN3D_UI_CurrentTask == UITASK_CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
 
                 SOLARCHVISION_move_3DViewport_towards_Selection(pow(2, -0.5 * Wheel_Value));
 
                 WIN3D_Update = 1;
               }              
 
-              if (WIN3D_UI_CurrentTask == UITASK_N15) { // viewport:PanX
+              if (WIN3D_UI_CurrentTask == UITASK_PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
 
                 WIN3D_X_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
 
                 WIN3D_Update = 1;
               }         
 
-              if (WIN3D_UI_CurrentTask == UITASK_N16) { // viewport:PanY
+              if (WIN3D_UI_CurrentTask == UITASK_PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
 
                 WIN3D_Y_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
 
                 WIN3D_Update = 1;
               }      
 
-              if (WIN3D_UI_CurrentTask == UITASK_N17) { // viewport:DistMouseXY
+              if (WIN3D_UI_CurrentTask == UITASK_DistMouseXY_TargetRollXY_TargetRollZ) { // viewport:DistMouseXY
 
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
@@ -34639,7 +34639,7 @@ void mouseReleased () {
           if (WIN3D_Include == 1) {
             if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
 
-              if ((WIN3D_UI_CurrentTask == UITASK_N02) || (WIN3D_UI_CurrentTask > UITASK_Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
+              if ((WIN3D_UI_CurrentTask == UITASK_RectSelect) || (WIN3D_UI_CurrentTask > UITASK_Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
 
                 float corner1x = SOLARCHVISION_X_click1 - 0.5 * WIN3D_X_View - WIN3D_CX_View;
                 float corner1y = SOLARCHVISION_Y_click1 - 0.5 * WIN3D_Y_View - WIN3D_CY_View;
@@ -34819,7 +34819,7 @@ void mouseDragged () {
             float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
             float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
 
-            if ((WIN3D_UI_CurrentTask == UITASK_N15) || (WIN3D_UI_CurrentTask == UITASK_N16)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK_PanX_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK_PanY_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
 
@@ -34836,7 +34836,7 @@ void mouseDragged () {
               }
             } 
 
-            if ((WIN3D_UI_CurrentTask == UITASK_N14) || (WIN3D_UI_CurrentTask == UITASK_N17)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll) || (WIN3D_UI_CurrentTask == UITASK_DistMouseXY_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // pan
 
@@ -34857,7 +34857,7 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D_UI_CurrentTask == UITASK_N12) || (WIN3D_UI_CurrentTask == UITASK_N13)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRoll
 
@@ -34877,7 +34877,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_N11) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
 
@@ -34894,7 +34894,7 @@ void mouseDragged () {
               }
             }            
 
-            if (WIN3D_UI_CurrentTask == UITASK_N10) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) { // viewport
 
               if (mouseButton == LEFT) { // TargetRoll
 
@@ -34915,7 +34915,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_N09) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport
 
               if (mouseButton == LEFT) { // TargetRollXY
 
@@ -34936,7 +34936,7 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D_UI_CurrentTask == UITASK_N03) || (WIN3D_UI_CurrentTask == UITASK_N07) || (WIN3D_UI_CurrentTask == UITASK_N08)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK_Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK_SkydomeSize) || (WIN3D_UI_CurrentTask == UITASK_AllModelSize)) { // viewport
 
               if (mouseButton == LEFT) { // orbit
 
@@ -34955,7 +34955,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_N04) { 
+            if (WIN3D_UI_CurrentTask == UITASK_Pan_Height) { 
 
               if (mouseButton == LEFT) { // move Y
 
@@ -34972,7 +34972,7 @@ void mouseDragged () {
               }
             }
 
-            if (WIN3D_UI_CurrentTask == UITASK_N05) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK_3DModelSize_Pan_TargetRoll) { // viewport
 
               if (mouseButton == LEFT) { // pan
 
@@ -34993,7 +34993,7 @@ void mouseDragged () {
               }
             }
 
-            if (WIN3D_UI_CurrentTask == UITASK_N06) { // viewport:different functions
+            if (WIN3D_UI_CurrentTask == UITASK_Truck_Orbit) { // viewport:different functions
 
               if (WIN3D_UI_TaskModifyParameter == 0) { // Truck
 
@@ -49785,7 +49785,7 @@ void UI_set_to_View_ProjectionType (int n) {
 
 void UI_set_to_View_ClickSelect (int n) {
 
-  WIN3D_UI_CurrentTask = UITASK_N01;
+  WIN3D_UI_CurrentTask = UITASK_PickSelect;
 
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1;
@@ -49799,7 +49799,7 @@ void UI_set_to_View_ClickSelect (int n) {
 }
 
 void UI_set_to_View_WindowSelect (int n) {
-  WIN3D_UI_CurrentTask = UITASK_N02;
+  WIN3D_UI_CurrentTask = UITASK_RectSelect;
 
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1;
@@ -49840,17 +49840,17 @@ void UI_set_to_View_PivotZ (int n) {
 void UI_set_to_View_Truck (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N03;
+    WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_N06;
+    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_N06;
+    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -49862,7 +49862,7 @@ void UI_set_to_View_Truck (int n) {
 void UI_set_to_View_DistMouseXY (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N17;
+    WIN3D_UI_CurrentTask = UITASK_DistMouseXY_TargetRollXY_TargetRollZ;
   }
 
   ROLLOUT_Update = 1;
@@ -49873,7 +49873,7 @@ void UI_set_to_View_DistMouseXY (int n) {
 void UI_set_to_View_CameraDistance (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N13;
+    WIN3D_UI_CurrentTask = UITASK_CameraDistance_TargetRollXY_TargetRollZ;
   }
 
   ROLLOUT_Update = 1;
@@ -49884,17 +49884,17 @@ void UI_set_to_View_CameraDistance (int n) {
 void UI_set_to_View_CameraRoll (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N12;
+    WIN3D_UI_CurrentTask = UITASK_TargetRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_N11;
+    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_N11;
+    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -49907,17 +49907,17 @@ void UI_set_to_View_CameraRoll (int n) {
 void UI_set_to_View_TargetRoll (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N10;
+    WIN3D_UI_CurrentTask = UITASK_TargetRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_N09;
+    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_N09;
+    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -49929,17 +49929,17 @@ void UI_set_to_View_TargetRoll (int n) {
 void UI_set_to_View_Orbit (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N03;
+    WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_N06;
+    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 1;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_N06;
+    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 1;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -49988,15 +49988,15 @@ void UI_set_to_View_LookAtOrigin (int n) {
 void UI_set_to_View_Pan (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_N14;
+    WIN3D_UI_CurrentTask = UITASK_Pan_TargetRoll;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_N15;
+    WIN3D_UI_CurrentTask = UITASK_PanX_TargetRollXY_TargetRollZ;
   }
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_N16;
+    WIN3D_UI_CurrentTask = UITASK_PanY_TargetRollXY_TargetRollZ;
   }
 
 
@@ -50004,7 +50004,7 @@ void UI_set_to_View_Pan (int n) {
 }  
 
 void UI_set_to_View_ZOOM (int n) {
-  WIN3D_UI_CurrentTask = UITASK_N04;
+  WIN3D_UI_CurrentTask = UITASK_Pan_Height;
 
   if (n == 1) {
     WIN3D_Zoom = 60;
@@ -50016,7 +50016,7 @@ void UI_set_to_View_ZOOM (int n) {
 
 void UI_set_to_View_3DModelSize () {
 
-  WIN3D_UI_CurrentTask = UITASK_N05;
+  WIN3D_UI_CurrentTask = UITASK_3DModelSize_Pan_TargetRoll;
 
   WIN3D_Update = 1;  
 
@@ -50025,7 +50025,7 @@ void UI_set_to_View_3DModelSize () {
 
 void UI_set_to_View_SkydomeSize () {
 
-  WIN3D_UI_CurrentTask = UITASK_N07;
+  WIN3D_UI_CurrentTask = UITASK_SkydomeSize;
 
   WIN3D_Update = 1;  
 
@@ -50034,7 +50034,7 @@ void UI_set_to_View_SkydomeSize () {
 
 void UI_set_to_View_AllModelSize () {
 
-  WIN3D_UI_CurrentTask = UITASK_N08;
+  WIN3D_UI_CurrentTask = UITASK_AllModelSize;
 
   WIN3D_Update = 1;  
 
