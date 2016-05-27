@@ -21735,6 +21735,7 @@ void SOLARCHVISION_export_objects_SCR () {
   println("End of scripting lines and meshes."); 
 
   SOLARCHVISION_explore_output(scrFilename);
+  println("File created:" + scrFilename);
 }
 
 
@@ -21887,6 +21888,7 @@ void SOLARCHVISION_export_objects_RAD () {
   println("End of creating rad file."); 
 
   SOLARCHVISION_explore_output(radFilename);
+  println("File created:" + radFilename);
   
   
   String batFilename = radFilename.replace(".rad", ".bat");
@@ -21909,7 +21911,7 @@ void SOLARCHVISION_export_objects_RAD () {
   Command2 += " -vv " + nf(WIN3D_Zoom, 0, 0);
   Command2 += " -vh " + nf(2 * atan_ang((WIN3D_X_View / float(WIN3D_Y_View)) * tan_ang(0.5 * WIN3D_Zoom)), 0, 0);  
 
-  Command2 += " -vp " + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0);
+  Command2 += " -vp " + nf(WIN3D_CAM_x / OBJECTS_scale, 0, 0) + " " + nf(WIN3D_CAM_y / OBJECTS_scale, 0, 0) + " " + nf(WIN3D_CAM_z / OBJECTS_scale, 0, 0);
 
   float dx = cos_ang(90 - WIN3D_RX_Coordinate) * cos_ang(90 - WIN3D_RZ_Coordinate);
   float dy = cos_ang(90 - WIN3D_RX_Coordinate) * sin_ang(90 - WIN3D_RZ_Coordinate);
@@ -23891,6 +23893,7 @@ void SOLARCHVISION_export_objects_OBJ () {
   println("End of exporting the mesh."); 
 
   SOLARCHVISION_explore_output(objFilename);
+  println("File created:" + objFilename);
 }
 
 void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
@@ -54622,7 +54625,6 @@ void SOLARCHVISION_add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, 
   defaultWeight = wgt;
   defaultClose = clz;
 
-  
 
   int[] newCurve = {
     SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
