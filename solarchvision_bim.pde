@@ -1,4 +1,6 @@
 
+// Modify Normal at Curve level is not complete... 
+
 // writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
 
 // colud record Climate data flags later.
@@ -751,16 +753,14 @@ int UITASK_TrunkSize = 12;
 int UITASK_LeafSize = 13; 
 int UITASK_AllFractalProps = 14; 
 int UITASK_Pivot = 15; 
-int UITASK_FaceNormal = 16; 
-int UITASK_FaceFirstVertex = 17; 
-int UITASK_CurveNormal = 18; 
-int UITASK_CurveFirstVertex = 19; 
-int UITASK_Drop = 20; 
-int UITASK_GetLength = 21; 
-int UITASK_PowerX = 22; 
-int UITASK_PowerY = 23; 
-int UITASK_PowerZ = 24; 
-int UITASK_PowerAll = 25; 
+int UITASK_Normal = 16; 
+int UITASK_FirstVertex = 17; 
+int UITASK_Drop = 18; 
+int UITASK_GetLength = 19; 
+int UITASK_PowerX = 20; 
+int UITASK_PowerY = 21; 
+int UITASK_PowerZ = 22; 
+int UITASK_PowerAll = 23; 
 
 int WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan; 
 int WIN3D_UI_OptionXorY = 0; // 0-1
@@ -36458,53 +36458,31 @@ void mouseClicked () {
               UI_BAR_b_Update = 1;
             } 
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip FaceNormal")) {
-              UI_set_to_Modify_FaceNormal(1);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm1");
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip Normal")) {
+              UI_set_to_Modify_Normal(1);
+              SOLARCHVISION_highlight_in_BAR_b("Norm1");
               UI_BAR_b_Update = 1;
             }                
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out FaceNormal")) {
-              UI_set_to_Modify_FaceNormal(2);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm2");
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out Normal")) {
+              UI_set_to_Modify_Normal(2);
+              SOLARCHVISION_highlight_in_BAR_b("Norm2");
               UI_BAR_b_Update = 1;
             }   
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In FaceNormal")) {
-              UI_set_to_Modify_FaceNormal(3);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm3");
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In Normal")) {
+              UI_set_to_Modify_Normal(3);
+              SOLARCHVISION_highlight_in_BAR_b("Norm3");
               UI_BAR_b_Update = 1;
             }   
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get FaceFirstVertex")) {
-              UI_set_to_Modify_FaceFirstVertex(1);
-              SOLARCHVISION_highlight_in_BAR_b("F1stV");
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get FirstVertex")) {
+              UI_set_to_Modify_FirstVertex(1);
+              SOLARCHVISION_highlight_in_BAR_b("1stV");
               UI_BAR_b_Update = 1;
             }     
             
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip CurveNormal")) {
-              UI_set_to_Modify_CurveNormal(1);
-              SOLARCHVISION_highlight_in_BAR_b("CNorm1");
-              UI_BAR_b_Update = 1;
-            }                
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out CurveNormal")) {
-              UI_set_to_Modify_CurveNormal(2);
-              SOLARCHVISION_highlight_in_BAR_b("CNorm2");
-              UI_BAR_b_Update = 1;
-            }   
-
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In CurveNormal")) {
-              UI_set_to_Modify_CurveNormal(3);
-              SOLARCHVISION_highlight_in_BAR_b("CNorm3");
-              UI_BAR_b_Update = 1;
-            }   
-
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get CurveFirstVertex")) {
-              UI_set_to_Modify_CurveFirstVertex(1);
-              SOLARCHVISION_highlight_in_BAR_b("C1stV");
-              UI_BAR_b_Update = 1;
-            }                 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
@@ -37692,7 +37670,7 @@ void mouseClicked () {
 
                 if ((WIN3D_UI_TaskModifyParameter != 0) && (WIN3D_UI_CurrentTask >= UITASK_Seed_Material)) { // Pick/Assign properties 
 
-                  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) {
+                  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves)) {
 
                     int f = int(RxP[0]);
 
@@ -37757,7 +37735,7 @@ void mouseClicked () {
                       }
                     }
 
-                    if (WIN3D_UI_CurrentTask == UITASK_FaceNormal) { //FaceNormal
+                    if (WIN3D_UI_CurrentTask == UITASK_Normal) { //Normal
 
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
 
@@ -37877,7 +37855,7 @@ void mouseClicked () {
                     }   
 
 
-                    if (WIN3D_UI_CurrentTask == UITASK_FaceFirstVertex) { //FaceFirstVertex
+                    if (WIN3D_UI_CurrentTask == UITASK_FirstVertex) { //FirstVertex
 
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
 
@@ -37915,6 +37893,45 @@ void mouseClicked () {
                           }
                         }
                       }
+                      
+                      
+                      if (Current_ObjectCategory == ObjectCategory_Curves) {
+
+                        selectedCurve_numbers = new int [2];
+                        selectedCurve_numbers[0] = 0;
+                        selectedCurve_numbers[1] = f;
+
+                        selectedCurve_displayVertexCount = 1;
+
+                        int n = allCurves_PNT[f].length;
+
+                        if (n > 2) {
+
+                          int min_num = 0;
+                          float min_dist = FLOAT_undefined;
+
+                          for (int j = 0; j < n; j++) {
+                            int vNo = allCurves_PNT[f][j];
+
+                            float d = dist(RxP[1], RxP[2], RxP[3], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+
+                            if (min_dist > d) {
+                              min_dist = d;
+                              min_num = j;
+                            }
+                          }
+
+                          int[] tmpCurve = new int[n];
+                          for (int j = 0; j < n; j++) {
+                            tmpCurve[j] = allCurves_PNT[f][j];
+                          }  
+
+                          for (int j = 0; j < n; j++) {
+                            allCurves_PNT[f][j] = tmpCurve[(j + min_num + n) % n];
+                          }
+                        }
+                      }                      
+                      
                     }
                   } 
 
@@ -47619,7 +47636,7 @@ void UI_dessin_Weight (int _type, float x, float y, float r) {
 }
 
 
-void UI_dessin_FaceNormal (int _type, float x, float y, float r) {
+void UI_dessin_Normal (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
@@ -47669,7 +47686,7 @@ void UI_dessin_FaceNormal (int _type, float x, float y, float r) {
 }
 
 
-void UI_dessin_FaceFirstVertex (int _type, float x, float y, float r) {
+void UI_dessin_FirstVertex (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
@@ -48508,7 +48525,7 @@ String[][] UI_BAR_a_Items = {
     "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Curve Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Curves", "Hide All Curves", "Hide Selected Curves", "Unhide Selected Curves", "Unhide All Curves", "Flatten Selected LandPoints"  }
   , 
   {
-    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Flip CurveNormal", "Set-Out CurveNormal", "Set-In CurveNormal", "Get CurveFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
+    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip Normal", "Set-Out Normal", "Set-In Normal", "Get FirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
   }
   , 
   {
@@ -49125,16 +49142,14 @@ String[][] UI_BAR_b_Items = {
   }
   ,   
   {
-    "1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"
+    "1", "Norm1", "Norm2", "Norm3", "Normal", "1.0"
   }
   , 
   {
-    "1", "F1stV", "FaceFirstVertex", "1.0"
+    "1", "1stV", "FirstVertex", "1.0"
   }
   , 
 
-  //{"1", "CNorm1", "CNorm2", "CNorm3", "CurveNormal", "1.0"},
-  //{"1", "C1stV", "CurveFirstVertex", "1.0"},
 
   //{"1", "<pvt>", ">pvt<", "|pvt|", ".pvt.", "Get/Set Pivot", "1.0"},
 
@@ -49337,25 +49352,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((UI_BAR_b_Items[i][j]).equals("Wgt3")) UI_set_to_Modify_Weight(3);
         }           
 
-        if (Bar_Switch.equals("FaceNormal")) {
-          if ((UI_BAR_b_Items[i][j]).equals("FNorm1")) UI_set_to_Modify_FaceNormal(1);
-          if ((UI_BAR_b_Items[i][j]).equals("FNorm2")) UI_set_to_Modify_FaceNormal(2);
-          if ((UI_BAR_b_Items[i][j]).equals("FNorm3")) UI_set_to_Modify_FaceNormal(3);
+        if (Bar_Switch.equals("Normal")) {
+          if ((UI_BAR_b_Items[i][j]).equals("Norm1")) UI_set_to_Modify_Normal(1);
+          if ((UI_BAR_b_Items[i][j]).equals("Norm2")) UI_set_to_Modify_Normal(2);
+          if ((UI_BAR_b_Items[i][j]).equals("Norm3")) UI_set_to_Modify_Normal(3);
         }
 
-        if (Bar_Switch.equals("FaceFirstVertex")) {
-          if ((UI_BAR_b_Items[i][j]).equals("F1stV")) UI_set_to_Modify_FaceFirstVertex(1);
+        if (Bar_Switch.equals("FirstVertex")) {
+          if ((UI_BAR_b_Items[i][j]).equals("1stV")) UI_set_to_Modify_FirstVertex(1);
         }        
 
-        if (Bar_Switch.equals("CurveNormal")) {
-          if ((UI_BAR_b_Items[i][j]).equals("CNorm1")) UI_set_to_Modify_CurveNormal(1);
-          if ((UI_BAR_b_Items[i][j]).equals("CNorm2")) UI_set_to_Modify_CurveNormal(2);
-          if ((UI_BAR_b_Items[i][j]).equals("CNorm3")) UI_set_to_Modify_CurveNormal(3);
-        }
-
-        if (Bar_Switch.equals("CurveFirstVertex")) {
-          if ((UI_BAR_b_Items[i][j]).equals("C1stV")) UI_set_to_Modify_CurveFirstVertex(1);
-        }   
 
 
         if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
@@ -49450,11 +49456,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Change Weight")) {
           UI_dessin_Weight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
         }          
-        if (Bar_Switch.equals("FaceNormal")) {
-          UI_dessin_FaceNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+        if (Bar_Switch.equals("Normal")) {
+          UI_dessin_Normal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
         }           
-        if (Bar_Switch.equals("FaceFirstVertex")) {
-          UI_dessin_FaceFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+        if (Bar_Switch.equals("FirstVertex")) {
+          UI_dessin_FirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
         }            
 
         if (Bar_Switch.equals("ClickSelect")) {
@@ -49797,40 +49803,21 @@ void UI_set_to_Modify_Pivot (int n) {
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_FaceNormal (int n) {
-  WIN3D_UI_CurrentTask = UITASK_FaceNormal;
+void UI_set_to_Modify_Normal (int n) {
+  WIN3D_UI_CurrentTask = UITASK_Normal;
   WIN3D_UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
   ROLLOUT_Update = 1;
 }
 
-void UI_set_to_Modify_FaceFirstVertex (int n) {
-  WIN3D_UI_CurrentTask = UITASK_FaceFirstVertex;
+void UI_set_to_Modify_FirstVertex (int n) {
+  WIN3D_UI_CurrentTask = UITASK_FirstVertex;
   WIN3D_UI_TaskModifyParameter = n; // 1:default
 
-  Current_ObjectCategory = ObjectCategory_Faces; // << because it only works with face sub-object
-  //UI_BAR_b_Update = 1;
-
   ROLLOUT_Update = 1;
 }
 
 
-void UI_set_to_Modify_CurveNormal (int n) {
-  WIN3D_UI_CurrentTask = UITASK_CurveNormal;
-  WIN3D_UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
-
-  ROLLOUT_Update = 1;
-}
-
-void UI_set_to_Modify_CurveFirstVertex (int n) {
-  WIN3D_UI_CurrentTask = UITASK_CurveFirstVertex;
-  WIN3D_UI_TaskModifyParameter = n; // 1:default
-
-  Current_ObjectCategory = ObjectCategory_Curves; // << because it only works with curve sub-object
-  //UI_BAR_b_Update = 1;
-
-  ROLLOUT_Update = 1;
-}
 
 
 void UI_set_to_Modify_Drop (int n) {
