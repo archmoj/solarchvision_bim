@@ -717,52 +717,49 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
 
-int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; //DistMouseXY/TargetRollXY/TargetRollZ
-int UITASK_PanY_TargetRollXY_TargetRollZ = -16; //PanY/TargetRollXY/TargetRollZ
-int UITASK_PanX_TargetRollXY_TargetRollZ = -15; //PanX/TargetRollXY/TargetRollZ
-int UITASK_Pan_TargetRoll = -14; //Pan/TargetRoll
-int UITASK_CameraDistance_TargetRollXY_TargetRollZ = -13; //CameraDistance/TargetRollXY/TargetRollZ
-int UITASK_TargetRoll_Pan = -12; //TargetRoll/Pan
-int UITASK_TargetRollXY_TargetRollZ = -11; //TargetRollXY/TargetRollZ
-int UITASK_TargetRoll_Pan = -10; //TargetRoll/Pan
-int UITASK_TargetRollXY_TargetRollZ = -9; //TargetRollXY/TargetRollZ
-int UITASK_AllModelSize = -8; //AllModelSize
-int UITASK_SkydomeSize = -7; //SkydomeSize
-int UITASK_Truck_Orbit = -6; //Truck/Orbit
-int UITASK_3DModelSize_Pan_TargetRoll = -5; //3DModelSize/Pan/TargetRoll
-int UITASK_Pan_Height = -4; //Pan/Height
-int UITASK_Zoom_Orbit_Pan = -3; //Zoom/Orbit/Pan
-int UITASK_RectSelect = -2; //RectSelect
-int UITASK_PickSelect = -1; //PickSelect
-int UITASK_Create = 0; //Create
-int UITASK_Move = 1; //Move
-int UITASK_Scale = 2; //Scale
-int UITASK_Rotate = 3; //Rotate
-int UITASK_Seed_Material = 4; //Seed/Material
-int UITASK_Tessellation = 5; //Tessellation
-int UITASK_Layer = 6; //Layer
-int UITASK_Visibility = 7; //Visibility
-int UITASK_Weight = 8; //Weight
-int UITASK_DegreeMax = 9; //DegreeMax
-int UITASK_DegreeDif = 10; //DegreeDif
-int UITASK_DegreeMin = 11; //DegreeMin
-int UITASK_TrunkSize = 12; //TrunkSize
-int UITASK_LeafSize = 13; //LeafSize
-int UITASK_AllFractalProps = 14; //AllFractalProps
-int UITASK_Pivot = 15; //Pivot
-int UITASK_FaceNormal = 16; //FaceNormal
-int UITASK_FaceFirstVertex = 17; //FaceFirstVertex
-int UITASK_Drop = 18; //Drop
-int UITASK_GetLength = 19; //GetLength
-int UITASK_PowerX = 20; //PowerX
-int UITASK_PowerY = 21; //PowerY
-int UITASK_PowerZ = 22; //PowerZ
-int UITASK_PowerAll = 23; //PowerXYZ
+int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; 
+int UITASK_PanY_TargetRollXY_TargetRollZ = -16; 
+int UITASK_PanX_TargetRollXY_TargetRollZ = -15; 
+int UITASK_Pan_TargetRoll = -14; 
+int UITASK_CameraDistance_TargetRollXY_TargetRollZ = -13; 
+int UITASK_CameraRoll_Pan = -12; 
+int UITASK_CameraRollXY_CameraRollZ = -11; 
+int UITASK_TargetRoll_Pan = -10; 
+int UITASK_TargetRollXY_TargetRollZ = -9; 
+int UITASK_AllModelSize = -8; 
+int UITASK_SkydomeSize = -7; 
+int UITASK_Truck_Orbit = -6; 
+int UITASK_3DModelSize_Pan_TargetRoll = -5; 
+int UITASK_Pan_Height = -4; 
+int UITASK_Zoom_Orbit_Pan = -3; 
+int UITASK_RectSelect = -2; 
+int UITASK_PickSelect = -1; 
+int UITASK_Create = 0; 
+int UITASK_Move = 1; 
+int UITASK_Scale = 2; 
+int UITASK_Rotate = 3; 
+int UITASK_Seed_Material = 4; 
+int UITASK_Tessellation = 5; 
+int UITASK_Layer = 6; 
+int UITASK_Visibility = 7; 
+int UITASK_Weight = 8; 
+int UITASK_DegreeMax = 9; 
+int UITASK_DegreeDif = 10; 
+int UITASK_DegreeMin = 11; 
+int UITASK_TrunkSize = 12; 
+int UITASK_LeafSize = 13; 
+int UITASK_AllFractalProps = 14; 
+int UITASK_Pivot = 15; 
+int UITASK_FaceNormal = 16; 
+int UITASK_FaceFirstVertex = 17; 
+int UITASK_Drop = 18; 
+int UITASK_GetLength = 19; 
+int UITASK_PowerX = 20; 
+int UITASK_PowerY = 21; 
+int UITASK_PowerZ = 22; 
+int UITASK_PowerAll = 23; 
 
-
-
-
-int WIN3D_UI_CurrentTask = UITASK_Create; 
+int WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan; 
 int WIN3D_UI_OptionXorY = 0; // 0-1
 int WIN3D_UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. Fractals
 
@@ -34412,7 +34409,7 @@ void mouseWheel (MouseEvent event) {
               }
 
 
-              if ((WIN3D_UI_CurrentTask == UITASK_Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll)) { // viewport:zoom
+              if ((WIN3D_UI_CurrentTask == UITASK_Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK_CameraRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D_ViewType == 1) {
                   WIN3D_Z_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
@@ -34527,7 +34524,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport:CameraRollXY/CameraRoolZ
+              if (WIN3D_UI_CurrentTask == UITASK_CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRoolZ
 
                 if (WIN3D_UI_OptionXorY == 0) {   
 
@@ -34857,7 +34854,7 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK_CameraRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRoll
 
@@ -34877,7 +34874,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK_CameraRollXY_CameraRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
 
@@ -49884,17 +49881,17 @@ void UI_set_to_View_CameraDistance (int n) {
 void UI_set_to_View_CameraRoll (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_TargetRoll_Pan;
+    WIN3D_UI_CurrentTask = UITASK_CameraRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK_CameraRollXY_CameraRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK_CameraRollXY_CameraRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
