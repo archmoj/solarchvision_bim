@@ -716,7 +716,53 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
-int WIN3D_UI_CurrentTask = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:Weight 9:DegreeMax 10:DegreeDif 11:DegreeMin 12:TrunkSize 13:LeafSize 14:AllFractalProps 15:Pivot 16:FaceNormal 17:FaceFirstVertex 18:Drop 19:GetLength 20:PowerX 21:PowerY 22:PowerZ 23:PowerXYZ 
+
+int UITASK_N17 = -17; //DistMouseXY/TargetRollXY/TargetRollZ
+int UITASK_N16 = -16; //PanY/TargetRollXY/TargetRollZ
+int UITASK_N15 = -15; //PanX/TargetRollXY/TargetRollZ
+int UITASK_N14 = -14; //Pan/TargetRoll
+int UITASK_N13 = -13; //CameraDistance/TargetRollXY/TargetRollZ
+int UITASK_N12 = -12; //TargetRoll/Pan
+int UITASK_N11 = -11; //TargetRollXY/TargetRollZ
+int UITASK_N10 = -10; //TargetRoll/Pan
+int UITASK_N09 = -9; //TargetRollXY/TargetRollZ
+int UITASK_N08 = -8; //AllModelSize
+int UITASK_N07 = -7; //SkydomeSize
+int UITASK_N06 = -6; //Truck/Orbit
+int UITASK_N05 = -5; //3DModelSize/Pan/TargetRoll
+int UITASK_N04 = -4; //Pan/Height
+int UITASK_N03 = -3; //Zoom/Orbit/Pan
+int UITASK_N02 = -2; //RectSelect
+int UITASK_N01 = -1; //PickSelect
+int UITASK_P00 = 0; //Create
+int UITASK_P01 = 1; //Move
+int UITASK_P02 = 2; //Scale
+int UITASK_P03 = 3; //Rotate
+int UITASK_P04 = 4; //Seed/Material
+int UITASK_P05 = 5; //Tessellation
+int UITASK_P06 = 6; //Layer
+int UITASK_P07 = 7; //Visibility
+int UITASK_P08 = 8; //Weight
+int UITASK_P09 = 9; //DegreeMax
+int UITASK_P10 = 10; //DegreeDif
+int UITASK_P11 = 11; //DegreeMin
+int UITASK_P12 = 12; //TrunkSize
+int UITASK_P13 = 13; //LeafSize
+int UITASK_P14 = 14; //AllFractalProps
+int UITASK_P15 = 15; //Pivot
+int UITASK_P16 = 16; //FaceNormal
+int UITASK_P17 = 17; //FaceFirstVertex
+int UITASK_P18 = 18; //Drop
+int UITASK_P19 = 19; //GetLength
+int UITASK_P20 = 20; //PowerX
+int UITASK_P21 = 21; //PowerY
+int UITASK_P22 = 22; //PowerZ
+int UITASK_P23 = 23; //PowerXYZ
+
+
+
+
+int WIN3D_UI_CurrentTask = UITASK_P00; 
 int WIN3D_UI_OptionXorY = 0; // 0-1
 int WIN3D_UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. Fractals
 
