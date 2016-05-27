@@ -1,9 +1,6 @@
 // export and import of curves
 // converting curves to faces e.g. Surface, Extrude, Connect
 
-//should add both add_face and add_line here!
-//if (WIN3D_UI_CurrentTask == UITASK_Create) { // create 
-
 // Modify Normal at Curve level is not complete... 
 
 // writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
@@ -23,6 +20,7 @@
 
 // could add join/explode groups ?
 
+// could add create curve
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
@@ -29059,6 +29057,29 @@ void SOLARCHVISION_add_Model_Home () { //Home
 
 
 
+void SOLARCHVISION_add_Model_Simple () {
+
+  {
+    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
+    SOLARCHVISION_add_Mesh2(7,0,0,1,0,0, -50,-50,0, 50,50,0); 
+  }
+  
+  {  
+    float dx = 5;
+    float dy = 5;
+    float dz = 5;
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float rot = 0;
+    
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);    
+    SOLARCHVISION_add_House_Core(7,0,0,1,0,0, x,y,z, dx,dy,dz, dz, rot); // house 
+  } 
+
+
+}
+
 
 void SOLARCHVISION_add_Model_Main () {
 
@@ -53990,13 +54011,22 @@ void SOLARCHVISION_RenderViewport () {
 
   Image_RGBA.loadPixels();
 
+  float Progress = 0;
+
+   
+
+
   for (int np = 0; np < (RES1 * RES2); np++) {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
     
     Image_X -= 0.5 * WIN3D_X_View;
     Image_Y -= 0.5 * WIN3D_Y_View;
-  
+
+    if (10 + Progress < 100 * np / float(RES1 * RES2)) { 
+      Progress = 100 * np / float(RES1 * RES2);
+      println("Progress:", int(Progress), "%");
+    }
 
     float[] ray_direction = new float [3];
 
