@@ -187,6 +187,7 @@ int pre_selectedGroup3D_displayBox;
 
 int pre_selectedFace_displayEdges;
 int pre_selectedFace_displayVertexCount;
+int pre_selectedCurve_displayVertexCount;
 int pre_selectedVertex_displayVertices;
 int pre_selectedCurve_displayVertices;
 
@@ -752,12 +753,14 @@ int UITASK_AllFractalProps = 14;
 int UITASK_Pivot = 15; 
 int UITASK_FaceNormal = 16; 
 int UITASK_FaceFirstVertex = 17; 
-int UITASK_Drop = 18; 
-int UITASK_GetLength = 19; 
-int UITASK_PowerX = 20; 
-int UITASK_PowerY = 21; 
-int UITASK_PowerZ = 22; 
-int UITASK_PowerAll = 23; 
+int UITASK_CurveNormal = 18; 
+int UITASK_CurveFirstVertex = 19; 
+int UITASK_Drop = 20; 
+int UITASK_GetLength = 21; 
+int UITASK_PowerX = 22; 
+int UITASK_PowerY = 23; 
+int UITASK_PowerZ = 24; 
+int UITASK_PowerAll = 25; 
 
 int WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan; 
 int WIN3D_UI_OptionXorY = 0; // 0-1
@@ -2250,6 +2253,7 @@ int selectedGroup3D_displayBox = 1;
 
 int selectedFace_displayEdges = 1;
 int selectedFace_displayVertexCount = 0;
+int selectedCurve_displayVertexCount = 0;
 int selectedVertex_displayVertices = 1;
 int selectedCurve_displayVertices = 1;
 
@@ -2870,6 +2874,7 @@ void draw () {
 
         pre_selectedFace_displayEdges = selectedFace_displayEdges;
         pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
+        pre_selectedCurve_displayVertexCount = selectedCurve_displayVertexCount;
         pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
         pre_selectedCurve_displayVertices = selectedCurve_displayVertices;
 
@@ -3207,6 +3212,10 @@ void draw () {
         if (pre_selectedFace_displayVertexCount != selectedFace_displayVertexCount) {
           WIN3D_Update = 1;
         }     
+        
+        if (pre_selectedCurve_displayVertexCount != selectedCurve_displayVertexCount) {
+          WIN3D_Update = 1;
+        }           
 
         if (pre_selectedVertex_displayVertices != selectedVertex_displayVertices) {
           WIN3D_Update = 1;
@@ -35862,7 +35871,13 @@ void mouseClicked () {
 
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }               
+            }            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Curves Vertex Count")) {
+              selectedCurve_displayVertexCount = (selectedCurve_displayVertexCount + 1) % 2;
+
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }                   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Vertices")) {
               selectedVertex_displayVertices = (selectedVertex_displayVertices + 1) % 2;
 
@@ -36461,6 +36476,30 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("F1stV");
               UI_BAR_b_Update = 1;
             }     
+            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip CurveNormal")) {
+              UI_set_to_Modify_CurveNormal(1);
+              SOLARCHVISION_highlight_in_BAR_b("CNorm1");
+              UI_BAR_b_Update = 1;
+            }                
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out CurveNormal")) {
+              UI_set_to_Modify_CurveNormal(2);
+              SOLARCHVISION_highlight_in_BAR_b("CNorm2");
+              UI_BAR_b_Update = 1;
+            }   
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In CurveNormal")) {
+              UI_set_to_Modify_CurveNormal(3);
+              SOLARCHVISION_highlight_in_BAR_b("CNorm3");
+              UI_BAR_b_Update = 1;
+            }   
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get CurveFirstVertex")) {
+              UI_set_to_Modify_CurveFirstVertex(1);
+              SOLARCHVISION_highlight_in_BAR_b("C1stV");
+              UI_BAR_b_Update = 1;
+            }                 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
@@ -39263,6 +39302,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       selectedFace_displayEdges = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "selectedFace_displayEdges", selectedFace_displayEdges, 0, 1, 1), 1));
       selectedFace_displayVertexCount = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "selectedFace_displayVertexCount", selectedFace_displayVertexCount, 0, 1, 1), 1));
+      selectedCurve_displayVertexCount = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "selectedCurve_displayVertexCount", selectedCurve_displayVertexCount, 0, 1, 1), 1));
       selectedVertex_displayVertices = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "selectedVertex_displayVertices", selectedVertex_displayVertices, 0, 1, 1), 1));
       selectedCurve_displayVertices = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "selectedCurve_displayVertices", selectedCurve_displayVertices, 0, 1, 1), 1));
 
@@ -40605,10 +40645,49 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   
   if (Current_ObjectCategory == ObjectCategory_Curves) {    
 
-    if (selectedCurve_displayVertices != 0) {
-//????????????      
+    if (selectedCurve_displayVertexCount != 0) {
+
+      pushMatrix();
+
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+
+      fill(0);
+
+      stroke(0); 
+      strokeWeight(0);
+
+      textSize(1.5 * MessageSize);
+      textAlign(CENTER, BOTTOM);
+
+      for (int o = selectedCurve_numbers.length - 1; o >= 0; o--) {
+
+        int f = selectedCurve_numbers[o];
+
+        if (f != 0) {
+
+          for (int j = 0; j < allCurves_PNT[f].length; j++) {
+            int vNo = allCurves_PNT[f][j];
+
+            float x = allVertices[vNo][0] * OBJECTS_scale;
+            float y = allVertices[vNo][1] * OBJECTS_scale;            
+            float z = -allVertices[vNo][2] * OBJECTS_scale;
+
+            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+
+            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+                text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
+              }
+            }
+          }
+        }
+      }
+
+      strokeWeight(0);   
+
+      popMatrix();
     }
-  }  
+  }
 
 
   if (Current_ObjectCategory == ObjectCategory_Vertices) {    
@@ -48390,7 +48469,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected REF Pivot", "Display/Hide Selected Group3D Pivot", "Display/Hide Selected Group3D Edges", "Display/Hide Selected Group3D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide CLMREC points", "Display/Hide CLMREC nearest", "Display/Hide TMYEPW points", "Display/Hide TMYEPW nearest"
+    "Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Curves Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected REF Pivot", "Display/Hide Selected Group3D Pivot", "Display/Hide Selected Group3D Edges", "Display/Hide Selected Group3D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide CLMREC points", "Display/Hide CLMREC nearest", "Display/Hide TMYEPW points", "Display/Hide TMYEPW nearest"
   }
   , 
   {
@@ -48422,7 +48501,7 @@ String[][] UI_BAR_a_Items = {
     "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Curve Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Curves", "Hide All Curves", "Hide Selected Curves", "Unhide Selected Curves", "Unhide All Curves", "Flatten Selected LandPoints"  }
   , 
   {
-    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
+    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Flip CurveNormal", "Set-Out CurveNormal", "Set-In CurveNormal", "Get CurveFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
   }
   , 
   {
@@ -48751,6 +48830,12 @@ void SOLARCHVISION_draw_window_BAR_a () {
                   fill(127);
                 }
               }   
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Curves Vertex Count")) {
+                if (selectedCurve_displayVertexCount == 0) {
+                  stroke(127); 
+                  fill(127);
+                }
+              }                
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Vertices")) {
                 if (selectedVertex_displayVertices == 0) {
                   stroke(127); 
@@ -49041,6 +49126,9 @@ String[][] UI_BAR_b_Items = {
   }
   , 
 
+  //{"1", "CNorm1", "CNorm2", "CNorm3", "CurveNormal", "1.0"},
+  //{"1", "C1stV", "CurveFirstVertex", "1.0"},
+
   //{"1", "<pvt>", ">pvt<", "|pvt|", ".pvt.", "Get/Set Pivot", "1.0"},
 
   //{"1", "SPvt0", "SPvt1", "SPvt2", "Pivot", "1.0"},
@@ -49251,6 +49339,17 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("FaceFirstVertex")) {
           if ((UI_BAR_b_Items[i][j]).equals("F1stV")) UI_set_to_Modify_FaceFirstVertex(1);
         }        
+
+        if (Bar_Switch.equals("CurveNormal")) {
+          if ((UI_BAR_b_Items[i][j]).equals("CNorm1")) UI_set_to_Modify_CurveNormal(1);
+          if ((UI_BAR_b_Items[i][j]).equals("CNorm2")) UI_set_to_Modify_CurveNormal(2);
+          if ((UI_BAR_b_Items[i][j]).equals("CNorm3")) UI_set_to_Modify_CurveNormal(3);
+        }
+
+        if (Bar_Switch.equals("CurveFirstVertex")) {
+          if ((UI_BAR_b_Items[i][j]).equals("C1stV")) UI_set_to_Modify_CurveFirstVertex(1);
+        }   
+
 
         if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);        
@@ -49703,6 +49802,24 @@ void UI_set_to_Modify_FaceFirstVertex (int n) {
   WIN3D_UI_TaskModifyParameter = n; // 1:default
 
   Current_ObjectCategory = ObjectCategory_Faces; // << because it only works with face sub-object
+  //UI_BAR_b_Update = 1;
+
+  ROLLOUT_Update = 1;
+}
+
+
+void UI_set_to_Modify_CurveNormal (int n) {
+  WIN3D_UI_CurrentTask = UITASK_CurveNormal;
+  WIN3D_UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
+
+  ROLLOUT_Update = 1;
+}
+
+void UI_set_to_Modify_CurveFirstVertex (int n) {
+  WIN3D_UI_CurrentTask = UITASK_CurveFirstVertex;
+  WIN3D_UI_TaskModifyParameter = n; // 1:default
+
+  Current_ObjectCategory = ObjectCategory_Curves; // << because it only works with curve sub-object
   //UI_BAR_b_Update = 1;
 
   ROLLOUT_Update = 1;
@@ -51202,6 +51319,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("selectedFace_displayEdges", selectedFace_displayEdges);
   newChild1.setInt("selectedFace_displayVertexCount", selectedFace_displayVertexCount);
+  newChild1.setInt("selectedCurve_displayVertexCount", selectedCurve_displayVertexCount);
   newChild1.setInt("selectedVertex_displayVertices", selectedVertex_displayVertices);
   newChild1.setInt("selectedCurve_displayVertices", selectedCurve_displayVertices);
   newChild1.setInt("selectedGroup3D_displayPivot", selectedGroup3D_displayPivot);  
@@ -52517,6 +52635,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedGroup3D_displayBox = children0[L].getInt("selectedGroup3D_displayBox");
       selectedFace_displayEdges = children0[L].getInt("selectedFace_displayEdges");
       selectedFace_displayVertexCount = children0[L].getInt("selectedFace_displayVertexCount");
+      selectedCurve_displayVertexCount = children0[L].getInt("selectedCurve_displayVertexCount");
       selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
       selectedCurve_displayVertices = children0[L].getInt("selectedCurve_displayVertices");
       selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
@@ -55889,7 +56008,7 @@ void SOLARCHVISION_draw_Curves () {
           
           if (drawSegment == 1) {
 
-            for (int q = 0; q < Tessellation; q++) {
+            for (int q = 0; q <= Tessellation; q++) {
   
               float[] P = {0, 0, 0};
               
@@ -55977,27 +56096,4 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_C
 
 void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip FaceNormal")) {
-              UI_set_to_Modify_FaceNormal(1);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm1");
-              UI_BAR_b_Update = 1;
-            }                
-
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out FaceNormal")) {
-              UI_set_to_Modify_FaceNormal(2);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm2");
-              UI_BAR_b_Update = 1;
-            }   
-
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In FaceNormal")) {
-              UI_set_to_Modify_FaceNormal(3);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm3");
-              UI_BAR_b_Update = 1;
-            }   
-
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get FaceFirstVertex")) {
-              UI_set_to_Modify_FaceFirstVertex(1);
-              SOLARCHVISION_highlight_in_BAR_b("F1stV");
-              UI_BAR_b_Update = 1;
-            }     
 */
