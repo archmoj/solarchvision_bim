@@ -12832,7 +12832,7 @@ void STUDY_keyPressed (KeyEvent e) {
         STUDY_Update = 1;
         ROLLOUT_Update = 1;
 
-        InitializationStep = 8; 
+        InitializationStep = 11; 
         frameCount = InitializationStep; 
         textAlign(CENTER, CENTER); 
         textSize(MessageSize);                    
@@ -12846,7 +12846,7 @@ void STUDY_keyPressed (KeyEvent e) {
         STUDY_Update = 1;
         ROLLOUT_Update = 1;
 
-        InitializationStep = 8; 
+        InitializationStep = 11; 
         frameCount = InitializationStep; 
         textAlign(CENTER, CENTER); 
         textSize(MessageSize);                    
@@ -56445,7 +56445,20 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }    
 
 
-   
+  else if (parts[0].toUpperCase().equals("LONLAT")) {
+    if (parts.length > 2) {
+      
+      STATION_Number = 0; // <<<<<<<<<< overwrite station 0
+      
+      Defined_Stations[STATION_Number][3] = parts[2];
+      Defined_Stations[STATION_Number][4] = parts[1];
+      
+      SOLARCHVISION_update_station(1);
+    }
+    else {
+      return_message = "LonLat ? ?";
+    }        
+  }      
 
   
   return return_message;
