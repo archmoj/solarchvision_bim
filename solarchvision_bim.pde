@@ -39,7 +39,8 @@ void launch (String[] s) {
 }
 
 
-String BaseFolder = "C:/SOLARCHVISION_2015"; 
+String SOLARCHVISION_version = "2016"; 
+String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
 
 String Grib2ArchiveFolder;
 String Wgrib2TempFolder;
@@ -820,20 +821,20 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
-//String CLIMATE_TMYEPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
-String CLIMATE_TMYEPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW_WORLD";
+//String CLIMATE_TMYEPW_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_EPW";
+String CLIMATE_TMYEPW_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_EPW_WORLD";
 
-//String CLIMATE_CWEEDS_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
-//String CLIMATE_CWEEDS_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-String CLIMATE_CWEEDS_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
+//String CLIMATE_CWEEDS_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+//String CLIMATE_CWEEDS_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
+String CLIMATE_CWEEDS_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CWEED";
 
-String CLIMATE_CLMREC_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CLMREC";
+String CLIMATE_CLMREC_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CLMREC";
 
-//String FORECAST_ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
-String FORECAST_ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS_Download";
+//String FORECAST_ENSEMBLE_directory = BaseFolder + "/Input/WeatherForecast/FORECAST_NAEFS";
+String FORECAST_ENSEMBLE_directory = BaseFolder + "/Input/WeatherForecast/FORECAST_NAEFS_Download";
 
-String RECENT_OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB_EMPTY";
-//String RECENT_OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB";
+String RECENT_OBSERVED_directory = BaseFolder + "/Input/WeatherRealTime/OBSERVATION_SWOB_EMPTY";
+//String RECENT_OBSERVED_directory = BaseFolder + "/Input/WeatherRealTime/OBSERVATION_SWOB";
 
 int TIME_ModelRun = 0; //12; 
 
@@ -2368,7 +2369,7 @@ void SOLARCHVISION_draw_frameIcon () {
 
   frame_icon.beginDraw();
 
-  //frame_icon.image(loadImage("C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Icon/s-icon.png"), 0, 0 );
+  //frame_icon.image(loadImage(BaseFolder + "/Input/BackgroundImages/Standard/Maps/Icon/s-icon.png"), 0, 0 );
 
   frame_icon.background(0);
   //frame_icon.background(63,63,255,255);
@@ -6055,7 +6056,7 @@ void SOLARCHVISION_try_update_FORECAST_ENSEMBLE (int THE_YEAR, int THE_MONTH, in
 
 
     if (any_file_downloaded != 0) {
-      launch("C:/SOLARCHVISION_2015/BatchFiles/unzipNAEFS.bat".replace('/', char(92)));
+      launch(BaseFolder + "/BatchFiles/unzipNAEFS.bat".replace('/', char(92)));
       //FORECAST_ENSEMBLE_XML_Files = SOLARCHVISION_getfiles(FORECAST_ENSEMBLE_directory); // slow
     }
 
@@ -24717,7 +24718,7 @@ void SOLARCHVISION_add_urban () {
       //float h = (HeightAboveGround - LocationElevation);
       float h = 0; //-20; // ?????????????????????????????????????????
 
-      SOLARCHVISION_import_objects_OBJ("C:/SOLARCHVISION_2015/Import/Stations/" + Defined_Stations[STATION_Number][0] + ".obj", -1, 0, 0, 1, 0, 0, 0, 0, h, 1, 1, 1);
+      SOLARCHVISION_import_objects_OBJ(BaseFolder + "/Import/Stations/" + Defined_Stations[STATION_Number][0] + ".obj", -1, 0, 0, 1, 0, 0, 0, 0, h, 1, 1, 1);
 
       urbanVertices_end = allVertices.length;
       urbanFaces_end = allFaces_PNT.length;
@@ -25329,8 +25330,8 @@ void SOLARCHVISION_draw_WindFlow () {
 
 PImage[] TROPO_IMAGES_Map;
 
-//String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
-String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds_less";
+//String TROPO_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Tropo/Winds";
+String TROPO_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Tropo/Winds_less";
 
 String[] TROPO_IMAGES_Filenames;
 
@@ -25449,7 +25450,7 @@ PImage[] EARTH_IMAGES_Map;
 float[][] EARTH_IMAGES_BoundariesX;
 float[][] EARTH_IMAGES_BoundariesY;
 
-String EARTH_IMAGES_Path = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/EarthSurface";
+String EARTH_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/EarthSurface";
 
 String[] EARTH_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(EARTH_IMAGES_Path));
 
@@ -25574,7 +25575,7 @@ void SOLARCHVISION_draw_EARTH3D () {
 
 
 
-String MOON_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
+String MOON_IMAGE_Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
 
 PImage MOON_IMAGE_Map; 
 
@@ -25672,7 +25673,7 @@ void SOLARCHVISION_draw_MOON3D () {
 }
 
 
-String STAR_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
+String STAR_IMAGE_Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
 
 PImage STAR_IMAGE_Map;
 
@@ -28640,7 +28641,7 @@ float[][][] LAND_MESH;
 
 void SOLARCHVISION_load_LandMesh (String ProjectSite) {
 
-  String LandDirectory = LandFolder + "/" + ProjectSite + "/"  + ProjectSite;
+  String LandDirectory = LandFolder + "/" + ProjectSite;
 
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
@@ -28837,7 +28838,7 @@ void SOLARCHVISION_add_Model_2DsFromFile () {
   SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
 
-  String[] FileALL = loadStrings("C:/SOLARCHVISION_2015/Import/Hamedan_PEOPLE.txt");
+  String[] FileALL = loadStrings(BaseFolder + "/Import/Hamedan_PEOPLE.txt");
 
   String lineSTR;  
 
@@ -29801,18 +29802,18 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                           String File_Name = "";
 
                           if (Defined_Stations[STATION_Number][0].equals("Hamedan")) { 
-                            File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Hamedan" + "/";
+                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Hamedan" + "/";
                           } else if (Defined_Stations[STATION_Number][0].equals("Financial_District")) { 
-                            File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Financial_District" + "/";
+                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Financial_District" + "/";
                           } else if (Defined_Stations[STATION_Number][0].equals("Ryerson_University")) { 
-                            File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
+                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
                           } else if (Defined_Stations[STATION_Number][0].equals("Place_Bonaventure")) { 
-                            File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
+                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
                           } else if (Defined_Stations[STATION_Number][0].equals("Montreal_Downtown")) { 
-                            if (Camera_Variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                            if (Camera_Variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                            if (Camera_Variation == 1) File_Name = BaseFolder + "/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                            if (Camera_Variation == 2) File_Name = BaseFolder + "/Input/ShadingAnalysis/EV_BUILDING" + "/";
                           } else {
-                            File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
                           }                          
 
 
@@ -41660,7 +41661,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           };
           String File_Name = "";
 
-          File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+          File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
 
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
 
@@ -42257,7 +42258,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
       };
       String File_Name = "";
 
-      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+      File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
 
       File_Name += "DIF_" + STR_SHD[SHD];
 
@@ -51109,7 +51110,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   XML newChild3 = null;
 
 
-  my_xml.setName("SOLARCHVISION_2015_project");
+  my_xml.setName("SOLARCHVISION_" + SOLARCHVISION_version + "_project");
 
   newChild1 = my_xml.addChild("SOLARCHVISION_variables");
 
@@ -54562,7 +54563,7 @@ void SOLARCHVISION_PreBakeViewport () {
         };
         String File_Name = "";
   
-        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+        File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
   
         File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
   
@@ -54586,7 +54587,7 @@ void SOLARCHVISION_PreBakeViewport () {
     };
     String File_Name = "";
 
-    File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+    File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
 
     File_Name += "DIF_" + STR_SHD[SHD];
     
