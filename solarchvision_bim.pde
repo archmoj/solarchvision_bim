@@ -56244,7 +56244,7 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 }
 
 
-
+/*
 int DiffuseSamples = 16; // internal now! 
 
 float[][] DiffuseVectors = new float[DiffuseSamples][3]; 
@@ -56256,6 +56256,12 @@ float[][] DiffuseVectors = new float[DiffuseSamples][3];
     DiffuseVectors[i][2] = random(0.1, 1);
   }
 }
+*/
+
+int DiffuseSamples = 5; // internal now! 
+
+float[][] DiffuseVectors = {{0,0,1}, {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}};
+
 
 void SOLARCHVISION_PreBakeViewport () {
 
