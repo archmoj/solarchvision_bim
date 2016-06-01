@@ -1,9 +1,13 @@
+// still not working well: SOLARCHVISION_autoNormalFaces_Selection
+
 // export and import of curves
 // converting curves to faces e.g. Surface, Extrude, Connect
 
-// Modify Normal at Curve level is not complete... 
+// Modify Normal at Curve level is not complete...
 
-// writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
+// SOLARCHVISION_autoNormalCurve_Selection
+
+// writing export to rad completed for meshes and land - not Fractals and 2Ds yet!1
 
 // colud record Climate data flags later.
 
@@ -27718,6 +27722,118 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
 }
 
 
+float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
+  
+  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+
+  float[][] hitPoint = new float [selectedFace_numbers.length][7];
+
+  for (int o = 0; o < selectedFace_numbers.length; o++) {
+    hitPoint[o][0] = FLOAT_undefined;
+    hitPoint[o][1] = FLOAT_undefined;
+    hitPoint[o][2] = FLOAT_undefined;
+    hitPoint[o][3] = FLOAT_undefined;
+    hitPoint[o][4] = FLOAT_undefined;
+    hitPoint[o][5] = FLOAT_undefined;
+    hitPoint[o][6] = FLOAT_undefined;
+  }
+  
+  
+  for (int o = 0; o < selectedFace_numbers.length; o++) {
+    
+    int f = selectedFace_numbers[o];     
+    
+    if (f > 0) {  
+
+      int vsb = allFaces_MTLVGC[f][3];
+  
+      if (vsb > 0) {    
+        
+        float[] A = allVertices[allFaces_PNT[f][0]];
+        float[] B = allVertices[allFaces_PNT[f][1]];
+        float[] C = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 2]];
+        float[] D = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 1]];
+        
+        float[] AC = SOLARCHVISION_3xSub(A, C);
+        float[] BD = SOLARCHVISION_3xSub(B, D);
+        
+        float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+        
+        float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+        
+        float dist2intersect = FLOAT_undefined;
+      
+        float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+  
+        if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+          dist2intersect = FLOAT_huge;
+        }
+        else {
+          dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+  
+          //if (dist2intersect > 0) {
+          if (dist2intersect > FLOAT_tiny) {
+          
+            float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+            float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+            float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+      
+            float AnglesAll = 0;      
+      
+            for (int i = 0; i < allFaces_PNT[f].length; i++) {
+              int next_i = (i + 1) % allFaces_PNT[f].length;
+      
+              float[] vect1 = {allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect};
+              float[] vect2 = {allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect};
+      
+              float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
+      
+              AnglesAll += t;
+            }
+            
+            if (AnglesAll > 359) { // <<<<<<<<<
+            
+              hitPoint[o][0] = X_intersect;
+              hitPoint[o][1] = Y_intersect;
+              hitPoint[o][2] = Z_intersect;
+              hitPoint[o][3] = dist2intersect;
+              hitPoint[o][4] = face_norm[0];
+              hitPoint[o][5] = face_norm[1];
+              hitPoint[o][6] = face_norm[2];
+            }
+          }
+        }
+      }
+    }
+  }  
+
+  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+
+  float pre_dist = FLOAT_undefined;
+
+  for (int o = 0; o < selectedFace_numbers.length; o++) {
+    
+    if (pre_dist > hitPoint[o][3]) {
+
+      pre_dist = hitPoint[o][3];
+
+      return_point[0] = o;
+      return_point[1] = hitPoint[o][0];
+      return_point[2] = hitPoint[o][1];
+      return_point[3] = hitPoint[o][2];
+      return_point[4] = hitPoint[o][3];
+      return_point[5] = hitPoint[o][4];
+      return_point[6] = hitPoint[o][5];
+      return_point[7] = hitPoint[o][6];
+
+    }
+
+  }
+
+  return return_point;
+}
+
+
 float[] SOLARCHVISION_10Dintersect (float[] ray_pnt, float[] ray_dir) {
   
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
@@ -36978,6 +37094,10 @@ void mouseClicked () {
               SOLARCHVISION_duplicate_Selection(1);
               WIN3D_Update = 1;
             } 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Auto-Normal Faces Selection")) {
+              SOLARCHVISION_autoNormalFaces_Selection();
+              WIN3D_Update = 1;
+            }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Insert Corner Opennings")) {
               SOLARCHVISION_inserCornerOpennings_Selection();
               WIN3D_Update = 1;
@@ -48668,7 +48788,7 @@ String[][] UI_BAR_a_Items = {
   ,
  
   {
-    "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Curve Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Curves", "Hide All Curves", "Hide Selected Curves", "Unhide Selected Curves", "Unhide All Curves", "Flatten Selected LandPoints"  }
+    "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Curve Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Auto-Normal Faces Selection", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Curves", "Hide All Curves", "Hide Selected Curves", "Unhide Selected Curves", "Unhide All Curves", "Flatten Selected LandPoints"  }
   , 
   {
     "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip Normal", "Set-Out Normal", "Set-In Normal", "Get FirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
@@ -56515,4 +56635,91 @@ void SOLARCHVISION_PreBakeViewport () {
   cursor(ARROW);
   
 
+}
+
+
+void SOLARCHVISION_autoNormalFaces_Selection () {
+
+  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+
+    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+
+      selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
+
+      SOLARCHVISION_convert_Group3D_to_Face();    
+
+      selectedFace_numbers = sort(selectedFace_numbers);
+    }
+
+    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+
+      selectedFace_numbers = sort(selectedFace_numbers);
+
+      SOLARCHVISION_convert_Face_to_Group3D();    
+
+      selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
+    }
+
+
+    if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) {
+
+
+      for (int o = 0; o < selectedFace_numbers.length; o++) {
+  
+        int f = selectedFace_numbers[o];     
+        
+        if (f > 0) {
+        
+          int n = allFaces_PNT[f].length;
+    
+          if (n > 2) {
+            int[] tmpFace = new int[n];
+            float[] G = {
+              0, 0, 0
+            }; 
+            for (int j = 0; j < n; j++) {
+              tmpFace[j] = allFaces_PNT[f][j];
+              G[0] += allVertices[tmpFace[j]][0] / float(n); 
+              G[1] += allVertices[tmpFace[j]][1] / float(n);
+              G[2] += allVertices[tmpFace[j]][2] / float(n);
+            }  
+    
+            
+            
+            PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
+            PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+    
+            PVector GAxGB = AG.cross(BG);
+    
+            
+            float[] ray_start = {G[0], G[1], G[2]};
+            float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
+
+
+            int flip_face = 0;
+    
+            int hitFace = int(SOLARCHVISION_selected3Dintersect(ray_start, ray_direction)[0]);
+    
+            if (hitFace != 0) flip_face = 1;
+    
+            if (flip_face == 1) {
+              for (int j = 0; j < n; j++) {
+                allFaces_PNT[f][j] = tmpFace[n - j - 1];
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+
+    Current_ObjectCategory = ObjectCategory_Faces; 
+    UI_BAR_b_Update = 1;
+
+    println("SOLARCHVISION_calculate_selection_BoundingBox 3700");
+    SOLARCHVISION_calculate_selection_BoundingBox();
+
+    WIN3D_VerticesSolarValue_Update = 1;
+  }
 }
