@@ -1046,7 +1046,7 @@ String[][] GRIB2_Domains = {
     "HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km", "-00.grib2", "2.5"
   } 
   , {
-    "WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.08", ".grib2", "5"
+    "RDWPS", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.08", ".grib2", "5"
   }
 };
 
@@ -5857,7 +5857,6 @@ float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Active, float j) {
     c[1] = 255 - 0.5 * COL[1];
     c[2] = 255 - 0.5 * COL[2];
     c[3] = 255 - 0.5 * COL[3];
-    STUDY_Diagrams.stroke(255 - 0.5 * COL[1], 255 - 0.5 * COL[2], 255 - 0.5 * COL[3], 127);
   } else if (COLOR_STYLE_Active == 10) {
     float[] COL = SOLARCHVISION_BGR(j);
     c[0] = 255;
@@ -39785,7 +39784,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
 
           String the_link = "";
 
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("WAVE")) {
+          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDWPS")) {
             the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + the_filename;
           }
           if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("HRDPS")) {
