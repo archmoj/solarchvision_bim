@@ -294,7 +294,7 @@ float CubePower = 16; //8;
 float StarPower = 0.25; 
 
 
-double DOUBLE_r_Earth = 6373000.0;
+double DOUBLE_r_Earth = 6367470.0; //6373000.0;
 float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
 
 
@@ -350,10 +350,15 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 2; 
+int STATION_Number = 0; 
 
 String[][] Defined_Stations = {
 
+  {
+    "Chitgar_Diba", "XX", "IR", "35.75425", "51.19250", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"
+  }
+  ,   
+  
   {
     "OCPM_2016a", "QC", "CA", "45.489049", "-73.578942", "-75", "30", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
   }  
@@ -363,6 +368,11 @@ String[][] Defined_Stations = {
     "Tweed", "XX", "AT", "44.4763", "-77.3138", "-75", "0", "240.0", "", "", ""
   }  
   ,    
+  
+  {
+    "Dezhou", "XX", "CN", "37.441290", "116.371787", "120", "0", "240.0", "", "", "CHN_Shandong.Huimin.Xian.547250_CSWD"
+  }  
+  ,      
   
   {
     "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
