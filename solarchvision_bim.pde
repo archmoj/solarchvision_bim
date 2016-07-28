@@ -350,7 +350,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 0; 
+int STATION_Number = 3; 
 
 String[][] Defined_Stations = {
 
@@ -29926,20 +29926,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                           };
                           String File_Name = "";
 
-                          if (Defined_Stations[STATION_Number][0].equals("Hamedan")) { 
-                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Hamedan" + "/";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Financial_District")) { 
-                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Financial_District" + "/";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Ryerson_University")) { 
-                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Place_Bonaventure")) { 
-                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Montreal_Downtown")) { 
-                            if (Camera_Variation == 1) File_Name = BaseFolder + "/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                            if (Camera_Variation == 2) File_Name = BaseFolder + "/Input/ShadingAnalysis/EV_BUILDING" + "/";
-                          } else {
-                            File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
-                          }                          
+                          File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+                         
 
 
                           if (RAD_TYPE == 0) {
@@ -29948,20 +29936,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                             File_Name += "DIF_" + STR_SHD[SHD];
                           }
 
-                          if (Defined_Stations[STATION_Number][0].equals("Hamedan")) { 
-                            File_Name += "_" + "Hamedan" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Financial_District")) { 
-                            File_Name += "_" + "Financial_District" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Ryerson_University")) { 
-                            File_Name += "_" + "Ryerson_University" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Place_Bonaventure")) { 
-                            File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
-                          } else if (Defined_Stations[STATION_Number][0].equals("Montreal_Downtown")) { 
-                            if (Camera_Variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                            if (Camera_Variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
-                          } else {
-                            File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
-                          }
+                          File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
+
 
                           println(File_Name);
                           Shadings[SHD]  = loadImage(File_Name);
