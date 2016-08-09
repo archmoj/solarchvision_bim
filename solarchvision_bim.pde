@@ -350,7 +350,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 3; 
+int STATION_Number = 9; 
 
 String[][] Defined_Stations = {
 
@@ -656,7 +656,7 @@ int DEFAULT_CreatePivotType = 0;
 float ModifyInput_WeldTreshold = 0.1; 
 
 int ModifyInput_TessellateRows = 6;
-int ModifyInput_TessellateColumns = 4;
+int ModifyInput_TessellateColumns = 30;
 
 float ModifyInput_OffsetAmount = 1.0; // 1 = 1m
 
@@ -1780,7 +1780,7 @@ int LAND_TESSELLATION = 0; //2;
 int MODEL3D_Tessellation = 2;
 
 int SKY3D_TESSELLATION = 3; //3;
-float SKY3D_scale = 25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+float SKY3D_scale = 1000000;//25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 float WindRose3D_scale = 400;
 
@@ -28983,7 +28983,8 @@ void SOLARCHVISION_add_Model_2DsFromFile () {
 }
 
 
-void SOLARCHVISION_add_Model_CMC () { //CMC
+//void SOLARCHVISION_add_Model_CMC () { //CMC
+void SOLARCHVISION_add_Model_Main () { //CMC
 
 
   {
@@ -28997,6 +28998,12 @@ void SOLARCHVISION_add_Model_CMC () { //CMC
     SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
     SOLARCHVISION_add_Box_Core(7, 0, 0, 1, 0, 0, x, y, z, dx, dy, dz, rot);
     //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1);
+    
+    for (float i = 0; i < 2 * dz; i += dz / 3.0) {
+      SOLARCHVISION_add_Box_Core(2, 0, 0, 1, 0, 0, x, y, i - 0.25, dx - 0.25, dy - 0.25, 0.25, rot); // floors
+      
+      SOLARCHVISION_add_Object2Ds_plane(1, 10, x, y, i, dx - 0.25, dy - 0.25, rot); // people
+    }       
   }  
 
 
@@ -29221,7 +29228,8 @@ void SOLARCHVISION_add_Model_Simple () {
 }
 
 
-void SOLARCHVISION_add_Model_Main () {
+void SOLARCHVISION_add_Model_MainRemarked () {
+//void SOLARCHVISION_add_Model_Main () {
 
   /*
   {
