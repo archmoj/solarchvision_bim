@@ -350,7 +350,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 9; 
+int STATION_Number = 0; 
 
 String[][] Defined_Stations = {
 
