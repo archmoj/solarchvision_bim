@@ -1,3 +1,5 @@
+// should save renders in another directory not root!
+
 // still not working well: SOLARCHVISION_autoNormalFaces_Selection
 
 // export and import of curves
@@ -7,7 +9,7 @@
 
 // SOLARCHVISION_autoNormalCurve_Selection
 
-// writing export to rad completed for meshes and land - not Fractals and 2Ds yet!1
+// writing export to rad completed for meshes and land - not Fractals and 2Ds yet!
 
 // colud record Climate data flags later.
 
@@ -36286,11 +36288,16 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Box");
               UI_BAR_b_Update = 1;
             }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Icosahedron")) {
+              UI_set_to_Create_Icosahedron();
+              SOLARCHVISION_highlight_in_BAR_b("Icosahedron");
+              UI_BAR_b_Update = 1;
+            }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Octahedron")) {
               UI_set_to_Create_Octahedron();
               SOLARCHVISION_highlight_in_BAR_b("Octahedron");
               UI_BAR_b_Update = 1;
-            }
+            }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Sphere")) {
               UI_set_to_Create_Sphere();
               SOLARCHVISION_highlight_in_BAR_b("Sphere");
@@ -48770,7 +48777,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
@@ -49332,7 +49339,7 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
-    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"
+    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"
   }
   , 
   {
@@ -49571,6 +49578,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((UI_BAR_b_Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
           else if ((UI_BAR_b_Items[i][j]).equals("House")) UI_set_to_Create_House();
           else if ((UI_BAR_b_Items[i][j]).equals("Box")) UI_set_to_Create_Box();
+          else if ((UI_BAR_b_Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
           else if ((UI_BAR_b_Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
           else if ((UI_BAR_b_Items[i][j]).equals("Sphere")) UI_set_to_Create_Sphere();
           else if ((UI_BAR_b_Items[i][j]).equals("Cylinder")) UI_set_to_Create_Cylinder();
@@ -49902,6 +49910,19 @@ void UI_set_to_Create_Box () {
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower; 
   CreateInput_powZ = CubePower;             
+
+  Current_ObjectCategory = ObjectCategory_Group3Ds;
+}
+
+
+void UI_set_to_Create_Icosahedron () {
+  UI_set_to_Create_Nothing();
+
+  CreateButton_3DSuperOBJ = 1;
+
+  CreateInput_powX = 1;  
+  CreateInput_powY = 1; 
+  CreateInput_powZ = 1;            
 
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
@@ -54469,6 +54490,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Move dx=? dy=? dz=?";
+      
+      SOLARCHVISION_highlight_in_BAR_b("MV³");
+      UI_BAR_b_Update = 1;
     }
   }  
   
@@ -54500,6 +54524,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
+  
+      UI_set_to_Modify_Rotate(2);
+      UI_BAR_b_Update = 1;
     }    
   }    
   
@@ -54536,6 +54563,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
+      
+      SOLARCHVISION_highlight_in_BAR_b("SC³");
+      UI_BAR_b_Update = 1;      
     }        
   }    
   
@@ -54652,6 +54682,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "2Dman m=? x=? y=? z=?";
+
+      UI_set_to_Create_Person();
+      SOLARCHVISION_highlight_in_BAR_b("Person");
+      UI_BAR_b_Update = 1;      
     }  
   }
      
@@ -54683,6 +54717,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "2Dtree m=? x=? y=? z=? h=?";
+      
+      UI_set_to_Create_Tree();
+      SOLARCHVISION_highlight_in_BAR_b("Tree");
+      UI_BAR_b_Update = 1;      
     }  
   }    
  
@@ -54726,6 +54764,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
+      
+      UI_set_to_Create_Fractal();
+      SOLARCHVISION_highlight_in_BAR_b("Fractal");
+      UI_BAR_b_Update = 1;      
     }  
   }     
 
@@ -54768,6 +54810,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
+
+      UI_set_to_Create_Box();
+      SOLARCHVISION_highlight_in_BAR_b("Box");
+      UI_BAR_b_Update = 1;            
     }  
   }  
   
@@ -54812,6 +54858,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+
+      UI_set_to_Create_Box();
+      SOLARCHVISION_highlight_in_BAR_b("Box");
+      UI_BAR_b_Update = 1;      
     }  
   }     
 
@@ -54858,6 +54908,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "House m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+
+      UI_set_to_Create_House();
+      SOLARCHVISION_highlight_in_BAR_b("House");
+      UI_BAR_b_Update = 1;      
     }  
   }     
 
@@ -54902,6 +54956,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
+      
+      UI_set_to_Create_Cylinder();
+      SOLARCHVISION_highlight_in_BAR_b("Cylinder");
+      UI_BAR_b_Update = 1;            
     }  
   }   
 
@@ -54944,6 +55002,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
+      
+      UI_set_to_Create_Sphere();
+      SOLARCHVISION_highlight_in_BAR_b("Sphere");
+      UI_BAR_b_Update = 1;      
     }  
   }   
 
@@ -54997,6 +55059,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
+      
+      UI_set_to_Create_Sphere();
+      SOLARCHVISION_highlight_in_BAR_b("Sphere");
+      UI_BAR_b_Update = 1;      
     }  
   }   
 
@@ -55042,6 +55108,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+      
+      UI_set_to_Create_Octahedron();
+      SOLARCHVISION_highlight_in_BAR_b("Octahedron");
+      UI_BAR_b_Update = 1;      
     }  
   }  
 
@@ -55082,6 +55152,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
+      
+      UI_set_to_Create_Icosahedron();
+      SOLARCHVISION_highlight_in_BAR_b("Icosahedron");
+      UI_BAR_b_Update = 1;            
     }  
   } 
   
@@ -55126,6 +55200,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
+      
+      UI_set_to_Create_Extrude();
+      SOLARCHVISION_highlight_in_BAR_b("Extrude");
+      UI_BAR_b_Update = 1;      
     }  
   }       
 
@@ -55170,6 +55248,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
+      
+      UI_set_to_Create_Hyper();
+      SOLARCHVISION_highlight_in_BAR_b("Hyper");
+      UI_BAR_b_Update = 1;      
     }  
   }       
 
@@ -55212,6 +55294,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
+      
+      UI_set_to_Create_Poly();
+      SOLARCHVISION_highlight_in_BAR_b("Poly");
+      UI_BAR_b_Update = 1;      
     }  
   }  
 
@@ -55623,6 +55709,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
+      
+      UI_set_to_Create_Solid();
+      SOLARCHVISION_highlight_in_BAR_b("SLD");
+      UI_BAR_b_Update = 1;      
     }  
   }  
 
@@ -55661,6 +55751,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Section t=? i=? j=? w=? h=? u=? v=? e=? r=?";
+      
+      UI_set_to_Create_Section();
+      SOLARCHVISION_highlight_in_BAR_b("SEC");
+      UI_BAR_b_Update = 1;      
     }  
   }
 
@@ -55700,6 +55794,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Camera t=? x=? y=? z=? s=? rx=? ry=? rz=? a=?";
+      
+      UI_set_to_Create_Camera();
+      SOLARCHVISION_highlight_in_BAR_b("CAM");
+      UI_BAR_b_Update = 1;      
     }  
   }  
 
@@ -55809,134 +55907,214 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (parts[0].toUpperCase().equals("DISTZ")) {
     UI_set_to_View_Truck(0);
+    SOLARCHVISION_highlight_in_BAR_b("±CDZ");
+    UI_BAR_b_Update = 1;    
   } 
   else if (parts[0].toUpperCase().equals("DISTC")) {
     UI_set_to_View_CameraDistance(0);
+    SOLARCHVISION_highlight_in_BAR_b("±CDS");
+    UI_BAR_b_Update = 1;    
   } 
   else if (parts[0].toUpperCase().equals("DISTP")) {
     UI_set_to_View_DistMouseXY(0);
+    SOLARCHVISION_highlight_in_BAR_b("±CDM");
+    UI_BAR_b_Update = 1;    
   } 
 
 
   else if (parts[0].toUpperCase().equals("SIZEALL")) {
     UI_set_to_View_AllModelSize();
+    SOLARCHVISION_highlight_in_BAR_b("±SA");
+    UI_BAR_b_Update = 1;    
   } 
   else if (parts[0].toUpperCase().equals("SIZESKY")) {
     UI_set_to_View_SkydomeSize();
+    SOLARCHVISION_highlight_in_BAR_b("±SK");
+    UI_BAR_b_Update = 1;    
   } 
   else if (parts[0].toUpperCase().equals("SIZE3D")) {
     UI_set_to_View_3DModelSize();
+    SOLARCHVISION_highlight_in_BAR_b("±SZ");
+    UI_BAR_b_Update = 1;    
   } 
 
   else if (parts[0].toUpperCase().equals("SHRINK3D")) {
     UI_set_to_View_3DViewSpace(0);
+    SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
+    UI_BAR_b_Update = 1;    
   }   
   else if (parts[0].toUpperCase().equals("ENLARGE3D")) {
     UI_set_to_View_3DViewSpace(1);
+    SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
+    UI_BAR_b_Update = 1;    
   } 
   
   else if (parts[0].toUpperCase().equals("LOOKORG")) {
     UI_set_to_View_LookAtOrigin(0);
+    SOLARCHVISION_highlight_in_BAR_b("LAO");
+    UI_BAR_b_Update = 1;    
   }   
   else if (parts[0].toUpperCase().equals("LOOKDIR")) {
     UI_set_to_View_LookAtDirection(0);
+    SOLARCHVISION_highlight_in_BAR_b("LAD");
+    UI_BAR_b_Update = 1;    
   }   
   else if (parts[0].toUpperCase().equals("LOOKSEL")) {
     UI_set_to_View_LookAtSelection(0);
+    SOLARCHVISION_highlight_in_BAR_b("LAS");
+    UI_BAR_b_Update = 1;    
   }   
   
   else if (parts[0].toUpperCase().equals("TRUCKZ")) {
     UI_set_to_View_Truck(0);
+    SOLARCHVISION_highlight_in_BAR_b("DIz");
+    UI_BAR_b_Update = 1;
   }   
   else if (parts[0].toUpperCase().equals("TRUCKX")) {
     UI_set_to_View_Truck(1);
+    SOLARCHVISION_highlight_in_BAR_b("DIx");
+    UI_BAR_b_Update = 1;
   }   
   else if (parts[0].toUpperCase().equals("TRUCKY")) {
     UI_set_to_View_Truck(2);
+    SOLARCHVISION_highlight_in_BAR_b("DIy");
+    UI_BAR_b_Update = 1;
   }   
 
   else if (parts[0].toUpperCase().equals("TROLL")) {
     UI_set_to_View_TargetRoll(0);
+    SOLARCHVISION_highlight_in_BAR_b("TRL");
+    UI_BAR_b_Update = 1;
   }   
   else if (parts[0].toUpperCase().equals("TROLLZ")) {
     UI_set_to_View_TargetRoll(1);
+    SOLARCHVISION_highlight_in_BAR_b("TRLz");
+    UI_BAR_b_Update = 1;    
   }   
   else if (parts[0].toUpperCase().equals("TROLLXY")) {
     UI_set_to_View_TargetRoll(2);
+    SOLARCHVISION_highlight_in_BAR_b("TRLxy");
+    UI_BAR_b_Update = 1;    
   }     
   
   else if (parts[0].toUpperCase().equals("CROLL")) {
     UI_set_to_View_CameraRoll(0);
+    SOLARCHVISION_highlight_in_BAR_b("CRL");
+    UI_BAR_b_Update = 1;   
   }   
   else if (parts[0].toUpperCase().equals("CROLLZ")) {
     UI_set_to_View_CameraRoll(1);
+    SOLARCHVISION_highlight_in_BAR_b("CRLz");
+    UI_BAR_b_Update = 1;   
   }   
   else if (parts[0].toUpperCase().equals("CROLLXY")) {
     UI_set_to_View_CameraRoll(2);
+    SOLARCHVISION_highlight_in_BAR_b("CRLxy");
+    UI_BAR_b_Update = 1;   
   }   
   
   
   else if (parts[0].toUpperCase().equals("ORBIT")) {
     UI_set_to_View_Orbit(0);
+    SOLARCHVISION_highlight_in_BAR_b("OR");
+    UI_BAR_b_Update = 1;   
   }   
   else if (parts[0].toUpperCase().equals("ORBITZ")) {
     UI_set_to_View_Orbit(1);
+    SOLARCHVISION_highlight_in_BAR_b("ORz");
+    UI_BAR_b_Update = 1;   
   }   
   else if (parts[0].toUpperCase().equals("ORBITXY")) {
     UI_set_to_View_Orbit(2);
+    SOLARCHVISION_highlight_in_BAR_b("ORxy");
+    UI_BAR_b_Update = 1;   
   }
   
   else if (parts[0].toUpperCase().equals("PAN")) {
     UI_set_to_View_Pan(0);
+    SOLARCHVISION_highlight_in_BAR_b("Pan");
+    UI_BAR_b_Update = 1;   
   }  
   else if (parts[0].toUpperCase().equals("PANX")) {
     UI_set_to_View_Pan(1);
+    SOLARCHVISION_highlight_in_BAR_b("PanX");
+    UI_BAR_b_Update = 1;   
   }  
   else if (parts[0].toUpperCase().equals("PANY")) {
     UI_set_to_View_Pan(2);
+    SOLARCHVISION_highlight_in_BAR_b("PanY");
+    UI_BAR_b_Update = 1;    
   }  
 
   else if (parts[0].toUpperCase().equals("ZOOM")) {
     UI_set_to_View_ZOOM(0);
+    SOLARCHVISION_highlight_in_BAR_b("±ZM");
+    UI_BAR_b_Update = 1;    
   }    
   else if (parts[0].toUpperCase().equals("NORMALZOOM")) {
     UI_set_to_View_ZOOM(1);
+    SOLARCHVISION_highlight_in_BAR_b("0ZM");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("ORTHOGRAPHIC")) {
     UI_set_to_View_ProjectionType(0);
+    SOLARCHVISION_highlight_in_BAR_b("P<>");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("PERSPECTIVE")) {
     UI_set_to_View_ProjectionType(1);
+    SOLARCHVISION_highlight_in_BAR_b("P><");
+    UI_BAR_b_Update = 1;    
   }    
   else if (parts[0].toUpperCase().equals("TOP")) {
     UI_set_to_View_3DViewPoint(0);
+    SOLARCHVISION_highlight_in_BAR_b("Top");
+    UI_BAR_b_Update = 1;    
   }    
   else if (parts[0].toUpperCase().equals("FRONT")) {
     UI_set_to_View_3DViewPoint(1);
+    SOLARCHVISION_highlight_in_BAR_b("Front");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("LEFT")) {
     UI_set_to_View_3DViewPoint(2);
+    SOLARCHVISION_highlight_in_BAR_b("Left");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("BACK")) {
     UI_set_to_View_3DViewPoint(3);
+    SOLARCHVISION_highlight_in_BAR_b("Back");
+    UI_BAR_b_Update = 1;    
   }    
   else if (parts[0].toUpperCase().equals("RIGHT")) {
     UI_set_to_View_3DViewPoint(4);
+    SOLARCHVISION_highlight_in_BAR_b("Right");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("BOTTOM")) {
     UI_set_to_View_3DViewPoint(5);
+    SOLARCHVISION_highlight_in_BAR_b("Bottom");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("S.W.")) {
     UI_set_to_View_3DViewPoint(6);
+    SOLARCHVISION_highlight_in_BAR_b("S.W.");
+    UI_BAR_b_Update = 1;    
   }    
   else if (parts[0].toUpperCase().equals("S.E.")) {
     UI_set_to_View_3DViewPoint(7);
+    SOLARCHVISION_highlight_in_BAR_b("S.E.");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("N.E.")) {
     UI_set_to_View_3DViewPoint(8);
+    SOLARCHVISION_highlight_in_BAR_b("N.E.");
+    UI_BAR_b_Update = 1;    
   }  
   else if (parts[0].toUpperCase().equals("N.W.")) {
     UI_set_to_View_3DViewPoint(9);
+    SOLARCHVISION_highlight_in_BAR_b("N.W.");
+    UI_BAR_b_Update = 1;    
   }    
 
 
