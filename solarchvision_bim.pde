@@ -35602,19 +35602,13 @@ void mouseClicked () {
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hold")) {
-              HoldStamp = nf(millis(), 0);
-              int pre_Display_Output_in_Explorer = Display_Output_in_Explorer;
-
-              SOLARCHVISION_save_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml", 0);
+              
+              SOLARCHVISION_hold_project();
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Fetch")) {
-              try {
-                SOLARCHVISION_load_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
-              }
-              catch (Exception e) {
-                println("Cannot find hold file!");
-              }
+              
+              SOLARCHVISION_fetch_project();
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Undo")) {
@@ -51421,6 +51415,8 @@ void SOLARCHVISION_check_for_WIN3D_update () {
 
 
 
+              
+
 
 void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
@@ -54022,7 +54018,21 @@ void SOLARCHVISION_load_project (String myFile) {
 }
 
 
+void SOLARCHVISION_hold_project () {
 
+  HoldStamp = nf(millis(), 0);
+
+  SOLARCHVISION_save_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml", 0);  
+}
+
+void SOLARCHVISION_fetch_project () {
+  try {
+    SOLARCHVISION_load_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
+  }
+  catch (Exception e) {
+    println("Cannot find hold file!");
+  }
+}
 
 
 
@@ -54650,6 +54660,53 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     allCommands[0] = "";
     allMessages[0] = "";
   }
+  
+  else if (parts[0].toUpperCase().equals("OPEN")) {
+    selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
+  }          
+
+  else if (parts[0].toUpperCase().equals("SAVE AS")) {
+    selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
+  }
+
+  else if (parts[0].toUpperCase().equals("SAVE")) {
+    SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml", 0);
+  }    
+
+  else if (parts[0].toUpperCase().equals("HOLD")) {
+    SOLARCHVISION_hold_project();
+  }  
+
+  else if (parts[0].toUpperCase().equals("FETCH")) {
+    SOLARCHVISION_fetch_project();
+  }    
+
+  else if (parts[0].toUpperCase().equals("IMPORT")) {
+    selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
+  }   
+
+  else if (parts[0].toUpperCase().equals("EXECUTE")) {
+    selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
+  }               
+
+  else if (parts[0].toUpperCase().equals("EXPORT OBJ")) {
+    SOLARCHVISION_export_objects_OBJ();
+  }    
+  
+  else if (parts[0].toUpperCase().equals("EXPORT RAD")) {
+    SOLARCHVISION_export_objects_RAD();
+  }
+
+  else if (parts[0].toUpperCase().equals("EXPORT SCR")) {
+    SOLARCHVISION_export_objects_SCR();
+  }                
+
+  else if (parts[0].toUpperCase().equals("QUIT")) {
+    exit();
+  }      
+
+
+
 
 
   else if (parts[0].toUpperCase().equals("MOVE")) {
