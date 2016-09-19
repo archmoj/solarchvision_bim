@@ -25032,13 +25032,26 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
   }
 }
 
+  
 
 
+float[][] DiffuseVectors;  
 
 void SOLARCHVISION_build_SkySphere (int Tessellation) {
 
   //SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, Tessellation, 1, 90); // SKY
-  SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
+  //SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
+  SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 90); // SKY
+
+
+  DiffuseVectors = new float[0][3];
+  for (int i = 0; i < skyVertices.length; i++) {
+    if (skyVertices[i][2] > 0) {
+      float[][] new_Vector = {{skyVertices[i][0], skyVertices[i][1], skyVertices[i][2]}};
+      DiffuseVectors = (float[][]) concat(DiffuseVectors, new_Vector);
+    }
+  }
+  
 }
 
 
@@ -56412,27 +56425,11 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 }
 
 
-/*
-int DiffuseSamples = 16; // internal now! 
 
-float[][] DiffuseVectors = new float[DiffuseSamples][3]; 
-
-{
-  for (int i = 0; i < DiffuseVectors.length; i++) {
-    DiffuseVectors[i][0] = random(-1, 1);
-    DiffuseVectors[i][1] = random(-1, 1);
-    DiffuseVectors[i][2] = random(0.1, 1);
-  }
-}
-*/
-
-int DiffuseSamples = 5; // internal now! 
-
-float[][] DiffuseVectors = {{0,0,1}, {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}};
 
 
 void SOLARCHVISION_PreBakeViewport () {
-
+  
   Camera_Variation = 0;
   
   SolarImpact_sectionType = 1; // <<<<< so that it analyzed later!
@@ -56511,7 +56508,7 @@ void SOLARCHVISION_PreBakeViewport () {
     lastHitDirect[i] = 0;
   }  
 
-  int[] lastHitDiffuse = new int [DiffuseSamples];
+  int[] lastHitDiffuse = new int [DiffuseVectors.length];
   
   for (int i = 0; i < lastHitDiffuse.length; i++) {
     lastHitDiffuse[i] = 0;
