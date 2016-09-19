@@ -1,4 +1,3 @@
-// should save renders in another directory not root!
 
 // still not working well: SOLARCHVISION_autoNormalFaces_Selection
 
@@ -55079,6 +55078,56 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }   
 
+  else if (parts[0].toUpperCase().equals("CUSHION")) {
+    if (parts.length > 1) {
+      int m = 7;
+      int deg = 3;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int wgt = 0;
+      int clz = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
+      
+      UI_set_to_Create_Cushion();
+      SOLARCHVISION_highlight_in_BAR_b("Cushion");
+      UI_BAR_b_Update = 1;      
+    }  
+  }   
+          
 
   else if (parts[0].toUpperCase().equals("OCTAHEDRON")) {
     if (parts.length > 1) {
