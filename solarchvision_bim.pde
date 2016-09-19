@@ -56404,11 +56404,10 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   Image_RGBA.updatePixels();
  
- 
-  Image_RGBA.save("Render.png");
-  
-  println("Render saved!");
-
+  String myFile = ScreenShotFolder + "/" + CreateStamp(1) + "Render.png";
+  Image_RGBA.save(myFile);
+  SOLARCHVISION_explore_output(myFile);
+  println("File created:" + myFile);
   
 }
 
