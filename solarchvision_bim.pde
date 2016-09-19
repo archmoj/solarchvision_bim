@@ -36036,49 +36036,34 @@ void mouseClicked () {
               MODEL3D_DisplayEdges = 1; //<<<<<<<<<<<<<<<
 
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Base")) {
               WIN3D_FacesShade = Shade_Surface_Base;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface White")) {
               WIN3D_FacesShade = Shade_Surface_White;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Materials")) {
               WIN3D_FacesShade = Shade_Surface_Materials;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Global Solar")) {
               WIN3D_FacesShade = Shade_Global_Solar;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Solar")) {
               WIN3D_FacesShade = Shade_Vertex_Solar;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Solid")) {
               WIN3D_FacesShade = Shade_Vertex_Solid;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Elevation")) {
               WIN3D_FacesShade = Shade_Vertex_Elevation;
-
               WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Render Viewport")) {
               
@@ -56414,6 +56399,47 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     SOLARCHVISION_highlight_in_BAR_b("N.W.");
     UI_BAR_b_Update = 1;    
   }    
+  
+
+  else if (Command_CAPITAL.equals("SHADE.WIRE")) {
+    WIN3D_FacesShade = Shade_Surface_Wire;
+    MODEL3D_DisplayEdges = 1; //<<<<<<<<<<<<<<<
+    WIN3D_Update = 1;  
+  }       
+  else if (Command_CAPITAL.equals("SHADE.BASE")) {
+    WIN3D_FacesShade = Shade_Surface_Base;
+    WIN3D_Update = 1;  
+  }           
+  else if (Command_CAPITAL.equals("SHADE.WHITE")) {
+    WIN3D_FacesShade = Shade_Surface_White;
+    WIN3D_Update = 1;  
+  } 
+  else if (Command_CAPITAL.equals("SHADE.MATERIALS")) {
+    WIN3D_FacesShade = Shade_Surface_Materials;
+    WIN3D_Update = 1;  
+  } 
+  else if (Command_CAPITAL.equals("SHADE.GLOBAL")) {
+    WIN3D_FacesShade = Shade_Global_Solar;
+    WIN3D_Update = 1;  
+  } 
+  else if (Command_CAPITAL.equals("SHADE.REAL")) {
+    WIN3D_FacesShade = Shade_Vertex_Solar;
+    WIN3D_Update = 1;  
+  }           
+  else if (Command_CAPITAL.equals("SHADE.SOLID")) {
+    WIN3D_FacesShade = Shade_Vertex_Solid;
+    WIN3D_Update = 1;  
+  }           
+  else if (Command_CAPITAL.equals("SHADE.ELEVATION")) {
+    WIN3D_FacesShade = Shade_Vertex_Elevation;
+    WIN3D_Update = 1;  
+  }      
+  else if (Command_CAPITAL.equals("RENDER.VIEWPORT")) {
+    SOLARCHVISION_RenderViewport();            
+  }     
+  else if (Command_CAPITAL.equals("PREBAKE.VIEWPORT")) {
+    SOLARCHVISION_PreBakeViewport();            
+  }             
 
 
   else if (Command_CAPITAL.equals("LONLAT")) {
