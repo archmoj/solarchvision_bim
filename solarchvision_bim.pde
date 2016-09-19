@@ -35589,10 +35589,14 @@ void mouseClicked () {
             }     
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("New")) { 
+              
+              /////////////////////////////
+              SOLARCHVISION_hold_project();
+              /////////////////////////////
+              
               selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
 
               SOLARCHVISION_delete_All();
-
 
               //SOLARCHVISION_update_station(0);
             }  
@@ -54653,7 +54657,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   
   String[] parts = split(lineSTR, ' ');
   
-  if (parts[0].toUpperCase().equals("CLS")) {
+  String Command_CAPITAL = parts[0].toUpperCase();
+  
+  if (Command_CAPITAL.equals("CLS")) {
     allCommands = new String[1];
     allMessages = new String[1];
 
@@ -54661,47 +54667,47 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     allMessages[0] = "";
   }
   
-  else if (parts[0].toUpperCase().equals("OPEN")) {
+  else if (Command_CAPITAL.equals("OPEN")) {
     selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
   }          
 
-  else if (parts[0].toUpperCase().equals("SAVE AS")) {
+  else if (Command_CAPITAL.equals("SAVE.AS")) {
     selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
   }
 
-  else if (parts[0].toUpperCase().equals("SAVE")) {
+  else if (Command_CAPITAL.equals("SAVE")) {
     SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml", 0);
   }    
 
-  else if (parts[0].toUpperCase().equals("HOLD")) {
+  else if (Command_CAPITAL.equals("HOLD")) {
     SOLARCHVISION_hold_project();
   }  
 
-  else if (parts[0].toUpperCase().equals("FETCH")) {
+  else if (Command_CAPITAL.equals("FETCH")) {
     SOLARCHVISION_fetch_project();
   }    
 
-  else if (parts[0].toUpperCase().equals("IMPORT")) {
+  else if (Command_CAPITAL.equals("IMPORT")) {
     selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
   }   
 
-  else if (parts[0].toUpperCase().equals("EXECUTE")) {
+  else if (Command_CAPITAL.equals("EXECUTE")) {
     selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
   }               
 
-  else if (parts[0].toUpperCase().equals("EXPORT OBJ")) {
+  else if (Command_CAPITAL.equals("EXPORT.OBJ")) {
     SOLARCHVISION_export_objects_OBJ();
   }    
   
-  else if (parts[0].toUpperCase().equals("EXPORT RAD")) {
+  else if (Command_CAPITAL.equals("EXPORT.RAD")) {
     SOLARCHVISION_export_objects_RAD();
   }
 
-  else if (parts[0].toUpperCase().equals("EXPORT SCR")) {
+  else if (Command_CAPITAL.equals("EXPORT.SCR")) {
     SOLARCHVISION_export_objects_SCR();
   }                
 
-  else if (parts[0].toUpperCase().equals("QUIT")) {
+  else if (Command_CAPITAL.equals("QUIT")) {
     exit();
   }      
 
@@ -54709,7 +54715,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 
-  else if (parts[0].toUpperCase().equals("MOVE")) {
+  else if (Command_CAPITAL.equals("MOVE")) {
     if (parts.length > 1) {
       float dx = 0;
       float dy = 0;
@@ -54738,12 +54744,12 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }  
   
-  else if ((parts[0].toUpperCase().equals("ROTATE")) || (parts[0].toUpperCase().equals("ROTATEX")) || (parts[0].toUpperCase().equals("ROTATEY")) || (parts[0].toUpperCase().equals("ROTATEZ"))) {
+  else if ((Command_CAPITAL.equals("ROTATE")) || (Command_CAPITAL.equals("ROTATEX")) || (Command_CAPITAL.equals("ROTATEY")) || (Command_CAPITAL.equals("ROTATEZ"))) {
     if (parts.length > 1) {
       int v = 2;
-      if (parts[0].toUpperCase().equals("ROTATEX")) v = 0;
-      if (parts[0].toUpperCase().equals("ROTATEY")) v = 1;
-      if (parts[0].toUpperCase().equals("ROTATEZ")) v = 2;
+      if (Command_CAPITAL.equals("ROTATEX")) v = 0;
+      if (Command_CAPITAL.equals("ROTATEY")) v = 1;
+      if (Command_CAPITAL.equals("ROTATEZ")) v = 2;
       
       float x = 0;
       float y = 0;
@@ -54772,7 +54778,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }    
   }    
   
-  else if (parts[0].toUpperCase().equals("SCALE")) {
+  else if (Command_CAPITAL.equals("SCALE")) {
     if (parts.length > 1) {
       float sx = 1;
       float sy = 1;
@@ -54811,7 +54817,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }        
   }    
   
-  else if (parts[0].toUpperCase().equals("DELETE")) {
+  else if (Command_CAPITAL.equals("DELETE")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
              if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_delete_All(); WIN3D_Update = 1;}
@@ -54832,7 +54838,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }   
   
-  else if (parts[0].toUpperCase().equals("COPY")) {
+  else if (Command_CAPITAL.equals("COPY")) {
     if (parts.length > 1) {
       int n = 1;
       float dx = 0;
@@ -54868,7 +54874,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }   
   
-  else if (parts[0].toUpperCase().equals("SELECT")) {
+  else if (Command_CAPITAL.equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
              if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory_Group3Ds; UI_BAR_b_Update = 1;}
@@ -54900,7 +54906,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
   
-  else if (parts[0].toUpperCase().equals("2DMAN")) {
+  else if (Command_CAPITAL.equals("2DMAN")) {
     if (parts.length > 1) {
       String t = "PEOPLE";
       int m = 0;
@@ -54931,7 +54937,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }
      
-  else if (parts[0].toUpperCase().equals("2DTREE")) {
+  else if (Command_CAPITAL.equals("2DTREE")) {
     if (parts.length > 1) {
       String t = "TREES";
       int m = 0;
@@ -54966,7 +54972,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }    
  
-  else if (parts[0].toUpperCase().equals("3DTREE")) {
+  else if (Command_CAPITAL.equals("3DTREE")) {
     if (parts.length > 1) {
       int m = 0;
       int Sd = 0; //PlantSeed
@@ -55013,7 +55019,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }     
 
-  else if (parts[0].toUpperCase().equals("BOX2P")) {
+  else if (Command_CAPITAL.equals("BOX2P")) {
     if (parts.length > 1) {
       int m = -1;
       int tes = 0;
@@ -55059,7 +55065,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
   
-  else if (parts[0].toUpperCase().equals("BOX")) {
+  else if (Command_CAPITAL.equals("BOX")) {
     if (parts.length > 1) {
       int m = -1;
       int tes = 0;
@@ -55107,7 +55113,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }     
 
-  else if (parts[0].toUpperCase().equals("HOUSE")) {
+  else if (Command_CAPITAL.equals("HOUSE")) {
     if (parts.length > 1) {
       int m = -1;
       int tes = 0;
@@ -55157,7 +55163,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }     
 
-  else if (parts[0].toUpperCase().equals("CYLINDER")) {
+  else if (Command_CAPITAL.equals("CYLINDER")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 16;
@@ -55205,7 +55211,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }   
 
-  else if (parts[0].toUpperCase().equals("SPHERE")) {
+  else if (Command_CAPITAL.equals("SPHERE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 3;
@@ -55252,7 +55258,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }   
 
 
-  else if (parts[0].toUpperCase().equals("SUPERSPHERE")) {
+  else if (Command_CAPITAL.equals("SUPERSPHERE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 3;
@@ -55308,7 +55314,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }   
 
-  else if (parts[0].toUpperCase().equals("CUSHION")) {
+  else if (Command_CAPITAL.equals("CUSHION")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 3;
@@ -55359,7 +55365,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }   
           
 
-  else if (parts[0].toUpperCase().equals("OCTAHEDRON")) {
+  else if (Command_CAPITAL.equals("OCTAHEDRON")) {
     if (parts.length > 1) {
       int m = 7;
       int tes = 0;
@@ -55407,7 +55413,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("ICOSAHEDRON")) {
+  else if (Command_CAPITAL.equals("ICOSAHEDRON")) {
     if (parts.length > 1) {
       int m = 7;
       int tes = 0;
@@ -55451,7 +55457,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   } 
   
-  else if (parts[0].toUpperCase().equals("POLYGONEXTRUDE")) {
+  else if (Command_CAPITAL.equals("POLYGONEXTRUDE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55499,7 +55505,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }       
 
-  else if (parts[0].toUpperCase().equals("POLYGONHYPER")) {
+  else if (Command_CAPITAL.equals("POLYGONHYPER")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55547,7 +55553,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }       
 
-  else if (parts[0].toUpperCase().equals("POLYGONMESH")) {
+  else if (Command_CAPITAL.equals("POLYGONMESH")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55593,7 +55599,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("MESH2")) {
+  else if (Command_CAPITAL.equals("MESH2")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55636,7 +55642,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   } 
  
-  else if (parts[0].toUpperCase().equals("MESH3")) {
+  else if (Command_CAPITAL.equals("MESH3")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55685,7 +55691,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }    
 
-  else if (parts[0].toUpperCase().equals("MESH4")) {
+  else if (Command_CAPITAL.equals("MESH4")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55740,7 +55746,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("MESH5")) {
+  else if (Command_CAPITAL.equals("MESH5")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55801,7 +55807,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
   
-  else if (parts[0].toUpperCase().equals("MESH6")) {
+  else if (Command_CAPITAL.equals("MESH6")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55868,7 +55874,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }    
 
-  else if (parts[0].toUpperCase().equals("H_SHADE")) {
+  else if (Command_CAPITAL.equals("H_SHADE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55913,7 +55919,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }
   
-  else if (parts[0].toUpperCase().equals("V_SHADE")) {
+  else if (Command_CAPITAL.equals("V_SHADE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -55958,7 +55964,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("SOLID")) {
+  else if (Command_CAPITAL.equals("SOLID")) {
     if (parts.length > 1) {
       float v = 1;
       float x = 0;
@@ -56008,7 +56014,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("SECTION")) {
+  else if (Command_CAPITAL.equals("SECTION")) {
     if (parts.length > 1) {
       int t = 1;
       int i = 200;
@@ -56050,7 +56056,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }
 
-  else if (parts[0].toUpperCase().equals("CAMERA")) {
+  else if (Command_CAPITAL.equals("CAMERA")) {
     if (parts.length > 1) {
       int t = 1;
       float x = 0;
@@ -56093,7 +56099,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (parts[0].toUpperCase().equals("LINE")) {
+  else if (Command_CAPITAL.equals("LINE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -56133,7 +56139,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
   
-  else if (parts[0].toUpperCase().equals("ARC")) {
+  else if (Command_CAPITAL.equals("ARC")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -56178,7 +56184,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   } 
   
-  else if (parts[0].toUpperCase().equals("PIVOT")) {
+  else if (Command_CAPITAL.equals("PIVOT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
              if (parts[q].toLowerCase().equals("minx")) UI_set_to_View_PivotX(-1);
@@ -56197,220 +56203,220 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }    
   }
 
-  else if (parts[0].toUpperCase().equals("DISTZ")) {
+  else if (Command_CAPITAL.equals("DISTZ")) {
     UI_set_to_View_Truck(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDZ");
     UI_BAR_b_Update = 1;    
   } 
-  else if (parts[0].toUpperCase().equals("DISTC")) {
+  else if (Command_CAPITAL.equals("DISTC")) {
     UI_set_to_View_CameraDistance(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDS");
     UI_BAR_b_Update = 1;    
   } 
-  else if (parts[0].toUpperCase().equals("DISTP")) {
+  else if (Command_CAPITAL.equals("DISTP")) {
     UI_set_to_View_DistMouseXY(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDM");
     UI_BAR_b_Update = 1;    
   } 
 
 
-  else if (parts[0].toUpperCase().equals("SIZEALL")) {
+  else if (Command_CAPITAL.equals("SIZEALL")) {
     UI_set_to_View_AllModelSize();
     SOLARCHVISION_highlight_in_BAR_b("±SA");
     UI_BAR_b_Update = 1;    
   } 
-  else if (parts[0].toUpperCase().equals("SIZESKY")) {
+  else if (Command_CAPITAL.equals("SIZESKY")) {
     UI_set_to_View_SkydomeSize();
     SOLARCHVISION_highlight_in_BAR_b("±SK");
     UI_BAR_b_Update = 1;    
   } 
-  else if (parts[0].toUpperCase().equals("SIZE3D")) {
+  else if (Command_CAPITAL.equals("SIZE3D")) {
     UI_set_to_View_3DModelSize();
     SOLARCHVISION_highlight_in_BAR_b("±SZ");
     UI_BAR_b_Update = 1;    
   } 
 
-  else if (parts[0].toUpperCase().equals("SHRINK3D")) {
+  else if (Command_CAPITAL.equals("SHRINK3D")) {
     UI_set_to_View_3DViewSpace(0);
     SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
     UI_BAR_b_Update = 1;    
   }   
-  else if (parts[0].toUpperCase().equals("ENLARGE3D")) {
+  else if (Command_CAPITAL.equals("ENLARGE3D")) {
     UI_set_to_View_3DViewSpace(1);
     SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
     UI_BAR_b_Update = 1;    
   } 
   
-  else if (parts[0].toUpperCase().equals("LOOKORG")) {
+  else if (Command_CAPITAL.equals("LOOKORG")) {
     UI_set_to_View_LookAtOrigin(0);
     SOLARCHVISION_highlight_in_BAR_b("LAO");
     UI_BAR_b_Update = 1;    
   }   
-  else if (parts[0].toUpperCase().equals("LOOKDIR")) {
+  else if (Command_CAPITAL.equals("LOOKDIR")) {
     UI_set_to_View_LookAtDirection(0);
     SOLARCHVISION_highlight_in_BAR_b("LAD");
     UI_BAR_b_Update = 1;    
   }   
-  else if (parts[0].toUpperCase().equals("LOOKSEL")) {
+  else if (Command_CAPITAL.equals("LOOKSEL")) {
     UI_set_to_View_LookAtSelection(0);
     SOLARCHVISION_highlight_in_BAR_b("LAS");
     UI_BAR_b_Update = 1;    
   }   
   
-  else if (parts[0].toUpperCase().equals("TRUCKZ")) {
+  else if (Command_CAPITAL.equals("TRUCKZ")) {
     UI_set_to_View_Truck(0);
     SOLARCHVISION_highlight_in_BAR_b("DIz");
     UI_BAR_b_Update = 1;
   }   
-  else if (parts[0].toUpperCase().equals("TRUCKX")) {
+  else if (Command_CAPITAL.equals("TRUCKX")) {
     UI_set_to_View_Truck(1);
     SOLARCHVISION_highlight_in_BAR_b("DIx");
     UI_BAR_b_Update = 1;
   }   
-  else if (parts[0].toUpperCase().equals("TRUCKY")) {
+  else if (Command_CAPITAL.equals("TRUCKY")) {
     UI_set_to_View_Truck(2);
     SOLARCHVISION_highlight_in_BAR_b("DIy");
     UI_BAR_b_Update = 1;
   }   
 
-  else if (parts[0].toUpperCase().equals("TROLL")) {
+  else if (Command_CAPITAL.equals("TROLL")) {
     UI_set_to_View_TargetRoll(0);
     SOLARCHVISION_highlight_in_BAR_b("TRL");
     UI_BAR_b_Update = 1;
   }   
-  else if (parts[0].toUpperCase().equals("TROLLZ")) {
+  else if (Command_CAPITAL.equals("TROLLZ")) {
     UI_set_to_View_TargetRoll(1);
     SOLARCHVISION_highlight_in_BAR_b("TRLz");
     UI_BAR_b_Update = 1;    
   }   
-  else if (parts[0].toUpperCase().equals("TROLLXY")) {
+  else if (Command_CAPITAL.equals("TROLLXY")) {
     UI_set_to_View_TargetRoll(2);
     SOLARCHVISION_highlight_in_BAR_b("TRLxy");
     UI_BAR_b_Update = 1;    
   }     
   
-  else if (parts[0].toUpperCase().equals("CROLL")) {
+  else if (Command_CAPITAL.equals("CROLL")) {
     UI_set_to_View_CameraRoll(0);
     SOLARCHVISION_highlight_in_BAR_b("CRL");
     UI_BAR_b_Update = 1;   
   }   
-  else if (parts[0].toUpperCase().equals("CROLLZ")) {
+  else if (Command_CAPITAL.equals("CROLLZ")) {
     UI_set_to_View_CameraRoll(1);
     SOLARCHVISION_highlight_in_BAR_b("CRLz");
     UI_BAR_b_Update = 1;   
   }   
-  else if (parts[0].toUpperCase().equals("CROLLXY")) {
+  else if (Command_CAPITAL.equals("CROLLXY")) {
     UI_set_to_View_CameraRoll(2);
     SOLARCHVISION_highlight_in_BAR_b("CRLxy");
     UI_BAR_b_Update = 1;   
   }   
   
   
-  else if (parts[0].toUpperCase().equals("ORBIT")) {
+  else if (Command_CAPITAL.equals("ORBIT")) {
     UI_set_to_View_Orbit(0);
     SOLARCHVISION_highlight_in_BAR_b("OR");
     UI_BAR_b_Update = 1;   
   }   
-  else if (parts[0].toUpperCase().equals("ORBITZ")) {
+  else if (Command_CAPITAL.equals("ORBITZ")) {
     UI_set_to_View_Orbit(1);
     SOLARCHVISION_highlight_in_BAR_b("ORz");
     UI_BAR_b_Update = 1;   
   }   
-  else if (parts[0].toUpperCase().equals("ORBITXY")) {
+  else if (Command_CAPITAL.equals("ORBITXY")) {
     UI_set_to_View_Orbit(2);
     SOLARCHVISION_highlight_in_BAR_b("ORxy");
     UI_BAR_b_Update = 1;   
   }
   
-  else if (parts[0].toUpperCase().equals("PAN")) {
+  else if (Command_CAPITAL.equals("PAN")) {
     UI_set_to_View_Pan(0);
     SOLARCHVISION_highlight_in_BAR_b("Pan");
     UI_BAR_b_Update = 1;   
   }  
-  else if (parts[0].toUpperCase().equals("PANX")) {
+  else if (Command_CAPITAL.equals("PANX")) {
     UI_set_to_View_Pan(1);
     SOLARCHVISION_highlight_in_BAR_b("PanX");
     UI_BAR_b_Update = 1;   
   }  
-  else if (parts[0].toUpperCase().equals("PANY")) {
+  else if (Command_CAPITAL.equals("PANY")) {
     UI_set_to_View_Pan(2);
     SOLARCHVISION_highlight_in_BAR_b("PanY");
     UI_BAR_b_Update = 1;    
   }  
 
-  else if (parts[0].toUpperCase().equals("ZOOM")) {
+  else if (Command_CAPITAL.equals("ZOOM")) {
     UI_set_to_View_ZOOM(0);
     SOLARCHVISION_highlight_in_BAR_b("±ZM");
     UI_BAR_b_Update = 1;    
   }    
-  else if (parts[0].toUpperCase().equals("NORMALZOOM")) {
+  else if (Command_CAPITAL.equals("NORMALZOOM")) {
     UI_set_to_View_ZOOM(1);
     SOLARCHVISION_highlight_in_BAR_b("0ZM");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("ORTHOGRAPHIC")) {
+  else if (Command_CAPITAL.equals("ORTHOGRAPHIC")) {
     UI_set_to_View_ProjectionType(0);
     SOLARCHVISION_highlight_in_BAR_b("P<>");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("PERSPECTIVE")) {
+  else if (Command_CAPITAL.equals("PERSPECTIVE")) {
     UI_set_to_View_ProjectionType(1);
     SOLARCHVISION_highlight_in_BAR_b("P><");
     UI_BAR_b_Update = 1;    
   }    
-  else if (parts[0].toUpperCase().equals("TOP")) {
+  else if (Command_CAPITAL.equals("TOP")) {
     UI_set_to_View_3DViewPoint(0);
     SOLARCHVISION_highlight_in_BAR_b("Top");
     UI_BAR_b_Update = 1;    
   }    
-  else if (parts[0].toUpperCase().equals("FRONT")) {
+  else if (Command_CAPITAL.equals("FRONT")) {
     UI_set_to_View_3DViewPoint(1);
     SOLARCHVISION_highlight_in_BAR_b("Front");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("LEFT")) {
+  else if (Command_CAPITAL.equals("LEFT")) {
     UI_set_to_View_3DViewPoint(2);
     SOLARCHVISION_highlight_in_BAR_b("Left");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("BACK")) {
+  else if (Command_CAPITAL.equals("BACK")) {
     UI_set_to_View_3DViewPoint(3);
     SOLARCHVISION_highlight_in_BAR_b("Back");
     UI_BAR_b_Update = 1;    
   }    
-  else if (parts[0].toUpperCase().equals("RIGHT")) {
+  else if (Command_CAPITAL.equals("RIGHT")) {
     UI_set_to_View_3DViewPoint(4);
     SOLARCHVISION_highlight_in_BAR_b("Right");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("BOTTOM")) {
+  else if (Command_CAPITAL.equals("BOTTOM")) {
     UI_set_to_View_3DViewPoint(5);
     SOLARCHVISION_highlight_in_BAR_b("Bottom");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("S.W.")) {
+  else if (Command_CAPITAL.equals("S.W.")) {
     UI_set_to_View_3DViewPoint(6);
     SOLARCHVISION_highlight_in_BAR_b("S.W.");
     UI_BAR_b_Update = 1;    
   }    
-  else if (parts[0].toUpperCase().equals("S.E.")) {
+  else if (Command_CAPITAL.equals("S.E.")) {
     UI_set_to_View_3DViewPoint(7);
     SOLARCHVISION_highlight_in_BAR_b("S.E.");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("N.E.")) {
+  else if (Command_CAPITAL.equals("N.E.")) {
     UI_set_to_View_3DViewPoint(8);
     SOLARCHVISION_highlight_in_BAR_b("N.E.");
     UI_BAR_b_Update = 1;    
   }  
-  else if (parts[0].toUpperCase().equals("N.W.")) {
+  else if (Command_CAPITAL.equals("N.W.")) {
     UI_set_to_View_3DViewPoint(9);
     SOLARCHVISION_highlight_in_BAR_b("N.W.");
     UI_BAR_b_Update = 1;    
   }    
 
 
-  else if (parts[0].toUpperCase().equals("LONLAT")) {
+  else if (Command_CAPITAL.equals("LONLAT")) {
     if (parts.length > 2) {
       
       STATION_Number = 0; // <<<<<<<<<< overwrite station 0
