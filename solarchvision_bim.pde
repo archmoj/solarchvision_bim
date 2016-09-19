@@ -56187,6 +56187,103 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PIVOT minX midY maxZ or other variations";
     }    
   }
+  
+  else if (Command_CAPITAL.equals("VERTEX>GROUP")) {
+    SOLARCHVISION_convert_Vertex_to_Group3D();
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("FACE>GROUP")) {
+    SOLARCHVISION_convert_Face_to_Group3D();
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("GROUP>FACE")) {
+    SOLARCHVISION_convert_Group3D_to_Face();
+    Current_ObjectCategory = ObjectCategory_Faces;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }    
+  else if (Command_CAPITAL.equals("CURVE>GROUP")) {
+    SOLARCHVISION_convert_Curve_to_Group3D();
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("GROUP>CURVE")) {
+    SOLARCHVISION_convert_Group3D_to_Curve();
+    Current_ObjectCategory = ObjectCategory_Curves;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }            
+  else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
+    SOLARCHVISION_convert_Curve_to_Vertex();
+    Current_ObjectCategory = ObjectCategory_Vertices;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  } 
+  else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
+    SOLARCHVISION_convert_Vertex_to_Curve();
+    Current_ObjectCategory = ObjectCategory_Curves;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }               
+  else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
+    SOLARCHVISION_convert_Group3D_to_Vertex();
+    Current_ObjectCategory = ObjectCategory_Vertices;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }  
+  else if (Command_CAPITAL.equals("FACE>VERTEX")) {
+    SOLARCHVISION_convert_Face_to_Vertex();
+    Current_ObjectCategory = ObjectCategory_Vertices;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  } 
+  else if (Command_CAPITAL.equals("VERTEX>FACE")) {
+    SOLARCHVISION_convert_Vertex_to_Face();
+    Current_ObjectCategory = ObjectCategory_Faces;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }    
+  else if (Command_CAPITAL.equals("SOLID>GROUP")) {
+    SOLARCHVISION_convert_Solid_to_Group3D();
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("GROUP>SOLID")) {
+    SOLARCHVISION_convert_Group3D_to_Solid();
+    Current_ObjectCategory = ObjectCategory_Solids;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }                
+  else if (Command_CAPITAL.equals("OBJ2D>GROUP")) {
+    SOLARCHVISION_convert_Object2D_to_Group3D();
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("GROUP>OBJ2D")) {
+    SOLARCHVISION_convert_Group3D_to_Object2D();
+    Current_ObjectCategory = ObjectCategory_Object2Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("FRACTAL>GROUP")) {
+    SOLARCHVISION_convert_Fractal_to_Group3D();
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }             
+  else if (Command_CAPITAL.equals("GROUP>FRACTAL")) {
+    SOLARCHVISION_convert_Group3D_to_Fractal();
+    Current_ObjectCategory = ObjectCategory_Fractals;
+    WIN3D_Update = 1;
+    UI_BAR_b_Update = 1;
+  }              
 
   else if (Command_CAPITAL.equals("DISTZ")) {
     UI_set_to_View_Truck(0);
