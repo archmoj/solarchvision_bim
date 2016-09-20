@@ -36393,19 +36393,19 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Person");
               UI_BAR_b_Update = 1;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Point")) {
               UI_set_to_Create_Vertex();
-              SOLARCHVISION_highlight_in_BAR_b("Vertex");
+              SOLARCHVISION_highlight_in_BAR_b("Point");
               UI_BAR_b_Update = 1;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Face")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Surface")) {
               UI_set_to_Create_Face();
-              SOLARCHVISION_highlight_in_BAR_b("Face");
+              SOLARCHVISION_highlight_in_BAR_b("Surface");
               UI_BAR_b_Update = 1;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Curve")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Line")) {
               UI_set_to_Create_Curve();
-              SOLARCHVISION_highlight_in_BAR_b("Curve");
+              SOLARCHVISION_highlight_in_BAR_b("Line");
               UI_BAR_b_Update = 1;
             }
             
@@ -38628,12 +38628,6 @@ void mouseClicked () {
                       //SOLARCHVISION_add_Face(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                     }
                   }      
-                
-                  if (Current_ObjectCategory == ObjectCategory_Vertices) { // working with vertices
-                    if (CreateButton_Vertex != 0) {
-                      //SOLARCHVISION_add_Vertex(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
-                    }
-                  }
           
                   if (Current_ObjectCategory == ObjectCategory_Curves) { // working with curves
                     if (CreateButton_Curve != 0) {
@@ -38641,7 +38635,11 @@ void mouseClicked () {
                     }
                   }        
                       
-    
+                  if (Current_ObjectCategory == ObjectCategory_Vertices) { // working with vertices
+                    if (CreateButton_Vertex != 0) {
+                      SOLARCHVISION_add_Vertex(x, y, z);
+                    }
+                  }    
   
                   if (Current_ObjectCategory == ObjectCategory_Solids) { // working with solids
                      if (CreateButton_Solid != 0) {
@@ -48998,7 +48996,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Vertex", "Curve", "Face", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Line", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
@@ -49560,7 +49558,7 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
-    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "Vertex", "Curve", "Face", "BuildingType", "2.5"
+    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "Point", "Line", "Surface", "BuildingType", "2.5"
   }
   , 
   {
@@ -49793,9 +49791,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((UI_BAR_b_Items[i][j]).equals("Fractal")) UI_set_to_Create_Fractal();
           else if ((UI_BAR_b_Items[i][j]).equals("Tree")) UI_set_to_Create_Tree();
           else if ((UI_BAR_b_Items[i][j]).equals("Person")) UI_set_to_Create_Person();
-          else if ((UI_BAR_b_Items[i][j]).equals("Person")) UI_set_to_Create_Vertex();
-          else if ((UI_BAR_b_Items[i][j]).equals("Curve")) UI_set_to_Create_Curve();
-          else if ((UI_BAR_b_Items[i][j]).equals("Face")) UI_set_to_Create_Face();
+          else if ((UI_BAR_b_Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
+          else if ((UI_BAR_b_Items[i][j]).equals("Line")) UI_set_to_Create_Curve();
+          else if ((UI_BAR_b_Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
           else if ((UI_BAR_b_Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
           else if ((UI_BAR_b_Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
           else if ((UI_BAR_b_Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
