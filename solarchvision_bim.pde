@@ -1,4 +1,3 @@
-// could add create vertex
 
 // could add create curve
 // could add create face
