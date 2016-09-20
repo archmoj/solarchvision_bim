@@ -1,6 +1,10 @@
 
 // still not working well: SOLARCHVISION_autoNormalFaces_Selection
 
+// diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
+
+
+
 // export and import of curves
 // converting curves to faces e.g. Surface, Extrude, Connect
 
@@ -57275,13 +57279,12 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
             float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
 
 
-            int flip_face = 0;
-    
-            int hitFace = int(SOLARCHVISION_selected3Dintersect(ray_start, ray_direction)[0]);
-    
-            if (hitFace != 0) flip_face = 1;
-    
-            if (flip_face == 1) {
+            
+
+            float[] RxP = SOLARCHVISION_selected3Dintersect(ray_start, ray_direction);
+
+            if (RxP[0] > 0) {
+
               for (int j = 0; j < n; j++) {
                 allFaces_PNT[f][j] = tmpFace[n - j - 1];
               }
