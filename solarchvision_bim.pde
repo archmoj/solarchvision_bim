@@ -1,6 +1,4 @@
 
-// still not working well: SOLARCHVISION_autoNormalFaces_Selection
-
 // diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
 
 
