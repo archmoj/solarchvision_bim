@@ -216,6 +216,7 @@ int pre_WIN3D_FacesShade;
 
 int pre_MODEL3D_Tessellation;
 
+int pre_MODEL3D_DisplayVertices;
 int pre_MODEL3D_DisplayEdges;
 int pre_MODEL3D_DisplayNormals;
 
@@ -1817,6 +1818,7 @@ int Display_URBAN_MESH = 1;
 int Display_SolidImpact_Points = 0;
 int Display_SolidImpact_Lines = 1;
 
+int MODEL3D_DisplayVertices = 0;
 int MODEL3D_DisplayEdges = 1;
 int MODEL3D_DisplayNormals = 0;
 
@@ -2877,6 +2879,7 @@ void draw () {
 
         pre_selectedFractal_displayEdges = selectedFractal_displayEdges;
         pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
+        pre_MODEL3D_DisplayVertices = MODEL3D_DisplayVertices;
         pre_MODEL3D_DisplayEdges = MODEL3D_DisplayEdges;
         pre_MODEL3D_DisplayNormals = MODEL3D_DisplayNormals;
 
@@ -3453,6 +3456,7 @@ void draw () {
         if (pre_Display_SolidImpact_Points != Display_SolidImpact_Points) WIN3D_Update = 1;
         if (pre_Display_SolidImpact_Lines != Display_SolidImpact_Lines) WIN3D_Update = 1;
 
+        if (pre_MODEL3D_DisplayVertices != MODEL3D_DisplayVertices) WIN3D_Update = 1;
         if (pre_MODEL3D_DisplayEdges != MODEL3D_DisplayEdges) WIN3D_Update = 1;
         if (pre_MODEL3D_DisplayNormals != MODEL3D_DisplayNormals) WIN3D_Update = 1;
 
@@ -3649,6 +3653,8 @@ void SOLARCHVISION_draw_WIN3D () {
     SOLARCHVISION_draw_Faces();
     
     SOLARCHVISION_draw_Curves();
+    
+    SOLARCHVISION_draw_Vertices();
 
     SOLARCHVISION_draw_Fractals();
 
@@ -36109,7 +36115,13 @@ void mouseClicked () {
 
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }          
+            } 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Vertices")) {
+              MODEL3D_DisplayVertices = (MODEL3D_DisplayVertices  + 1) % 2;
+
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Edges")) {
               MODEL3D_DisplayEdges = (MODEL3D_DisplayEdges  + 1) % 2;
 
@@ -39601,6 +39613,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       //WIN3D_FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,1,0, "WIN3D_FacesShade", WIN3D_FacesShade, 0, Shade_Options_num - 1, 1), 1));
 
+      MODEL3D_DisplayVertices = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "MODEL3D_DisplayVertices", MODEL3D_DisplayVertices, 0, 1, 1), 1));
       MODEL3D_DisplayEdges = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "MODEL3D_DisplayEdges", MODEL3D_DisplayEdges, 0, 1, 1), 1));
       MODEL3D_DisplayNormals = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "MODEL3D_DisplayNormals", MODEL3D_DisplayNormals, 0, 1, 1), 1));
 
@@ -48976,7 +48989,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Curves Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected REF Pivot", "Display/Hide Selected Group3D Pivot", "Display/Hide Selected Group3D Edges", "Display/Hide Selected Group3D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide CLMREC points", "Display/Hide CLMREC nearest", "Display/Hide TMYEPW points", "Display/Hide TMYEPW nearest"
+    "Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Curves Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected REF Pivot", "Display/Hide Selected Group3D Pivot", "Display/Hide Selected Group3D Edges", "Display/Hide Selected Group3D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide CLMREC points", "Display/Hide CLMREC nearest", "Display/Hide TMYEPW points", "Display/Hide TMYEPW nearest"
   }
   , 
   {
@@ -49178,7 +49191,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
                   stroke(127); 
                   fill(127);
                 }
-              }          
+              }  
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Vertices")) {
+                if (MODEL3D_DisplayVertices == 0) {
+                  stroke(127); 
+                  fill(127);
+                }
+              }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Edges")) {
                 if (MODEL3D_DisplayEdges == 0) {
                   stroke(127); 
@@ -51805,6 +51824,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_URBAN_MESH", Display_URBAN_MESH);
   newChild1.setInt("Display_SolidImpact_Points", Display_SolidImpact_Points);
   newChild1.setInt("Display_SolidImpact_Lines", Display_SolidImpact_Lines);
+  newChild1.setInt("MODEL3D_DisplayVertices", MODEL3D_DisplayVertices);       
   newChild1.setInt("MODEL3D_DisplayEdges", MODEL3D_DisplayEdges);
   newChild1.setInt("MODEL3D_DisplayNormals", MODEL3D_DisplayNormals);
   newChild1.setInt("Display_WindFlow", Display_WindFlow);
@@ -53116,6 +53136,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_URBAN_MESH = children0[L].getInt("Display_URBAN_MESH");
       Display_SolidImpact_Points = children0[L].getInt("Display_SolidImpact_Points");
       Display_SolidImpact_Lines = children0[L].getInt("Display_SolidImpact_Lines");
+      MODEL3D_DisplayVertices = children0[L].getInt("MODEL3D_DisplayVertices");  
       MODEL3D_DisplayEdges = children0[L].getInt("MODEL3D_DisplayEdges");
       MODEL3D_DisplayNormals = children0[L].getInt("MODEL3D_DisplayNormals");
       Display_WindFlow = children0[L].getInt("Display_WindFlow");
@@ -54574,6 +54595,41 @@ void SOLARCHVISION_draw_Curves () {
   WIN3D_Diagrams.strokeWeight(0);
 }
 
+
+
+
+
+void SOLARCHVISION_draw_Vertices () {
+
+  WIN3D_Diagrams.strokeWeight(3);
+
+  WIN3D_Diagrams.stroke(0); 
+  
+  WIN3D_Diagrams.noFill();
+   
+
+  if (MODEL3D_DisplayVertices != 0) {
+    
+    float d = 0.5; // <<<<<<<<<<<<<< distance 
+
+    for (int f = 1; f < allVertices.length; f++) {    
+              
+      float x = allVertices[f][0];
+      float y = allVertices[f][1];
+      float z = allVertices[f][2];
+      
+      WIN3D_Diagrams.line((x - d) * OBJECTS_scale * WIN3D_Scale3D, -(y * OBJECTS_scale * WIN3D_Scale3D), z * OBJECTS_scale * WIN3D_Scale3D, (x + d) * OBJECTS_scale * WIN3D_Scale3D, -(y * OBJECTS_scale * WIN3D_Scale3D), z * OBJECTS_scale * WIN3D_Scale3D);
+
+      WIN3D_Diagrams.line(x * OBJECTS_scale * WIN3D_Scale3D, -((y - d) * OBJECTS_scale * WIN3D_Scale3D), z * OBJECTS_scale * WIN3D_Scale3D, x * OBJECTS_scale * WIN3D_Scale3D, -((y + d) * OBJECTS_scale * WIN3D_Scale3D), z * OBJECTS_scale * WIN3D_Scale3D);
+
+      WIN3D_Diagrams.line(x * OBJECTS_scale * WIN3D_Scale3D, -(y * OBJECTS_scale * WIN3D_Scale3D), (z - d) * OBJECTS_scale * WIN3D_Scale3D, x * OBJECTS_scale * WIN3D_Scale3D, -(y * OBJECTS_scale * WIN3D_Scale3D), (z + d) * OBJECTS_scale * WIN3D_Scale3D);
+
+            
+    }
+  }
+  
+  WIN3D_Diagrams.strokeWeight(0);
+}
 
 
 
