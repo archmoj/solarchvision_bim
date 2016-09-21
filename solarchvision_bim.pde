@@ -15361,7 +15361,7 @@ void SOLARCHVISION_beginNewFace () {
 }
 
 void SOLARCHVISION_add_VertexToLastFace (float x, float y, float z) {
-
+  
   int n = allFaces_PNT.length - 1;
   
   int[] newVertex = {
@@ -38695,13 +38695,15 @@ void mouseClicked () {
 
                   if (Current_ObjectCategory == ObjectCategory_Faces) { // working with faces
                     if (CreateButton_Face != 0) {
-                      SOLARCHVISION_add_VertexToLastFace(x, y, z);
+                      SOLARCHVISION_add_VertexToLastFace(x, y, z); 
+                      
                     }
                   }      
           
                   if (Current_ObjectCategory == ObjectCategory_Curves) { // working with curves
                     if (CreateButton_Curve != 0) {
-                      SOLARCHVISION_add_VertexToLastCurve(x, y, z);
+                      SOLARCHVISION_add_VertexToLastCurve(x, y, z);                   
+                      
                     }
                   }        
                       
@@ -50168,6 +50170,13 @@ void UI_set_to_Create_Vertex () {
 
 void UI_set_to_Create_Face () {
   UI_set_to_Create_Nothing();
+
+  defaultMaterial = DEFAULT_CreateMaterial;
+  defaultTessellation = DEFAULT_CreateTessellation;
+  defaultLayer = DEFAULT_CreateLayer;
+  defaultVisibility = DEFAULT_CreateVisibility;
+  defaultWeight = DEFAULT_CreateWeight;  
+  defaultClose = DEFAULT_CreateClose;   
   
   SOLARCHVISION_beginNewFace();
 
@@ -50177,6 +50186,13 @@ void UI_set_to_Create_Face () {
 
 void UI_set_to_Create_Curve () {
   UI_set_to_Create_Nothing();
+
+  defaultMaterial = DEFAULT_CreateMaterial;
+  defaultTessellation = DEFAULT_CreateTessellation;
+  defaultLayer = DEFAULT_CreateLayer;
+  defaultVisibility = DEFAULT_CreateVisibility;
+  defaultWeight = DEFAULT_CreateWeight;  
+  defaultClose = DEFAULT_CreateClose;   
   
   SOLARCHVISION_beginNewCurve();
 
