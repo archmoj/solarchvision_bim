@@ -315,7 +315,7 @@ float GLOBE_calculatedResolution = 2.5; //1, 2.5, 5
 
 float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
-float objExport_Scale = 0.001; // 0.001: 1km --> 1
+float objExport_Scale = 1.0; //0.001; // 0.001: 1km --> 1
 int objExport_FlipZYaxis = 1; //1; // 1: to fit in Unity3D
 
 int objExport_PrecisionVertex = 6; 
@@ -30703,9 +30703,9 @@ void SOLARCHVISION_calculate_WindFlow () {
    */
 
 
-  for (float z = 2.5; z <= 30; z += 2.5) {
-    for (float y = -80; y <= 80; y += 2.5) {
-      for (float x = -80; x <= 80; x += 2.5) {
+  for (float z = 2.5; z <= 30; z += 5.0) {
+    for (float y = -80; y <= 80; y += 5.0) {
+      for (float x = -80; x <= 80; x += 5.0) {
 
 
 
@@ -54353,8 +54353,10 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   y += posY;  
   z += posZ;
 
-  //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
-  return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));
+   
+  //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));
+  //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
+  return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / (value * scaleX * scaleY * scaleZ * 0.001));
 }
 
 
