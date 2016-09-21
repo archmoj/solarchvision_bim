@@ -36461,16 +36461,17 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Point");
               UI_BAR_b_Update = 1;
             }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Spline")) {
+              UI_set_to_Create_Curve();
+              SOLARCHVISION_highlight_in_BAR_b("Spline");
+              UI_BAR_b_Update = 1;
+            }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Surface")) {
               UI_set_to_Create_Face();
               SOLARCHVISION_highlight_in_BAR_b("Surface");
               UI_BAR_b_Update = 1;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Line")) {
-              UI_set_to_Create_Curve();
-              SOLARCHVISION_highlight_in_BAR_b("Line");
-              UI_BAR_b_Update = 1;
-            }
+
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 1")) {
               UI_set_to_Create_Parametric(1);
@@ -49065,7 +49066,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Line", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
@@ -49633,7 +49634,7 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
-    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "Point", "Line", "Surface", "BuildingType", "2.5"
+    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
   }
   , 
   {
@@ -49867,7 +49868,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((UI_BAR_b_Items[i][j]).equals("Tree")) UI_set_to_Create_Tree();
           else if ((UI_BAR_b_Items[i][j]).equals("Person")) UI_set_to_Create_Person();
           else if ((UI_BAR_b_Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
-          else if ((UI_BAR_b_Items[i][j]).equals("Line")) UI_set_to_Create_Curve();
+          else if ((UI_BAR_b_Items[i][j]).equals("Spline")) UI_set_to_Create_Curve();
           else if ((UI_BAR_b_Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
           else if ((UI_BAR_b_Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
           else if ((UI_BAR_b_Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
@@ -54497,7 +54498,7 @@ float[] SOLARCHVISION_getPivot () {
 
 
 
-void SOLARCHVISION_add_Line (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
+void SOLARCHVISION_add_Spline (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
   
   defaultMaterial = m;
   defaultTessellation = tes;
@@ -56296,7 +56297,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }  
 
-  else if (Command_CAPITAL.equals("LINE")) {
+  else if (Command_CAPITAL.equals("SPLINE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -56324,7 +56325,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }        
       }
       if (points.length > 1) {   
-        SOLARCHVISION_add_Line(m, tes, lyr, vsb, wgt, clz, points);
+        SOLARCHVISION_add_Spline(m, tes, lyr, vsb, wgt, clz, points);
         WIN3D_Update = 1;  
         Current_ObjectCategory = ObjectCategory_Curves;
         UI_BAR_b_Update = 1;
@@ -56332,7 +56333,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Line m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
+      return_message = "Spline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
       
       UI_set_to_Create_Curve();
       SOLARCHVISION_highlight_in_BAR_b("Curve");
