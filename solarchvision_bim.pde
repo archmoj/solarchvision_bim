@@ -15348,7 +15348,7 @@ void SOLARCHVISION_beginNewCurve () {
 
   int[] newCurve = {};    
   
-  SOLARCHVISION_add_Face(newCurve);
+  SOLARCHVISION_add_Curve(newCurve);
   
 }
 
