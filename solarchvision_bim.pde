@@ -32897,7 +32897,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
 
 
 void SOLARCHVISION_PickSelect (float[] RxP) {
-
+  
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselect_All();
 
 
@@ -33063,27 +33063,13 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     int OBJ_NUM = 0;
 
-    if (OBJ_NUM != 0) {
-      for (int i = 0; i < allGroup3Ds_num + 1; i++) {
-        if ((allGroup3Ds_Faces[i][0] <= f) && (f <= allGroup3Ds_Faces[i][1])) {
-  
-          OBJ_NUM = i;
-  
-          WIN3D_Update = 1;
-          break;
-        }
-      }
-    }
+    for (int i = 0; i < allGroup3Ds_num + 1; i++) {
+      if ((allGroup3Ds_Faces[i][0] <= f) && (f <= allGroup3Ds_Faces[i][1])) {
 
-    if (OBJ_NUM != 0) {
-      for (int i = 0; i < allGroup3Ds_num + 1; i++) {
-        if ((allGroup3Ds_Curves[i][0] <= f) && (f <= allGroup3Ds_Curves[i][1])) {
-  
-          OBJ_NUM = i;
-  
-          WIN3D_Update = 1;
-          break;
-        }
+        OBJ_NUM = i;
+
+        WIN3D_Update = 1;
+        break;
       }
     }
 
@@ -33250,37 +33236,18 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     int OBJ_NUM = 0;
     float min_dist = FLOAT_undefined;  
 
-    if (OBJ_NUM != 0) {
-      for (int j = 0; j < allFaces_PNT[f].length; j++) {
-        int vNo = allFaces_PNT[f][j];
-  
-        float x = allVertices[vNo][0];
-        float y = allVertices[vNo][1];          
-        float z = allVertices[vNo][2];
-  
-        float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
-  
-        if (min_dist > now_dist) {
-          min_dist = now_dist;
-          OBJ_NUM = vNo;
-        }
-      }
-    }
+    for (int j = 0; j < allFaces_PNT[f].length; j++) {
+      int vNo = allFaces_PNT[f][j];
 
-    if (OBJ_NUM != 0) {
-      for (int j = 0; j < allCurves_PNT[f].length; j++) {
-        int vNo = allCurves_PNT[f][j];
-  
-        float x = allVertices[vNo][0];
-        float y = allVertices[vNo][1];          
-        float z = allVertices[vNo][2];
-  
-        float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
-  
-        if (min_dist > now_dist) {
-          min_dist = now_dist;
-          OBJ_NUM = vNo;
-        }
+      float x = allVertices[vNo][0];
+      float y = allVertices[vNo][1];          
+      float z = allVertices[vNo][2];
+
+      float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
+
+      if (min_dist > now_dist) {
+        min_dist = now_dist;
+        OBJ_NUM = vNo;
       }
     }
 
