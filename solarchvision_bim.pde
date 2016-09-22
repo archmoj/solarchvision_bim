@@ -1,4 +1,4 @@
-
+// should see where else could add snap3D :)
 
 
 // diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
@@ -35175,7 +35175,7 @@ void mouseReleased () {
                   if (mouseButton == RIGHT) {
                     RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
                   } else if (mouseButton == LEFT) {
-                    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_3Dsnap(SOLARCHVISION_3Dintersect(ray_start, ray_direction));
                   }
 
                   if (RxP[0] > 0) {
@@ -38026,8 +38026,7 @@ void mouseClicked () {
               } else if (mouseButton == LEFT) {
 
                 if ((WIN3D_UI_CurrentTask == UITASK_Create) || (WIN3D_UI_CurrentTask == UITASK_Move)) {
-                   float[] tmp = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
-                   RxP = SOLARCHVISION_3Dsnap(tmp);
+                   RxP = SOLARCHVISION_3Dsnap(SOLARCHVISION_3Dintersect(ray_start, ray_direction));
 
                 } else {
   
@@ -38044,8 +38043,7 @@ void mouseClicked () {
                   } else if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
                     RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction);
                   } else {
-                    float[] tmp = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
-                    RxP = SOLARCHVISION_3Dsnap(tmp);
+                    RxP = SOLARCHVISION_3Dsnap(SOLARCHVISION_3Dintersect(ray_start, ray_direction));
                   }
                 }
                 
