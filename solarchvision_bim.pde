@@ -57530,24 +57530,51 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
     if (CreateInput_Snap == 1) { // nearest endpoint
     
       float nearest_D = FLOAT_undefined;
-      int nearest_N = -1;
-      
-      for (int j = 0; j < allFaces_PNT[f].length; j++) {
-        
-        int n = allFaces_PNT[f][j];
-        
-        float d = dist(x, y, z, allVertices[n][0], allVertices[n][1], allVertices[n][2]);
-        
-        if (nearest_D > d) {
-          nearest_D = d;
-          nearest_N = n;
-        }
-          
+      float nearest_X = FLOAT_undefined;
+      float nearest_Y = FLOAT_undefined;
+      float nearest_Z = FLOAT_undefined;
+
+      int mt = allFaces_MTLVGC[f][0];
+
+      int Tessellation = allFaces_MTLVGC[f][1];
+
+      int TotalSubNo = 1;  
+      if (allFaces_MTLVGC[f][0] == 0) {
+        Tessellation += MODEL3D_Tessellation;
       }
-      if (nearest_N != -1) {
-        RxP[1] = allVertices[nearest_N][0];
-        RxP[2] = allVertices[nearest_N][1];
-        RxP[3] = allVertices[nearest_N][2];
+      if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+      float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+        int vNo = allFaces_PNT[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }
+
+      for (int n = 0; n < TotalSubNo; n++) {
+
+        float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+
+        WIN3D_Diagrams.beginShape();
+
+        for (int s = 0; s < subFace.length; s++) {
+      
+          float d = dist(x, y, z, subFace[s][0], subFace[s][1], subFace[s][2]);
+          
+          if (nearest_D > d) {
+            nearest_D = d;
+            nearest_X = subFace[s][0];
+            nearest_Y = subFace[s][1];
+            nearest_Z = subFace[s][2];
+          }
+        }
+      }
+      
+      if (nearest_D < 0.9 * FLOAT_undefined) {
+        RxP[1] = nearest_X;
+        RxP[2] = nearest_Y;
+        RxP[3] = nearest_Z;
       }
     }
   }
