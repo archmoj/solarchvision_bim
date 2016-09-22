@@ -27865,7 +27865,7 @@ int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, int firstGu
 }
 
 
-float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28089,7 +28089,7 @@ float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
 }
 
 
-float[] SOLARCHVISION_10Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
   
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28200,7 +28200,7 @@ float[] SOLARCHVISION_10Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28292,7 +28292,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28384,7 +28384,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28477,7 +28477,7 @@ float[] SOLARCHVISION_9Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28569,7 +28569,7 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28664,7 +28664,7 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir) {
+float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -35173,9 +35173,9 @@ void mouseReleased () {
                   float[] RxP = new float [8]; 
 
                   if (mouseButton == RIGHT) {
-                    RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
                   } else if (mouseButton == LEFT) {
-                    RxP = SOLARCHVISION_3Dsnap(SOLARCHVISION_3Dintersect(ray_start, ray_direction));
+                    RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
                   }
 
                   if (RxP[0] > 0) {
@@ -38022,28 +38022,28 @@ void mouseClicked () {
               float[] RxP = new float [8];
   
               if (mouseButton == RIGHT) {
-                RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
+                RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
               } else if (mouseButton == LEFT) {
 
                 if ((WIN3D_UI_CurrentTask == UITASK_Create) || (WIN3D_UI_CurrentTask == UITASK_Move)) {
-                   RxP = SOLARCHVISION_3Dsnap(SOLARCHVISION_3Dintersect(ray_start, ray_direction));
+                   RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
 
                 } else {
   
                   if (Current_ObjectCategory == ObjectCategory_Curves) {
-                    RxP = SOLARCHVISION_10Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_Curves(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory_Cameras) {
-                    RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_Cameras(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory_Sections) {
-                    RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_Sections(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory_Solids) {
-                    RxP = SOLARCHVISION_7Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_Solids(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory_Fractals) {
-                    RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_Fractals(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-                    RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_intersect_Object2Ds(ray_start, ray_direction);
                   } else {
-                    RxP = SOLARCHVISION_3Dsnap(SOLARCHVISION_3Dintersect(ray_start, ray_direction));
+                    RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
                   }
                 }
                 
@@ -46884,9 +46884,9 @@ void SOLARCHVISION_drop_Selection () {
         float[] RxP = new float [8];
 
         if (WIN3D_UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
+          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
         } else if (WIN3D_UI_TaskModifyParameter == 1) {
-          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
         } else {
           RxP[0] = -1; // undefined
         }
@@ -46899,9 +46899,9 @@ void SOLARCHVISION_drop_Selection () {
           ray_direction[2] = 1; // <<<< going upwards
 
           if (WIN3D_UI_TaskModifyParameter == 0) { 
-            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
+            RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
           } else if (WIN3D_UI_TaskModifyParameter == 2) {
-            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+            RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
           } else {
             RxP[0] = -1; // undefined
           }
@@ -46939,9 +46939,9 @@ void SOLARCHVISION_drop_Selection () {
         float[] RxP = new float [8];
 
         if (WIN3D_UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
+          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
         } else if (WIN3D_UI_TaskModifyParameter == 1) {
-          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
         } else {
           RxP[0] = -1; // undefined
         }
@@ -46954,9 +46954,9 @@ void SOLARCHVISION_drop_Selection () {
           ray_direction[2] = 1; // <<<< going upwards
 
           if (WIN3D_UI_TaskModifyParameter == 0) { 
-            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction);
+            RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
           } else if (WIN3D_UI_TaskModifyParameter == 2) {
-            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+            RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
           } else {
             RxP[0] = -1; // undefined
           }
@@ -56866,7 +56866,7 @@ void SOLARCHVISION_RenderViewport () {
   
     float[] RxP = new float [8]; 
 
-    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+    RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
 
     if (RxP[0] > 0) {        
         
@@ -57213,7 +57213,7 @@ void SOLARCHVISION_PreBakeViewport () {
   
     float[] RxP = new float [8]; 
 
-    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+    RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
 
     if (RxP[0] > 0) {        
         
@@ -57518,7 +57518,7 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 }
 
 
-float[] SOLARCHVISION_3Dsnap (float[] RxP) {
+float[] SOLARCHVISION_snap_Faces (float[] RxP) {
   
   if (RxP[0] > 0) {
     
