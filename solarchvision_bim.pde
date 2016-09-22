@@ -38517,7 +38517,7 @@ void mouseClicked () {
                 }
   
                 if (WIN3D_UI_CurrentTask == UITASK_Create) { // create
-  
+                  
                   int keep_number_of_Group3Ds = allGroup3Ds_num + 1;
                   int keep_number_of_Object2Ds = allObject2Ds_num + 1;
                   int keep_number_of_Fractals = allFractals_num + 1;
@@ -38690,6 +38690,7 @@ void mouseClicked () {
                   if (Current_ObjectCategory == ObjectCategory_Vertices) { // working with vertices
                     if (CreateButton_Vertex != 0) {
                       SOLARCHVISION_add_Vertex(x, y, z);
+                      
                     }
                   }    
 
@@ -38697,14 +38698,26 @@ void mouseClicked () {
                   if (Current_ObjectCategory == ObjectCategory_Faces) { // working with faces
                     if (CreateButton_Face != 0) {
                       SOLARCHVISION_add_VertexToLastFace(x, y, z); 
-                      
+
+                      selectedFace_numbers = new int [2];
+                      selectedFace_numbers[0] = 0;
+                      selectedFace_numbers[1] = allFaces_PNT.length - 1;
+    
+                      println("SOLARCHVISION_calculate_selection_BoundingBox 9_Face");
+                      SOLARCHVISION_calculate_selection_BoundingBox();
                     }
                   }      
           
                   if (Current_ObjectCategory == ObjectCategory_Curves) { // working with curves
                     if (CreateButton_Curve != 0) {
                       SOLARCHVISION_add_VertexToLastCurve(x, y, z);                   
-                      
+
+                      selectedCurve_numbers = new int [2];
+                      selectedCurve_numbers[0] = 0;
+                      selectedCurve_numbers[1] = allCurves_PNT.length - 1;
+    
+                      println("SOLARCHVISION_calculate_selection_BoundingBox 9_Curve");
+                      SOLARCHVISION_calculate_selection_BoundingBox();
                     }
                   }        
                       
@@ -39013,7 +39026,7 @@ void mouseClicked () {
                   }
   
   
-  
+
   
                   if (keep_number_of_Solids != allSolids_DEF.length) { // if any Solid created during the process
   
@@ -39022,9 +39035,7 @@ void mouseClicked () {
   
                     for (int o = keep_number_of_Solids; o < allSolids_DEF.length; o++) {
   
-                      int[] newlyAddedSolid = {
-                        allSolids_DEF.length - 1
-                      };
+                      int[] newlyAddedSolid = {o};
   
                       selectedSolid_numbers = concat(selectedSolid_numbers, newlyAddedSolid);
                     }  
@@ -39042,9 +39053,7 @@ void mouseClicked () {
   
                     for (int o = keep_number_of_Cameras; o < allCameras_num + 1; o++) {
   
-                      int[] newlyAddedCamera = {
-                        allCameras_num
-                      };
+                      int[] newlyAddedCamera = {o};
   
                       selectedCamera_numbers = concat(selectedCamera_numbers, newlyAddedCamera);
                     }  
@@ -39061,9 +39070,7 @@ void mouseClicked () {
   
                     for (int o = keep_number_of_Group3Ds; o < allGroup3Ds_num + 1; o++) {
   
-                      int[] newlyAddedGroup3D = {
-                        allGroup3Ds_num
-                      };
+                      int[] newlyAddedGroup3D = {o};
   
                       selectedGroup3D_numbers = concat(selectedGroup3D_numbers, newlyAddedGroup3D);
                     }  
@@ -39079,9 +39086,7 @@ void mouseClicked () {
   
                     for (int o = keep_number_of_Object2Ds; o < allObject2Ds_num + 1; o++) {
   
-                      int[] newlyAddedObject2D = {
-                        allObject2Ds_num
-                      };
+                      int[] newlyAddedObject2D = {o};
   
                       selectedObject2D_numbers = concat(selectedObject2D_numbers, newlyAddedObject2D);
                     }  
@@ -39098,9 +39103,7 @@ void mouseClicked () {
   
                     for (int o = keep_number_of_Fractals; o < allFractals_num + 1; o++) {
   
-                      int[] newlyAddedFractal = {
-                        allFractals_num
-                      };
+                      int[] newlyAddedFractal = {o};
   
                       selectedFractal_numbers = concat(selectedFractal_numbers, newlyAddedFractal);
                     }  
@@ -39108,6 +39111,10 @@ void mouseClicked () {
                     println("SOLARCHVISION_calculate_selection_BoundingBox 9_Fractal");
                     SOLARCHVISION_calculate_selection_BoundingBox();
                   }
+                  
+          
+                  
+                  
                 }
               }          
   
@@ -54359,7 +54366,7 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / (value * scaleX * scaleY * scaleZ * 0.001));
   return(scaleX * scaleY * scaleZ * 0.01 * pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
   
-  ????
+
 }
 
 
