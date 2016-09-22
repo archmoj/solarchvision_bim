@@ -19473,7 +19473,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
       selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
     }
 
-    int[] new_selectedCurve_numbers = {
+    int[] new_selectedFace_numbers = {
       0
     };
 
@@ -19543,57 +19543,60 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
                 int s_next = (s + 1) % allCurves_PNT[f].length;
 
                 if (ModifyInput_OpenningDepth < 0) { // reverse direction for negative extrude heights
-                  int[][] newCurve = {
+                  int[][] newFace = {
                     {
                       base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]
                     }
                   };  
-                  allCurves_PNT = (int[][]) concat(allCurves_PNT, newCurve);
+                  allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
                 } else {
-                  int[][] newCurve = {
+                  int[][] newFace = {
                     {
                       base_Vertex_numbers[s], base_Vertex_numbers[s_next], top_Vertex_numbers[s_next], top_Vertex_numbers[s]
                     }
                   };  
-                  allCurves_PNT = (int[][]) concat(allCurves_PNT, newCurve);
+                  allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
                 }       
 
-                int[][] newCurve_MTLVGC = {
+                int[][] newFace_MTLVGC = { // copying target face properties from curve source
                   {
                     allCurves_MTLVGC[f][0], allCurves_MTLVGC[f][1], allCurves_MTLVGC[f][2], allCurves_MTLVGC[f][3], allCurves_MTLVGC[f][4], allCurves_MTLVGC[f][5]
                   }
                 }; 
-                allCurves_MTLVGC =  (int[][]) concat(allCurves_MTLVGC, newCurve_MTLVGC);
+                allFaces_MTLVGC =  (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);
               }  
 
               { // adding the cap
-                int[][] newCurve = {
+                int[][] newFace = {
                   top_Vertex_numbers
                 };  
-                allCurves_PNT = (int[][]) concat(allCurves_PNT, newCurve);         
+                allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);         
 
-                int[][] newCurve_MTLVGC = {
+                int[][] newFace_MTLVGC = { // copying target face properties from curve source
                   {
                     allCurves_MTLVGC[f][0], allCurves_MTLVGC[f][1], allCurves_MTLVGC[f][2], allCurves_MTLVGC[f][3], allCurves_MTLVGC[f][4], allCurves_MTLVGC[f][5]
                   }
                 }; 
-                allCurves_MTLVGC =  (int[][]) concat(allCurves_MTLVGC, newCurve_MTLVGC);  
+                allFaces_MTLVGC =  (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);  
 
-                int[] lastCurve = {
-                  allCurves_PNT.length - 1
+                int[] lastFace = {
+                  allFaces_PNT.length - 1
                 };
 
-                new_selectedCurve_numbers = (int[]) concat(new_selectedCurve_numbers, lastCurve);
+                new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);
               }
 
-              allGroup3Ds_Curves[allGroup3Ds_num][1] = allCurves_PNT.length - 1;
+              allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces_PNT.length - 1;
             }
           }
         }
       }
     }
 
-    selectedCurve_numbers = new_selectedCurve_numbers;
+    selectedFace_numbers = new_selectedFace_numbers;
+    
+    Current_ObjectCategory = ObjectCategory_Faces;
+    UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 101b");
     SOLARCHVISION_calculate_selection_BoundingBox();
