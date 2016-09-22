@@ -278,6 +278,7 @@ float pre_CreateInput_powAll;
 
 
 
+
 int SavedScreenShots = 0;
 
 float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
@@ -695,6 +696,8 @@ int CreateInput_CylinderDegree = 24;
 
 
 int CreateInput_PolyDegree = 6;
+
+int CreateInput_Snap = 0;
 
 
 int CreateButton_3DPoly = 0;
@@ -38023,7 +38026,9 @@ void mouseClicked () {
               } else if (mouseButton == LEFT) {
 
                 if ((WIN3D_UI_CurrentTask == UITASK_Create) || (WIN3D_UI_CurrentTask == UITASK_Move)) {
-                   RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+                   float[] tmp = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+                   RxP = SOLARCHVISION_3Dsnap(tmp);
+
                 } else {
   
                   if (Current_ObjectCategory == ObjectCategory_Curves) {
@@ -38039,9 +38044,12 @@ void mouseClicked () {
                   } else if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
                     RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction);
                   } else {
-                    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+                    float[] tmp = SOLARCHVISION_3Dintersect(ray_start, ray_direction);
+                    RxP = SOLARCHVISION_3Dsnap(tmp);
                   }
                 }
+                
+                
 
               }
   
@@ -39534,6 +39542,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       CreateInput_Height = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateInput_Height", CreateInput_Height, -50, 150, -2), 0.5);     
 
       CreateInput_Volume = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateInput_Volume", CreateInput_Volume, 0, 25000, 1000);
+      
+      CreateInput_Snap = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateInput_Snap", CreateInput_Snap, 0, 1, 1), 1));
     }    
 
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Modify
@@ -51623,6 +51633,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("CreateInput_SphereDegree", CreateInput_SphereDegree);
   newChild1.setInt("CreateInput_CylinderDegree", CreateInput_CylinderDegree);
   newChild1.setInt("CreateInput_PolyDegree", CreateInput_PolyDegree);
+  newChild1.setInt("CreateInput_Snap", CreateInput_Snap);
+  
   newChild1.setInt("CreateParametric_Type", CreateParametric_Type);
   newChild1.setInt("CreatePerson_Type", CreatePerson_Type);
   newChild1.setInt("CreatePlant_Type", CreatePlant_Type);
@@ -52935,6 +52947,8 @@ void SOLARCHVISION_load_project (String myFile) {
       CreateInput_SphereDegree = children0[L].getInt("CreateInput_SphereDegree");
       CreateInput_CylinderDegree = children0[L].getInt("CreateInput_CylinderDegree");
       CreateInput_PolyDegree = children0[L].getInt("CreateInput_PolyDegree");
+      CreateInput_Snap = children0[L].getInt("CreateInput_Snap");
+      
       CreateParametric_Type = children0[L].getInt("CreateParametric_Type");
       CreatePerson_Type = children0[L].getInt("CreatePerson_Type");
       CreatePlant_Type = children0[L].getInt("CreatePlant_Type");
@@ -57503,4 +57517,42 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
     WIN3D_VerticesSolarValue_Update = 1;
   }
+}
+
+
+float[] SOLARCHVISION_3Dsnap (float[] RxP) {
+  
+  if (RxP[0] > 0) {
+    
+    int f = int(RxP[0]);
+    float x = RxP[1];
+    float y = RxP[2];
+    float z = RxP[3];
+  
+    if (CreateInput_Snap == 1) { // nearest endpoint
+    
+      float nearest_D = FLOAT_undefined;
+      int nearest_N = -1;
+      
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+        
+        int n = allFaces_PNT[f][j];
+        
+        float d = dist(x, y, z, allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+        
+        if (nearest_D > d) {
+          nearest_D = d;
+          nearest_N = n;
+        }
+          
+      }
+      if (nearest_N != -1) {
+        RxP[1] = allVertices[nearest_N][0];
+        RxP[2] = allVertices[nearest_N][1];
+        RxP[3] = allVertices[nearest_N][2];
+      }
+    }
+  }
+  
+  return RxP;
 }
