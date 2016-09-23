@@ -27805,7 +27805,9 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
     
     if (f > 0) {
       
-        if (allFaces_PNT[f].length > 2) {      
+      int n = allFaces_PNT[f].length;
+      
+      if (n > 2) {      
   
         int vsb = allFaces_MTLVGC[f][3];
     
@@ -27813,8 +27815,8 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
     
           float[] A = allVertices[allFaces_PNT[f][0]];
           float[] B = allVertices[allFaces_PNT[f][1]];
-          float[] C = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 2]];
-          float[] D = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 1]];
+          float[] C = allVertices[allFaces_PNT[f][n - 2]];
+          float[] D = allVertices[allFaces_PNT[f][n - 1]];
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
           float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -27842,8 +27844,8 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
         
               float AnglesAll = 0;      
         
-              for (int i = 0; i < allFaces_PNT[f].length; i++) {
-                int next_i = (i + 1) % allFaces_PNT[f].length;
+              for (int i = 0; i < n; i++) {
+                int next_i = (i + 1) % n;
         
                 float[] vect1 = {allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect};
                 float[] vect2 = {allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect};
@@ -27890,7 +27892,9 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
   
   for (int f = 1; f < allFaces_PNT.length; f++) {
     
-    if (allFaces_PNT[f].length > 2) {
+    int n = allFaces_PNT[f].length;
+    
+    if (n > 2) {
   
       int vsb = allFaces_MTLVGC[f][3];
   
@@ -27898,8 +27902,8 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
   
         float[] A = allVertices[allFaces_PNT[f][0]];
         float[] B = allVertices[allFaces_PNT[f][1]];
-        float[] C = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 2]];
-        float[] D = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 1]];
+        float[] C = allVertices[allFaces_PNT[f][n - 2]];
+        float[] D = allVertices[allFaces_PNT[f][n - 1]];
         
         float[] AC = SOLARCHVISION_3xSub(A, C);
         float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -27927,8 +27931,8 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
       
             float AnglesAll = 0;      
       
-            for (int i = 0; i < allFaces_PNT[f].length; i++) {
-              int next_i = (i + 1) % allFaces_PNT[f].length;
+            for (int i = 0; i < n; i++) {
+              int next_i = (i + 1) % n;
       
               float[] vect1 = {allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect};
               float[] vect2 = {allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect};
@@ -28004,7 +28008,9 @@ float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
     
     if (f > 0) {  
 
-        if (allFaces_PNT[f].length > 2) {
+      int n = allFaces_PNT[f].length;
+      
+      if (n > 2) {
         
         int vsb = allFaces_MTLVGC[f][3];
     
@@ -28012,8 +28018,8 @@ float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
           
           float[] A = allVertices[allFaces_PNT[f][0]];
           float[] B = allVertices[allFaces_PNT[f][1]];
-          float[] C = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 2]];
-          float[] D = allVertices[allFaces_PNT[f][allFaces_PNT[f].length - 1]];
+          float[] C = allVertices[allFaces_PNT[f][n - 2]];
+          float[] D = allVertices[allFaces_PNT[f][n - 1]];
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
           float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28041,8 +28047,8 @@ float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
         
               float AnglesAll = 0;      
         
-              for (int i = 0; i < allFaces_PNT[f].length; i++) {
-                int next_i = (i + 1) % allFaces_PNT[f].length;
+              for (int i = 0; i < n; i++) {
+                int next_i = (i + 1) % n;
         
                 float[] vect1 = {allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect};
                 float[] vect2 = {allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect};
@@ -28179,7 +28185,9 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
   
   for (int f = 1; f < allCurves_PNT.length; f++) {
     
-    if (allCurves_PNT[f].length > 2) {
+    int n = allCurves_PNT[f].length;
+    
+    if (n > 2) {
 
       int vsb = allCurves_MTLVGC[f][3];
   
@@ -28187,8 +28195,8 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
   
         float[] A = allVertices[allCurves_PNT[f][0]];
         float[] B = allVertices[allCurves_PNT[f][1]];
-        float[] C = allVertices[allCurves_PNT[f][allCurves_PNT[f].length - 2]];
-        float[] D = allVertices[allCurves_PNT[f][allCurves_PNT[f].length - 1]];
+        float[] C = allVertices[allCurves_PNT[f][n - 2]];
+        float[] D = allVertices[allCurves_PNT[f][n - 1]];
         
         float[] AC = SOLARCHVISION_3xSub(A, C);
         float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28216,8 +28224,8 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
       
             float AnglesAll = 0;      
       
-            for (int i = 0; i < allCurves_PNT[f].length; i++) {
-              int next_i = (i + 1) % allCurves_PNT[f].length;
+            for (int i = 0; i < n; i++) {
+              int next_i = (i + 1) % n;
       
               float[] vect1 = {allVertices[allCurves_PNT[f][i]][0] - X_intersect, allVertices[allCurves_PNT[f][i]][1] - Y_intersect, allVertices[allCurves_PNT[f][i]][2] - Z_intersect};
               float[] vect2 = {allVertices[allCurves_PNT[f][next_i]][0] - X_intersect, allVertices[allCurves_PNT[f][next_i]][1] - Y_intersect, allVertices[allCurves_PNT[f][next_i]][2] - Z_intersect};
@@ -28286,11 +28294,13 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
+    
+    int n = allObject2Ds_Faces[f].length;
 
     float[] A = allObject2Ds_Vertices[allObject2Ds_Faces[f][0]];
     float[] B = allObject2Ds_Vertices[allObject2Ds_Faces[f][1]];
-    float[] C = allObject2Ds_Vertices[allObject2Ds_Faces[f][allObject2Ds_Faces[f].length - 2]];
-    float[] D = allObject2Ds_Vertices[allObject2Ds_Faces[f][allObject2Ds_Faces[f].length - 1]];
+    float[] C = allObject2Ds_Vertices[allObject2Ds_Faces[f][n - 2]];
+    float[] D = allObject2Ds_Vertices[allObject2Ds_Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28318,8 +28328,8 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
   
         float AnglesAll = 0;      
   
-        for (int i = 0; i < allObject2Ds_Faces[f].length; i++) {
-          int next_i = (i + 1) % allObject2Ds_Faces[f].length;
+        for (int i = 0; i < n; i++) {
+          int next_i = (i + 1) % n;
   
           float[] vect1 = {allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][0] - X_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][1] - Y_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][2] - Z_intersect};
           float[] vect2 = {allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][0] - X_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][1] - Y_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][2] - Z_intersect};
@@ -28378,11 +28388,13 @@ float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allFractals_Faces.length; f++) {
+    
+    int n = allFractals_Faces[f].length;
 
     float[] A = allFractals_Vertices[allFractals_Faces[f][0]];
     float[] B = allFractals_Vertices[allFractals_Faces[f][1]];
-    float[] C = allFractals_Vertices[allFractals_Faces[f][allFractals_Faces[f].length - 2]];
-    float[] D = allFractals_Vertices[allFractals_Faces[f][allFractals_Faces[f].length - 1]];
+    float[] C = allFractals_Vertices[allFractals_Faces[f][n - 2]];
+    float[] D = allFractals_Vertices[allFractals_Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28410,8 +28422,8 @@ float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
   
         float AnglesAll = 0;      
   
-        for (int i = 0; i < allFractals_Faces[f].length; i++) {
-          int next_i = (i + 1) % allFractals_Faces[f].length;
+        for (int i = 0; i < n; i++) {
+          int next_i = (i + 1) % n;
   
           float[] vect1 = {allFractals_Vertices[allFractals_Faces[f][i]][0] - X_intersect, allFractals_Vertices[allFractals_Faces[f][i]][1] - Y_intersect, allFractals_Vertices[allFractals_Faces[f][i]][2] - Z_intersect};
           float[] vect2 = {allFractals_Vertices[allFractals_Faces[f][next_i]][0] - X_intersect, allFractals_Vertices[allFractals_Faces[f][next_i]][1] - Y_intersect, allFractals_Vertices[allFractals_Faces[f][next_i]][2] - Z_intersect};
@@ -28470,11 +28482,13 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allCameras_Faces.length; f++) {
+    
+    int n = allCameras_Faces[f].length;
 
     float[] A = allCameras_Vertices[allCameras_Faces[f][0]];
     float[] B = allCameras_Vertices[allCameras_Faces[f][1]];
-    float[] C = allCameras_Vertices[allCameras_Faces[f][allCameras_Faces[f].length - 2]];
-    float[] D = allCameras_Vertices[allCameras_Faces[f][allCameras_Faces[f].length - 1]];
+    float[] C = allCameras_Vertices[allCameras_Faces[f][n - 2]];
+    float[] D = allCameras_Vertices[allCameras_Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28502,8 +28516,8 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
   
         float AnglesAll = 0;      
   
-        for (int i = 0; i < allCameras_Faces[f].length; i++) {
-          int next_i = (i + 1) % allCameras_Faces[f].length;
+        for (int i = 0; i < n; i++) {
+          int next_i = (i + 1) % n;
   
           float[] vect1 = {allCameras_Vertices[allCameras_Faces[f][i]][0] - X_intersect, allCameras_Vertices[allCameras_Faces[f][i]][1] - Y_intersect, allCameras_Vertices[allCameras_Faces[f][i]][2] - Z_intersect};
           float[] vect2 = {allCameras_Vertices[allCameras_Faces[f][next_i]][0] - X_intersect, allCameras_Vertices[allCameras_Faces[f][next_i]][1] - Y_intersect, allCameras_Vertices[allCameras_Faces[f][next_i]][2] - Z_intersect};
@@ -28563,11 +28577,13 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allSections_Faces.length; f++) {
+    
+    int n = allSections_Faces[f].length;
 
     float[] A = allSections_Vertices[allSections_Faces[f][0]];
     float[] B = allSections_Vertices[allSections_Faces[f][1]];
-    float[] C = allSections_Vertices[allSections_Faces[f][allSections_Faces[f].length - 2]];
-    float[] D = allSections_Vertices[allSections_Faces[f][allSections_Faces[f].length - 1]];
+    float[] C = allSections_Vertices[allSections_Faces[f][n - 2]];
+    float[] D = allSections_Vertices[allSections_Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28595,8 +28611,8 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
   
         float AnglesAll = 0;      
   
-        for (int i = 0; i < allSections_Faces[f].length; i++) {
-          int next_i = (i + 1) % allSections_Faces[f].length;
+        for (int i = 0; i < n; i++) {
+          int next_i = (i + 1) % n;
   
           float[] vect1 = {allSections_Vertices[allSections_Faces[f][i]][0] - X_intersect, allSections_Vertices[allSections_Faces[f][i]][1] - Y_intersect, allSections_Vertices[allSections_Faces[f][i]][2] - Z_intersect};
           float[] vect2 = {allSections_Vertices[allSections_Faces[f][next_i]][0] - X_intersect, allSections_Vertices[allSections_Faces[f][next_i]][1] - Y_intersect, allSections_Vertices[allSections_Faces[f][next_i]][2] - Z_intersect};
@@ -28655,11 +28671,13 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allSolids_Faces.length; f++) {
+    
+    int n = allSolids_Faces[f].length;
 
     float[] A = allSolids_Vertices[allSolids_Faces[f][0]];
     float[] B = allSolids_Vertices[allSolids_Faces[f][1]];
-    float[] C = allSolids_Vertices[allSolids_Faces[f][allSolids_Faces[f].length - 2]];
-    float[] D = allSolids_Vertices[allSolids_Faces[f][allSolids_Faces[f].length - 1]];
+    float[] C = allSolids_Vertices[allSolids_Faces[f][n - 2]];
+    float[] D = allSolids_Vertices[allSolids_Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -28687,8 +28705,8 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
   
         float AnglesAll = 0;      
   
-        for (int i = 0; i < allSolids_Faces[f].length; i++) {
-          int next_i = (i + 1) % allSolids_Faces[f].length;
+        for (int i = 0; i < n; i++) {
+          int next_i = (i + 1) % n;
   
           float[] vect1 = {allSolids_Vertices[allSolids_Faces[f][i]][0] - X_intersect, allSolids_Vertices[allSolids_Faces[f][i]][1] - Y_intersect, allSolids_Vertices[allSolids_Faces[f][i]][2] - Z_intersect};
           float[] vect2 = {allSolids_Vertices[allSolids_Faces[f][next_i]][0] - X_intersect, allSolids_Vertices[allSolids_Faces[f][next_i]][1] - Y_intersect, allSolids_Vertices[allSolids_Faces[f][next_i]][2] - Z_intersect};
