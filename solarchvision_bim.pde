@@ -38036,7 +38036,7 @@ void mouseClicked () {
                    RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
 
                 } else {
-  
+ 
                   if (Current_ObjectCategory == ObjectCategory_Curves) {
                     RxP = SOLARCHVISION_intersect_Curves(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory_Cameras) {
