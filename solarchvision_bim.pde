@@ -27899,56 +27899,124 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
       int vsb = allFaces_MTLVGC[f][3];
   
       if (vsb > 0) {    
-  
-        float[] A = allVertices[allFaces_PNT[f][0]];
-        float[] B = allVertices[allFaces_PNT[f][1]];
-        float[] C = allVertices[allFaces_PNT[f][n - 2]];
-        float[] D = allVertices[allFaces_PNT[f][n - 1]];
-        
-        float[] AC = SOLARCHVISION_3xSub(A, C);
-        float[] BD = SOLARCHVISION_3xSub(B, D);
-        
-        float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
-        
-        float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-        
+
+        float X_intersect = FLOAT_undefined;         
+        float Y_intersect = FLOAT_undefined;
+        float Z_intersect = FLOAT_undefined;
         float dist2intersect = FLOAT_undefined;
-      
-        float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+        float[] face_norm = {0,0,0};
+        
+        boolean InPoly = false;
+        
+        if (n < 5) { // works if n==3 or n==4
+    
+          float[] A = allVertices[allFaces_PNT[f][0]];
+          float[] B = allVertices[allFaces_PNT[f][1]];
+          float[] C = allVertices[allFaces_PNT[f][n - 2]];
+          float[] D = allVertices[allFaces_PNT[f][n - 1]];
+          
+          float[] AC = SOLARCHVISION_3xSub(A, C);
+          float[] BD = SOLARCHVISION_3xSub(B, D);
+          
+          face_norm = SOLARCHVISION_3xCross(AC, BD);
+          
+          float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+        
+          float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+    
+          if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+            dist2intersect = FLOAT_huge;
+          }
+          else {
+            dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+    
+            //if (dist2intersect > 0) {
+            if (dist2intersect > FLOAT_tiny) {
   
-        if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-          dist2intersect = FLOAT_huge;
-        }
-        else {
-          dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
-  
-          //if (dist2intersect > 0) {
-          if (dist2intersect > FLOAT_tiny) {
+              X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+              Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+              Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+              
+              float[] P = {X_intersect, Y_intersect, Z_intersect};
+              
+              if (n == 4) InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C, D);
+              else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
 
-            float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-            float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-            float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-            
-            float[] P = {X_intersect, Y_intersect, Z_intersect};
-            
-            boolean InPoly = false;
-            if (n == 3) InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
-            else InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C, D);
-            
-            if (InPoly == true) {
-              hitPoint[f][0] = X_intersect;
-              hitPoint[f][1] = Y_intersect;
-              hitPoint[f][2] = Z_intersect;
-              hitPoint[f][3] = dist2intersect;
-              hitPoint[f][4] = face_norm[0];
-              hitPoint[f][5] = face_norm[1];
-              hitPoint[f][6] = face_norm[2];             
-            } 
-            
-            
-
+            }
           }
         }
+        else {        
+
+          int[] tmpFace = new int[n];
+          float[] G = {
+            0, 0, 0
+          }; 
+          for (int j = 0; j < n; j++) {
+            tmpFace[j] = allFaces_PNT[f][j];
+            G[0] += allVertices[tmpFace[j]][0] / float(n); 
+            G[1] += allVertices[tmpFace[j]][1] / float(n);
+            G[2] += allVertices[tmpFace[j]][2] / float(n);
+          }  
+          
+          for (int j = 0; j < n; j++) {
+    
+            int j_next = (j + 1) % n;
+    
+            float[] A = {
+              allVertices[allFaces_PNT[f][j]][0],
+              allVertices[allFaces_PNT[f][j]][1],
+              allVertices[allFaces_PNT[f][j]][2]
+            };            
+            
+            float[] B = {
+              allVertices[allFaces_PNT[f][j_next]][0],
+              allVertices[allFaces_PNT[f][j_next]][1],
+              allVertices[allFaces_PNT[f][j_next]][2]
+            };                
+  
+            float[] AG = SOLARCHVISION_3xSub(A, G);
+            float[] BG = SOLARCHVISION_3xSub(B, G);
+            
+            face_norm = SOLARCHVISION_3xCross(AG, BG);
+              
+            float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+            
+            float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      
+            if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+              dist2intersect = FLOAT_huge;
+            }
+            else {
+              dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+      
+              //if (dist2intersect > 0) {
+              if (dist2intersect > FLOAT_tiny) {
+    
+                X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+                Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+                Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+                
+                float[] P = {X_intersect, Y_intersect, Z_intersect};
+  
+                InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, G); 
+                
+              }
+            }
+            
+            if (InPoly == true) break;
+          }
+        }
+              
+        if (InPoly == true) {
+          hitPoint[f][0] = X_intersect;
+          hitPoint[f][1] = Y_intersect;
+          hitPoint[f][2] = Z_intersect;
+          hitPoint[f][3] = dist2intersect;
+          hitPoint[f][4] = face_norm[0];
+          hitPoint[f][5] = face_norm[1];
+          hitPoint[f][6] = face_norm[2];             
+        }               
+
       }
     }  
   }
@@ -57710,5 +57778,7 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
   
   return result;
 }
+
+
 
 
