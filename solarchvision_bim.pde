@@ -57636,23 +57636,28 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
   
   // Compute vectors        
-  float[] w0 = {C[0] - A[0], C[1] - A[1], C[2] - A[2]};
-  float[] w1 = {B[0] - A[0], B[1] - A[1], B[2] - A[2]};
-  float[] w2 = {P[0] - A[0], P[1] - A[1], P[2] - A[2]};
+  float[] a = {A[0] - C[0], A[1] - C[1], A[2] - C[2]};
+  float[] b = {B[0] - C[0], B[1] - C[1], B[2] - C[2]};
+  float[] p = {P[0] - C[0], P[1] - C[1], P[2] - C[2]};
   
   // Compute dot products
-  float dot00 = SOLARCHVISION_3xDot(w0, w0);
-  float dot01 = SOLARCHVISION_3xDot(w0, w1);
-  float dot02 = SOLARCHVISION_3xDot(w0, w2);
-  float dot11 = SOLARCHVISION_3xDot(w1, w1);
-  float dot12 = SOLARCHVISION_3xDot(w1, w2);
+  float AA = SOLARCHVISION_3xDot(a, a);
+  float AB = SOLARCHVISION_3xDot(a, b);
+  float AP = SOLARCHVISION_3xDot(a, p);
+  float BB = SOLARCHVISION_3xDot(b, b);
+  float BP = SOLARCHVISION_3xDot(b, p);
   
   // Compute barycentric coordinates
-  float invDenom = 1.0 / (dot00 * dot11 - dot01 * dot01);
-  float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-  float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
   
   // Check if point is in triangle
   return ((u >= 0) && (v >= 0) && (u + v < 1));
 
 }
+
+
+
+
+
