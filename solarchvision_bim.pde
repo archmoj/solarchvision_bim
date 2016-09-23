@@ -1,4 +1,12 @@
+
+
 // should see where else could add snap3D :)
+
+
+// drop functions only works for living objects and not at Group3D level
+
+// could add join/explode groups ?
+
 
 
 // diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
@@ -27,10 +35,9 @@
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
 
-// could add join/explode groups ?
 
 
-// drop functions only works for living objects and not at Group3D level
+
 
 // Note: different tropo layer exported in obj format but only at frame 0.
 // Note: still cannot use regional layers as tropo.
@@ -57581,3 +57588,4 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
   
   return RxP;
 }
+
