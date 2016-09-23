@@ -27908,18 +27908,19 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
         
         boolean InPoly = false;
         
-        if (n == 3) {
+        if (n < 5) { // works if n==3 or n==4
     
           float[] A = allVertices[allFaces_PNT[f][0]];
           float[] B = allVertices[allFaces_PNT[f][1]];
-          float[] C = allVertices[allFaces_PNT[f][n - 1]];
+          float[] C = allVertices[allFaces_PNT[f][n - 2]];
+          float[] D = allVertices[allFaces_PNT[f][n - 1]];
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
-          float[] BC = SOLARCHVISION_3xSub(B, C);
+          float[] BD = SOLARCHVISION_3xSub(B, D);
           
-          face_norm = SOLARCHVISION_3xCross(AC, BC);
+          face_norm = SOLARCHVISION_3xCross(AC, BD);
           
-          float face_offset = ((A[0] + B[0] + C[0]) * face_norm[0] + (A[1] + B[1] + C[1]) * face_norm[1] + (A[2] + B[2] + C[2]) * face_norm[2]) / 3.0;  
+          float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
         
           float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
     
@@ -27938,7 +27939,8 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               
               float[] P = {X_intersect, Y_intersect, Z_intersect};
               
-              InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, C); 
+              if (n == 4) InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C, D);
+              else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
 
             }
           }
@@ -27977,7 +27979,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
             
             face_norm = SOLARCHVISION_3xCross(AG, BG);
               
-            float face_offset = ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]) / 3.0;  
+            float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
             
             float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
       
@@ -57700,7 +57702,7 @@ boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[
   return ((u >= 0) && (v >= 0) && (u + v <= 1));
 }
 
-/*
+
 boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float[] C, float[] D) {
 
   float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
@@ -57776,7 +57778,7 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
   
   return result;
 }
-*/
+
 
 
 
