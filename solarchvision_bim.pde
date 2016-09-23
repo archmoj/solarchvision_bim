@@ -57699,7 +57699,7 @@ boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[
   float u = (BB * AP - AB * BP) / r;
   float v = (AA * BP - AB * AP) / r;
   
-  return ((u >= 0) && (v >= 0) && (u + v < 1));
+  return ((u >= 0) && (v >= 0) && (u + v <= 1));
 }
 
 
@@ -57729,7 +57729,7 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
   float u = (BB * AP - AB * BP) / r;
   float v = (AA * BP - AB * AP) / r;
  
-  boolean result = ((u >= 0) && (v >= 0) && (u + v < 1));
+  boolean result = ((u >= 0) && (v >= 0) && (u + v <= 1));
   
   if (result == false) {
 
@@ -57745,7 +57745,7 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
     u = (CC * BP - BC * CP) / r;
     v = (BB * CP - BC * BP) / r;  
     
-    result = ((u >= 0) && (v >= 0) && (u + v < 1));
+    result = ((u >= 0) && (v >= 0) && (u + v <= 1));
     
     if (result == false) {
 
@@ -57761,7 +57761,7 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
       u = (DD * CP - CD * DP) / r;
       v = (CC * DP - CD * CP) / r;
       
-      result = ((u >= 0) && (v >= 0) && (u + v < 1));
+      result = ((u >= 0) && (v >= 0) && (u + v <= 1));
       
       if (result == false) {
         
@@ -57771,7 +57771,7 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
         u = (AA * DP - DA * AP) / r;
         v = (DD * AP - DA * DP) / r;
         
-        result = ((u >= 0) && (v >= 0) && (u + v < 1));
+        result = ((u >= 0) && (v >= 0) && (u + v <= 1));
       }  
     }
   }
