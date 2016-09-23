@@ -27925,8 +27925,6 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
           //if (dist2intersect > 0) {
           if (dist2intersect > FLOAT_tiny) {
 
-            
-            
             float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
             float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
             float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
@@ -27948,33 +27946,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
             } 
             
             
-            
-            /*
 
-            float AnglesAll = 0;      
-      
-            for (int i = 0; i < n; i++) {
-              int next_i = (i + 1) % n;
-      
-              float[] vect1 = {allVertices[allFaces_PNT[f][i]][0] - X_intersect, allVertices[allFaces_PNT[f][i]][1] - Y_intersect, allVertices[allFaces_PNT[f][i]][2] - Z_intersect};
-              float[] vect2 = {allVertices[allFaces_PNT[f][next_i]][0] - X_intersect, allVertices[allFaces_PNT[f][next_i]][1] - Y_intersect, allVertices[allFaces_PNT[f][next_i]][2] - Z_intersect};
-      
-              float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
-      
-              AnglesAll += t;
-            }
-            
-            if (AnglesAll > 359) { // <<<<<<<<<
-            
-              hitPoint[f][0] = X_intersect;
-              hitPoint[f][1] = Y_intersect;
-              hitPoint[f][2] = Z_intersect;
-              hitPoint[f][3] = dist2intersect;
-              hitPoint[f][4] = face_norm[0];
-              hitPoint[f][5] = face_norm[1];
-              hitPoint[f][6] = face_norm[2];
-            }
-            */
           }
         }
       }
@@ -57635,9 +57607,12 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
   
 
-boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] C, float[] B, float[] A) {
-  
-  // Compute vectors        
+boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
+
+  float pX = P[0] - C[0];
+  float pY = P[1] - C[1];
+  float pZ = P[2] - C[2];
+    
   float aX = A[0] - C[0];
   float aY = A[1] - C[1];
   float aZ = A[2] - C[2];
@@ -57646,23 +57621,16 @@ boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] C, float[] B, float[
   float bY = B[1] - C[1];
   float bZ = B[2] - C[2];
 
-  float pX = P[0] - C[0];
-  float pY = P[1] - C[1];
-  float pZ = P[2] - C[2];
-  
-  // Compute dot products
   float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
   float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
   float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
   float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
   float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
   
-  // Compute barycentric coordinates
   float r = (AA * BB - AB * AB);
   float u = (BB * AP - AB * BP) / r;
   float v = (AA * BP - AB * AP) / r;
   
-  // Check if point is in triangle
   return ((u >= 0) && (v >= 0) && (u + v < 1));
 }
 
@@ -57670,8 +57638,11 @@ boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] C, float[] B, float[
 boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float[] C, float[] D) {
 
   float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
-  
-  // Compute vectors        
+
+  float pX = P[0] - G[0];
+  float pY = P[1] - G[1];
+  float pZ = P[2] - G[2];
+
   float aX = A[0] - G[0];
   float aY = A[1] - G[1];
   float aZ = A[2] - G[2];
@@ -57679,54 +57650,65 @@ boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float
   float bX = B[0] - G[0];
   float bY = B[1] - G[1];
   float bZ = B[2] - G[2];
-
-  float cX = C[0] - G[0];
-  float cY = C[1] - G[1];
-  float cZ = C[2] - G[2];
-
-  float dX = D[0] - G[0];
-  float dY = D[1] - G[1];
-  float dZ = D[2] - G[2];
-
-  float pX = P[0] - G[0];
-  float pY = P[1] - G[1];
-  float pZ = P[2] - G[2];
   
-  // Compute dot products
   float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
   float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
   float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
   float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
   float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
 
-  float CC = cX * cX + cY * cY + cZ * cZ; // SOLARCHVISION_3xDot(c, c);
-  float CD = cX * dX + cY * dY + cZ * dZ; // SOLARCHVISION_3xDot(c, d);
-  float CP = cX * pX + cY * pY + cZ * pZ; // SOLARCHVISION_3xDot(c, p);
-  float DD = dX * dX + dY * dY + dZ * dZ; // SOLARCHVISION_3xDot(d, d);
-  float DP = dX * pX + dY * pY + dZ * pZ; // SOLARCHVISION_3xDot(d, p);
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+ 
+  boolean result = ((u >= 0) && (v >= 0) && (u + v < 1));
   
-  float BC = bX * cX + bY * cY + bZ * cZ; // SOLARCHVISION_3xDot(b, c);
-  float DA = dX * aX + dY * aY + dZ * aZ; // SOLARCHVISION_3xDot(d, a);  
-  
-  // Compute barycentric coordinates
-  float rAB = (AA * BB - AB * AB);
-  float uAB = (BB * AP - AB * BP) / rAB;
-  float vAB = (AA * BP - AB * AP) / rAB;
-  
-  float rBC = (BB * CC - BC * BC);
-  float uBC = (CC * BP - BC * CP) / rBC;
-  float vBC = (BB * CP - BC * BP) / rBC;  
-  
-  float rCD = (CC * DD - CD * CD);
-  float uCD = (DD * CP - CD * DP) / rCD;
-  float vCD = (CC * DP - CD * CP) / rCD;
+  if (result == false) {
 
-  float rDA = (DD * AA - DA * DA);
-  float uDA = (AA * DP - DA * AP) / rDA;
-  float vDA = (DD * AP - DA * DP) / rDA;  
+    float cX = C[0] - G[0];
+    float cY = C[1] - G[1];
+    float cZ = C[2] - G[2];
+
+    float CC = cX * cX + cY * cY + cZ * cZ; // SOLARCHVISION_3xDot(c, c);
+    float CP = cX * pX + cY * pY + cZ * pZ; // SOLARCHVISION_3xDot(c, p);
+    float BC = bX * cX + bY * cY + bZ * cZ; // SOLARCHVISION_3xDot(b, c);
   
-  // Check if point is in rectangle
-  return ((uAB >= 0) && (vAB >= 0) && (uAB + vAB < 1)) || ((uBC >= 0) && (vBC >= 0) && (uBC + vBC < 1)) || ((uCD >= 0) && (vCD >= 0) && (uCD + vCD < 1)) || ((uDA >= 0) && (vDA >= 0) && (uDA + vDA < 1)); 
+    r = (BB * CC - BC * BC);
+    u = (CC * BP - BC * CP) / r;
+    v = (BB * CP - BC * BP) / r;  
+    
+    result = ((u >= 0) && (v >= 0) && (u + v < 1));
+    
+    if (result == false) {
+
+      float dX = D[0] - G[0];
+      float dY = D[1] - G[1];
+      float dZ = D[2] - G[2];
+      
+      float CD = cX * dX + cY * dY + cZ * dZ; // SOLARCHVISION_3xDot(c, d);
+      float DD = dX * dX + dY * dY + dZ * dZ; // SOLARCHVISION_3xDot(d, d);
+      float DP = dX * pX + dY * pY + dZ * pZ; // SOLARCHVISION_3xDot(d, p);
+    
+      r = (CC * DD - CD * CD);
+      u = (DD * CP - CD * DP) / r;
+      v = (CC * DP - CD * CP) / r;
+      
+      result = ((u >= 0) && (v >= 0) && (u + v < 1));
+      
+      if (result == false) {
+        
+        float DA = dX * aX + dY * aY + dZ * aZ; // SOLARCHVISION_3xDot(d, a);  
+        
+        r = (DD * AA - DA * DA);
+        u = (AA * DP - DA * AP) / r;
+        v = (DD * AP - DA * DP) / r;
+        
+        result = ((u >= 0) && (v >= 0) && (u + v < 1));
+      }  
+    }
+  }
+  
+  return result;
 }
 
 
