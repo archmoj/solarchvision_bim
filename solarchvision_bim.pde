@@ -27158,7 +27158,7 @@ void SOLARCHVISION_draw_Faces () {
 
                                   if (SOLARCHVISION_fn_dot(W, ray_direction) > 0) { // removes backing faces
 
-                                    if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction, 0) != 0) { 
+                                    if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
                                       if (_values_E_dir < 0) {
                                         _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
                                         _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
@@ -27793,7 +27793,7 @@ void SOLARCHVISION_draw_Object2Ds () {
 }
 
 
-int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, int firstGuess) {
+int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
@@ -28093,6 +28093,71 @@ float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
   }
 
   return return_point;
+}
+
+
+float[] SOLARCHVISION_snap_Faces (float[] RxP) {
+  
+  if (RxP[0] > 0) {
+    
+    int f = int(RxP[0]);
+    float x = RxP[1];
+    float y = RxP[2];
+    float z = RxP[3];
+  
+    if (CreateInput_Snap == 1) { // nearest endpoint
+    
+      float nearest_D = FLOAT_undefined;
+      float nearest_X = FLOAT_undefined;
+      float nearest_Y = FLOAT_undefined;
+      float nearest_Z = FLOAT_undefined;
+
+      int mt = allFaces_MTLVGC[f][0];
+
+      int Tessellation = allFaces_MTLVGC[f][1];
+
+      int TotalSubNo = 1;  
+      if (allFaces_MTLVGC[f][0] == 0) {
+        Tessellation += MODEL3D_Tessellation;
+      }
+      if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+      float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+        int vNo = allFaces_PNT[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }
+
+      for (int n = 0; n < TotalSubNo; n++) {
+
+        float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+
+        WIN3D_Diagrams.beginShape();
+
+        for (int s = 0; s < subFace.length; s++) {
+      
+          float d = dist(x, y, z, subFace[s][0], subFace[s][1], subFace[s][2]);
+          
+          if (nearest_D > d) {
+            nearest_D = d;
+            nearest_X = subFace[s][0];
+            nearest_Y = subFace[s][1];
+            nearest_Z = subFace[s][2];
+          }
+        }
+      }
+      
+      if (nearest_D < 0.9 * FLOAT_undefined) {
+        RxP[1] = nearest_X;
+        RxP[2] = nearest_Y;
+        RxP[3] = nearest_Z;
+      }
+    }
+  }
+  
+  return RxP;
 }
 
 
@@ -56946,7 +57011,7 @@ ray_direction[2] = SunV[2];
 
 if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
 
-  if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction, 0) != 0) { 
+  if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
     if (_values_E_dir < 0) {
       _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
       _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
@@ -57275,7 +57340,7 @@ void SOLARCHVISION_PreBakeViewport () {
           // when SHD = 0;
           Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
          
-          lastHitDiffuse[n_Ray] = SOLARCHVISION_is3Dintersected(ray_start, ray_direction, lastHitDiffuse[n_Ray]);
+          lastHitDiffuse[n_Ray] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray]);
             
           // when SHD = 1;            
           if (lastHitDiffuse[n_Ray] == 0) {
@@ -57319,7 +57384,7 @@ void SOLARCHVISION_PreBakeViewport () {
             
           // when SHD = 1;            
           
-          lastHitDirect[n_Map] = SOLARCHVISION_is3Dintersected(ray_start, ray_direction, lastHitDirect[n_Map]);
+          lastHitDirect[n_Map] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDirect[n_Map]);
           
           if (lastHitDirect[n_Map] == 0) { 
             Direct_RGBA[n_Map][1].pixels[np] = color(255 * SunMask, 255);
@@ -57525,67 +57590,5 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 }
 
 
-float[] SOLARCHVISION_snap_Faces (float[] RxP) {
-  
-  if (RxP[0] > 0) {
-    
-    int f = int(RxP[0]);
-    float x = RxP[1];
-    float y = RxP[2];
-    float z = RxP[3];
-  
-    if (CreateInput_Snap == 1) { // nearest endpoint
-    
-      float nearest_D = FLOAT_undefined;
-      float nearest_X = FLOAT_undefined;
-      float nearest_Y = FLOAT_undefined;
-      float nearest_Z = FLOAT_undefined;
 
-      int mt = allFaces_MTLVGC[f][0];
-
-      int Tessellation = allFaces_MTLVGC[f][1];
-
-      int TotalSubNo = 1;  
-      if (allFaces_MTLVGC[f][0] == 0) {
-        Tessellation += MODEL3D_Tessellation;
-      }
-      if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-      float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-      for (int j = 0; j < allFaces_PNT[f].length; j++) {
-        int vNo = allFaces_PNT[f][j];
-        base_Vertices[j][0] = allVertices[vNo][0];
-        base_Vertices[j][1] = allVertices[vNo][1];
-        base_Vertices[j][2] = allVertices[vNo][2];
-      }
-
-      for (int n = 0; n < TotalSubNo; n++) {
-
-        float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-        WIN3D_Diagrams.beginShape();
-
-        for (int s = 0; s < subFace.length; s++) {
-      
-          float d = dist(x, y, z, subFace[s][0], subFace[s][1], subFace[s][2]);
-          
-          if (nearest_D > d) {
-            nearest_D = d;
-            nearest_X = subFace[s][0];
-            nearest_Y = subFace[s][1];
-            nearest_Z = subFace[s][2];
-          }
-        }
-      }
-      
-      if (nearest_D < 0.9 * FLOAT_undefined) {
-        RxP[1] = nearest_X;
-        RxP[2] = nearest_Y;
-        RxP[3] = nearest_Z;
-      }
-    }
-  }
-  
-  return RxP;
-}
 
