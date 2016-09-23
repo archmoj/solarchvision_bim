@@ -57633,19 +57633,28 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
 
   
+
 boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
   
   // Compute vectors        
-  float[] a = {A[0] - C[0], A[1] - C[1], A[2] - C[2]};
-  float[] b = {B[0] - C[0], B[1] - C[1], B[2] - C[2]};
-  float[] p = {P[0] - C[0], P[1] - C[1], P[2] - C[2]};
+  float aX = A[0] - C[0];
+  float aY = A[1] - C[1];
+  float aZ = A[2] - C[2];
+
+  float bX = B[0] - C[0];
+  float bY = B[1] - C[1];
+  float bZ = B[2] - C[2];
+
+  float pX = P[0] - C[0];
+  float pY = P[1] - C[1];
+  float pZ = P[2] - C[2];
   
   // Compute dot products
-  float AA = SOLARCHVISION_3xDot(a, a);
-  float AB = SOLARCHVISION_3xDot(a, b);
-  float AP = SOLARCHVISION_3xDot(a, p);
-  float BB = SOLARCHVISION_3xDot(b, b);
-  float BP = SOLARCHVISION_3xDot(b, p);
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
   
   // Compute barycentric coordinates
   float r = (AA * BB - AB * AB);
@@ -57656,8 +57665,6 @@ boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[
   return ((u >= 0) && (v >= 0) && (u + v < 1));
 
 }
-
-
 
 
 
