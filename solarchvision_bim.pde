@@ -27924,11 +27924,32 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
   
           //if (dist2intersect > 0) {
           if (dist2intersect > FLOAT_tiny) {
-          
+
+            
+            
             float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
             float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
             float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-      
+            
+            float[] P = {X_intersect, Y_intersect, Z_intersect};
+            
+            boolean InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, C);
+            if (n > 3) InPoly = InPoly || SOLARCHVISION_isInside_Triangle(P, C, D, A);
+            
+            if (InPoly == true) {
+              hitPoint[f][0] = X_intersect;
+              hitPoint[f][1] = Y_intersect;
+              hitPoint[f][2] = Z_intersect;
+              hitPoint[f][3] = dist2intersect;
+              hitPoint[f][4] = face_norm[0];
+              hitPoint[f][5] = face_norm[1];
+              hitPoint[f][6] = face_norm[2];             
+            } 
+            
+            
+            
+            /*
+
             float AnglesAll = 0;      
       
             for (int i = 0; i < n; i++) {
@@ -27952,6 +27973,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               hitPoint[f][5] = face_norm[1];
               hitPoint[f][6] = face_norm[2];
             }
+            */
           }
         }
       }
@@ -57610,3 +57632,27 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
 
 
+  
+boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
+  
+  // Compute vectors        
+  float[] w0 = {C[0] - A[0], C[1] - A[1], C[2] - A[2]};
+  float[] w1 = {B[0] - A[0], B[1] - A[1], B[2] - A[2]};
+  float[] w2 = {P[0] - A[0], P[1] - A[1], P[2] - A[2]};
+  
+  // Compute dot products
+  float dot00 = SOLARCHVISION_3xDot(w0, w0);
+  float dot01 = SOLARCHVISION_3xDot(w0, w1);
+  float dot02 = SOLARCHVISION_3xDot(w0, w2);
+  float dot11 = SOLARCHVISION_3xDot(w1, w1);
+  float dot12 = SOLARCHVISION_3xDot(w1, w2);
+  
+  // Compute barycentric coordinates
+  float invDenom = 1.0 / (dot00 * dot11 - dot01 * dot01);
+  float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+  float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+  
+  // Check if point is in triangle
+  return ((u >= 0) && (v >= 0) && (u + v < 1));
+
+}
