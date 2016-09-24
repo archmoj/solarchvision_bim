@@ -1,4 +1,5 @@
 
+// don't know if multiple Object2D_Images[map].loadPixels(); in Object2D selection can produce performance problems? 
 
 
 // bug: hiting 'b' can cause problems!! 
@@ -28498,7 +28499,8 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
     float Z_intersect = FLOAT_undefined;
     float dist2intersect = FLOAT_undefined;
 
-    boolean InPoly = false;
+    //boolean InPoly = false;
+    float[] UV = {FLOAT_undefined, FLOAT_undefined};
 
     float[] A = allObject2Ds_Vertices[allObject2Ds_Faces[f][0]];
     float[] B = allObject2Ds_Vertices[allObject2Ds_Faces[f][1]];
@@ -28529,17 +28531,42 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
         
         float[] P = {X_intersect, Y_intersect, Z_intersect};
         
-        InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
+        //InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
+        UV = SOLARCHVISION_uvInside_Rectangle(P, A, B, C);
       }
     }
-          
-    if (InPoly == true) {
-      hitPoint[f][0] = X_intersect;
-      hitPoint[f][1] = Y_intersect;
-      hitPoint[f][2] = Z_intersect;
-      hitPoint[f][3] = dist2intersect;
-    }  
-
+    
+    float u = UV[0];
+    float v = UV[1];
+    
+    if ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1)) {
+      
+      
+      
+      int map = abs(allObject2Ds_MAP[f]);
+      int RES1 = Object2D_Images[map].width; 
+      int RES2 = Object2D_Images[map].height;    
+   
+      Object2D_Images[map].loadPixels();
+      
+      if (map < 0) u = 1 - u;
+      int Image_X = int((1 - u) * RES1); 
+      int Image_Y = int((1 - v) * RES2);
+  
+      color COL = Object2D_Images[map].get(Image_X, Image_Y);
+      //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+  
+      float COL_V = (COL >> 24 & 0xFF);
+      
+      if (COL_V > 0) {
+      //if (InPoly == true) {
+  
+        hitPoint[f][0] = X_intersect;
+        hitPoint[f][1] = Y_intersect;
+        hitPoint[f][2] = Z_intersect;
+        hitPoint[f][3] = dist2intersect;
+      }  
+    }
   }  
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
@@ -57791,32 +57818,7 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
 
 
-boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting Object2Ds, etc.  
 
-  float pX = P[0] - O[0];
-  float pY = P[1] - O[1];
-  float pZ = P[2] - O[2];
-    
-  float aX = A[0] - O[0];
-  float aY = A[1] - O[1];
-  float aZ = A[2] - O[2];
-
-  float bX = B[0] - O[0];
-  float bY = B[1] - O[1];
-  float bZ = B[2] - O[2];
-
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
-}
 
 
 boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
@@ -57923,6 +57925,58 @@ boolean SOLARCHVISION_isInside_Quadrangle (float[] P, float[] A, float[] B, floa
   return result;
 }
 
+boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting Object2Ds, etc.  
 
+  float pX = P[0] - O[0];
+  float pY = P[1] - O[1];
+  float pZ = P[2] - O[2];
+    
+  float aX = A[0] - O[0];
+  float aY = A[1] - O[1];
+  float aZ = A[2] - O[2];
 
+  float bX = B[0] - O[0];
+  float bY = B[1] - O[1];
+  float bZ = B[2] - O[2];
 
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
+  
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+  
+  return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
+}
+
+float[] SOLARCHVISION_uvInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // copy of the function above but it returns u and v
+
+  float pX = P[0] - O[0];
+  float pY = P[1] - O[1];
+  float pZ = P[2] - O[2];
+    
+  float aX = A[0] - O[0];
+  float aY = A[1] - O[1];
+  float aZ = A[2] - O[2];
+
+  float bX = B[0] - O[0];
+  float bY = B[1] - O[1];
+  float bZ = B[2] - O[2];
+
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
+  
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+  
+  float[] result = {u, v};
+  
+  return result;
+}
