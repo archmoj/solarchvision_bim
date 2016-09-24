@@ -1,5 +1,9 @@
 
+
+
 // bug: hiting 'b' can cause problems!! 
+
+// note: code for SOLARCHVISION_intersect_LandPoints and SOLARCHVISION_intersect_Solids might run a bit slow. But it is OK for now.
 
 
 // should see where else could add snap3D :)
@@ -28576,8 +28580,15 @@ float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allFractals_Faces.length; f++) {
-    
+
     int n = allFractals_Faces[f].length;
+    
+    float X_intersect = FLOAT_undefined;         
+    float Y_intersect = FLOAT_undefined;
+    float Z_intersect = FLOAT_undefined;
+    float dist2intersect = FLOAT_undefined;
+
+    boolean InPoly = false;
 
     float[] A = allFractals_Vertices[allFractals_Faces[f][0]];
     float[] B = allFractals_Vertices[allFractals_Faces[f][1]];
@@ -28590,8 +28601,6 @@ float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
     float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
     
     float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-    
-    float dist2intersect = FLOAT_undefined;
   
     float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
@@ -28603,33 +28612,24 @@ float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
 
       //if (dist2intersect > 0) {
       if (dist2intersect > FLOAT_tiny) {
-      
-        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-  
-        float AnglesAll = 0;      
-  
-        for (int i = 0; i < n; i++) {
-          int next_i = (i + 1) % n;
-  
-          float[] vect1 = {allFractals_Vertices[allFractals_Faces[f][i]][0] - X_intersect, allFractals_Vertices[allFractals_Faces[f][i]][1] - Y_intersect, allFractals_Vertices[allFractals_Faces[f][i]][2] - Z_intersect};
-          float[] vect2 = {allFractals_Vertices[allFractals_Faces[f][next_i]][0] - X_intersect, allFractals_Vertices[allFractals_Faces[f][next_i]][1] - Y_intersect, allFractals_Vertices[allFractals_Faces[f][next_i]][2] - Z_intersect};
-  
-          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
-  
-          AnglesAll += t;
-        }
+
+        X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
         
-        if (AnglesAll > 359) { // <<<<<<<<<
+        float[] P = {X_intersect, Y_intersect, Z_intersect};
         
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
-        }
+        InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
       }
     }
+          
+    if (InPoly == true) {
+      hitPoint[f][0] = X_intersect;
+      hitPoint[f][1] = Y_intersect;
+      hitPoint[f][2] = Z_intersect;
+      hitPoint[f][3] = dist2intersect;
+    }  
+
   }  
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
@@ -28670,8 +28670,15 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allCameras_Faces.length; f++) {
-    
+
     int n = allCameras_Faces[f].length;
+    
+    float X_intersect = FLOAT_undefined;         
+    float Y_intersect = FLOAT_undefined;
+    float Z_intersect = FLOAT_undefined;
+    float dist2intersect = FLOAT_undefined;
+
+    boolean InPoly = false;
 
     float[] A = allCameras_Vertices[allCameras_Faces[f][0]];
     float[] B = allCameras_Vertices[allCameras_Faces[f][1]];
@@ -28684,8 +28691,6 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
     float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
     
     float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-    
-    float dist2intersect = FLOAT_undefined;
   
     float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
@@ -28697,33 +28702,24 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
 
       //if (dist2intersect > 0) {
       if (dist2intersect > FLOAT_tiny) {
-      
-        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-  
-        float AnglesAll = 0;      
-  
-        for (int i = 0; i < n; i++) {
-          int next_i = (i + 1) % n;
-  
-          float[] vect1 = {allCameras_Vertices[allCameras_Faces[f][i]][0] - X_intersect, allCameras_Vertices[allCameras_Faces[f][i]][1] - Y_intersect, allCameras_Vertices[allCameras_Faces[f][i]][2] - Z_intersect};
-          float[] vect2 = {allCameras_Vertices[allCameras_Faces[f][next_i]][0] - X_intersect, allCameras_Vertices[allCameras_Faces[f][next_i]][1] - Y_intersect, allCameras_Vertices[allCameras_Faces[f][next_i]][2] - Z_intersect};
-  
-          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
-  
-          AnglesAll += t;
-        }
+
+        X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
         
-        if (AnglesAll > 359) { // <<<<<<<<<
+        float[] P = {X_intersect, Y_intersect, Z_intersect};
         
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
-        }
+        InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
       }
     }
+          
+    if (InPoly == true) {
+      hitPoint[f][0] = X_intersect;
+      hitPoint[f][1] = Y_intersect;
+      hitPoint[f][2] = Z_intersect;
+      hitPoint[f][3] = dist2intersect;
+    }  
+
   }  
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
@@ -28751,6 +28747,7 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
 
 
 
+
 float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
@@ -28765,8 +28762,15 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allSections_Faces.length; f++) {
-    
+
     int n = allSections_Faces[f].length;
+    
+    float X_intersect = FLOAT_undefined;         
+    float Y_intersect = FLOAT_undefined;
+    float Z_intersect = FLOAT_undefined;
+    float dist2intersect = FLOAT_undefined;
+
+    boolean InPoly = false;
 
     float[] A = allSections_Vertices[allSections_Faces[f][0]];
     float[] B = allSections_Vertices[allSections_Faces[f][1]];
@@ -28779,8 +28783,6 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
     float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
     
     float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-    
-    float dist2intersect = FLOAT_undefined;
   
     float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
@@ -28792,33 +28794,24 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
       //if (dist2intersect > 0) {
       if (dist2intersect > FLOAT_tiny) {
-      
-        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-  
-        float AnglesAll = 0;      
-  
-        for (int i = 0; i < n; i++) {
-          int next_i = (i + 1) % n;
-  
-          float[] vect1 = {allSections_Vertices[allSections_Faces[f][i]][0] - X_intersect, allSections_Vertices[allSections_Faces[f][i]][1] - Y_intersect, allSections_Vertices[allSections_Faces[f][i]][2] - Z_intersect};
-          float[] vect2 = {allSections_Vertices[allSections_Faces[f][next_i]][0] - X_intersect, allSections_Vertices[allSections_Faces[f][next_i]][1] - Y_intersect, allSections_Vertices[allSections_Faces[f][next_i]][2] - Z_intersect};
-  
-          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
-  
-          AnglesAll += t;
-        }
+
+        X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
         
-        if (AnglesAll > 359) { // <<<<<<<<<
+        float[] P = {X_intersect, Y_intersect, Z_intersect};
         
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
-        }
+        InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
       }
     }
+          
+    if (InPoly == true) {
+      hitPoint[f][0] = X_intersect;
+      hitPoint[f][1] = Y_intersect;
+      hitPoint[f][2] = Z_intersect;
+      hitPoint[f][3] = dist2intersect;
+    }  
+
   }  
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
@@ -28842,7 +28835,6 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   return return_point;
 }
-
 
 
 float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
@@ -28937,6 +28929,7 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
 
   return return_point;
 }
+
 
 
 
