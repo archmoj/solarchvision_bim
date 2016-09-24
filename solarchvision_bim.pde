@@ -27854,7 +27854,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                 
                 float[] P = {X_intersect, Y_intersect, Z_intersect};
                 
-                if (n == 4) InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C, D);
+                if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
                 else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
   
               }
@@ -28005,7 +28005,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               
               float[] P = {X_intersect, Y_intersect, Z_intersect};
               
-              if (n == 4) InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C, D);
+              if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
               else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
 
             }
@@ -28184,7 +28184,7 @@ float[] SOLARCHVISION_selected3Dintersect (float[] ray_pnt, float[] ray_dir) {
                 
                 float[] P = {X_intersect, Y_intersect, Z_intersect};
                 
-                if (n == 4) InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C, D);
+                if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
                 else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
   
               }
@@ -28486,8 +28486,15 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
-    
+
     int n = allObject2Ds_Faces[f].length;
+    
+    float X_intersect = FLOAT_undefined;         
+    float Y_intersect = FLOAT_undefined;
+    float Z_intersect = FLOAT_undefined;
+    float dist2intersect = FLOAT_undefined;
+
+    boolean InPoly = false;
 
     float[] A = allObject2Ds_Vertices[allObject2Ds_Faces[f][0]];
     float[] B = allObject2Ds_Vertices[allObject2Ds_Faces[f][1]];
@@ -28500,8 +28507,6 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
     float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
     
     float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-    
-    float dist2intersect = FLOAT_undefined;
   
     float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
 
@@ -28513,33 +28518,24 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
       //if (dist2intersect > 0) {
       if (dist2intersect > FLOAT_tiny) {
-    
-        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-  
-        float AnglesAll = 0;      
-  
-        for (int i = 0; i < n; i++) {
-          int next_i = (i + 1) % n;
-  
-          float[] vect1 = {allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][0] - X_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][1] - Y_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][2] - Z_intersect};
-          float[] vect2 = {allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][0] - X_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][1] - Y_intersect, allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][2] - Z_intersect};
-  
-          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
-  
-          AnglesAll += t;
-        }
+
+        X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+        Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+        Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
         
-        if (AnglesAll > 359) { // <<<<<<<<<
+        float[] P = {X_intersect, Y_intersect, Z_intersect};
         
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
-        }
+        InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
       }
     }
+          
+    if (InPoly == true) {
+      hitPoint[f][0] = X_intersect;
+      hitPoint[f][1] = Y_intersect;
+      hitPoint[f][2] = Z_intersect;
+      hitPoint[f][3] = dist2intersect;
+    }  
+
   }  
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
@@ -57802,7 +57798,33 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
 
 
+boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting Object2Ds, etc.  
+
+  float pX = P[0] - O[0];
+  float pY = P[1] - O[1];
+  float pZ = P[2] - O[2];
+    
+  float aX = A[0] - O[0];
+  float aY = A[1] - O[1];
+  float aZ = A[2] - O[2];
+
+  float bX = B[0] - O[0];
+  float bY = B[1] - O[1];
+  float bZ = B[2] - O[2];
+
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
   
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+  
+  return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
+}
+
 
 boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
 
@@ -57832,7 +57854,7 @@ boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[
 }
 
 
-boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] B, float[] C, float[] D) {
+boolean SOLARCHVISION_isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {  
 
   float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
 
