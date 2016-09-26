@@ -1,3 +1,7 @@
+// remarked: SOLARCHVISION_update_station(10);
+// remarked: SOLARCHVISION_update_models(2);
+
+
 
 // don't know if multiple Object2D_Images[n].get(Image_X, Image_Y) in Object2D selection can produce performance problems? 
 
@@ -369,7 +373,7 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 0; 
+int STATION_Number = 3; 
 
 String[][] Defined_Stations = {
 
@@ -2757,7 +2761,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_Object2Ds_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 21) {
-    SOLARCHVISION_update_station(10);
+    //SOLARCHVISION_update_station(10);
 
     stroke(0);
     fill(0);
@@ -2777,7 +2781,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_Model_Main", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 23) {
-    SOLARCHVISION_update_models(2);
+    //SOLARCHVISION_update_models(2);
 
     stroke(0);
     fill(0);
@@ -29563,11 +29567,6 @@ void SOLARCHVISION_add_Model_Main () { //CMC
       SOLARCHVISION_add_Object2Ds_plane(1, 10, x, y, i, dx - 0.25, dy - 0.25, rot); // people
     }       
   }  
-
-
-
-
-
 
 
   SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
