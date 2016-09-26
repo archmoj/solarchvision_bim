@@ -41427,6 +41427,62 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
   }  
+  
+  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+
+    if (selectedObject2D_displayEdges != 0) {
+
+      pushMatrix();
+
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+
+      noFill();
+
+      stroke(255, 127, 0); 
+      strokeWeight(2);
+
+      {
+        for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+
+          int OBJ_NUM = selectedObject2D_numbers[o];
+
+          if (OBJ_NUM != 0) {  
+
+            for (int plane_type = 0; plane_type < Object2Ds_numDisplayFaces; plane_type++) {          
+
+              int f = (OBJ_NUM - 1) * Object2Ds_numDisplayFaces + plane_type + 1; 
+
+              if ((0 < f) && (f < allObject2Ds_Faces.length)) { 
+
+                beginShape();
+
+                for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
+
+                  int vNo = allObject2Ds_Faces[f][j];
+
+                  float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
+                  float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
+                  float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
+
+                  float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+
+                  if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                    if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                  }
+                }
+
+                endShape(CLOSE);
+              }
+            }
+          }
+        }
+      }
+
+      strokeWeight(0);   
+
+      popMatrix();
+    }
+  }    
 
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
 
@@ -41480,61 +41536,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
   }
-
-
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-
-    if (selectedObject2D_displayEdges != 0) {
-
-      pushMatrix();
-
-      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-
-      noFill();
-
-      stroke(255, 127, 0); 
-      strokeWeight(2);
-
-      {
-        for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
-
-          int OBJ_NUM = selectedObject2D_numbers[o];
-
-          if (OBJ_NUM != 0) {            
-
-            int f = OBJ_NUM; 
-
-            if ((0 < f) && (f < allObject2Ds_Faces.length)) { 
-
-              beginShape();
-
-              for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
-
-                int vNo = allObject2Ds_Faces[f][j];
-
-                float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
-                float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
-
-                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
-
-                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
-                }
-              }
-
-              endShape(CLOSE);
-            }
-          }
-        }
-      }
-
-      strokeWeight(0);   
-
-      popMatrix();
-    }
-  }
-
 
   if (Current_ObjectCategory == ObjectCategory_Faces) {    
 
