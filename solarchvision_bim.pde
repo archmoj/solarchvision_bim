@@ -27850,13 +27850,13 @@ void SOLARCHVISION_draw_Object2Ds () {
               allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 3][3] = 0;
-              allObject2Ds_Vertices[nv - 3][4] = 1;
+              allObject2Ds_Vertices[nv - 3][4] = ratio;
           
               allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 2][3] = 1;
-              allObject2Ds_Vertices[nv - 2][4] = 1;
+              allObject2Ds_Vertices[nv - 2][4] = ratio;
           
               allObject2Ds_Vertices[nv - 1][0] = x3 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 1][1] = y3 / OBJECTS_scale;
@@ -28708,14 +28708,14 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
     
-    int the_ID = 1 + int((f - 1) / Object2Ds_numDisplayFaces);
+    int OBJ_NUM = 1 + int((f - 1) / Object2Ds_numDisplayFaces);
 
     if (pre_dist > hitPoint[f][3]) {
       
       float u = hitPoint[f][4];
       float v = hitPoint[f][5];
 
-      int n = abs(allObject2Ds_MAP[the_ID]);
+      int n = abs(allObject2Ds_MAP[OBJ_NUM]);
      
       int RES1 = Object2D_Images[n].width; 
       int RES2 = Object2D_Images[n].height;    
@@ -28738,7 +28738,7 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
         pre_dist = hitPoint[f][3];
   
-        return_point[0] = the_ID;
+        return_point[0] = OBJ_NUM;
         return_point[1] = hitPoint[f][0];
         return_point[2] = hitPoint[f][1];
         return_point[3] = hitPoint[f][2];
@@ -34611,7 +34611,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       int OBJ_NUM = 1 + ((f - 1) / Solids_numDisplayFaces);
 
-      println(f, OBJ_NUM);
+      //println(f, OBJ_NUM);
 
       for (int j = 0; j < allSolids_Faces[f].length; j++) {
 
