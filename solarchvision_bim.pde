@@ -1,5 +1,5 @@
 
-// don't know if multiple Object2D_Images[map].loadPixels(); in Object2D selection can produce performance problems? 
+// don't know if multiple Object2D_Images[n].get(Image_X, Image_Y) in Object2D selection can produce performance problems? 
 
 
 // bug: hiting 'b' can cause problems!! 
@@ -28550,7 +28550,9 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
       hitPoint[f][5] = v;
 
     }
-  }  
+  }
+  
+ 
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
 
