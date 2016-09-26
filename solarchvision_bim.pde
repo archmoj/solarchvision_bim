@@ -28481,13 +28481,15 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allObject2Ds_Faces.length][4];
+  float[][] hitPoint = new float [allObject2Ds_Faces.length][6];
 
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
+    hitPoint[f][4] = FLOAT_undefined;
+    hitPoint[f][5] = FLOAT_undefined;    
   }
   
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
@@ -28531,7 +28533,6 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
         
         float[] P = {X_intersect, Y_intersect, Z_intersect};
         
-        //InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
         UV = SOLARCHVISION_uvInside_Rectangle(P, A, B, C);
       }
     }
@@ -28540,32 +28541,14 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
     float v = UV[1];
     
     if ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1)) {
-      
-      
-      
-      int map = abs(allObject2Ds_MAP[f]);
-      int RES1 = Object2D_Images[map].width; 
-      int RES2 = Object2D_Images[map].height;    
-   
-      Object2D_Images[map].loadPixels();
-      
-      if (map < 0) u = 1 - u;
-      int Image_X = int((1 - u) * RES1); 
-      int Image_Y = int((1 - v) * RES2);
   
-      color COL = Object2D_Images[map].get(Image_X, Image_Y);
-      //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-  
-      float COL_V = (COL >> 24 & 0xFF);
-      
-      if (COL_V > 0) {
-      //if (InPoly == true) {
-  
-        hitPoint[f][0] = X_intersect;
-        hitPoint[f][1] = Y_intersect;
-        hitPoint[f][2] = Z_intersect;
-        hitPoint[f][3] = dist2intersect;
-      }  
+      hitPoint[f][0] = X_intersect;
+      hitPoint[f][1] = Y_intersect;
+      hitPoint[f][2] = Z_intersect;
+      hitPoint[f][3] = dist2intersect;
+      hitPoint[f][4] = u;
+      hitPoint[f][5] = v;
+
     }
   }  
 
@@ -28576,14 +28559,35 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
+      
+      float u = hitPoint[f][4];
+      float v = hitPoint[f][5];
 
-      pre_dist = hitPoint[f][3];
+      int n = abs(allObject2Ds_MAP[f]);
+      int RES1 = Object2D_Images[n].width; 
+      int RES2 = Object2D_Images[n].height;    
+   
+      Object2D_Images[n].loadPixels();
+      
+      if (n < 0) u = 1 - u;
+      int Image_X = int((1 - u) * RES1); 
+      int Image_Y = int((1 - v) * RES2);
+  
+      color COL = Object2D_Images[n].get(Image_X, Image_Y);
+      //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+  
+      float COL_V = (COL >> 24 & 0xFF);
+      
+      if (COL_V > 0) {
 
-      return_point[0] = f;
-      return_point[1] = hitPoint[f][0];
-      return_point[2] = hitPoint[f][1];
-      return_point[3] = hitPoint[f][2];
-      return_point[4] = hitPoint[f][3];
+        pre_dist = hitPoint[f][3];
+  
+        return_point[0] = f;
+        return_point[1] = hitPoint[f][0];
+        return_point[2] = hitPoint[f][1];
+        return_point[3] = hitPoint[f][2];
+        return_point[4] = hitPoint[f][3];
+      }
     }
 
   }
