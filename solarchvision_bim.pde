@@ -27684,9 +27684,9 @@ int[][] allObject2Ds_Faces;
 
 void SOLARCHVISION_draw_Object2Ds () {
 
-  allObject2Ds_Faces = new int [1 + allObject2Ds_num][4];
+  allObject2Ds_Faces = new int [1 + allObject2Ds_num * Object2Ds_numDisplayFaces][4];
 
-  allObject2Ds_Vertices = new float [4 * allObject2Ds_num + 1][3];
+  allObject2Ds_Vertices = new float [4 * allObject2Ds_num * Object2Ds_numDisplayFaces + 1][3];
   allObject2Ds_Vertices[0][0] = 0;
   allObject2Ds_Vertices[0][1] = 0;
   allObject2Ds_Vertices[0][2] = 0;
@@ -27743,35 +27743,46 @@ void SOLARCHVISION_draw_Object2Ds () {
         WIN3D_Diagrams.texture(Object2D_Images[n]);    
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);
+        
+        float dx = rw * cos(t);
+        float dy = rw * sin(t);
+        
+        float x1 = x - dx;
+        float y1 = y - dy;
 
-        WIN3D_Diagrams.vertex((x - rw * cos(t)) * WIN3D_Scale3D, -(y - rw * sin(t)) * WIN3D_Scale3D, z * WIN3D_Scale3D, 0, h);
-        WIN3D_Diagrams.vertex((x + rw * cos(t)) * WIN3D_Scale3D, -(y + rw * sin(t)) * WIN3D_Scale3D, z * WIN3D_Scale3D, w, h);
-        WIN3D_Diagrams.vertex((x + rw * cos(t)) * WIN3D_Scale3D, -(y + rw * sin(t)) * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, w, 0);
-        WIN3D_Diagrams.vertex((x - rw * cos(t)) * WIN3D_Scale3D, -(y - rw * sin(t)) * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
+        float x2 = x + dx;
+        float y2 = y + dy;
+
+        WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, z * WIN3D_Scale3D, 0, h);
+        WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, z * WIN3D_Scale3D, w, h);
+        WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, w, 0);
+        WIN3D_Diagrams.vertex(x1* WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
 
         WIN3D_Diagrams.endShape(CLOSE);
 
         {
-          allObject2Ds_Vertices[f * 4 - 3][0] = (x - rw * cos(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 3][1] = (y - rw * sin(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
+          int m = f * 4 * Object2Ds_numDisplayFaces;
+          
+          allObject2Ds_Vertices[m - 3][0] = x1 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 3][1] = y1 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 3][2] = (z) / OBJECTS_scale;
 
-          allObject2Ds_Vertices[f * 4 - 2][0] = (x + rw * cos(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 2][1] = (y + rw * sin(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 2][0] = x2 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 2][1] = y2 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 2][2] = (z) / OBJECTS_scale;
 
-          allObject2Ds_Vertices[f * 4 - 1][0] = (x + rw * cos(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 1][1] = (y + rw * sin(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 1][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 1][0] = x2 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 1][1] = y2 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 1][2] = (z + 2 * rh) / OBJECTS_scale;
 
-          allObject2Ds_Vertices[f * 4 - 0][0] = (x - rw * cos(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 0][1] = (y - rw * sin(t)) / OBJECTS_scale;
-          allObject2Ds_Vertices[f * 4 - 0][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 0][0] = x1 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 0][1] = y1 / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 0][2] = (z + 2 * rh) / OBJECTS_scale;
 
-          allObject2Ds_Faces[f][0] = f * 4 - 3;
-          allObject2Ds_Faces[f][1] = f * 4 - 2;
-          allObject2Ds_Faces[f][2] = f * 4 - 1;
-          allObject2Ds_Faces[f][3] = f * 4 - 0;
+          allObject2Ds_Faces[f][0] = m - 3;
+          allObject2Ds_Faces[f][1] = m - 2;
+          allObject2Ds_Faces[f][2] = m - 1;
+          allObject2Ds_Faces[f][3] = m - 0;
         }        
 
 
@@ -27784,23 +27795,65 @@ void SOLARCHVISION_draw_Object2Ds () {
 
             float rot = back_front * PI / 2 + t;
 
+            dx = rw * cos(rot);
+            dy = rw * sin(rot);
+            
+            float x3 = x2 + dx;
+            float x3 = y2 + dy;
+
+            float x4 = x1 + dx;
+            float x4 = y1 + dy;
+
             WIN3D_Diagrams.beginShape();
 
             WIN3D_Diagrams.texture(Object2D_Images[n]);    
             WIN3D_Diagrams.stroke(255, 255, 255, 0);
             WIN3D_Diagrams.fill(255, 255, 255, 0);
 
-            WIN3D_Diagrams.vertex((x - rw * cos(t)) * WIN3D_Scale3D, -(y - rw * sin(t)) * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, h * ratio);
-            WIN3D_Diagrams.vertex((x + rw * cos(t)) * WIN3D_Scale3D, -(y + rw * sin(t)) * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, h * ratio);
-            WIN3D_Diagrams.vertex((x + rw * cos(t) + rw * cos(rot)) * WIN3D_Scale3D, -(y + rw * sin(t) + rw * sin(rot)) * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, 0);
-            WIN3D_Diagrams.vertex((x - rw * cos(t) + rw * cos(rot)) * WIN3D_Scale3D, -(y - rw * sin(t) + rw * sin(rot)) * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, 0);
+            WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -(y1 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, h * ratio);
+            WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -(y2 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, h * ratio);
+            WIN3D_Diagrams.vertex(x3 * WIN3D_Scale3D, -(y3 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, 0);
+            WIN3D_Diagrams.vertex(x4 * WIN3D_Scale3D, -(y4 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, 0);
 
             WIN3D_Diagrams.endShape(CLOSE);
+            
+            {
+              int m = f * 4 * Object2Ds_numDisplayFaces;
+
+              if (back_front == -1) {
+                m += 4;
+              }
+              else {
+                m += 8;
+              }
+              
+              allObject2Ds_Vertices[m - 3][0] = x1 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 3][1] = y1 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+    
+              allObject2Ds_Vertices[m - 2][0] = x2 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 2][1] = y2 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+    
+              allObject2Ds_Vertices[m - 1][0] = x3 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 1][1] = y3 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+    
+              allObject2Ds_Vertices[m - 0][0] = x4 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 0][1] = y4 / OBJECTS_scale;
+              allObject2Ds_Vertices[m - 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+    
+              allObject2Ds_Faces[f][0] = m - 3;
+              allObject2Ds_Faces[f][1] = m - 2;
+              allObject2Ds_Faces[f][2] = m - 1;
+              allObject2Ds_Faces[f][3] = m - 0;
+            }          
           }
         }
       }
     }
   }
+  
 }
 
 
@@ -28666,6 +28719,10 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
 
 
+
+
+
+
 float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
@@ -29017,7 +29074,7 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
 
       pre_dist = hitPoint[f][3];
 
-      return_point[0] = 1 + int((f - 1) / Solids_DisplayFaces);
+      return_point[0] = 1 + int((f - 1) / Solids_numDisplayFaces);
       return_point[1] = hitPoint[f][0];
       return_point[2] = hitPoint[f][1];
       return_point[3] = hitPoint[f][2];
@@ -34518,7 +34575,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      int OBJ_NUM = 1 + ((f - 1) / Solids_DisplayFaces);
+      int OBJ_NUM = 1 + ((f - 1) / Solids_numDisplayFaces);
 
       println(f, OBJ_NUM);
 
@@ -41293,9 +41350,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           if (OBJ_NUM != 0) {  
 
-            for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {          
+            for (int plane_type = 0; plane_type < Solids_numDisplayFaces; plane_type++) {          
 
-              int f = (OBJ_NUM - 1) * Solids_DisplayFaces + plane_type + 1; 
+              int f = (OBJ_NUM - 1) * Solids_numDisplayFaces + plane_type + 1; 
 
               if ((0 < f) && (f < allSolids_Faces.length)) { 
 
@@ -41828,9 +41885,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             if ((0 < q) && (q < allSolids_Faces.length)) {
 
-              for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {          
+              for (int plane_type = 0; plane_type < Solids_numDisplayFaces; plane_type++) {          
 
-                int f = (q - 1) * Solids_DisplayFaces + plane_type + 1; 
+                int f = (q - 1) * Solids_numDisplayFaces + plane_type + 1; 
 
                 if ((0 < f) && (f < allSolids_Faces.length)) {               
 
@@ -44241,19 +44298,22 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 }
 
 
+int Object2Ds_numDisplayFaces = 3; // internal - number of faces: Vertical, Horizontal Front, Horizontal Back 
+
+int Solids_numDisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
+int Solids_numDisplayDegree = 16; //8; // internal - number of each face corners 
 
 float[][] allSolids_Vertices;
 int[][] allSolids_Faces;
 
-int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
-int Solids_DisplayDegree = 16; //8; // internal - number of each face corners 
+
 
 
 void SOLARCHVISION_draw_Solids () {
 
-  allSolids_Faces = new int [1 + Solids_DisplayFaces * (allSolids_DEF.length - 1)][Solids_DisplayDegree]; 
+  allSolids_Faces = new int [1 + Solids_numDisplayFaces * (allSolids_DEF.length - 1)][Solids_numDisplayDegree]; 
 
-  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids_DEF.length][3];
+  allSolids_Vertices = new float [Solids_numDisplayFaces * Solids_numDisplayDegree * allSolids_DEF.length][3];
   allSolids_Vertices[0][0] = 0;
   allSolids_Vertices[0][1] = 0;
   allSolids_Vertices[0][2] = 0;
@@ -44278,7 +44338,7 @@ void SOLARCHVISION_draw_Solids () {
       float Solid_rotZ = Solid_get_rotZ(f);
       float Solid_value = Solid_get_value(f);
 
-      for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {
+      for (int plane_type = 0; plane_type < Solids_numDisplayFaces; plane_type++) {
 
         WIN3D_Diagrams.noFill();        
         WIN3D_Diagrams.stroke(0);
@@ -44297,7 +44357,7 @@ void SOLARCHVISION_draw_Solids () {
 
         float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(plane_type, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
 
-        for (int q = 1; q <= Solids_DisplayDegree; q++) {
+        for (int q = 1; q <= Solids_numDisplayDegree; q++) {
 
           float x = ImageVertex[q][0];
           float y = ImageVertex[q][1];
@@ -44307,13 +44367,13 @@ void SOLARCHVISION_draw_Solids () {
 
           if (q != 0) {
 
-            int vNo = (Solids_DisplayFaces * (f - 1) + plane_type) * Solids_DisplayDegree + q;
+            int vNo = (Solids_numDisplayFaces * (f - 1) + plane_type) * Solids_numDisplayDegree + q;
 
             allSolids_Vertices[vNo][0] = x;
             allSolids_Vertices[vNo][1] = y;
             allSolids_Vertices[vNo][2] = z;
 
-            int fNo = (Solids_DisplayFaces * (f - 1) + plane_type) + 1;
+            int fNo = (Solids_numDisplayFaces * (f - 1) + plane_type) + 1;
 
             allSolids_Faces[fNo][q - 1] = vNo;
           }
@@ -44331,9 +44391,9 @@ void SOLARCHVISION_draw_Solids () {
 
 float[][] SOLARCHVISION_getCorners_Solid (int plane_type, float Solid_posX, float Solid_posY, float Solid_posZ, float Solid_powX, float Solid_powY, float Solid_powZ, float Solid_scaleX, float Solid_scaleY, float Solid_scaleZ, float Solid_rotX, float Solid_rotY, float Solid_rotZ, float Solid_value) {
 
-  float[][] ImageVertex = new float [Solids_DisplayDegree + 1][3];
+  float[][] ImageVertex = new float [Solids_numDisplayDegree + 1][3];
 
-  for (int q = 0; q <= Solids_DisplayDegree; q++) {
+  for (int q = 0; q <= Solids_numDisplayDegree; q++) {
 
     float qx = 0;
     float qy = 0;
@@ -44341,18 +44401,18 @@ float[][] SOLARCHVISION_getCorners_Solid (int plane_type, float Solid_posX, floa
 
     if (q != 0) {
       if (plane_type == 0) {
-        qx = cos_ang(q * 360.0 / float(Solids_DisplayDegree));
-        qy = sin_ang(q * 360.0 / float(Solids_DisplayDegree));
+        qx = cos_ang(q * 360.0 / float(Solids_numDisplayDegree));
+        qy = sin_ang(q * 360.0 / float(Solids_numDisplayDegree));
       }
 
       if (plane_type == 1) {
-        qy = cos_ang(q * 360.0 / float(Solids_DisplayDegree));
-        qz = sin_ang(q * 360.0 / float(Solids_DisplayDegree));
+        qy = cos_ang(q * 360.0 / float(Solids_numDisplayDegree));
+        qz = sin_ang(q * 360.0 / float(Solids_numDisplayDegree));
       }
 
       if (plane_type == 2) {
-        qz = cos_ang(q * 360.0 / float(Solids_DisplayDegree));
-        qx = sin_ang(q * 360.0 / float(Solids_DisplayDegree));
+        qz = cos_ang(q * 360.0 / float(Solids_numDisplayDegree));
+        qx = sin_ang(q * 360.0 / float(Solids_numDisplayDegree));
       }
     }
 
