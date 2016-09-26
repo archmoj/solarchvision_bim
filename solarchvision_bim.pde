@@ -1,3 +1,5 @@
+// now must correct window select for object2Ds :(((( 
+
 // should reverse loop in pick select object2ds to make it faster as they are sorted?
 
 // remarked: SOLARCHVISION_update_station(10);
@@ -27688,7 +27690,7 @@ void SOLARCHVISION_draw_Object2Ds () {
 
   allObject2Ds_Faces = new int [1 + allObject2Ds_num * Object2Ds_numDisplayFaces][4];
 
-  allObject2Ds_Vertices = new float [4 * allObject2Ds_num * Object2Ds_numDisplayFaces + 1][5]; // note we are keeping u & v 
+  allObject2Ds_Vertices = new float [4 * allObject2Ds_num * Object2Ds_numDisplayFaces + 1][5]; // note we are keeping u & v at 3rd and 4th members
   allObject2Ds_Vertices[0][0] = 0;
   allObject2Ds_Vertices[0][1] = 0;
   allObject2Ds_Vertices[0][2] = 0;
@@ -27765,36 +27767,37 @@ void SOLARCHVISION_draw_Object2Ds () {
         WIN3D_Diagrams.endShape(CLOSE);
 
         {
-          int m = f * 4 * Object2Ds_numDisplayFaces;
+          int nv = f * Object2Ds_numDisplayFaces * 4;
+          int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;
           
-          allObject2Ds_Vertices[m - 3][0] = x1 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 3][1] = y1 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 3][2] = (z) / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 3][3] = 0;
-          allObject2Ds_Vertices[m - 3][4] = 1;
+          allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 3][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 3][3] = 0;
+          allObject2Ds_Vertices[nv - 3][4] = 1;
 
-          allObject2Ds_Vertices[m - 2][0] = x2 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 2][1] = y2 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 2][2] = (z) / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 2][3] = 1;
-          allObject2Ds_Vertices[m - 2][4] = 1;
+          allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 2][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 2][3] = 1;
+          allObject2Ds_Vertices[nv - 2][4] = 1;
 
-          allObject2Ds_Vertices[m - 1][0] = x2 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 1][1] = y2 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 1][2] = (z + 2 * rh) / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 1][3] = 1;
-          allObject2Ds_Vertices[m - 1][4] = 0;
+          allObject2Ds_Vertices[nv - 1][0] = x2 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 1][1] = y2 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 1][3] = 1;
+          allObject2Ds_Vertices[nv - 1][4] = 0;
 
-          allObject2Ds_Vertices[m - 0][0] = x1 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 0][1] = y1 / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 0][2] = (z + 2 * rh) / OBJECTS_scale;
-          allObject2Ds_Vertices[m - 0][3] = 0;
-          allObject2Ds_Vertices[m - 0][4] = 0;
+          allObject2Ds_Vertices[nv - 0][0] = x1 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 0][1] = y1 / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[nv - 0][3] = 0;
+          allObject2Ds_Vertices[nv - 0][4] = 0;
 
-          allObject2Ds_Faces[f][0] = m - 3;
-          allObject2Ds_Faces[f][1] = m - 2;
-          allObject2Ds_Faces[f][2] = m - 1;
-          allObject2Ds_Faces[f][3] = m - 0;
+          allObject2Ds_Faces[nf][0] = nv - 3;
+          allObject2Ds_Faces[nf][1] = nv - 2;
+          allObject2Ds_Faces[nf][2] = nv - 1;
+          allObject2Ds_Faces[nf][3] = nv - 0;
         }        
 
 
@@ -27831,43 +27834,46 @@ void SOLARCHVISION_draw_Object2Ds () {
             
             {
 
-              int m = f * 4 * Object2Ds_numDisplayFaces;
+              int nv = f * Object2Ds_numDisplayFaces * 4;
+              int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;  
 
               if (back_front == -1) {
-                m -= 8;
+                nv -= 8;
+                nf += 1;
               }
               else {
-                m -= 4;
+                nv -= 4;
+                nf += 2;
               }
               
-              allObject2Ds_Vertices[m - 3][0] = x1 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 3][1] = y1 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 3][3] = 0;
-              allObject2Ds_Vertices[m - 3][4] = 1;
+              allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][3] = 0;
+              allObject2Ds_Vertices[nv - 3][4] = 1;
           
-              allObject2Ds_Vertices[m - 2][0] = x2 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 2][1] = y2 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 2][3] = 1;
-              allObject2Ds_Vertices[m - 2][4] = 1;
+              allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][3] = 1;
+              allObject2Ds_Vertices[nv - 2][4] = 1;
           
-              allObject2Ds_Vertices[m - 1][0] = x3 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 1][1] = y3 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 1][3] = 1;
-              allObject2Ds_Vertices[m - 1][4] = 0;
+              allObject2Ds_Vertices[nv - 1][0] = x3 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][1] = y3 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][3] = 1;
+              allObject2Ds_Vertices[nv - 1][4] = 0;
               
-              allObject2Ds_Vertices[m - 0][0] = x4 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 0][1] = y4 / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-              allObject2Ds_Vertices[m - 0][3] = 0;
-              allObject2Ds_Vertices[m - 0][4] = 0;              
+              allObject2Ds_Vertices[nv - 0][0] = x4 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][1] = y4 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][3] = 0;
+              allObject2Ds_Vertices[nv - 0][4] = 0;      
           
-              allObject2Ds_Faces[f][0] = m - 3;
-              allObject2Ds_Faces[f][1] = m - 2;
-              allObject2Ds_Faces[f][2] = m - 1;
-              allObject2Ds_Faces[f][3] = m - 0;
+              allObject2Ds_Faces[nf][0] = nv - 3;
+              allObject2Ds_Faces[nf][1] = nv - 2;
+              allObject2Ds_Faces[nf][2] = nv - 1;
+              allObject2Ds_Faces[nf][3] = nv - 0;
 
             }          
           }
@@ -27875,7 +27881,6 @@ void SOLARCHVISION_draw_Object2Ds () {
       }
     }
   }
-  
   
 }
 
@@ -28636,7 +28641,7 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
   }
   
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
-
+    
     int n = allObject2Ds_Faces[f].length;
     
     float X_intersect = FLOAT_undefined;         
@@ -28695,24 +28700,23 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
     }
   }
-  
- 
+
 
   float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
 
   float pre_dist = FLOAT_undefined;
 
   for (int f = 1; f < allObject2Ds_Faces.length; f++) {
+    
+    int the_ID = 1 + int((f - 1) / Object2Ds_numDisplayFaces);
 
     if (pre_dist > hitPoint[f][3]) {
       
       float u = hitPoint[f][4];
       float v = hitPoint[f][5];
-      
 
-      
-
-      int n = abs(allObject2Ds_MAP[f]);
+      int n = abs(allObject2Ds_MAP[the_ID]);
+     
       int RES1 = Object2D_Images[n].width; 
       int RES2 = Object2D_Images[n].height;    
    
@@ -28734,7 +28738,7 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
         pre_dist = hitPoint[f][3];
   
-        return_point[0] = f;
+        return_point[0] = the_ID;
         return_point[1] = hitPoint[f][0];
         return_point[2] = hitPoint[f][1];
         return_point[3] = hitPoint[f][2];
