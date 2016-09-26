@@ -28689,8 +28689,9 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
       hitPoint[f][1] = Y_intersect;
       hitPoint[f][2] = Z_intersect;
       hitPoint[f][3] = dist2intersect;
-      hitPoint[f][4] = u;
-      hitPoint[f][5] = v;
+      // converting rom face UV to image UV
+      hitPoint[f][4] = (1 - u) * B[3] + u * A[3];
+      hitPoint[f][5] = (1 - v) * B[4] + v * C[4];
 
     }
   }
@@ -28707,6 +28708,9 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
       
       float u = hitPoint[f][4];
       float v = hitPoint[f][5];
+      
+
+      
 
       int n = abs(allObject2Ds_MAP[f]);
       int RES1 = Object2D_Images[n].width; 
@@ -28715,8 +28719,11 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
       Object2D_Images[n].loadPixels();
       
       if (n < 0) u = 1 - u;
-      int Image_X = int((1 - u) * RES1); 
-      int Image_Y = int((1 - v) * RES2);
+      
+      println("uv,n", u, v, n);
+      
+      int Image_X = int(u * RES1); 
+      int Image_Y = int(v * RES2);
   
       color COL = Object2D_Images[n].get(Image_X, Image_Y);
       //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
