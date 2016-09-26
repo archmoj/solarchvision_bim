@@ -1,3 +1,5 @@
+// should reverse loop in pick select object2ds to make it faster as they are sorted?
+
 // remarked: SOLARCHVISION_update_station(10);
 // remarked: SOLARCHVISION_update_models(2);
 
@@ -2761,7 +2763,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_Object2Ds_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 21) {
-    //SOLARCHVISION_update_station(10);
+    SOLARCHVISION_update_station(10);
 
     stroke(0);
     fill(0);
@@ -27686,10 +27688,12 @@ void SOLARCHVISION_draw_Object2Ds () {
 
   allObject2Ds_Faces = new int [1 + allObject2Ds_num * Object2Ds_numDisplayFaces][4];
 
-  allObject2Ds_Vertices = new float [4 * allObject2Ds_num * Object2Ds_numDisplayFaces + 1][3];
+  allObject2Ds_Vertices = new float [4 * allObject2Ds_num * Object2Ds_numDisplayFaces + 1][5]; // note we are keeping u & v 
   allObject2Ds_Vertices[0][0] = 0;
   allObject2Ds_Vertices[0][1] = 0;
   allObject2Ds_Vertices[0][2] = 0;
+  allObject2Ds_Vertices[0][3] = 0;
+  allObject2Ds_Vertices[0][4] = 0;
 
   if (Display_Model2Ds != 0) {
 
@@ -27756,7 +27760,7 @@ void SOLARCHVISION_draw_Object2Ds () {
         WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, z * WIN3D_Scale3D, 0, h);
         WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, z * WIN3D_Scale3D, w, h);
         WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, w, 0);
-        WIN3D_Diagrams.vertex(x1* WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
+        WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
 
         WIN3D_Diagrams.endShape(CLOSE);
 
@@ -27766,18 +27770,26 @@ void SOLARCHVISION_draw_Object2Ds () {
           allObject2Ds_Vertices[m - 3][0] = x1 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 3][1] = y1 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 3][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 3][3] = 0;
+          allObject2Ds_Vertices[m - 3][4] = 1;
 
           allObject2Ds_Vertices[m - 2][0] = x2 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 2][1] = y2 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 2][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 2][3] = 1;
+          allObject2Ds_Vertices[m - 2][4] = 1;
 
           allObject2Ds_Vertices[m - 1][0] = x2 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 1][1] = y2 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 1][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 1][3] = 1;
+          allObject2Ds_Vertices[m - 1][4] = 0;
 
           allObject2Ds_Vertices[m - 0][0] = x1 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 0][1] = y1 / OBJECTS_scale;
           allObject2Ds_Vertices[m - 0][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[m - 0][3] = 0;
+          allObject2Ds_Vertices[m - 0][4] = 0;
 
           allObject2Ds_Faces[f][0] = m - 3;
           allObject2Ds_Faces[f][1] = m - 2;
@@ -27799,10 +27811,10 @@ void SOLARCHVISION_draw_Object2Ds () {
             dy = rw * sin(rot);
             
             float x3 = x2 + dx;
-            float x3 = y2 + dy;
+            float y3 = y2 + dy;
 
             float x4 = x1 + dx;
-            float x4 = y1 + dy;
+            float y4 = y1 + dy;
 
             WIN3D_Diagrams.beginShape();
 
@@ -27810,49 +27822,60 @@ void SOLARCHVISION_draw_Object2Ds () {
             WIN3D_Diagrams.stroke(255, 255, 255, 0);
             WIN3D_Diagrams.fill(255, 255, 255, 0);
 
-            WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -(y1 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, h * ratio);
-            WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -(y2 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, h * ratio);
-            WIN3D_Diagrams.vertex(x3 * WIN3D_Scale3D, -(y3 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, 0);
-            WIN3D_Diagrams.vertex(x4 * WIN3D_Scale3D, -(y4 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, 0);
+            WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, h * ratio);
+            WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, h * ratio);
+            WIN3D_Diagrams.vertex(x3 * WIN3D_Scale3D, -y3 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, w, 0);
+            WIN3D_Diagrams.vertex(x4 * WIN3D_Scale3D, -y4 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, 0);
 
             WIN3D_Diagrams.endShape(CLOSE);
             
             {
+
               int m = f * 4 * Object2Ds_numDisplayFaces;
 
               if (back_front == -1) {
-                m += 4;
+                m -= 8;
               }
               else {
-                m += 8;
+                m -= 4;
               }
               
               allObject2Ds_Vertices[m - 3][0] = x1 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 3][1] = y1 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-    
+              allObject2Ds_Vertices[m - 3][3] = 0;
+              allObject2Ds_Vertices[m - 3][4] = 1;
+          
               allObject2Ds_Vertices[m - 2][0] = x2 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 2][1] = y2 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-    
+              allObject2Ds_Vertices[m - 2][3] = 1;
+              allObject2Ds_Vertices[m - 2][4] = 1;
+          
               allObject2Ds_Vertices[m - 1][0] = x3 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 1][1] = y3 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-    
+              allObject2Ds_Vertices[m - 1][3] = 1;
+              allObject2Ds_Vertices[m - 1][4] = 0;
+              
               allObject2Ds_Vertices[m - 0][0] = x4 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 0][1] = y4 / OBJECTS_scale;
               allObject2Ds_Vertices[m - 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-    
+              allObject2Ds_Vertices[m - 0][3] = 0;
+              allObject2Ds_Vertices[m - 0][4] = 0;              
+          
               allObject2Ds_Faces[f][0] = m - 3;
               allObject2Ds_Faces[f][1] = m - 2;
               allObject2Ds_Faces[f][2] = m - 1;
               allObject2Ds_Faces[f][3] = m - 0;
+
             }          
           }
         }
       }
     }
   }
+  
   
 }
 
