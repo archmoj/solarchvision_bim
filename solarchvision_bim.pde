@@ -1,4 +1,3 @@
-// now must correct window select for object2Ds :(((( 
 
 // should reverse loop in pick select object2ds to make it faster as they are sorted?
 
@@ -27878,6 +27877,60 @@ void SOLARCHVISION_draw_Object2Ds () {
             }          
           }
         }
+        else { // case: people
+        
+          for (int back_front = -1; back_front <= 1; back_front += 2) {
+
+            {
+
+              int nv = f * Object2Ds_numDisplayFaces * 4;
+              int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;  
+
+              if (back_front == -1) {
+                nv -= 8;
+                nf += 1;
+              }
+              else {
+                nv -= 4;
+                nf += 2;
+              }
+              
+              allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][2] = (z) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][3] = 0;
+              allObject2Ds_Vertices[nv - 3][4] = 1;
+    
+              allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][2] = (z) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][3] = 1;
+              allObject2Ds_Vertices[nv - 2][4] = 1;
+    
+              allObject2Ds_Vertices[nv - 1][0] = x2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][1] = y2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][3] = 1;
+              allObject2Ds_Vertices[nv - 1][4] = 0;
+    
+              allObject2Ds_Vertices[nv - 0][0] = x1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][1] = y1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][3] = 0;
+              allObject2Ds_Vertices[nv - 0][4] = 0;
+    
+              allObject2Ds_Faces[nf][0] = nv - 3;
+              allObject2Ds_Faces[nf][1] = nv - 2;
+              allObject2Ds_Faces[nf][2] = nv - 1;
+              allObject2Ds_Faces[nf][3] = nv - 0;
+
+            }          
+          }
+        }
+        
+        
+        
+        
       }
     }
   }
