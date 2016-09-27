@@ -27743,8 +27743,6 @@ void SOLARCHVISION_draw_Object2Ds () {
 
         if (allObject2Ds_MAP[f] < 0) t += PI;         
 
-
-        
         float dx = rw * cos(t);
         float dy = rw * sin(t);
         
@@ -27753,66 +27751,74 @@ void SOLARCHVISION_draw_Object2Ds () {
 
         float x2 = x + dx;
         float y2 = y + dy;
-        
-        {
-          int nv = f * Object2Ds_numDisplayFaces * 4;
-          int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;
+
+        for (int back_front = -1; back_front <= 1; back_front += 1) {
           
-          allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 3][2] = (z) / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 3][3] = 0;
-          allObject2Ds_Vertices[nv - 3][4] = 1;
+          if (back_front == 0) {
 
-          allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 2][2] = (z) / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 2][3] = 1;
-          allObject2Ds_Vertices[nv - 2][4] = 1;
+            WIN3D_Diagrams.beginShape();
+    
+            WIN3D_Diagrams.texture(Object2D_Images[n]);    
+            WIN3D_Diagrams.stroke(255, 255, 255, 0);
+            WIN3D_Diagrams.fill(255, 255, 255, 0);        
+    
+            WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, z * WIN3D_Scale3D, 0, h);
+            WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, z * WIN3D_Scale3D, w, h);
+            WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, w, 0);
+            WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
+    
+            WIN3D_Diagrams.endShape(CLOSE);        
 
-          allObject2Ds_Vertices[nv - 1][0] = x2 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 1][1] = y2 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh) / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 1][3] = 1;
-          allObject2Ds_Vertices[nv - 1][4] = 0;
-
-          allObject2Ds_Vertices[nv - 0][0] = x1 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 0][1] = y1 / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh) / OBJECTS_scale;
-          allObject2Ds_Vertices[nv - 0][3] = 0;
-          allObject2Ds_Vertices[nv - 0][4] = 0;
-
-          allObject2Ds_Faces[nf][0] = nv - 3;
-          allObject2Ds_Faces[nf][1] = nv - 2;
-          allObject2Ds_Faces[nf][2] = nv - 1;
-          allObject2Ds_Faces[nf][3] = nv - 0;
-        }        
-
-
-
-        if (n > Object2D_PEOPLE_Files_Num) { // case: trees   
-
-          float ratio = 0.5;
-
-          for (int back_front = -1; back_front <= 1; back_front += 1) {
+            int nv = f * Object2Ds_numDisplayFaces * 4;
+            int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;
             
-            if (back_front == 0) {
+            allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 3][2] = (z) / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 3][3] = 0;
+            allObject2Ds_Vertices[nv - 3][4] = 1;
+  
+            allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 2][2] = (z) / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 2][3] = 1;
+            allObject2Ds_Vertices[nv - 2][4] = 1;
+  
+            allObject2Ds_Vertices[nv - 1][0] = x2 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 1][1] = y2 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh) / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 1][3] = 1;
+            allObject2Ds_Vertices[nv - 1][4] = 0;
+  
+            allObject2Ds_Vertices[nv - 0][0] = x1 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 0][1] = y1 / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh) / OBJECTS_scale;
+            allObject2Ds_Vertices[nv - 0][3] = 0;
+            allObject2Ds_Vertices[nv - 0][4] = 0;
+  
+            allObject2Ds_Faces[nf][0] = nv - 3;
+            allObject2Ds_Faces[nf][1] = nv - 2;
+            allObject2Ds_Faces[nf][2] = nv - 1;
+            allObject2Ds_Faces[nf][3] = nv - 0;
+          }     
+          else {
             
-              WIN3D_Diagrams.beginShape();
-      
-              WIN3D_Diagrams.texture(Object2D_Images[n]);    
-              WIN3D_Diagrams.stroke(255, 255, 255, 0);
-              WIN3D_Diagrams.fill(255, 255, 255, 0);        
-      
-              WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, z * WIN3D_Scale3D, 0, h);
-              WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, z * WIN3D_Scale3D, w, h);
-              WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, w, 0);
-              WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
-      
-              WIN3D_Diagrams.endShape(CLOSE);
-            }  
-            else {          
+            int nv = f * Object2Ds_numDisplayFaces * 4;
+            int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;  
 
+            if (back_front == -1) {
+              nv -= 8;
+              nf += 1;
+            }
+            else {
+              nv -= 4;
+              nf += 2;
+            }            
+            
+            if (n > Object2D_PEOPLE_Files_Num) { // case: trees   
+
+              float ratio = 0.5;
+          
               float rot = back_front * PI / 2 + t;
   
               dx = rw * cos(rot);
@@ -27837,84 +27843,39 @@ void SOLARCHVISION_draw_Object2Ds () {
   
               WIN3D_Diagrams.endShape(CLOSE);
               
-              {
-  
-                int nv = f * Object2Ds_numDisplayFaces * 4;
-                int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;  
-  
-                if (back_front == -1) {
-                  nv -= 8;
-                  nf += 1;
-                }
-                else {
-                  nv -= 4;
-                  nf += 2;
-                }
-                
-                allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 3][3] = 0;
-                allObject2Ds_Vertices[nv - 3][4] = ratio;
-            
-                allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 2][3] = 1;
-                allObject2Ds_Vertices[nv - 2][4] = ratio;
-            
-                allObject2Ds_Vertices[nv - 1][0] = x3 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 1][1] = y3 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 1][3] = 1;
-                allObject2Ds_Vertices[nv - 1][4] = 0;
-                
-                allObject2Ds_Vertices[nv - 0][0] = x4 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 0][1] = y4 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv - 0][3] = 0;
-                allObject2Ds_Vertices[nv - 0][4] = 0;      
-            
-                allObject2Ds_Faces[nf][0] = nv - 3;
-                allObject2Ds_Faces[nf][1] = nv - 2;
-                allObject2Ds_Faces[nf][2] = nv - 1;
-                allObject2Ds_Faces[nf][3] = nv - 0;
-  
-              }          
-            }
-          }
-        }
-        else { // case: people
-        
-          WIN3D_Diagrams.beginShape();
-  
-          WIN3D_Diagrams.texture(Object2D_Images[n]);    
-          WIN3D_Diagrams.stroke(255, 255, 255, 0);
-          WIN3D_Diagrams.fill(255, 255, 255, 0);        
-  
-          WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, z * WIN3D_Scale3D, 0, h);
-          WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, z * WIN3D_Scale3D, w, h);
-          WIN3D_Diagrams.vertex(x2 * WIN3D_Scale3D, -y2 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, w, 0);
-          WIN3D_Diagrams.vertex(x1 * WIN3D_Scale3D, -y1 * WIN3D_Scale3D, (z + 2 * rh) * WIN3D_Scale3D, 0, 0);
-  
-          WIN3D_Diagrams.endShape(CLOSE);        
-        
-          for (int back_front = -1; back_front <= 1; back_front += 2) {
 
-            {
-
-              int nv = f * Object2Ds_numDisplayFaces * 4;
-              int nf = (f - 1) * Object2Ds_numDisplayFaces + 1;  
-
-              if (back_front == -1) {
-                nv -= 8;
-                nf += 1;
-              }
-              else {
-                nv -= 4;
-                nf += 2;
-              }
               
+              allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 3][3] = 0;
+              allObject2Ds_Vertices[nv - 3][4] = ratio;
+          
+              allObject2Ds_Vertices[nv - 2][0] = x2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][1] = y2 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 2][3] = 1;
+              allObject2Ds_Vertices[nv - 2][4] = ratio;
+          
+              allObject2Ds_Vertices[nv - 1][0] = x3 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][1] = y3 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 1][3] = 1;
+              allObject2Ds_Vertices[nv - 1][4] = 0;
+              
+              allObject2Ds_Vertices[nv - 0][0] = x4 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][1] = y4 / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+              allObject2Ds_Vertices[nv - 0][3] = 0;
+              allObject2Ds_Vertices[nv - 0][4] = 0;      
+          
+              allObject2Ds_Faces[nf][0] = nv - 3;
+              allObject2Ds_Faces[nf][1] = nv - 2;
+              allObject2Ds_Faces[nf][2] = nv - 1;
+              allObject2Ds_Faces[nf][3] = nv - 0;
+  
+            }
+            else { // case: people
               allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 3][2] = (z) / OBJECTS_scale;
@@ -27942,15 +27903,10 @@ void SOLARCHVISION_draw_Object2Ds () {
               allObject2Ds_Faces[nf][0] = nv - 3;
               allObject2Ds_Faces[nf][1] = nv - 2;
               allObject2Ds_Faces[nf][2] = nv - 1;
-              allObject2Ds_Faces[nf][3] = nv - 0;
-
-            }          
+              allObject2Ds_Faces[nf][3] = nv - 0;              
+            }
           }
         }
-        
-        
-        
-        
       }
     }
   }
