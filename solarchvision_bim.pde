@@ -1,3 +1,5 @@
+// if we shade to global solar then press F7 we have an error! 
+
 
 // remarked: SOLARCHVISION_update_models(2);
 
@@ -57682,6 +57684,12 @@ void SOLARCHVISION_PreBakeViewport () {
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
       face_norm = SOLARCHVISION_fn_normalize(face_norm);
       
+      if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // to render backing faces 
+        face_norm[0] *= -1;
+        face_norm[1] *= -1;
+        face_norm[2] *= -1;
+      }
+      
       float Alpha = 90 - acos_ang(face_norm[2]);
       float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
 
@@ -57719,7 +57727,7 @@ void SOLARCHVISION_PreBakeViewport () {
           ray_direction[2] = DiffuseVectors[n_Ray][2];
     
           float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(DiffuseVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
-          if (SkyMask <= 0) SkyMask = 0; // removes backing faces
+          //if (SkyMask <= 0) SkyMask = 0; // removes backing faces
          
           // when SHD = 0;
           Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
@@ -57761,7 +57769,7 @@ void SOLARCHVISION_PreBakeViewport () {
           ray_direction[2] = DirectVector[2];
 
           float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(DirectVector), SOLARCHVISION_fn_normalize(VECT));
-          if (SunMask <= 0) SunMask = 0; // removes backing faces 
+          //if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
           // when SHD = 0;
           Direct_RGBA[n_Map][0].pixels[np] = color(255 * SunMask, 255);
