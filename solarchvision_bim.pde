@@ -5454,6 +5454,168 @@ float SOLARCHVISION_Bilinear (float f_00, float f_10, float f_11, float f_01, fl
 }
 
 
+boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
+
+  float pX = P[0] - C[0];
+  float pY = P[1] - C[1];
+  float pZ = P[2] - C[2];
+    
+  float aX = A[0] - C[0];
+  float aY = A[1] - C[1];
+  float aZ = A[2] - C[2];
+
+  float bX = B[0] - C[0];
+  float bY = B[1] - C[1];
+  float bZ = B[2] - C[2];
+
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
+  
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+  
+  return ((u >= 0) && (v >= 0) && (u + v <= 1));
+}
+
+
+boolean SOLARCHVISION_isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {  
+
+  float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
+
+  float pX = P[0] - G[0];
+  float pY = P[1] - G[1];
+  float pZ = P[2] - G[2];
+
+  float aX = A[0] - G[0];
+  float aY = A[1] - G[1];
+  float aZ = A[2] - G[2];
+
+  float bX = B[0] - G[0];
+  float bY = B[1] - G[1];
+  float bZ = B[2] - G[2];
+  
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
+
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+ 
+  boolean result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+  
+  if (result == false) {
+
+    float cX = C[0] - G[0];
+    float cY = C[1] - G[1];
+    float cZ = C[2] - G[2];
+
+    float CC = cX * cX + cY * cY + cZ * cZ; // SOLARCHVISION_3xDot(c, c);
+    float CP = cX * pX + cY * pY + cZ * pZ; // SOLARCHVISION_3xDot(c, p);
+    float BC = bX * cX + bY * cY + bZ * cZ; // SOLARCHVISION_3xDot(b, c);
+  
+    r = (BB * CC - BC * BC);
+    u = (CC * BP - BC * CP) / r;
+    v = (BB * CP - BC * BP) / r;  
+    
+    result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+    
+    if (result == false) {
+
+      float dX = D[0] - G[0];
+      float dY = D[1] - G[1];
+      float dZ = D[2] - G[2];
+      
+      float CD = cX * dX + cY * dY + cZ * dZ; // SOLARCHVISION_3xDot(c, d);
+      float DD = dX * dX + dY * dY + dZ * dZ; // SOLARCHVISION_3xDot(d, d);
+      float DP = dX * pX + dY * pY + dZ * pZ; // SOLARCHVISION_3xDot(d, p);
+    
+      r = (CC * DD - CD * CD);
+      u = (DD * CP - CD * DP) / r;
+      v = (CC * DP - CD * CP) / r;
+      
+      result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+      
+      if (result == false) {
+        
+        float DA = dX * aX + dY * aY + dZ * aZ; // SOLARCHVISION_3xDot(d, a);  
+        
+        r = (DD * AA - DA * DA);
+        u = (AA * DP - DA * AP) / r;
+        v = (DD * AP - DA * DP) / r;
+        
+        result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+      }  
+    }
+  }
+  
+  return result;
+}
+
+boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting Object2Ds, etc.  
+
+  float pX = P[0] - O[0];
+  float pY = P[1] - O[1];
+  float pZ = P[2] - O[2];
+    
+  float aX = A[0] - O[0];
+  float aY = A[1] - O[1];
+  float aZ = A[2] - O[2];
+
+  float bX = B[0] - O[0];
+  float bY = B[1] - O[1];
+  float bZ = B[2] - O[2];
+
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
+  
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+  
+  return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
+}
+
+float[] SOLARCHVISION_uvInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // copy of the function above but it returns u and v
+
+  float pX = P[0] - O[0];
+  float pY = P[1] - O[1];
+  float pZ = P[2] - O[2];
+    
+  float aX = A[0] - O[0];
+  float aY = A[1] - O[1];
+  float aZ = A[2] - O[2];
+
+  float bX = B[0] - O[0];
+  float bY = B[1] - O[1];
+  float bZ = B[2] - O[2];
+
+  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
+  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
+  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
+  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
+  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
+  
+  float r = (AA * BB - AB * AB);
+  float u = (BB * AP - AB * BP) / r;
+  float v = (AA * BP - AB * AP) / r;
+  
+  float[] result = {u, v};
+  
+  return result;
+}
+
+
+
 
 
 float[] SOLARCHVISION_WBGRW (float _variable) {
@@ -19323,6 +19485,85 @@ void SOLARCHVISION_forceTriangulateFaces_Selection () {
 }
 
 
+
+void SOLARCHVISION_autoNormalFaces_Selection () {
+
+  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+
+    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+
+      selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
+
+      SOLARCHVISION_convert_Group3D_to_Face();    
+
+      selectedFace_numbers = sort(selectedFace_numbers);
+    }
+
+    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+
+      selectedFace_numbers = sort(selectedFace_numbers);
+
+      SOLARCHVISION_convert_Face_to_Group3D();    
+
+      selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
+    }
+
+
+    if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) {
+
+
+      for (int o = 0; o < selectedFace_numbers.length; o++) {
+  
+        int f = selectedFace_numbers[o];     
+        
+        if (f > 0) {
+        
+          int n = allFaces_PNT[f].length;
+    
+          if (n > 2) {
+            int[] tmpFace = new int[n];
+            float[] G = {
+              0, 0, 0
+            }; 
+            for (int j = 0; j < n; j++) {
+              tmpFace[j] = allFaces_PNT[f][j];
+              G[0] += allVertices[tmpFace[j]][0] / float(n); 
+              G[1] += allVertices[tmpFace[j]][1] / float(n);
+              G[2] += allVertices[tmpFace[j]][2] / float(n);
+            }  
+            
+            PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
+            PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+    
+            PVector GAxGB = AG.cross(BG);
+
+            float[] ray_start = {G[0], G[1], G[2]};
+            float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
+
+            float[] RxP = SOLARCHVISION_intersect_selectedFaces(ray_start, ray_direction);
+
+            if (RxP[0] > 0) {
+
+              for (int j = 0; j < n; j++) {
+                allFaces_PNT[f][j] = tmpFace[n - j - 1];
+              }
+            }
+          }
+        }
+      }
+    }
+
+    Current_ObjectCategory = ObjectCategory_Faces; 
+    UI_BAR_b_Update = 1;
+
+    println("SOLARCHVISION_calculate_selection_BoundingBox 3700");
+    SOLARCHVISION_calculate_selection_BoundingBox();
+
+    WIN3D_VerticesSolarValue_Update = 1;
+  }
+}
+
+
 void SOLARCHVISION_extrudeFaceEdges_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
@@ -27842,9 +28083,7 @@ void SOLARCHVISION_draw_Object2Ds () {
               WIN3D_Diagrams.vertex(x4 * WIN3D_Scale3D, -y4 * WIN3D_Scale3D, (z + 2 * rh * ratio) * WIN3D_Scale3D, 0, 0);
   
               WIN3D_Diagrams.endShape(CLOSE);
-              
 
-              
               allObject2Ds_Vertices[nv - 3][0] = x1 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 3][1] = y1 / OBJECTS_scale;
               allObject2Ds_Vertices[nv - 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
@@ -57273,282 +57512,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 
-
-/////////////////////// internal values <<<<<<<<<<<<<<<<<<<<<<<<<<<<
-int MAT_renderer = 1;
-int GLB_renderer = 2;
-int SHD_renderer = 3;
-
-int rendererType = 3; //GLB_renderer; // <<<<<<<<<<<<< 
-
-
-void SOLARCHVISION_RenderViewport () {
-
-  println("Render started!");
-  
-  int PAL_TYPE = 0; 
-  int PAL_DIR = 1;
-  float PAL_Multiplier = 1;   
-
-  if (Impact_TYPE == Impact_ACTIVE) {
-    PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
-    PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
-    PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
-  }
-  if (Impact_TYPE == Impact_PASSIVE) {  
-    PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
-    PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-    PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
-  }     
-
-  
-  int RES1 = WIN3D_X_View;
-  int RES2 = WIN3D_Y_View;
-  
-  PImage Image_RGBA = createImage(RES1, RES2, ARGB);
-
-  Image_RGBA.loadPixels();
-
-  float Progress = 0;
-
-   
-
-
-  for (int np = 0; np < (RES1 * RES2); np++) {
-    int Image_X = np % RES1;
-    int Image_Y = np / RES1;
-    
-    Image_X -= 0.5 * WIN3D_X_View;
-    Image_Y -= 0.5 * WIN3D_Y_View;
-
-    if (10 + Progress < 100 * np / float(RES1 * RES2)) { 
-      Progress = 100 * np / float(RES1 * RES2);
-      println("Progress:", int(Progress), "%");
-    }
-
-    float[] ray_direction = new float [3];
-
-    float[] ray_start = {
-      WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
-    };
-
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
-
-    ray_start[0] /= OBJECTS_scale;
-    ray_start[1] /= OBJECTS_scale;
-    ray_start[2] /= OBJECTS_scale;          
-
-    ray_end[0] /= OBJECTS_scale;
-    ray_end[1] /= OBJECTS_scale;
-    ray_end[2] /= OBJECTS_scale;
-
-    if (WIN3D_ViewType == 0) {
-      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
-
-      ray_center[0] /= OBJECTS_scale;
-      ray_center[1] /= OBJECTS_scale;
-      ray_center[2] /= OBJECTS_scale;
-
-      ray_start[0] += ray_end[0] - ray_center[0];
-      ray_start[1] += ray_end[1] - ray_center[1];
-      ray_start[2] += ray_end[2] - ray_center[2];
-    }
-
-    ray_direction[0] = ray_end[0] - ray_start[0];
-    ray_direction[1] = ray_end[1] - ray_start[1];
-    ray_direction[2] = ray_end[2] - ray_start[2];
-
-
-
-         
-  
-    float[] RxP = new float [8]; 
-
-    RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-
-    if (RxP[0] > 0) {        
-        
-      int f = int(RxP[0]);
-
-      if (rendererType == SHD_renderer) {
-
-        float[] COL = {
-          0, 0, 0, 0
-        };
-        
-        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-        face_norm = SOLARCHVISION_fn_normalize(face_norm);
-        
-        float Alpha = 90 - acos_ang(face_norm[2]);
-        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
-
-float _valuesSUM_RAD = 0;
-float _valuesSUM_EFF_P = 0;
-float _valuesSUM_EFF_N = 0;
-int _valuesNUM = 0; 
-
-                float _values_R_dir = 1;
-                float _values_R_dif = 1;
-                float _values_E_dir = 0.1;
-                float _values_E_dif = 0.1;
-
-
-//float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
-float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
-float[] VECT = {
-  0, 0, 0
-}; 
-
-if (abs(Alpha) > 89.99) {
-  VECT[0] = 0;
-  VECT[1] = 0;
-  VECT[2] = 1;
-} else if (Alpha < -89.99) {
-  VECT[0] = 0;
-  VECT[1] = 0;
-  VECT[2] = -1;
-} else {
-  VECT[0] = sin_ang(Beta);
-  VECT[1] = -cos_ang(Beta);
-  VECT[2] = tan_ang(Alpha);
-}   
-
-VECT = SOLARCHVISION_fn_normalize(VECT);
-
-
-float[] SunV = {
-  SunR[1], SunR[2], SunR[3]
-};
-
-float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
-if (SunMask <= 0) SunMask = 0; // removes backing faces 
-
-float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
-
-
-// new trace
-ray_start[0] = RxP[1];
-ray_start[1] = RxP[2];
-ray_start[2] = RxP[3];
-
-ray_direction[0] = SunV[0];
-ray_direction[1] = SunV[1];
-ray_direction[2] = SunV[2];
-
-if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
-
-  if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
-    if (_values_E_dir < 0) {
-      _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
-      _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
-    } else {
-      _valuesSUM_EFF_N += (_values_E_dir * SunMask); 
-      _valuesSUM_EFF_P += (_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
-    }
-
-    _valuesSUM_RAD += (_values_R_dif * SkyMask); // only approximate diffuse radiation!
-  } else { 
-    if (_values_E_dir < 0) {
-      _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
-    } else {
-      _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
-    }
-
-    _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
-  }
-}
-_valuesNUM += 1;
-
-//-----------------------------
-float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-//-----------------------------
-      
-        float _u = 0;
-      
-        if (_valuesSUM < 0.9 * FLOAT_undefined) {
-      
-          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-      
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-        }
-      
-        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-        
-        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        
-      }
-      else if (rendererType == GLB_renderer) {
-
-        float[] COL = {
-          0, 0, 0, 0
-        };
-        
-        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-        face_norm = SOLARCHVISION_fn_normalize(face_norm);
-        
-        float Alpha = 90 - acos_ang(face_norm[2]);
-        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
-
-       
-        int a = int((Alpha + 90) / SOLARCHVISION_GLOBE_stp_slp);
-        int b = int(Beta / SOLARCHVISION_GLOBE_stp_dir);
-      
-        if (a < 0) a += int(180 / SOLARCHVISION_GLOBE_stp_slp);
-        if (b < 0) b += int(360 / SOLARCHVISION_GLOBE_stp_dir);
-        if (a > int(180 / SOLARCHVISION_GLOBE_stp_slp)) a -= int(180 / SOLARCHVISION_GLOBE_stp_slp);
-        if (b > int(360 / SOLARCHVISION_GLOBE_stp_dir)) b -= int(360 / SOLARCHVISION_GLOBE_stp_dir);
-      
-        float _valuesSUM = LocationExposure[IMPACTS_DisplayDay][a][b];
-      
-        float _u = 0;
-      
-        if (_valuesSUM < 0.9 * FLOAT_undefined) {
-      
-          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-      
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-        }
-      
-        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-        
-        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        
-      }
-      else if (rendererType == MAT_renderer) {
-        int mt = allFaces_MTLVGC[f][0];
-    
-        float a = Materials_Color[mt][0];
-        float r = Materials_Color[mt][1]; 
-        float g = Materials_Color[mt][2]; 
-        float b = Materials_Color[mt][3];   
-    
-        Image_RGBA.pixels[np] = color(r, g, b, a);
-      }
-    }
-    else Image_RGBA.pixels[np] = color(0,0,0,0);
-  }
-
-  Image_RGBA.updatePixels();
- 
-  String myFile = ScreenShotFolder + "/" + CreateStamp(1) + "Render.png";
-  Image_RGBA.save(myFile);
-  SOLARCHVISION_explore_output(myFile);
-  println("File created:" + myFile);
-  
-}
-
-
-
-
-
 void SOLARCHVISION_PreBakeViewport () {
   
   Camera_Variation = 0;
@@ -57930,253 +57893,291 @@ void SOLARCHVISION_PreBakeViewport () {
 }
 
 
-void SOLARCHVISION_autoNormalFaces_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+/////////////////////// internal values <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+int MAT_renderer = 1;
+int GLB_renderer = 2;
+int SHD_renderer = 3;
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
-
-      selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
-
-      SOLARCHVISION_convert_Group3D_to_Face();    
-
-      selectedFace_numbers = sort(selectedFace_numbers);
-    }
-
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
-
-      selectedFace_numbers = sort(selectedFace_numbers);
-
-      SOLARCHVISION_convert_Face_to_Group3D();    
-
-      selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
-    }
+int rendererType = 3; //GLB_renderer; // <<<<<<<<<<<<< 
 
 
-    if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) {
+void SOLARCHVISION_RenderViewport () {
 
-
-      for (int o = 0; o < selectedFace_numbers.length; o++) {
+  println("Render started!");
   
-        int f = selectedFace_numbers[o];     
+  int PAL_TYPE = 0; 
+  int PAL_DIR = 1;
+  float PAL_Multiplier = 1;   
+
+  if (Impact_TYPE == Impact_ACTIVE) {
+    PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+    PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
+    PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
+  }
+  if (Impact_TYPE == Impact_PASSIVE) {  
+    PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+    PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+    PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
+  }     
+
+  
+  int RES1 = WIN3D_X_View;
+  int RES2 = WIN3D_Y_View;
+  
+  PImage Image_RGBA = createImage(RES1, RES2, ARGB);
+
+  Image_RGBA.loadPixels();
+
+  float Progress = 0;
+
+   
+
+
+  for (int np = 0; np < (RES1 * RES2); np++) {
+    int Image_X = np % RES1;
+    int Image_Y = np / RES1;
+    
+    Image_X -= 0.5 * WIN3D_X_View;
+    Image_Y -= 0.5 * WIN3D_Y_View;
+
+    if (10 + Progress < 100 * np / float(RES1 * RES2)) { 
+      Progress = 100 * np / float(RES1 * RES2);
+      println("Progress:", int(Progress), "%");
+    }
+
+    float[] ray_direction = new float [3];
+
+    float[] ray_start = {
+      WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
+    };
+
+    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+
+    ray_start[0] /= OBJECTS_scale;
+    ray_start[1] /= OBJECTS_scale;
+    ray_start[2] /= OBJECTS_scale;          
+
+    ray_end[0] /= OBJECTS_scale;
+    ray_end[1] /= OBJECTS_scale;
+    ray_end[2] /= OBJECTS_scale;
+
+    if (WIN3D_ViewType == 0) {
+      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+
+      ray_center[0] /= OBJECTS_scale;
+      ray_center[1] /= OBJECTS_scale;
+      ray_center[2] /= OBJECTS_scale;
+
+      ray_start[0] += ray_end[0] - ray_center[0];
+      ray_start[1] += ray_end[1] - ray_center[1];
+      ray_start[2] += ray_end[2] - ray_center[2];
+    }
+
+    ray_direction[0] = ray_end[0] - ray_start[0];
+    ray_direction[1] = ray_end[1] - ray_start[1];
+    ray_direction[2] = ray_end[2] - ray_start[2];
+
+
+
+         
+  
+    float[] RxP = new float [8]; 
+
+    RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+
+    if (RxP[0] > 0) {        
         
-        if (f > 0) {
+      int f = int(RxP[0]);
+
+      if (rendererType == SHD_renderer) {
+
+        float[] COL = {
+          0, 0, 0, 0
+        };
         
-          int n = allFaces_PNT[f].length;
-    
-          if (n > 2) {
-            int[] tmpFace = new int[n];
-            float[] G = {
-              0, 0, 0
-            }; 
-            for (int j = 0; j < n; j++) {
-              tmpFace[j] = allFaces_PNT[f][j];
-              G[0] += allVertices[tmpFace[j]][0] / float(n); 
-              G[1] += allVertices[tmpFace[j]][1] / float(n);
-              G[2] += allVertices[tmpFace[j]][2] / float(n);
-            }  
-    
-            
-            
-            PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
-            PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
-    
-            PVector GAxGB = AG.cross(BG);
-    
-            
-            float[] ray_start = {G[0], G[1], G[2]};
-            float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
+        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+        face_norm = SOLARCHVISION_fn_normalize(face_norm);
+        
+        float Alpha = 90 - acos_ang(face_norm[2]);
+        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+
+float _valuesSUM_RAD = 0;
+float _valuesSUM_EFF_P = 0;
+float _valuesSUM_EFF_N = 0;
+int _valuesNUM = 0; 
+
+                float _values_R_dir = 1;
+                float _values_R_dif = 1;
+                float _values_E_dir = 0.1;
+                float _values_E_dif = 0.1;
 
 
-            
+//float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
+float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
+float[] VECT = {
+  0, 0, 0
+}; 
 
-            float[] RxP = SOLARCHVISION_intersect_selectedFaces(ray_start, ray_direction);
+if (abs(Alpha) > 89.99) {
+  VECT[0] = 0;
+  VECT[1] = 0;
+  VECT[2] = 1;
+} else if (Alpha < -89.99) {
+  VECT[0] = 0;
+  VECT[1] = 0;
+  VECT[2] = -1;
+} else {
+  VECT[0] = sin_ang(Beta);
+  VECT[1] = -cos_ang(Beta);
+  VECT[2] = tan_ang(Alpha);
+}   
 
-            if (RxP[0] > 0) {
+VECT = SOLARCHVISION_fn_normalize(VECT);
 
-              for (int j = 0; j < n; j++) {
-                allFaces_PNT[f][j] = tmpFace[n - j - 1];
-              }
-            }
-          }
+
+float[] SunV = {
+  SunR[1], SunR[2], SunR[3]
+};
+
+float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+if (SunMask <= 0) SunMask = 0; // removes backing faces 
+
+float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+
+
+// new trace
+ray_start[0] = RxP[1];
+ray_start[1] = RxP[2];
+ray_start[2] = RxP[3];
+
+ray_direction[0] = SunV[0];
+ray_direction[1] = SunV[1];
+ray_direction[2] = SunV[2];
+
+if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
+
+  if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
+    if (_values_E_dir < 0) {
+      _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
+      _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
+    } else {
+      _valuesSUM_EFF_N += (_values_E_dir * SunMask); 
+      _valuesSUM_EFF_P += (_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
+    }
+
+    _valuesSUM_RAD += (_values_R_dif * SkyMask); // only approximate diffuse radiation!
+  } else { 
+    if (_values_E_dir < 0) {
+      _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
+    } else {
+      _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
+    }
+
+    _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
+  }
+}
+_valuesNUM += 1;
+
+//-----------------------------
+float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//-----------------------------
+      
+        float _u = 0;
+      
+        if (_valuesSUM < 0.9 * FLOAT_undefined) {
+      
+          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+      
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
         }
+      
+        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+
+        
+        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+        
+      }
+      else if (rendererType == GLB_renderer) {
+
+        float[] COL = {
+          0, 0, 0, 0
+        };
+        
+        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+        face_norm = SOLARCHVISION_fn_normalize(face_norm);
+        
+        float Alpha = 90 - acos_ang(face_norm[2]);
+        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+
+       
+        int a = int((Alpha + 90) / SOLARCHVISION_GLOBE_stp_slp);
+        int b = int(Beta / SOLARCHVISION_GLOBE_stp_dir);
+      
+        if (a < 0) a += int(180 / SOLARCHVISION_GLOBE_stp_slp);
+        if (b < 0) b += int(360 / SOLARCHVISION_GLOBE_stp_dir);
+        if (a > int(180 / SOLARCHVISION_GLOBE_stp_slp)) a -= int(180 / SOLARCHVISION_GLOBE_stp_slp);
+        if (b > int(360 / SOLARCHVISION_GLOBE_stp_dir)) b -= int(360 / SOLARCHVISION_GLOBE_stp_dir);
+      
+        float _valuesSUM = LocationExposure[IMPACTS_DisplayDay][a][b];
+      
+        float _u = 0;
+      
+        if (_valuesSUM < 0.9 * FLOAT_undefined) {
+      
+          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+      
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
+        }
+      
+        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+
+        
+        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+        
+      }
+      else if (rendererType == MAT_renderer) {
+        int mt = allFaces_MTLVGC[f][0];
+    
+        float a = Materials_Color[mt][0];
+        float r = Materials_Color[mt][1]; 
+        float g = Materials_Color[mt][2]; 
+        float b = Materials_Color[mt][3];   
+    
+        Image_RGBA.pixels[np] = color(r, g, b, a);
       }
     }
-
-
-
-    Current_ObjectCategory = ObjectCategory_Faces; 
-    UI_BAR_b_Update = 1;
-
-    println("SOLARCHVISION_calculate_selection_BoundingBox 3700");
-    SOLARCHVISION_calculate_selection_BoundingBox();
-
-    WIN3D_VerticesSolarValue_Update = 1;
+    else Image_RGBA.pixels[np] = color(0,0,0,0);
   }
-}
 
-
-
-
-
-
-
-boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
-
-  float pX = P[0] - C[0];
-  float pY = P[1] - C[1];
-  float pZ = P[2] - C[2];
-    
-  float aX = A[0] - C[0];
-  float aY = A[1] - C[1];
-  float aZ = A[2] - C[2];
-
-  float bX = B[0] - C[0];
-  float bY = B[1] - C[1];
-  float bZ = B[2] - C[2];
-
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  return ((u >= 0) && (v >= 0) && (u + v <= 1));
-}
-
-
-boolean SOLARCHVISION_isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {  
-
-  float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
-
-  float pX = P[0] - G[0];
-  float pY = P[1] - G[1];
-  float pZ = P[2] - G[2];
-
-  float aX = A[0] - G[0];
-  float aY = A[1] - G[1];
-  float aZ = A[2] - G[2];
-
-  float bX = B[0] - G[0];
-  float bY = B[1] - G[1];
-  float bZ = B[2] - G[2];
-  
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
+  Image_RGBA.updatePixels();
  
-  boolean result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+  String myFile = ScreenShotFolder + "/" + CreateStamp(1) + "Render.png";
+  Image_RGBA.save(myFile);
+  SOLARCHVISION_explore_output(myFile);
+  println("File created:" + myFile);
   
-  if (result == false) {
-
-    float cX = C[0] - G[0];
-    float cY = C[1] - G[1];
-    float cZ = C[2] - G[2];
-
-    float CC = cX * cX + cY * cY + cZ * cZ; // SOLARCHVISION_3xDot(c, c);
-    float CP = cX * pX + cY * pY + cZ * pZ; // SOLARCHVISION_3xDot(c, p);
-    float BC = bX * cX + bY * cY + bZ * cZ; // SOLARCHVISION_3xDot(b, c);
-  
-    r = (BB * CC - BC * BC);
-    u = (CC * BP - BC * CP) / r;
-    v = (BB * CP - BC * BP) / r;  
-    
-    result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-    
-    if (result == false) {
-
-      float dX = D[0] - G[0];
-      float dY = D[1] - G[1];
-      float dZ = D[2] - G[2];
-      
-      float CD = cX * dX + cY * dY + cZ * dZ; // SOLARCHVISION_3xDot(c, d);
-      float DD = dX * dX + dY * dY + dZ * dZ; // SOLARCHVISION_3xDot(d, d);
-      float DP = dX * pX + dY * pY + dZ * pZ; // SOLARCHVISION_3xDot(d, p);
-    
-      r = (CC * DD - CD * CD);
-      u = (DD * CP - CD * DP) / r;
-      v = (CC * DP - CD * CP) / r;
-      
-      result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-      
-      if (result == false) {
-        
-        float DA = dX * aX + dY * aY + dZ * aZ; // SOLARCHVISION_3xDot(d, a);  
-        
-        r = (DD * AA - DA * DA);
-        u = (AA * DP - DA * AP) / r;
-        v = (DD * AP - DA * DP) / r;
-        
-        result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-      }  
-    }
-  }
-  
-  return result;
 }
 
-boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting Object2Ds, etc.  
 
-  float pX = P[0] - O[0];
-  float pY = P[1] - O[1];
-  float pZ = P[2] - O[2];
-    
-  float aX = A[0] - O[0];
-  float aY = A[1] - O[1];
-  float aZ = A[2] - O[2];
 
-  float bX = B[0] - O[0];
-  float bY = B[1] - O[1];
-  float bZ = B[2] - O[2];
 
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
-}
 
-float[] SOLARCHVISION_uvInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // copy of the function above but it returns u and v
 
-  float pX = P[0] - O[0];
-  float pY = P[1] - O[1];
-  float pZ = P[2] - O[2];
-    
-  float aX = A[0] - O[0];
-  float aY = A[1] - O[1];
-  float aZ = A[2] - O[2];
 
-  float bX = B[0] - O[0];
-  float bY = B[1] - O[1];
-  float bZ = B[2] - O[2];
 
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  float[] result = {u, v};
-  
-  return result;
-}
+
+
+
+
+
+
+
+
+
