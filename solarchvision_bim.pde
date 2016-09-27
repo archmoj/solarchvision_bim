@@ -1,15 +1,10 @@
 
-// should reverse loop in pick select object2ds to make it faster as they are sorted?
-
-// remarked: SOLARCHVISION_update_station(10);
 // remarked: SOLARCHVISION_update_models(2);
 
-// snap fr Curve objects is not developed yet.
+// snap for Curve objects is not developed yet.
 
 // don't know if multiple Object2D_Images[n].get(Image_X, Image_Y) in Object2D selection can produce performance problems? 
 
-
-// bug: hiting 'b' can cause problems!! 
 
 // note: code for SOLARCHVISION_intersect_LandPoints and SOLARCHVISION_intersect_Solids might run a bit slow. But it is OK for now.
 
