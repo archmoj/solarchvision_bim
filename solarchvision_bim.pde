@@ -718,15 +718,15 @@ int CreateInput_PolyDegree = 6;
 int CreateInput_Snap = 0;
 
 
-int CreateButton_3DPoly = 0;
-int CreateButton_3DExtrude = 0;
-int CreateButton_3DTri = 0;
-int CreateButton_3DQuad = 0;
-int CreateButton_3DHouse = 0; 
-int CreateButton_3DSuperOBJ = 0;
-int CreateButton_3DParametric = 0;
-int CreateButton_2DPerson = 0;
-int CreateButton_2DPlant = 0;
+int CreateButton_Poly = 0;
+int CreateButton_Extrude = 0;
+int CreateButton_Tri = 0;
+int CreateButton_Hyper = 0;
+int CreateButton_House = 0; 
+int CreateButton_SuperOBJ = 0;
+int CreateButton_Parametric = 0;
+int CreateButton_Person = 0;
+int CreateButton_Plant = 0;
 int CreateButton_Fractal = 0;
 int CreateButton_Face = 0;
 int CreateButton_Vertex = 0;
@@ -21883,6 +21883,32 @@ void SOLARCHVISION_add_Mesh6 (int m, int tes, int lyr, int vsb, int wgt, int clz
   }
 }
 
+
+void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
+
+  defaultMaterial = m;
+  defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultWeight = wgt;
+  defaultClose = clz;
+
+  int[] newFace = {
+    SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)
+  };
+  for (int i = 1; i < n; i++) {
+    float t = i * 360.0 / float(n);
+    int[] f = {
+      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
+    };
+    newFace = concat(newFace, f);
+  } 
+
+  SOLARCHVISION_add_Face(newFace);
+}
+
+
+
 void SOLARCHVISION_add_PolygonMesh (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot) {
 
   defaultMaterial = m;
@@ -21965,28 +21991,7 @@ void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int lyr, int vsb, int wgt
 }
 
 
-void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int[] newFace = {
-    SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)
-  };
-  for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n);
-    int[] f = {
-      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
-    };
-    newFace = concat(newFace, f);
-  } 
-
-  SOLARCHVISION_add_Face(newFace);
-}
 
 
 
@@ -39304,7 +39309,7 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory_Group3Ds) { // working with meshes
     
-                    if (CreateButton_3DSuperOBJ == 1) {
+                    if (CreateButton_SuperOBJ == 1) {
     
                       if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
     
@@ -39334,7 +39339,7 @@ void mouseClicked () {
     
   
     
-                    if (CreateButton_3DTri == 1) {
+                    if (CreateButton_Tri == 1) {
     
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
@@ -39342,27 +39347,27 @@ void mouseClicked () {
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                     }
     
-                    if (CreateButton_3DQuad == 1) {
+                    if (CreateButton_Hyper == 1) {
     
                       SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
                     }
     
-                    if (CreateButton_3DPoly == 1) {
+                    if (CreateButton_Poly == 1) {
     
                       SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
     
-                    if (CreateButton_3DExtrude == 1) {       
+                    if (CreateButton_Extrude == 1) {       
     
                       SOLARCHVISION_add_PolygonExtrude(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
     
-                    if (CreateButton_3DHouse == 1) {   
+                    if (CreateButton_House == 1) {   
     
                       SOLARCHVISION_add_House_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, ry, rot);
                     }
     
-                    if (CreateButton_3DParametric != 0) {
+                    if (CreateButton_Parametric != 0) {
     
                       SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, CreateParametric_Type, rot);
                     }
@@ -39370,13 +39375,13 @@ void mouseClicked () {
                   }
   
                   if (Current_ObjectCategory == ObjectCategory_Object2Ds) { // working with object2Ds
-                    if (CreateButton_2DPerson != 0) {
+                    if (CreateButton_Person != 0) {
     
                       randomSeed(millis());
                       SOLARCHVISION_add_Object2D_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
                     }
     
-                    if (CreateButton_2DPlant != 0) {
+                    if (CreateButton_Plant != 0) {
                       int n = 0;
                       if (CreatePlant_Type > 0) n = CreatePlant_Type + Object2D_PEOPLE_Files_Num;
     
@@ -40305,7 +40310,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 4) { // Solid
 
-      CreateButton_3DSuperOBJ = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateButton_3DSuperOBJ", CreateButton_3DSuperOBJ, 0, 1, 1), 1));
+      CreateButton_SuperOBJ = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateButton_SuperOBJ", CreateButton_SuperOBJ, 0, 1, 1), 1));
 
       //CreateInput_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powRnd" , CreateInput_powRnd, 0, 1, 1), 1));    
       CreateInput_powAll = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateInput_powAll", CreateInput_powAll, 0.5, CubePower, -2);
@@ -50836,15 +50841,15 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 void UI_set_to_Create_Nothing () {
 
-  CreateButton_3DPoly = 0;
-  CreateButton_3DExtrude = 0;
-  CreateButton_3DTri = 0;
-  CreateButton_3DQuad = 0;
-  CreateButton_3DHouse = 0; 
-  CreateButton_3DParametric = 0;
-  CreateButton_3DSuperOBJ = 0;
-  CreateButton_2DPerson = 0;
-  CreateButton_2DPlant = 0;
+  CreateButton_Poly = 0;
+  CreateButton_Extrude = 0;
+  CreateButton_Tri = 0;
+  CreateButton_Hyper = 0;
+  CreateButton_House = 0; 
+  CreateButton_Parametric = 0;
+  CreateButton_SuperOBJ = 0;
+  CreateButton_Person = 0;
+  CreateButton_Plant = 0;
   CreateButton_Fractal = 0;
   CreateButton_Face = 0;
   CreateButton_Vertex = 0;
@@ -50870,14 +50875,14 @@ void UI_set_to_Create_Fractal () {
 void UI_set_to_Create_Tree () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_2DPlant = 1;
+  CreateButton_Plant = 1;
   Current_ObjectCategory = ObjectCategory_Object2Ds;
 }
 
 void UI_set_to_Create_Person () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_2DPerson = 1;
+  CreateButton_Person = 1;
   Current_ObjectCategory = ObjectCategory_Object2Ds;
 }
 
@@ -50950,7 +50955,7 @@ void UI_set_to_Create_Camera () {
 void UI_set_to_Create_Parametric (int n) {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DParametric = 1;
+  CreateButton_Parametric = 1;
   CreateParametric_Type = n;
 
   Current_ObjectCategory = ObjectCategory_Group3Ds;
@@ -50959,42 +50964,42 @@ void UI_set_to_Create_Parametric (int n) {
 void UI_set_to_Create_Tri () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DTri = 1;
+  CreateButton_Tri = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Poly () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DPoly = 1;
+  CreateButton_Poly = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Extrude () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DExtrude = 1;
+  CreateButton_Extrude = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Hyper () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DQuad = 1;
+  CreateButton_Hyper = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_House () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DHouse = 1;
+  CreateButton_House = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Box () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DSuperOBJ = 1;
+  CreateButton_SuperOBJ = 1;
 
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower; 
@@ -51007,7 +51012,7 @@ void UI_set_to_Create_Box () {
 void UI_set_to_Create_Icosahedron () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DSuperOBJ = 1;
+  CreateButton_SuperOBJ = 1;
 
   CreateInput_powX = 1;  
   CreateInput_powY = 1; 
@@ -51019,7 +51024,7 @@ void UI_set_to_Create_Icosahedron () {
 void UI_set_to_Create_Octahedron () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DSuperOBJ = 1;
+  CreateButton_SuperOBJ = 1;
 
   CreateInput_powX = 1;  
   CreateInput_powY = 1; 
@@ -51031,7 +51036,7 @@ void UI_set_to_Create_Octahedron () {
 void UI_set_to_Create_Sphere () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DSuperOBJ = 1;
+  CreateButton_SuperOBJ = 1;
 
   CreateInput_powX = 2;  
   CreateInput_powY = 2; 
@@ -51043,7 +51048,7 @@ void UI_set_to_Create_Sphere () {
 void UI_set_to_Create_Cylinder () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DSuperOBJ = 1;
+  CreateButton_SuperOBJ = 1;
 
   CreateInput_powX = 2;  
   CreateInput_powY = 2; 
@@ -51055,7 +51060,7 @@ void UI_set_to_Create_Cylinder () {
 void UI_set_to_Create_Cushion () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_3DSuperOBJ = 1;
+  CreateButton_SuperOBJ = 1;
 
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower;  
