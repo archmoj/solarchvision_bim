@@ -27153,8 +27153,8 @@ void SOLARCHVISION_draw_Faces () {
                     N_baked += 1;
 
                     float _valuesSUM = 0;
-                    if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[1 + IMPACTS_DisplayDay][N_baked];
-                    if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[1 + IMPACTS_DisplayDay][N_baked];
+                    if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[IMPACTS_DisplayDay][N_baked];
+                    if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[IMPACTS_DisplayDay][N_baked];
 
                     if (_valuesSUM < 0.9 * FLOAT_undefined) {
 
@@ -27440,7 +27440,45 @@ void SOLARCHVISION_draw_Faces () {
                         }
                       }
                     }
+                    
+                    
+                    ????????? we should first collect values then sum them up below!
+
+                    float _valuesMUL = 0;
+  
+                    if (_valuesNUM != 0) {
+                      _valuesMUL = 12.0 / (1.0 * _valuesNUM); // this might be approximate!
+  
+                      _valuesSUM_RAD *= _valuesMUL;
+                      _valuesSUM_EFF_P *= _valuesMUL;
+                      _valuesSUM_EFF_N *= _valuesMUL;
+                    } else {
+                      _valuesSUM_RAD = 0; //FLOAT_undefined;
+                      _valuesSUM_EFF_P = 0; //FLOAT_undefined;
+                      _valuesSUM_EFF_N = 0; //FLOAT_undefined;
+                    }                   
+  
+                    float AVERAGE, PERCENTAGE, COMPARISON;
+  
+                    AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
+                    if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
+                    else PERCENTAGE = 0.0;
+                    COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+  
+                    //println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
+
+                    float[] ADD_values_RAD = {
+                      _valuesSUM_RAD
+                    };
+                    WIN3D_VerticesSolarEnergy[j + 1] = (float[]) concat(WIN3D_VerticesSolarEnergy[j + 1], ADD_values_RAD);
+
+                    float[] ADD_values_EFF = {
+                      COMPARISON
+                    };
+                    WIN3D_VerticesSolarEffect[j + 1] = (float[]) concat(WIN3D_VerticesSolarEffect[j + 1], ADD_values_EFF);
+                   
                   }    
+
 
                   float _valuesMUL = 0;
 
@@ -27456,8 +27494,6 @@ void SOLARCHVISION_draw_Faces () {
                     _valuesSUM_EFF_N = 0; //FLOAT_undefined;
                   }                   
 
-
-
                   float AVERAGE, PERCENTAGE, COMPARISON;
 
                   AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
@@ -27467,17 +27503,16 @@ void SOLARCHVISION_draw_Faces () {
 
                   //println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
 
-                  {
-                    float[] ADD_values_RAD = {
-                      _valuesSUM_RAD
-                    };
-                    WIN3D_VerticesSolarEnergy[0] = (float[]) concat(WIN3D_VerticesSolarEnergy, ADD_values_RAD);
+                  float[] ADD_values_RAD = {
+                    _valuesSUM_RAD
+                  };
+                  WIN3D_VerticesSolarEnergy[0] = (float[]) concat(WIN3D_VerticesSolarEnergy[0], ADD_values_RAD);
 
-                    float[] ADD_values_EFF = {
-                      COMPARISON
-                    };
-                    WIN3D_VerticesSolarEffect[0] = (float[]) concat(WIN3D_VerticesSolarEffect, ADD_values_EFF);
-                  }
+                  float[] ADD_values_EFF = {
+                    COMPARISON
+                  };
+                  WIN3D_VerticesSolarEffect[0] = (float[]) concat(WIN3D_VerticesSolarEffect[0], ADD_values_EFF);
+
 
                   float _valuesSUM = 0;
                   if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
