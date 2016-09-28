@@ -6995,11 +6995,11 @@ void SOLARCHVISION_PlotFORECAST_ENSEMBLE (float x_Plot, float y_Plot, float z_Pl
       }        
 
       if (STUDY_DisplaySorted == 1) {
-        SOLARCHVISION_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
       if (STUDY_DisplayNormals == 1) {
-        SOLARCHVISION_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
@@ -7400,11 +7400,11 @@ void SOLARCHVISION_PlotCLIMATE_CWEEDS (float x_Plot, float y_Plot, float z_Plot,
       }      
 
       if (STUDY_DisplaySorted == 1) {
-        SOLARCHVISION_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
       if (STUDY_DisplayNormals == 1) {
-        SOLARCHVISION_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
@@ -7952,11 +7952,11 @@ void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot,
       }      
 
       if (STUDY_DisplaySorted == 1) {
-        SOLARCHVISION_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
       if (STUDY_DisplayNormals == 1) {
-        SOLARCHVISION_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
@@ -8352,11 +8352,11 @@ void SOLARCHVISION_PlotCLIMATE_TMYEPW (float x_Plot, float y_Plot, float z_Plot,
       }      
 
       if (STUDY_DisplaySorted == 1) {
-        SOLARCHVISION_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
       if (STUDY_DisplayNormals == 1) {
-        SOLARCHVISION_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
@@ -8952,11 +8952,11 @@ void SOLARCHVISION_PlotRECENT_OBSERVED (float x_Plot, float y_Plot, float z_Plot
       }        
 
       if (STUDY_DisplaySorted == 1) {
-        SOLARCHVISION_draw_data_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
       if (STUDY_DisplayNormals == 1) {
-        SOLARCHVISION_draw_data_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
 
@@ -9349,7 +9349,7 @@ void SOLARCHVISION_draw_dataProbs (int i, int j, int start_z, int end_z, float[]
 }
 
 
-void SOLARCHVISION_draw_data_sorted (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
+void SOLARCHVISION_draw_dataSorted (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
   int PAL_TYPE = STUDY_Pallet_SORT_CLR; 
   int PAL_DIR = STUDY_Pallet_SORT_DIR;  
@@ -9451,7 +9451,7 @@ void SOLARCHVISION_draw_data_sorted (int i, int j, float[] _valuesA, float[] _va
 }
 
 
-void SOLARCHVISION_draw_data_normals (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
+void SOLARCHVISION_draw_dataNormals (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   float[] NormalsA = SOLARCHVISION_NORMAL(_valuesA);
   float[] NormalsB = SOLARCHVISION_NORMAL(_valuesB);
 
