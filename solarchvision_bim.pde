@@ -6,7 +6,7 @@
 // don't know if multiple Object2D_Images[n].get(Image_X, Image_Y) in Object2D selection can produce performance problems? 
 
 
-// note: code for SOLARCHVISION_intersect_LandPoints and SOLARCHVISION_intersect_Solids might run a bit slow. But it is OK for now.
+// note: code for SOLARCHVISION_intersect_Solids might run a bit slow. But it is OK for now.
 
 
 // should see where else could add snap3D :)
@@ -29412,6 +29412,13 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
 
+    float X_intersect = FLOAT_undefined;         
+    float Y_intersect = FLOAT_undefined;
+    float Z_intersect = FLOAT_undefined;
+    float dist2intersect = FLOAT_undefined;
+    
+    boolean InPoly = false;
+
     int LAND_i = (f - 1) / (LAND_n_J - 1);
     int LAND_j = (f - 1) % (LAND_n_J - 1);
     
@@ -29419,70 +29426,65 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
     float[] B = LAND_MESH[LAND_i][LAND_j + 1];
     float[] C = LAND_MESH[LAND_i + 1][LAND_j + 1];
     float[] D = LAND_MESH[LAND_i + 1][LAND_j];
+    float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])}; 
     
-    float[] AC = SOLARCHVISION_3xSub(A, C);
-    float[] BD = SOLARCHVISION_3xSub(B, D);
-    
-    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
-    
-    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-    
-    float dist2intersect = FLOAT_undefined;
-  
-    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
-
-    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-      dist2intersect = FLOAT_huge;
-    }
-    else {
-      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
-
-      //if (dist2intersect > 0) {
-      if (dist2intersect > FLOAT_tiny) {
+    for (int i = 0; i < 4; i++) {
       
-        float X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-        float Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-        float Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-  
-        float AnglesAll = 0;      
-  
-        for (int i = 0; i < 4; i++) {
-          
-          float[] P = {0,0,0};
-          float[] Q = {0,0,0};
-          
+      float[] M = {0,0,0};
+      float[] N = {0,0,0};
 
-          if (i == 0) {
-            P = A;
-            Q = B;
-          } else if (i == 1) {
-            P = B;
-            Q = C;
-          } else if (i == 2) {
-            P = C;
-            Q = D;
-          } else if (i == 3) {
-            P = D;
-            Q = A;
-          }         
+      if (i == 0) {
+        M = A;
+        N = B;
+      } else if (i == 1) {
+        M = B;
+        N = C;
+      } else if (i == 2) {
+        M = C;
+        N = D;
+      } else if (i == 3) {
+        M = D;
+        N = A;
+      }       
+    
+      float[] NG = SOLARCHVISION_3xSub(N, G);
+      float[] GM = SOLARCHVISION_3xSub(G, M);
+      
+      float[] face_norm = SOLARCHVISION_3xCross(NG, GM);
+      
+      float face_offset = ((G[0] + M[0] + N[0]) * face_norm[0] + (G[1] + M[1] + N[1]) * face_norm[1] + (G[2] + M[2] + N[2]) * face_norm[2]) / 3.0;  
+    
+      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+  
+      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+        dist2intersect = FLOAT_huge;
+      }
+      else {
+        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+  
+        //if (dist2intersect > 0) {
+        if (dist2intersect > FLOAT_tiny) {
+        
+          X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+          Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+          Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+
+          float[] P = {X_intersect, Y_intersect, Z_intersect};
+
+          InPoly = SOLARCHVISION_isInside_Triangle(P, M, N, G); 
           
-          float[] vect1 = {P[0] - X_intersect, P[1] - Y_intersect, P[2] - Z_intersect};
-          float[] vect2 = {Q[0] - X_intersect, Q[1] - Y_intersect, Q[2] - Z_intersect};
-  
-          float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
-  
-          AnglesAll += t;
-        }
-        
-        if (AnglesAll > 359) { // <<<<<<<<<
-        
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
         }
       }
-    }    
+      
+      if (InPoly == true) break;
+    }
+    
+    if (InPoly == true) {
+      hitPoint[f][0] = X_intersect;
+      hitPoint[f][1] = Y_intersect;
+      hitPoint[f][2] = Z_intersect;
+      hitPoint[f][3] = dist2intersect;
+    }   
 
   }
 
