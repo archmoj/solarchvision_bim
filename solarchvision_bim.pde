@@ -718,6 +718,7 @@ int CreateInput_PolyDegree = 6;
 int CreateInput_Snap = 0;
 
 
+int CreateButton_Plane = 0;
 int CreateButton_Poly = 0;
 int CreateButton_Extrude = 0;
 int CreateButton_Tri = 0;
@@ -21884,6 +21885,8 @@ void SOLARCHVISION_add_Mesh6 (int m, int tes, int lyr, int vsb, int wgt, int clz
 }
 
 
+
+
 void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
   defaultMaterial = m;
@@ -37222,11 +37225,16 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Tri");
               UI_BAR_b_Update = 1;
             }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Plane")) {
+              UI_set_to_Create_Plane();
+              SOLARCHVISION_highlight_in_BAR_b("Plane");
+              UI_BAR_b_Update = 1;
+            }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Poly")) {
               UI_set_to_Create_Poly();
               SOLARCHVISION_highlight_in_BAR_b("Poly");
               UI_BAR_b_Update = 1;
-            }
+            }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Extrude")) {
               UI_set_to_Create_Extrude();
               SOLARCHVISION_highlight_in_BAR_b("Extrude");
@@ -39347,15 +39355,22 @@ void mouseClicked () {
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                     }
     
-                    if (CreateButton_Hyper == 1) {
+
+                    if (CreateButton_Plane == 1) {
     
-                      SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+                      SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     }
-    
+                    
                     if (CreateButton_Poly == 1) {
+    
+                      SOLARCHVISION_add_PolygonMesh(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, CreateInput_PolyDegree, rot);
+                    }                    
+                    
+                    if (CreateButton_Hyper == 1) {
     
                       SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
+                      
     
                     if (CreateButton_Extrude == 1) {       
     
@@ -49790,7 +49805,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
@@ -50358,7 +50373,7 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
-    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
+    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
   }
   , 
   {
@@ -50595,6 +50610,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((UI_BAR_b_Items[i][j]).equals("Spline")) UI_set_to_Create_Curve();
           else if ((UI_BAR_b_Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
           else if ((UI_BAR_b_Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
+          else if ((UI_BAR_b_Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
           else if ((UI_BAR_b_Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
           else if ((UI_BAR_b_Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
           else if ((UI_BAR_b_Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
@@ -50841,6 +50857,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 void UI_set_to_Create_Nothing () {
 
+  CreateButton_Plane = 0;
   CreateButton_Poly = 0;
   CreateButton_Extrude = 0;
   CreateButton_Tri = 0;
@@ -50965,6 +50982,13 @@ void UI_set_to_Create_Tri () {
   UI_set_to_Create_Nothing();
 
   CreateButton_Tri = 1;
+  Current_ObjectCategory = ObjectCategory_Group3Ds;
+}
+
+void UI_set_to_Create_Plane () {
+  UI_set_to_Create_Nothing();
+
+  CreateButton_Plane = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
@@ -56524,7 +56548,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
       
-      UI_set_to_Create_Poly();
+      UI_set_to_Create_Plane();
       SOLARCHVISION_highlight_in_BAR_b("Poly");
       UI_BAR_b_Update = 1;      
     }  
