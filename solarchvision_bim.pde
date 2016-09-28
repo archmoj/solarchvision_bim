@@ -1,5 +1,13 @@
-
 // remarked: SOLARCHVISION_update_models(2);
+
+
+
+// diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
+
+
+
+
+
 
 // snap for Curve objects is not developed yet.
 
@@ -18,7 +26,6 @@
 
 
 
-// diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
 
 
 
