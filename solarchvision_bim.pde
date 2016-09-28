@@ -2047,8 +2047,8 @@ int WIN3D_Include = 1;
 
 
 
-float[] WIN3D_VerticesSolarEnergy;
-float[] WIN3D_VerticesSolarEffect;
+float[][] WIN3D_VerticesSolarEnergy;
+float[][] WIN3D_VerticesSolarEffect;
 int WIN3D_VerticesSolarValue_Update = 1;
 
 
@@ -2374,12 +2374,7 @@ void setup () {
   SOLARCHVISION_empty_Materials_DirectArea();
   SOLARCHVISION_empty_Materials_DiffuseArea();
 
-  WIN3D_VerticesSolarEnergy = new float [1];
-  WIN3D_VerticesSolarEffect = new float [1];
-  WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined;
-  WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
-
-
+  SOLARCHVISION_resize_WIN3D_VerticesSolar_Array(); 
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
@@ -25031,7 +25026,11 @@ void SOLARCHVISION_resize_allSections_Solar_Impact_Array () { // called when STU
       }
     }
   }
+
 }
+
+
+
 
 
 void SOLARCHVISION_delete_Fractals () {
@@ -27154,8 +27153,8 @@ void SOLARCHVISION_draw_Faces () {
                     N_baked += 1;
 
                     float _valuesSUM = 0;
-                    if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[N_baked];
-                    if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[N_baked];
+                    if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[1 + IMPACTS_DisplayDay][N_baked];
+                    if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[1 + IMPACTS_DisplayDay][N_baked];
 
                     if (_valuesSUM < 0.9 * FLOAT_undefined) {
 
@@ -27189,10 +27188,7 @@ void SOLARCHVISION_draw_Faces () {
       } else {
         cursor(WAIT);
 
-        WIN3D_VerticesSolarEnergy = new float [1];
-        WIN3D_VerticesSolarEffect = new float [1];
-        WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined; 
-        WIN3D_VerticesSolarEffect[0] = FLOAT_undefined; 
+        SOLARCHVISION_resize_WIN3D_VerticesSolar_Array();
 
         float keep_STUDY_PerDays = STUDY_PerDays;
         int keep_STUDY_JoinDays = STUDY_JoinDays;
@@ -27475,12 +27471,12 @@ void SOLARCHVISION_draw_Faces () {
                     float[] ADD_values_RAD = {
                       _valuesSUM_RAD
                     };
-                    WIN3D_VerticesSolarEnergy = concat(WIN3D_VerticesSolarEnergy, ADD_values_RAD);
+                    WIN3D_VerticesSolarEnergy[0] = (float[]) concat(WIN3D_VerticesSolarEnergy, ADD_values_RAD);
 
                     float[] ADD_values_EFF = {
                       COMPARISON
                     };
-                    WIN3D_VerticesSolarEffect = concat(WIN3D_VerticesSolarEffect, ADD_values_EFF);
+                    WIN3D_VerticesSolarEffect[0] = (float[]) concat(WIN3D_VerticesSolarEffect, ADD_values_EFF);
                   }
 
                   float _valuesSUM = 0;
@@ -58114,17 +58110,15 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+void SOLARCHVISION_resize_WIN3D_VerticesSolar_Array () { // called when STUDY_j_End changes
 
+  WIN3D_VerticesSolarEnergy = new float [1 + STUDY_j_End - STUDY_j_Start][1];
+  WIN3D_VerticesSolarEffect = new float [1 + STUDY_j_End - STUDY_j_Start][1];
+  for (int i = 0; i < WIN3D_VerticesSolarEnergy.length; i++) {
+    WIN3D_VerticesSolarEnergy[i][0] = FLOAT_undefined;
+  }
+  for (int i = 0; i < WIN3D_VerticesSolarEffect.length; i++) {
+    WIN3D_VerticesSolarEffect[i][0] = FLOAT_undefined;
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
+}
