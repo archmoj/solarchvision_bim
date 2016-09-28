@@ -1,5 +1,3 @@
-// if we shade to global solar then press F7 we have an error! 
-
 
 // remarked: SOLARCHVISION_update_models(2);
 
@@ -10922,7 +10920,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     if (STUDY_Impacts_Update == 1) {
 
-      SOLARCHVISION_calculate_SolarImpact_CurrentSection();
+      SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked();
 
       int RES1 = SolarImpact_RES1;
       int RES2 = SolarImpact_RES2;
@@ -28159,7 +28157,7 @@ void SOLARCHVISION_draw_Object2Ds () {
 
 
 int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
-
+  
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
   int hit = 0;
@@ -30730,10 +30728,9 @@ int SolarImpact_RES2 = 100; //200;
 float SolarImpact_Elevation;
 
 
-void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
+void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
-
-  if (rebuild_SolarProjection_array != 0) {
+  if (rebuild_SolarImpactImage_array != 0) {
     SOLARCHVISION_build_SolarImpact_Image_array();
   }
   
@@ -31194,7 +31191,7 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
 
       SceneName = "temp_" + Section_Stamp();
 
-      SOLARCHVISION_calculate_SolarImpact_CurrentSection();
+      SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked();
       for (int j = STUDY_j_Start - 1; j < STUDY_j_End; j += 1) {
 
         allSections_SolarImpact[f][j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
@@ -49789,11 +49786,11 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation", "Render Viewport", "PreBake Viewport"
+    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation"
   }
   , 
   {
-    "Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"
+    "Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Render Viewport", "PreBake Viewport", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"
   }
   , 
   {
