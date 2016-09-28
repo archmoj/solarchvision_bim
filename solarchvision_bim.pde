@@ -57538,17 +57538,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 void SOLARCHVISION_PreBakeViewport () {
+
+  cursor(WAIT);  
   
+  println("PreBaking Direct and Diffuse Models. Please wait...");  
+
   Camera_Variation = 0;
   
   SolarImpact_sectionType = 1; // <<<<< so that it analyzed later!
 
-  
-  cursor(WAIT);  
-  
-  
-  
-  
   int start_DATE_ANGLE = 0;
   int step_DATE_ANGLE = 15;
   int end_DATE_ANGLE = 360 - step_DATE_ANGLE;
@@ -57557,13 +57555,7 @@ void SOLARCHVISION_PreBakeViewport () {
   int step_HOUR = 1;
   int end_HOUR = 20; // to make it faster. Also the images are not needed out of this period.
 
-  
-
   SceneName = "Test" + Viewport_Stamp();
-  
-  println("PreBaking Direct and Diffuse Models. Please wait...");
-
-
 
   int pre_WIN3D_X_View = WIN3D_X_View; 
   int pre_WIN3D_Y_View = WIN3D_Y_View;
@@ -57575,21 +57567,13 @@ void SOLARCHVISION_PreBakeViewport () {
   SOLARCHVISION_transform_3DViewport();
   
   //SOLARCHVISION_put_3DViewport();  //????????????
- 
- 
+
   float ScaleToFit = float(pre_WIN3D_Y_View) / float(WIN3D_Y_View); 
- 
-  
+
 
   int RES1 = WIN3D_X_View;
   int RES2 = WIN3D_Y_View;    
 
-
-
-  
-
-  
-  
   float[][] Diffuse_Matrix = new float [2][(RES1 * RES2)]; 
   
   for (int SHD = 0; SHD <= 1; SHD += 1) {
@@ -57597,7 +57581,6 @@ void SOLARCHVISION_PreBakeViewport () {
       Diffuse_Matrix[SHD][np] = 0; 
     }
   }
-
 
   int n_Map = 0; 
   for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
@@ -57608,9 +57591,8 @@ void SOLARCHVISION_PreBakeViewport () {
   } 
   
   PImage[][] Direct_RGBA = new PImage [n_Map][2];
-  
-  
-  
+
+
   int[] lastHitDirect = new int [n_Map];
   
   for (int i = 0; i < lastHitDirect.length; i++) {
@@ -57622,9 +57604,8 @@ void SOLARCHVISION_PreBakeViewport () {
   for (int i = 0; i < lastHitDiffuse.length; i++) {
     lastHitDiffuse[i] = 0;
   }  
-  
-  
-  
+
+
   n_Map = -1; 
   for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
     
@@ -57639,12 +57620,6 @@ void SOLARCHVISION_PreBakeViewport () {
       }
     }
   }
-  
-  
-
-
-  
-  
   
   float Progress = 0;
 
@@ -57694,9 +57669,6 @@ void SOLARCHVISION_PreBakeViewport () {
     ray_direction[2] = ray_end[2] - ray_start[2];
 
 
-
-         
-  
     float[] RxP = new float [8]; 
 
     RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
@@ -57769,9 +57741,7 @@ void SOLARCHVISION_PreBakeViewport () {
           else Diffuse_Matrix[1][np] += 0;   
         }
       }      
-      
-      
-      
+
       
       n_Map = -1; 
       for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
@@ -57812,9 +57782,6 @@ void SOLARCHVISION_PreBakeViewport () {
           else Direct_RGBA[n_Map][1].pixels[np] = color(0, 255);
         }
       }
-     
-            
-  
     }
     else {
       
@@ -57912,25 +57879,19 @@ void SOLARCHVISION_PreBakeViewport () {
     
     println(File_Name + ".PNG");    
   }       
- 
 
-  WIN3D_X_View = pre_WIN3D_X_View;
-  WIN3D_Y_View = pre_WIN3D_Y_View;
-  WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+
 
   cursor(ARROW);
   
-
+  WIN3D_X_View = pre_WIN3D_X_View;
+  WIN3D_Y_View = pre_WIN3D_Y_View;
+  WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 }
 
 
 
-/////////////////////// internal values <<<<<<<<<<<<<<<<<<<<<<<<<<<<
-int MAT_renderer = 1;
-int GLB_renderer = 2;
-int SHD_renderer = 3;
 
-int rendererType = 3; //GLB_renderer; // <<<<<<<<<<<<< 
 
 
 void SOLARCHVISION_RenderViewport () {
@@ -58021,27 +57982,33 @@ void SOLARCHVISION_RenderViewport () {
         
       int f = int(RxP[0]);
 
-      if (rendererType == SHD_renderer) {
 
-        float[] COL = {
-          0, 0, 0, 0
-        };
-        
-        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-        face_norm = SOLARCHVISION_fn_normalize(face_norm);
-        
-        float Alpha = 90 - acos_ang(face_norm[2]);
-        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+      float[] COL = {
+        0, 0, 0, 0
+      };
+      
+      float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+      face_norm = SOLARCHVISION_fn_normalize(face_norm);
+      
+      if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // to render backing faces 
+        face_norm[0] *= -1;
+        face_norm[1] *= -1;
+        face_norm[2] *= -1;
+      }
+
+      
+      float Alpha = 90 - acos_ang(face_norm[2]);
+      float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
 
 float _valuesSUM_RAD = 0;
 float _valuesSUM_EFF_P = 0;
 float _valuesSUM_EFF_N = 0;
 int _valuesNUM = 0; 
 
-                float _values_R_dir = 1;
-                float _values_R_dif = 1;
-                float _values_E_dir = 0.1;
-                float _values_E_dif = 0.1;
+float _values_R_dir = 1;
+float _values_R_dif = 1;
+float _values_E_dir = 0.1;
+float _values_E_dif = 0.1;
 
 
 //float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_ENSEMBLE_Data[i][j][LAYER_cloudcover][k]);
@@ -58086,7 +58053,8 @@ ray_direction[0] = SunV[0];
 ray_direction[1] = SunV[1];
 ray_direction[2] = SunV[2];
 
-if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // removes backing faces
+//if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) 
+{ // removes backing faces
 
   if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
     if (_values_E_dir < 0) {
@@ -58114,76 +58082,24 @@ _valuesNUM += 1;
 float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 //-----------------------------
       
-        float _u = 0;
-      
-        if (_valuesSUM < 0.9 * FLOAT_undefined) {
-      
-          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-      
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-        }
-      
-        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-        
-        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        
-      }
-      else if (rendererType == GLB_renderer) {
-
-        float[] COL = {
-          0, 0, 0, 0
-        };
-        
-        float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-        face_norm = SOLARCHVISION_fn_normalize(face_norm);
-        
-        float Alpha = 90 - acos_ang(face_norm[2]);
-        float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
-
-       
-        int a = int((Alpha + 90) / SOLARCHVISION_GLOBE_stp_slp);
-        int b = int(Beta / SOLARCHVISION_GLOBE_stp_dir);
-      
-        if (a < 0) a += int(180 / SOLARCHVISION_GLOBE_stp_slp);
-        if (b < 0) b += int(360 / SOLARCHVISION_GLOBE_stp_dir);
-        if (a > int(180 / SOLARCHVISION_GLOBE_stp_slp)) a -= int(180 / SOLARCHVISION_GLOBE_stp_slp);
-        if (b > int(360 / SOLARCHVISION_GLOBE_stp_dir)) b -= int(360 / SOLARCHVISION_GLOBE_stp_dir);
-      
-        float _valuesSUM = LocationExposure[IMPACTS_DisplayDay][a][b];
-      
-        float _u = 0;
-      
-        if (_valuesSUM < 0.9 * FLOAT_undefined) {
-      
-          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-      
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-        }
-      
-        COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-        
-        Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        
-      }
-      else if (rendererType == MAT_renderer) {
-        int mt = allFaces_MTLVGC[f][0];
+      float _u = 0;
     
-        float a = Materials_Color[mt][0];
-        float r = Materials_Color[mt][1]; 
-        float g = Materials_Color[mt][2]; 
-        float b = Materials_Color[mt][3];   
+      if (_valuesSUM < 0.9 * FLOAT_undefined) {
     
-        Image_RGBA.pixels[np] = color(r, g, b, a);
+        if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+    
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
       }
+    
+      COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+
+      
+      Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
     }
+    
     else Image_RGBA.pixels[np] = color(0,0,0,0);
   }
 
