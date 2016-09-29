@@ -1,4 +1,3 @@
-// why palette is not printed on time graphs?
 
 // remarked: SOLARCHVISION_update_models(2);
 
@@ -10884,7 +10883,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);         
 
         STUDY_Diagrams.strokeWeight(0);
-        STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
+        STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, 175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
 
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           STUDY_Diagrams.stroke(127);
@@ -10899,7 +10898,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
         STUDY_Diagrams.textAlign(CENTER, CENTER);
 
-        if (Impact_TYPE == Impact_WIND_Temperature) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_WIND_Temperature) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
       }
     }         
 
@@ -11086,7 +11085,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);         
 
         STUDY_Diagrams.strokeWeight(0);
-        STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
+        STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, 175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
 
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           STUDY_Diagrams.stroke(127);
@@ -11100,8 +11099,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
         STUDY_Diagrams.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
-        if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
       }
 
       if (STUDY_PrintTtitle != 0) {
@@ -11523,7 +11522,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);       
 
       STUDY_Diagrams.strokeWeight(0);
-      STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
+      STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, 175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
 
       if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
         STUDY_Diagrams.stroke(127);
@@ -11537,8 +11536,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
       STUDY_Diagrams.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
     }
 
 
@@ -11780,6 +11779,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     float pal_length = 400;
     for (int q = 0; q < 11; q += 1) {
+      
       float _u = 0;
 
       if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
@@ -11794,7 +11794,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);       
 
       STUDY_Diagrams.strokeWeight(0);
-      STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
+      STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, 175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
 
       if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
         STUDY_Diagrams.stroke(127);
@@ -11808,8 +11808,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
       STUDY_Diagrams.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+
+      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
     } 
 
 
@@ -11836,6 +11837,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //?? French
       }
     }
+
   } 
 
 
@@ -12200,6 +12202,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   keep_STUDY_PerDays = STUDY_PerDays;
   STUDY_JoinDays = keep_STUDY_JoinDays;
 
+
+  
 
   STUDY_Diagrams.popMatrix();
 } 
