@@ -2807,6 +2807,11 @@ void draw () {
 
     SOLARCHVISION_X_clicked = -1;
     SOLARCHVISION_Y_clicked = -1;
+    
+    UI_BAR_a_Update = 1;
+    UI_BAR_b_Update = 1;
+    UI_BAR_c_Update = 1;
+    UI_BAR_d_Update = 1;
 
     InitializationStep = frameCount; 
     Last_initializationStep = frameCount;
@@ -11954,84 +11959,84 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           }
         }
 
-        /*
+        
 
          { // Diffuse
-         int RES1 = 25; // 100; 
-         int RES2 = RES1;
-         float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
-         
-         if (Materials_DiffuseArea_Flags[now_i][now_j] == -1) {
-         
-         Materials_DiffuseArea_Flags[now_i][now_j] = 1; 
-         
-         for (int mt = 0; mt < Materials_Number; mt++) {                 
-         Materials_DiffuseArea_Data[mt][now_i][now_j] = 0;
-         }                 
-         
-         int num_diffuse_views = 0;
-         
-         for (int vNo = 1; vNo < skyVertices.length; vNo++) {
-         
-         float skyAngle_Alpha = asin_ang(skyVertices[vNo][2]);
-         float skyAngle_Beta = atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
-         
-         if (skyAngle_Alpha >= 0) {
-         
-         num_diffuse_views += 1;
-         
-         PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
-         
-         STUDY_Diagrams.imageMode(CENTER); 
-         STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - skyAngle_Alpha) * STUDY_rect_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * STUDY_rect_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
-         
-         for (int np = 0; np < (RES1 * RES2); np++) {
-         int Image_X = np % RES1;
-         int Image_Y = np / RES1;
-         
-         color COL = Image_RGBA.get(Image_X, Image_Y);
-         
-         int COL_A = COL >> 24 & 0xFF;
-         
-         if (COL_A != 0) {
-         int COL_R = COL >> 16 & 0xFF; 
-         int COL_G = COL >> 8 & 0xFF; 
-         int COL_B = COL & 0xFF;
-         
-         for (int mt = 0; mt < Materials_Number; mt++) {  
-         
-         if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
-         Materials_DiffuseArea_Data[mt][now_i][now_j] += 1;
+           int RES1 = 25; // 100; 
+           int RES2 = RES1;
+           float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
+           
+           if (Materials_DiffuseArea_Flags[now_i][now_j] == -1) {
+             
+             Materials_DiffuseArea_Flags[now_i][now_j] = 1; 
+             
+             for (int mt = 0; mt < Materials_Number; mt++) {                 
+               Materials_DiffuseArea_Data[mt][now_i][now_j] = 0;
+             }                 
+             
+             int num_diffuse_views = 0;
+             
+             for (int vNo = 1; vNo < skyVertices.length; vNo++) {
+               
+               float skyAngle_Alpha = asin_ang(skyVertices[vNo][2]);
+               float skyAngle_Beta = atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
+               
+               if (skyAngle_Alpha >= 0) {
+                 
+                 num_diffuse_views += 1;
+                 
+                 PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
+                 
+                 STUDY_Diagrams.imageMode(CENTER); 
+                 STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - skyAngle_Alpha) * STUDY_rect_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * STUDY_rect_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
+                 
+                 for (int np = 0; np < (RES1 * RES2); np++) {
+                   int Image_X = np % RES1;
+                   int Image_Y = np / RES1;
+                   
+                   color COL = Image_RGBA.get(Image_X, Image_Y);
+                   
+                   int COL_A = COL >> 24 & 0xFF;
+                   
+                   if (COL_A != 0) {
+                     int COL_R = COL >> 16 & 0xFF; 
+                     int COL_G = COL >> 8 & 0xFF; 
+                     int COL_B = COL & 0xFF;
+                     
+                     for (int mt = 0; mt < Materials_Number; mt++) {  
+                       
+                       if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
+                         Materials_DiffuseArea_Data[mt][now_i][now_j] += 1;
+                       }
+                     }
+                   }
+                 }  
+                 
+                 STUDY_Diagrams.imageMode(CORNER);
+               }
+             }
+             for (int mt = 0; mt < Materials_Number; mt++) {                 
+               Materials_DiffuseArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
+               Materials_DiffuseArea_Data[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
+               
+               if (Materials_Selection == mt) println("Diffuse:", mt, now_i, now_j, Materials_DiffuseArea_Data[mt][now_i][now_j]); 
+             }
+             
+             //---------------------------------------------
+             // applying calculated diffuse model at this time for the rest of year.
+             for (int mt = 0; mt < Materials_Number; mt++) {
+               for (int loop_i = 0; loop_i < 24; loop_i += 1) {
+                 for (int loop_j = 0; loop_j < 365; loop_j += 1) {
+                   Materials_DiffuseArea_Data[mt][loop_i][loop_j] = Materials_DiffuseArea_Data[mt][now_i][now_j];
+                   Materials_DiffuseArea_Flags[loop_i][loop_j] = 1;
+                 }
+               }  
+             }
+             //---------------------------------------------                          
+           }
          }
-         }
-         }
-         }  
          
-         STUDY_Diagrams.imageMode(CORNER);
-         }
-         }
-         for (int mt = 0; mt < Materials_Number; mt++) {                 
-         Materials_DiffuseArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
-         Materials_DiffuseArea_Data[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
-         
-         if (Materials_Selection == mt) println("Diffuse:", mt, now_i, now_j, Materials_DiffuseArea_Data[mt][now_i][now_j]); 
-         }
-         
-         //---------------------------------------------
-         // applying calculated diffuse model at this time for the rest of year.
-         for (int mt = 0; mt < Materials_Number; mt++) {
-         for (int loop_i = 0; loop_i < 24; loop_i += 1) {
-         for (int loop_j = 0; loop_j < 365; loop_j += 1) {
-         Materials_DiffuseArea_Data[mt][loop_i][loop_j] = Materials_DiffuseArea_Data[mt][now_i][now_j];
-         Materials_DiffuseArea_Flags[loop_i][loop_j] = 1;
-         }
-         }  
-         }
-         //---------------------------------------------                          
-         }
-         }
-         
-         */
+
       }
     }
 
@@ -27276,6 +27281,24 @@ void SOLARCHVISION_draw_Faces () {
 
                   float Alpha = asin_ang(W[2]);
                   float Beta = atan2_ang(W[1], W[0]) + 90; 
+                  
+                  
+                  float SkyMask = 0;
+                  
+                                  
+                                  
+                                  
+                                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
 
                   int l = STUDY_ImpactLayer;
 
@@ -27336,7 +27359,6 @@ void SOLARCHVISION_draw_Faces () {
                     if (nk != -1) {
                       int k = int(nk / STUDY_JoinDays);
                       int j_ADD = nk % STUDY_JoinDays; 
-
 
                       for (int i = 0; i < 24; i += 1) {
 
@@ -27412,7 +27434,7 @@ void SOLARCHVISION_draw_Faces () {
                                   float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
                                   if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
-                                  float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+
 
                                   float[] ray_start = subFace[s];     
                                   float[] ray_direction = {
