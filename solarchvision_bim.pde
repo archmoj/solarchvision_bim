@@ -1,8 +1,10 @@
+// why palette is not printed on time graphs?
+
 // remarked: SOLARCHVISION_update_models(2);
 
 
 
-// diffuse model used in shade.vertex.solar & render is simple see note "adding approximate diffuse radiation effect anyway!" 
+// diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!" 
 
 
 
@@ -2495,6 +2497,8 @@ int Last_initializationStep = 1000;
 int InitializationStep = 0;
 
 
+int FORCE_WIN3D_Update = 0; // internal: in connection with solar vertex shade 
+
 void draw () {
 
   //println("frameCount:", frameCount);
@@ -3605,6 +3609,14 @@ void draw () {
     //STUDY_Update = 0;
 
     //noLoop(); // <<<<<<<<<<<<
+    
+    
+    
+    if (FORCE_WIN3D_Update == 1) { // in connection with solar vertex shade
+      
+      FORCE_WIN3D_Update = 0;
+      WIN3D_Update = 1;
+    }
   }
 } 
 
@@ -27177,8 +27189,11 @@ void SOLARCHVISION_draw_Faces () {
           }
         } 
         catch (Exception e) {
+          
+          println("Catch:", e);
+          
           WIN3D_VerticesSolarValue_Update = 1; 
-          WIN3D_Update = 1;
+          FORCE_WIN3D_Update = 1;
         }
       } else {
         cursor(WAIT);
@@ -27305,7 +27320,6 @@ void SOLARCHVISION_draw_Faces () {
                   }   
                   
                   
-                  
 
                   int l = STUDY_ImpactLayer;
 
@@ -27314,11 +27328,6 @@ void SOLARCHVISION_draw_Faces () {
                   int J_START = STUDY_j_Start;
                   int J_END = STUDY_j_End;
             
-                  if (IMPACTS_DisplayDay > 0) {
-                    J_START = IMPACTS_DisplayDay - 1;
-                    J_END = IMPACTS_DisplayDay;
-                  }
-                  
                   float TOTAL_valuesSUM_RAD = FLOAT_undefined;
                   float TOTAL_valuesSUM_EFF_P = FLOAT_undefined;
                   float TOTAL_valuesSUM_EFF_N = FLOAT_undefined;
@@ -27435,13 +27444,13 @@ void SOLARCHVISION_draw_Faces () {
                                     if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
                                       if (_values_E_dir < 0) {
                                         _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
-                                        _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
+                                        _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); 
                                       } else {
                                         _valuesSUM_EFF_N += (_values_E_dir * SunMask); 
-                                        _valuesSUM_EFF_P += (_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
+                                        _valuesSUM_EFF_P += (_values_E_dif * SkyMask); 
                                       }
 
-                                      _valuesSUM_RAD += (_values_R_dif * SkyMask); // only approximate diffuse radiation!
+                                      _valuesSUM_RAD += (_values_R_dif * SkyMask);
                                     } else { 
                                       if (_values_E_dir < 0) {
                                         _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask));
@@ -27551,6 +27560,7 @@ void SOLARCHVISION_draw_Faces () {
           }
         }
         WIN3D_VerticesSolarValue_Update = 0;
+        FORCE_WIN3D_Update = 1;
 
         cursor(ARROW);
       }
