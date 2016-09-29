@@ -27217,10 +27217,15 @@ void SOLARCHVISION_draw_Faces () {
           {
           }
         };  
+        
+        float Progress = 0;
 
         for (int f = 1; f < allFaces_PNT.length; f++) {
 
-          println("calculating %", nf(100.0 * f / (1.0 * allFaces_PNT.length), 0, 2)); 
+          if (10 + Progress < 100 * (f - 1) / float(allFaces_PNT.length - 1)) { 
+            Progress = 100 * (f - 1) / float(allFaces_PNT.length - 1);
+            println("Progress:", int(Progress), "%");
+          }
 
           int vsb = allFaces_MTLVGC[f][3];
 
@@ -27287,28 +27292,17 @@ void SOLARCHVISION_draw_Faces () {
                   
                   
                   float SkyMask = 0;
-/*                  
-                  float[] SkyR= {
-                    0, 0, 0, 0
-                  };
-          
-
                   
-                  float[] SkyV = {
-                    DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
-                  };
-
-                  float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SkyV), SOLARCHVISION_fn_normalize(VECT));
-                  if (SkyMask <= 0) SkyMask = 0; // removes backing faces      
-*/                                  
-                                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
+                  for (int i = 0; i < DiffuseVectors.length; i++) {
+                    float[] SkyV = {
+                      DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
+                    };
+  
+                    float tmp = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SkyV), SOLARCHVISION_fn_normalize(VECT));
+                    if (tmp <= 0) tmp = 0; // removes backing faces
+                 
+                    SkyMask += tmp / float(DiffuseVectors.length);
+                  }   
                   
                   
                   
@@ -27364,7 +27358,7 @@ void SOLARCHVISION_draw_Faces () {
                         Normals_COL_N
                       };
                       PROCESSED_DAILY_SCENARIOS = (int[][]) concat(PROCESSED_DAILY_SCENARIOS, newNormals);
-                      println("length of PROCESSED_DAILY_SCENARIOS =", PROCESSED_DAILY_SCENARIOS.length);
+                      //println("length of PROCESSED_DAILY_SCENARIOS =", PROCESSED_DAILY_SCENARIOS.length);
                     }
 
                     int nk = Normals_COL_N[l];
