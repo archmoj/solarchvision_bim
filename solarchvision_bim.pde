@@ -25538,24 +25538,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
   
 
 
-float[][] DiffuseVectors;  
 
-void SOLARCHVISION_build_SkySphere (int Tessellation) {
-
-  //SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, Tessellation, 1, 90); // SKY
-  //SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
-  SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 90); // SKY
-
-
-  DiffuseVectors = new float[0][3];
-  for (int i = 0; i < skyVertices.length; i++) {
-    if (skyVertices[i][2] > 0) {
-      float[][] new_Vector = {{skyVertices[i][0], skyVertices[i][1], skyVertices[i][2]}};
-      DiffuseVectors = (float[][]) concat(DiffuseVectors, new_Vector);
-    }
-  }
-  
-}
 
 
 
@@ -27281,13 +27264,43 @@ void SOLARCHVISION_draw_Faces () {
 
                   float Alpha = asin_ang(W[2]);
                   float Beta = atan2_ang(W[1], W[0]) + 90; 
+
+                  float[] VECT = {
+                    0, 0, 0
+                  }; 
+
+                  if (abs(Alpha) > 89.99) {
+                    VECT[0] = 0;
+                    VECT[1] = 0;
+                    VECT[2] = 1;
+                  } else if (Alpha < -89.99) {
+                    VECT[0] = 0;
+                    VECT[1] = 0;
+                    VECT[2] = -1;
+                  } else {
+                    VECT[0] = sin_ang(Beta);
+                    VECT[1] = -cos_ang(Beta);
+                    VECT[2] = tan_ang(Alpha);
+                  }  
+
+                  VECT = SOLARCHVISION_fn_normalize(VECT);
                   
                   
                   float SkyMask = 0;
+/*                  
+                  float[] SkyR= {
+                    0, 0, 0, 0
+                  };
+          
+
                   
-                                  
-                                  
-                                  
+                  float[] SkyV = {
+                    DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
+                  };
+
+                  float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SkyV), SOLARCHVISION_fn_normalize(VECT));
+                  if (SkyMask <= 0) SkyMask = 0; // removes backing faces      
+*/                                  
                                   
                   
                   
@@ -27407,25 +27420,7 @@ void SOLARCHVISION_draw_Faces () {
                                   _valuesNUM = 0;
                                 } else {
 
-                                  float[] VECT = {
-                                    0, 0, 0
-                                  }; 
 
-                                  if (abs(Alpha) > 89.99) {
-                                    VECT[0] = 0;
-                                    VECT[1] = 0;
-                                    VECT[2] = 1;
-                                  } else if (Alpha < -89.99) {
-                                    VECT[0] = 0;
-                                    VECT[1] = 0;
-                                    VECT[2] = -1;
-                                  } else {
-                                    VECT[0] = sin_ang(Beta);
-                                    VECT[1] = -cos_ang(Beta);
-                                    VECT[2] = tan_ang(Alpha);
-                                  }  
-
-                                  VECT = SOLARCHVISION_fn_normalize(VECT);
 
                                   float[] SunV = {
                                     SunR[1], SunR[2], SunR[3]
@@ -43460,17 +43455,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
       File_Name += "DIF_" + STR_SHD[SHD];
 
-      for (int i = 1; i < skyFaces.length; i++) {
+      for (int i = 0; i < DiffuseVectors.length; i++) {
 
         float[] SunR= {
-          0, 0, 0, 0
+          0, DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
         };
-
-        for (int j = 0; j < skyFaces[i].length; j++) {
-          SunR[1] += skyVertices[skyFaces[i][j]][0] / float(skyFaces[i].length);
-          SunR[2] += skyVertices[skyFaces[i][j]][1] / float(skyFaces[i].length);
-          SunR[3] += skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
-        }
 
         float[] SunR_Rotated = SunR; 
         int SunR_Rotated_check = 3;
@@ -58174,6 +58163,38 @@ void SOLARCHVISION_resize_WIN3D_VerticesSolar_Array () { // called when STUDY_j_
   }
   for (int i = 0; i < WIN3D_VerticesSolarEffect.length; i++) {
     WIN3D_VerticesSolarEffect[i][0] = FLOAT_undefined;
+  }
+
+}
+
+
+float[][] DiffuseVectors;  
+
+void SOLARCHVISION_build_SkySphere (int Tessellation) {
+
+  //SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  //SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
+  SOLARCHVISION_add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 90); // SKY
+
+  DiffuseVectors = new float[0][3];
+
+  for (int i = 1; i < skyFaces.length; i++) {
+
+    float x = 0;
+    float y = 0;
+    float z = 0;
+
+    for (int j = 0; j < skyFaces[i].length; j++) {
+
+      x += skyVertices[skyFaces[i][j]][0] / float(skyFaces[i].length);
+      y += skyVertices[skyFaces[i][j]][1] / float(skyFaces[i].length);
+      z += skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
+      
+      if (z > 0) {
+        float[][] new_Vector = {{x, y, z}};
+        DiffuseVectors = (float[][]) concat(DiffuseVectors, new_Vector);
+      }      
+    }
   }
 
 }
