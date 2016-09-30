@@ -1,4 +1,5 @@
 
+// save and open solarImages only records currect Impact_TYPE not both Passive and Active!
 
 
 // SOLARCHVISION_vertexU_Shade_Vertex_Solar ???????
@@ -320,6 +321,11 @@ float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = squar
 
 
 
+int Impact_ACTIVE = 0; // internal
+int Impact_PASSIVE = 1; // internal
+int numberOfImpactVariations = 2; // internal
+
+int Impact_TYPE;
 
 
 
@@ -2268,12 +2274,12 @@ int allSections_num = 0;
 PImage[] allSections_SolidImpact = {
   createImage(2, 2, RGB)
 };
-PImage[][][] allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][2];
+PImage[][][] allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][numberOfImpactVariations];
 {
   int i = 0;
   
   for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
-    for (int q = 0; q < 2; q++) { 
+    for (int q = 0; q < numberOfImpactVariations; q++) { 
       allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
     }
   }
@@ -2504,10 +2510,6 @@ int Last_initializationStep = 1000;
 int InitializationStep = 0;
 
 
-int Impact_ACTIVE = 0; // internal
-int Impact_PASSIVE = 1; // internal
-
-int Impact_TYPE;
 
 
 
@@ -25031,11 +25033,11 @@ void SOLARCHVISION_delete_Sections () {
   allSections_SolidImpact = new PImage [1];
   allSections_SolidImpact[0] = createImage(2, 2, RGB);
 
-  allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][2];
+  allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][numberOfImpactVariations];
   {
     int i = 0;
     for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
-      for (int q = 0; q < 2; q++) { 
+      for (int q = 0; q < numberOfImpactVariations; q++) { 
         allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
       }
     }
@@ -25074,11 +25076,11 @@ void SOLARCHVISION_delete_Solids () {
 
 void SOLARCHVISION_resize_allSections_SolarImpact_array () { // called when STUDY_j_End changes
 
-  allSections_SolarImpact = new PImage [1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)][2];
+  allSections_SolarImpact = new PImage [1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)][numberOfImpactVariations];
   {
     for (int i = 0; i <= allSections_num; i++) {
       for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
-        for (int q = 0; q < 2; q++) {
+        for (int q = 0; q < numberOfImpactVariations; q++) {
           allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
         }
       }
@@ -30880,7 +30882,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
       int l = STUDY_ImpactLayer;
 
       PImage[] total_Image_RGBA = new PImage[2];
-      for (int q = 0; q < total_Image_RGBA.length; q++) {
+      for (int q = 0; q < numberOfImpactVariations; q++) {
         total_Image_RGBA[q] = createImage(RES1, RES2, RGB);
       }
 
@@ -30891,7 +30893,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
         int Image_X = np % RES1;
         int Image_Y = np / RES1;
         
-        for (int q = 0; q < total_Matrix_ARGB.length; q++) {
+        for (int q = 0; q < numberOfImpactVariations; q++) {
           total_Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
           total_Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
           total_Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
@@ -30940,7 +30942,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
               int Image_X = np % RES1;
               int Image_Y = np / RES1;
               
-              for (int q = 0; q < Matrix_ARGB.length; q++) {
+              for (int q = 0; q < numberOfImpactVariations; q++) {
                 Matrix_ARGB[q][0][Image_X][Image_Y] = FLOAT_undefined;
                 Matrix_ARGB[q][1][Image_X][Image_Y] = FLOAT_undefined;
                 Matrix_ARGB[q][2][Image_X][Image_Y] = FLOAT_undefined;
@@ -30949,7 +30951,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
             }
 
             PImage[] Image_RGBA = new PImage[2];
-            for (int q = 0; q < Image_RGBA.length; q++) {
+            for (int q = 0; q < numberOfImpactVariations; q++) {
               Image_RGBA[q] = createImage(RES1, RES2, RGB);
             }
             
@@ -31036,7 +31038,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                           int Image_X = np % RES1;
                           int Image_Y = np / RES1;
 
-                          for (int q = 0; q < 2; q++) {
+                          for (int q = 0; q < numberOfImpactVariations; q++) {
                             if (Matrix_ARGB[q][0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
                             
                               Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
@@ -31085,7 +31087,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
             }
 
 
-            for (int q = 0; q < 2; q++) {
+            for (int q = 0; q < numberOfImpactVariations; q++) {
               Image_RGBA[q].loadPixels();
             }
 
@@ -31093,7 +31095,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
               int Image_X = np % RES1;
               int Image_Y = np / RES1;
               
-              for (int q = 0; q < 2; q++) {
+              for (int q = 0; q < numberOfImpactVariations; q++) {
 
                 float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * _valuesMUL;
                 float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * _valuesMUL;
@@ -31162,7 +31164,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
               }
             }
             
-            for (int q = 0; q < 2; q++) {
+            for (int q = 0; q < numberOfImpactVariations; q++) {
               Image_RGBA[q].updatePixels();
 
   
@@ -31183,7 +31185,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
       { 
         int j = -1; // << to put the summary graph before the daily graphs
         
-        for (int q = 0; q < 2; q++) {
+        for (int q = 0; q < numberOfImpactVariations; q++) {
           total_Image_RGBA[q].loadPixels();
         }
 
@@ -31191,7 +31193,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
           int Image_X = np % RES1;
           int Image_Y = np / RES1;
 
-          for (int q = 0; q < 2; q++) {
+          for (int q = 0; q < numberOfImpactVariations; q++) {
             
             float Image_A = total_Matrix_ARGB[q][0][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
             float Image_R = total_Matrix_ARGB[q][1][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
@@ -31251,7 +31253,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
           }
         }
         
-        for (int q = 0; q < 2; q++) {
+        for (int q = 0; q < numberOfImpactVariations; q++) {
   
           total_Image_RGBA[q].updatePixels(); 
   
@@ -31332,7 +31334,7 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
       
       
       for (int j = STUDY_j_Start - 1; j < STUDY_j_End; j += 1) {
-        for (int q = 0; q < 2; q++) {
+        for (int q = 0; q < numberOfImpactVariations; q++) {
           allSections_SolarImpact[f][j + 1][q] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
   
           allSections_SolarImpact[f][j + 1][q].copy(SolarImpact_Image[q][j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
@@ -44552,11 +44554,11 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   }; 
   allSections_SolidImpact = (PImage[]) concat(allSections_SolidImpact, TempSection_SolidImpact);
 
-  PImage[][][] TempSection_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][2];
+  PImage[][][] TempSection_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][numberOfImpactVariations];
   {
     int i = 0;
     for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
-      for (int q = 0; q < 2; q++) { 
+      for (int q = 0; q < numberOfImpactVariations; q++) { 
         TempSection_SolarImpact[i][j][q] = createImage(2, 2, RGB);
       }
     }
@@ -54369,7 +54371,7 @@ void SOLARCHVISION_load_project (String myFile) {
         int ni = children0[L].getInt("ni");
         int nj = children0[L].getInt("nj");
 
-        allSections_SolarImpact = new PImage [ni][nj][2]; 
+        allSections_SolarImpact = new PImage [ni][nj][numberOfImpactVariations]; 
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
