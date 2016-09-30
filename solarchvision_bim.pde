@@ -2268,11 +2268,14 @@ int allSections_num = 0;
 PImage[] allSections_SolidImpact = {
   createImage(2, 2, RGB)
 };
-PImage[][] allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)];
+PImage[][][] allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][2];
 {
   int i = 0;
-  for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
-    allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
+  
+  for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
+    for (int q = 0; q < 2; q++) { 
+      allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
+    }
   }
 }
 
@@ -11017,7 +11020,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.rect((j + STUDY_rect_offset_x - 100 * STUDY_rect_scale) * sx_Plot, (-100 * STUDY_rect_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * STUDY_rect_scale) * sx_Plot, (200 * STUDY_rect_scale) * sx_Plot);
 
           STUDY_Diagrams.imageMode(CENTER); 
-          STUDY_Diagrams.image(SolarImpact_Image[j + 1], (j + 100 * STUDY_rect_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * STUDY_rect_scale) * sx_Plot), int((180 * STUDY_rect_scale) * sx_Plot));
+          STUDY_Diagrams.image(SolarImpact_Image[Impact_TYPE][j + 1], (j + 100 * STUDY_rect_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * STUDY_rect_scale) * sx_Plot), int((180 * STUDY_rect_scale) * sx_Plot));
 
           STUDY_Diagrams.stroke(0);
           STUDY_Diagrams.fill(0);
@@ -11049,7 +11052,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           //STUDY_Diagrams.rect((j + STUDY_rect_offset_x - 100 * STUDY_rect_scale) * sx_Plot, (-100 * STUDY_rect_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * STUDY_rect_scale) * sx_Plot, (200 * STUDY_rect_scale) * sx_Plot);
 
           STUDY_Diagrams.imageMode(CENTER); 
-          //STUDY_Diagrams.image(SolarImpact_Image[j + 1], (j + 100 * STUDY_rect_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * STUDY_rect_scale) * sx_Plot), int((180 * STUDY_rect_scale) * sx_Plot));
+          //STUDY_Diagrams.image(SolarImpact_Image[Impact_TYPE][j + 1], (j + 100 * STUDY_rect_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * STUDY_rect_scale) * sx_Plot), int((180 * STUDY_rect_scale) * sx_Plot));
 
           STUDY_Diagrams.stroke(0);
           STUDY_Diagrams.fill(0);
@@ -16935,10 +16938,10 @@ void SOLARCHVISION_delete_Selection () {
         }
 
         {
-          PImage[][] startList = (PImage[][]) subset(allSections_SolarImpact, 0, OBJ_NUM);
-          PImage[][] endList = (PImage[][]) subset(allSections_SolarImpact, OBJ_NUM + 1);
+          PImage[][][] startList = (PImage[][][]) subset(allSections_SolarImpact, 0, OBJ_NUM);
+          PImage[][][] endList = (PImage[][][]) subset(allSections_SolarImpact, OBJ_NUM + 1);
 
-          allSections_SolarImpact = (PImage[][]) concat(startList, endList);
+          allSections_SolarImpact = (PImage[][][]) concat(startList, endList);
         }        
 
         allSections_num -= 1;
@@ -22945,7 +22948,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
           if (Display_SolarImpactImage != 0) {
             println("Saving texture:", new_Texture_path);
-            allSections_SolarImpact[f][IMPACTS_DisplayDay].save(new_Texture_path);
+            allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE].save(new_Texture_path);
           } else if (Display_SolidImpactImage != 0) {
             println("Saving texture:", new_Texture_path);
             allSections_SolidImpact[f].save(new_Texture_path);
@@ -25028,11 +25031,13 @@ void SOLARCHVISION_delete_Sections () {
   allSections_SolidImpact = new PImage [1];
   allSections_SolidImpact[0] = createImage(2, 2, RGB);
 
-  allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)];
+  allSections_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][2];
   {
     int i = 0;
-    for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
-      allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
+    for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
+      for (int q = 0; q < 2; q++) { 
+        allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
+      }
     }
   }      
 
@@ -25069,11 +25074,13 @@ void SOLARCHVISION_delete_Solids () {
 
 void SOLARCHVISION_resize_allSections_SolarImpact_array () { // called when STUDY_j_End changes
 
-  allSections_SolarImpact = new PImage [1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)];
+  allSections_SolarImpact = new PImage [1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)][2];
   {
     for (int i = 0; i <= allSections_num; i++) {
       for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
-        allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
+        for (int q = 0; q < 2; q++) {
+          allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
+        }
       }
     }
   }
@@ -30780,12 +30787,14 @@ void SOLARCHVISION_add_Model_SCHOOL () {
 
 void SOLARCHVISION_build_SolarImpact_Image_array () {
 
-  SolarImpact_Image = new PImage [(1 + STUDY_j_End - STUDY_j_Start)];
+  SolarImpact_Image = new PImage [2][(1 + STUDY_j_End - STUDY_j_Start)];
 
-  for (int j = STUDY_j_Start - 1; j < STUDY_j_End; j += 1) { // total image at j = -1 
-
-      SolarImpact_Image[j + 1] = createImage(2, 2, RGB); // empty and small
-  }  
+  for (int i = 0; i < SolarImpact_Image.length; i++) {
+    for (int j = STUDY_j_Start - 1; j < STUDY_j_End; j += 1) { // total image at j = -1 
+  
+      SolarImpact_Image[i][j + 1] = createImage(2, 2, RGB); // empty and small
+    }  
+  }
 
   rebuild_SolarImpactImage_array = 0;
 }
@@ -30811,7 +30820,7 @@ int Display_WindRoseImage = 0; // 0:talse 1:true
 int Rendered_WindRose_RES = 1;
 int WindRose_RES = 400;
 
-PImage[] SolarImpact_Image;
+PImage[][] SolarImpact_Image;
 
 int Display_SolarImpactImage = 0; // 0:talse 1:true
 int SolarImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
@@ -30852,9 +30861,6 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
     int RES1 = SolarImpact_RES1;
     int RES2 = SolarImpact_RES2;
 
-    if (STUDY_PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
-    if (STUDY_PlotImpacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
-
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
     float Pc = FLOAT_undefined;
@@ -30870,37 +30876,27 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
     int now_i = 0;
     int now_j = 0;
 
-    int PAL_TYPE = 0; 
-    int PAL_DIR = 1;
-    float PAL_Multiplier = 1; 
-
-    if (Impact_TYPE == Impact_ACTIVE) {
-      PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
-      PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;  
-      PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
-    }
-    if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
-      PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-      PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
-    }             
-
     for (int p = 0; p < 1; p += 1) { 
       int l = STUDY_ImpactLayer;
 
-      PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
+      PImage[] total_Image_RGBA = new PImage[2];
+      for (int q = 0; q < total_Image_RGBA.length; q++) {
+        total_Image_RGBA[q] = createImage(RES1, RES2, RGB);
+      }
 
-      float[][][] total_Matrix_ARGB;
-      total_Matrix_ARGB = new float [4][RES1][RES2];
+      float[][][][] total_Matrix_ARGB;
+      total_Matrix_ARGB = new float [2][4][RES1][RES2];
 
       for (int np = 0; np < (RES1 * RES2); np++) {
         int Image_X = np % RES1;
         int Image_Y = np / RES1;
-
-        total_Matrix_ARGB[0][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[1][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[2][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[3][Image_X][Image_Y] = 0;
+        
+        for (int q = 0; q < total_Matrix_ARGB.length; q++) {
+          total_Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
+          total_Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
+          total_Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
+          total_Matrix_ARGB[q][3][Image_X][Image_Y] = 0;
+        }
       }
 
       for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) {
@@ -30936,25 +30932,27 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
             int k = int(nk / STUDY_JoinDays);
             int j_ADD = nk % STUDY_JoinDays; 
 
-            float[][][] Matrix_ARGB;
+            float[][][][] Matrix_ARGB;
 
-            Matrix_ARGB = new float [4][RES1][RES2];
+            Matrix_ARGB = new float [2][4][RES1][RES2];
 
             for (int np = 0; np < (RES1 * RES2); np++) {
               int Image_X = np % RES1;
               int Image_Y = np / RES1;
-
-              Matrix_ARGB[0][Image_X][Image_Y] = FLOAT_undefined;
-              Matrix_ARGB[1][Image_X][Image_Y] = FLOAT_undefined;
-              Matrix_ARGB[2][Image_X][Image_Y] = FLOAT_undefined;
-              Matrix_ARGB[3][Image_X][Image_Y] = FLOAT_undefined;
+              
+              for (int q = 0; q < Matrix_ARGB.length; q++) {
+                Matrix_ARGB[q][0][Image_X][Image_Y] = FLOAT_undefined;
+                Matrix_ARGB[q][1][Image_X][Image_Y] = FLOAT_undefined;
+                Matrix_ARGB[q][2][Image_X][Image_Y] = FLOAT_undefined;
+                Matrix_ARGB[q][3][Image_X][Image_Y] = FLOAT_undefined;
+              }
             }
 
-            PImage Image_RGBA = createImage(RES1, RES2, RGB);
-
-
-
-
+            PImage[] Image_RGBA = new PImage[2];
+            for (int q = 0; q < Image_RGBA.length; q++) {
+              Image_RGBA[q] = createImage(RES1, RES2, RGB);
+            }
+            
             int _valuesNUM = 0;  
 
             for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
@@ -31038,11 +31036,14 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                           int Image_X = np % RES1;
                           int Image_Y = np / RES1;
 
-                          if (Matrix_ARGB[0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
-                            Matrix_ARGB[0][Image_X][Image_Y] = 0;
-                            Matrix_ARGB[1][Image_X][Image_Y] = 0;
-                            Matrix_ARGB[2][Image_X][Image_Y] = 0;
-                            Matrix_ARGB[3][Image_X][Image_Y] = 0;
+                          for (int q = 0; q < 2; q++) {
+                            if (Matrix_ARGB[q][0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
+                            
+                              Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
+                              Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
+                              Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
+                              Matrix_ARGB[q][3][Image_X][Image_Y] = 0;
+                            }
                           }                             
 
                           color COL0 = Shadings[0].get(Image_X, Image_Y);
@@ -31053,19 +31054,17 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
                           float COL_Alpha = (COL1 >> 24 & 0xFF);
 
-                          Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
+                          Matrix_ARGB[Impact_ACTIVE][0][Image_X][Image_Y] = COL_Alpha;
+                          Matrix_ARGB[Impact_PASSIVE][0][Image_X][Image_Y] = COL_Alpha;
 
-                          if (Impact_TYPE == Impact_ACTIVE) {  
-                            Matrix_ARGB[2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
-                          }
-                          if (Impact_TYPE == Impact_PASSIVE) {
-                            if (EFF_VALUE < 0) {
-                              Matrix_ARGB[1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
-                              if (COL_V0 != COL_V1) Matrix_ARGB[3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1);
-                            } else {
-                              Matrix_ARGB[3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
-                              if (COL_V0 != COL_V1) Matrix_ARGB[1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
-                            }
+                          Matrix_ARGB[Impact_ACTIVE][2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
+
+                          if (EFF_VALUE < 0) {
+                            Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
+                            if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1);
+                          } else {
+                            Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
+                            if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
                           }
 
                           if (np == 0) _valuesNUM += 1;
@@ -31085,151 +31084,187 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
               _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
             }
 
-            Image_RGBA.loadPixels();
+
+            for (int q = 0; q < 2; q++) {
+              Image_RGBA[q].loadPixels();
+            }
 
             for (int np = 0; np < (RES1 * RES2); np++) {
               int Image_X = np % RES1;
               int Image_Y = np / RES1;
+              
+              for (int q = 0; q < 2; q++) {
 
-              float Image_A = Matrix_ARGB[0][Image_X][Image_Y] * _valuesMUL;
-              float Image_R = Matrix_ARGB[1][Image_X][Image_Y] * _valuesMUL;
-              float Image_G = Matrix_ARGB[2][Image_X][Image_Y] * _valuesMUL;
-              float Image_B = Matrix_ARGB[3][Image_X][Image_Y] * _valuesMUL;
-
-              total_Matrix_ARGB[0][Image_X][Image_Y] += Image_A;
-              total_Matrix_ARGB[1][Image_X][Image_Y] += Image_R;
-              total_Matrix_ARGB[2][Image_X][Image_Y] += Image_G;
-              total_Matrix_ARGB[3][Image_X][Image_Y] += Image_B; 
-
-
-              float[] _c = {
-                0, 0, 0, 0
-              };
-
-              float _u = 0;
-
-              float _valuesSUM = FLOAT_undefined;
-
-              if (Impact_TYPE == Impact_ACTIVE) {
-                _valuesSUM = Image_G;
-
-                //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                //_u = (0.1 * PAL_Multiplier * _valuesSUM);
-                _u = (0.2 * PAL_Multiplier * _valuesSUM);
+                float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * _valuesMUL;
+                float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * _valuesMUL;
+                float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * _valuesMUL;
+                float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * _valuesMUL;
+  
+                total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
+                total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
+                total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
+                total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B; 
+              
+                float[] _c = {
+                  0, 0, 0, 0
+                };
+  
+                float _u = 0;
+  
+                float _valuesSUM = FLOAT_undefined;
+  
+                int PAL_TYPE = 0; 
+                int PAL_DIR = 1;
+                float PAL_Multiplier = 1; 
+  
+                if (q == Impact_ACTIVE) {
+                  _valuesSUM = Image_G;
+  
+                  PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+                  PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;  
+                  PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
+  
+                  //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  //_u = (0.1 * PAL_Multiplier * _valuesSUM);
+                  _u = (0.2 * PAL_Multiplier * _valuesSUM);
+                }
+  
+                if (q == Impact_PASSIVE) {
+                  float AVERAGE, PERCENTAGE, COMPARISON;
+  
+                  AVERAGE = (Image_B - Image_R);
+                  if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
+                  else PERCENTAGE = 0.0;
+                  COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+  
+                  _valuesSUM = COMPARISON;
+  
+                  PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+                  PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+                  PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
+  
+                  //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+                }
+  
+  
+                //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
+                //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
+  
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+                _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+  
+                if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
+                else Image_RGBA[q].pixels[np] = color(223, 223, 223);
               }
+            }
+            
+            for (int q = 0; q < 2; q++) {
+              Image_RGBA[q].updatePixels();
 
-              if (Impact_TYPE == Impact_PASSIVE) {
-                float AVERAGE, PERCENTAGE, COMPARISON;
-
-                AVERAGE = (Image_B - Image_R);
-                if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
-                else PERCENTAGE = 0.0;
-                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-                _valuesSUM = COMPARISON;
-
-                //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+  
+              //if (Camera_Variation == 0) {
+              SolarImpact_Image[q][j + 1] = Image_RGBA[q];           
+              if (SolarImpact_record_JPG == 1) {
+                String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
+                SolarImpact_Image[q][j + 1].save(myFile);
+                if (j == 0) SOLARCHVISION_explore_output(myFile);
+                println("File created:" + myFile);
               }
-
-
-              //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
-              //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
-
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
-
-              _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-              if (Image_A != 0) Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
-              else Image_RGBA.pixels[np] = color(223, 223, 223);
+              //}
             }
-
-            Image_RGBA.updatePixels(); 
-
-            //if (Camera_Variation == 0) {
-            SolarImpact_Image[j + 1] = Image_RGBA;           
-            if (SolarImpact_record_JPG == 1) {
-              String myFile = getFilename_SolarImpact() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
-              SolarImpact_Image[j + 1].save(myFile);
-              if (j == 0) SOLARCHVISION_explore_output(myFile);
-              println("File created:" + myFile);
-            }
-            //}
           }
         }
       }
 
-      //----------------------
-      if (Camera_Variation == 0) STUDY_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      //----------------------
-
-      if (STUDY_impact_summary == 1) { 
+      { 
         int j = -1; // << to put the summary graph before the daily graphs
-
-        total_Image_RGBA.loadPixels();
+        
+        for (int q = 0; q < 2; q++) {
+          total_Image_RGBA[q].loadPixels();
+        }
 
         for (int np = 0; np < (RES1 * RES2); np++) {
           int Image_X = np % RES1;
           int Image_Y = np / RES1;
 
-          float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
-          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
-          float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
-          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
+          for (int q = 0; q < 2; q++) {
+            
+            float Image_A = total_Matrix_ARGB[q][0][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
+            float Image_R = total_Matrix_ARGB[q][1][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
+            float Image_G = total_Matrix_ARGB[q][2][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
+            float Image_B = total_Matrix_ARGB[q][3][Image_X][Image_Y] / (1.0 * (STUDY_j_End - STUDY_j_Start));
 
-          float[] _c = {
-            0, 0, 0, 0
-          };
+            float[] _c = {
+              0, 0, 0, 0
+            };
+  
+            float _u = 0;
+  
+            float _valuesSUM = FLOAT_undefined;
 
-          float _u = 0;
-
-          float _valuesSUM = FLOAT_undefined;
-
-          if (Impact_TYPE == Impact_ACTIVE) {
-            _valuesSUM = Image_G;
-
-            //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-            //_u = (0.1 * PAL_Multiplier * _valuesSUM);
-            _u = (0.2 * PAL_Multiplier * _valuesSUM);
+            int PAL_TYPE = 0; 
+            int PAL_DIR = 1;
+            float PAL_Multiplier = 1; 
+  
+            if (q == Impact_ACTIVE) {
+              _valuesSUM = Image_G;
+  
+              PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+              PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;  
+              PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
+  
+              //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+              //_u = (0.1 * PAL_Multiplier * _valuesSUM);
+              _u = (0.2 * PAL_Multiplier * _valuesSUM);
+            }
+  
+            if (q == Impact_PASSIVE) {
+              float AVERAGE, PERCENTAGE, COMPARISON;
+  
+              AVERAGE = (Image_B - Image_R);
+              if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
+              else PERCENTAGE = 0.0;
+              COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+   
+              _valuesSUM = COMPARISON;
+  
+              PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+              PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+              PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
+  
+              //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+              _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+            }
+  
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+            _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+  
+            if (Image_A != 0) total_Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
+            else total_Image_RGBA[q].pixels[np] = color(223, 223, 223);
           }
-
-          if (Impact_TYPE == Impact_PASSIVE) {
-            float AVERAGE, PERCENTAGE, COMPARISON;
-
-            AVERAGE = (Image_B - Image_R);
-            if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
-            else PERCENTAGE = 0.0;
-            COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-            _valuesSUM = COMPARISON;
-
-            //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-            _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+        }
+        
+        for (int q = 0; q < 2; q++) {
+  
+          total_Image_RGBA[q].updatePixels(); 
+  
+          //if (Camera_Variation == 0) {
+          SolarImpact_Image[q][0] = total_Image_RGBA[q];           
+          if (SolarImpact_record_JPG == 1) {
+            String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(0, 0) + ".jpg";
+            SolarImpact_Image[q][0].save(myFile);
+            //SOLARCHVISION_explore_output(myFile);
+            println("File created:" + myFile);
           }
-
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-
-          _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-          if (Image_A != 0) total_Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
-          else total_Image_RGBA.pixels[np] = color(223, 223, 223);
+          //}
         }
-
-        total_Image_RGBA.updatePixels(); 
-
-        //if (Camera_Variation == 0) {
-        SolarImpact_Image[0] = total_Image_RGBA;           
-        if (SolarImpact_record_JPG == 1) {
-          String myFile = getFilename_SolarImpact() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
-          SolarImpact_Image[0].save(myFile);
-          //SOLARCHVISION_explore_output(myFile);
-          println("File created:" + myFile);
-        }
-        //}
       }
     }
 
@@ -31294,11 +31329,14 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
       SceneName = "temp_" + Section_Stamp();
 
       SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked();
+      
+      
       for (int j = STUDY_j_Start - 1; j < STUDY_j_End; j += 1) {
-
-        allSections_SolarImpact[f][j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
-
-        allSections_SolarImpact[f][j + 1].copy(SolarImpact_Image[j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
+        for (int q = 0; q < 2; q++) {
+          allSections_SolarImpact[f][j + 1][q] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
+  
+          allSections_SolarImpact[f][j + 1][q].copy(SolarImpact_Image[q][j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
+        }
       }
     }
   }
@@ -44514,14 +44552,16 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   }; 
   allSections_SolidImpact = (PImage[]) concat(allSections_SolidImpact, TempSection_SolidImpact);
 
-  PImage[][] TempSection_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)];
+  PImage[][][] TempSection_SolarImpact = new PImage [1][(1 + STUDY_j_End - STUDY_j_Start)][2];
   {
     int i = 0;
-    for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
-      TempSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+    for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
+      for (int q = 0; q < 2; q++) { 
+        TempSection_SolarImpact[i][j][q] = createImage(2, 2, RGB);
+      }
     }
   }
-  allSections_SolarImpact = (PImage[][]) concat(allSections_SolarImpact, TempSection_SolarImpact);    
+  allSections_SolarImpact = (PImage[][][]) concat(allSections_SolarImpact, TempSection_SolarImpact);    
 
   float[][] TempSection_UVERAB = {
     {
@@ -44571,7 +44611,7 @@ void SOLARCHVISION_draw_Sections () {
 
         if (Display_SolarImpactImage != 0) { 
           
-          WIN3D_Diagrams.texture(allSections_SolarImpact[f][IMPACTS_DisplayDay]);
+          WIN3D_Diagrams.texture(allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE]);
 
           WIN3D_Diagrams.noStroke();
           WIN3D_Diagrams.noFill();
@@ -53038,7 +53078,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
         String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
 
         println("Saving texture:", TEXTURE_path);
-        allSections_SolarImpact[i][j].save(TEXTURE_path);
+        allSections_SolarImpact[i][j][Impact_TYPE].save(TEXTURE_path);
 
         newChild2 = newChild1.addChild("Path");
         newChild2.setInt("id", i * nj + j); 
@@ -54329,7 +54369,7 @@ void SOLARCHVISION_load_project (String myFile) {
         int ni = children0[L].getInt("ni");
         int nj = children0[L].getInt("nj");
 
-        allSections_SolarImpact = new PImage [ni][nj]; 
+        allSections_SolarImpact = new PImage [ni][nj][2]; 
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
@@ -54337,10 +54377,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
             String TEXTURE_path = children1[i * nj + j].getContent();
 
-            allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
+            allSections_SolarImpact[i][j][Impact_TYPE] = createImage(2, 2, RGB);
 
             println("Loading texture(" + i + "," + j + "):", TEXTURE_path);
-            allSections_SolarImpact[i][j] = loadImage(TEXTURE_path);
+            allSections_SolarImpact[i][j][Impact_TYPE] = loadImage(TEXTURE_path);
             println("loaded!");
           }
         }
