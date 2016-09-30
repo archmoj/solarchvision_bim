@@ -1,3 +1,20 @@
+// now try to see if we can remove items 0 - very risky!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // SOLARCHVISION_vertexU_Shade_Vertex_Solar ???????
 
@@ -2137,21 +2154,11 @@ float WIN3D_CAM_clipFar = 2000000000.0;
 
 
 
-float[][] allVertices = {
-  {
-    0, 0, 0
-  }
-};
-int[][] allFaces_PNT = {
-  {
-    0, 0, 0
-  }
-};
-int[][] allFaces_MTLVGC = {
-  {
-    0, 0, 0, 0, 0, 0
-  }
-}; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight 5:close
+float[][] allVertices = new float[0][3];
+
+int[][] allFaces_PNT = new int[0][3];
+
+int[][] allFaces_MTLVGC = new int[0][6]; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight 5:close
 
 int[][] allCurves_PNT = {
   {
@@ -25150,18 +25157,9 @@ void SOLARCHVISION_delete_Object2Ds () {
 
 void SOLARCHVISION_delete_Faces () {
 
-  allFaces_PNT = new int [1][3];
-  allFaces_PNT[0][0] = 0;
-  allFaces_PNT[0][1] = 0;
-  allFaces_PNT[0][2] = 0;
+  allFaces_PNT = new int [0][3];
 
-  allFaces_MTLVGC = new int [1][6];
-  allFaces_MTLVGC[0][0] = 0;
-  allFaces_MTLVGC[0][1] = 0;
-  allFaces_MTLVGC[0][2] = 0;
-  allFaces_MTLVGC[0][3] = 0;
-  allFaces_MTLVGC[0][4] = 0;
-  allFaces_MTLVGC[0][5] = 0;
+  allFaces_MTLVGC = new int [0][6];
 
   for (int q = 0; q < allGroup3Ds_num + 1; q++) {
     allGroup3Ds_Faces[q][0] = 0;
@@ -25196,10 +25194,7 @@ void SOLARCHVISION_delete_Curves () {
 
 void SOLARCHVISION_delete_Vertices () {
 
-  allVertices = new float [1][3];
-  allVertices[0][0] = 0;
-  allVertices[0][1] = 0;
-  allVertices[0][2] = 0;
+  allVertices = new float [0][3];
 
   SOLARCHVISION_deselect_All();
 }
