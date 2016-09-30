@@ -1,9 +1,4 @@
 
-int Impact_ACTIVE = 0; // internal
-int Impact_PASSIVE = 1; // internal
-
-
-int Impact_TYPE = Impact_PASSIVE;
 
 
 // SOLARCHVISION_vertexU_Shade_Vertex_Solar ???????
@@ -2506,14 +2501,23 @@ int Last_initializationStep = 1000;
 int InitializationStep = 0;
 
 
+int Impact_ACTIVE = 0; // internal
+int Impact_PASSIVE = 1; // internal
+
+int Impact_TYPE;
+
+
+
 int FORCE_WIN3D_Update = 0; // internal: in connection with solar vertex shade 
 
 void draw () {
 
   //println("frameCount:", frameCount);
 
+  Impact_TYPE = STUDY_PlotImpacts % 2; // <<<<<<<<<<<
 
-
+  
+  
   if (frameCount == 1) {
 
     background(223);
@@ -3015,7 +3019,7 @@ void draw () {
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;      
 
-          SOLARCHVISION_resize_allSections_Solar_Impact_Array();
+          SOLARCHVISION_resize_allSections_SolarImpact_Array();
         }
 
         if (pre_IMPACTS_DisplayDay != IMPACTS_DisplayDay) {
@@ -13230,7 +13234,7 @@ void STUDY_keyPressed (KeyEvent e) {
         rebuild_SolarProjection_array = 1;
         rebuild_SolarImpactImage_array = 1;
         rebuild_WindRoseImage_array = 1;
-        SOLARCHVISION_resize_allSections_Solar_Impact_Array();
+        SOLARCHVISION_resize_allSections_SolarImpact_Array();
 
         UI_BAR_d_Update = 1;
         STUDY_Update = 1; 
@@ -13254,7 +13258,7 @@ void STUDY_keyPressed (KeyEvent e) {
         rebuild_SolarProjection_array = 1;
         rebuild_SolarImpactImage_array = 1;
         rebuild_WindRoseImage_array = 1;   
-        SOLARCHVISION_resize_allSections_Solar_Impact_Array();
+        SOLARCHVISION_resize_allSections_SolarImpact_Array();
 
         UI_BAR_d_Update = 1; 
         STUDY_Update = 1; 
@@ -25055,7 +25059,7 @@ void SOLARCHVISION_delete_Solids () {
 }
 
 
-void SOLARCHVISION_resize_allSections_Solar_Impact_Array () { // called when STUDY_j_End changes
+void SOLARCHVISION_resize_allSections_SolarImpact_Array () { // called when STUDY_j_End changes
 
   allSections_SolarImpact = new PImage [1 + allSections_num][(1 + STUDY_j_End - STUDY_j_Start)];
   {
