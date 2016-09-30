@@ -1,3 +1,8 @@
+// exporting vertex solar shade to OBJ.
+
+
+// should test view from the sun function: if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
+
 
 // remarked: SOLARCHVISION_update_models(2);
 
@@ -11929,7 +11934,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
           STUDY_Diagrams.imageMode(CENTER); 
           STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - Alpha) * STUDY_rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY_rect_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
-
+          STUDY_Diagrams.imageMode(CORNER);
+          
           if (Materials_DirectArea_Flags[now_i][now_j] == -1) {
 
             Materials_DirectArea_Flags[now_i][now_j] = 1; 
@@ -11968,12 +11974,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (Materials_Selection == mt) println("Direct:", mt, now_i, now_j, Materials_DirectArea_Data[mt][now_i][now_j]);
               }
 
-              STUDY_Diagrams.imageMode(CORNER);
+              
             }
           }
         }
 
-        
 
          { // Diffuse
            int RES1 = 25; // 100; 
@@ -12001,8 +12006,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                  
                  PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
                  
-                 STUDY_Diagrams.imageMode(CENTER); 
-                 STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - skyAngle_Alpha) * STUDY_rect_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * STUDY_rect_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
+                 //STUDY_Diagrams.imageMode(CENTER); 
+                 //STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - skyAngle_Alpha) * STUDY_rect_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * STUDY_rect_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
+                 //STUDY_Diagrams.imageMode(CORNER);
                  
                  for (int np = 0; np < (RES1 * RES2); np++) {
                    int Image_X = np % RES1;
@@ -12026,7 +12032,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                    }
                  }  
                  
-                 STUDY_Diagrams.imageMode(CORNER);
                }
              }
              for (int mt = 0; mt < Materials_Number; mt++) {                 
@@ -23273,7 +23278,7 @@ void SOLARCHVISION_export_objects_OBJ () {
   }
 
 
-  if (Display_Model3Ds != 0) {
+  if (Display_Model3Ds != 0) {????????
 
 
 
