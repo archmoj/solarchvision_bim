@@ -1598,11 +1598,11 @@ float SunPath3D_Pallet_PASSIVE_MLT = 1; //1;
 
 int SKY3D_Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = 1; //-1;
-float SKY3D_Pallet_ACTIVE_MLT = 0.5; //0.25; //1;
+float SKY3D_Pallet_ACTIVE_MLT = 1; //0.5; //0.25;
 
 int SKY3D_Pallet_PASSIVE_CLR = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
-float SKY3D_Pallet_PASSIVE_MLT = 1; //2;
+float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int ELEVATION_Pallet_CLR = 1; 
 int ELEVATION_Pallet_DIR = -1; 
@@ -13148,41 +13148,49 @@ void STUDY_keyPressed (KeyEvent e) {
       case 112 : //F1
         STUDY_PlotImpacts = -2; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;
       case 113 : //F2
         STUDY_PlotImpacts = -1; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;
       case 114 : //F3
         STUDY_PlotImpacts = 4; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;
       case 115 : //F4
         STUDY_PlotImpacts = 5; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;          
       case 116 : //F5
         STUDY_PlotImpacts = 2; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;
       case 117 : //F6
         STUDY_PlotImpacts = 3; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;                   
       case 118 : //F7
         STUDY_PlotImpacts = 0; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;           
       case 119 : //F8
         STUDY_PlotImpacts = 1; 
         STUDY_Update = 1; 
+        WIN3D_Update = 1;
         ROLLOUT_Update = 1; 
         break;
       }
@@ -26848,7 +26856,7 @@ float SOLARCHVISION_vertexU_Shade_Global_Solar (float[] VERTEX_now, float[] VERT
   if (a > int(180 / SOLARCHVISION_GLOBE_stp_slp)) a -= int(180 / SOLARCHVISION_GLOBE_stp_slp);
   if (b > int(360 / SOLARCHVISION_GLOBE_stp_dir)) b -= int(360 / SOLARCHVISION_GLOBE_stp_dir);
 
-  float _valuesSUM = GlobalSolar[IMPACTS_DisplayDay][a][b];
+  float _valuesSUM = GlobalSolar[Impact_TYPE][IMPACTS_DisplayDay][a][b];
 
   float _u = 0;
 
@@ -33161,7 +33169,7 @@ float SOLARCHVISION_GLOBE_stp_dir;
 int SOLARCHVISION_GLOBE_n_slp;  
 int SOLARCHVISION_GLOBE_n_dir;
 
-float[][][]GlobalSolar;
+float[][][][] GlobalSolar;
 
 
 int rebuild_GlobalSolar_array = 1;
@@ -33176,13 +33184,15 @@ void SOLARCHVISION_build_GlobalSolar_array () {
   SOLARCHVISION_GLOBE_n_slp = int(roundTo(180.0 / (1.0 * SOLARCHVISION_GLOBE_stp_slp), 1)) + 1;  
   SOLARCHVISION_GLOBE_n_dir = int(roundTo(360.0 / (1.0 * SOLARCHVISION_GLOBE_stp_dir), 1));
 
-  GlobalSolar = new float [(1 + STUDY_j_End - STUDY_j_Start)][SOLARCHVISION_GLOBE_n_slp][SOLARCHVISION_GLOBE_n_dir];
+  GlobalSolar = new float [2][(1 + STUDY_j_End - STUDY_j_Start)][SOLARCHVISION_GLOBE_n_slp][SOLARCHVISION_GLOBE_n_dir];
 
-  for (int j = 0; j < GlobalSolar.length; j += 1) {
-
-    for (int a = 0; a < SOLARCHVISION_GLOBE_n_slp; a += 1) {
-      for (int b = 0; b < SOLARCHVISION_GLOBE_n_dir; b += 1) {  
-        GlobalSolar[j][a][b] = FLOAT_undefined;
+  for (int i = 0; i < GlobalSolar.length; i += 1) {
+    for (int j = 0; j < GlobalSolar[i].length; j += 1) {
+  
+      for (int a = 0; a < SOLARCHVISION_GLOBE_n_slp; a += 1) {
+        for (int b = 0; b < SOLARCHVISION_GLOBE_n_dir; b += 1) {  
+          GlobalSolar[i][j][a][b] = FLOAT_undefined;
+        }
       }
     }
   }
@@ -33378,12 +33388,11 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             else PERCENTAGE = 0.0;
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
-            float _valuesSUM = FLOAT_undefined;
-            if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
-            if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
-
-            if (_valuesSUM < 0.9 * FLOAT_undefined) {
-              GlobalSolar[j + 1][a][b] = _valuesSUM;
+            if (_valuesSUM_RAD < 0.9 * FLOAT_undefined) {
+              GlobalSolar[Impact_ACTIVE][j + 1][a][b] = _valuesSUM_RAD;
+            }
+            if (COMPARISON < 0.9 * FLOAT_undefined) {
+              GlobalSolar[Impact_PASSIVE][j + 1][a][b] = COMPARISON;
             }
           }
         }
@@ -33415,14 +33424,13 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
       else PERCENTAGE = 0.0;
       COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
-
-      float _valuesSUM = FLOAT_undefined;
-      if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
-      if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
-
-      if (_valuesSUM < 0.9 * FLOAT_undefined) {
-        GlobalSolar[0][a][b] = _valuesSUM;
+      if (TOTAL_valuesSUM_RAD[a][b] < 0.9 * FLOAT_undefined) {
+        GlobalSolar[Impact_ACTIVE][0][a][b] = TOTAL_valuesSUM_RAD[a][b];
       }
+      if (COMPARISON < 0.9 * FLOAT_undefined) {
+        GlobalSolar[Impact_PASSIVE][0][a][b] = COMPARISON;
+      }
+
     }
   }
 
