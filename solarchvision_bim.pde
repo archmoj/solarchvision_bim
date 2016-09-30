@@ -1,3 +1,5 @@
+// SOLARCHVISION_vertexU_Shade_Vertex_Solar ???????
+
 // exporting vertex solar shade to OBJ.
 
 
@@ -23278,13 +23280,13 @@ void SOLARCHVISION_export_objects_OBJ () {
   }
 
 
-  if (Display_Model3Ds != 0) {????????
+  if (Display_Model3Ds != 0) {
 
 
 
     int Create_Face_Texture = 0;
 
-    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solid) || (WIN3D_FacesShade == Shade_Vertex_Elevation)) {
+    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solid) || (WIN3D_FacesShade == Shade_Vertex_Elevation)) {
       Create_Face_Texture = 1;
     }
 
@@ -23824,7 +23826,12 @@ void SOLARCHVISION_export_objects_OBJ () {
                             }
 
                             _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                          }              
+                          }
+            
+                          if (WIN3D_FacesShade == Shade_Vertex_Solar) {
+
+                            _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }                            
 
                           if (WIN3D_FacesShade == Shade_Vertex_Solid) {
 
@@ -26735,6 +26742,30 @@ float[] SOLARCHVISION_vertexRender_Shade_Surface_Materials (int mt) {
   };
 
   return COL;
+}
+
+
+float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solar (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+
+  float _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+
+  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);     
+
+  return COL;
+}
+
+
+float SOLARCHVISION_vertexU_Shade_Vertex_Solar (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+
+  float val = 0; //SOLARCHVISION_get_SolarImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
+
+  float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
+
+  if (PAL_DIR == -1) _u = 1 - _u;
+  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+  if (PAL_DIR == 2) _u =  0.5 * _u;
+
+  return _u;
 }
 
 
