@@ -1,7 +1,4 @@
 
-// save and open solarImages only records currect Impact_TYPE not both Passive and Active!
-
-
 // SOLARCHVISION_vertexU_Shade_Vertex_Solar ???????
 
 // exporting vertex solar shade to OBJ.
@@ -25319,7 +25316,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   //if (n != 0) {
   SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
-  SOLARCHVISION_add_Mesh2(8, 0, 0, 1, 0, 0, -100, -100, 0, 100, 100, 0);
+  SOLARCHVISION_add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
   //}
 
   if (n == 1) {
@@ -36407,9 +36404,9 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
 
     println("Saving to:", Filename);
 
-    SOLARCHVISION_save_project(Filename, Display_Output_in_Explorer);
-
     SOLARCHVISION_update_Project_info(selectedFile);
+
+    SOLARCHVISION_save_project(Filename, Display_Output_in_Explorer);
   }
 }     
 
@@ -53066,25 +53063,30 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1 = my_xml.addChild("allSections_SolarImpact");
     int ni = allSections_SolarImpact.length;
     int nj = allSections_SolarImpact[0].length;
+    int nk = allSections_SolarImpact[0][0].length;
     newChild1.setInt("ni", ni);
     newChild1.setInt("nj", nj);
+    newChild1.setInt("nk", nk);
 
     println("ni", ni);
     println("nj", nj);
+    println("nk", nk);
 
     for (int i = 0; i < ni; i++) {
       for (int j = 0; j < nj; j++) {
+        for (int k = 0; k < nk; k++) {
 
-        String the_filename = "SolarImpact_" + nf(i * nj + j, 0) + ".bmp";
-
-        String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
-
-        println("Saving texture:", TEXTURE_path);
-        allSections_SolarImpact[i][j][Impact_TYPE].save(TEXTURE_path);
-
-        newChild2 = newChild1.addChild("Path");
-        newChild2.setInt("id", i * nj + j); 
-        newChild2.setContent(TEXTURE_path);
+          String the_filename = "SolarImpact_" + nf((i * nj + j) * nk + k, 0) + ".bmp";
+  
+          String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
+  
+          println("Saving texture:", TEXTURE_path);
+          allSections_SolarImpact[i][j][k].save(TEXTURE_path);
+  
+          newChild2 = newChild1.addChild("Path");
+          newChild2.setInt("id", (i * nj + j) * nk + k); 
+          newChild2.setContent(TEXTURE_path);
+        }
       }
     }
   }
@@ -54370,20 +54372,23 @@ void SOLARCHVISION_load_project (String myFile) {
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         int nj = children0[L].getInt("nj");
+        int nk = children0[L].getInt("nk");
 
-        allSections_SolarImpact = new PImage [ni][nj][numberOfImpactVariations]; 
+        allSections_SolarImpact = new PImage [ni][nj][nk]; 
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
           for (int j = 0; j < nj; j++) {
+            for (int k = 0; k < nk; k++) {
 
-            String TEXTURE_path = children1[i * nj + j].getContent();
-
-            allSections_SolarImpact[i][j][Impact_TYPE] = createImage(2, 2, RGB);
-
-            println("Loading texture(" + i + "," + j + "):", TEXTURE_path);
-            allSections_SolarImpact[i][j][Impact_TYPE] = loadImage(TEXTURE_path);
-            println("loaded!");
+              String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
+  
+              allSections_SolarImpact[i][j][k] = createImage(2, 2, RGB);
+  
+              println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
+              allSections_SolarImpact[i][j][k] = loadImage(TEXTURE_path);
+              println("loaded!");
+            }
           }
         }
       }
