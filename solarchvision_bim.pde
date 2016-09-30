@@ -1,3 +1,11 @@
+
+int Impact_ACTIVE = 0; // internal
+int Impact_PASSIVE = 1; // internal
+
+
+int Impact_TYPE = Impact_PASSIVE;
+
+
 // SOLARCHVISION_vertexU_Shade_Vertex_Solar ???????
 
 // exporting vertex solar shade to OBJ.
@@ -1614,12 +1622,7 @@ int WindFlow_Pallet_DIR = -1;
 float WindFlow_Pallet_MLT = 1;
 
 
-int Impact_ACTIVE = 1;
-int Impact_PASSIVE = 2;
-int Impact_WIND_Overlay = 1;
-int Impact_WIND_Temperature = 2;
 
-int Impact_TYPE = 1; 
 
 
 
@@ -2062,8 +2065,8 @@ int WIN3D_Include = 1;
 
 
 
-float[][] WIN3D_VerticesSolarEnergy;
-float[][] WIN3D_VerticesSolarEffect;
+float[][][] WIN3D_VerticesSolar;
+
 int WIN3D_VerticesSolarValue_Update = 1;
 
 
@@ -2965,8 +2968,9 @@ void draw () {
 
         SOLARCHVISION_draw_ROLLOUT();
 
-        if (abs(pre_STUDY_PlotImpacts) % 2 != abs(STUDY_PlotImpacts) % 2) {
-          rebuild_SolarProjection_array = 1;
+        if (pre_STUDY_PlotImpacts != STUDY_PlotImpacts) {
+          WIN3D_Update = 1;
+          STUDY_Update = 1;
         }
 
         if (pre_SampleYear_Start != SampleYear_Start) {
@@ -10577,8 +10581,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     Rendered_WindRose_RES = RES;
 
-    if (STUDY_PlotImpacts == -2) Impact_TYPE = Impact_WIND_Overlay; 
-    if (STUDY_PlotImpacts == -1) Impact_TYPE = Impact_WIND_Temperature;
+    if (STUDY_PlotImpacts == -2) Impact_TYPE = Impact_ACTIVE; 
+    if (STUDY_PlotImpacts == -1) Impact_TYPE = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -10600,19 +10604,19 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
 
-    if (Impact_TYPE == Impact_WIND_Overlay) {  
+    if (Impact_TYPE == Impact_ACTIVE) {  
       PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; 
       PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
     }
-    if (Impact_TYPE == Impact_WIND_Temperature) {  
+    if (Impact_TYPE == Impact_PASSIVE) {  
       //PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
       PAL_TYPE = 12; 
       PAL_DIR = -1;
     }             
 
     float PAL_Multiplier = 1; 
-    if (Impact_TYPE == Impact_WIND_Overlay) PAL_Multiplier = 1.0;
-    if (Impact_TYPE == Impact_WIND_Temperature) PAL_Multiplier = 1.0 / 30.0;
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 1.0 / 30.0;
 
     for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) { 
 
@@ -10683,7 +10687,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                     float _u = 0;
 
-                    if (Impact_TYPE == Impact_WIND_Overlay) {
+                    if (Impact_TYPE == Impact_ACTIVE) {
 
                       float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count); 
 
@@ -10698,7 +10702,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                     }
-                    if (Impact_TYPE == Impact_WIND_Temperature) {
+                    if (Impact_TYPE == Impact_PASSIVE) {
                       _u = 0.5 + 0.5 * (PAL_Multiplier * T);
 
                       if (PAL_DIR == -1) _u = 1 - _u;
@@ -10796,7 +10800,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                     float _u = 0;
 
-                    if (Impact_TYPE == Impact_WIND_Overlay) {
+                    if (Impact_TYPE == Impact_ACTIVE) {
 
                       float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count) / (STUDY_j_End - STUDY_j_Start);
 
@@ -10811,7 +10815,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                     }
-                    if (Impact_TYPE == Impact_WIND_Temperature) {
+                    if (Impact_TYPE == Impact_PASSIVE) {
                       _u = 0.5 + 0.5 * (PAL_Multiplier * T);
 
                       if (PAL_DIR == -1) _u = 1 - _u;
@@ -10873,13 +10877,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.rect((j + STUDY_rect_offset_x - 100 * STUDY_rect_scale) * sx_Plot, (-100 * STUDY_rect_scale) * sx_Plot, (200 * STUDY_rect_scale) * sx_Plot, (200 * STUDY_rect_scale) * sx_Plot);
     }
 
-    if (Impact_TYPE != Impact_WIND_Overlay) { 
+    if (Impact_TYPE != Impact_ACTIVE) { 
 
       float pal_length = 400;
       for (int q = 0; q < 11; q += 1) {
         float _u = 0;
 
-        if (Impact_TYPE == Impact_WIND_Temperature) _u = 0.1 * q;
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.1 * q;
 
         if (PAL_DIR == -1) _u = 1 - _u;
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10905,7 +10909,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
         STUDY_Diagrams.textAlign(CENTER, CENTER);
 
-        if (Impact_TYPE == Impact_WIND_Temperature) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 + 175 - 0.05 * 20) * STUDY_S_View);
       }
     }         
 
@@ -10924,11 +10928,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(LEFT, TOP); 
-      if (Impact_TYPE == Impact_WIND_Overlay) {  
+      if (Impact_TYPE == Impact_ACTIVE) {  
         STUDY_Diagrams.text(("Wind direction and speed"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
-      if (Impact_TYPE == Impact_WIND_Temperature) {  
+      if (Impact_TYPE == Impact_PASSIVE) {  
         STUDY_Diagrams.text(("Wind direction and speed with air temperature"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
@@ -13138,47 +13142,42 @@ void STUDY_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
       case 112 : //F1
-        IMPACTS_DataSource = databaseNumber_FORECAST_ENSEMBLE; 
+        STUDY_PlotImpacts = -2; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case 113 : //F2
-        IMPACTS_DataSource = databaseNumber_RECENT_OBSERVED; 
+        STUDY_PlotImpacts = -1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case 114 : //F3
-        IMPACTS_DataSource = databaseNumber_CLIMATE_CWEEDS; 
+        STUDY_PlotImpacts = 4; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case 115 : //F4
-        IMPACTS_DataSource = databaseNumber_CLIMATE_TMYEPW; 
+        STUDY_PlotImpacts = 5; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;          
-
       case 116 : //F5
-        if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 4)) || (STUDY_PlotImpacts == 5)) STUDY_PlotImpacts = 4;
-        else STUDY_PlotImpacts = 5; 
+        STUDY_PlotImpacts = 2; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case 117 : //F6
-        if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 2)) || (STUDY_PlotImpacts == 3)) STUDY_PlotImpacts = 2;
-        else STUDY_PlotImpacts = 3; 
+        STUDY_PlotImpacts = 3; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;                   
       case 118 : //F7
-        if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != 0)) || (STUDY_PlotImpacts == 1)) STUDY_PlotImpacts = 0;
-        else STUDY_PlotImpacts = 1; 
+        STUDY_PlotImpacts = 0; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;           
       case 119 : //F8
-        if (((abs(STUDY_PlotImpacts) % 2 == 0) && (STUDY_PlotImpacts != -2)) || (STUDY_PlotImpacts == -1)) STUDY_PlotImpacts = -2;
-        else STUDY_PlotImpacts = -1; 
+        STUDY_PlotImpacts = 1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
@@ -27200,8 +27199,7 @@ void SOLARCHVISION_draw_Faces () {
                     N_baked += 1;
 
                     float _valuesSUM = 0;
-                    if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[IMPACTS_DisplayDay][N_baked];
-                    if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[IMPACTS_DisplayDay][N_baked];
+                    _valuesSUM = WIN3D_VerticesSolar[Impact_TYPE][IMPACTS_DisplayDay][N_baked];
 
                     if (_valuesSUM < 0.9 * FLOAT_undefined) {
 
@@ -27548,12 +27546,12 @@ void SOLARCHVISION_draw_Faces () {
                     float[] ADD_values_RAD = {
                       _valuesSUM_RAD
                     };
-                    WIN3D_VerticesSolarEnergy[j + 1] = (float[]) concat(WIN3D_VerticesSolarEnergy[j + 1], ADD_values_RAD);
+                    WIN3D_VerticesSolar[Impact_ACTIVE][j + 1] = (float[]) concat(WIN3D_VerticesSolar[Impact_ACTIVE][j + 1], ADD_values_RAD);
 
                     float[] ADD_values_EFF = {
                       COMPARISON
                     };
-                    WIN3D_VerticesSolarEffect[j + 1] = (float[]) concat(WIN3D_VerticesSolarEffect[j + 1], ADD_values_EFF);
+                    WIN3D_VerticesSolar[Impact_PASSIVE][j + 1] = (float[]) concat(WIN3D_VerticesSolar[Impact_PASSIVE][j + 1], ADD_values_EFF);
                    
                   }    
 
@@ -27586,12 +27584,12 @@ void SOLARCHVISION_draw_Faces () {
                   float[] ADD_values_RAD = {
                     TOTAL_valuesSUM_RAD
                   };
-                  WIN3D_VerticesSolarEnergy[0] = (float[]) concat(WIN3D_VerticesSolarEnergy[0], ADD_values_RAD);
+                  WIN3D_VerticesSolar[Impact_ACTIVE][0] = (float[]) concat(WIN3D_VerticesSolar[Impact_ACTIVE][0], ADD_values_RAD);
 
                   float[] ADD_values_EFF = {
                     COMPARISON
                   };
-                  WIN3D_VerticesSolarEffect[0] = (float[]) concat(WIN3D_VerticesSolarEffect[0], ADD_values_EFF);
+                  WIN3D_VerticesSolar[Impact_PASSIVE][0] = (float[]) concat(WIN3D_VerticesSolar[Impact_PASSIVE][0], ADD_values_EFF);
 
                 }
 
@@ -52679,10 +52677,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("WindFlow_Pallet_CLR", WindFlow_Pallet_CLR);
   newChild1.setInt("WindFlow_Pallet_DIR", WindFlow_Pallet_DIR);
   newChild1.setFloat("WindFlow_Pallet_MLT", WindFlow_Pallet_MLT);
-  newChild1.setInt("Impact_ACTIVE", Impact_ACTIVE);
-  newChild1.setInt("Impact_PASSIVE", Impact_PASSIVE);
-  newChild1.setInt("Impact_WIND_Overlay", Impact_WIND_Overlay);
-  newChild1.setInt("Impact_WIND_Temperature", Impact_WIND_Temperature);
   newChild1.setInt("Impact_TYPE", Impact_TYPE);
   newChild1.setFloat("STUDY_O_scale", STUDY_O_scale);
   newChild1.setFloat("STUDY_W_scale", STUDY_W_scale);
@@ -53993,10 +53987,6 @@ void SOLARCHVISION_load_project (String myFile) {
       WindFlow_Pallet_CLR = children0[L].getInt("WindFlow_Pallet_CLR");
       WindFlow_Pallet_DIR = children0[L].getInt("WindFlow_Pallet_DIR");
       WindFlow_Pallet_MLT = children0[L].getFloat("WindFlow_Pallet_MLT");
-      Impact_ACTIVE = children0[L].getInt("Impact_ACTIVE");
-      Impact_PASSIVE = children0[L].getInt("Impact_PASSIVE");
-      Impact_WIND_Overlay = children0[L].getInt("Impact_WIND_Overlay");
-      Impact_WIND_Temperature = children0[L].getInt("Impact_WIND_Temperature");
       Impact_TYPE = children0[L].getInt("Impact_TYPE");
       STUDY_O_scale = children0[L].getFloat("STUDY_O_scale");
       STUDY_W_scale = children0[L].getFloat("STUDY_W_scale");
@@ -58200,13 +58190,12 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 void SOLARCHVISION_resize_WIN3D_VerticesSolar_Array () { // called when STUDY_j_End changes
 
-  WIN3D_VerticesSolarEnergy = new float [1 + STUDY_j_End - STUDY_j_Start][1];
-  WIN3D_VerticesSolarEffect = new float [1 + STUDY_j_End - STUDY_j_Start][1];
-  for (int i = 0; i < WIN3D_VerticesSolarEnergy.length; i++) {
-    WIN3D_VerticesSolarEnergy[i][0] = FLOAT_undefined;
-  }
-  for (int i = 0; i < WIN3D_VerticesSolarEffect.length; i++) {
-    WIN3D_VerticesSolarEffect[i][0] = FLOAT_undefined;
+  WIN3D_VerticesSolar = new float [2][1 + STUDY_j_End - STUDY_j_Start][1];
+
+  for (int i = 0; i < WIN3D_VerticesSolar.length; i++) {
+    for (int j = 0; j < WIN3D_VerticesSolar[i].length; j++) {
+      WIN3D_VerticesSolar[i][j][0] = FLOAT_undefined;
+    }
   }
 
 }
