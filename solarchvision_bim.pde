@@ -1,4 +1,4 @@
-
+// should write the info on 3D-Pal
 
 
 
@@ -34567,8 +34567,8 @@ void mouseWheel (MouseEvent event) {
 
               int keep_WORLD_Viewport_ZOOM = WORLD_Viewport_ZOOM;
 
-              if (Wheel_Value < 0) WORLD_Viewport_ZOOM += 1;
-              if (Wheel_Value > 0) WORLD_Viewport_ZOOM -= 1;
+              if (Wheel_Value < 0) WORLD_Viewport_ZOOM -= 1;
+              if (Wheel_Value > 0) WORLD_Viewport_ZOOM += 1;
 
               if (WORLD_Viewport_ZOOM < 1) WORLD_Viewport_ZOOM = 1;
               if (WORLD_Viewport_ZOOM > 6) WORLD_Viewport_ZOOM = 6;
