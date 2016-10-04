@@ -783,7 +783,7 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
-int UITASK_LandOrbit_TargetRollXY_TargetRollZ = -19;
+int UITASK_LandOrbit_Pan_TargetRollZ = -19;
 int UITASK_LookAtDirection = -18;
 int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; 
 int UITASK_PanY_TargetRollXY_TargetRollZ = -16; 
@@ -14063,7 +14063,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
       case 33: 
         WIN3D_CurrentCamera += 1;
-        if (WIN3D_CurrentCamera > allCameras_num) WIN3D_CurrentCamera = 0;
+        if (WIN3D_CurrentCamera > allCameras_num - 1) WIN3D_CurrentCamera = 0;
         SOLARCHVISION_apply_currentCamera();
 
         SOLARCHVISION_modify_Viewport_Title();
@@ -34903,7 +34903,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_TargetRollXY_TargetRollZ) { // viewport:LandOrbit
+              if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
 
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
@@ -35162,7 +35162,7 @@ void mouseDragged () {
             float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
             float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
 
-            if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_TargetRollXY_TargetRollZ) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_Pan_TargetRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraLandOrbit
 
@@ -35171,11 +35171,10 @@ void mouseDragged () {
                 WIN3D_Update = 1;
               }
 
-              if (mouseButton == RIGHT) { // TargetRollXY
+              if (mouseButton == RIGHT) { // Pan
 
-                WIN3D_RZ_Coordinate += 10 * dx * WIN3D_RS_Coordinate; 
-
-                SOLARCHVISION_reverseTransform_3DViewport(); 
+                WIN3D_X_Coordinate += 100 * dx * WIN3D_S_Coordinate * OBJECTS_scale;  
+                WIN3D_Y_Coordinate += 100 * dy * WIN3D_S_Coordinate * OBJECTS_scale; 
 
                 WIN3D_Update = 1;
               }
@@ -35200,7 +35199,7 @@ void mouseDragged () {
 
             if ((WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll) || (WIN3D_UI_CurrentTask == UITASK_DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK_PickSelect)) { // viewport
 
-              if (mouseButton == LEFT) { // pan
+              if (mouseButton == LEFT) { // Pan
 
                 WIN3D_X_Coordinate += 100 * dx * WIN3D_S_Coordinate * OBJECTS_scale;  
                 WIN3D_Y_Coordinate += 100 * dy * WIN3D_S_Coordinate * OBJECTS_scale; 
@@ -35230,7 +35229,7 @@ void mouseDragged () {
                 WIN3D_Update = 1;
               }
 
-              if (mouseButton == RIGHT) { // pan
+              if (mouseButton == RIGHT) { // Pan
 
                 WIN3D_X_Coordinate += 100 * dx * WIN3D_S_Coordinate * OBJECTS_scale;  
                 WIN3D_Y_Coordinate += 100 * dy * WIN3D_S_Coordinate * OBJECTS_scale; 
@@ -35268,7 +35267,7 @@ void mouseDragged () {
                 WIN3D_Update = 1;
               }
 
-              if (mouseButton == RIGHT) { // pan
+              if (mouseButton == RIGHT) { // Pan
 
                 WIN3D_X_Coordinate += 100 * dx * WIN3D_S_Coordinate * OBJECTS_scale;  
                 WIN3D_Y_Coordinate += 100 * dy * WIN3D_S_Coordinate * OBJECTS_scale; 
@@ -35308,7 +35307,7 @@ void mouseDragged () {
                 WIN3D_Update = 1;
               }
 
-              if (mouseButton == RIGHT) { // pan
+              if (mouseButton == RIGHT) { // Pan
 
                 WIN3D_X_Coordinate += 100 * dx * WIN3D_S_Coordinate * OBJECTS_scale;  
                 WIN3D_Y_Coordinate += 100 * dy * WIN3D_S_Coordinate * OBJECTS_scale; 
@@ -35336,7 +35335,7 @@ void mouseDragged () {
 
             if (WIN3D_UI_CurrentTask == UITASK_3DModelSize_Pan_TargetRoll) { // viewport
 
-              if (mouseButton == LEFT) { // pan
+              if (mouseButton == LEFT) { // Pan
 
                 WIN3D_X_Coordinate += 100 * dx * WIN3D_S_Coordinate * OBJECTS_scale;  
                 WIN3D_Y_Coordinate += 100 * dy * WIN3D_S_Coordinate * OBJECTS_scale; 
@@ -50517,7 +50516,7 @@ void UI_set_to_View_Orbit (int n) {
 
 void UI_set_to_View_LandOrbit (int n) {
 
-  WIN3D_UI_CurrentTask = UITASK_LandOrbit_TargetRollXY_TargetRollZ;
+  WIN3D_UI_CurrentTask = UITASK_LandOrbit_Pan_TargetRollZ;
 
   ROLLOUT_Update = 1;
 }  
