@@ -783,6 +783,7 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
+int UITASK_LandOrbit_TargetRollXY_TargetRollZ = -19;
 int UITASK_LookAtDirection = -18;
 int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; 
 int UITASK_PanY_TargetRollXY_TargetRollZ = -16; 
@@ -27197,6 +27198,74 @@ void SOLARCHVISION_rotateXY_3DViewport_around_Selection (float t) {
 }
 
 
+void SOLARCHVISION_rotateXY_3DViewport_around_LandIntersection (float t) {
+
+  float Image_X = SOLARCHVISION_X_click1 - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+  float Image_Y = SOLARCHVISION_Y_click1 - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+
+  float[] ray_direction = new float [3];
+
+  float[] ray_start = {
+    WIN3D_CAM_x, WIN3D_CAM_y, WIN3D_CAM_z
+  };
+
+  float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+
+  ray_start[0] /= OBJECTS_scale;
+  ray_start[1] /= OBJECTS_scale;
+  ray_start[2] /= OBJECTS_scale;          
+
+  ray_end[0] /= OBJECTS_scale;
+  ray_end[1] /= OBJECTS_scale;
+  ray_end[2] /= OBJECTS_scale;
+
+  if (WIN3D_ViewType == 0) {
+    float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+
+    ray_center[0] /= OBJECTS_scale;
+    ray_center[1] /= OBJECTS_scale;
+    ray_center[2] /= OBJECTS_scale;
+
+    ray_start[0] += ray_end[0] - ray_center[0];
+    ray_start[1] += ray_end[1] - ray_center[1];
+    ray_start[2] += ray_end[2] - ray_center[2];
+  }
+
+  ray_direction[0] = ray_end[0] - ray_start[0];
+  ray_direction[1] = ray_end[1] - ray_start[1];
+  ray_direction[2] = ray_end[2] - ray_start[2];  
+  
+  
+  float[] RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+
+  if (RxP[0] >= 0) {  
+
+    float xO = RxP[1] / OBJECTS_scale;
+    float yO = RxP[2] / OBJECTS_scale;
+    float zO = RxP[3] / OBJECTS_scale;             
+
+    float xA = ray_start[0];
+    float yA = ray_start[1];
+    float zA = ray_start[2];
+
+    float dx = xA - xO;
+    float dy = yA - yO;
+  
+    WIN3D_RZ_Coordinate += t;
+  
+    float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
+    float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
+    float zB = zA;
+  
+    WIN3D_CAM_x = xB * OBJECTS_scale;           
+    WIN3D_CAM_y = yB * OBJECTS_scale;
+    WIN3D_CAM_z = zB * OBJECTS_scale;   
+  
+    SOLARCHVISION_reverseTransform_3DViewport();
+  }
+}
+
+
 void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_Coordinate, WIN3D_Y_Coordinate and WIN3D_Z_Coordinate from new set of camera start and end points.
 
   float px, py, pz;
@@ -34834,6 +34903,12 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
+              if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_TargetRollXY_TargetRollZ) { // viewport:LandOrbit
+
+                SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
+
+                WIN3D_Update = 1;
+              }      
 
 
               
@@ -35086,6 +35161,25 @@ void mouseDragged () {
 
             float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
             float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+
+            if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_TargetRollXY_TargetRollZ) { // viewport
+
+              if (mouseButton == LEFT) { // CameraLandOrbit
+
+                SOLARCHVISION_rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D_RS_Coordinate);
+
+                WIN3D_Update = 1;
+              }
+
+              if (mouseButton == RIGHT) { // TargetRollXY
+
+                WIN3D_RZ_Coordinate += 10 * dx * WIN3D_RS_Coordinate; 
+
+                SOLARCHVISION_reverseTransform_3DViewport(); 
+
+                WIN3D_Update = 1;
+              }
+            } 
 
             if ((WIN3D_UI_CurrentTask == UITASK_PanX_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK_PanY_TargetRollXY_TargetRollZ)) { // viewport
 
@@ -37278,6 +37372,12 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("OrbitXY")) {
               UI_set_to_View_Orbit(2);
               SOLARCHVISION_highlight_in_BAR_b("ORxy");
+              UI_BAR_b_Update = 1;
+            }   
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandOrbit")) {
+              UI_set_to_View_LandOrbit(0);
+              SOLARCHVISION_highlight_in_BAR_b("LNOR");
               UI_BAR_b_Update = 1;
             }   
 
@@ -48256,6 +48356,65 @@ void UI_dessin_SkydomeSize (int _type, float x, float y, float r) {
 }
 
 
+void UI_dessin_LandOrbit (int _type, float x, float y, float r) {
+
+  {
+    pushMatrix();
+    translate(x, y);
+    translate(-0.333 * r, -0.333 * r); // <<<<<<
+  
+    float d = 1.0 * r;
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(0); 
+    ellipse(0, 0, d, d); 
+  
+    strokeWeight(2);
+    stroke(255); 
+    noFill();  
+  
+    if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
+    if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+    if (_type == 1) {
+      arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+      arc(0, 0, d, 0.333 * d, 0, PI);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  }
+  
+  {  
+    pushMatrix();
+    translate(x, y);
+    translate(0.333 * r, 0.333 * r); // <<<<<<
+  
+    float d = 0.75 * r;
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    arc(0, 0, d, d, 0, PI); 
+  
+    stroke(255); 
+    noFill();  
+  
+    for (float i = -1.5; i <= 1.5; i++) { 
+      line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
+  
+      if (i < 1.5) arc(i * 0.25 * d, -0.5 * d, 0.25 * d, 0.25 * d, PI, 2*PI);
+    }
+    
+    strokeWeight(0);
+
+    popMatrix();      
+  }
+
+  UI_BAR_b_Display_Text = 0;
+}
+
 void UI_dessin_Orbit (int _type, float x, float y, float r) {
 
   pushMatrix();
@@ -48699,7 +48858,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at direction", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
+    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at direction", "Look at selection", "Pan", "PanX", "PanY", "LandOrbit", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
   }
   , 
   {
@@ -49250,11 +49409,15 @@ String[][] UI_BAR_b_Items = {
   {
     "3", "DIz", "DIx", "DIy", "Truck", "1.0"
   }
-  , 
+  ,
+  {
+    "1", "LNOR", "LandOrbit", "1.0"
+  }
+  ,  
   {
     "1", "OR", "ORxy", "ORz", "Orbit", "1.0"
   }
-  , 
+  ,   
   {
     "1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"
   }
@@ -49599,6 +49762,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
         if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
 
+        if (Bar_Switch.equals("LandOrbit")) UI_set_to_View_LandOrbit(0);
+        
         if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
         if (Bar_Switch.equals("CameraRoll")) UI_set_to_View_CameraRoll(j - 1);
         if (Bar_Switch.equals("TargetRoll")) UI_set_to_View_TargetRoll(j - 1);
@@ -49694,7 +49859,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }          
         if (Bar_Switch.equals("Zoom")) {
           UI_dessin_ZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }   
+        }
+        if (Bar_Switch.equals("LandOrbit")) {
+          UI_dessin_LandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+        }             
         if (Bar_Switch.equals("Orbit")) {
           UI_dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
         }     
@@ -50347,6 +50515,14 @@ void UI_set_to_View_Orbit (int n) {
 
 
 
+void UI_set_to_View_LandOrbit (int n) {
+
+  WIN3D_UI_CurrentTask = UITASK_LandOrbit_TargetRollXY_TargetRollZ;
+
+  ROLLOUT_Update = 1;
+}  
+
+
 
 void UI_set_to_View_LookAtSelection (int n) {
 
@@ -50390,6 +50566,7 @@ void UI_set_to_View_LookAtOrigin (int n) {
 
   ROLLOUT_Update = 1;
 }  
+
 
 void UI_set_to_View_Pan (int n) {
 
@@ -56297,6 +56474,12 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     SOLARCHVISION_highlight_in_BAR_b("ORxy");
     UI_BAR_b_Update = 1;   
   }
+  
+  else if (Command_CAPITAL.equals("LANDORBIT")) {
+    UI_set_to_View_LandOrbit(0);
+    SOLARCHVISION_highlight_in_BAR_b("LNOR");
+    UI_BAR_b_Update = 1;   
+  }    
   
   else if (Command_CAPITAL.equals("PAN")) {
     UI_set_to_View_Pan(0);
