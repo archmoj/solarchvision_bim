@@ -14,7 +14,7 @@
 // should test view from the sun function: if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
 
 
-// remarked: SOLARCHVISION_update_models(2);
+
 
 
 
@@ -2683,7 +2683,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_Model_Main", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 23) {
-    //SOLARCHVISION_update_models(2);
+    SOLARCHVISION_update_models(2);
 
     stroke(0);
     fill(0);
@@ -29440,8 +29440,29 @@ void SOLARCHVISION_add_Model_2DsFromFile () {
 }
 
 
-//void SOLARCHVISION_add_Model_CMC () { //CMC
+
 void SOLARCHVISION_add_Model_Main () { //CMC
+
+
+  {
+    float r = 5;
+    float x = 0;
+    float y = 0;
+    float z = 0;    
+    float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
+    SOLARCHVISION_add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 0);
+  }  
+
+  
+
+  SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+  addToLastGroup3D = 0;
+}
+
+
+void SOLARCHVISION_add_Model_CMC () { //CMC
 
 
   {
