@@ -23911,7 +23911,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
 
   for (int f = 0; f < FileALL.length; f += 1) {
 
-    if (10 + Progress < 100 * f / float(FileALL.length)) { 
+    if (1 + Progress < 100 * f / float(FileALL.length)) { 
       Progress = 100 * f / float(FileALL.length);
       println("Progress:", int(Progress), "%");
     }
@@ -26610,7 +26610,7 @@ void SOLARCHVISION_draw_Faces () {
 
         for (int f = 0; f < allFaces_PNT.length; f++) {
 
-          if (10 + Progress < 100 * f / float(allFaces_PNT.length)) { 
+          if (1 + Progress < 100 * f / float(allFaces_PNT.length)) { 
             Progress = 100 * f / float(allFaces_PNT.length);
             println("Progress:", int(Progress), "%");
           }
@@ -56741,7 +56741,7 @@ void SOLARCHVISION_PreBakeViewport () {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
     
-    if (10 + Progress < 100 * np / float(RES1 * RES2)) { 
+    if (1 + Progress < 100 * np / float(RES1 * RES2)) { 
       Progress = 100 * np / float(RES1 * RES2);
       println("Progress:", int(Progress), "%");
     }
@@ -57047,7 +57047,7 @@ void SOLARCHVISION_RenderViewport () {
     Image_X -= 0.5 * WIN3D_X_View;
     Image_Y -= 0.5 * WIN3D_Y_View;
 
-    if (10 + Progress < 100 * np / float(RES1 * RES2)) { 
+    if (1 + Progress < 100 * np / float(RES1 * RES2)) { 
       Progress = 100 * np / float(RES1 * RES2);
       println("Progress:", int(Progress), "%");
     }
