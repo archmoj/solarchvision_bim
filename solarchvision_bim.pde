@@ -1,3 +1,4 @@
+
 // should write the info on 3D-Pal
 
 
@@ -9394,25 +9395,25 @@ void SOLARCHVISION_draw_dataNormals (int i, int j, float[] _valuesA, float[] _va
 
 
     if (l == STAT_N_Middle) {
-      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
-      STUDY_Diagrams.stroke(0, 191, 0, _OPACITY);
-      STUDY_Diagrams.fill(0, 191, 0, _OPACITY);
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
+      STUDY_Diagrams.stroke(0, 191, 0);
+      STUDY_Diagrams.fill(0, 191, 0);
     } else if (l == STAT_N_MidHigh) {
-      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
-      STUDY_Diagrams.stroke(191, 0, 0, _OPACITY);
-      STUDY_Diagrams.fill(191, 0, 0, _OPACITY);
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
+      STUDY_Diagrams.stroke(191, 0, 0);
+      STUDY_Diagrams.fill(191, 0, 0);
     } else if (l == STAT_N_MidLow) {
-      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
-      STUDY_Diagrams.stroke(0, 0, 191, _OPACITY);
-      STUDY_Diagrams.fill(0, 0, 191, _OPACITY);
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
+      STUDY_Diagrams.stroke(0, 0, 191);
+      STUDY_Diagrams.fill(0, 0, 191);
     } else if (l == STAT_N_Max) {
-      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
-      STUDY_Diagrams.stroke(255, 127, 127, _OPACITY);
-      STUDY_Diagrams.fill(255, 127, 127, _OPACITY);
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
+      STUDY_Diagrams.stroke(255, 127, 127);
+      STUDY_Diagrams.fill(255, 127, 127);
     } else if (l == STAT_N_Min) {
-      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
-      STUDY_Diagrams.stroke(127, 127, 255, _OPACITY);
-      STUDY_Diagrams.fill(127, 127, 255, _OPACITY);
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
+      STUDY_Diagrams.stroke(127, 127, 255);
+      STUDY_Diagrams.fill(127, 127, 255);
     } else if (l == STAT_N_M50) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
       STUDY_Diagrams.stroke(0, 127, 0);
@@ -9432,14 +9433,13 @@ void SOLARCHVISION_draw_dataNormals (int i, int j, float[] _valuesA, float[] _va
     }
 
 
-    /*
+    
     if (l == STUDY_ImpactLayer) {
      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
-     STUDY_Diagrams.stroke(0, 191, 0, _OPACITY);
-     STUDY_Diagrams.fill(0, 191, 0, _OPACITY);
-     }
-     */
-
+     STUDY_Diagrams.stroke(127, 127, 127, _OPACITY);
+     STUDY_Diagrams.fill(127, 127, 127, _OPACITY);
+    }
+    
     /////////////////////////////// 
     /*
      if (SOLARCHVISION_now_drawing == databaseNumber_CLIMATE_CWEEDS) {
@@ -9468,10 +9468,6 @@ void SOLARCHVISION_draw_dataNormals (int i, int j, float[] _valuesA, float[] _va
      STUDY_Diagrams.fill(0, 127, 0);
      }    
      */
-
-    //STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
-    //STUDY_Diagrams.stroke(0, 127, 0);
-    //STUDY_Diagrams.fill(0, 127, 0);
 
     /////////////////////////////// 
 
@@ -36746,13 +36742,14 @@ void mouseClicked () {
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("GoTo Selected Camera")) {
-
-              WIN3D_CurrentCamera = selectedCamera_numbers[selectedCamera_numbers.length - 1];
-              SOLARCHVISION_apply_currentCamera();
-              SOLARCHVISION_modify_Viewport_Title();
-
-              WIN3D_Update = 1;   
-              UI_BAR_b_Update = 1;
+              if (selectedCamera_numbers.length > 0) {
+                WIN3D_CurrentCamera = selectedCamera_numbers[selectedCamera_numbers.length - 1];
+                SOLARCHVISION_apply_currentCamera();
+                SOLARCHVISION_modify_Viewport_Title();
+  
+                WIN3D_Update = 1;   
+                UI_BAR_b_Update = 1;
+              }
             }
 
 
