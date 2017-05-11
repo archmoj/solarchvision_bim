@@ -37492,16 +37492,26 @@ void mouseClicked () {
               UI_BAR_b_Update = 1;
             }     
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shrink 3DViewSpace")) {
-              UI_set_to_View_3DViewSpace(0);
-              SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display All Viewports")) {
+              UI_set_to_Viewport(0);
+              SOLARCHVISION_highlight_in_BAR_b("AllViewports");
               UI_BAR_b_Update = 1;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge 3DViewSpace")) {
-              UI_set_to_View_3DViewSpace(1);
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge 3D Viewport")) {
+              UI_set_to_Viewport(1);
               SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
               UI_BAR_b_Update = 1;
             } 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge Time Viewport")) {
+              UI_set_to_Viewport(2);
+              SOLARCHVISION_highlight_in_BAR_b("ExpandTimeView");
+              UI_BAR_b_Update = 1;
+            }              
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge Map Viewport")) {
+              UI_set_to_Viewport(3);
+              SOLARCHVISION_highlight_in_BAR_b("ExpandMapView");
+              UI_BAR_b_Update = 1;
+            }             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Top")) {
               UI_set_to_View_3DViewPoint(0);
@@ -48875,7 +48885,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at direction", "Look at selection", "Pan", "PanX", "PanY", "LandOrbit", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
+    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Display All Viewports", "Enlarge 3D Viewport", "Enlarge Map Viewport", "Enlarge Time Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at direction", "Look at selection", "Pan", "PanX", "PanY", "LandOrbit", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
   }
   , 
   {
@@ -49387,7 +49397,7 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
-    "2", "AllViewsports", "Expand3DView", "3DViewSpace", "1"
+    "2", "AllViewports", "Expand3DView", "ExpandTimeView", "ExpandMapView", "3DViewSpace", "1"
   }
   , 
 
@@ -49813,7 +49823,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("AllModelSize")) UI_set_to_View_AllModelSize();
 
-        if (Bar_Switch.equals("3DViewSpace")) UI_set_to_View_3DViewSpace(j - 1);
+        if (Bar_Switch.equals("3DViewSpace")) UI_set_to_Viewport(j - 1);
 
         if (Bar_Switch.equals("3DViewPoint")) UI_set_to_View_3DViewPoint(j - 1);
       }
@@ -50642,7 +50652,7 @@ void UI_set_to_View_AllModelSize () {
 }   
 
 
-void UI_set_to_View_3DViewSpace (int n) {
+void UI_set_to_Viewport (int n) {
 
   FrameVariation = n;
   SOLARCHVISION_update_frame_layout();
@@ -56400,13 +56410,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     UI_BAR_b_Update = 1;    
   } 
 
-  else if (Command_CAPITAL.equals("SHRINK3D")) {
-    UI_set_to_View_3DViewSpace(0);
-    SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
+  else if (Command_CAPITAL.equals("ALLVIEWPORTS")) {
+    UI_set_to_Viewport(0);
+    SOLARCHVISION_highlight_in_BAR_b("AllViewports");
     UI_BAR_b_Update = 1;    
   }   
   else if (Command_CAPITAL.equals("ENLARGE3D")) {
-    UI_set_to_View_3DViewSpace(1);
+    UI_set_to_Viewport(1);
     SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
     UI_BAR_b_Update = 1;    
   } 
