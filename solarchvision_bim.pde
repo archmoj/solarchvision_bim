@@ -23252,7 +23252,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
                           float u0 = 0.5 * (_u + 0.5);
 
-                          if (WIN3D_FacesShade == Shade_Global_Solar) {
+                          if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
                             if (Impact_TYPE == Impact_ACTIVE) {
                               u0 = _u;
                             }
