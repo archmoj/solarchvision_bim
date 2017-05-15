@@ -2063,7 +2063,7 @@ int WIN3D_Include = 1;
 
 
 
-float[][][] VerticesSolar;
+float[][][][] VerticesSolar; // x,y,z, value
 
 int VerticesSolarValue_Update = 1;
 
@@ -23257,8 +23257,9 @@ void SOLARCHVISION_export_objects_OBJ () {
                           }
             
                           if (WIN3D_FacesShade == Shade_Vertex_Solar) {
-
+                            
                             _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            
                           }                            
 
                           if (WIN3D_FacesShade == Shade_Vertex_Solid) {
@@ -26095,7 +26096,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solar (float[] VERTEX_now, int P
 
 float SOLARCHVISION_vertexU_Shade_Vertex_Solar (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
-  float val = 0; //SOLARCHVISION_get_SolarImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
+  float val = SOLARCHVISION_get_SolarImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
   float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
 
@@ -26105,6 +26106,79 @@ float SOLARCHVISION_vertexU_Shade_Vertex_Solar (float[] VERTEX_now, int PAL_TYPE
 
   return _u;
 }
+
+float SOLARCHVISION_get_SolarImpact_atXYZ (float x, float y, float z) {
+
+  float v = 0;
+
+/*
+
+  kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+
+  for (int f = 0; f < allFaces_PNT.length; f++) {
+
+    int vsb = allFaces_MTLVGC[f][3];
+
+    if (vsb > 0) {
+
+      int Tessellation = allFaces_MTLVGC[f][1];
+
+      int TotalSubNo = 1;  
+      if (allFaces_MTLVGC[f][0] == 0) {
+        Tessellation += MODEL3D_Tessellation;
+      }
+      if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+      float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+      for (int j = 0; j < allFaces_PNT[f].length; j++) {
+        int vNo = allFaces_PNT[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }     
+
+      for (int n = 0; n < TotalSubNo; n++) {
+
+        float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+
+        WIN3D_Diagrams.beginShape();
+
+        for (int s = 0; s < subFace.length; s++) {
+
+          N_baked += 1;
+
+          float _valuesSUM = 0;
+          _valuesSUM = VerticesSolar[Impact_TYPE][IMPACTS_DisplayDay][N_baked][3]; // note that the solar values are stored at index:3
+
+          if (_valuesSUM < 0.9 * FLOAT_undefined) {
+
+            float _u = 0;
+
+            if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+            if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+
+            float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+
+            WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);          
+
+            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
+          }
+        }
+
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+    }
+  }
+
+*/
+
+  return v;
+}
+
 
 
 float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
@@ -26531,7 +26605,7 @@ void SOLARCHVISION_draw_Faces () {
                   N_baked += 1;
 
                   float _valuesSUM = 0;
-                  _valuesSUM = VerticesSolar[Impact_TYPE][IMPACTS_DisplayDay][N_baked];
+                  _valuesSUM = VerticesSolar[Impact_TYPE][IMPACTS_DisplayDay][N_baked][3]; // note that the solar values are stored at index:3
 
                   if (_valuesSUM < 0.9 * FLOAT_undefined) {
 
@@ -26871,15 +26945,19 @@ void SOLARCHVISION_draw_Faces () {
 
                   //println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
 
-                  float[] ADD_values_RAD = {
-                    _valuesSUM_RAD
+                  float[][] ADD_values_RAD = {
+                    {
+                      subFace[s][0], subFace[s][1], subFace[s][2], _valuesSUM_RAD
+                    }
                   };
-                  VerticesSolar[Impact_ACTIVE][j + 1] = (float[]) concat(VerticesSolar[Impact_ACTIVE][j + 1], ADD_values_RAD);
+                  VerticesSolar[Impact_ACTIVE][j + 1] = (float[][]) concat(VerticesSolar[Impact_ACTIVE][j + 1], ADD_values_RAD);
 
-                  float[] ADD_values_EFF = {
-                    COMPARISON
+                  float[][] ADD_values_EFF = {
+                    {
+                      subFace[s][0], subFace[s][1], subFace[s][2], COMPARISON
+                    }
                   };
-                  VerticesSolar[Impact_PASSIVE][j + 1] = (float[]) concat(VerticesSolar[Impact_PASSIVE][j + 1], ADD_values_EFF);
+                  VerticesSolar[Impact_PASSIVE][j + 1] = (float[][]) concat(VerticesSolar[Impact_PASSIVE][j + 1], ADD_values_EFF);
                  
                 }    
 
@@ -26909,15 +26987,19 @@ void SOLARCHVISION_draw_Faces () {
 
                 //println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
 
-                float[] ADD_values_RAD = {
-                  TOTAL_valuesSUM_RAD
+                float[][] ADD_values_RAD = {
+                  {
+                    subFace[s][0], subFace[s][1], subFace[s][2], TOTAL_valuesSUM_RAD
+                  }
                 };
-                VerticesSolar[Impact_ACTIVE][0] = (float[]) concat(VerticesSolar[Impact_ACTIVE][0], ADD_values_RAD);
+                VerticesSolar[Impact_ACTIVE][0] = (float[][]) concat(VerticesSolar[Impact_ACTIVE][0], ADD_values_RAD);
 
-                float[] ADD_values_EFF = {
-                  COMPARISON
+                float[][] ADD_values_EFF = {
+                  {
+                    subFace[s][0], subFace[s][1], subFace[s][2], COMPARISON
+                  }
                 };
-                VerticesSolar[Impact_PASSIVE][0] = (float[]) concat(VerticesSolar[Impact_PASSIVE][0], ADD_values_EFF);
+                VerticesSolar[Impact_PASSIVE][0] = (float[][]) concat(VerticesSolar[Impact_PASSIVE][0], ADD_values_EFF);
 
               }
 
@@ -57237,11 +57319,13 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 void SOLARCHVISION_resize_VerticesSolar_array () { // called when STUDY_j_End changes
 
-  VerticesSolar = new float [2][1 + STUDY_j_End - STUDY_j_Start][1];
+  VerticesSolar = new float [2][1 + STUDY_j_End - STUDY_j_Start][1][4];
 
   for (int i = 0; i < VerticesSolar.length; i++) {
     for (int j = 0; j < VerticesSolar[i].length; j++) {
-      VerticesSolar[i][j][0] = FLOAT_undefined;
+      for (int q = 0; q < 3; q++) {
+        VerticesSolar[i][j][0][q] = FLOAT_undefined;
+      }
     }
   }
 
