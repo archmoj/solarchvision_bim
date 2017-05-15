@@ -2718,6 +2718,11 @@ void draw () {
     InitializationStep = frameCount; 
     Last_initializationStep = frameCount;
   } else {
+    
+    if (VerticesSolarValue_Update != 0) {
+      SOLARCHVISION_compute_VerticesSolar_arrays();
+    }
+
 
     if (ROLLOUT_Include == 1) {
       if (ROLLOUT_Update == 1) {
@@ -26415,149 +26420,101 @@ void SOLARCHVISION_draw_Faces () {
 
 
 
-    if (WIN3D_FacesShade != Shade_Vertex_Solar) {
-      for (int f = 0; f < allFaces_PNT.length; f++) {
+    for (int f = 0; f < allFaces_PNT.length; f++) {
 
-        int vsb = allFaces_MTLVGC[f][3];
+      int vsb = allFaces_MTLVGC[f][3];
 
-        if (vsb > 0) {        
+      if (vsb > 0) {        
 
-          if (WIN3D_FacesShade == Shade_Surface_Base) {
+        if (WIN3D_FacesShade == Shade_Surface_Base) {
 
-            WIN3D_Diagrams.fill(255, 255, 255);
+          WIN3D_Diagrams.fill(255, 255, 255);
+
+          WIN3D_Diagrams.beginShape();
+
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
+
+            WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
+          }    
+
+          WIN3D_Diagrams.endShape(CLOSE);
+        } else {
+
+          int mt = allFaces_MTLVGC[f][0];
+
+          int Tessellation = allFaces_MTLVGC[f][1];
+
+          int TotalSubNo = 1;  
+          if (allFaces_MTLVGC[f][0] == 0) {
+            Tessellation += MODEL3D_Tessellation;
+          }
+          if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
+            base_Vertices[j][0] = allVertices[vNo][0];
+            base_Vertices[j][1] = allVertices[vNo][1];
+            base_Vertices[j][2] = allVertices[vNo][2];
+          }
+
+          for (int n = 0; n < TotalSubNo; n++) {
+
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
             WIN3D_Diagrams.beginShape();
 
-            for (int j = 0; j < allFaces_PNT[f].length; j++) {
-              int vNo = allFaces_PNT[f][j];
+            for (int s = 0; s < subFace.length; s++) {
 
-              WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
-            }    
+              if (WIN3D_FacesShade != Shade_Surface_Wire) {
 
-            WIN3D_Diagrams.endShape(CLOSE);
-          } else {
+                float[] COL = {
+                  255, 255, 255, 255
+                };
 
-            int mt = allFaces_MTLVGC[f][0];
+                if (WIN3D_FacesShade == Shade_Global_Solar) {
+                  int s_next = (s + 1) % subFace.length;
+                  int s_prev = (s + subFace.length - 1) % subFace.length;
 
-            int Tessellation = allFaces_MTLVGC[f][1];
+                  COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }              
 
-            int TotalSubNo = 1;  
-            if (allFaces_MTLVGC[f][0] == 0) {
-              Tessellation += MODEL3D_Tessellation;
-            }
-            if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (WIN3D_FacesShade == Shade_Surface_Materials) {
+                  COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                }              
 
-            float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-            for (int j = 0; j < allFaces_PNT[f].length; j++) {
-              int vNo = allFaces_PNT[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
+                if (WIN3D_FacesShade == Shade_Surface_White) {
+                  COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                }     
 
-            for (int n = 0; n < TotalSubNo; n++) {
+                if (WIN3D_FacesShade == Shade_Vertex_Solid) {
 
-              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-              WIN3D_Diagrams.beginShape();
-
-              for (int s = 0; s < subFace.length; s++) {
-
-                if (WIN3D_FacesShade != Shade_Surface_Wire) {
-
-                  float[] COL = {
-                    255, 255, 255, 255
-                  };
-
-                  if (WIN3D_FacesShade == Shade_Global_Solar) {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }              
-
-                  if (WIN3D_FacesShade == Shade_Surface_Materials) {
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                  }              
-
-                  if (WIN3D_FacesShade == Shade_Surface_White) {
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                  }     
-
-                  if (WIN3D_FacesShade == Shade_Vertex_Solid) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }                  
-
-                  if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }
-
-                  WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
-                } else {
-                  WIN3D_Diagrams.noFill();
+                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }
 
+                if (WIN3D_FacesShade == Shade_Vertex_Solar) {
 
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
+                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }              
+
+                if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
+
+                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }
+
+                WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
+              } else {
+                WIN3D_Diagrams.noFill();
               }
 
-              WIN3D_Diagrams.endShape(CLOSE);
+
+              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
             }
+
+            WIN3D_Diagrams.endShape(CLOSE);
           }
         }
-      }
-    } else if (WIN3D_FacesShade == Shade_Vertex_Solar) {
-      if (VerticesSolarValue_Update == 0) {
-
-        for (int f = 0; f < allFaces_PNT.length; f++) {
-
-          int vsb = allFaces_MTLVGC[f][3];
-
-          if (vsb > 0) {
-
-            int Tessellation = allFaces_MTLVGC[f][1];
-
-            int TotalSubNo = 1;  
-            if (allFaces_MTLVGC[f][0] == 0) {
-              Tessellation += MODEL3D_Tessellation;
-            }
-            if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-            float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-            for (int j = 0; j < allFaces_PNT[f].length; j++) {
-              int vNo = allFaces_PNT[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }     
-
-            for (int n = 0; n < TotalSubNo; n++) {
-
-              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-              WIN3D_Diagrams.beginShape();
-
-              for (int s = 0; s < subFace.length; s++) {
-
-                float _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-
-                float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-
-                WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);          
-
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
-              }
-
-              WIN3D_Diagrams.endShape(CLOSE);
-            }
-          }
-        }
-      } else {
-        
-        SOLARCHVISION_compute_VerticesSolar_arrays();
-        
       }
     }
   }
@@ -26937,6 +26894,7 @@ void SOLARCHVISION_compute_VerticesSolar_arrays () {
 
   cursor(ARROW);
 }
+
 
 
 float Orthographic_ZOOM () {
