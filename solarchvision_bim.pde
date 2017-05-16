@@ -140,6 +140,20 @@ void SOLARCHVISION_update_folders () {
 
 
 
+float[][]   VertexSolar_XYZ; 
+float[][][] VertexSolar_amounts; 
+
+int rebuild_VertexSolar_array = 0;
+int rebuild_GlobalSolar_array = 1;
+int rebuild_SolarImpactImage_array = 1;
+int rebuild_WindRoseImage_array = 1; 
+
+float SOLARCHVISION_GLOBE_stp_slp;
+float SOLARCHVISION_GLOBE_stp_dir;
+int SOLARCHVISION_GLOBE_n_slp;  
+int SOLARCHVISION_GLOBE_n_dir;
+
+float[][][][] GlobalSolar;
 
 
 
@@ -2050,12 +2064,6 @@ int WIN3D_Include = 1;
 
 
 
-float[][]   VerticesSolar_XYZ; 
-float[][][] VerticesSolar_amounts; 
-
-int VerticesSolarValue_Update = 0;
-
-
 
 
 
@@ -2264,7 +2272,7 @@ void setup () {
   SOLARCHVISION_empty_Materials_DirectArea();
   SOLARCHVISION_empty_Materials_DiffuseArea();
 
-  SOLARCHVISION_resize_VerticesSolar_array(); 
+  SOLARCHVISION_resize_VertexSolar_array(); 
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
@@ -2323,7 +2331,7 @@ void SOLARCHVISION_update_station (int Step) {
     rebuild_SolarImpactImage_array = 1;
     rebuild_WindRoseImage_array = 1;    
 
-    //VerticesSolarValue_Update = 1;
+    //rebuild_VertexSolar_array = 1;
 
     WORLD_Update = 1;
     WIN3D_Update = 1; 
@@ -2707,8 +2715,8 @@ void draw () {
     Last_initializationStep = frameCount;
   } else {
     
-    if (VerticesSolarValue_Update != 0) {
-      SOLARCHVISION_compute_VerticesSolar_arrays();
+    if (rebuild_VertexSolar_array != 0) {
+      SOLARCHVISION_compute_VertexSolar_arrays();
     }
 
 
@@ -3140,7 +3148,7 @@ void draw () {
         }             
 
         if (pre_MODEL3D_Tessellation != MODEL3D_Tessellation) {
-          //VerticesSolarValue_Update = 1;
+          //rebuild_VertexSolar_array = 1;
         }
 
 
@@ -3464,15 +3472,37 @@ float WIN3D_refScale = 100; // it improves displaying the shaded scene!
 
 PGraphics WIN3D_Diagrams;
 
+
+void SOLARCHVISION_check_to_update_drawings () {
+
+  if (WIN3D_FacesShade == Shade_Global_Solar) {
+    rebuild_GlobalSolar_array = 1;
+    WIN3D_Update = 1;
+  }
+  if (WIN3D_FacesShade == Shade_Vertex_Solar) {
+    rebuild_VertexSolar_array = 1;
+    WIN3D_Update = 1;
+  }  
+  if (Display_SolarImpactImage != 0) {
+    rebuild_SolarImpactImage_array = 1;
+    WIN3D_Update = 1;
+  }     
+  if (Display_WindRoseImage != 0) {
+    rebuild_WindRoseImage_array = 1;
+    WIN3D_Update = 1;
+  }      
+  if (Display_SUN3D_Path != 0) {
+    WIN3D_Update = 1;
+  }    
+  if (Display_SUN3D_Pattern != 0) {
+    WIN3D_Update = 1;
+  }
+}  
+
+
 void SOLARCHVISION_draw_WIN3D () {
-
+  
   if (WIN3D_Update == 1) {
-
-    if (WIN3D_FacesShade == Shade_Global_Solar) {
-      if (rebuild_GlobalSolar_array != 0) {
-        SOLARCHVISION_calculate_GlobalSolar_array();
-      }
-    }     
 
     if (WIN3D_record_JPG == 1) WIN3D_ImageScale = 2; //3;
     else WIN3D_ImageScale = 1;
@@ -14249,7 +14279,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
       case ENTER: 
         if (WIN3D_FacesShade == Shade_Global_Solar) rebuild_GlobalSolar_array = 1;   
-        if (WIN3D_FacesShade == Shade_Vertex_Solar) VerticesSolarValue_Update = 1;
+        if (WIN3D_FacesShade == Shade_Vertex_Solar) rebuild_VertexSolar_array = 1;
         WIN3D_Update = 1;
         ROLLOUT_Update = 1;  
         break;                  
@@ -23628,7 +23658,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
   if (Display_SKY3D != 0) {
 
-    if (WIN3D_FacesShade == Shade_Global_Solar) {
+    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
 
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
@@ -25825,18 +25855,6 @@ void SOLARCHVISION_draw_land (int target_window) {
                     COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                   }
 
-
-
-                  if (WIN3D_FacesShade == Shade_Surface_White) {
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                  }                   
-
-                  if (WIN3D_FacesShade == Shade_Surface_Materials) {
-                    //COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
-                  }    
-
-          
                   if (WIN3D_FacesShade == Shade_Vertex_Solar) {
 
                     COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
@@ -25850,7 +25868,19 @@ void SOLARCHVISION_draw_land (int target_window) {
                   if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
 
                     COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }                      
+                  }   
+
+                  if (WIN3D_FacesShade == Shade_Surface_White) {
+                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                  }                   
+
+                  if (WIN3D_FacesShade == Shade_Surface_Materials) {
+                    //COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
+                  }    
+
+          
+                   
 
                   if (target_window == 3) {
                     WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -26097,12 +26127,12 @@ float SOLARCHVISION_get_SolarImpact_atXYZ (float x, float y, float z) {
 
   float v = 0;
 
-  for (int q = 0; q < VerticesSolar_XYZ.length; q++) {
+  for (int q = 0; q < VertexSolar_XYZ.length; q++) {
     
-    if (x == VerticesSolar_XYZ[q][0]) {
-    if (y == VerticesSolar_XYZ[q][1]) {
-    if (z == VerticesSolar_XYZ[q][2]) {
-        v =  VerticesSolar_amounts[Impact_TYPE][IMPACTS_DisplayDay][q];
+    if (x == VertexSolar_XYZ[q][0]) {
+    if (y == VertexSolar_XYZ[q][1]) {
+    if (z == VertexSolar_XYZ[q][2]) {
+        v =  VertexSolar_amounts[Impact_TYPE][IMPACTS_DisplayDay][q];
         break;
     }
     }
@@ -26462,18 +26492,10 @@ void SOLARCHVISION_draw_Faces () {
                 if (WIN3D_FacesShade == Shade_Global_Solar) {
                   int s_next = (s + 1) % subFace.length;
                   int s_prev = (s + subFace.length - 1) % subFace.length;
-
+                  
                   COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }              
-
-                if (WIN3D_FacesShade == Shade_Surface_Materials) {
-                  COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                }              
-
-                if (WIN3D_FacesShade == Shade_Surface_White) {
-                  COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                }     
-
+                }        
+          
                 if (WIN3D_FacesShade == Shade_Vertex_Solar) {
 
                   COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
@@ -26489,11 +26511,18 @@ void SOLARCHVISION_draw_Faces () {
                   COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }
 
+                if (WIN3D_FacesShade == Shade_Surface_Materials) {
+                  COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                }              
+
+                if (WIN3D_FacesShade == Shade_Surface_White) {
+                  COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                }     
+
                 WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
               } else {
                 WIN3D_Diagrams.noFill();
               }
-
 
               WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
             }
@@ -26507,19 +26536,19 @@ void SOLARCHVISION_draw_Faces () {
 }
 
 
-void SOLARCHVISION_resize_VerticesSolar_array () { // called when STUDY_j_End changes
+void SOLARCHVISION_resize_VertexSolar_array () { // called when STUDY_j_End changes
 
-  VerticesSolar_XYZ     = new float [0][3];
-  VerticesSolar_amounts = new float [2][1 + STUDY_j_End - STUDY_j_Start][0];
+  VertexSolar_XYZ     = new float [0][3];
+  VertexSolar_amounts = new float [2][1 + STUDY_j_End - STUDY_j_Start][0];
 
 }
 
 
-void SOLARCHVISION_compute_VerticesSolar_arrays () {
+void SOLARCHVISION_compute_VertexSolar_arrays () {
   
   cursor(WAIT);
 
-  SOLARCHVISION_resize_VerticesSolar_array();
+  SOLARCHVISION_resize_VertexSolar_array();
 
   float keep_STUDY_PerDays = STUDY_PerDays;
   int keep_STUDY_JoinDays = STUDY_JoinDays;
@@ -26826,12 +26855,12 @@ void SOLARCHVISION_compute_VerticesSolar_arrays () {
             float[] ADD_values_RAD = {
               _valuesSUM_RAD
             };
-            VerticesSolar_amounts[Impact_ACTIVE][j + 1] = (float[]) concat(VerticesSolar_amounts[Impact_ACTIVE][j + 1], ADD_values_RAD);
+            VertexSolar_amounts[Impact_ACTIVE][j + 1] = (float[]) concat(VertexSolar_amounts[Impact_ACTIVE][j + 1], ADD_values_RAD);
 
             float[] ADD_values_EFF = {
               COMPARISON
             };
-            VerticesSolar_amounts[Impact_PASSIVE][j + 1] = (float[]) concat(VerticesSolar_amounts[Impact_PASSIVE][j + 1], ADD_values_EFF);
+            VertexSolar_amounts[Impact_PASSIVE][j + 1] = (float[]) concat(VertexSolar_amounts[Impact_PASSIVE][j + 1], ADD_values_EFF);
            
           }    
 
@@ -26864,26 +26893,26 @@ void SOLARCHVISION_compute_VerticesSolar_arrays () {
           float[] ADD_values_RAD = {
             TOTAL_valuesSUM_RAD
           };
-          VerticesSolar_amounts[Impact_ACTIVE][0] = (float[]) concat(VerticesSolar_amounts[Impact_ACTIVE][0], ADD_values_RAD);
+          VertexSolar_amounts[Impact_ACTIVE][0] = (float[]) concat(VertexSolar_amounts[Impact_ACTIVE][0], ADD_values_RAD);
 
           float[] ADD_values_EFF = {
             COMPARISON
           };
-          VerticesSolar_amounts[Impact_PASSIVE][0] = (float[]) concat(VerticesSolar_amounts[Impact_PASSIVE][0], ADD_values_EFF);
+          VertexSolar_amounts[Impact_PASSIVE][0] = (float[]) concat(VertexSolar_amounts[Impact_PASSIVE][0], ADD_values_EFF);
           
           float[][] ADD_values_XYZ = {
             {
               subFace[s][0], subFace[s][1], subFace[s][2]
             }
           };
-          VerticesSolar_XYZ = (float[][]) concat(VerticesSolar_XYZ, ADD_values_XYZ);          
+          VertexSolar_XYZ = (float[][]) concat(VertexSolar_XYZ, ADD_values_XYZ);          
 
         }
 
       }
     }
   }
-  VerticesSolarValue_Update = 0;
+  rebuild_VertexSolar_array = 0;
 
   cursor(ARROW);
 }
@@ -32474,17 +32503,12 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
 
 
 
-float SOLARCHVISION_GLOBE_stp_slp;
-float SOLARCHVISION_GLOBE_stp_dir;
-int SOLARCHVISION_GLOBE_n_slp;  
-int SOLARCHVISION_GLOBE_n_dir;
-
-float[][][][] GlobalSolar;
 
 
-int rebuild_GlobalSolar_array = 1;
-int rebuild_SolarImpactImage_array = 1;
-int rebuild_WindRoseImage_array = 1; 
+
+
+
+
 
 
 void SOLARCHVISION_build_GlobalSolar_array () {
@@ -34420,7 +34444,7 @@ void mouseWheel (MouseEvent event) {
                     STUDY_Update = 1;
                     UI_BAR_d_Update = 1;
 
-                    SOLARCHVISION_check_for_WIN3D_update();
+                    SOLARCHVISION_check_to_update_drawings();
                   }
                 }
               }
@@ -34444,7 +34468,7 @@ void mouseWheel (MouseEvent event) {
                     STUDY_Update = 1;
                     UI_BAR_d_Update = 1;
 
-                    SOLARCHVISION_check_for_WIN3D_update();
+                    SOLARCHVISION_check_to_update_drawings();
                   }
                 }
               }
@@ -34484,7 +34508,7 @@ void mouseWheel (MouseEvent event) {
                       STUDY_Update = 1;
                       UI_BAR_d_Update = 1;
 
-                      SOLARCHVISION_check_for_WIN3D_update();
+                      SOLARCHVISION_check_to_update_drawings();
                     }
                   }
                   
@@ -34519,7 +34543,7 @@ void mouseWheel (MouseEvent event) {
                       STUDY_Update = 1;
                       UI_BAR_d_Update = 1;
 
-                      SOLARCHVISION_check_for_WIN3D_update();
+                      SOLARCHVISION_check_to_update_drawings();
                     }
                   }                  
 
@@ -34554,7 +34578,7 @@ void mouseWheel (MouseEvent event) {
                       STUDY_Update = 1;
                       UI_BAR_d_Update = 1;
 
-                      SOLARCHVISION_check_for_WIN3D_update();
+                      SOLARCHVISION_check_to_update_drawings();
                     }
                   }   
 
@@ -34589,7 +34613,7 @@ void mouseWheel (MouseEvent event) {
                       STUDY_Update = 1;
                       UI_BAR_d_Update = 1;
 
-                      SOLARCHVISION_check_for_WIN3D_update();
+                      SOLARCHVISION_check_to_update_drawings();
                     }
                   }
                 }
@@ -50754,7 +50778,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
 
-            SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_to_update_drawings();
           }
 
           if (mouseButton == RIGHT) {
@@ -50763,7 +50787,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
 
-            SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_to_update_drawings();
           }
         }        
 
@@ -50806,7 +50830,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
 
-            SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_to_update_drawings();
           }
 
           if (mouseButton == RIGHT) {
@@ -50824,7 +50848,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             STUDY_Update = 1; 
             ROLLOUT_Update = 1;
 
-            SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_to_update_drawings();
           }
         }        
 
@@ -50964,7 +50988,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
 
-            SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_to_update_drawings();
           }
 
           if (mouseButton == RIGHT) {
@@ -51024,7 +51048,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
 
-            SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_to_update_drawings();
           }
         }        
 
@@ -51129,7 +51153,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         ROLLOUT_Update = 1;
         STUDY_Update = 1;
 
-        SOLARCHVISION_check_for_WIN3D_update();
+        SOLARCHVISION_check_to_update_drawings();
       }
     }
 
@@ -51371,29 +51395,7 @@ void SOLARCHVISION_explore_output (String outputFile) {
   }
 }
 
-void SOLARCHVISION_check_for_WIN3D_update () {
 
-  if (WIN3D_FacesShade == Shade_Global_Solar) {
-    rebuild_GlobalSolar_array = 1;
-    WIN3D_Update = 1;
-  }
-  if (Display_SolarImpactImage != 0) {
-    rebuild_SolarImpactImage_array = 1;
-    WIN3D_Update = 1;
-  }     
-  if (Display_WindRoseImage != 0) {
-    rebuild_WindRoseImage_array = 1;
-    WIN3D_Update = 1;
-  }      
-
-
-  if (Display_SUN3D_Path != 0) {
-    WIN3D_Update = 1;
-  }    
-  if (Display_SUN3D_Pattern != 0) {
-    WIN3D_Update = 1;
-  }
-}  
 
 
 
