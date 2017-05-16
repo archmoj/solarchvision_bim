@@ -24993,54 +24993,31 @@ void SOLARCHVISION_draw_SKY3D () {
 
   if (Display_SKY3D != 0) {
 
-    for (int f = 0; f < skyFaces.length; f++) {
+    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
 
-      if (WIN3D_FacesShade != Shade_Global_Solar) {
+      int PAL_TYPE = 0; 
+      int PAL_DIR = 1;
+      float PAL_Multiplier = 1; 
 
-        color c = color(191, 191, 255);
-
-        WIN3D_Diagrams.noStroke();
-
-        if (WIN3D_FacesShade == Shade_Surface_Materials) {
-          //WIN3D_Diagrams.fill(255, 255, 255);
-          WIN3D_Diagrams.noFill();
-        } else {
-          WIN3D_Diagrams.fill(c);
-        }    
-
-        WIN3D_Diagrams.beginShape();
-
-        for (int j = 0; j < skyFaces[f].length; j++) {
-          int vNo = skyFaces[f][j];
-          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * SKY3D_scale * WIN3D_Scale3D, -(skyVertices[vNo][1] * SKY3D_scale * WIN3D_Scale3D), skyVertices[vNo][2] * SKY3D_scale * WIN3D_Scale3D);
-        }    
-
-        WIN3D_Diagrams.endShape(CLOSE);
-      } else {
-
-        int PAL_TYPE = 0; 
-        int PAL_DIR = 1;
-        float PAL_Multiplier = 1; 
-
-        if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
-          PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
-          PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;
-        }
-        if (Impact_TYPE == Impact_PASSIVE) {
-          PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
-          PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
-          PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT;
-        }             
-
-
-
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
+        PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+        PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {
+        PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
+        PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+        PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT;
+      }             
+      
+      for (int f = 0; f < skyFaces.length; f++) {      
+  
         int Tessellation = 0;
-
+  
         int TotalSubNo = 1;  
         Tessellation = SKY3D_TESSELLATION;
         if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
+  
         float[][] base_Vertices = new float [skyFaces[f].length][3];
         for (int j = 0; j < skyFaces[f].length; j++) {
           int vNo = skyFaces[f][j];
@@ -25048,33 +25025,58 @@ void SOLARCHVISION_draw_SKY3D () {
           base_Vertices[j][1] = skyVertices[vNo][1];
           base_Vertices[j][2] = skyVertices[vNo][2];
         }
-
+  
         for (int n = 0; n < TotalSubNo; n++) {
-
+  
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
+  
           for (int j = 0; j < subFace.length; j++) {
             subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
           }
-
+  
           WIN3D_Diagrams.beginShape();
-
+  
           for (int s = 0; s < subFace.length; s++) {
-
+  
             int s_next = (s + 1) % subFace.length;
             int s_prev = (s + subFace.length - 1) % subFace.length;
-
+  
             float[] COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-
+  
             WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
-
+  
             WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale * WIN3D_Scale3D, -(subFace[s][1] * SKY3D_scale * WIN3D_Scale3D), subFace[s][2] * SKY3D_scale * WIN3D_Scale3D);
           }
-
+  
           WIN3D_Diagrams.endShape(CLOSE);
         }
       }
+    } else {
+
+      color c = color(191, 191, 255);
+
+      WIN3D_Diagrams.noStroke();
+
+      if (WIN3D_FacesShade == Shade_Surface_Materials) {
+        //WIN3D_Diagrams.fill(255, 255, 255);
+        WIN3D_Diagrams.noFill();
+      } else {
+        WIN3D_Diagrams.fill(c);
+      }    
+      
+      for (int f = 0; f < skyFaces.length; f++) {
+
+        WIN3D_Diagrams.beginShape();
+  
+        for (int j = 0; j < skyFaces[f].length; j++) {
+          int vNo = skyFaces[f][j];
+          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * SKY3D_scale * WIN3D_Scale3D, -(skyVertices[vNo][1] * SKY3D_scale * WIN3D_Scale3D), skyVertices[vNo][2] * SKY3D_scale * WIN3D_Scale3D);
+        }    
+  
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
     }
+
   }
 }
 
