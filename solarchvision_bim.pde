@@ -11226,14 +11226,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   STUDY_Diagrams.strokeWeight(0);
 
                   float x1 = (j + STUDY_rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y1 = (                  -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
+                  float y1 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
                   float x2 = (j + STUDY_rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y2 = (                  -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+                  float y2 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
 
                   float x3 = (j + STUDY_rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y3 = (                  -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+                  float y3 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
                   float x4 = (j + STUDY_rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y4 = (                  -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+                  float y4 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
 
                   STUDY_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
                 }
@@ -11309,14 +11309,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               STUDY_Diagrams.strokeWeight(0);
 
               float x1 = (j + STUDY_rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y1 = (                  -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
+              float y1 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
               float x2 = (j + STUDY_rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y2 = (                  -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+              float y2 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
 
               float x3 = (j + STUDY_rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y3 = (                  -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+              float y3 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
               float x4 = (j + STUDY_rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y4 = (                  -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+              float y4 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY_rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
 
               STUDY_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
             }
