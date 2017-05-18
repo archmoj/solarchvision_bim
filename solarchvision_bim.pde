@@ -25782,6 +25782,10 @@ void SOLARCHVISION_draw_land (int target_window) {
         Tessellation = 0;
       }
 
+      if ((target_window == -1) || (target_window == 0)) {
+        Tessellation = 0;
+      }
+
       int TotalSubNo = 1;  
       if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
 
@@ -26042,12 +26046,21 @@ void SOLARCHVISION_draw_land (int target_window) {
             }
             
             if (target_window == 0) {
-              int[] newFace = new int[4];
-              newFace[0] = allVertices.length - 4;
-              newFace[1] = allVertices.length - 3;
-              newFace[2] = allVertices.length - 2;
-              newFace[3] = allVertices.length - 1;
-              SOLARCHVISION_add_Face(newFace);
+              if (i == 0) { // This is to avoid creation of surfaces with duplicate points at the center 
+                int[] newFace = new int[3];
+                newFace[0] = allVertices.length - 3;
+                newFace[1] = allVertices.length - 2;
+                newFace[2] = allVertices.length - 1;
+                SOLARCHVISION_add_Face(newFace);                
+              }
+              else {
+                int[] newFace = new int[4];
+                newFace[0] = allVertices.length - 4;
+                newFace[1] = allVertices.length - 3;
+                newFace[2] = allVertices.length - 2;
+                newFace[3] = allVertices.length - 1;
+                SOLARCHVISION_add_Face(newFace);
+              }
             }
             
 
