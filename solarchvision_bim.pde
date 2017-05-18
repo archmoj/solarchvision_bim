@@ -196,7 +196,7 @@ int pre_LoadButton_CLIMATE_CLMREC;
 int pre_LoadButton_FORECAST_ENSEMBLE;
 int pre_LoadButton_RECENT_OBSERVED;    
 
-int pre_LoadButton_LandMesh;
+int pre_LoadButton_LAND_MESH;
 
 float pre_LocationLatitude;
 float pre_LocationLongitude;
@@ -330,7 +330,7 @@ int Impact_TYPE;
 
 
 float FLOAT_huge = 1000000000;
-float FLOAT_tiny = 0.001; // don't use very tiny values that could result is shading problems at the intersection of faces
+float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
 
 String STRING_undefined = "N/A";
 float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
@@ -1734,7 +1734,7 @@ float STUDY_O_scale = 50.0;
 float STUDY_W_scale = 3.0;
 
 
-int COLOR_STYLE_Active = 0;
+int COLOR_STYLE_Current = 0;
 int COLOR_STYLE_Number = 20; //6;
 
 float STUDY_rect_scale = 0.005;
@@ -1833,11 +1833,11 @@ int ERASE_Solids = 0;
 int ERASE_Sections = 0;
 int ERASE_Cameras = 0;
 
-int LAND_TESSELLATION = 0; //2;
+int LAND_Tessellation = 0; //2;
 
 int MODEL3D_Tessellation = 2;
 
-int SKY3D_TESSELLATION = 3; //3;
+int SKY3D_Tessellation = 3; //3;
 float SKY3D_scale = 1000000;//25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 float WindRose3D_scale = 400;
@@ -1849,7 +1849,7 @@ int Display_SUN3D_Pattern = 0;
 int Display_SKY3D = 1;
 
 int Download_LAND_MESH = 0;
-int LoadButton_LandMesh = 1; 
+int LoadButton_LAND_MESH = 1; 
 
 int Display_LAND_MESH = 1; 
 int Display_LAND_POINTS = 0;
@@ -2765,7 +2765,7 @@ void draw () {
 
         pre_WORLD_AutoView = WORLD_AutoView;
 
-        pre_LoadButton_LandMesh = LoadButton_LandMesh;
+        pre_LoadButton_LAND_MESH = LoadButton_LAND_MESH;
 
         pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
         pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
@@ -2964,12 +2964,12 @@ void draw () {
 
 
         if (Download_LAND_MESH != 0) {
-          SOLARCHVISION_download_LandMesh();
+          SOLARCHVISION_Download_LAND_MESHMesh();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
 
-        if (pre_LoadButton_LandMesh != LoadButton_LandMesh) {
+        if (pre_LoadButton_LAND_MESH != LoadButton_LAND_MESH) {
           SOLARCHVISION_load_LandMesh(LocationName);
           WIN3D_Update = 1;
         }
@@ -5901,130 +5901,130 @@ float[] SOLARCHVISION_DBCW (float _variable) {
 }
 
 
-float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Active, float j) {
+float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Current, float j) {
   float[] c = {
     255, 0, 0, 0
   };
 
-  if (COLOR_STYLE_Active == 0) {
+  if (COLOR_STYLE_Current == 0) {
     c[0] = SOLARCHVISION_getOpacity(STUDY_O_scale);
     c[1] = 0;
     c[2] = 0;
     c[3] = 0;
-  } else if (COLOR_STYLE_Active == 19) {
+  } else if (COLOR_STYLE_Current == 19) {
     float[] COL = SOLARCHVISION_DWYR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 18) {
+  } else if (COLOR_STYLE_Current == 18) {
     float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = COL[3];
     c[2] = COL[2];
     c[3] = COL[1];
-  } else if (COLOR_STYLE_Active == 17) {
+  } else if (COLOR_STYLE_Current == 17) {
     float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = 255 - COL[3];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[1];
-  } else if (COLOR_STYLE_Active == 16) {
+  } else if (COLOR_STYLE_Current == 16) {
     float[] COL = SOLARCHVISION_DBCW(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 15) {
+  } else if (COLOR_STYLE_Current == 15) {
     float[] COL = SOLARCHVISION_DRYW(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 14) {
+  } else if (COLOR_STYLE_Current == 14) {
     float[] COL = SOLARCHVISION_DBGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 13) {
+  } else if (COLOR_STYLE_Current == 13) {
     float[] COL = SOLARCHVISION_DWBGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 12) {
+  } else if (COLOR_STYLE_Current == 12) {
     float[] COL = SOLARCHVISION_BGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 11) {
+  } else if (COLOR_STYLE_Current == 11) {
     float[] COL = SOLARCHVISION_BGR(j);
     c[0] = 127;
     c[1] = 255 - 0.5 * COL[1];
     c[2] = 255 - 0.5 * COL[2];
     c[3] = 255 - 0.5 * COL[3];
-  } else if (COLOR_STYLE_Active == 10) {
+  } else if (COLOR_STYLE_Current == 10) {
     float[] COL = SOLARCHVISION_BGR(j);
     c[0] = 255;
     c[1] = 255 - COL[1];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[3];
-  } else if (COLOR_STYLE_Active == 9) {
+  } else if (COLOR_STYLE_Current == 9) {
     float[] COL = SOLARCHVISION_WBGRW(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 8) {
+  } else if (COLOR_STYLE_Current == 8) {
     float[] COL = SOLARCHVISION_BGR(j);
     c[0] = 255;
     c[1] = 255 - COL[1];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[3];
-  } else if (COLOR_STYLE_Active == 7) {
+  } else if (COLOR_STYLE_Current == 7) {
     float[] COL = SOLARCHVISION_WBGRW(j);
     c[0] = 255;
     c[1] = 255 - COL[1];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[3];
-  } else if (COLOR_STYLE_Active == 6) {
+  } else if (COLOR_STYLE_Current == 6) {
     float[] COL = SOLARCHVISION_BGR(j);
     c[0] = 255;
     c[1] = COL[3];
     c[2] = COL[2];
     c[3] = COL[1];
-  } else if (COLOR_STYLE_Active == 4) {
+  } else if (COLOR_STYLE_Current == 4) {
     float[] COL = SOLARCHVISION_VDWBGR(j);
     c[0] = STUDY_O_scale;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 3) {
+  } else if (COLOR_STYLE_Current == 3) {
     float[] COL = SOLARCHVISION_VDWBGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 2) {
+  } else if (COLOR_STYLE_Current == 2) {
     float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = STUDY_O_scale;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 1) {
+  } else if (COLOR_STYLE_Current == 1) {
     float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
-  } else if (COLOR_STYLE_Active == 5) {
+  } else if (COLOR_STYLE_Current == 5) {
     c[0] = 255;
     c[1] = 0;
     c[2] = 0;
     c[3] = 0;
-  } else if (COLOR_STYLE_Active == -1) {
+  } else if (COLOR_STYLE_Current == -1) {
     float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = 255 - COL[3];
@@ -6791,7 +6791,7 @@ void SOLARCHVISION_PlotFORECAST_ENSEMBLE (float x_Plot, float y_Plot, float z_Pl
           STUDY_Diagrams.fill(127, 0, 255);
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 6);
         } else {
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + FORECAST_ENSEMBLE_end - FORECAST_ENSEMBLE_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Current, (1.0 * k / (1 + FORECAST_ENSEMBLE_end - FORECAST_ENSEMBLE_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -7194,7 +7194,7 @@ void SOLARCHVISION_PlotCLIMATE_CWEEDS (float x_Plot, float y_Plot, float z_Plot,
           _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
 
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Current, (1.0 * k / (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -7746,7 +7746,7 @@ void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot,
           _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
 
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Current, (1.0 * k / (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -8146,7 +8146,7 @@ void SOLARCHVISION_PlotCLIMATE_TMYEPW (float x_Plot, float y_Plot, float z_Plot,
           _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
 
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Current, (1.0 * k / (1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -8748,7 +8748,7 @@ void SOLARCHVISION_PlotRECENT_OBSERVED (float x_Plot, float y_Plot, float z_Plot
           STUDY_Diagrams.fill(127, 0, 255);
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 6);
         } else {
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Active, (1.0 * k / (1 + RECENT_OBSERVED_end - RECENT_OBSERVED_start)));
+          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Current, (1.0 * k / (1 + RECENT_OBSERVED_end - RECENT_OBSERVED_start)));
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -13252,12 +13252,12 @@ void STUDY_keyPressed (KeyEvent e) {
         break;
 
       case 'c' :
-        COLOR_STYLE_Active = (COLOR_STYLE_Active + 1) % COLOR_STYLE_Number; 
+        COLOR_STYLE_Current = (COLOR_STYLE_Current + 1) % COLOR_STYLE_Number; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case 'C' :
-        COLOR_STYLE_Active = (COLOR_STYLE_Active - 1 + COLOR_STYLE_Number) % COLOR_STYLE_Number; 
+        COLOR_STYLE_Current = (COLOR_STYLE_Current - 1 + COLOR_STYLE_Number) % COLOR_STYLE_Number; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
@@ -15421,8 +15421,7 @@ int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, floa
 }
 
 
-void SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
-
+int SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
 
   float[][] newObject_PivotXYZ = {
     {
@@ -15484,6 +15483,8 @@ void SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float s
 
 
   allGroup3Ds_num += 1;
+  
+  return(allGroup3Ds_num - 1);  
 }
 
 
@@ -23765,7 +23766,7 @@ void SOLARCHVISION_export_objects_OBJ () {
           int Tessellation = 0;
 
           int TotalSubNo = 1;  
-          Tessellation = SKY3D_TESSELLATION;
+          Tessellation = SKY3D_Tessellation;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
           float[][] base_Vertices = new float [skyFaces[f].length][3];
@@ -24117,7 +24118,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     }
   };
 
-  int Tessellation = LAND_TESSELLATION;
+  int Tessellation = LAND_Tessellation;
   if (WIN3D_FacesShade == Shade_Surface_Base) {
     Tessellation = 0;
   }
@@ -24177,7 +24178,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           if (n_Map != -1) {
 
-            int max_o = int(10000 / pow(2, LAND_TESSELLATION)); // number of tries to find green points!
+            int max_o = int(10000 / pow(2, LAND_Tessellation)); // number of tries to find green points!
 
             //if (max_o > 100) max_o = 100;
 
@@ -24285,7 +24286,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
-          int max_o = int((16.0 / pow(2, LAND_TESSELLATION)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+          int max_o = int((16.0 / pow(2, LAND_Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
 
 
           if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -24610,7 +24611,7 @@ void SOLARCHVISION_delete_Group3Ds () {
 
 void SOLARCHVISION_add_3Dbase (int m, int tes, int lyr, int vsb, int wgt, int clz) {
 
-  if (LoadButton_LandMesh != 0) {
+  if (LoadButton_LAND_MESH != 0) {
 
     for (int i = 0; i < Skip_LAND_MESH_Center; i += 1) {  
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -24625,7 +24626,7 @@ int MAX_Default_Models_Number = 7;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
-  if (LoadButton_LandMesh == 1) {
+  if (LoadButton_LAND_MESH == 1) {
 
     SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
 
@@ -25025,7 +25026,7 @@ void SOLARCHVISION_draw_SKY3D () {
         int Tessellation = 0;
   
         int TotalSubNo = 1;  
-        Tessellation = SKY3D_TESSELLATION;
+        Tessellation = SKY3D_Tessellation;
         if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
         float[][] base_Vertices = new float [skyFaces[f].length][3];
@@ -25654,10 +25655,20 @@ void SOLARCHVISION_draw_STAR3D () {
 
 void SOLARCHVISION_draw_land (int target_window) {
 
-  // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export 5:RAD-export
+  // target_window: -1:LandGapAsGroup3D, 0:LandMeshAsGroup3D, 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export 5:RAD-export
 
-  if ((Display_LAND_MESH == 1) && (LoadButton_LandMesh == 1)) {
+  boolean proceed = false;
 
+  if (target_window > 0) {  
+    if ((Display_LAND_MESH == 1) && (LoadButton_LAND_MESH == 1)) {
+      proceed = true;
+    }
+  }
+  else {
+    proceed = true;
+  }
+    
+  if (proceed == true) {
 
     int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
     int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
@@ -25694,7 +25705,7 @@ void SOLARCHVISION_draw_land (int target_window) {
         }
       }
     }
-
+    
     if (target_window == 4) {
 
       if (objExport_MaterialLibrary != 0) {
@@ -25737,6 +25748,11 @@ void SOLARCHVISION_draw_land (int target_window) {
         }
       }
     }
+    
+    if (target_window == 0) {
+      SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
 
 
     num_vertices_added = 0;
@@ -25761,7 +25777,7 @@ void SOLARCHVISION_draw_land (int target_window) {
 
 
 
-      int Tessellation = LAND_TESSELLATION;
+      int Tessellation = LAND_Tessellation;
       if (WIN3D_FacesShade == Shade_Surface_Base) {
         Tessellation = 0;
       }
@@ -25769,8 +25785,17 @@ void SOLARCHVISION_draw_land (int target_window) {
       int TotalSubNo = 1;  
       if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
 
+      int i_start = Skip_LAND_MESH_Center;
+      int i_end = LAND_n_I - 1;
 
-      for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
+      if (target_window == -1) {
+        i_start = 0;
+        i_end = Skip_LAND_MESH_Center;
+        
+        target_window = 0; // because the rest is simillar to that
+      }
+
+      for (int i = i_start; i < i_end; i += 1) {
         for (int j = 0; j < LAND_n_J - 1; j += 1) {
 
           float[][] base_Vertices = new float [4][3];
@@ -25977,13 +26002,14 @@ void SOLARCHVISION_draw_land (int target_window) {
                     }
                   }
                 }
-
-
-
+                
+                if (target_window == 0) {
+                  SOLARCHVISION_add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                }
              
               }
             }
-
+            
 
             if (target_window == 3) {
               WIN3D_Diagrams.endShape(CLOSE);
@@ -26014,6 +26040,16 @@ void SOLARCHVISION_draw_land (int target_window) {
                 }
               }
             }
+            
+            if (target_window == 0) {
+              int[] newFace = new int[4];
+              newFace[0] = allVertices.length - 4;
+              newFace[1] = allVertices.length - 3;
+              newFace[2] = allVertices.length - 2;
+              newFace[3] = allVertices.length - 1;
+              SOLARCHVISION_add_Face(newFace);
+            }
+            
 
 
             if (Display_LAND_Texture != 0) {
@@ -26099,6 +26135,16 @@ void SOLARCHVISION_draw_land (int target_window) {
         }
       }
     }
+    
+    if (target_window == 0) {
+      selectedGroup3D_numbers = new int [1];
+      selectedGroup3D_numbers[0] = allGroup3Ds_num - 1;
+      
+      SOLARCHVISION_weldObjectsVertices_Selection();
+      
+      SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0); // to avoid bugs we should finilizing the previous group by starting a new group.
+    }    
+    
   }
 }
 
@@ -29245,7 +29291,7 @@ void SOLARCHVISION_load_LandMesh (String ProjectSite) {
 
   try { 
 
-    if (LoadButton_LandMesh == 1) {
+    if (LoadButton_LAND_MESH == 1) {
 
       for (int i = 0; i < LAND_n_I; i += 1) {
 
@@ -29305,7 +29351,7 @@ void SOLARCHVISION_load_LandMesh (String ProjectSite) {
 }
 
 
-void SOLARCHVISION_download_LandMesh () {
+void SOLARCHVISION_Download_LAND_MESHMesh () {
 
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
@@ -36755,6 +36801,18 @@ void mouseClicked () {
                 UI_BAR_b_Update = 1;
               }
             }
+            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandMesh >> Group3D")) {
+              SOLARCHVISION_draw_land(0);
+              
+              WIN3D_Update = 1;   
+            }          
+          
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandGap >> Group3D")) {
+              SOLARCHVISION_draw_land(-1);
+
+              WIN3D_Update = 1;   
+            }                
 
 
 
@@ -39431,9 +39489,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       MODEL3D_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "MODEL3D_Tessellation", MODEL3D_Tessellation, 0, 4, 1), 1));
 
-      LAND_TESSELLATION = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LAND_TESSELLATION", LAND_TESSELLATION, 0, 4, 1), 1));
+      LAND_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LAND_Tessellation", LAND_Tessellation, 0, 4, 1), 1));
 
-      SKY3D_TESSELLATION = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "SKY3D_TESSELLATION", SKY3D_TESSELLATION, 0, 4, 1), 1));   
+      SKY3D_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "SKY3D_Tessellation", SKY3D_Tessellation, 0, 4, 1), 1));   
       SKY3D_scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "SKY3D_scale", SKY3D_scale, 0.0000001, 1000000, -2);
 
       BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
@@ -39557,7 +39615,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (SOLARCHVISION_ROLLOUT_child == 7) { // Environment
 
       Download_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Download_LAND_MESH", Download_LAND_MESH, 0, 1, 1), 1));
-      LoadButton_LandMesh = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LoadButton_LandMesh", LoadButton_LandMesh, 0, 1, 1), 1));
+      LoadButton_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LoadButton_LAND_MESH", LoadButton_LAND_MESH, 0, 1, 1), 1));
       Skip_LAND_MESH_Center = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Skip_LAND_MESH_Center", Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
       Display_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_MESH", Display_LAND_MESH, 0, 1, 1), 1));
       Display_LAND_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Texture", Display_LAND_Texture, 0, 1, 1), 1));
@@ -39705,7 +39763,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 2) { // 2D-Colors
 
-      //COLOR_STYLE_Active = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Active, -1, (COLOR_STYLE_Number - 1), 1), 1));
+      //COLOR_STYLE_Current = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
 
       STUDY_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "STUDY_Pallet_ACTIVE_CLR", STUDY_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
       STUDY_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "STUDY_Pallet_ACTIVE_DIR", STUDY_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -42348,7 +42406,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             if (Display_LAND_MESH != 0) {
               
-              int Tessellation = LAND_TESSELLATION;
+              int Tessellation = LAND_Tessellation;
               if (WIN3D_FacesShade == Shade_Surface_Base) {
                 Tessellation = 0;
               }
@@ -42963,7 +43021,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           
           if (Display_LAND_MESH != 0) {
             
-            int Tessellation = LAND_TESSELLATION;
+            int Tessellation = LAND_Tessellation;
             if (WIN3D_FacesShade == Shade_Surface_Base) {
               Tessellation = 0;
             }
@@ -48913,7 +48971,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "LandMesh >> Group3D", "LandGap >> Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
@@ -51697,7 +51755,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Impact_TYPE", Impact_TYPE);
   newChild1.setFloat("STUDY_O_scale", STUDY_O_scale);
   newChild1.setFloat("STUDY_W_scale", STUDY_W_scale);
-  newChild1.setInt("COLOR_STYLE_Active", COLOR_STYLE_Active);
+  newChild1.setInt("COLOR_STYLE_Current", COLOR_STYLE_Current);
   newChild1.setInt("COLOR_STYLE_Number", COLOR_STYLE_Number);
   newChild1.setFloat("STUDY_rect_scale", STUDY_rect_scale);
   newChild1.setFloat("STUDY_rect_offset_x", STUDY_rect_offset_x);
@@ -51713,9 +51771,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("STUDY_Impacts_Update", STUDY_Impacts_Update);
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
-  newChild1.setInt("LAND_TESSELLATION", LAND_TESSELLATION);
+  newChild1.setInt("LAND_Tessellation", LAND_Tessellation);
   newChild1.setInt("MODEL3D_Tessellation", MODEL3D_Tessellation);
-  newChild1.setInt("SKY3D_TESSELLATION", SKY3D_TESSELLATION);
+  newChild1.setInt("SKY3D_Tessellation", SKY3D_Tessellation);
   newChild1.setFloat("SKY3D_scale", SKY3D_scale);
   newChild1.setFloat("WindRose3D_scale", WindRose3D_scale);
 
@@ -51733,7 +51791,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_EARTH3D_Surface", Display_EARTH3D_Surface);
   newChild1.setInt("Display_EARTH3D_Texture", Display_EARTH3D_Texture);
   newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
-  newChild1.setInt("LoadButton_LandMesh", LoadButton_LandMesh);
+  newChild1.setInt("LoadButton_LAND_MESH", LoadButton_LAND_MESH);
   newChild1.setInt("Display_LAND_MESH", Display_LAND_MESH);
   newChild1.setInt("Display_LAND_POINTS", Display_LAND_POINTS);
   newChild1.setInt("Display_LAND_Texture", Display_LAND_Texture);
@@ -53014,7 +53072,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Impact_TYPE = children0[L].getInt("Impact_TYPE");
       STUDY_O_scale = children0[L].getFloat("STUDY_O_scale");
       STUDY_W_scale = children0[L].getFloat("STUDY_W_scale");
-      COLOR_STYLE_Active = children0[L].getInt("COLOR_STYLE_Active");
+      COLOR_STYLE_Current = children0[L].getInt("COLOR_STYLE_Current");
       COLOR_STYLE_Number = children0[L].getInt("COLOR_STYLE_Number");
       STUDY_rect_scale = children0[L].getFloat("STUDY_rect_scale");
       STUDY_rect_offset_x = children0[L].getFloat("STUDY_rect_offset_x");
@@ -53030,9 +53088,9 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY_Impacts_Update = children0[L].getInt("STUDY_Impacts_Update");
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
-      LAND_TESSELLATION = children0[L].getInt("LAND_TESSELLATION");
+      LAND_Tessellation = children0[L].getInt("LAND_Tessellation");
       MODEL3D_Tessellation = children0[L].getInt("MODEL3D_Tessellation");
-      SKY3D_TESSELLATION = children0[L].getInt("SKY3D_TESSELLATION");
+      SKY3D_Tessellation = children0[L].getInt("SKY3D_Tessellation");
       SKY3D_scale = children0[L].getFloat("SKY3D_scale");
       WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
 
@@ -53050,7 +53108,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_EARTH3D_Surface = children0[L].getInt("Display_EARTH3D_Surface");
       Display_EARTH3D_Texture = children0[L].getInt("Display_EARTH3D_Texture");
       Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
-      LoadButton_LandMesh = children0[L].getInt("LoadButton_LandMesh");
+      LoadButton_LAND_MESH = children0[L].getInt("LoadButton_LAND_MESH");
       Display_LAND_MESH = children0[L].getInt("Display_LAND_MESH");
       Display_LAND_POINTS = children0[L].getInt("Display_LAND_POINTS");
       Display_LAND_Texture = children0[L].getInt("Display_LAND_Texture");
