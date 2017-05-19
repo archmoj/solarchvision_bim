@@ -24601,9 +24601,8 @@ void SOLARCHVISION_delete_Group3Ds () {
   allGroup3Ds_PivotType = new int [0][1];
 
   allGroup3Ds_num = 0;
-
+  
   SOLARCHVISION_deselect_All();
-
  
 }
 
@@ -26008,7 +26007,9 @@ void SOLARCHVISION_draw_land (int target_window) {
                 }
                 
                 if (target_window == 0) {
-                  SOLARCHVISION_add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                  if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center
+                    SOLARCHVISION_add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                  }
                 }
              
               }
@@ -26046,14 +26047,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             }
             
             if (target_window == 0) {
-              if (i == 0) { // This is to avoid creation of surfaces with duplicate points at the center 
-                int[] newFace = new int[3];
-                newFace[0] = allVertices.length - 3;
-                newFace[1] = allVertices.length - 2;
-                newFace[2] = allVertices.length - 1;
-                SOLARCHVISION_add_Face(newFace);                
-              }
-              else {
+              if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center 
                 int[] newFace = new int[4];
                 newFace[0] = allVertices.length - 4;
                 newFace[1] = allVertices.length - 3;
@@ -26113,6 +26107,20 @@ void SOLARCHVISION_draw_land (int target_window) {
                 }
               }
             }
+          }
+        }
+        
+        
+        
+        if (target_window == 0) {
+          // This is to create a polygon around the center
+          if (i == 0) {
+            
+            int[] newFace = new int[LAND_n_J - 1];
+            for (int j = 0; j < newFace.length; j += 1) {
+              newFace[j] = SOLARCHVISION_add_Vertex(LAND_MESH[i + 1][j][0], LAND_MESH[i + 1][j][1], LAND_MESH[i + 1][j][2]);
+            }
+            SOLARCHVISION_add_Face(newFace);
           }
         }
       }
