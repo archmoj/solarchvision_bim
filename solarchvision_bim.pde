@@ -2700,8 +2700,10 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 24) {
-
-    SOLARCHVISION_build_SkySphere(1); //1 - 3 
+    
+    SOLARCHVISION_build_SkySphere(1); //1 - 3
+    SOLARCHVISION_resize_GlobalSolar_array();    
+    SOLARCHVISION_resize_VertexSolar_array();
 
     stroke(0);
     fill(0);
@@ -2725,8 +2727,6 @@ void draw () {
     Last_initializationStep = frameCount;
   } else {
     
-    SOLARCHVISION_regenerate_desired_bakings();
-
     if (ROLLOUT_Include == 1) {
       if (ROLLOUT_Update == 1) {
         ROLLOUT_Update = 0;
@@ -3429,6 +3429,8 @@ void draw () {
       if (WORLD_record_PDF == 0) {      
         if (WIN3D_Include == 1) {
           if (WIN3D_Update == 1) {
+            
+            SOLARCHVISION_regenerate_desired_bakings();
 
             SOLARCHVISION_draw_WIN3D();
           }
@@ -16825,7 +16827,7 @@ void SOLARCHVISION_delete_Selection () {
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
     /////////////////////////////
-    SOLARCHVISION_hold_project();
+    //SOLARCHVISION_hold_project();
     /////////////////////////////    
     
     
@@ -17370,7 +17372,7 @@ void SOLARCHVISION_selectNearVertices_Selection () {
 
 
 
-void SOLARCHVISION_weldSceneVertices_Selection () {
+void SOLARCHVISION_weldSceneVertices_Selection (float max_distance) {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -17407,7 +17409,7 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
 
               float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
 
-              if (d <= ModifyInput_WeldTreshold) { 
+              if (d <= max_distance) { 
 
                 allFaces_PNT[i][j] = vNo;
 
@@ -17428,7 +17430,7 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
 
               float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
 
-              if (d <= ModifyInput_WeldTreshold) { 
+              if (d <= max_distance) { 
 
                 allCurves_PNT[i][j] = vNo;
 
@@ -17479,7 +17481,7 @@ void SOLARCHVISION_weldSceneVertices_Selection () {
 
 
 
-void SOLARCHVISION_weldObjectsVertices_Selection () {
+void SOLARCHVISION_weldObjectsVertices_Selection (float max_distance) {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -17515,7 +17517,7 @@ void SOLARCHVISION_weldObjectsVertices_Selection () {
 
         float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
 
-        if (d <= ModifyInput_WeldTreshold) { 
+        if (d <= max_distance) { 
 
           for (int i = 0; i < selectedFace_numbers.length; i++) {
             int f = selectedFace_numbers[i];
@@ -25755,7 +25757,16 @@ void SOLARCHVISION_draw_land (int target_window) {
     }
     
     if ((target_window == -1) || (target_window == 0)) {
+      
+      defaultMaterial = DEFAULT_CreateMaterial;
+      defaultTessellation = DEFAULT_CreateTessellation;
+      defaultLayer = DEFAULT_CreateLayer;
+      defaultVisibility = DEFAULT_CreateVisibility;
+      defaultWeight = DEFAULT_CreateWeight;
+      defaultClose = DEFAULT_CreateClose;            
+      
       SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      
     }
 
 
@@ -26169,7 +26180,7 @@ void SOLARCHVISION_draw_land (int target_window) {
       selectedGroup3D_numbers = new int [1];
       selectedGroup3D_numbers[0] = allGroup3Ds_num - 1;
       
-      SOLARCHVISION_weldObjectsVertices_Selection();
+      SOLARCHVISION_weldObjectsVertices_Selection(0);
       
     }    
     
@@ -37278,11 +37289,11 @@ void mouseClicked () {
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weld Objects Vertices Selection")) {
-              SOLARCHVISION_weldObjectsVertices_Selection();
+              SOLARCHVISION_weldObjectsVertices_Selection(ModifyInput_WeldTreshold);
               WIN3D_Update = 1;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weld Scene Vertices Selection")) {
-              SOLARCHVISION_weldSceneVertices_Selection();
+              SOLARCHVISION_weldSceneVertices_Selection(ModifyInput_WeldTreshold);
               WIN3D_Update = 1;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Reposition Vertices Selection")) {
