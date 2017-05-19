@@ -26212,7 +26212,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solar (float[] VERTEX_now, int P
 
   float _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = {0,0,0,0}; // default transparent color for undefined values 
+  float[] COL = {0,0,0,0}; // default color for undefined values 
 
   if (is_undefined_FLOAT(_u) == false) {   
     COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
@@ -26329,7 +26329,11 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
 
   float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+  float[] COL = {127,127,127,127}; // default color for undefined values 
+
+  if (is_undefined_FLOAT(_u) == false) { 
+    COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+  }
 
   return COL;
 }
@@ -26357,7 +26361,7 @@ float SOLARCHVISION_vertexU_Shade_Global_Solar (float[] VERTEX_now, float[] VERT
 
   float _valuesSUM = GlobalSolar[Impact_TYPE][IMPACTS_DisplayDay][a][b];
 
-  float _u = 0;
+  float _u = FLOAT_undefined;
 
   if (is_undefined_FLOAT(_valuesSUM) == false) {
 
