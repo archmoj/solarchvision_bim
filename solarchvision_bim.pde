@@ -16823,7 +16823,13 @@ void SOLARCHVISION_delete_Selection () {
   }
 
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
-
+    
+    /////////////////////////////
+    SOLARCHVISION_hold_project();
+    /////////////////////////////    
+    
+    
+    
     SOLARCHVISION_convert_Group3D_to_Vertex(); // finding vertices so that we could delete the isolated ones later  
 
     selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
@@ -24410,7 +24416,7 @@ void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, fl
 
 
 void SOLARCHVISION_delete_All () {
-
+  
   SOLARCHVISION_delete_Fractals();
 
   SOLARCHVISION_delete_Object2Ds();
@@ -24585,7 +24591,7 @@ void SOLARCHVISION_delete_Vertices () {
 }
 
 void SOLARCHVISION_delete_Group3Ds () {
-
+  
   allGroup3Ds_Fractals = new int [0][2];
 
   allGroup3Ds_Object2Ds = new int [0][2];
@@ -25748,7 +25754,7 @@ void SOLARCHVISION_draw_land (int target_window) {
       }
     }
     
-    if (target_window == 0) {
+    if ((target_window == -1) || (target_window == 0)) {
       SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
 
@@ -25798,7 +25804,9 @@ void SOLARCHVISION_draw_land (int target_window) {
         target_window = 0; // because the rest is simillar to that
       }
 
+       
       for (int i = i_start; i < i_end; i += 1) {
+        
         for (int j = 0; j < LAND_n_J - 1; j += 1) {
 
           float[][] base_Vertices = new float [4][3];
@@ -26163,7 +26171,6 @@ void SOLARCHVISION_draw_land (int target_window) {
       
       SOLARCHVISION_weldObjectsVertices_Selection();
       
-      SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0); // to avoid bugs we should finilizing the previous group by starting a new group.
     }    
     
   }
