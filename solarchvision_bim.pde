@@ -1,3 +1,5 @@
+///////////////////SOLARCHVISION_Download_LAND_Textures
+
 
 // should write the info on 3D-Pal
 
@@ -196,7 +198,8 @@ int pre_LoadButton_CLIMATE_CLMREC;
 int pre_LoadButton_FORECAST_ENSEMBLE;
 int pre_LoadButton_RECENT_OBSERVED;    
 
-int pre_LoadButton_LAND_MESH;
+int pre_LoadButton_LAND_Mesh;
+int pre_LoadButton_LAND_Textures;
 
 float pre_LocationLatitude;
 float pre_LocationLongitude;
@@ -422,6 +425,11 @@ String[][] Defined_Stations = {
     "Dezhou", "XX", "CN", "37.441290", "116.371787", "120", "0", "240.0", "", "", "CHN_Shandong.Huimin.Xian.547250_CSWD"
   }  
   ,      
+  
+  {
+    "SITE_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
+  }  
+  ,    
   
   {
     "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
@@ -1848,14 +1856,16 @@ int Display_SUN3D_Pattern = 0;
 
 int Display_SKY3D = 1;
 
-int Download_LAND_MESH = 0;
-int LoadButton_LAND_MESH = 1; 
+int Download_LAND_Textures = 0;
+int LoadButton_LAND_Textures = 1; 
+int Download_LAND_Mesh = 0;
+int LoadButton_LAND_Mesh = 1; 
 
-int Display_LAND_MESH = 1; 
+int Display_LAND_Mesh = 1; 
 int Display_LAND_POINTS = 0;
-int Display_LAND_Texture = 1;
+int Display_LAND_Textures = 1;
 int Display_LAND_DEPTH = 0;
-int Skip_LAND_MESH_Center = 0; //5;
+int Skip_LAND_Mesh_Center = 0; //5;
 
 
 int Display_SolidImpact_Points = 0;
@@ -2371,7 +2381,7 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) SOLARCHVISION_try_update_FORECAST_ENSEMBLE(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-  if ((Step == 0) || (Step == 7)) SOLARCHVISION_load_LandMesh(LocationName);
+  if ((Step == 0) || (Step == 7)) SOLARCHVISION_load_LAND_Mesh(LocationName);
 
   //if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Fractals();
 
@@ -2634,7 +2644,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_load_LandMesh", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_load_LAND_Mesh", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 18) {
     SOLARCHVISION_update_station(7);
 
@@ -2765,7 +2775,8 @@ void draw () {
 
         pre_WORLD_AutoView = WORLD_AutoView;
 
-        pre_LoadButton_LAND_MESH = LoadButton_LAND_MESH;
+        pre_LoadButton_LAND_Mesh = LoadButton_LAND_Mesh;
+        pre_LoadButton_LAND_Textures = LoadButton_LAND_Textures;
 
         pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
         pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
@@ -2963,14 +2974,25 @@ void draw () {
         }
 
 
-        if (Download_LAND_MESH != 0) {
-          SOLARCHVISION_Download_LAND_MESHMesh();
+        if (Download_LAND_Mesh != 0) {
+          SOLARCHVISION_Download_LAND_Mesh();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
 
-        if (pre_LoadButton_LAND_MESH != LoadButton_LAND_MESH) {
-          SOLARCHVISION_load_LandMesh(LocationName);
+        if (pre_LoadButton_LAND_Mesh != LoadButton_LAND_Mesh) {
+          SOLARCHVISION_load_LAND_Mesh(LocationName);
+          WIN3D_Update = 1;
+        }
+        
+        if (Download_LAND_Textures != 0) {
+          SOLARCHVISION_Download_LAND_Textures();
+          WIN3D_Update = 1;
+          ROLLOUT_Update = 1;
+        }
+
+        if (pre_LoadButton_LAND_Textures != LoadButton_LAND_Textures) {
+          SOLARCHVISION_load_LAND_Textures(LocationName);
           WIN3D_Update = 1;
         }
 
@@ -13954,8 +13976,8 @@ void WIN3D_keyPressed (KeyEvent e) {
         break;
 
       case '0' :
-        Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
-        if (Display_LAND_MESH != 0) {
+        Display_LAND_Mesh = (Display_LAND_Mesh + 1) % 2;
+        if (Display_LAND_Mesh != 0) {
           Current_ObjectCategory = ObjectCategory_LandPoints;
           UI_BAR_b_Update = 1;
         }
@@ -21747,7 +21769,7 @@ void SOLARCHVISION_export_objects_RAD () {
   radOutput.println();
 
 
-  if (Display_LAND_MESH != 0) {
+  if (Display_LAND_Mesh != 0) {
 
     SOLARCHVISION_draw_land(5);
   }
@@ -22364,7 +22386,7 @@ void SOLARCHVISION_export_objects_OBJ () {
   }
 
 
-  if (Display_LAND_MESH != 0) {
+  if (Display_LAND_Mesh != 0) {
 
     SOLARCHVISION_draw_land(4);
   }
@@ -24136,42 +24158,42 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
 
 
-  if ((Display_LAND_Texture != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+  if ((Display_LAND_Textures != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
 
-    for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
+    for (int i = Skip_LAND_Mesh_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
 
         float[][] base_Vertices = new float [4][3];
 
-        base_Vertices[0][0] = LAND_MESH[i][j][0];
-        base_Vertices[0][1] = LAND_MESH[i][j][1];
-        base_Vertices[0][2] = LAND_MESH[i][j][2];
+        base_Vertices[0][0] = LAND_Mesh[i][j][0];
+        base_Vertices[0][1] = LAND_Mesh[i][j][1];
+        base_Vertices[0][2] = LAND_Mesh[i][j][2];
 
-        base_Vertices[1][0] = LAND_MESH[i+1][j][0];
-        base_Vertices[1][1] = LAND_MESH[i+1][j][1];
-        base_Vertices[1][2] = LAND_MESH[i+1][j][2];
+        base_Vertices[1][0] = LAND_Mesh[i+1][j][0];
+        base_Vertices[1][1] = LAND_Mesh[i+1][j][1];
+        base_Vertices[1][2] = LAND_Mesh[i+1][j][2];
 
-        base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
-        base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
-        base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
+        base_Vertices[2][0] = LAND_Mesh[i+1][j+1][0];
+        base_Vertices[2][1] = LAND_Mesh[i+1][j+1][1];
+        base_Vertices[2][2] = LAND_Mesh[i+1][j+1][2];
 
-        base_Vertices[3][0] = LAND_MESH[i][j+1][0];
-        base_Vertices[3][1] = LAND_MESH[i][j+1][1];
-        base_Vertices[3][2] = LAND_MESH[i][j+1][2];
+        base_Vertices[3][0] = LAND_Mesh[i][j+1][0];
+        base_Vertices[3][1] = LAND_Mesh[i][j+1][1];
+        base_Vertices[3][2] = LAND_Mesh[i][j+1][2];
 
         for (int n = 0; n < TotalSubNo; n++) {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
           int n_Map = -1; 
-          for (int q = 0; q < LAND_Texture_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+          for (int q = 0; q < LAND_Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
 
             n_Map = q; 
 
             for (int s = 0; s < subFace.length; s++) {
 
-              float u = (subFace[s][0] / LAND_Texture_scale_U[q] + 0.5);
-              float v = (-subFace[s][1] / LAND_Texture_scale_V[q] + 0.5);
+              float u = (subFace[s][0] / LAND_Textures_scale_U[q] + 0.5);
+              float v = (-subFace[s][1] / LAND_Textures_scale_V[q] + 0.5);
 
               if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
 
@@ -24203,13 +24225,13 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
               float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
 
-              float u = (x / LAND_Texture_scale_U[n_Map] + 0.5);
-              float v = (-y / LAND_Texture_scale_V[n_Map] + 0.5);
+              float u = (x / LAND_Textures_scale_U[n_Map] + 0.5);
+              float v = (-y / LAND_Textures_scale_V[n_Map] + 0.5);
 
-              int uSTUDY_Pixel = int(u * LAND_Texture_Map[n_Map].width);
-              int vSTUDY_Pixel = int(v * LAND_Texture_Map[n_Map].height);
+              int uSTUDY_Pixel = int(u * LAND_Textures_Map[n_Map].width);
+              int vSTUDY_Pixel = int(v * LAND_Textures_Map[n_Map].height);
 
-              color COL = LAND_Texture_Map[n_Map].get(uSTUDY_Pixel, vSTUDY_Pixel);
+              color COL = LAND_Textures_Map[n_Map].get(uSTUDY_Pixel, vSTUDY_Pixel);
               //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
               float r = COL >> 16 & 0xFF; 
               float g = COL >> 8 & 0xFF;
@@ -24269,26 +24291,26 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     }
   } else {
 
-    for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
+    for (int i = Skip_LAND_Mesh_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
 
         float[][] base_Vertices = new float [4][3];
 
-        base_Vertices[0][0] = LAND_MESH[i][j][0];
-        base_Vertices[0][1] = LAND_MESH[i][j][1];
-        base_Vertices[0][2] = LAND_MESH[i][j][2];
+        base_Vertices[0][0] = LAND_Mesh[i][j][0];
+        base_Vertices[0][1] = LAND_Mesh[i][j][1];
+        base_Vertices[0][2] = LAND_Mesh[i][j][2];
 
-        base_Vertices[1][0] = LAND_MESH[i+1][j][0];
-        base_Vertices[1][1] = LAND_MESH[i+1][j][1];
-        base_Vertices[1][2] = LAND_MESH[i+1][j][2];
+        base_Vertices[1][0] = LAND_Mesh[i+1][j][0];
+        base_Vertices[1][1] = LAND_Mesh[i+1][j][1];
+        base_Vertices[1][2] = LAND_Mesh[i+1][j][2];
 
-        base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
-        base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
-        base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
+        base_Vertices[2][0] = LAND_Mesh[i+1][j+1][0];
+        base_Vertices[2][1] = LAND_Mesh[i+1][j+1][1];
+        base_Vertices[2][2] = LAND_Mesh[i+1][j+1][2];
 
-        base_Vertices[3][0] = LAND_MESH[i][j+1][0];
-        base_Vertices[3][1] = LAND_MESH[i][j+1][1];
-        base_Vertices[3][2] = LAND_MESH[i][j+1][2];      
+        base_Vertices[3][0] = LAND_Mesh[i][j+1][0];
+        base_Vertices[3][1] = LAND_Mesh[i][j+1][1];
+        base_Vertices[3][2] = LAND_Mesh[i][j+1][2];      
 
         for (int n = 0; n < TotalSubNo; n++) {
 
@@ -24618,12 +24640,12 @@ void SOLARCHVISION_delete_Group3Ds () {
 
 void SOLARCHVISION_add_3Dbase (int m, int tes, int lyr, int vsb, int wgt, int clz) {
 
-  if (LoadButton_LAND_MESH != 0) {
+  if (LoadButton_LAND_Mesh != 0) {
 
-    for (int i = 0; i < Skip_LAND_MESH_Center; i += 1) {  
+    for (int i = 0; i < Skip_LAND_Mesh_Center; i += 1) {  
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
         // Material -2 for colored elevations
-        SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, wgt, clz, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2]);
+        SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, wgt, clz, LAND_Mesh[i][j][0], LAND_Mesh[i][j][1], LAND_Mesh[i][j][2], LAND_Mesh[i+1][j][0], LAND_Mesh[i+1][j][1], LAND_Mesh[i+1][j][2], LAND_Mesh[i+1][j+1][0], LAND_Mesh[i+1][j+1][1], LAND_Mesh[i+1][j+1][2], LAND_Mesh[i][j+1][0], LAND_Mesh[i][j+1][1], LAND_Mesh[i][j+1][2]);
       }
     }
   }
@@ -24633,7 +24655,7 @@ int MAX_Default_Models_Number = 7;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
-  if (LoadButton_LAND_MESH == 1) {
+  if (LoadButton_LAND_Mesh == 1) {
 
     SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
 
@@ -25667,7 +25689,7 @@ void SOLARCHVISION_draw_land (int target_window) {
   boolean proceed = false;
 
   if (target_window > 0) {  
-    if ((Display_LAND_MESH == 1) && (LoadButton_LAND_MESH == 1)) {
+    if ((Display_LAND_Mesh == 1) && (LoadButton_LAND_Mesh == 1)) {
       proceed = true;
     }
   }
@@ -25685,9 +25707,9 @@ void SOLARCHVISION_draw_land (int target_window) {
 
       if (objExport_MaterialLibrary != 0) {
 
-        if (Display_LAND_Texture != 0) {           
+        if (Display_LAND_Textures != 0) {           
 
-          for (int n_Map = 0; n_Map < LAND_Texture_num; n_Map++) {
+          for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
 
             int mt = n_Map;
 
@@ -25701,7 +25723,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             radOutput.println("0");
             radOutput.println("5 " + nf(r, 0, objExport_PrecisionVtexture) + " " + nf(g, 0, objExport_PrecisionVtexture) + " " + nf(b, 0, objExport_PrecisionVtexture) + " 0 0");
 
-            if (Display_LAND_Texture != 0) {
+            if (Display_LAND_Textures != 0) {
               if (n_Map != -1) {
 /*
     copy the map!
@@ -25717,9 +25739,9 @@ void SOLARCHVISION_draw_land (int target_window) {
 
       if (objExport_MaterialLibrary != 0) {
 
-        if (Display_LAND_Texture != 0) {           
+        if (Display_LAND_Textures != 0) {           
 
-          for (int n_Map = 0; n_Map < LAND_Texture_num; n_Map++) {
+          for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
 
             mtlOutput.println("newmtl LandMesh_" + nf(n_Map, 0));
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -25734,10 +25756,10 @@ void SOLARCHVISION_draw_land (int target_window) {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
 
-            if (Display_LAND_Texture != 0) {
+            if (Display_LAND_Textures != 0) {
               if (n_Map != -1) {
 
-                String old_Texture_path = LAND_Texture_ImagePath[n_Map]; 
+                String old_Texture_path = LAND_Textures_ImagePath[n_Map]; 
 
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
@@ -25782,7 +25804,7 @@ void SOLARCHVISION_draw_land (int target_window) {
 
         if (_turn == 3) {
           
-          if (Display_LAND_Texture != 0) {   
+          if (Display_LAND_Textures != 0) {   
 
             obj_lastGroupNumber += 1;
             objOutput.println("g LandMesh");
@@ -25805,12 +25827,12 @@ void SOLARCHVISION_draw_land (int target_window) {
       int TotalSubNo = 1;  
       if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
 
-      int i_start = Skip_LAND_MESH_Center;
+      int i_start = Skip_LAND_Mesh_Center;
       int i_end = LAND_n_I - 1;
 
       if (target_window == -1) {
         i_start = 0;
-        i_end = Skip_LAND_MESH_Center;
+        i_end = Skip_LAND_Mesh_Center;
         
         target_window = 0; // because the rest is simillar to that
       }
@@ -25822,37 +25844,37 @@ void SOLARCHVISION_draw_land (int target_window) {
 
           float[][] base_Vertices = new float [4][3];
 
-          base_Vertices[0][0] = LAND_MESH[i][j][0];
-          base_Vertices[0][1] = LAND_MESH[i][j][1];
-          base_Vertices[0][2] = LAND_MESH[i][j][2];
+          base_Vertices[0][0] = LAND_Mesh[i][j][0];
+          base_Vertices[0][1] = LAND_Mesh[i][j][1];
+          base_Vertices[0][2] = LAND_Mesh[i][j][2];
 
-          base_Vertices[1][0] = LAND_MESH[i+1][j][0];
-          base_Vertices[1][1] = LAND_MESH[i+1][j][1];
-          base_Vertices[1][2] = LAND_MESH[i+1][j][2];
+          base_Vertices[1][0] = LAND_Mesh[i+1][j][0];
+          base_Vertices[1][1] = LAND_Mesh[i+1][j][1];
+          base_Vertices[1][2] = LAND_Mesh[i+1][j][2];
 
-          base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
-          base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
-          base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
+          base_Vertices[2][0] = LAND_Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = LAND_Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = LAND_Mesh[i+1][j+1][2];
 
-          base_Vertices[3][0] = LAND_MESH[i][j+1][0];
-          base_Vertices[3][1] = LAND_MESH[i][j+1][1];
-          base_Vertices[3][2] = LAND_MESH[i][j+1][2];        
+          base_Vertices[3][0] = LAND_Mesh[i][j+1][0];
+          base_Vertices[3][1] = LAND_Mesh[i][j+1][1];
+          base_Vertices[3][2] = LAND_Mesh[i][j+1][2];        
 
           for (int n = 0; n < TotalSubNo; n++) {
 
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
             int n_Map = -1; 
-            if (Display_LAND_Texture != 0) { 
+            if (Display_LAND_Textures != 0) { 
 
-              for (int q = 0; q < LAND_Texture_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+              for (int q = 0; q < LAND_Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
 
                 n_Map = q; 
 
                 for (int s = 0; s < subFace.length; s++) {
 
-                  float u = (subFace[s][0] / LAND_Texture_scale_U[q] + 0.5);
-                  float v = (-subFace[s][1] / LAND_Texture_scale_V[q] + 0.5);
+                  float u = (subFace[s][0] / LAND_Textures_scale_U[q] + 0.5);
+                  float v = (-subFace[s][1] / LAND_Textures_scale_V[q] + 0.5);
 
                   if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
 
@@ -25873,11 +25895,11 @@ void SOLARCHVISION_draw_land (int target_window) {
               WIN3D_Diagrams.strokeWeight(1);
               WIN3D_Diagrams.stroke(0, 0, 0);
               if (MODEL3D_DisplayEdges == 0) WIN3D_Diagrams.noStroke();
-              if (Display_LAND_Texture != 0) WIN3D_Diagrams.noStroke();
+              if (Display_LAND_Textures != 0) WIN3D_Diagrams.noStroke();
 
-              if (Display_LAND_Texture != 0) {
+              if (Display_LAND_Textures != 0) {
                 if (n_Map != -1) {
-                  WIN3D_Diagrams.texture(LAND_Texture_Map[n_Map]);
+                  WIN3D_Diagrams.texture(LAND_Textures_Map[n_Map]);
                 } else {
                   WIN3D_Diagrams.noFill();   
                   WIN3D_Diagrams.strokeWeight(1);
@@ -25890,7 +25912,7 @@ void SOLARCHVISION_draw_land (int target_window) {
 
               if (_turn == 3) {
 
-                if (Display_LAND_Texture != 0) {
+                if (Display_LAND_Textures != 0) {
 
                   if (objExport_MaterialLibrary != 0) {
                     if (n_Map != -1) {    
@@ -25903,7 +25925,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             
             for (int s = 0; s < subFace.length; s++) {
 
-              if (Display_LAND_Texture == 0) {
+              if (Display_LAND_Textures == 0) {
 
                 if (WIN3D_FacesShade != Shade_Surface_Wire) {
 
@@ -25963,7 +25985,7 @@ void SOLARCHVISION_draw_land (int target_window) {
                 
                 if (target_window == 5) {
 
-                  if (Display_LAND_Texture != 0) {   
+                  if (Display_LAND_Textures != 0) {   
                   
                     radOutput.println("LandMesh_0" + " polygon " + "LAND");
                     radOutput.println("0");
@@ -25993,13 +26015,13 @@ void SOLARCHVISION_draw_land (int target_window) {
                 float u = 0;
                 float v = 0;
                 if (n_Map != -1) {
-                  u = (subFace[s][0] / LAND_Texture_scale_U[n_Map] + 0.5);
-                  v = (-subFace[s][1] / LAND_Texture_scale_V[n_Map] + 0.5);
+                  u = (subFace[s][0] / LAND_Textures_scale_U[n_Map] + 0.5);
+                  v = (-subFace[s][1] / LAND_Textures_scale_V[n_Map] + 0.5);
                 }
 
                 if (target_window == 3) {
                   if (n_Map != -1) {
-                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, u * LAND_Texture_Map[n_Map].width, v * LAND_Texture_Map[n_Map].height);
+                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, u * LAND_Textures_Map[n_Map].width, v * LAND_Textures_Map[n_Map].height);
                   }
                   else {
                     WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);                    
@@ -26008,7 +26030,7 @@ void SOLARCHVISION_draw_land (int target_window) {
 
                 if (target_window == 4) {
                   
-                  if (Display_LAND_Texture != 0) {   
+                  if (Display_LAND_Textures != 0) {   
                   
                     if (_turn == 1) {
                       SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
@@ -26043,7 +26065,7 @@ void SOLARCHVISION_draw_land (int target_window) {
 
               if (_turn == 3) {
                 
-                if (Display_LAND_Texture != 0) {   
+                if (Display_LAND_Textures != 0) {   
 
                   String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
                   String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
@@ -26078,7 +26100,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             
 
 
-            if (Display_LAND_Texture != 0) {
+            if (Display_LAND_Textures != 0) {
 
               if (Display_LAND_DEPTH != 0) {
 
@@ -26095,24 +26117,24 @@ void SOLARCHVISION_draw_land (int target_window) {
                   float u = 0;
                   float v = 0;
                   if (n_Map != -1) {
-                    u = (subFace[s][0] / LAND_Texture_scale_U[n_Map] + 0.5);
-                    v = (-subFace[s][1] / LAND_Texture_scale_V[n_Map] + 0.5);
+                    u = (subFace[s][0] / LAND_Textures_scale_U[n_Map] + 0.5);
+                    v = (-subFace[s][1] / LAND_Textures_scale_V[n_Map] + 0.5);
                   }
 
-                  float u_next = (subFace[s_next][0] / LAND_Texture_scale_U[n_Map] + 0.5);
-                  float v_next = (-subFace[s_next][1] / LAND_Texture_scale_V[n_Map] + 0.5);
+                  float u_next = (subFace[s_next][0] / LAND_Textures_scale_U[n_Map] + 0.5);
+                  float v_next = (-subFace[s_next][1] / LAND_Textures_scale_V[n_Map] + 0.5);
 
                   if (target_window == 3) {
 
                     WIN3D_Diagrams.beginShape();
                     
                     if (n_Map != -1) {
-                      WIN3D_Diagrams.texture(LAND_Texture_Map[n_Map]);                  
+                      WIN3D_Diagrams.texture(LAND_Textures_Map[n_Map]);                  
   
-                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, u * LAND_Texture_Map[n_Map].width, v * LAND_Texture_Map[n_Map].height);
-                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_Scale3D, u_next * LAND_Texture_Map[n_Map].width, v_next * LAND_Texture_Map[n_Map].height);
-                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D, u_next * LAND_Texture_Map[n_Map].width, v_next * LAND_Texture_Map[n_Map].height);
-                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D, u * LAND_Texture_Map[n_Map].width, v * LAND_Texture_Map[n_Map].height);
+                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, u * LAND_Textures_Map[n_Map].width, v * LAND_Textures_Map[n_Map].height);
+                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_Scale3D, u_next * LAND_Textures_Map[n_Map].width, v_next * LAND_Textures_Map[n_Map].height);
+                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D, u_next * LAND_Textures_Map[n_Map].width, v_next * LAND_Textures_Map[n_Map].height);
+                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D, u * LAND_Textures_Map[n_Map].width, v * LAND_Textures_Map[n_Map].height);
                     }
                     else {
                       WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
@@ -26137,7 +26159,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             
             int[] newFace = new int[LAND_n_J - 1];
             for (int j = 0; j < newFace.length; j += 1) {
-              newFace[j] = SOLARCHVISION_add_Vertex(LAND_MESH[i + 1][j][0], LAND_MESH[i + 1][j][1], LAND_MESH[i + 1][j][2]);
+              newFace[j] = SOLARCHVISION_add_Vertex(LAND_Mesh[i + 1][j][0], LAND_Mesh[i + 1][j][1], LAND_Mesh[i + 1][j][2]);
             }
             SOLARCHVISION_add_Face(newFace);
           }
@@ -26161,9 +26183,9 @@ void SOLARCHVISION_draw_land (int target_window) {
         for (int i = 0; i < LAND_n_I; i += 1) {
           for (int j = 0; j < LAND_n_J; j += 1) {
 
-            float x = LAND_MESH[i][j][0];
-            float y = LAND_MESH[i][j][1];
-            float z = LAND_MESH[i][j][2];
+            float x = LAND_Mesh[i][j][0];
+            float y = LAND_Mesh[i][j][1];
+            float z = LAND_Mesh[i][j][2];
 
             float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
 
@@ -28998,10 +29020,10 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
     int LAND_i = f / (LAND_n_J - 1);
     int LAND_j = f % (LAND_n_J - 1);
     
-    float[] A = LAND_MESH[LAND_i][LAND_j];
-    float[] B = LAND_MESH[LAND_i][LAND_j + 1];
-    float[] C = LAND_MESH[LAND_i + 1][LAND_j + 1];
-    float[] D = LAND_MESH[LAND_i + 1][LAND_j];
+    float[] A = LAND_Mesh[LAND_i][LAND_j];
+    float[] B = LAND_Mesh[LAND_i][LAND_j + 1];
+    float[] C = LAND_Mesh[LAND_i + 1][LAND_j + 1];
+    float[] D = LAND_Mesh[LAND_i + 1][LAND_j];
     float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])}; 
     
     for (int i = 0; i < 4; i++) {
@@ -29207,21 +29229,24 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 // ---------------------------------------------------------
 
 
-float[] LAND_Texture_scale_U;
-float[] LAND_Texture_scale_V;
-PImage[] LAND_Texture_Map;
-String[] LAND_Texture_ImagePath;
-int LAND_Texture_num = 0;   
+float[] LAND_Textures_scale_U;
+float[] LAND_Textures_scale_V;
+PImage[] LAND_Textures_Map;
+String[] LAND_Textures_ImagePath;
+int LAND_Textures_num = 0;   
 
-void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
+void SOLARCHVISION_load_LAND_Textures (String ProjectSite) {
 
-  LAND_Texture_scale_U = new float [0];
-  LAND_Texture_scale_V = new float [0];
-  LAND_Texture_Map = new PImage [0];
-  LAND_Texture_ImagePath = new String [0];
-  LAND_Texture_num = 0;
+  String LandDirectory = LandFolder + "/" + ProjectSite;
 
-  Display_LAND_Texture = 0;
+  
+  LAND_Textures_scale_U = new float [0];
+  LAND_Textures_scale_V = new float [0];
+  LAND_Textures_Map = new PImage [0];
+  LAND_Textures_ImagePath = new String [0];
+  LAND_Textures_num = 0;
+
+  Display_LAND_Textures = 0;
 
   try {     
 
@@ -29249,7 +29274,7 @@ void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
                   dir
                 };
 
-                LAND_Texture_ImagePath = (String[]) concat(LAND_Texture_ImagePath, new_item);
+                LAND_Textures_ImagePath = (String[]) concat(LAND_Textures_ImagePath, new_item);
               }
 
               {
@@ -29257,7 +29282,7 @@ void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
                   loadImage(dir)
                 };
 
-                LAND_Texture_Map = (PImage[]) concat(LAND_Texture_Map, new_item);
+                LAND_Textures_Map = (PImage[]) concat(LAND_Textures_Map, new_item);
               }
 
               float h = float(Parts[1]);
@@ -29267,7 +29292,7 @@ void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
                   h * 1.16363
                 };
 
-                LAND_Texture_scale_U = (float[]) concat(LAND_Texture_scale_U, new_item);
+                LAND_Textures_scale_U = (float[]) concat(LAND_Textures_scale_U, new_item);
               }  
 
               {
@@ -29275,13 +29300,13 @@ void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
                   h * 0.66084
                 };
 
-                LAND_Texture_scale_V = (float[]) concat(LAND_Texture_scale_V, new_item);
+                LAND_Textures_scale_V = (float[]) concat(LAND_Textures_scale_V, new_item);
               }
 
-              LAND_Texture_num += 1;
+              LAND_Textures_num += 1;
 
 
-              Display_LAND_Texture = 1;
+              Display_LAND_Textures = 1;
             }
           }
         }
@@ -29289,7 +29314,7 @@ void SOLARCHVISION_LoadLAND_Texture (String LandDirectory) {
     }
   }
   catch (Exception e) {
-    println("ERROR loading LAND_Texture_Map!");
+    println("ERROR loading LAND_Textures_Map!");
   }
 }
 
@@ -29313,28 +29338,28 @@ int LAND_n_J = 24 + 1;
 double LAND_mid_lat;
 double LAND_mid_lon;
 
-float[][][] LAND_MESH;
+float[][][] LAND_Mesh;
 
-void SOLARCHVISION_load_LandMesh (String ProjectSite) {
+void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
 
   String LandDirectory = LandFolder + "/" + ProjectSite;
 
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
 
-  LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
+  LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
-      LAND_MESH[i][j][0] = FLOAT_undefined;
-      LAND_MESH[i][j][1] = FLOAT_undefined;
-      LAND_MESH[i][j][2] = FLOAT_undefined;
+      LAND_Mesh[i][j][0] = FLOAT_undefined;
+      LAND_Mesh[i][j][1] = FLOAT_undefined;
+      LAND_Mesh[i][j][2] = FLOAT_undefined;
     }
   }
 
   try { 
 
-    if (LoadButton_LAND_MESH == 1) {
+    if (LoadButton_LAND_Mesh == 1) {
 
       for (int i = 0; i < LAND_n_I; i += 1) {
 
@@ -29366,40 +29391,40 @@ void SOLARCHVISION_load_LandMesh (String ProjectSite) {
           //println(i, j);
           //println(x,y,z);
 
-          LAND_MESH[i][j][0] = x;      
-          LAND_MESH[i][j][1] = y;      
-          LAND_MESH[i][j][2] = z;
+          LAND_Mesh[i][j][0] = x;      
+          LAND_Mesh[i][j][1] = y;      
+          LAND_Mesh[i][j][2] = z;
         }
       }
 
-      float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
+      float h = LAND_Mesh[LAND_n_I_base][LAND_n_J_base][2];
 
       h += HeightAboveGround;
 
       for (int i = 0; i < LAND_n_I; i += 1) {
         for (int j = 0; j < LAND_n_J; j += 1) {
 
-          LAND_MESH[i][j][2] -= h;
+          LAND_Mesh[i][j][2] -= h;
         }
       }
     }
   }
 
   catch (Exception e) {
-    println("ERROR loading LAND_MESH!");
+    println("ERROR loading LAND_Mesh!");
   }
 
 
-  SOLARCHVISION_LoadLAND_Texture(LandDirectory);
+  SOLARCHVISION_load_LAND_Textures(ProjectSite);
 }
 
 
-void SOLARCHVISION_Download_LAND_MESHMesh () {
+void SOLARCHVISION_Download_LAND_Mesh () {
 
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
 
-  LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
+  LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
 
   for (int i = 0; i < LAND_n_I; i += 1) {
@@ -29485,26 +29510,43 @@ void SOLARCHVISION_Download_LAND_MESHMesh () {
       //println(i, j);
       //println(x,y,z);
 
-      LAND_MESH[i][j][0] = x;      
-      LAND_MESH[i][j][1] = y;      
-      LAND_MESH[i][j][2] = z;    
+      LAND_Mesh[i][j][0] = x;      
+      LAND_Mesh[i][j][1] = y;      
+      LAND_Mesh[i][j][2] = z;    
 
       if ((i == 0) && (j == 0)) LocationElevation = z;
     }
   }
 
-  float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
+  float h = LAND_Mesh[LAND_n_I_base][LAND_n_J_base][2];
 
   h += HeightAboveGround;
 
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
 
-      LAND_MESH[i][j][2] -= h;
+      LAND_Mesh[i][j][2] -= h;
     }
   }
 
-  Download_LAND_MESH = 0;
+  Download_LAND_Mesh = 0;
+}
+
+
+void SOLARCHVISION_Download_LAND_Textures () {
+  
+  for (int zoom = 20; zoom > 15; zoom -= 1) {
+
+    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(zoom, 0) + "&size=1000x1000&maptype=satellite&format=jpg";
+   
+    println(the_link);
+    //link(the_link);
+
+    String LandFile = LandFolder + "/" + nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5) + "/" + nf(zoom, 0) + ".jpg";
+    saveBytes(LandFile, loadBytes(the_link));      
+  }
+
+  Download_LAND_Textures = 0;
 }
 
 
@@ -33547,9 +33589,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!  
 
-        float x = LAND_MESH[i][j][0] * OBJECTS_scale;
-        float y = LAND_MESH[i][j][1] * OBJECTS_scale;
-        float z = -LAND_MESH[i][j][2] * OBJECTS_scale;
+        float x = LAND_Mesh[i][j][0] * OBJECTS_scale;
+        float y = LAND_Mesh[i][j][1] * OBJECTS_scale;
+        float z = -LAND_Mesh[i][j][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -36145,13 +36187,13 @@ void mouseClicked () {
             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
-              Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
+              Display_LAND_Mesh = (Display_LAND_Mesh + 1) % 2;
 
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-              Display_LAND_Texture = (Display_LAND_Texture + 1) % 2;
+              Display_LAND_Textures = (Display_LAND_Textures + 1) % 2;
 
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -39657,11 +39699,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 7) { // Environment
 
-      Download_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Download_LAND_MESH", Download_LAND_MESH, 0, 1, 1), 1));
-      LoadButton_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LoadButton_LAND_MESH", LoadButton_LAND_MESH, 0, 1, 1), 1));
-      Skip_LAND_MESH_Center = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Skip_LAND_MESH_Center", Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
-      Display_LAND_MESH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_MESH", Display_LAND_MESH, 0, 1, 1), 1));
-      Display_LAND_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Texture", Display_LAND_Texture, 0, 1, 1), 1));
+      Download_LAND_Textures = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Download_LAND_Textures", Download_LAND_Textures, 0, 1, 1), 1));
+      LoadButton_LAND_Textures = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LoadButton_LAND_Textures", LoadButton_LAND_Textures, 0, 1, 1), 1));
+      Download_LAND_Mesh = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Download_LAND_Mesh", Download_LAND_Mesh, 0, 1, 1), 1));
+      LoadButton_LAND_Mesh = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LoadButton_LAND_Mesh", LoadButton_LAND_Mesh, 0, 1, 1), 1));
+      Skip_LAND_Mesh_Center = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Skip_LAND_Mesh_Center", Skip_LAND_Mesh_Center, 0, LAND_n_I - 1, 1), 1));
+      Display_LAND_Mesh = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Mesh", Display_LAND_Mesh, 0, 1, 1), 1));
+      Display_LAND_Textures = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Textures", Display_LAND_Textures, 0, 1, 1), 1));
       Display_LAND_POINTS = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_POINTS", Display_LAND_POINTS, 0, 1, 1), 1));     
       Display_LAND_DEPTH = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_DEPTH", Display_LAND_DEPTH, 0, 1, 1), 1));
 
@@ -40827,9 +40871,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         int i = OBJ_NUM / LAND_n_J;
         int j = OBJ_NUM % LAND_n_J;
 
-        float x = LAND_MESH[i][j][0] * OBJECTS_scale;
-        float y = LAND_MESH[i][j][1] * OBJECTS_scale;
-        float z = -LAND_MESH[i][j][2] * OBJECTS_scale;
+        float x = LAND_Mesh[i][j][0] * OBJECTS_scale;
+        float y = LAND_Mesh[i][j][1] * OBJECTS_scale;
+        float z = -LAND_Mesh[i][j][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -42447,7 +42491,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             }
             
 
-            if (Display_LAND_MESH != 0) {
+            if (Display_LAND_Mesh != 0) {
               
               int Tessellation = LAND_Tessellation;
               if (WIN3D_FacesShade == Shade_Surface_Base) {
@@ -42458,26 +42502,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
         
         
-              for (int Li = Skip_LAND_MESH_Center; Li < LAND_n_I - 1; Li += 1) {
+              for (int Li = Skip_LAND_Mesh_Center; Li < LAND_n_I - 1; Li += 1) {
                 for (int Lj = 0; Lj < LAND_n_J - 1; Lj += 1) {
         
                   float[][] base_Vertices = new float [4][3];
         
-                  base_Vertices[0][0] = LAND_MESH[Li][Lj][0];
-                  base_Vertices[0][1] = LAND_MESH[Li][Lj][1];
-                  base_Vertices[0][2] = LAND_MESH[Li][Lj][2];
+                  base_Vertices[0][0] = LAND_Mesh[Li][Lj][0];
+                  base_Vertices[0][1] = LAND_Mesh[Li][Lj][1];
+                  base_Vertices[0][2] = LAND_Mesh[Li][Lj][2];
         
-                  base_Vertices[1][0] = LAND_MESH[Li+1][Lj][0];
-                  base_Vertices[1][1] = LAND_MESH[Li+1][Lj][1];
-                  base_Vertices[1][2] = LAND_MESH[Li+1][Lj][2];
+                  base_Vertices[1][0] = LAND_Mesh[Li+1][Lj][0];
+                  base_Vertices[1][1] = LAND_Mesh[Li+1][Lj][1];
+                  base_Vertices[1][2] = LAND_Mesh[Li+1][Lj][2];
         
-                  base_Vertices[2][0] = LAND_MESH[Li+1][Lj+1][0];
-                  base_Vertices[2][1] = LAND_MESH[Li+1][Lj+1][1];
-                  base_Vertices[2][2] = LAND_MESH[Li+1][Lj+1][2];
+                  base_Vertices[2][0] = LAND_Mesh[Li+1][Lj+1][0];
+                  base_Vertices[2][1] = LAND_Mesh[Li+1][Lj+1][1];
+                  base_Vertices[2][2] = LAND_Mesh[Li+1][Lj+1][2];
         
-                  base_Vertices[3][0] = LAND_MESH[Li][Lj+1][0];
-                  base_Vertices[3][1] = LAND_MESH[Li][Lj+1][1];
-                  base_Vertices[3][2] = LAND_MESH[Li][Lj+1][2];        
+                  base_Vertices[3][0] = LAND_Mesh[Li][Lj+1][0];
+                  base_Vertices[3][1] = LAND_Mesh[Li][Lj+1][1];
+                  base_Vertices[3][2] = LAND_Mesh[Li][Lj+1][2];        
         
                   for (int n = 0; n < TotalSubNo; n++) {
 
@@ -43062,7 +43106,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }
           
           
-          if (Display_LAND_MESH != 0) {
+          if (Display_LAND_Mesh != 0) {
             
             int Tessellation = LAND_Tessellation;
             if (WIN3D_FacesShade == Shade_Surface_Base) {
@@ -43073,26 +43117,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
       
       
-            for (int Li = Skip_LAND_MESH_Center; Li < LAND_n_I - 1; Li += 1) {
+            for (int Li = Skip_LAND_Mesh_Center; Li < LAND_n_I - 1; Li += 1) {
               for (int Lj = 0; Lj < LAND_n_J - 1; Lj += 1) {
       
                 float[][] base_Vertices = new float [4][3];
       
-                base_Vertices[0][0] = LAND_MESH[Li][Lj][0];
-                base_Vertices[0][1] = LAND_MESH[Li][Lj][1];
-                base_Vertices[0][2] = LAND_MESH[Li][Lj][2];
+                base_Vertices[0][0] = LAND_Mesh[Li][Lj][0];
+                base_Vertices[0][1] = LAND_Mesh[Li][Lj][1];
+                base_Vertices[0][2] = LAND_Mesh[Li][Lj][2];
       
-                base_Vertices[1][0] = LAND_MESH[Li+1][Lj][0];
-                base_Vertices[1][1] = LAND_MESH[Li+1][Lj][1];
-                base_Vertices[1][2] = LAND_MESH[Li+1][Lj][2];
+                base_Vertices[1][0] = LAND_Mesh[Li+1][Lj][0];
+                base_Vertices[1][1] = LAND_Mesh[Li+1][Lj][1];
+                base_Vertices[1][2] = LAND_Mesh[Li+1][Lj][2];
       
-                base_Vertices[2][0] = LAND_MESH[Li+1][Lj+1][0];
-                base_Vertices[2][1] = LAND_MESH[Li+1][Lj+1][1];
-                base_Vertices[2][2] = LAND_MESH[Li+1][Lj+1][2];
+                base_Vertices[2][0] = LAND_Mesh[Li+1][Lj+1][0];
+                base_Vertices[2][1] = LAND_Mesh[Li+1][Lj+1][1];
+                base_Vertices[2][2] = LAND_Mesh[Li+1][Lj+1][2];
       
-                base_Vertices[3][0] = LAND_MESH[Li][Lj+1][0];
-                base_Vertices[3][1] = LAND_MESH[Li][Lj+1][1];
-                base_Vertices[3][2] = LAND_MESH[Li][Lj+1][2];        
+                base_Vertices[3][0] = LAND_Mesh[Li][Lj+1][0];
+                base_Vertices[3][1] = LAND_Mesh[Li][Lj+1][1];
+                base_Vertices[3][2] = LAND_Mesh[Li][Lj+1][2];        
       
                 for (int n = 0; n < TotalSubNo; n++) {
 
@@ -45166,9 +45210,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       int the_i = OBJ_NUM / LAND_n_J;
       int the_j = OBJ_NUM % LAND_n_J;
 
-      x = LAND_MESH[the_i][the_j][0];
-      y = LAND_MESH[the_i][the_j][1];
-      z = LAND_MESH[the_i][the_j][2];
+      x = LAND_Mesh[the_i][the_j][0];
+      y = LAND_Mesh[the_i][the_j][1];
+      z = LAND_Mesh[the_i][the_j][2];
 
     }             
 
@@ -46472,7 +46516,7 @@ void SOLARCHVISION_flatten_selectedLandPoints () {
     int i = f / LAND_n_J;
     int j = f % LAND_n_J;
 
-    LAND_MESH[i][j][2] = 0;
+    LAND_Mesh[i][j][2] = 0;
 
   }
 }
@@ -46488,9 +46532,9 @@ void SOLARCHVISION_move_selectedLandPoints (float dx, float dy, float dz) {
     int i = f / LAND_n_J;
     int j = f % LAND_n_J;
 
-    LAND_MESH[i][j][0] += dx; 
-    LAND_MESH[i][j][1] += dy;
-    LAND_MESH[i][j][2] += dz;
+    LAND_Mesh[i][j][0] += dx; 
+    LAND_Mesh[i][j][1] += dy;
+    LAND_Mesh[i][j][2] += dz;
   }
 }
 
@@ -46504,22 +46548,22 @@ void SOLARCHVISION_rotate_selectedLandPoints (float x0, float y0, float z0, floa
     int i = f / LAND_n_J;
     int j = f % LAND_n_J;
 
-    float x = LAND_MESH[i][j][0] - x0; 
-    float y = LAND_MESH[i][j][1] - y0; 
-    float z = LAND_MESH[i][j][2] - z0;
+    float x = LAND_Mesh[i][j][0] - x0; 
+    float y = LAND_Mesh[i][j][1] - y0; 
+    float z = LAND_Mesh[i][j][2] - z0;
 
     if (the_Vector == 2) {
-      LAND_MESH[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
-      LAND_MESH[i][j][1] = y0 + (x * sin(r) + y * cos(r));
-      LAND_MESH[i][j][2] = z0 + (z);
+      LAND_Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
+      LAND_Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
+      LAND_Mesh[i][j][2] = z0 + (z);
     } else if (the_Vector == 1) {
-      LAND_MESH[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
-      LAND_MESH[i][j][1] = y0 + (y);
-      LAND_MESH[i][j][2] = z0 + (z * cos(r) - x * sin(r));
+      LAND_Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
+      LAND_Mesh[i][j][1] = y0 + (y);
+      LAND_Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
     } else if (the_Vector == 0) {
-      LAND_MESH[i][j][0] = x0 + (x); 
-      LAND_MESH[i][j][1] = y0 + (y * cos(r) - z * sin(r));
-      LAND_MESH[i][j][2] = z0 + (y * sin(r) + z * cos(r));
+      LAND_Mesh[i][j][0] = x0 + (x); 
+      LAND_Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
+      LAND_Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
     }
   }
 }
@@ -46534,9 +46578,9 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
     int i = f / LAND_n_J;
     int j = f % LAND_n_J;
 
-    float x = LAND_MESH[i][j][0];
-    float y = LAND_MESH[i][j][1]; 
-    float z = LAND_MESH[i][j][2];
+    float x = LAND_Mesh[i][j][0];
+    float y = LAND_Mesh[i][j][1]; 
+    float z = LAND_Mesh[i][j][2];
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -46550,9 +46594,9 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
     y = B[1];
     z = B[2];
 
-    LAND_MESH[i][j][0] = x; 
-    LAND_MESH[i][j][1] = y;
-    LAND_MESH[i][j][2] = z;
+    LAND_Mesh[i][j][0] = x; 
+    LAND_Mesh[i][j][1] = y;
+    LAND_Mesh[i][j][2] = z;
 
   }
 }
@@ -49174,13 +49218,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
             if (UI_BAR_a_Items[i][0].equals("Display")) {
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Mesh")) {
-                if (Display_LAND_MESH == 0) {
+                if (Display_LAND_Mesh == 0) {
                   stroke(127); 
                   fill(127);
                 }
               }       
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (Display_LAND_Texture == 0) {
+                if (Display_LAND_Textures == 0) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51833,13 +51877,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_TROPO3D_Texture", Display_TROPO3D_Texture);
   newChild1.setInt("Display_EARTH3D_Surface", Display_EARTH3D_Surface);
   newChild1.setInt("Display_EARTH3D_Texture", Display_EARTH3D_Texture);
-  newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
-  newChild1.setInt("LoadButton_LAND_MESH", LoadButton_LAND_MESH);
-  newChild1.setInt("Display_LAND_MESH", Display_LAND_MESH);
+  newChild1.setInt("Download_LAND_Textures", Download_LAND_Textures);
+  newChild1.setInt("LoadButton_LAND_Textures", LoadButton_LAND_Textures);  
+  newChild1.setInt("Download_LAND_Mesh", Download_LAND_Mesh);
+  newChild1.setInt("LoadButton_LAND_Mesh", LoadButton_LAND_Mesh);
+  newChild1.setInt("Display_LAND_Mesh", Display_LAND_Mesh);
   newChild1.setInt("Display_LAND_POINTS", Display_LAND_POINTS);
-  newChild1.setInt("Display_LAND_Texture", Display_LAND_Texture);
+  newChild1.setInt("Display_LAND_Textures", Display_LAND_Textures);
   newChild1.setInt("Display_LAND_DEPTH", Display_LAND_DEPTH);
-  newChild1.setInt("Skip_LAND_MESH_Center", Skip_LAND_MESH_Center);
+  newChild1.setInt("Skip_LAND_Mesh_Center", Skip_LAND_Mesh_Center);
   newChild1.setInt("Display_SolidImpact_Points", Display_SolidImpact_Points);
   newChild1.setInt("Display_SolidImpact_Lines", Display_SolidImpact_Lines);
   newChild1.setInt("MODEL3D_DisplayVertices", MODEL3D_DisplayVertices);       
@@ -51982,15 +52028,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
 
-  newChild1.setInt("LAND_Texture_num", LAND_Texture_num);
+  newChild1.setInt("LAND_Textures_num", LAND_Textures_num);
 
   {
-    newChild1 = my_xml.addChild("LAND_Texture_scale_U");
-    int ni = LAND_Texture_scale_U.length;
+    newChild1 = my_xml.addChild("LAND_Textures_scale_U");
+    int ni = LAND_Textures_scale_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAND_Texture_scale_U[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(LAND_Textures_scale_U[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -51998,12 +52044,12 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("LAND_Texture_scale_V");
-    int ni = LAND_Texture_scale_V.length;
+    newChild1 = my_xml.addChild("LAND_Textures_scale_V");
+    int ni = LAND_Textures_scale_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAND_Texture_scale_V[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(LAND_Textures_scale_V[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -52015,42 +52061,42 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
     String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
 
-    for (int q = 0; q < LAND_Texture_num; q++) {
+    for (int q = 0; q < LAND_Textures_num; q++) {
 
       int n_Map = q; 
 
-      String the_filename = LAND_Texture_ImagePath[n_Map].substring(LAND_Texture_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
+      String the_filename = LAND_Textures_ImagePath[n_Map].substring(LAND_Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
 
       String new_Texture_path = the_dir + "/Textures/" +  the_filename;
 
-      //println("pre_LAND_Texture_ImagePath", LAND_Texture_ImagePath[n_Map]);
+      //println("pre_LAND_Textures_ImagePath", LAND_Textures_ImagePath[n_Map]);
       //println("new_Texture_path", new_Texture_path);
 
-      if (LAND_Texture_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+      if (LAND_Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         TEXTURE_copied = -1;
       } else {
 
-        println("Copying texture:", LAND_Texture_ImagePath[n_Map], ">", new_Texture_path);
-        saveBytes(new_Texture_path, loadBytes(LAND_Texture_ImagePath[n_Map]));
-        LAND_Texture_ImagePath[n_Map] = new_Texture_path;
+        println("Copying texture:", LAND_Textures_ImagePath[n_Map], ">", new_Texture_path);
+        saveBytes(new_Texture_path, loadBytes(LAND_Textures_ImagePath[n_Map]));
+        LAND_Textures_ImagePath[n_Map] = new_Texture_path;
 
         TEXTURE_copied = 1;
       }
 
       //if (TEXTURE_copied == 0) {
       //  println("Saving texture from the scene.");
-      //  LAND_Texture_Map[n_Map].save(new_Texture_path);
+      //  LAND_Textures_Map[n_Map].save(new_Texture_path);
       //}
     }
   }
 
   {
-    newChild1 = my_xml.addChild("LAND_Texture_ImagePath");
-    int ni = LAND_Texture_ImagePath.length;
+    newChild1 = my_xml.addChild("LAND_Textures_ImagePath");
+    int ni = LAND_Textures_ImagePath.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += LAND_Texture_ImagePath[i];
+      lineSTR += LAND_Textures_ImagePath[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -52171,19 +52217,19 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
   }
 
-  println("Saving:LAND_MESH");
+  println("Saving:LAND_Mesh");
   {
-    newChild1 = my_xml.addChild("LAND_MESH");
+    newChild1 = my_xml.addChild("LAND_Mesh");
     int vNo = 0;
-    for (int i = 0; i < LAND_MESH.length; i++) {
-      for (int j = 0; j < LAND_MESH[i].length; j++) {
+    for (int i = 0; i < LAND_Mesh.length; i++) {
+      for (int j = 0; j < LAND_Mesh[i].length; j++) {
         newChild2 = newChild1.addChild("Vertice");
         newChild2.setInt("id", vNo);
         String lineSTR = "";
-        //for (int k = 0; k < LAND_MESH[i][j].length; k++) {
+        //for (int k = 0; k < LAND_Mesh[i][j].length; k++) {
         for (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(LAND_MESH[i][j][k], 0, 4).replace(",", "."); // <<<<
-          if (k < LAND_MESH[i][j].length - 1) lineSTR += ",";
+          lineSTR += nf(LAND_Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+          if (k < LAND_Mesh[i][j].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
         vNo += 1;
@@ -53150,13 +53196,15 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_TROPO3D_Texture = children0[L].getInt("Display_TROPO3D_Texture");
       Display_EARTH3D_Surface = children0[L].getInt("Display_EARTH3D_Surface");
       Display_EARTH3D_Texture = children0[L].getInt("Display_EARTH3D_Texture");
-      Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
-      LoadButton_LAND_MESH = children0[L].getInt("LoadButton_LAND_MESH");
-      Display_LAND_MESH = children0[L].getInt("Display_LAND_MESH");
+      Download_LAND_Textures = children0[L].getInt("Download_LAND_Textures");
+      LoadButton_LAND_Textures = children0[L].getInt("LoadButton_LAND_Textures");      
+      Download_LAND_Mesh = children0[L].getInt("Download_LAND_Mesh");
+      LoadButton_LAND_Mesh = children0[L].getInt("LoadButton_LAND_Mesh");
+      Display_LAND_Mesh = children0[L].getInt("Display_LAND_Mesh");
       Display_LAND_POINTS = children0[L].getInt("Display_LAND_POINTS");
-      Display_LAND_Texture = children0[L].getInt("Display_LAND_Texture");
+      Display_LAND_Textures = children0[L].getInt("Display_LAND_Textures");
       Display_LAND_DEPTH = children0[L].getInt("Display_LAND_DEPTH");
-      Skip_LAND_MESH_Center = children0[L].getInt("Skip_LAND_MESH_Center");
+      Skip_LAND_Mesh_Center = children0[L].getInt("Skip_LAND_Mesh_Center");
       Display_SolidImpact_Points = children0[L].getInt("Display_SolidImpact_Points");
       Display_SolidImpact_Lines = children0[L].getInt("Display_SolidImpact_Lines");
       MODEL3D_DisplayVertices = children0[L].getInt("MODEL3D_DisplayVertices");  
@@ -53308,25 +53356,25 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_n_J = children0[L].getInt("LAND_n_J");
 
 
-      int pre_LAND_Texture_num = LAND_Texture_num;
-      LAND_Texture_num = children0[L].getInt("LAND_Texture_num");
+      int pre_LAND_Textures_num = LAND_Textures_num;
+      LAND_Textures_num = children0[L].getInt("LAND_Textures_num");
 
-      if (pre_LAND_Texture_num != LAND_Texture_num) {
+      if (pre_LAND_Textures_num != LAND_Textures_num) {
 
-        int ni = LAND_Texture_num;
+        int ni = LAND_Textures_num;
 
-        LAND_Texture_ImagePath = new String [ni];
-        LAND_Texture_Map = new PImage [ni];
+        LAND_Textures_ImagePath = new String [ni];
+        LAND_Textures_Map = new PImage [ni];
 
         for (int i = 0; i < ni; i++) {
 
-          LAND_Texture_ImagePath[i] = "";
-          LAND_Texture_Map[i] = createImage(2, 2, RGB);
+          LAND_Textures_ImagePath[i] = "";
+          LAND_Textures_Map[i] = createImage(2, 2, RGB);
         }
       }
     }
 
-    children0 = FileAll.getChildren("LAND_Texture_ImagePath");
+    children0 = FileAll.getChildren("LAND_Textures_ImagePath");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
@@ -53336,39 +53384,39 @@ void SOLARCHVISION_load_project (String myFile) {
 
         String new_Texture_path = parts[i];
 
-        if (LAND_Texture_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+        if (LAND_Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         } else {
 
-          LAND_Texture_ImagePath[i] = new_Texture_path;
+          LAND_Textures_ImagePath[i] = new_Texture_path;
 
-          if (LAND_Texture_ImagePath[i].equals("")) {
+          if (LAND_Textures_ImagePath[i].equals("")) {
           } else {
-            println("Loading texture:", LAND_Texture_ImagePath[i]);
-            LAND_Texture_Map[i] = loadImage(LAND_Texture_ImagePath[i]);
+            println("Loading texture:", LAND_Textures_ImagePath[i]);
+            LAND_Textures_Map[i] = loadImage(LAND_Textures_ImagePath[i]);
           }
         }
       }
     }
 
-    children0 = FileAll.getChildren("LAND_Texture_scale_U");
+    children0 = FileAll.getChildren("LAND_Textures_scale_U");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      LAND_Texture_scale_U = new float [ni];
+      LAND_Textures_scale_U = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        LAND_Texture_scale_U[i] = float(parts[i]);
+        LAND_Textures_scale_U[i] = float(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("LAND_Texture_scale_V");
+    children0 = FileAll.getChildren("LAND_Textures_scale_V");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      LAND_Texture_scale_V = new float [ni];
+      LAND_Textures_scale_V = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        LAND_Texture_scale_V[i] = float(parts[i]);
+        LAND_Textures_scale_V[i] = float(parts[i]);
       }
     }
 
@@ -53479,16 +53527,16 @@ void SOLARCHVISION_load_project (String myFile) {
       UI_BAR_a_Items[N_Site_in_Bar_a][1] = Defined_Stations[STATION_Number][0]; // <<<<<<<<
     }
 
-    println("Loading:LAND_MESH");
-    LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
-    children0 = FileAll.getChildren("LAND_MESH");
+    println("Loading:LAND_Mesh");
+    LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
+    children0 = FileAll.getChildren("LAND_Mesh");
     for (int L = 0; L < children0.length; L++) {
       XML[] children1 = children0[L].getChildren("Vertice");         
       for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          LAND_MESH[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]);
+          LAND_Mesh[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]);
         }
       }
     }
