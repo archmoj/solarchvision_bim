@@ -2970,7 +2970,7 @@ void draw () {
 
 
         if (Download_LAND_Mesh != 0) {
-          SOLARCHVISION_Download_LAND_Mesh();
+          SOLARCHVISION_Download_LAND_Mesh(LocationName);
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
@@ -2981,7 +2981,7 @@ void draw () {
         }
         
         if (Download_LAND_Textures != 0) {
-          SOLARCHVISION_Download_LAND_Textures();
+          SOLARCHVISION_Download_LAND_Textures(LocationName);
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
@@ -29242,17 +29242,13 @@ int LAND_n_J = 24 + 1;
 
 
 
-double LAND_mid_lat;
-double LAND_mid_lon;
+
 
 float[][][] LAND_Mesh;
 
 void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
-
+  
   String LandDirectory = LandFolder + "/" + ProjectSite;
-
-  LAND_mid_lat = LocationLatitude;
-  LAND_mid_lon = LocationLongitude;
 
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
@@ -29288,8 +29284,8 @@ void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
           double _lon = Double.parseDouble(txt_longitude); 
           double _lat = Double.parseDouble(txt_latitude); 
 
-          double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_r_Earth);
-          double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_r_Earth);
+          double du = ((_lon - LocationLongitude) / 180.0) * (PI * DOUBLE_r_Earth);
+          double dv = ((_lat - LocationLatitude) / 180.0) * (PI * DOUBLE_r_Earth);
 
           float x = (float) du * cos_ang((float) _lat);
           float y = (float) dv; 
@@ -29326,13 +29322,8 @@ void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
 }
 
 
-void SOLARCHVISION_Download_LAND_Mesh () {
-
-  String ProjectSite = nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5);
-
-  LAND_mid_lat = LocationLatitude;
-  LAND_mid_lon = LocationLongitude;
-
+void SOLARCHVISION_Download_LAND_Mesh (String ProjectSite) {
+  
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
   for (int i = 0; i < LAND_n_I; i += 1) {
@@ -29343,7 +29334,7 @@ void SOLARCHVISION_Download_LAND_Mesh () {
     //double stp_lat = 40.0 / 2224.5968; // equals to 2km 
 
 
-    double stp_lon = stp_lat / cos_ang((float) LAND_mid_lat); 
+    double stp_lon = stp_lat / cos_ang(LocationLatitude); 
 
     for (int j = 0; j < LAND_n_J; j += 1) {
 
@@ -29358,16 +29349,16 @@ void SOLARCHVISION_Download_LAND_Mesh () {
       float r = 0;
       if (i > 0) r = pow(q, i - 1);
 
-      double _lon = LAND_mid_lon + stp_lon * r * cos_ang(t);
-      double _lat = LAND_mid_lat + stp_lat * r * sin_ang(t);
+      double _lon = LocationLongitude + stp_lon * r * cos_ang(t);
+      double _lat = LocationLatitude + stp_lat * r * sin_ang(t);
 
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_r_Earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_r_Earth);
+      double du = ((_lon - LocationLongitude) / 180.0) * (PI * DOUBLE_r_Earth);
+      double dv = ((_lat - LocationLatitude) / 180.0) * (PI * DOUBLE_r_Earth);
 
-      float x = (float) du * cos_ang((float) LAND_mid_lat);
+      float x = (float) du * cos_ang(LocationLatitude);
       float y = (float) dv; 
 
-      //println(dist_lon_lat(_lon, _lat, LAND_mid_lon, LAND_mid_lat));
+      //println(dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude));
       //println(dist(x,y,0,0));
       //println("____________");
 
@@ -29395,11 +29386,8 @@ void SOLARCHVISION_Download_LAND_Mesh () {
 }
 
 
-void SOLARCHVISION_Download_LAND_Textures () {
+void SOLARCHVISION_Download_LAND_Textures (String ProjectSite) {
   
-  //String ProjectSite = nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5);
-  String ProjectSite = LocationName;
-
   float[] ratios = { 
     1128.497220,
     2256.994440,
@@ -51984,8 +51972,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
   newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
-  newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
-  newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
 
   newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
   newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num); 
@@ -53304,8 +53290,6 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
       LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
-      LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
-      LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
       Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
       Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
       softSelection_Power = children0[L].getFloat("softSelection_Power");
