@@ -119,9 +119,8 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   
-  ProjectsFolder        = BaseFolder + "/Projects/Project_C01";  
+  ProjectsFolder        = BaseFolder + "/Projects/Project_D01";  
   
-  //LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
   LandFolder            = ProjectsFolder + "/Land";
   
   ExportFolder          = BaseFolder + "/Export";
@@ -29411,7 +29410,7 @@ void SOLARCHVISION_Download_LAND_Textures () {
   
   for (int i = 0; i <= 15; i += 1) {
 
-    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=2048x2048&maptype=satellite&format=jpg";
+    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
    
     println(the_link);
     //link(the_link);
@@ -29474,20 +29473,38 @@ void SOLARCHVISION_load_LAND_Textures () {
                 LAND_Textures_ImagePath = (String[]) concat(LAND_Textures_ImagePath, new_item);
               }
 
+              float u = float(Parts[1]);
+              float v = u;
+
               {
                 PImage[] new_item = {
                   loadImage(dir)
                 };
 
                 LAND_Textures_Map = (PImage[]) concat(LAND_Textures_Map, new_item);
+                
+                int w = new_item[0].width;
+                int h = new_item[0].height;
+                
+                if (w < h) {
+                  if (h != 0) {
+                    u *= w / (1.0 * h);
+                  } 
+                }
+                
+                if (w > h) {
+                  if (w != 0) {
+                    v *= h / (1.0 * w);
+                  } 
+                }
+                
               }
 
-              float h = float(Parts[1]);
+
 
               {
                 float[] new_item = {
-                  //h * 1.16363
-                  h
+                  u
                 };
 
                 LAND_Textures_scale_U = (float[]) concat(LAND_Textures_scale_U, new_item);
@@ -29495,8 +29512,7 @@ void SOLARCHVISION_load_LAND_Textures () {
 
               {
                 float[] new_item = {
-                  //h * 0.66084
-                  h
+                  v
                 };
 
                 LAND_Textures_scale_V = (float[]) concat(LAND_Textures_scale_V, new_item);
