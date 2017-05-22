@@ -427,11 +427,6 @@ String[][] Defined_Stations = {
   ,      
   
   {
-    "SITE_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
-  }  
-  ,    
-  
-  {
     "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
   }  
   ,  
@@ -29229,94 +29224,6 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 // ---------------------------------------------------------
 
 
-float[] LAND_Textures_scale_U;
-float[] LAND_Textures_scale_V;
-PImage[] LAND_Textures_Map;
-String[] LAND_Textures_ImagePath;
-int LAND_Textures_num = 0;   
-
-void SOLARCHVISION_load_LAND_Textures (String ProjectSite) {
-
-  String LandDirectory = LandFolder + "/" + ProjectSite;
-
-  
-  LAND_Textures_scale_U = new float [0];
-  LAND_Textures_scale_V = new float [0];
-  LAND_Textures_Map = new PImage [0];
-  LAND_Textures_ImagePath = new String [0];
-  LAND_Textures_num = 0;
-
-  Display_LAND_Textures = 0;
-
-  try {     
-
-    String[] filenames = sort(SOLARCHVISION_getfiles(LandDirectory)); // important to sort
-
-    if (filenames != null) {
-      for (int i = 0; i < filenames.length; i++) {
-        println(filenames[i]);
-
-        int _L = filenames[i].length();
-        String _Extention = filenames[i].substring(_L - 4, _L);
-        //println(_Extention);
-        if (_Extention.toLowerCase().equals(".jpg")) {
-
-          String[] Parts = split(filenames[i], '_');
-
-          if (Parts[0].toUpperCase().equals("ELEV")) {
-
-            if (Parts.length > 1) {
-
-              String dir = LandDirectory + "/" + filenames[i];
-
-              {
-                String[] new_item = {
-                  dir
-                };
-
-                LAND_Textures_ImagePath = (String[]) concat(LAND_Textures_ImagePath, new_item);
-              }
-
-              {
-                PImage[] new_item = {
-                  loadImage(dir)
-                };
-
-                LAND_Textures_Map = (PImage[]) concat(LAND_Textures_Map, new_item);
-              }
-
-              float h = float(Parts[1]);
-
-              {
-                float[] new_item = {
-                  h * 1.16363
-                };
-
-                LAND_Textures_scale_U = (float[]) concat(LAND_Textures_scale_U, new_item);
-              }  
-
-              {
-                float[] new_item = {
-                  h * 0.66084
-                };
-
-                LAND_Textures_scale_V = (float[]) concat(LAND_Textures_scale_V, new_item);
-              }
-
-              LAND_Textures_num += 1;
-
-
-              Display_LAND_Textures = 1;
-            }
-          }
-        }
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR loading LAND_Textures_Map!");
-  }
-}
 
 
 
@@ -29421,11 +29328,12 @@ void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
 
 void SOLARCHVISION_Download_LAND_Mesh () {
 
+  String ProjectSite = nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5);
+
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
 
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
-
 
   for (int i = 0; i < LAND_n_I; i += 1) {
 
@@ -29478,76 +29386,155 @@ void SOLARCHVISION_Download_LAND_Mesh () {
     println(nf(i, 0), ":", the_link);
     //link(the_link);
 
-    String LandFile = LandFolder + "/" + nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5) + "/" + nf(i, 0) + ".xml";
+    String LandFile = LandFolder + "/" + ProjectSite + "/" + nf(i, 0) + ".xml";
     saveBytes(LandFile, loadBytes(the_link));
 
-
-    XML FileALL = loadXML(LandFile);
-
-    XML[] children0 = FileALL.getChildren("result");
-
-    for (int j = 0; j < LAND_n_J; j += 1) {
-
-      String txt_elevation = children0[j].getChild("elevation").getContent();
-
-      XML[] children1 = children0[j].getChildren("location");
-
-      String txt_latitude = children1[0].getChild("lat").getContent();
-      String txt_longitude = children1[0].getChild("lng").getContent();
-
-      //println(txt_longitude, txt_latitude, txt_elevation);
-
-      double _lon = Double.parseDouble(txt_longitude); 
-      double _lat = Double.parseDouble(txt_latitude); 
-
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * DOUBLE_r_Earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * DOUBLE_r_Earth);
-
-      float x = (float) du * cos_ang((float) _lat);
-      float y = (float) dv; 
-      float z = float(txt_elevation);
-
-      //println(i, j);
-      //println(x,y,z);
-
-      LAND_Mesh[i][j][0] = x;      
-      LAND_Mesh[i][j][1] = y;      
-      LAND_Mesh[i][j][2] = z;    
-
-      if ((i == 0) && (j == 0)) LocationElevation = z;
-    }
   }
-
-  float h = LAND_Mesh[LAND_n_I_base][LAND_n_J_base][2];
-
-  h += HeightAboveGround;
-
-  for (int i = 0; i < LAND_n_I; i += 1) {
-    for (int j = 0; j < LAND_n_J; j += 1) {
-
-      LAND_Mesh[i][j][2] -= h;
-    }
-  }
-
+  
   Download_LAND_Mesh = 0;
 }
 
 
 void SOLARCHVISION_Download_LAND_Textures () {
   
-  for (int zoom = 20; zoom > 15; zoom -= 1) {
+  //String ProjectSite = nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5);
+  String ProjectSite = LocationName;
 
-    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(zoom, 0) + "&size=1000x1000&maptype=satellite&format=jpg";
+  float[] ratios = { 
+    1128.497220,
+    2256.994440,
+    4513.988880,
+    9027.977761,
+    18055.95552,
+    36111.91104,
+    72223.82209,
+    144447.6442,
+    288895.2884,
+    577790.5767,
+    1155581.153,
+    2311162.307,
+    4622324.614,
+    9244649.227,
+    18489298.45,
+    36978596.91,
+    73957193.82,
+    147914387.6,
+    295828775.3,
+    591657550.5
+  };
+  
+  for (int i = 0; i < 15; i += 1) {
+
+    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=1024x1024&maptype=satellite&format=jpg";
    
     println(the_link);
     //link(the_link);
 
-    String LandFile = LandFolder + "/" + nf(LocationLatitude, 0, 5) + "_" + nf(LocationLongitude, 0, 5) + "/" + nf(zoom, 0) + ".jpg";
-    saveBytes(LandFile, loadBytes(the_link));      
+    String LandFile = LandFolder + "/" + ProjectSite + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
+    saveBytes(LandFile, loadBytes(the_link));
   }
+  
+  
+  SOLARCHVISION_load_LAND_Textures(ProjectSite);
 
   Download_LAND_Textures = 0;
 }
+
+
+
+
+float[] LAND_Textures_scale_U;
+float[] LAND_Textures_scale_V;
+PImage[] LAND_Textures_Map;
+String[] LAND_Textures_ImagePath;
+int LAND_Textures_num = 0;   
+
+void SOLARCHVISION_load_LAND_Textures (String ProjectSite) {
+
+  String LandDirectory = LandFolder + "/" + ProjectSite;
+
+  
+  LAND_Textures_scale_U = new float [0];
+  LAND_Textures_scale_V = new float [0];
+  LAND_Textures_Map = new PImage [0];
+  LAND_Textures_ImagePath = new String [0];
+  LAND_Textures_num = 0;
+
+  Display_LAND_Textures = 0;
+
+  try {     
+
+    String[] filenames = sort(SOLARCHVISION_getfiles(LandDirectory)); // important to sort
+
+    if (filenames != null) {
+      for (int i = 0; i < filenames.length; i++) {
+        println(filenames[i]);
+
+        int _L = filenames[i].length();
+        String _Extention = filenames[i].substring(_L - 4, _L);
+        //println(_Extention);
+        if (_Extention.toLowerCase().equals(".jpg")) {
+
+          String[] Parts = split(filenames[i], '_');
+
+          if (Parts[0].toUpperCase().equals("ELEV")) {
+
+            if (Parts.length > 1) {
+
+              String dir = LandDirectory + "/" + filenames[i];
+
+              {
+                String[] new_item = {
+                  dir
+                };
+
+                LAND_Textures_ImagePath = (String[]) concat(LAND_Textures_ImagePath, new_item);
+              }
+
+              {
+                PImage[] new_item = {
+                  loadImage(dir)
+                };
+
+                LAND_Textures_Map = (PImage[]) concat(LAND_Textures_Map, new_item);
+              }
+
+              float h = float(Parts[1]);
+
+              {
+                float[] new_item = {
+                  //h * 1.16363
+                  h
+                };
+
+                LAND_Textures_scale_U = (float[]) concat(LAND_Textures_scale_U, new_item);
+              }  
+
+              {
+                float[] new_item = {
+                  //h * 0.66084
+                  h
+                };
+
+                LAND_Textures_scale_V = (float[]) concat(LAND_Textures_scale_V, new_item);
+              }
+
+              LAND_Textures_num += 1;
+
+
+              Display_LAND_Textures = 1;
+            }
+          }
+        }
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR loading LAND_Textures_Map!");
+  }
+}
+
+
 
 
 
