@@ -2974,7 +2974,7 @@ void draw () {
 
 
         if (Download_LAND_Mesh != 0) {
-          SOLARCHVISION_Download_LAND_Mesh();
+          SOLARCHVISION_download_LAND_Mesh();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
@@ -2985,7 +2985,7 @@ void draw () {
         }
         
         if (Download_LAND_Textures != 0) {
-          SOLARCHVISION_Download_LAND_Textures();
+          SOLARCHVISION_download_LAND_Textures();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
@@ -29233,15 +29233,8 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 //Polar
-int LAND_n_I_base = 0;
-int LAND_n_J_base = 0;
-int LAND_n_I = 25 + 1; //13 + 1; //29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
-int LAND_n_J = 24 + 1;     
-
-
-
-
-
+int LAND_n_I = 24; 
+int LAND_n_J = 24 + 1; // 24 + 1;     
 
 float[][][] LAND_Mesh;
 
@@ -29261,17 +29254,17 @@ void SOLARCHVISION_load_LAND_Mesh () {
 
     if (LoadButton_LAND_Mesh == 1) {
 
-      for (int i = 0; i < LAND_n_I; i += 1) {
+      for (int j = 0; j < LAND_n_J; j += 1) {
 
-        XML FileALL = loadXML(LandFolder + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
+        XML FileALL = loadXML(LandFolder + "/" + nf(j, 0) + ".xml");
 
         XML[] children0 = FileALL.getChildren("result");
 
-        for (int j = 0; j < LAND_n_J; j += 1) {
+        for (int i = 0; i < LAND_n_I; i += 1) {
 
-          String txt_elevation = children0[j].getChild("elevation").getContent();
+          String txt_elevation = children0[i].getChild("elevation").getContent();
 
-          XML[] children1 = children0[j].getChildren("location");
+          XML[] children1 = children0[i].getChildren("location");
 
           String txt_latitude = children1[0].getChild("lat").getContent();
           String txt_longitude = children1[0].getChild("lng").getContent();
@@ -29297,7 +29290,7 @@ void SOLARCHVISION_load_LAND_Mesh () {
         }
       }
 
-      float h = LAND_Mesh[LAND_n_I_base][LAND_n_J_base][2];
+      float h = LAND_Mesh[0][0][2];
 
       h += HeightAboveGround;
 
@@ -29319,71 +29312,57 @@ void SOLARCHVISION_load_LAND_Mesh () {
 }
 
 
-void SOLARCHVISION_Download_LAND_Mesh () {
+void SOLARCHVISION_download_LAND_Mesh () {
   
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
-  for (int i = 0; i < LAND_n_I; i += 1) {
+  double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<< Note: for many locations this one is applied
+
+  double stp_lon = stp_lat / cos_ang(LocationLatitude);   
+  
+  //float q = 2;
+  float q = pow(2, 0.5); // <<<<<<<< Note: for many locations this one is applied
+  //float q = 1.25;
+  //float q = 1.125;  
+  
+  for (int j = 0; j < LAND_n_J; j += 1) {
+
+    float t = j * 360.0 / (LAND_n_J - 1);
 
     String the_link = "";
 
-    double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<< Note: for many locations this one is applied
-    //double stp_lat = 40.0 / 2224.5968; // equals to 2km 
+    for (int i = 0; i < LAND_n_I; i += 1) {
 
-
-    double stp_lon = stp_lat / cos_ang(LocationLatitude); 
-
-    for (int j = 0; j < LAND_n_J; j += 1) {
-
-      float t = j * 360.0 / (LAND_n_J - 1);
-
-      //float q = 2;
-      float q = pow(2, 0.5); // <<<<<<<< Note: for many locations this one is applied
-      //float q = 1.25;
-      //float q = 1.125;
-
-
+      if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
+      else the_link += "%7C"; //"|";
+      
       float r = 0;
       if (i > 0) r = pow(q, i - 1);
 
       double _lon = LocationLongitude + stp_lon * r * cos_ang(t);
       double _lat = LocationLatitude + stp_lat * r * sin_ang(t);
-
-      double du = ((_lon - LocationLongitude) / 180.0) * (PI * DOUBLE_r_Earth);
-      double dv = ((_lat - LocationLatitude) / 180.0) * (PI * DOUBLE_r_Earth);
-
-      float x = (float) du * cos_ang(LocationLatitude);
-      float y = (float) dv; 
-
-      //println(dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude));
-      //println(dist(x,y,0,0));
-      //println("____________");
-
-      //String txt_latitude = String.valueOf(_lat);
-      //String txt_longitude = String.valueOf(_lon);
-
+      
       String txt_latitude = nf((float) _lat, 0, 5);
-      String txt_longitude = nf((float) _lon, 0, 5);      
-
-      if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
-      else the_link += "%7C"; //"|";
+      String txt_longitude = nf((float) _lon, 0, 5);            
 
       the_link += txt_latitude + "," + txt_longitude;
     }
 
-    println(nf(i, 0), ":", the_link);
-    //link(the_link);
+    println(j, the_link);
 
-    String LandFile = LandFolder + "/" + nf(i, 0) + ".xml";
+    String LandFile = LandFolder + "/" + nf(j, 0) + ".xml";
     saveBytes(LandFile, loadBytes(the_link));
 
   }
+  
+  
+  SOLARCHVISION_load_LAND_Mesh();
   
   Download_LAND_Mesh = 0;
 }
 
 
-void SOLARCHVISION_Download_LAND_Textures () {
+void SOLARCHVISION_download_LAND_Textures () {
   
   float[] ratios = { 
     1128.497220,
@@ -29412,8 +29391,7 @@ void SOLARCHVISION_Download_LAND_Textures () {
 
     String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
    
-    println(the_link);
-    //link(the_link);
+    println(i, the_link);
 
     String LandFile = LandFolder + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
     saveBytes(LandFile, loadBytes(the_link));
@@ -51979,8 +51957,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("SOLARCHVISION_GLOBE_stp_dir", SOLARCHVISION_GLOBE_stp_dir);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_slp", SOLARCHVISION_GLOBE_n_slp);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_dir", SOLARCHVISION_GLOBE_n_dir);
-  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
-  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
   newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
 
@@ -52007,8 +51983,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setString("Default_Font", Default_Font);
 
-  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
-  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
   newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
 
@@ -53297,8 +53271,6 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_stp_dir = children0[L].getFloat("SOLARCHVISION_GLOBE_stp_dir");
       SOLARCHVISION_GLOBE_n_slp = children0[L].getInt("SOLARCHVISION_GLOBE_n_slp");
       SOLARCHVISION_GLOBE_n_dir = children0[L].getInt("SOLARCHVISION_GLOBE_n_dir");
-      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
-      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
       LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
       Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
@@ -53332,8 +53304,6 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       } 
 
-      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
-      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
       LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
 
