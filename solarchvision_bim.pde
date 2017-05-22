@@ -1,4 +1,3 @@
-///////////////////SOLARCHVISION_Download_LAND_Textures
 
 
 // should write the info on 3D-Pal
@@ -112,14 +111,20 @@ void SOLARCHVISION_update_folders () {
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CLMRECFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   TMYEPWFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
+  
+  
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL_CROP_low";
   //Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   //Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
+  
+  ProjectsFolder        = BaseFolder + "/Projects/Project_C01";  
+  
+  //LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
+  LandFolder            = ProjectsFolder + "/Land";
+  
   ExportFolder          = BaseFolder + "/Export";
-  ProjectsFolder        = BaseFolder + "/Projects/Project_B01";  
   DiagramsFolder        = ExportFolder + "/Diagrams";  
   Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);  
 
@@ -2376,7 +2381,7 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) SOLARCHVISION_try_update_FORECAST_ENSEMBLE(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-  if ((Step == 0) || (Step == 7)) SOLARCHVISION_load_LAND_Mesh(LocationName);
+  if ((Step == 0) || (Step == 7)) SOLARCHVISION_load_LAND_Mesh();
 
   //if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Fractals();
 
@@ -2970,24 +2975,24 @@ void draw () {
 
 
         if (Download_LAND_Mesh != 0) {
-          SOLARCHVISION_Download_LAND_Mesh(LocationName);
+          SOLARCHVISION_Download_LAND_Mesh();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
 
         if (pre_LoadButton_LAND_Mesh != LoadButton_LAND_Mesh) {
-          SOLARCHVISION_load_LAND_Mesh(LocationName);
+          SOLARCHVISION_load_LAND_Mesh();
           WIN3D_Update = 1;
         }
         
         if (Download_LAND_Textures != 0) {
-          SOLARCHVISION_Download_LAND_Textures(LocationName);
+          SOLARCHVISION_Download_LAND_Textures();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
 
         if (pre_LoadButton_LAND_Textures != LoadButton_LAND_Textures) {
-          SOLARCHVISION_load_LAND_Textures(LocationName);
+          SOLARCHVISION_load_LAND_Textures();
           WIN3D_Update = 1;
         }
 
@@ -29227,11 +29232,6 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 
-//Cartesian
-//int LAND_n_I_base = 15;
-//int LAND_n_J_base = 15;
-//int LAND_n_I = LAND_n_I_base * 2 + 1;
-//int LAND_n_J = LAND_n_J_base * 2 + 1;    
 
 //Polar
 int LAND_n_I_base = 0;
@@ -29246,9 +29246,7 @@ int LAND_n_J = 24 + 1;
 
 float[][][] LAND_Mesh;
 
-void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
-  
-  String LandDirectory = LandFolder + "/" + ProjectSite;
+void SOLARCHVISION_load_LAND_Mesh () {
 
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
@@ -29266,7 +29264,7 @@ void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
 
       for (int i = 0; i < LAND_n_I; i += 1) {
 
-        XML FileALL = loadXML(LandDirectory + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
+        XML FileALL = loadXML(LandFolder + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
 
         XML[] children0 = FileALL.getChildren("result");
 
@@ -29318,11 +29316,11 @@ void SOLARCHVISION_load_LAND_Mesh (String ProjectSite) {
   }
 
 
-  SOLARCHVISION_load_LAND_Textures(ProjectSite);
+  SOLARCHVISION_load_LAND_Textures();
 }
 
 
-void SOLARCHVISION_Download_LAND_Mesh (String ProjectSite) {
+void SOLARCHVISION_Download_LAND_Mesh () {
   
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
@@ -29377,7 +29375,7 @@ void SOLARCHVISION_Download_LAND_Mesh (String ProjectSite) {
     println(nf(i, 0), ":", the_link);
     //link(the_link);
 
-    String LandFile = LandFolder + "/" + ProjectSite + "/" + nf(i, 0) + ".xml";
+    String LandFile = LandFolder + "/" + nf(i, 0) + ".xml";
     saveBytes(LandFile, loadBytes(the_link));
 
   }
@@ -29386,7 +29384,7 @@ void SOLARCHVISION_Download_LAND_Mesh (String ProjectSite) {
 }
 
 
-void SOLARCHVISION_Download_LAND_Textures (String ProjectSite) {
+void SOLARCHVISION_Download_LAND_Textures () {
   
   float[] ratios = { 
     1128.497220,
@@ -29411,19 +29409,19 @@ void SOLARCHVISION_Download_LAND_Textures (String ProjectSite) {
     591657550.5
   };
   
-  for (int i = 0; i < 15; i += 1) {
+  for (int i = 0; i <= 15; i += 1) {
 
-    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=1024x1024&maptype=satellite&format=jpg";
+    String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=2048x2048&maptype=satellite&format=jpg";
    
     println(the_link);
     //link(the_link);
 
-    String LandFile = LandFolder + "/" + ProjectSite + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
+    String LandFile = LandFolder + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
     saveBytes(LandFile, loadBytes(the_link));
   }
   
   
-  SOLARCHVISION_load_LAND_Textures(ProjectSite);
+  SOLARCHVISION_load_LAND_Textures();
 
   Download_LAND_Textures = 0;
 }
@@ -29437,11 +29435,8 @@ PImage[] LAND_Textures_Map;
 String[] LAND_Textures_ImagePath;
 int LAND_Textures_num = 0;   
 
-void SOLARCHVISION_load_LAND_Textures (String ProjectSite) {
+void SOLARCHVISION_load_LAND_Textures () {
 
-  String LandDirectory = LandFolder + "/" + ProjectSite;
-
-  
   LAND_Textures_scale_U = new float [0];
   LAND_Textures_scale_V = new float [0];
   LAND_Textures_Map = new PImage [0];
@@ -29452,7 +29447,7 @@ void SOLARCHVISION_load_LAND_Textures (String ProjectSite) {
 
   try {     
 
-    String[] filenames = sort(SOLARCHVISION_getfiles(LandDirectory)); // important to sort
+    String[] filenames = sort(SOLARCHVISION_getfiles(LandFolder)); // important to sort
 
     if (filenames != null) {
       for (int i = 0; i < filenames.length; i++) {
@@ -29469,7 +29464,7 @@ void SOLARCHVISION_load_LAND_Textures (String ProjectSite) {
 
             if (Parts.length > 1) {
 
-              String dir = LandDirectory + "/" + filenames[i];
+              String dir = LandFolder + "/" + filenames[i];
 
               {
                 String[] new_item = {
