@@ -1,4 +1,4 @@
-
+// download ONLY if the file does not exist <<<<<<<<<< 
 
 // should write the info on 3D-Pal
 
@@ -114,7 +114,7 @@ String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(
 String ProjectName = "Revision_" + RunStamp;
 String HoldStamp = ""; 
 
-void SOLARCHVISION_update_Folders () {
+void SOLARCHVISION_update_folders () {
   
   ProjectFolder = BaseFolder + "/Projects/Project_A01";    
   
@@ -762,7 +762,7 @@ int WIN3D_record_AUTO = 0;
 
 
 int STUDY_max_j_end_parameters = 16; // Constant
-int STUDY_max_j_end_observations = 0; // Variable
+int STUDY_max_j_end_observations = 3; // Variable
 
 float STUDY_PerDays = 45; //61; //1; //45; //61; //30.5;
 int STUDY_JoinDays = 1; //30;//STUDY_PerDays; // it should be set up to 1 in order to plot only one day  
@@ -2047,7 +2047,7 @@ void setup () {
   MOON_IMAGE_Map = loadImage(MOON_IMAGE_Filename);
   STAR_IMAGE_Map = loadImage(STAR_IMAGE_Filename);
 
-  SOLARCHVISION_LoadDefaultFontStyle();  
+  SOLARCHVISION_loadDefaultFontStyle();  
 
   frameRate(24);
 
@@ -2162,7 +2162,7 @@ void draw () {
 
     background(223);
 
-    SOLARCHVISION_update_Folders();
+    SOLARCHVISION_update_folders();
 
     float cr;
 
@@ -2240,7 +2240,7 @@ void draw () {
     text("SOLARCHVISION_ListWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 3) {
     SOLARCHVISION_ListWorldImages();
-    SOLARCHVISION_Load_WorldViewImage(WORLD_VIEW_Number); // to load the globe image into memory
+    SOLARCHVISION_load_WorldViewImage(WORLD_VIEW_Number); // to load the globe image into memory
 
     stroke(0);
     fill(0);
@@ -2248,9 +2248,9 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_LoadObject2DImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_loadObject2DImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 4) {
-    SOLARCHVISION_LoadObject2DImages();
+    SOLARCHVISION_loadObject2DImages();
 
     stroke(0);
     fill(0);
@@ -4297,15 +4297,15 @@ void SOLARCHVISION_draw_STUDY () {
     DrawnFrame += 1;
     println("frame:", DrawnFrame);    
 
-    //if (Update_DevelopData == 1) {
-    if (STUDY_CurrentLayer == LAYER_developed) {
-      SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
-
-      println("DevelopDATA updated!");
-
-      Update_DevelopData = 0;
-    }
-    //}     
+    if (Update_DevelopData == 1) {
+      if (STUDY_CurrentLayer == LAYER_developed) {
+        SOLARCHVISION_DevelopDATA(IMPACTS_DataSource);
+  
+        println("DevelopDATA updated!");
+  
+        Update_DevelopData = 0;
+      }
+    }     
 
 
     STUDY_S_View = (STUDY_X_View / 2100.0);
@@ -4926,15 +4926,23 @@ String[] SOLARCHVISION_getfiles (String _Folder) {
   
   println(_Folder);
   
+  String[] filenames = new String[0];
+  
   File dir = new File(_Folder);
   
-  String[] filenames = dir.list();
-
-  if (filenames != null) {
-    for (int i = 0; i < filenames.length; i++) {
-      //println(filenames[i]);
-    }
+  if (dir.exists()) {
+   if (dir.isDirectory()) {
+    
+      filenames = concat(filenames, dir.list());
+    
+      if (filenames != null) {
+        for (int i = 0; i < filenames.length; i++) {
+          //println(filenames[i]);
+        }
+      }
+   }
   }
+  
   return filenames;
 }
 
@@ -5936,7 +5944,7 @@ void SOLARCHVISION_update_FORECASTS (int THE_YEAR, int THE_MONTH, int THE_DAY, i
         }        
 
 
-        if (File_Found != -1) SOLARCHVISION_LoadFORECASTS((FORECASTS_directory + "/" + FN), f);
+        if (File_Found != -1) SOLARCHVISION_loadFORECASTS((FORECASTS_directory + "/" + FN), f);
         else println("FILE NOT FOUND:", FN);
       }
     }
@@ -5945,6 +5953,12 @@ void SOLARCHVISION_update_FORECASTS (int THE_YEAR, int THE_MONTH, int THE_DAY, i
 
     SOLARCHVISION_postProcess_FORECASTS();
   }
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1;  
+  STUDY_Update = 1;
+  ROLLOUT_Update = 1;
+  UI_BAR_d_Update = 1;    
 }
 
 void SOLARCHVISION_postProcess_FORECASTS () {
@@ -6327,7 +6341,7 @@ void SOLARCHVISION_postProcess_FORECASTS () {
 }
 
 
-void SOLARCHVISION_LoadFORECASTS (String FileName, int Load_Layer) {
+void SOLARCHVISION_loadFORECASTS (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
@@ -6719,13 +6733,19 @@ void SOLARCHVISION_update_CLIMATE_CWEEDS () {
       }
     }
 
-    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CWEEDS((CLIMATE_CWEEDS_directory + "/" + FN));
+    if (File_Found != -1) SOLARCHVISION_loadCLIMATE_CWEEDS((CLIMATE_CWEEDS_directory + "/" + FN));
     else println("FILE NOT FOUND:", FN);
   }
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1;  
+  STUDY_Update = 1;
+  ROLLOUT_Update = 1;
+  UI_BAR_d_Update = 1;    
 }
 
 
-void SOLARCHVISION_LoadCLIMATE_CWEEDS (String FileName) {
+void SOLARCHVISION_loadCLIMATE_CWEEDS (String FileName) {
   String[] FileALL = loadStrings(FileName);
 
   String lineSTR;
@@ -7190,7 +7210,7 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
           }
         }
     
-        if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
+        if (File_Found != -1) SOLARCHVISION_loadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
         else println("FILE NOT FOUND:", FN);
       }
     }
@@ -7198,10 +7218,16 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
     SOLARCHVISION_postProcess_CLIMATE_CLMREC();
   
   }
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1;  
+  STUDY_Update = 1;
+  ROLLOUT_Update = 1;
+  UI_BAR_d_Update = 1;    
 }
 
 
-void SOLARCHVISION_LoadCLIMATE_CLMREC (String FileName) {
+void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
 
   String[] FileALL = loadStrings(FileName);
 
@@ -7688,12 +7714,18 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
       }
     }
 
-    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_TMYEPW((CLIMATE_TMYEPW_directory + "/" + FN));
+    if (File_Found != -1) SOLARCHVISION_loadCLIMATE_TMYEPW((CLIMATE_TMYEPW_directory + "/" + FN));
     else println("FILE NOT FOUND:", FN);
   }
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1;  
+  STUDY_Update = 1;
+  ROLLOUT_Update = 1;
+  UI_BAR_d_Update = 1;    
 }
 
-void SOLARCHVISION_LoadCLIMATE_TMYEPW (String FileName) {
+void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
   String[] FileALL = loadStrings(FileName);
 
   String lineSTR;
@@ -8211,7 +8243,7 @@ void SOLARCHVISION_update_OBSERVATIONS () {
             }
           }
 
-          if (File_Found != -1) SOLARCHVISION_LoadOBSERVATIONS((OBSERVATIONS_directory + "/" + FN), q);
+          if (File_Found != -1) SOLARCHVISION_loadOBSERVATIONS((OBSERVATIONS_directory + "/" + FN), q);
           else println("FILE NOT FOUND:", FN);
         }
       }
@@ -8291,10 +8323,16 @@ void SOLARCHVISION_update_OBSERVATIONS () {
       }
     }
   }
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1;  
+  STUDY_Update = 1;
+  ROLLOUT_Update = 1;
+  UI_BAR_d_Update = 1;      
 }
 
 
-void SOLARCHVISION_LoadOBSERVATIONS (String FileName, int Load_Layer) {
+void SOLARCHVISION_loadOBSERVATIONS (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
@@ -12638,82 +12676,7 @@ void STUDY_keyPressed (KeyEvent e) {
   } else if (e.isControlDown() == true) {
     if (key == CODED) { 
       switch(keyCode) {
-
-      case 35  :
-        TIME_Date += 1;
-        if (int(TIME_Date) == 365) TIME_Date -= 365;
-        if (int(TIME_Date) == 286) TIME_Year += 1;
-        SOLARCHVISION_update_date(); 
-        SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-        Update_DevelopData = 1;
-        UI_BAR_d_Update = 1; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-
-      case 36  :
-        TIME_Date -= 1;
-        if (int(TIME_Date) < 0) TIME_Date += 365;
-        if (int(TIME_Date) == 285) TIME_Year -= 1;
-        SOLARCHVISION_update_date(); 
-        SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-        Update_DevelopData = 1;
-        UI_BAR_d_Update = 1; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-
-      case 33:
-        TIME_Date += 1; 
-        if (TIME_Date >= 365) TIME_Date -= 365;
-        if ((TIME_Date == 286) || (TIME_Date == 286.5)) TIME_Year += 1;
-        SOLARCHVISION_update_date(); 
-        TIME_BeginDay = int(TIME_BeginDay + 1) % 365; 
-        SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-        Update_DevelopData = 1;
-        UI_BAR_d_Update = 1; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break; 
-
-      case 34 :
-        TIME_Date -= 1; 
-        if (TIME_Date < 0) TIME_Date += 365;
-        if ((TIME_Date == 285) || (TIME_Date == 285.5)) TIME_Year -= 1;
-        SOLARCHVISION_update_date(); 
-        TIME_BeginDay = int(365 + TIME_BeginDay - 1) % 365;
-        SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-        Update_DevelopData = 1;
-        UI_BAR_d_Update = 1; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break; 
-
-      case LEFT  :
-        TIME_BeginDay = (365 + TIME_BeginDay - 1) % 365; 
-        Update_DevelopData = 1; 
-        UI_BAR_d_Update = 1; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-      case RIGHT :
-        TIME_BeginDay = (TIME_BeginDay + 1) % 365; 
-        Update_DevelopData = 1; 
-        UI_BAR_d_Update = 1; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-
-      case UP   :
-        STUDY_CurrentLayer = (STUDY_CurrentLayer + 1) % num_Layers; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-      case DOWN :
-        STUDY_CurrentLayer = (STUDY_CurrentLayer + num_Layers - 1) % num_Layers; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
+        
       }
     } else {
       switch(key) {
@@ -12729,28 +12692,6 @@ void STUDY_keyPressed (KeyEvent e) {
         ROLLOUT_Update = 1; 
         break;
 
-
-      case '^' : 
-        STUDY_DisplayRaws = 1; 
-        Export_STUDY_info_node = 1; 
-        STUDY_record_JPG = 0; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-      case '&' : 
-        STUDY_DisplayNormals = 1; 
-        Export_STUDY_info_norm = 1; 
-        STUDY_record_JPG = 0; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
-      case '%' : 
-        STUDY_DisplayProbs = 1; 
-        Export_STUDY_info_prob = 1; 
-        STUDY_record_JPG = 0; 
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
-        break;
       }
     }
   } else if (e.isShiftDown() == true) {
@@ -12828,8 +12769,6 @@ void STUDY_keyPressed (KeyEvent e) {
         else TIME_Date -= 0.5;
         SOLARCHVISION_update_date(); 
         SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-        STUDY_Update = 1; 
-        ROLLOUT_Update = 1; 
         break;
 
       case ';': 
@@ -12895,13 +12834,6 @@ void STUDY_keyPressed (KeyEvent e) {
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
-
-        /*      
-         case '*' :STUDY_TrendJoinType *= -1;
-         Update_DevelopData = 1;
-         UI_BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
-         */
-
 
       case 'a'  :
         Develop_AngleInclination -= 5;
@@ -14467,7 +14399,7 @@ String Default_Font = "MS Sans Serif";
 
 PFont SOLARCHVISION_font;
 
-void SOLARCHVISION_LoadDefaultFontStyle () {
+void SOLARCHVISION_loadDefaultFontStyle () {
 
   println("Loading font:", Default_Font);
 
@@ -14538,7 +14470,7 @@ void SOLARCHVISION_add_Object2D_single (String t, int m, float x, float y, float
 PImage[] Object2D_Images;
 float[] Object2D_ImageRatios;
 
-void SOLARCHVISION_LoadObject2DImages () {
+void SOLARCHVISION_loadObject2DImages () {
 
   Object2D_ImagePath = new String [1];
   Object2D_ImagePath[0] = "";
@@ -14666,7 +14598,7 @@ int WORLD_FindGoodViewport (float pointLongitude, float pointLatitude) {
   }
 
   if (return_VIEWPORT != WORLD_VIEW_Number) {
-    SOLARCHVISION_Load_WorldViewImage(return_VIEWPORT);
+    SOLARCHVISION_load_WorldViewImage(return_VIEWPORT);
 
     if (Display_EARTH3D_Surface != 0) WIN3D_Update = 1;
   }
@@ -14677,7 +14609,7 @@ int WORLD_FindGoodViewport (float pointLongitude, float pointLatitude) {
 
 PImage WORLDViewImage;
 
-void SOLARCHVISION_Load_WorldViewImage (int n) {
+void SOLARCHVISION_load_WorldViewImage (int n) {
 
   println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
 
@@ -35794,60 +35726,30 @@ void mouseClicked () {
 
               Load_CLIMATE_TMYEPW = 1;
               SOLARCHVISION_update_CLIMATE_TMYEPW();
-
-              WORLD_Update = 1;
-              WIN3D_Update = 1;  
-              STUDY_Update = 1;
-              ROLLOUT_Update = 1;
-              UI_BAR_d_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
               IMPACTS_DataSource = databaseNumber_CLIMATE_CWEEDS;
 
               Load_CLIMATE_CWEEDS = 1;
               SOLARCHVISION_update_CLIMATE_CWEEDS();
-
-              WORLD_Update = 1;
-              WIN3D_Update = 1;  
-              STUDY_Update = 1;
-              ROLLOUT_Update = 1;
-              UI_BAR_d_Update = 1;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CLMREC)")) {
               IMPACTS_DataSource = databaseNumber_CLIMATE_CLMREC;
 
               Load_CLIMATE_CLMREC = 1;
               SOLARCHVISION_update_CLIMATE_CLMREC();
-
-              WORLD_Update = 1;
-              WIN3D_Update = 1;  
-              STUDY_Update = 1;
-              ROLLOUT_Update = 1;
-              UI_BAR_d_Update = 1;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
               IMPACTS_DataSource = databaseNumber_FORECASTS;
 
               Load_FORECASTS = 1;
               SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-
-              WORLD_Update = 1;
-              WIN3D_Update = 1;  
-              STUDY_Update = 1;
-              ROLLOUT_Update = 1;
-              UI_BAR_d_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
               IMPACTS_DataSource = databaseNumber_OBSERVATIONS;
 
               Load_OBSERVATIONS = 1;
               SOLARCHVISION_update_OBSERVATIONS();
-
-              WORLD_Update = 1;
-              WIN3D_Update = 1;  
-              STUDY_Update = 1;
-              ROLLOUT_Update = 1;
-              UI_BAR_d_Update = 1;
             }           
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Wire")) {
@@ -50652,11 +50554,6 @@ void SOLARCHVISION_draw_window_BAR_d () {
             TIME_BeginDay = int(TIME_BeginDay + (TIME_Date - keep_TIME_Date) + 365) % 365;
             SOLARCHVISION_update_FORECASTS(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-            Update_DevelopData = 1;
-
-            ROLLOUT_Update = 1;
-            STUDY_Update = 1;
-
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
 
@@ -52977,7 +52874,7 @@ void SOLARCHVISION_load_project (String myFile) {
         if (Default_Font.equals(new_Default_Font)) {
         } else {
           Default_Font = new_Default_Font;        
-          SOLARCHVISION_LoadDefaultFontStyle();
+          SOLARCHVISION_loadDefaultFontStyle();
         }
       } 
 
