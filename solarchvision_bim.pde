@@ -74,10 +74,28 @@ void launch (String[] s) {
 }
 
 
+String CLIMATE_TMYEPW_directory;
+String CLIMATE_CWEEDS_directory;
+String CLIMATE_CLMREC_directory;
+String RECENT_OBSERVED_directory;
+String FORECAST_ENSEMBLE_directory;
+String FORECAST_GRIB2_directory;
+String FORECAST_GEOMET_directory;
+
+String[] CLIMATE_TMYEPW_Files;
+String[] CLIMATE_CWEEDS_Files;
+String[] CLIMATE_CLMREC_Files;
+String[] RECENT_OBSERVED_XML_Files;
+String[] FORECAST_ENSEMBLE_XML_Files;
+
+
 String SOLARCHVISION_version = "2017"; 
 String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
 
-String ForecastDownloadFolder;
+
+
+
+String RealtimeDataFolder;
 String Wgrib2TempFolder;
 
 String BackgroundFolder;
@@ -87,18 +105,37 @@ String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
 String ExportFolder;
-String ProjectsFolder;
+String ProjectFolder;
 String DiagramsFolder;
 String ScreenShotFolder;
 String Model3DFolder;
 
-String ProjectName = "Revision_" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+
+String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+String ProjectName = "Revision_" + RunStamp;
 String HoldStamp = ""; 
 
 void SOLARCHVISION_update_folders () {
+  
+  ProjectFolder = BaseFolder + "/Projects/Project_A01";    
+  
+  Wgrib2TempFolder = ProjectFolder + "/Temp";
 
-  ForecastDownloadFolder = BaseFolder + "/Input/WeatherForecast/Downloads";
-  Wgrib2TempFolder = BaseFolder + "/Temp";
+  RealtimeDataFolder = ProjectFolder + "/Input/WeatherRealtime";
+  FORECAST_GEOMET_directory = ProjectFolder + "/forecast/FORECAST_GEOMET";
+  FORECAST_GRIB2_directory = ProjectFolder + "/forecast/FORECAST_GRIB2";
+  FORECAST_ENSEMBLE_directory = ProjectFolder + "/forecast/FORECAST_NAEFS";
+  RECENT_OBSERVED_directory = ProjectFolder + "/observation/OBSERVATION_SWOB";
+
+  CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
+  CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
+  CLIMATE_CWEEDS_directory = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
+  
+  CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
+  CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
+  CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
+  RECENT_OBSERVED_XML_Files = SOLARCHVISION_getfiles(RECENT_OBSERVED_directory);
+  FORECAST_ENSEMBLE_XML_Files = SOLARCHVISION_getfiles(FORECAST_ENSEMBLE_directory);  
 
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
@@ -110,26 +147,16 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   
-  ProjectsFolder        = BaseFolder + "/Projects/Project_A01";  
+  LandFolder            = ProjectFolder + "/Land";
   
-  LandFolder            = ProjectsFolder + "/Land";
-  
-  ExportFolder          = BaseFolder + "/Export";
+  ExportFolder          = ProjectFolder + "/Export";
+  Model3DFolder         = ExportFolder + "/Model_3D" + "/" + RunStamp;
   DiagramsFolder        = ExportFolder + "/Diagrams";  
-  Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);  
-
-  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-  //ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/Next_Presentation";
-
-
-
-  //try {
+  ScreenShotFolder      = ExportFolder + "/ScreenShots";
 
   String[] filenames = SOLARCHVISION_getfiles(ScreenShotFolder);
   if (filenames != null) SavedScreenShots = filenames.length;
-  //println("SavedScreenShots:", SavedScreenShots);
-
-  //} catch (Exception e) println("No ScreenShotFolder!");
+  
 }
 
 
@@ -639,20 +666,12 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
-//String CLIMATE_TMYEPW_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_EPW";
-String CLIMATE_TMYEPW_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_EPW_WORLD";
 
-//String CLIMATE_CWEEDS_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
-//String CLIMATE_CWEEDS_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-String CLIMATE_CWEEDS_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CWEED";
+ 
 
-String CLIMATE_CLMREC_directory = BaseFolder + "/Input/WeatherClimate/CLIMATE_CLMREC";
 
-//String FORECAST_ENSEMBLE_directory = BaseFolder + "/Input/WeatherForecast/FORECAST_NAEFS";
-String FORECAST_ENSEMBLE_directory = BaseFolder + "/Input/WeatherForecast/FORECAST_NAEFS_Download";
 
-String RECENT_OBSERVED_directory = BaseFolder + "/Input/WeatherRealTime/OBSERVATION_SWOB_EMPTY";
-//String RECENT_OBSERVED_directory = BaseFolder + "/Input/WeatherRealTime/OBSERVATION_SWOB";
+
 
 int TIME_ModelRun = 0; //12; 
 
@@ -1563,11 +1582,7 @@ int SOLARCHVISION_Y_click1 = -1;
 int SOLARCHVISION_X_click2 = -1;
 int SOLARCHVISION_Y_click2 = -1;
 
-String[] CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
-String[] CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
-String[] CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
-String[] FORECAST_ENSEMBLE_XML_Files = SOLARCHVISION_getfiles(FORECAST_ENSEMBLE_directory);
-String[] RECENT_OBSERVED_XML_Files = SOLARCHVISION_getfiles(RECENT_OBSERVED_directory);
+
 
 int ERASE_All = 0;
 int ERASE_Curves = 0;
@@ -4925,8 +4940,11 @@ void SOLARCHVISION_Plot_Setup () {
 
 
 String[] SOLARCHVISION_getfiles (String _Folder) {
+  
+  println(_Folder);
+  
   File dir = new File(_Folder);
-
+  
   String[] filenames = dir.list();
 
   if (filenames != null) {
@@ -5920,7 +5938,7 @@ void SOLARCHVISION_try_update_FORECAST_ENSEMBLE (int THE_YEAR, int THE_MONTH, in
 
     if (any_file_downloaded != 0) {
       
-      String folder_inout = "ForecastDownloadFolder".replace('/', char(92));
+      String folder_inout = FORECAST_ENSEMBLE_directory.replace('/', char(92));
       String CommandArguments;
 
       CommandArguments = "C:\\Program Files (x86)\\7-Zip\\7z.exe e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
@@ -35228,10 +35246,10 @@ void mouseDragged () {
 void SOLARCHVISION_update_Project_info (File selectedFile) {
 
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", "").replace(".Xml", ""); // should work most of the times!
-  ProjectsFolder =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
+  ProjectFolder =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
 
   println("New ProjectName:", ProjectName);
-  println("New ProjectsFolder:", ProjectsFolder);
+  println("New ProjectFolder:", ProjectFolder);
 }
 
 void SOLARCHVISION_fileSelected_New (File selectedFile) {
@@ -35388,7 +35406,7 @@ void mouseClicked () {
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Save")) { 
-              SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml", 0);
+              SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml", 0);
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hold")) {
@@ -39980,7 +39998,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
 
 
 String getGrib2Folder (int s) {
-  return(ForecastDownloadFolder + "/FORECAST_" + GRIB2_Domains[s][1]);
+  return(FORECAST_GRIB2_directory + "/FORECAST_" + GRIB2_Domains[s][1]);
 }
 
 String getGrib2Filename (int k, int l, int h) {
@@ -51776,7 +51794,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
       String the_filename = "SolidImpact_" + nf(i, 0) + ".bmp";
 
-      String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
+      String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
 
       println("Saving texture:", TEXTURE_path);
       allSections_SolidImpact[i].save(TEXTURE_path);
@@ -51808,7 +51826,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     
               String the_filename = "SolarImpact_" + nf((i * nj + j) * nk + k, 0) + ".bmp";
       
-              String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
+              String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
       
               println("Saving texture:", TEXTURE_path);
               allSections_SolarImpact[i][j][k].save(TEXTURE_path);
@@ -53794,12 +53812,12 @@ void SOLARCHVISION_hold_project () {
 
   HoldStamp = nf(millis(), 0);
 
-  SOLARCHVISION_save_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml", 0);  
+  SOLARCHVISION_save_project(ProjectFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml", 0);  
 }
 
 void SOLARCHVISION_fetch_project () {
   try {
-    SOLARCHVISION_load_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
+    SOLARCHVISION_load_project(ProjectFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
   }
   catch (Exception e) {
     println("Cannot find hold file!");
@@ -54484,7 +54502,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }
 
   else if (Command_CAPITAL.equals("SAVE")) {
-    SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml", 0);
+    SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml", 0);
   }    
 
   else if (Command_CAPITAL.equals("HOLD")) {
