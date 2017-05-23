@@ -4930,17 +4930,15 @@ String[] SOLARCHVISION_getfiles (String _Folder) {
   
   File dir = new File(_Folder);
   
-  if (dir.exists()) {
-   if (dir.isDirectory()) {
+  if (dir.exists() && dir.isDirectory()) {
     
-      filenames = concat(filenames, dir.list());
-    
-      if (filenames != null) {
-        for (int i = 0; i < filenames.length; i++) {
-          //println(filenames[i]);
-        }
+    filenames = concat(filenames, dir.list());
+  
+    if (filenames != null) {
+      for (int i = 0; i < filenames.length; i++) {
+        //println(filenames[i]);
       }
-   }
+    }
   }
   
   return filenames;
@@ -5864,20 +5862,26 @@ void SOLARCHVISION_download_FORECASTS (int THE_YEAR, int THE_MONTH, int THE_DAY,
     if (LAYERS_Text[f].equals("")) {
     } else {
       String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[f] + "_000-384.xml";
-
-      String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + LAYERS_Text[f] + "/raw";
-      String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
-      String the_target = FORECASTS_directory + "/" + FN + ".bz2";
-  
-      println("Try downloading: " + the_link);
-  
-      try {
-        saveBytes(the_target, loadBytes(the_link));
-  
-        new_files_downloaded = true;
-      } 
-      catch (Exception e) {
-        println("LINK NOT AVAILABLE:", the_link);
+      
+      String the_target = FORECASTS_directory + "/" + FN;
+      
+      File dir = new File(the_target);
+      if (!dir.isFile()) {
+        
+        String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + LAYERS_Text[f] + "/raw";
+        String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
+        the_target = the_target + ".bz2";
+    
+        println("Try downloading: " + the_link);
+    
+        try {
+          saveBytes(the_target, loadBytes(the_link));
+    
+          new_files_downloaded = true;
+        } 
+        catch (Exception e) {
+          println("LINK NOT AVAILABLE:", the_link);
+        }
       }
     }
   }
@@ -5929,26 +5933,13 @@ void SOLARCHVISION_update_FORECASTS (int THE_YEAR, int THE_MONTH, int THE_DAY, i
       } else {
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[f] + "_000-384.xml";
 
-        int File_Found = -1;
+        String the_source = FORECASTS_directory + "/" + FN;
 
-        //println(FN);
-        for (int i = FORECASTS_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
-          //println(FORECASTS_XML_Files[i]); 
-
-          if (FORECASTS_XML_Files[i].equals(FN)) {
-            //println("FILE FOUND:", FN);
-            File_Found = i;
-
-            break; // <<<<<<<<<<
-          }
-        }        
-
-
-        if (File_Found != -1) SOLARCHVISION_loadFORECASTS((FORECASTS_directory + "/" + FN), f);
-        else println("FILE NOT FOUND:", FN);
+        File dir = new File(the_source);
+        if (dir.isFile()) SOLARCHVISION_loadFORECASTS(the_source, f);
+        else println("FILE NOT FOUND:", the_source);
       }
     }
-
 
 
     SOLARCHVISION_postProcess_FORECASTS();
@@ -6719,22 +6710,13 @@ void SOLARCHVISION_update_CLIMATE_CWEEDS () {
   if (Load_CLIMATE_CWEEDS == 1) {
 
     String FN = Defined_Stations[9] + ".wy2";
+    
+    String the_source = CLIMATE_CWEEDS_directory + "/" + FN;
 
-    int File_Found = -1;
+    File dir = new File(the_source);
+    if (dir.isFile()) SOLARCHVISION_loadCLIMATE_CWEEDS(the_source);
+    else println("FILE NOT FOUND:", the_source);
 
-    //println(FN);
-    for (int i = 0; i < CLIMATE_CWEEDS_Files.length; i++) {
-
-      if (CLIMATE_CWEEDS_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-        //println("FILE FOUND:", FN);
-        File_Found = i;
-
-        break; // <<<<<<<<<<
-      }
-    }
-
-    if (File_Found != -1) SOLARCHVISION_loadCLIMATE_CWEEDS((CLIMATE_CWEEDS_directory + "/" + FN));
-    else println("FILE NOT FOUND:", FN);
   }
   
   WORLD_Update = 1;
@@ -7119,23 +7101,26 @@ void SOLARCHVISION_download_CLIMATE_CLMREC () {
       
         int THE_YEAR = k + CLIMATE_CLMREC_start;
         int THE_MONTH = m + 1;
-  
-        int File_Found = -1;    
     
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
           
-        String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
         String the_target = CLIMATE_CLMREC_directory + "/" + FN;
-  
-        println("Try downloading: " + the_link);
-  
-        try {
-          saveBytes(the_target, loadBytes(the_link));
           
-          new_files_downloaded = true;
-        } 
-        catch (Exception e) {
-          println("LINK NOT AVAILABLE:", the_link);
+        File dir = new File(the_target);
+        if (!dir.isFile()) {          
+          
+          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          
+          println("Try downloading: " + the_link);
+    
+          try {
+            saveBytes(the_target, loadBytes(the_link));
+            
+            new_files_downloaded = true;
+          } 
+          catch (Exception e) {
+            println("LINK NOT AVAILABLE:", the_link);
+          }
         }
       }
     }
@@ -7194,24 +7179,15 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
       
         int THE_YEAR = k + CLIMATE_CLMREC_start;
         int THE_MONTH = m + 1;
-  
-        int File_Found = -1;    
     
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
-    
-        println(FN);
-        for (int i = 0; i < CLIMATE_CLMREC_Files.length; i++) {
-    
-          if (CLIMATE_CLMREC_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-            //println("FILE FOUND:", FN);
-            File_Found = i;
-    
-            break; // <<<<<<<<<<
-          }
-        }
-    
-        if (File_Found != -1) SOLARCHVISION_loadCLIMATE_CLMREC((CLIMATE_CLMREC_directory + "/" + FN));
-        else println("FILE NOT FOUND:", FN);
+        
+        String the_source = CLIMATE_CLMREC_directory + "/" + FN;
+        
+        File dir = new File(the_source);
+        if (dir.isFile()) SOLARCHVISION_loadCLIMATE_CLMREC(the_source);
+        else println("FILE NOT FOUND:", the_source);
+
       }
     }
 
@@ -7701,21 +7677,12 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
 
     String FN = Defined_Stations[10] + ".epw";
 
-    int File_Found = -1;
+    String the_source = CLIMATE_TMYEPW_directory + "/" + FN;
 
-    //println(FN);
-    for (int i = 0; i < CLIMATE_TMYEPW_Files.length; i++) {
+    File dir = new File(the_source);
+    if (dir.isFile()) SOLARCHVISION_loadCLIMATE_TMYEPW(the_source);
+    else println("FILE NOT FOUND:", the_source);
 
-      if (CLIMATE_TMYEPW_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-        //println("FILE FOUND:", FN);
-        File_Found = i;
-
-        break; // <<<<<<<<<<
-      }
-    }
-
-    if (File_Found != -1) SOLARCHVISION_loadCLIMATE_TMYEPW((CLIMATE_TMYEPW_directory + "/" + FN));
-    else println("FILE NOT FOUND:", FN);
   }
   
   WORLD_Update = 1;
@@ -8131,20 +8098,24 @@ void SOLARCHVISION_download_OBSERVATIONS () {
 
         String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
 
-        String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
         String the_target = OBSERVATIONS_directory + "/" + FN;
 
-        println("Try downloading: " + the_link);
+        File dir = new File(the_target);
+        if (!dir.isFile()) {       
 
-        try {
-          saveBytes(the_target, loadBytes(the_link));
-          
-          new_files_downloaded = true;
-        } 
-        catch (Exception e) {
-          println("LINK NOT AVAILABLE:", the_link);
+          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
+  
+          println("Try downloading: " + the_link);
+  
+          try {
+            saveBytes(the_target, loadBytes(the_link));
+            
+            new_files_downloaded = true;
+          } 
+          catch (Exception e) {
+            println("LINK NOT AVAILABLE:", the_link);
+          }
         }
-
       }
     }
 
@@ -8228,23 +8199,12 @@ void SOLARCHVISION_update_OBSERVATIONS () {
 
           String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
 
-          int File_Found = -1;
+          String the_source = OBSERVATIONS_directory + "/" + FN;
+      
+          File dir = new File(the_source);
+          if (dir.isFile()) SOLARCHVISION_loadOBSERVATIONS(the_source, q);
+          else println("FILE NOT FOUND:", the_source);
 
-          //println(FN);
-          for (int i = OBSERVATIONS_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
-            //println(OBSERVATIONS_XML_Files[i]); 
-
-            if (OBSERVATIONS_XML_Files[i].equals(FN)) {
-
-              File_Found = i;
-              println("Found:", File_Found);
-
-              break; // <<<<<<<<<<
-            }
-          }
-
-          if (File_Found != -1) SOLARCHVISION_loadOBSERVATIONS((OBSERVATIONS_directory + "/" + FN), q);
-          else println("FILE NOT FOUND:", FN);
         }
       }
 
@@ -39702,55 +39662,51 @@ void SOLARCHVISION_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY
         for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
           GRIB2_Hour = k;
 
-          String the_filename = getGrib2Filename(GRIB2_Hour, GRIB2_Layer, h);
-
-          int File_Found = 0;
-
-          for (int i = SavedFiles.length - 1; i >= 0; i--) {
-            String thisFile = the_directory + "/" + SavedFiles[i];
-
-            if (thisFile.equals(the_directory + "/" + the_filename)) {
-              File_Found = 1;
-              break;
-            }
-          }
+          boolean new_files_downloaded = false;
 
           String the_link = "";
 
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDWPS")) {
-            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + the_filename;
-          }
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("HRDPS")) {
-            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-          }
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDPS")) {
-            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-          }          
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GDPS")) {
-            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-          }
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("REPS")) {
-            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-          }
-          if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GEPS")) {
-            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-          }
+          String the_filename = getGrib2Filename(GRIB2_Hour, GRIB2_Layer, h);
 
-          if (File_Found == 0) {
+          String the_target = the_directory + "/" + the_filename;
+          
+          File dir = new File(the_target);
+          if (!dir.isFile()) {
 
-            String the_target = the_directory + "/" + the_filename;
+            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDWPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + the_filename;
+            }
+            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("HRDPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
+            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }          
+            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GDPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
+            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("REPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
+            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GEPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
 
+
+            println("Try downloading: " + the_link);
+        
             try {
-              println("Downloading...", the_link);
               saveBytes(the_target, loadBytes(the_link));
-              println("100%");
-              File_Found = 1;
+        
+              new_files_downloaded = true;
             } 
             catch (Exception e) {
+              println("LINK NOT AVAILABLE:", the_link);
             }
+
           }
 
-          if (File_Found == 1) {
+          if (new_files_downloaded == true) {
             /*
 
              for (int n = 0; n < AERIAL_num; n += 1) {
