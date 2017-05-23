@@ -181,9 +181,6 @@ int pre_STUDY_Setup;
 int pre_IMPACTS_DisplayDay;
 int pre_IMPACTS_DataSource;
 
-int pre_STATION_Number;
-int pre_STATION_Selected;
-
 int pre_CLIMATIC_SolarForecast;
 int pre_CLIMATIC_WeatherForecast;
 
@@ -402,265 +399,16 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-int STATION_Number = 3; 
-
-String[][] Defined_Stations = {
-
-  {
-    "OCPM_2016a", "QC", "CA", "45.489049", "-73.578942", "-75", "30", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  }  
-  ,   
-  
-  {
-    "Tweed", "XX", "AT", "44.4763", "-77.3138", "-75", "0", "240.0", "", "", ""
-  }  
-  ,    
-  
-  {
-    "Dezhou", "XX", "CN", "37.441290", "116.371787", "120", "0", "240.0", "", "", "CHN_Shandong.Huimin.Xian.547250_CSWD"
-  }  
-  ,      
-  
-  {
-    "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "240.0", "", "", "AUT_Innsbruck.111200_IWEC"
-  }  
-  ,  
-  
-  {
-    "FORT_MCMURRAY", "AB", "CA", "56.65", "-111.22", "-105", "369.10", "240.0", "FORT_MCMURRAY_AB_CA", "AB_FORT-MCMURRAY-A_5665_11122_10500", "CAN_AB_Fort.McMurray.719320_CWEC"
-  }  
-  ,
-  
-  
-  {
-    "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
-  }  
-  ,
-
-  {
-    "Isle_of_Man", "XX", "UK", "54.216539", "-4.683195", "0", "0", "240.0", "", "", "GBR_Aughton.033220_IWEC"
-  }
-  , 
-  
-  {
-    "Brossard_Oakland", "QC", "CA", "45.4337", "-73.4615", "-75", "13.4594707", "240.0", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
-  }
-  ,   
-  
-  {
-    "Montreal_WestStation", "QC", "CA", "45.455158", "-73.640696", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  }
-  , 
-
-  {
-    "Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  }
-  , 
-  {
-    "Montreal_Biosphere", "QC", "CA", "45.5141", "-73.53145", "-75", "9", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  }
-  , 
-  {
-    "Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  }
-  , 
-  {
-    "Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  }
-  
-  , 
-  {
-    "Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
-  }
-  , 
-  {
-    "Financial_District", "ON", "CA", "43.6488", "-79.3817", "-75", "86", "692.82", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"
-  }
-  , 
-  {
-    "TORONTO-ISLAND", "ON", "CA", "43.6275", "-79.396111", "-75", "76.8", "240.0", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"
-  }
-  , 
-  {
-    "TORONTO-PEARSON", "ON", "CA", "43.676667", "-79.630556", "-75", "173.4", "240.0", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-PEARSON-INT'L_4367_7962_7500", "CAN_ON_Toronto.716240_CWEC"
-  }
-  , 
-  {
-    "CALGARY", "AB", "CA", "51.113889", "-114.02", "-120", "1084.1", "240.0", "CALGARY_INTL_AB_CA", "AB_CALGARY-INT'L-A_5110_11402_10500", "CAN_AB_Calgary.718770_CWEC"
-  }
-  , 
-  {
-    "EDMONTON", "AB", "CA", "53.31", "-113.579444", "-120", "723.3", "240.0", "EDMONTON_INTL_A_AB_CA", "AB_EDMONTON-INT'L-A_5332_11358_10500", "CAN_AB_Edmonton.711230_CWEC"
-  }
-  , 
-  {
-    "HALIFAX", "NS", "CA", "44.881111", "-63.508611", "-60", "145.4", "240.0", "HALIFAX_INTL_AIRPORT_NS_CA", "NS_HALIFAX-INT'L-A_4488_6352_6000", "CAN_NS_Shearwater.716010_CWEC"
-  }
-  , 
-  {
-    "OTTAWA", "ON", "CA", "45.383333", "-75.716667", "-75", "79.2", "240.0", "OTTAWA_INTL_ON_CA", "ON_OTTAWA-CDA_4538_7572_7500", "CAN_ON_Ottawa.716280_CWEC"
-  }
-  , 
-  {
-    "QUEBEC", "QC", "CA", "46.803611", "-71.381667", "-75", "60", "240.0", "QUEBEC_QC_CA", "QC_QUEBEC-A_4680_7137_7500", "CAN_PQ_Quebec.717140_CWEC"
-  }
-  , 
-  {
-    "SUDBURY", "ON", "CA", "46.625556", "-80.797778", "-75", "348.4", "240.0", "SUDBURY_ON_CA", "ON_SUDBURY-A_4662_8080_7500", "CAN_ON_North.Bay.717310_CWEC"
-  }
-  , 
-  {
-    "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
-  }
-  , 
-  {
-    "WINNIPEG", "MB", "CA", "49.91", "-97.24", "-90", "238.7", "240.0", "WINNIPEG_INTL_MB_CA", "MB_WINNIPEG-INT'L-A_4990_9723_9000", "CAN_MB_Winnipeg.718520_CWEC"
-  }
-  , 
-
-  {
-    "BOSTON", "MA", "US", "42.35843", "-71.05978", "-75", "15.0", "240.0", "BOSTON_MA_US", "WY2-filename", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3"
-  }
-  , 
-  {
-    "CHICAGO", "IL", "US", "41.878113", "-87.6298", "-90", "181.0", "240.0", "CHICAGO_IL_US", "WY2-filename", "USA_IL_Chicago-Midway.AP.725340_TMY3"
-  }
-  , 
-  {
-    "DENVER", "CO", "US", "39.737568", "-104.98472", "-105", "1608.0", "240.0", "DENVER_CO_US", "WY2-filename", "USA_CO_Golden-NREL.724666_TMY3"
-  }
-  , 
-  {
-    "HOUSTON", "TX", "US", "29.760193", "-95.36939", "-90", "15.0", "240.0", "HOUSTON_TX_US", "WY2-filename", "USA_TX_Houston-William.P.Hobby.AP.722435_TMY3"
-  }
-  , 
-  {
-    "LAS_VEGAS", "NV", "US", "36.16994", "-115.13983", "-120", "611.0", "240.0", "LAS_VEGAS_NV_US", "WY2-filename", "USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3"
-  }
-  , 
-  {
-    "LOS_ANGELES", "CA", "US", "34.052235", "-118.24368", "-120", "87.0", "240.0", "LOS_ANGELES_CA_US", "WY2-filename", "USA_CA_Hawthorne-Jack.Northrop.Field.722956_TMY3"
-  }
-  , 
-  {
-    "MIAMI", "FL", "US", "25.789097", "-80.20404", "-75", "3.0", "240.0", "MIAMI_FL_US", "WY2-filename", "USA_FL_Miami.Intl.AP.722020_TMY3"
-  }
-  , 
-  {
-    "NEW_YORK_CITY", "NY", "US", "40.712784", "-74.00594", "-75", "10.0", "240.0", "NEW_YORK_CITY_NY_US", "WY2-filename", "USA_NY_New.York-Central.Park.725033_TMY3"
-  }
-  , 
-  {
-    "WASHINGTON", "DC", "US", "38.907192", "-77.03687", "-75", "22.0", "240.0", "WASHINGTON_DC_US", "WY2-filename", "USA_VA_Arlington-Ronald.Reagan.Washington.Natl.AP.724050_TMY3"
-  }
-  , 
-
-  {
-    "BRASILIA", "XX", "BR", "-29.176456", "-51.22032", "-45", "774.0", "240.0", "BRASILIA_XX_BR", "WY2-filename", "BRA_Santa.Maria.839360_SWERA"
-  }
-  , 
-  {
-    "RIO_DE_JANEIRO", "XX", "BR", "-22.893467", "-43.21391", "-45", "6.0", "240.0", "RIO_DE_JANEIRO_XX_BR", "WY2-filename", "BRA_Rio.de.Janeiro-Santos.Dumont.837550_SWERA"
-  }
-  , 
-  {
-    "SAO_PAULO", "XX", "BR", "-23.5500", "-46.6333", "-45", "768.0", "240.0", "SAO_PAULO_XX_BR", "WY2-filename", "BRA_Bom.Jesus.da.Lapa.832880_SWERA"
-  }
-  , 
-
-  {
-    "MEXICO_CITY", "DF", "MX", "19.432608", "-99.13321", "-105", "2230.0", "240.0", "CIUDAD_DE_MEXICO_DF_MX", "WY2-filename", "MEX_Mexico.City.766790_IWEC"
-  }
-  , 
-  {
-    "HAVANA", "XX", "CU", "23.05407", "-82.34519", "-75", "93.0", "240.0", "HAVANA_XX_CU", "WY2-filename", "CUB_Havana-Jose.Marti.782240_SWERA"
-  }
-  , 
-  {
-    "SANTO_DOMINGO", "XX", "DO", "18.482439", "-69.96518", "-75", "62.0", "240.0", "SANTO_DOMINGO_XX_DO", "WY2-filename", "PRI_Mayaguez-Eugenio.Maria.de.Hostos.AP.785145_TMY3"
-  }
-  , 
-  {
-    "SAN_SALVADOR", "XX", "SV", "13.679502", "-89.21397", "-90", "796.0", "240.0", "SAN_SALVADOR_XX_SV", "WY2-filename", "SLV_San.Salvador-Ilopango.786630_SWERA"
-  }
-  , 
-  {
-    "CARACAS", "XX", "VE", "10.960712", "-63.920437", "-60", "32.0", "240.0", "CARACAS_XX_VEe", "WY2-filename", "VEN_Caracas.804150_IWEC"
-  }
-  , 
-  {
-    "BOGOTA", "XX", "CO", "7.894716", "-72.504616", "-75", "302.0", "240.0", "BOGOTA_XX_CO", "WY2-filename", "COL_Bogota.802220_IWEC"
-  }
-  , 
-  {
-    "GUAYAQUIL", "XX", "EC", "-2.1241937", "-79.59123", "-75", "11.0", "240.0", "GUAYAQUIL_XX_EC", "WY2-filename", "ECU_Quito.840710_IWEC"
-  }
-  , 
-  {
-    "LIMA", "XX", "PE", "-12.032012", "-76.92987", "-75", "336.0", "240.0", "LIMA_XX_PE", "WY2-filename", "PER_Lima.846280_IWEC"
-  }
-  , 
-  {
-    "ANTOFAGASTA", "XX", "CL", "-23.65", "-70.4", "-75", "13.0", "240.0", "ANTOFAGASTA_XX_CL", "WY2-filename", "CHL_Antofagasta.854420_IWEC"
-  }
-  , 
 
 
+String[] Defined_Stations = {
 
-  {
-    "Tehran_SBU", "XX", "IR", "35.797", "51.395", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"
-  }
-  , 
+  "Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
 
-  {
-    "Tehran_Adib", "XX", "IR", "35.797", "51.352", "52.5", "1769", "240.0", "", "", "IRN_TEHRAN_XX_IR"
-  }
-  , 
-
-  {
-    "Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"
-  }
-  , 
-
-  {
-    "Hamedan", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"
-  }
-  , 
-
-  {
-    "Vancouver_A", "BC", "CA", "49.28793", "-123.11415", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
-  }
-  , 
-  {
-    "Vancouver_B", "BC", "CA", "49.274166", "-123.103353", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
-  }
-  , 
-
-  {
-    "Yazd", "XX", "IR", "31.8916", "54.3712", "52.5", "1144", "240.0", "", "", "IRN_Yazd_XX_IR"
-  }
-  , 
-
-
-  {
-    "Edinburgh_School", "QC", "CA", "45.457", "-73.660", "-75", "0", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  }
-  , 
-
-  {
-    "Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"
-  }
-  , 
-
-  {
-    "Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"
-  }
-  ,
 };
 
 
-int STATION_Selected = STATION_Number;
-int LoadButton_STATION = 0; 
+
 
 
 int STUDY_i_Start = 0;
@@ -2347,13 +2095,13 @@ void SOLARCHVISION_update_station (int Step) {
     WIN3D_Update = 1; 
     STUDY_Update = 1;    
 
-    LocationName = Defined_Stations[STATION_Number][0];
-    LocationProvince = Defined_Stations[STATION_Number][1];
+    LocationName = Defined_Stations[0];
+    LocationProvince = Defined_Stations[1];
 
-    LocationLatitude = float(Defined_Stations[STATION_Number][3]);
-    LocationLongitude = float(Defined_Stations[STATION_Number][4]);
-    LocationTimeZone = float(Defined_Stations[STATION_Number][5]);
-    LocationElevation = float(Defined_Stations[STATION_Number][6]);
+    LocationLatitude = float(Defined_Stations[3]);
+    LocationLongitude = float(Defined_Stations[4]);
+    LocationTimeZone = float(Defined_Stations[5]);
+    LocationElevation = float(Defined_Stations[6]);
     LocationDeltaNoon = (LocationTimeZone - LocationLongitude) / 15.0;
 
     WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
@@ -2744,8 +2492,6 @@ void draw () {
         pre_IMPACTS_DisplayDay = IMPACTS_DisplayDay;
         pre_STUDY_Setup = STUDY_Setup;
         pre_IMPACTS_DataSource = IMPACTS_DataSource;
-        pre_STATION_Number = STATION_Number;
-        pre_STATION_Selected = STATION_Selected;
         pre_TIME_Year = TIME_Year;
         pre_TIME_Month = TIME_Month;
         pre_TIME_Day = TIME_Day;
@@ -2935,15 +2681,7 @@ void draw () {
           SOLARCHVISION_draw_ROLLOUT();
         }
 
-        if (pre_STATION_Number != STATION_Number) SOLARCHVISION_update_station(0);
-
-        if (pre_STATION_Selected != STATION_Selected) ROLLOUT_Update = 1;
-
-        if (LoadButton_STATION == 1) {         
-          STATION_Number = STATION_Selected;
-          SOLARCHVISION_update_station(0);
-          LoadButton_STATION = 0;
-        }
+        
 
         if (pre_LoadButton_CLIMATE_TMYEPW != LoadButton_CLIMATE_TMYEPW) SOLARCHVISION_try_update_CLIMATE_TMYEPW();
         if (pre_LoadButton_CLIMATE_CWEEDS != LoadButton_CLIMATE_CWEEDS) SOLARCHVISION_try_update_CLIMATE_CWEEDS();
@@ -6133,7 +5871,7 @@ void SOLARCHVISION_try_update_FORECAST_ENSEMBLE (int THE_YEAR, int THE_MONTH, in
     for (int f = 0; f < num_Layers; f++) {
       if (LAYERS_Text[f].equals("")) {
       } else {
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_Number][8] + "_" + LAYERS_Text[f] + "_000-384.xml";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[f] + "_000-384.xml";
 
         int File_Found = -1;
 
@@ -6200,7 +5938,7 @@ void SOLARCHVISION_try_update_FORECAST_ENSEMBLE (int THE_YEAR, int THE_MONTH, in
     for (int f = 0; f < num_Layers; f++) {
       if (LAYERS_Text[f].equals("")) {
       } else {
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_Number][8] + "_" + LAYERS_Text[f] + "_000-384.xml";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[f] + "_000-384.xml";
 
         int File_Found = -1;
 
@@ -6934,7 +6672,7 @@ void SOLARCHVISION_PlotFORECAST_ENSEMBLE (float x_Plot, float y_Plot, float z_Pl
     }
 
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_Number][8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
+      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       FILE_outputRaw[(j - STUDY_j_Start)].println("Interpolated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       if (LAYERS_Unit[STUDY_CurrentLayer].equals("kW°C/m²") || LAYERS_Unit[STUDY_CurrentLayer].equals("W/m²")) FILE_outputRaw[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
@@ -6942,7 +6680,7 @@ void SOLARCHVISION_PlotFORECAST_ENSEMBLE (float x_Plot, float y_Plot, float z_Pl
     }
 
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_Number][8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
+      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       FILE_outputNorms[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputNorms[(j - STUDY_j_Start)].println("* : SOLARCHVISION internal algorithm");
       if (LAYERS_Unit[STUDY_CurrentLayer].equals("kW°C/m²") || LAYERS_Unit[STUDY_CurrentLayer].equals("W/m²")) FILE_outputNorms[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
@@ -6951,7 +6689,7 @@ void SOLARCHVISION_PlotFORECAST_ENSEMBLE (float x_Plot, float y_Plot, float z_Pl
     }
 
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_Number][8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
+      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       FILE_outputProbs[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       if (LAYERS_Unit[STUDY_CurrentLayer].equals("kW°C/m²") || LAYERS_Unit[STUDY_CurrentLayer].equals("W/m²")) FILE_outputProbs[(j - STUDY_j_Start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       FILE_outputProbs[(j - STUDY_j_Start)].flush(); 
@@ -6985,7 +6723,7 @@ void SOLARCHVISION_try_update_CLIMATE_CWEEDS () {
 
   if (LoadButton_CLIMATE_CWEEDS == 1) {
 
-    String FN = Defined_Stations[STATION_Number][9] + ".wy2";
+    String FN = Defined_Stations[9] + ".wy2";
 
     int File_Found = -1;
 
@@ -7339,14 +7077,14 @@ void SOLARCHVISION_PlotCLIMATE_CWEEDS (float x_Plot, float y_Plot, float z_Plot,
     }
 
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
+      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       FILE_outputRaw[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
       FILE_outputRaw[(j - STUDY_j_Start)].close();
     }
 
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
+      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       FILE_outputNorms[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputNorms[(j - STUDY_j_Start)].println("* : SOLARCHVISION internal algorithm");
       FILE_outputNorms[(j - STUDY_j_Start)].flush(); 
@@ -7354,7 +7092,7 @@ void SOLARCHVISION_PlotCLIMATE_CWEEDS (float x_Plot, float y_Plot, float z_Plot,
     }
 
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
+      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       FILE_outputProbs[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputProbs[(j - STUDY_j_Start)].flush(); 
       FILE_outputProbs[(j - STUDY_j_Start)].close();
@@ -7891,14 +7629,14 @@ void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot,
     }
 
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
+      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       FILE_outputRaw[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
       FILE_outputRaw[(j - STUDY_j_Start)].close();
     }
 
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
+      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       FILE_outputNorms[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputNorms[(j - STUDY_j_Start)].println("* : SOLARCHVISION internal algorithm");
       FILE_outputNorms[(j - STUDY_j_Start)].flush(); 
@@ -7906,7 +7644,7 @@ void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot,
     }
 
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
+      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       FILE_outputProbs[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputProbs[(j - STUDY_j_Start)].flush(); 
       FILE_outputProbs[(j - STUDY_j_Start)].close();
@@ -7938,7 +7676,7 @@ void SOLARCHVISION_try_update_CLIMATE_TMYEPW () {
 
   if (LoadButton_CLIMATE_TMYEPW == 1) {
 
-    String FN = Defined_Stations[STATION_Number][10] + ".epw";
+    String FN = Defined_Stations[10] + ".epw";
 
     int File_Found = -1;
 
@@ -8291,14 +8029,14 @@ void SOLARCHVISION_PlotCLIMATE_TMYEPW (float x_Plot, float y_Plot, float z_Plot,
     }
 
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][10] + ".epw");
+      FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[10] + ".epw");
       FILE_outputRaw[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
       FILE_outputRaw[(j - STUDY_j_Start)].close();
     }
 
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][10] + ".epw");
+      FILE_outputNorms[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[10] + ".epw");
       FILE_outputNorms[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputNorms[(j - STUDY_j_Start)].println("* : SOLARCHVISION internal algorithm");
       FILE_outputNorms[(j - STUDY_j_Start)].flush(); 
@@ -8306,7 +8044,7 @@ void SOLARCHVISION_PlotCLIMATE_TMYEPW (float x_Plot, float y_Plot, float z_Plot,
     }
 
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[STATION_Number][10] + ".epw");
+      FILE_outputProbs[(j - STUDY_j_Start)].println("Source: " + Defined_Stations[10] + ".epw");
       FILE_outputProbs[(j - STUDY_j_Start)].println("Calculated and processed by SOLARCHVISION 2017: www.solarchvision.com");
       FILE_outputProbs[(j - STUDY_j_Start)].flush(); 
       FILE_outputProbs[(j - STUDY_j_Start)].close();
@@ -12961,35 +12699,6 @@ void STUDY_keyPressed (KeyEvent e) {
       }
     } else {
       switch(key) {
-
-      case 's' :
-        STATION_Number = (STATION_Number + 1) % Defined_Stations.length; 
-        //SOLARCHVISION_update_station(0); 
-        WORLD_Update = 1;
-        WIN3D_Update = 1; 
-        STUDY_Update = 1;
-        ROLLOUT_Update = 1;
-
-        InitializationStep = 11; 
-        frameCount = InitializationStep; 
-        textAlign(CENTER, CENTER); 
-        textSize(MessageSize);                    
-        loop(); 
-        break;
-      case 'S' :
-        STATION_Number = (STATION_Number - 1 + Defined_Stations.length) % Defined_Stations.length; 
-        //SOLARCHVISION_update_station(0); 
-        WORLD_Update = 1;
-        WIN3D_Update = 1; 
-        STUDY_Update = 1;
-        ROLLOUT_Update = 1;
-
-        InitializationStep = 11; 
-        frameCount = InitializationStep; 
-        textAlign(CENTER, CENTER); 
-        textSize(MessageSize);                    
-        loop(); 
-        break;              
 
       case 'r' : 
         STUDY_record_AUTO = (STUDY_record_AUTO + 1) % 2; 
@@ -29235,8 +28944,8 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 //Polar
-int LAND_n_I = 24; 
-int LAND_n_J = 24 + 1; // 24 + 1;     
+int LAND_n_I = 16; //24; 
+int LAND_n_J = 24 + 1; // 48 + 1;     
 
 float[][][] LAND_Mesh;
 
@@ -30311,8 +30020,8 @@ int SolarImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:ve
 
 float SolarImpact_Rotation = 0; // North is up by default
 
-float SolarImpact_scale_U = float(Defined_Stations[STATION_Number][7]); // i.e. 500 = 500m 
-float SolarImpact_scale_V = float(Defined_Stations[STATION_Number][7]); // i.e. 500 = 500m 
+float SolarImpact_scale_U = float(Defined_Stations[7]); // i.e. 500 = 500m 
+float SolarImpact_scale_V = float(Defined_Stations[7]); // i.e. 500 = 500m 
 
 float SolarImpact_offset_U = 0;
 float SolarImpact_offset_V = 0; 
@@ -35983,15 +35692,8 @@ void mouseClicked () {
               FRAME_drag_JPG = 1;
             }                
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][0].equals("Site")) {
-              if (UI_BAR_a_selected_child > 0) {
-                if (STATION_Number != UI_BAR_a_selected_child - 1) {
-
-                  STATION_Number = UI_BAR_a_selected_child - 1;
-
-                  SOLARCHVISION_update_station(0);
-                }
-              }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update Station")) { 
+              SOLARCHVISION_update_station(0);
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][0].equals("Layer")) {
@@ -37808,30 +37510,24 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_NAEFS;
 
-                if (Defined_Stations[STATION_Number][8].equals(STATION_NAEFS_INFO[f][6])) {
+                if (Defined_Stations[8].equals(STATION_NAEFS_INFO[f][6])) {
                 } else {
 
-                  STATION_Number = 0; // <<<<<<<<<< overwrite station 0
+                  Defined_Stations[3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[4] = nf(mouse_lon, 0, 0); 
 
-                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
-
-                  Defined_Stations[STATION_Number][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
+                  Defined_Stations[8] = STATION_NAEFS_INFO[f][6]; // naefs filename
 
                   println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
 
-                  STATION_Selected = STATION_Number;
-
                   if (IMPACTS_DataSource == databaseNumber_FORECAST_ENSEMBLE) {
-                    Defined_Stations[STATION_Number][0] = STATION_NAEFS_INFO[f][0];
-                    Defined_Stations[STATION_Number][1] = STATION_NAEFS_INFO[f][1];
-                    Defined_Stations[STATION_Number][2] = STATION_NAEFS_INFO[f][2];
+                    Defined_Stations[0] = STATION_NAEFS_INFO[f][0];
+                    Defined_Stations[1] = STATION_NAEFS_INFO[f][1];
+                    Defined_Stations[2] = STATION_NAEFS_INFO[f][2];
 
-                    //Defined_Stations[STATION_Number][3] = STATION_NAEFS_INFO[f][3];
-                    //Defined_Stations[STATION_Number][4] = STATION_NAEFS_INFO[f][4];
-                    Defined_Stations[STATION_Number][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
-
-                    UI_BAR_a_Items[N_Site_in_Bar_a][1] = Defined_Stations[STATION_Number][0]; // <<<<<<<<
+                    //Defined_Stations[3] = STATION_NAEFS_INFO[f][3];
+                    //Defined_Stations[4] = STATION_NAEFS_INFO[f][4];
+                    Defined_Stations[5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -37867,32 +37563,26 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_CWEEDS;
 
-                if (Defined_Stations[STATION_Number][9].equals(STATION_CWEEDS_INFO[f][6])) {
+                if (Defined_Stations[9].equals(STATION_CWEEDS_INFO[f][6])) {
                 } else {
 
-                  STATION_Number = 0; // <<<<<<<<<< overwrite station 0
+                  Defined_Stations[3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[4] = nf(mouse_lon, 0, 0); 
 
-                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
-
-                  Defined_Stations[STATION_Number][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
+                  Defined_Stations[9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
 
                   println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
 
-                  STATION_Selected = STATION_Number;
-
                   if (IMPACTS_DataSource == databaseNumber_CLIMATE_CWEEDS) { 
 
-                    Defined_Stations[STATION_Number][0] = STATION_CWEEDS_INFO[f][0];
-                    Defined_Stations[STATION_Number][1] = STATION_CWEEDS_INFO[f][1];
-                    Defined_Stations[STATION_Number][2] = STATION_CWEEDS_INFO[f][2]; 
+                    Defined_Stations[0] = STATION_CWEEDS_INFO[f][0];
+                    Defined_Stations[1] = STATION_CWEEDS_INFO[f][1];
+                    Defined_Stations[2] = STATION_CWEEDS_INFO[f][2]; 
 
-                    //Defined_Stations[STATION_Number][3] = STATION_CWEEDS_INFO[f][3];
-                    //Defined_Stations[STATION_Number][4] = STATION_CWEEDS_INFO[f][4];
-                    Defined_Stations[STATION_Number][5] = STATION_CWEEDS_INFO[f][6]; 
-                    Defined_Stations[STATION_Number][6] = STATION_CWEEDS_INFO[f][5];   
-
-                    UI_BAR_a_Items[N_Site_in_Bar_a][1] = Defined_Stations[STATION_Number][0]; // <<<<<<<<
+                    //Defined_Stations[3] = STATION_CWEEDS_INFO[f][3];
+                    //Defined_Stations[4] = STATION_CWEEDS_INFO[f][4];
+                    Defined_Stations[5] = STATION_CWEEDS_INFO[f][6]; 
+                    Defined_Stations[6] = STATION_CWEEDS_INFO[f][5];   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -37929,32 +37619,26 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_CLMREC;
 
-                if (Defined_Stations[STATION_Number][9].equals(STATION_CLMREC_INFO[f][6])) {
+                if (Defined_Stations[9].equals(STATION_CLMREC_INFO[f][6])) {
                 } else {
 
-                  STATION_Number = 0; // <<<<<<<<<< overwrite station 0
+                  Defined_Stations[3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[4] = nf(mouse_lon, 0, 0); 
 
-                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
-
-                  Defined_Stations[STATION_Number][9] = STATION_CLMREC_INFO[f][6]; // CLMREC filename
+                  Defined_Stations[9] = STATION_CLMREC_INFO[f][6]; // CLMREC filename
 
                   println("nearest CLMREC filename:", STATION_CLMREC_INFO[f][6]);       
 
-                  STATION_Selected = STATION_Number;
-
                   if (IMPACTS_DataSource == databaseNumber_CLIMATE_CLMREC) { 
 
-                    Defined_Stations[STATION_Number][0] = STATION_CLMREC_INFO[f][0];
-                    Defined_Stations[STATION_Number][1] = STATION_CLMREC_INFO[f][1];
-                    Defined_Stations[STATION_Number][2] = STATION_CLMREC_INFO[f][2]; 
+                    Defined_Stations[0] = STATION_CLMREC_INFO[f][0];
+                    Defined_Stations[1] = STATION_CLMREC_INFO[f][1];
+                    Defined_Stations[2] = STATION_CLMREC_INFO[f][2]; 
 
-                    //Defined_Stations[STATION_Number][3] = STATION_CLMREC_INFO[f][3];
-                    //Defined_Stations[STATION_Number][4] = STATION_CLMREC_INFO[f][4];
-                    Defined_Stations[STATION_Number][5] = STATION_CLMREC_INFO[f][6]; 
-                    Defined_Stations[STATION_Number][6] = STATION_CLMREC_INFO[f][5];   
-
-                    UI_BAR_a_Items[N_Site_in_Bar_a][1] = Defined_Stations[STATION_Number][0]; // <<<<<<<<
+                    //Defined_Stations[3] = STATION_CLMREC_INFO[f][3];
+                    //Defined_Stations[4] = STATION_CLMREC_INFO[f][4];
+                    Defined_Stations[5] = STATION_CLMREC_INFO[f][6]; 
+                    Defined_Stations[6] = STATION_CLMREC_INFO[f][5];   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -37989,31 +37673,25 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_TMYEPW;
 
-                if (Defined_Stations[STATION_Number][10].equals(STATION_TMYEPW_INFO[f][8])) {
+                if (Defined_Stations[10].equals(STATION_TMYEPW_INFO[f][8])) {
                 } else {
 
-                  STATION_Number = 0; // <<<<<<<<<< overwrite station 0
+                  Defined_Stations[3] = nf(mouse_lat, 0, 0);                
+                  Defined_Stations[4] = nf(mouse_lon, 0, 0); 
 
-                  Defined_Stations[STATION_Number][3] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_Number][4] = nf(mouse_lon, 0, 0); 
-
-                  Defined_Stations[STATION_Number][10] = STATION_TMYEPW_INFO[f][8]; // epw filename
+                  Defined_Stations[10] = STATION_TMYEPW_INFO[f][8]; // epw filename
 
                   println("nearest epw filename:", STATION_TMYEPW_INFO[f][8]);       
 
-                  STATION_Selected = STATION_Number;
-
                   if (IMPACTS_DataSource == databaseNumber_CLIMATE_TMYEPW) {     
-                    Defined_Stations[STATION_Number][0] = STATION_TMYEPW_INFO[f][0];
-                    Defined_Stations[STATION_Number][1] = STATION_TMYEPW_INFO[f][1];
-                    Defined_Stations[STATION_Number][2] = STATION_TMYEPW_INFO[f][2]; 
+                    Defined_Stations[0] = STATION_TMYEPW_INFO[f][0];
+                    Defined_Stations[1] = STATION_TMYEPW_INFO[f][1];
+                    Defined_Stations[2] = STATION_TMYEPW_INFO[f][2]; 
 
-                    //Defined_Stations[STATION_Number][3] = STATION_TMYEPW_INFO[f][3];
-                    //Defined_Stations[STATION_Number][4] = STATION_TMYEPW_INFO[f][4];
-                    Defined_Stations[STATION_Number][5] = STATION_TMYEPW_INFO[f][6]; 
-                    Defined_Stations[STATION_Number][6] = STATION_TMYEPW_INFO[f][5];    
-
-                    UI_BAR_a_Items[N_Site_in_Bar_a][1] = Defined_Stations[STATION_Number][0]; // <<<<<<<<
+                    //Defined_Stations[3] = STATION_TMYEPW_INFO[f][3];
+                    //Defined_Stations[4] = STATION_TMYEPW_INFO[f][4];
+                    Defined_Stations[5] = STATION_TMYEPW_INFO[f][6]; 
+                    Defined_Stations[6] = STATION_TMYEPW_INFO[f][5];    
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -39459,10 +39137,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
 
     if (SOLARCHVISION_ROLLOUT_child == 1) { // Point
-      //STATION_Selected = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Selected:" + Defined_Stations[STATION_Selected][0], STATION_Selected, 0, Defined_Stations.length - 1, 1), 1));
-      //LoadButton_STATION = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,1,1, "LoadButton_STATION", LoadButton_STATION, 0, 1, 1), 1));
-      //STATION_Number = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,1,1, "Loaded:" + Defined_Stations[STATION_Number][0], STATION_Number, 0, Defined_Stations.length - 1, 1), 1));
-
 
       //WORLD_AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Auto Fit", WORLD_AutoView, 0, 1, 1), 1));
       //WORLD_VIEW_Number = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, WORLD_Viewports_num - 1, 1), 1));
@@ -48992,7 +48666,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Site"
+    "Site", "Update Station"
   }
   , // Locations
   {
@@ -49048,23 +48722,6 @@ String[][] UI_BAR_a_Items = {
   }
 };
 
-
-
-
-
-
-int N_Site_in_Bar_a = 2; 
-{
-
-  UI_BAR_a_Items[N_Site_in_Bar_a] = new String [1 + Defined_Stations.length];
-
-  UI_BAR_a_Items[N_Site_in_Bar_a][0] = "Site";
-
-  for (int i = 0; i < Defined_Stations.length; i++) {
-
-    UI_BAR_a_Items[N_Site_in_Bar_a][i + 1] = Defined_Stations[i][0];
-  }
-} 
 
 int N_Layer_in_Bar_a = 8; 
 {
@@ -52169,11 +51826,11 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   println("Saving:STATION");
   {
     newChild1 = my_xml.addChild("DEFINED_STATION");
-    newChild1.setInt("ni", Defined_Stations[STATION_Number].length);
-    for (int i = 0; i < Defined_Stations[STATION_Number].length; i++) {
+    newChild1.setInt("ni", Defined_Stations.length);
+    for (int i = 0; i < Defined_Stations.length; i++) {
       newChild2 = newChild1.addChild("Property");
       newChild2.setInt("id", i);
-      newChild2.setContent(Defined_Stations[STATION_Number][i]);
+      newChild2.setContent(Defined_Stations[i]);
     }
   }
 
@@ -53470,15 +53127,11 @@ void SOLARCHVISION_load_project (String myFile) {
 
       XML[] children1 = children0[L].getChildren("Property");         
 
-      STATION_Number = 0; // <<<<<<<<<< overwrite station 0
-
-        for (int i = 0; i < ni; i++) {
+      for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
 
-        Defined_Stations[STATION_Number][i] = lineSTR;
+        Defined_Stations[i] = lineSTR;
       }
-
-      UI_BAR_a_Items[N_Site_in_Bar_a][1] = Defined_Stations[STATION_Number][0]; // <<<<<<<<
     }
 
     println("Loading:LAND_Mesh");
@@ -56726,10 +56379,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("LONLAT")) {
     if (parts.length > 2) {
       
-      STATION_Number = 0; // <<<<<<<<<< overwrite station 0
-      
-      Defined_Stations[STATION_Number][3] = parts[2];
-      Defined_Stations[STATION_Number][4] = parts[1];
+      Defined_Stations[3] = parts[2];
+      Defined_Stations[4] = parts[1];
       
       SOLARCHVISION_update_station(1);
     }
