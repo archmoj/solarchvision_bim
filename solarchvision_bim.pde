@@ -74,19 +74,15 @@ void launch (String[] s) {
 }
 
 
-String SOLARCHVISION_version = "2016"; 
+String SOLARCHVISION_version = "2017"; 
 String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
 
-String Grib2ArchiveFolder;
+String ForecastDownloadFolder;
 String Wgrib2TempFolder;
 
 String BackgroundFolder;
 String WorldViewFolder;
-String SWOBFolder;
-String NAEFSFolder;
-String CWEEDSFolder;
-String CLMRECFolder;
-String TMYEPWFolder;
+String WorldDataFolder;
 String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
@@ -101,17 +97,12 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
 
-  Grib2ArchiveFolder = BaseFolder + "/Input/WeatherForecast";
+  ForecastDownloadFolder = BaseFolder + "/Input/WeatherForecast/Downloads";
   Wgrib2TempFolder = BaseFolder + "/Temp";
 
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
-  SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  CLMRECFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  TMYEPWFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  
+  WorldDataFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL_CROP_low";
   //Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
@@ -119,7 +110,7 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   
-  ProjectsFolder        = BaseFolder + "/Projects/Project_D01";  
+  ProjectsFolder        = BaseFolder + "/Projects/Project_A01";  
   
   LandFolder            = ProjectsFolder + "/Land";
   
@@ -6190,7 +6181,18 @@ void SOLARCHVISION_try_update_FORECAST_ENSEMBLE (int THE_YEAR, int THE_MONTH, in
 
 
     if (any_file_downloaded != 0) {
-      launch(BaseFolder + "/BatchFiles/unzipNAEFS.bat".replace('/', char(92)));
+      
+      String folder_inout = "ForecastDownloadFolder".replace('/', char(92));
+      String CommandArguments;
+
+      CommandArguments = "C:\\Program Files (x86)\\7-Zip\\7z.exe e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
+      println(CommandArguments);
+      launch(CommandArguments);
+
+      CommandArguments = "del " + folder_inout + "\\*.bz2 /q";
+      println(CommandArguments);
+      //launch(CommandArguments);
+      
       //FORECAST_ENSEMBLE_XML_Files = SOLARCHVISION_getfiles(FORECAST_ENSEMBLE_directory); // slow
     }
 
@@ -14969,7 +14971,7 @@ String[][] STATION_NAEFS_INFO;
 
 void SOLARCHVISION_getNAEFS_Coordinates () {
   try {
-    String[] FileALL = loadStrings(NAEFSFolder + "/NAEFS_UTF8.txt");
+    String[] FileALL = loadStrings(WorldDataFolder + "/NAEFS_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -15047,7 +15049,7 @@ String[][] STATION_CWEEDS_INFO;
 
 void SOLARCHVISION_getCWEEDS_Coordinates () {
   try {
-    String[] FileALL = loadStrings(CWEEDSFolder + "/CWEEDS_UTF8.txt");
+    String[] FileALL = loadStrings(WorldDataFolder + "/CWEEDS_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -15108,7 +15110,7 @@ String[][] STATION_CLMREC_INFO;
 void SOLARCHVISION_getCLMREC_Coordinates () {
   
   try {
-    String[] FileALL = loadStrings(CLMRECFolder + "/CLMREC_UTF8_EN.txt");
+    String[] FileALL = loadStrings(WorldDataFolder + "/CLMREC_UTF8_EN.txt");
 
     String lineSTR;
     String[] input;
@@ -15181,7 +15183,7 @@ String[][] STATION_SWOB_INFO;
 
 void SOLARCHVISION_getSWOB_Coordinates () {
   try {
-    String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
+    String[] FileALL = loadStrings(WorldDataFolder + "/SWOB_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -15258,7 +15260,7 @@ String[][] STATION_TMYEPW_INFO;
 
 void SOLARCHVISION_getTMYEPW_Coordinates () {
   try {
-    String[] FileALL = loadStrings(TMYEPWFolder + "/EPW_UTF8.txt");
+    String[] FileALL = loadStrings(WorldDataFolder + "/EPW_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -40304,7 +40306,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
 
 
 String getGrib2Folder (int s) {
-  return(Grib2ArchiveFolder + "/FORECAST_" + GRIB2_Domains[s][1]);
+  return(ForecastDownloadFolder + "/FORECAST_" + GRIB2_Domains[s][1]);
 }
 
 String getGrib2Filename (int k, int l, int h) {
