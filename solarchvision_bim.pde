@@ -804,22 +804,22 @@ int SampleStation_Start = 1;
 int SampleStation_End = 1;
 
 float[][][][] CLIMATE_TMYEPW_values;
-int[][][][] CLIMATE_TMYEPW_flags;
+boolean[][][][] CLIMATE_TMYEPW_flags;
 
 float[][][][] CLIMATE_CWEEDS_values;
-int[][][][] CLIMATE_CWEEDS_flags;
+boolean[][][][] CLIMATE_CWEEDS_flags;
 
 float[][][][] CLIMATE_CLMREC_values;
-int[][][][] CLIMATE_CLMREC_flags;
+boolean[][][][] CLIMATE_CLMREC_flags;
 
 float[][][][] FORECASTS_values;
-int[][][][] FORECASTS_flags;
+boolean[][][][] FORECASTS_flags;
 
 float[][][][] OBSERVATIONS_values;
-int[][][][] OBSERVATIONS_flags;
+boolean[][][][] OBSERVATIONS_flags;
 
 float[][][][] DATA_values;
-int[][][][] DATA_flags;
+boolean[][][][] DATA_flags;
 
 
 int Load_CLIMATE_TMYEPW = 1;
@@ -5921,14 +5921,14 @@ void SOLARCHVISION_update_FORECASTS (int THE_YEAR, int THE_MONTH, int THE_DAY, i
   FORECASTS_XML_Files = SOLARCHVISION_getfiles(FORECASTS_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
   FORECASTS_values = new float [24][365][num_Layers][(1 + FORECASTS_end - FORECASTS_start)];
-  FORECASTS_flags = new int [24][365][num_Layers][(1 + FORECASTS_end - FORECASTS_start)]; // -1: undefined, 0: interpolated, 1: data
+  FORECASTS_flags = new boolean [24][365][num_Layers][(1 + FORECASTS_end - FORECASTS_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + FORECASTS_end - FORECASTS_start); k += 1) {
           FORECASTS_values[i][j][l][k] = FLOAT_undefined;
-          FORECASTS_flags[i][j][l][k] = -1;
+          FORECASTS_flags[i][j][l][k] = false;
         }
       }
     }
@@ -6019,13 +6019,13 @@ void SOLARCHVISION_postProcess_FORECASTS () {
 
 
                   //println("[i][j][l][k]", i, j, l, k);
-                  FORECASTS_flags[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with TIME_ModelRun == 12!!!!!!!!!!!!!!!!!!??????????
+                  FORECASTS_flags[i][j][l][k] = false; // On Layers: RH and TMP it didn't work with TIME_ModelRun == 12!!!!!!!!!!!!!!!!!!??????????
                 } else {
-                  FORECASTS_flags[i][j][l][k] = -1;
+                  FORECASTS_flags[i][j][l][k] = false;
                 }
               }
             } else {
-              FORECASTS_flags[i][j][l][k] = 1;
+              FORECASTS_flags[i][j][l][k] = true;
               pre_v = FORECASTS_values[i][j][l][k];
               pre_num = 0;
             }
@@ -6141,7 +6141,7 @@ void SOLARCHVISION_postProcess_FORECASTS () {
             }        
 
             for (int i = 0; i < 24; i += 1) {
-              if (FORECASTS_flags[i][now_j][l][k] == 0) { // if it was interpolated then ...
+              if (FORECASTS_flags[i][now_j][l][k] == false) { // if it was interpolated then ...
 
                 if (is_undefined_FLOAT(pre_v) == false) {
                   pre_num += 1;
@@ -6164,7 +6164,7 @@ void SOLARCHVISION_postProcess_FORECASTS () {
                     if (next_j == 365) {
                       next_j = 0;
                     }
-                    if (FORECASTS_flags[next_i][next_j][l][k] != 0) { // if it wasn't interpolated then ...
+                    if (FORECASTS_flags[next_i][next_j][l][k] == true) { // if it wasn't interpolated then ...
                       next_v = FORECASTS_values[next_i][next_j][l][k];
                       next_hour = next_i;
                       next_day = (int(next_j - TIME_Date + 286 + 365) % 365); 
@@ -6210,12 +6210,12 @@ void SOLARCHVISION_postProcess_FORECASTS () {
                     }
                   }
 
-                  FORECASTS_flags[i][now_j][l][k] = 0;
+                  FORECASTS_flags[i][now_j][l][k] = false;
                 } else {
-                  FORECASTS_flags[i][now_j][l][k] = -1;
+                  FORECASTS_flags[i][now_j][l][k] = false;
                 }
               } else {
-                FORECASTS_flags[i][now_j][l][k] = 1;
+                FORECASTS_flags[i][now_j][l][k] = true;
                 pre_v = FORECASTS_values[i][now_j][l][k];
                 pre_num = 0;
 
@@ -6248,13 +6248,13 @@ void SOLARCHVISION_postProcess_FORECASTS () {
           float T = FORECASTS_values[i][j][LAYER_drybulb][k];
 
           FORECASTS_values[i][j][LAYER_dirnorrad][k] = SunR[4];
-          FORECASTS_flags[i][j][LAYER_dirnorrad][k] = 0;
+          FORECASTS_flags[i][j][LAYER_dirnorrad][k] = false;
 
           FORECASTS_values[i][j][LAYER_difhorrad][k] = SunR[5];
-          FORECASTS_flags[i][j][LAYER_difhorrad][k] = 0;
+          FORECASTS_flags[i][j][LAYER_difhorrad][k] = false;
 
           FORECASTS_values[i][j][LAYER_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
-          FORECASTS_flags[i][j][LAYER_glohorrad][k] = 0;
+          FORECASTS_flags[i][j][LAYER_glohorrad][k] = false;
 
 
           //---------------------------------------------------------------------
@@ -6329,10 +6329,10 @@ void SOLARCHVISION_postProcess_FORECASTS () {
           //---------------------------------------------------------------------
 
           FORECASTS_values[i][j][LAYER_direffect][k] = FORECASTS_values[i][j][LAYER_dirnorrad][k] * (18 - T);
-          FORECASTS_flags[i][j][LAYER_direffect][k] = 0;
+          FORECASTS_flags[i][j][LAYER_direffect][k] = false;
 
           FORECASTS_values[i][j][LAYER_difeffect][k] = FORECASTS_values[i][j][LAYER_difhorrad][k] * (18 - T);
-          FORECASTS_flags[i][j][LAYER_difeffect][k] = 0;
+          FORECASTS_flags[i][j][LAYER_difeffect][k] = false;
         }
       }
     }
@@ -6598,7 +6598,7 @@ void SOLARCHVISION_PlotFORECASTS (float x_Plot, float y_Plot, float z_Plot, floa
               _valuesSUM[k] += _valuesA[k];
               _valuesNUM[k] += 1;
 
-              if ((FORECASTS_flags[now_i][now_j][STUDY_CurrentLayer][now_k] == 1) && ((STUDY_DisplayRaws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
+              if ((FORECASTS_flags[now_i][now_j][STUDY_CurrentLayer][now_k] == true) && ((STUDY_DisplayRaws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
               if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
                 if (is_undefined_FLOAT(_valuesA[k]) == false) FILE_outputRaw[(j - STUDY_j_Start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
@@ -6702,14 +6702,14 @@ void SOLARCHVISION_PlotFORECASTS (float x_Plot, float y_Plot, float z_Plot, floa
 void SOLARCHVISION_update_CLIMATE_CWEEDS () {
 
   CLIMATE_CWEEDS_values = new float [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)];
-  CLIMATE_CWEEDS_flags = new int [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)]; // -1: undefined, 0: interpolated, 1: data
+  CLIMATE_CWEEDS_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k += 1) {
           CLIMATE_CWEEDS_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_CWEEDS_flags[i][j][l][k] = -1;
+          CLIMATE_CWEEDS_flags[i][j][l][k] = false;
         }
       }
     }
@@ -6809,7 +6809,7 @@ void SOLARCHVISION_loadCLIMATE_CWEEDS (String FileName) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k += 1) {
           if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[i][j][l][k]) == false) {
-            CLIMATE_CWEEDS_flags[i][j][l][k] = 1;
+            CLIMATE_CWEEDS_flags[i][j][l][k] = true;
           }
         }
       }
@@ -7166,14 +7166,14 @@ void SOLARCHVISION_download_CLIMATE_CLMREC () {
 void SOLARCHVISION_update_CLIMATE_CLMREC () {
 
   CLIMATE_CLMREC_values = new float [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
-  CLIMATE_CLMREC_flags = new int [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // -1: undefined, 0: interpolated, 1: data
+  CLIMATE_CLMREC_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k += 1) {
           CLIMATE_CLMREC_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_CLMREC_flags[i][j][l][k] = -1;
+          CLIMATE_CLMREC_flags[i][j][l][k] = false;
         }
       }
     }
@@ -7304,7 +7304,7 @@ void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k += 1) {
           if (is_undefined_FLOAT(CLIMATE_CLMREC_values[i][j][l][k]) == false) {
-            CLIMATE_CLMREC_flags[i][j][l][k] = 1;
+            CLIMATE_CLMREC_flags[i][j][l][k] = true;
           }
         }
       }
@@ -7706,14 +7706,14 @@ void SOLARCHVISION_PlotCLIMATE_CLMREC (float x_Plot, float y_Plot, float z_Plot,
 void SOLARCHVISION_update_CLIMATE_TMYEPW () {
 
   CLIMATE_TMYEPW_values = new float [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)];
-  CLIMATE_TMYEPW_flags = new int [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)]; // -1: undefined, 0: interpolated, 1: data
+  CLIMATE_TMYEPW_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start); k += 1) {
           CLIMATE_TMYEPW_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_TMYEPW_flags[i][j][l][k] = -1;
+          CLIMATE_TMYEPW_flags[i][j][l][k] = false;
         }
       }
     }
@@ -7812,7 +7812,7 @@ void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start); k += 1) {
           if (is_undefined_FLOAT(CLIMATE_TMYEPW_values[i][j][l][k]) == false) {
-            CLIMATE_TMYEPW_flags[i][j][l][k] = 1;
+            CLIMATE_TMYEPW_flags[i][j][l][k] = true;
           }
         }
       }
@@ -8212,14 +8212,14 @@ void SOLARCHVISION_update_OBSERVATIONS () {
 
 
   OBSERVATIONS_values = new float [24][365][num_Layers][(1 + OBSERVATIONS_end - OBSERVATIONS_start)];
-  OBSERVATIONS_flags = new int [24][365][num_Layers][(1 + OBSERVATIONS_end - OBSERVATIONS_start)]; // -1: undefined, 0: interpolated, 1: data
+  OBSERVATIONS_flags = new boolean [24][365][num_Layers][(1 + OBSERVATIONS_end - OBSERVATIONS_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
         for (int k = 0; k < (1 + OBSERVATIONS_end - OBSERVATIONS_start); k += 1) {
           OBSERVATIONS_values[i][j][l][k] = FLOAT_undefined;
-          OBSERVATIONS_flags[i][j][l][k] = -1;
+          OBSERVATIONS_flags[i][j][l][k] = false;
         }
       }
     }
@@ -8334,13 +8334,13 @@ void SOLARCHVISION_update_OBSERVATIONS () {
                   if (l == LAYER_winddir) OBSERVATIONS_values[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
                   else OBSERVATIONS_values[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
 
-                  OBSERVATIONS_flags[i][j][l][k] = 0;
+                  OBSERVATIONS_flags[i][j][l][k] = false;
                 } else {
-                  OBSERVATIONS_flags[i][j][l][k] = -1;
+                  OBSERVATIONS_flags[i][j][l][k] = false;
                 }
               }
             } else {
-              OBSERVATIONS_flags[i][j][l][k] = 1;
+              OBSERVATIONS_flags[i][j][l][k] = true;
               pre_v = OBSERVATIONS_values[i][j][l][k];
               pre_num = 0;
             }
@@ -8415,37 +8415,30 @@ void SOLARCHVISION_loadOBSERVATIONS (String FileName, int Load_Layer) {
 
     if (_a1.equals("stn_pres")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_pressure][Load_Layer] = Float.valueOf(_a2);
-      OBSERVATIONS_flags[now_i][now_j][LAYER_pressure][Load_Layer] = 1;
     }
 
     if (_a1.equals("air_temp")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_drybulb][Load_Layer] = Float.valueOf(_a2);
-      OBSERVATIONS_flags[now_i][now_j][LAYER_drybulb][Load_Layer] = 1;
     }
 
     if (_a1.equals("rel_hum")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_relhum][Load_Layer] = Float.valueOf(_a2);
-      OBSERVATIONS_flags[now_i][now_j][LAYER_relhum][Load_Layer] = 1;
     } 
 
     if (_a1.equals("tot_cld_amt")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_cloudcover][Load_Layer] = 0.1 * Float.valueOf(_a2);
-      OBSERVATIONS_flags[now_i][now_j][LAYER_cloudcover][Load_Layer] = 1;
     }    
 
     if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_winddir][Load_Layer] = Float.valueOf(_a2);
-      OBSERVATIONS_flags[now_i][now_j][LAYER_winddir][Load_Layer] = 1;
     }    
 
     if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_windspd][Load_Layer] = Float.valueOf(_a2);
-      OBSERVATIONS_flags[now_i][now_j][LAYER_windspd][Load_Layer] = 1;
     }
 
     if (_a1.equals("pcpn_amt_pst6hrs")) {
       OBSERVATIONS_values[now_i][now_j][LAYER_precipitation_A][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
-      OBSERVATIONS_flags[now_i][now_j][LAYER_precipitation_A][Load_Layer] = 1;
     }
 
     if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
@@ -8453,7 +8446,6 @@ void SOLARCHVISION_loadOBSERVATIONS (String FileName, int Load_Layer) {
       } else {
         //if (_a3.equals("W/m²")) {
         OBSERVATIONS_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
-        OBSERVATIONS_flags[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1;
         //}
       }
     }
@@ -8463,11 +8455,26 @@ void SOLARCHVISION_loadOBSERVATIONS (String FileName, int Load_Layer) {
       } else {
         //if (_a3.equals("kJ/m²")) {
         OBSERVATIONS_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
-        OBSERVATIONS_flags[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1;
         //}
       }
     }
+    
   }
+  
+  // setting the flags
+  for (int i = 0; i < 24; i += 1) {
+    for (int j = 0; j < 365; j += 1) {
+      for (int l = 0; l < num_Layers; l += 1) {
+        for (int k = 0; k < (1 + OBSERVATIONS_end - OBSERVATIONS_start); k += 1) {
+          if (is_undefined_FLOAT(OBSERVATIONS_values[i][j][l][k]) == false) {
+            OBSERVATIONS_flags[i][j][l][k] = true;
+          }
+        }
+      }
+    }
+  }    
+  
+  
 }
 
 
@@ -8643,7 +8650,7 @@ void SOLARCHVISION_PlotOBSERVATIONS (float x_Plot, float y_Plot, float z_Plot, f
               _valuesSUM[k] += _valuesA[k];
               _valuesNUM[k] += 1;
 
-              //if ((OBSERVATIONS_flags[now_i][now_j][STUDY_CurrentLayer][now_k] == 1) && ((STUDY_DisplayRaws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
+              //if ((OBSERVATIONS_flags[now_i][now_j][STUDY_CurrentLayer][now_k] == true) && ((STUDY_DisplayRaws == 1))) STUDY_Diagrams.ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
               if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
                 if (is_undefined_FLOAT(_valuesA[k]) == false) FILE_outputRaw[(j - STUDY_j_Start)].print(nfs(_valuesA[k] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
@@ -10379,7 +10386,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 } else {
                   int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
 
-                  if ((IMPACTS_DataSource == databaseNumber_FORECASTS) && (FORECASTS_flags[now_i][now_j][LAYER_winddir][now_k] != 1)) memberCount = 0;
+                  if ((IMPACTS_DataSource == databaseNumber_FORECASTS) && (FORECASTS_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
 
                   if (memberCount == 1) {
 
@@ -10492,7 +10499,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 } else {
                   int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
                   
-                  if ((IMPACTS_DataSource == databaseNumber_FORECASTS) && (FORECASTS_flags[now_i][now_j][LAYER_winddir][now_k] != 1)) memberCount = 0;
+                  if ((IMPACTS_DataSource == databaseNumber_FORECASTS) && (FORECASTS_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
 
                   if (memberCount == 1) {
 
