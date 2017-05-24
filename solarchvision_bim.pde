@@ -7942,7 +7942,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   int start_k = startK_endK[0];
   int end_k = startK_endK[1]; 
   int count_k = 1 + end_k - start_k;
-  if (count k < 0) count_k = 0;
+  if (count_k < 0) count_k = 0;
 
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
@@ -8847,7 +8847,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
   int count_k = 1 + end_k - start_k;
-  if (count k < 0) count_k = 0;
+  if (count_k < 0) count_k = 0;
 
 
   if ((STUDY_PlotImpacts == -2) || (STUDY_PlotImpacts == -1)) {
@@ -10510,7 +10510,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
   int count_k = 1 + end_k - start_k;
-  if (count k < 0) count_k = 0;
+  if (count_k < 0) count_k = 0;
 
 
 
@@ -11837,7 +11837,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
     int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
     int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
     int count_k = 1 + end_k - start_k;
-    if (count k < 0) count_k = 0;
+    if (count_k < 0) count_k = 0;
 
     for (int p = 0; p < 1; p += 1) { 
 
@@ -24945,7 +24945,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
   int count_k = 1 + end_k - start_k;
-  if (count k < 0) count_k = 0;
+  if (count_k < 0) count_k = 0;
 
   Impact_TYPE = Impact_ACTIVE; 
   if (STUDY_PlotImpacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
@@ -28613,7 +28613,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
     int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
     int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
     int count_k = 1 + end_k - start_k;    
-    if (count k < 0) count_k = 0;
+    if (count_k < 0) count_k = 0;
 
 
     int RES1 = SolarImpact_RES1;
@@ -30951,7 +30951,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
   int count_k = 1 + end_k - start_k;  
-  if (count k < 0) count_k = 0;
+  if (count_k < 0) count_k = 0;
 
 
 
@@ -55547,7 +55547,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
   int start_k = startK_endK[0]; 
   int end_k = startK_endK[1];
   int count_k = 1 + end_k - start_k; 
-  if (count k < 0) count_k = 0;
+  if (count_k < 0) count_k = 0;
   
 
   if (STUDY_PrintTtitle != 0) {
