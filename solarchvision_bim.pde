@@ -7941,16 +7941,17 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   int[] startK_endK = STUDY_get_startK_endK(data_source);
   int start_k = startK_endK[0];
   int end_k = startK_endK[1]; 
-  int layers_count = 1 + end_k - start_k; 
+  int count_k = 1 + end_k - start_k;
+  if (count k < 0) count_k = 0;
 
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
   float RAIN, T, WS, R_dir, R_dif;
 
   float[] _valuesSUM; 
-  _valuesSUM = new float [layers_count];
+  _valuesSUM = new float [count_k];
 
-  for (int k = 0; k < layers_count; k += 1) {
+  for (int k = 0; k < count_k; k += 1) {
     _valuesSUM[k] = FLOAT_undefined;
   }
 
@@ -8745,7 +8746,7 @@ int[] SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS (float[] _values) {
 }
 
 
-int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_k, int end_k, int j, float DATE_ANGLE) {
+int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int count_k, int start_k, int end_k, int j, float DATE_ANGLE) {
 
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
@@ -8760,12 +8761,12 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_k, int 
   float[] _valuesSUM_RAD; 
   float[] _valuesSUM_EFF;
   float[] _valuesNUM;
-  _valuesSUM_RAD = new float [(layers_count * STUDY_JoinDays)];
-  _valuesSUM_EFF = new float [(layers_count * STUDY_JoinDays)];
-  _valuesNUM = new float [(layers_count * STUDY_JoinDays)];
+  _valuesSUM_RAD = new float [(count_k * STUDY_JoinDays)];
+  _valuesSUM_EFF = new float [(count_k * STUDY_JoinDays)];
+  _valuesNUM = new float [(count_k * STUDY_JoinDays)];
 
   for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
-    for (int k = 0; k < layers_count; k += 1) { 
+    for (int k = 0; k < count_k; k += 1) { 
       _valuesSUM_RAD[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
       _valuesSUM_EFF[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
       _valuesNUM[(k * STUDY_JoinDays + j_ADD)] = 0;
@@ -8845,7 +8846,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
-  int layers_count = 1 + end_k - start_k;
+  int count_k = 1 + end_k - start_k;
+  if (count k < 0) count_k = 0;
 
 
   if ((STUDY_PlotImpacts == -2) || (STUDY_PlotImpacts == -1)) {
@@ -8866,11 +8868,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     float[] _values_w_dir;
     float[] _values_w_spd; 
     float[] _values_w_tmp; 
-    _values_w_dir = new float [layers_count];
-    _values_w_spd = new float [layers_count]; 
-    _values_w_tmp = new float [layers_count]; 
+    _values_w_dir = new float [count_k];
+    _values_w_spd = new float [count_k]; 
+    _values_w_tmp = new float [count_k]; 
 
-    for (int k = 0; k < layers_count; k += 1) { 
+    for (int k = 0; k < count_k; k += 1) { 
       _values_w_dir[k] = FLOAT_undefined;
       _values_w_spd[k] = FLOAT_undefined;
       _values_w_tmp[k] = FLOAT_undefined;
@@ -8964,7 +8966,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                     if (Impact_TYPE == Impact_ACTIVE) {
 
-                      float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count); 
+                      float _s = (STUDY_O_scale / 100) * 255 / (0.333 * count_k); 
 
                       if (STUDY_skyScenario_Active > 1) _s *= 3; // to improve visibility of those cases.
 
@@ -9077,7 +9079,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                     if (Impact_TYPE == Impact_ACTIVE) {
 
-                      float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count) / (STUDY_j_End - STUDY_j_Start);
+                      float _s = (STUDY_O_scale / 100) * 255 / (0.333 * count_k) / (STUDY_j_End - STUDY_j_Start);
 
                       if (STUDY_skyScenario_Active > 1) _s *= 3; // to improve visibility of those cases.
 
@@ -9508,7 +9510,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
@@ -9924,7 +9926,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
@@ -10187,7 +10189,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       int[] Normals_COL_N;
       Normals_COL_N = new int [9];
-      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
 
       for (int i = 0; i < 24; i += 1) {
         //for (int i = 10; i <= 14; i += 2) {
@@ -10507,7 +10509,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
-  int layers_count = 1 + end_k - start_k;
+  int count_k = 1 + end_k - start_k;
+  if (count k < 0) count_k = 0;
 
 
 
@@ -10681,7 +10684,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           int keep_filter_type = FILTER_Active;
           FILTER_Active = FILTER_Hourly;
 
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, more_J + j, DATE_ANGLE);
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, more_J + j, DATE_ANGLE);
 
           FILTER_Active = keep_filter_type;
         }
@@ -11833,7 +11836,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
     int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
     int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
-    int layers_count = 1 + end_k - start_k;
+    int count_k = 1 + end_k - start_k;
+    if (count k < 0) count_k = 0;
 
     for (int p = 0; p < 1; p += 1) { 
 
@@ -11874,7 +11878,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
@@ -24940,7 +24944,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
-  int layers_count = 1 + end_k - start_k;
+  int count_k = 1 + end_k - start_k;
+  if (count k < 0) count_k = 0;
 
   Impact_TYPE = Impact_ACTIVE; 
   if (STUDY_PlotImpacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
@@ -25093,7 +25098,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 Normals_COL_N = PROCESSED_DAILY_SCENARIOS[STUDY_j_End - STUDY_j_Start];
               } else {
                 Normals_COL_N = new int [9];
-                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
   
                 int[][] newNormals = {
                   Normals_COL_N
@@ -28607,7 +28612,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
     int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
     int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
-    int layers_count = 1 + end_k - start_k;    
+    int count_k = 1 + end_k - start_k;    
+    if (count k < 0) count_k = 0;
 
 
     int RES1 = SolarImpact_RES1;
@@ -28674,7 +28680,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
 
         //println("j =", j);
         //println(Normals_COL_N);
@@ -30944,7 +30950,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   int start_k = STUDY_get_startK_endK(IMPACTS_DataSource)[0];
   int end_k = STUDY_get_startK_endK(IMPACTS_DataSource)[1]; 
-  int layers_count = 1 + end_k - start_k;  
+  int count_k = 1 + end_k - start_k;  
+  if (count k < 0) count_k = 0;
 
 
 
@@ -31001,7 +31008,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
     int[] Normals_COL_N;
     Normals_COL_N = new int [9];
-    Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_k, end_k, j, DATE_ANGLE);
+    Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(count_k, start_k, end_k, j, DATE_ANGLE);
 
     for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
       if (nk != -1) {
@@ -55539,6 +55546,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
   int[] startK_endK = STUDY_get_startK_endK(data_source);
   int start_k = startK_endK[0]; 
   int end_k = startK_endK[1];
+  int count_k = 1 + end_k - start_k; 
+  if (count k < 0) count_k = 0;
   
 
   if (STUDY_PrintTtitle != 0) {
@@ -55565,21 +55574,23 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float [(1 + DATA_end - DATA_start) * STUDY_JoinDays];
-  _valuesB = new float [(1 + DATA_end - DATA_start) * STUDY_JoinDays]; 
+  _valuesA = new float [count_k * STUDY_JoinDays];
+  _valuesB = new float [count_k * STUDY_JoinDays]; 
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float [(1 + DATA_end - DATA_start) * STUDY_JoinDays];
-  _valuesNUM = new float [(1 + DATA_end - DATA_start) * STUDY_JoinDays];
+  _valuesSUM = new float [count_k * STUDY_JoinDays];
+  _valuesNUM = new float [count_k * STUDY_JoinDays];
   
-  for (int k = 0; k < (1 + DATA_end - DATA_start) * STUDY_JoinDays; k += 1) { 
-    _valuesA[k] = FLOAT_undefined;
-    _valuesB[k] = FLOAT_undefined;
-    _valuesSUM[k] = 0;
-    _valuesNUM[k] = 0;
-  }  
+  for (int k = 0; k < count_k; k += 1) {
+    for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
+      _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+      _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+      _valuesSUM[(k * STUDY_JoinDays + j_ADD)] = 0; // Note: must be initialized to zero; not undefined.
+      _valuesNUM[(k * STUDY_JoinDays + j_ADD)] = 0;
+    }  
+  }
 
   float[] Ax_LINES = new float [0];
   float[] Ay_LINES = new float [0];
@@ -55619,7 +55630,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
       FILE_outputRaw[(j - STUDY_j_Start)].print("Hour\t");
-      for (int k = start_k; k <= end_k; k += 1) {   
+      for (int k = 0; k < count_k; k += 1) {   
         FILE_outputRaw[(j - STUDY_j_Start)].print(nf(k, 4) + "        \t");
       }
       FILE_outputRaw[(j - STUDY_j_Start)].println("");
@@ -55646,7 +55657,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) FILE_outputNorms[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
       if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) FILE_outputProbs[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
 
-      for (int k = start_k; k <= end_k; k += 1) {   
+      for (int k = 0; k < count_k; k += 1) {   
         for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
 
           _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
@@ -55741,12 +55752,13 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
           }
         }
       }
+      
 
       if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].println();
 
       _interval += 1; 
       if ((_interval % STUDY_SumInterval) == 0) {
-        for (int k = 0; k < (1 + DATA_end - DATA_start); k += 1) {
+        for (int k = 0; k < count_k; k += 1) {
           for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
             _valuesSUM[(k * STUDY_JoinDays + j_ADD)] += _valuesA[(k * STUDY_JoinDays + j_ADD)];
             _valuesNUM[(k * STUDY_JoinDays + j_ADD)] += 1;
@@ -55762,7 +55774,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
         if (STUDY_DisplayProbs == 1) {
           SOLARCHVISION_draw_dataProbs(i, j, (start_k * STUDY_JoinDays + 1), (end_k * STUDY_JoinDays + STUDY_JoinDays), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
-        for (int k = 0; k < (1 + DATA_end - DATA_start); k += 1) {
+        for (int k = 0; k < count_k; k += 1) {
           for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
             _valuesSUM[(k * STUDY_JoinDays + j_ADD)] = 0;
             _valuesNUM[(k * STUDY_JoinDays + j_ADD)] = 0;
