@@ -1,4 +1,6 @@
 
+// bug using small STUDY_LevelPix 
+
 // could split SOLARCHVISION_update_AERIAL to download and update parts.
 
 // should write the info on 3D-Pal
@@ -6486,7 +6488,7 @@ void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
       
       str = parts[24];
       
-      println(str);
+      //println(str);
        
       if (str.equals("NA")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
       else if (str.equals("Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 0;
@@ -6495,7 +6497,7 @@ void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
       else if (str.equals("Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 7.5;
       else CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 10;
       
-      println(CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k]);
+      //println(CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k]);
     
       str = parts[6];
       if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_drybulb][k] = float(str); // °C
@@ -37460,7 +37462,7 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
 
 String[][] SOLARCHVISION_ROLLOUTS = {
   {
-    "Location & Data", "Point", "Weather", "Atmosphere"
+    "Location & Data", "Point", "Weather", "Space"
   }
   , 
   {
@@ -37468,7 +37470,7 @@ String[][] SOLARCHVISION_ROLLOUTS = {
   }
   , 
   {
-    "Time & Scenarios", "Period", "Ranges", "Filters"
+    "Period & Scenarios", "Time", "Ranges", "Filters"
   }
   , 
   {
@@ -37606,17 +37608,18 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       LocationLatitude = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Latitude", LocationLatitude, -85, 85, LocationLAT_step);
       LocationLongitude = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Longitude", LocationLongitude, -180, 180, LocationLON_step);
-      LocationElevation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Elevation", LocationElevation, -100, 8000, LocationELE_step);
+      //LocationElevation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Elevation", LocationElevation, -100, 8000, LocationELE_step);
 
       LocationLAT_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
       LocationLON_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
-      LocationELE_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
+      //LocationELE_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
 
-      Display_SWOB_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_SWOB_Points", Display_SWOB_Points, 0, 2, 1), 1));
-      Display_SWOB_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_SWOB_Nearest", Display_SWOB_Nearest, 0, 1, 1), 1));
+    }
 
-      Display_NAEFS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_NAEFS_Points", Display_NAEFS_Points, 0, 2, 1), 1));
-      Display_NAEFS_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
+    if (SOLARCHVISION_ROLLOUT_child == 2) { // Weather
+
+      Display_TMYEPW_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_TMYEPW_Points", Display_TMYEPW_Points, 0, 2, 1), 1));
+      Display_TMYEPW_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_TMYEPW_Nearest", Display_TMYEPW_Nearest, 0, 1, 1), 1));
 
       Display_CWEEDS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_CWEEDS_Points", Display_CWEEDS_Points, 0, 2, 1), 1));
       Display_CWEEDS_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_CWEEDS_Nearest", Display_CWEEDS_Nearest, 0, 1, 1), 1));
@@ -37624,19 +37627,18 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_CLMREC_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_CLMREC_Points", Display_CLMREC_Points, 0, 2, 1), 1));
       Display_CLMREC_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_CLMREC_Nearest", Display_CLMREC_Nearest, 0, 1, 1), 1));
 
-      Display_TMYEPW_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_TMYEPW_Points", Display_TMYEPW_Points, 0, 2, 1), 1));
-      Display_TMYEPW_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_TMYEPW_Nearest", Display_TMYEPW_Nearest, 0, 1, 1), 1));
-    }
+      Display_SWOB_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_SWOB_Points", Display_SWOB_Points, 0, 2, 1), 1));
+      Display_SWOB_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_SWOB_Nearest", Display_SWOB_Nearest, 0, 1, 1), 1));
 
-    if (SOLARCHVISION_ROLLOUT_child == 2) { // Weather
+      Display_NAEFS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_NAEFS_Points", Display_NAEFS_Points, 0, 2, 1), 1));
+      Display_NAEFS_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
 
+      
       Load_FORECAST_XML = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_FORECAST_XML", Load_FORECAST_XML, 0, 1, 1), 1));
-      Load_CLIMATE_CWEEDS = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS, 0, 1, 1), 1));
-      Load_CLIMATE_CLMREC = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC, 0, 1, 1), 1));
-      Load_CLIMATE_TMYEPW = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW, 0, 1, 1), 1));
       Load_OBSERVATION_XML = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_OBSERVATION_XML", Load_OBSERVATION_XML, 0, 1, 1), 1));
-
-      OBSERVATION_XML_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "OBSERVATION_XML_maxDays", OBSERVATION_XML_maxDays, 0, 31, 1), 1));
+      Load_CLIMATE_CLMREC = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC, 0, 1, 1), 1));
+      Load_CLIMATE_CWEEDS = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS, 0, 1, 1), 1));
+      Load_CLIMATE_TMYEPW = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW, 0, 1, 1), 1));
 
       GRIB2_Hour_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
       GRIB2_Hour_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
@@ -37647,7 +37649,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       GRIB2_Layer_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, num_Layers, 1), 1));
     }
 
-    if (SOLARCHVISION_ROLLOUT_child == 3) { // Atmosphere
+    if (SOLARCHVISION_ROLLOUT_child == 3) { // Space
 
       Display_TROPO3D_Surface = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_TROPO3D_Surface", Display_TROPO3D_Surface, 0, 1, 1), 1));
       Display_TROPO3D_Texture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_TROPO3D_Texture", Display_TROPO3D_Texture, 0, 1, 1), 1));      
@@ -37687,10 +37689,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 2) { // Create
 
-
       addToLastGroup3D = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "addToLastGroup3D", addToLastGroup3D, 0, 1, 1), 1));
-
-
 
       DEFAULT_CreateMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateMaterial", DEFAULT_CreateMaterial, -1, 8, 1), 1));
       DEFAULT_CreateTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "DEFAULT_CreateTessellation", DEFAULT_CreateTessellation, 0, 6, 1), 1));
@@ -37863,13 +37862,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Display_WindFlow = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Display_WindFlow", Display_WindFlow, 0, 1, 1), 1));
     }
-  } else if (SOLARCHVISION_ROLLOUT_parent == 2) { // Time & Scenarios
+  } else if (SOLARCHVISION_ROLLOUT_parent == 2) { // Period & Scenarios
 
-    if (SOLARCHVISION_ROLLOUT_child == 1) { // Period
-
-      STUDY_j_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Number of days to plot", STUDY_j_End, 1, 61, 1), 1));
-
-      TIME_BeginDay = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Plot start date", TIME_BeginDay, 0, 364, 1), 1));
+    if (SOLARCHVISION_ROLLOUT_child == 1) { // Time
 
       //TIME_Date = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1,0,0, "Solar date", TIME_Date, 0, 364.5, 0.5);
       TIME_Date = int(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Solar date", TIME_Date, 0, 364, 1));
@@ -37877,6 +37872,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       TIME_Day = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Forecast day", TIME_Day, 1, 31, 1), 1));
       TIME_Month = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Forecast month", TIME_Month, 1, 12, 1), 1));
       TIME_Year = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Forecast year", TIME_Year, 1953, 2100, 1), 1));
+
+      TIME_BeginDay = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Plot start date", TIME_BeginDay, 0, 364, 1), 1));
+
+      STUDY_j_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Number of days to plot", STUDY_j_End, 1, 61, 1), 1));
+
+      OBSERVATION_XML_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "OBSERVATION_XML_maxDays", OBSERVATION_XML_maxDays, 0, 31, 1), 1));
+          
     }
 
     if (SOLARCHVISION_ROLLOUT_child == 2) { // Ranges
@@ -37894,7 +37896,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End member", SampleMember_End, FORECAST_XML_start, FORECAST_XML_end, 1), 1));
 
       SampleStation_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start station", SampleStation_Start, OBSERVATION_XML_start, OBSERVATION_XML_end, 1), 1));  
-      SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End station", SampleStation_End, OBSERVATION_XML_start, OBSERVATION_XML_end, 1), 1));      
+      SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End station", SampleStation_End, OBSERVATION_XML_start, OBSERVATION_XML_end, 1), 1));
+
+
     }
 
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Filters
@@ -49499,11 +49503,11 @@ int[] get_startK_endK () {
   }   
 
 
+  //println("start_k=", start_k);
+  //println("end_k=", end_k);
+
   a[0] = start_k;
   a[1] = end_k;
-  
-  println("start_k=", start_k);
-  println("end_k=", end_k);
   
   return  a;
 }
