@@ -7960,10 +7960,10 @@ void SOLARCHVISION_DevelopDATA () {
 
   for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
     for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
-      for (int k = start_k; k <= end_k; k += 1) {
+      for (int k = 0; k < count_k; k += 1) {
         for (int i = 0; i < 24; i += 1) {
 
-          int now_k = k;
+          int now_k = k + start_k;
           int now_i = i;
           int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -8749,6 +8749,7 @@ int[] SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS (float[] _values) {
 int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, float DATE_ANGLE) {
   
   int count_k = 1 + end_k - start_k;
+  if (count_k < 0) count_k = 0;
 
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
@@ -8777,14 +8778,14 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
 
   for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
 
-    for (int k = start_k; k <= end_k; k += 1) {
+    for (int k = 0; k < count_k; k += 1) {
 
       for (int i = 0; i < 24; i += 1) {
 
         float HOUR_ANGLE = i; 
         float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
 
-        int now_k = k;
+        int now_k = k + start_k;
         int now_i = i;
         int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -8909,7 +8910,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         for (int i = 0; i < 24; i += 1) {
           if (STUDY_isInHourlyRange(i) == 1) {
 
-            for (int k = start_k; k <= end_k; k += 1) {
+            for (int k = 0; k < count_k; k += 1) {
 
               _values_w_dir[k] = FLOAT_undefined;
               _values_w_spd[k] = FLOAT_undefined;
@@ -8919,7 +8920,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
               if (_plot == 1) {
 
-                int now_k = k;
+                int now_k = k + start_k;
                 int now_i = i;
                 int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -9022,7 +9023,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         for (int i = 0; i < 24; i += 1) {
           if (STUDY_isInHourlyRange(i) == 1) {
 
-            for (int k = start_k; k <= end_k; k += 1) {
+            for (int k = 0; k < count_k; k += 1) {
 
               _values_w_dir[k] = FLOAT_undefined;
               _values_w_spd[k] = FLOAT_undefined;
@@ -9032,7 +9033,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
               if (_plot == 1) {
 
-                int now_k = k;
+                int now_k = k + start_k;
                 int now_i = i;
                 int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -38018,7 +38019,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SampleYear_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
       SampleYear_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
 //??????
-      F_Layer_Option = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Forecast filter option", F_Layer_Option, -1, 4, 1), 1));
+      F_Layer_Option = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Forecast filter option", F_Layer_Option, -1, 3, 1), 1));
       SampleMember_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start member", SampleMember_Start, FORECAST_XML_start, FORECAST_XML_end, 1), 1));  
       SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End member", SampleMember_End, FORECAST_XML_start, FORECAST_XML_end, 1), 1));
 
@@ -49668,17 +49669,13 @@ int[] STUDY_get_startK_endK () {
     case 1 : 
       start_k = 23; 
       end_k = 43; 
-      break; //xml: US
+      break; //xml: GEFS
     case 2 : 
-      start_k = 0; 
+      start_k = 1; 
       end_k = 22; 
       break; //xml: GEPS + GDPS
     case 3: 
-      start_k = 44; 
-      end_k = FORECAST_XML_end; 
-      break; // additional GRIB2 domains
-    case 4: 
-      start_k = 0; 
+      start_k = 1; 
       end_k = 43; 
       break; //xml: NAEFS
     }
@@ -55667,7 +55664,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
 
-          int now_k = k;
+          int now_k = k + start_k;
           int now_i = i;
           int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
