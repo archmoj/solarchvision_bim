@@ -55681,7 +55681,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) FILE_outputNorms[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
       if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) FILE_outputProbs[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
 
-      for (int k = 0; k < (1 + DATA_end - DATA_start); k += 1) {
+      for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
         for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
 
           _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
@@ -55693,93 +55693,85 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
           STUDY_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
-          int _plot = 0;
 
-          if ((start_z <= k) && (end_z >= k)) {
-            _plot = 1;
+          int now_k = k;
+          int now_i = i;
+          int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+
+
+          if (now_j >= 365) {
+            now_j = now_j % 365;
+          }
+          if (now_j < 0) {
+            now_j = (now_j + 365) % 365;
           }
 
-          if (_plot == 1) {
-
-            int now_k = k;
-            int now_i = i;
-            int now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
-
-
-            if (now_j >= 365) {
-              now_j = now_j % 365;
+          int next_i = now_i + 1;
+          int next_j = now_j;
+          int next_k = now_k;
+          if (next_i == 24) {
+            next_i = 0;
+            next_j += 1;
+            if (next_j == 365) {
+              next_j = 0;
+              next_k += 1;
             }
-            if (now_j < 0) {
-              now_j = (now_j + 365) % 365;
-            }
+          }
 
-            int next_i = now_i + 1;
-            int next_j = now_j;
-            int next_k = now_k;
-            if (next_i == 24) {
-              next_i = 0;
-              next_j += 1;
-              if (next_j == 365) {
-                next_j = 0;
-                next_k += 1;
+          if (IMPACTS_DataSource == databaseID_CLIMATE_TMYEPW) Pa = CLIMATE_TMYEPW_values[now_i][now_j][STUDY_CurrentLayer][now_k]; 
+          if (IMPACTS_DataSource == databaseID_CLIMATE_CWEEDS) Pa = CLIMATE_CWEEDS_values[now_i][now_j][STUDY_CurrentLayer][now_k];
+          if (IMPACTS_DataSource == databaseID_CLIMATE_CLMREC) Pa = CLIMATE_CLMREC_values[now_i][now_j][STUDY_CurrentLayer][now_k];
+          if (IMPACTS_DataSource == databaseID_FORECAST_XML) Pa = FORECAST_XML_values[now_i][now_j][STUDY_CurrentLayer][now_k];
+          if (IMPACTS_DataSource == databaseID_OBSERVATION_XML) Pa = OBSERVATION_XML_values[now_i][now_j][STUDY_CurrentLayer][now_k];
+        
+          if (is_undefined_FLOAT(Pa) == true) {
+            _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+
+            if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
+          } else {
+            int memberCount = SOLARCHVISION_filter(DATA_filter, LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+
+            if (memberCount == 1) {
+              _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
+              _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
+
+              _valuesSUM[(k * STUDY_JoinDays + j_ADD)] += _valuesA[(k * STUDY_JoinDays + j_ADD)];
+              _valuesNUM[(k * STUDY_JoinDays + j_ADD)] += 1;
+
+              if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
+                if (is_undefined_FLOAT(_valuesA[(k * STUDY_JoinDays + j_ADD)]) == false) FILE_outputRaw[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
+                else FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
               }
-            }
 
-            if (IMPACTS_DataSource == databaseID_CLIMATE_TMYEPW) Pa = CLIMATE_TMYEPW_values[now_i][now_j][STUDY_CurrentLayer][now_k]; 
-            if (IMPACTS_DataSource == databaseID_CLIMATE_CWEEDS) Pa = CLIMATE_CWEEDS_values[now_i][now_j][STUDY_CurrentLayer][now_k];
-            if (IMPACTS_DataSource == databaseID_CLIMATE_CLMREC) Pa = CLIMATE_CLMREC_values[now_i][now_j][STUDY_CurrentLayer][now_k];
-            if (IMPACTS_DataSource == databaseID_FORECAST_XML) Pa = FORECAST_XML_values[now_i][now_j][STUDY_CurrentLayer][now_k];
-            if (IMPACTS_DataSource == databaseID_OBSERVATION_XML) Pa = OBSERVATION_XML_values[now_i][now_j][STUDY_CurrentLayer][now_k];
-          
-            if (is_undefined_FLOAT(Pa) == true) {
-              _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+              if (next_k < (1 + DATA_end - DATA_start)) {
 
-              if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
-            } else {
-              int memberCount = SOLARCHVISION_filter(DATA_filter, LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+                if (IMPACTS_DataSource == databaseID_CLIMATE_TMYEPW) Pb = CLIMATE_TMYEPW_values[next_i][next_j][STUDY_CurrentLayer][next_k];
+                if (IMPACTS_DataSource == databaseID_CLIMATE_CWEEDS) Pb = CLIMATE_CWEEDS_values[next_i][next_j][STUDY_CurrentLayer][next_k];
+                if (IMPACTS_DataSource == databaseID_CLIMATE_CLMREC) Pb = CLIMATE_CLMREC_values[next_i][next_j][STUDY_CurrentLayer][next_k];
+                if (IMPACTS_DataSource == databaseID_FORECAST_XML) Pb = FORECAST_XML_values[next_i][next_j][STUDY_CurrentLayer][next_k];
+                if (IMPACTS_DataSource == databaseID_OBSERVATION_XML) Pb = OBSERVATION_XML_values[next_i][next_j][STUDY_CurrentLayer][next_k];                    
+                
+                if (is_undefined_FLOAT(Pb) == true) {
+                  _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
+                } else {
+                  _valuesB[(k * STUDY_JoinDays + j_ADD)] = Pb;
+                  _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
 
-              if (memberCount == 1) {
-                _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
-                _valuesA[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
-
-                _valuesSUM[(k * STUDY_JoinDays + j_ADD)] += _valuesA[(k * STUDY_JoinDays + j_ADD)];
-                _valuesNUM[(k * STUDY_JoinDays + j_ADD)] += 1;
-
-                if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-                  if (is_undefined_FLOAT(_valuesA[(k * STUDY_JoinDays + j_ADD)]) == false) FILE_outputRaw[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
-                  else FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
-                }
-
-                if (next_k < (1 + DATA_end - DATA_start)) {
-
-                  if (IMPACTS_DataSource == databaseID_CLIMATE_TMYEPW) Pb = CLIMATE_TMYEPW_values[next_i][next_j][STUDY_CurrentLayer][next_k];
-                  if (IMPACTS_DataSource == databaseID_CLIMATE_CWEEDS) Pb = CLIMATE_CWEEDS_values[next_i][next_j][STUDY_CurrentLayer][next_k];
-                  if (IMPACTS_DataSource == databaseID_CLIMATE_CLMREC) Pb = CLIMATE_CLMREC_values[next_i][next_j][STUDY_CurrentLayer][next_k];
-                  if (IMPACTS_DataSource == databaseID_FORECAST_XML) Pb = FORECAST_XML_values[next_i][next_j][STUDY_CurrentLayer][next_k];
-                  if (IMPACTS_DataSource == databaseID_OBSERVATION_XML) Pb = OBSERVATION_XML_values[next_i][next_j][STUDY_CurrentLayer][next_k];                    
-                  
-                  if (is_undefined_FLOAT(Pb) == true) {
-                    _valuesB[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
-                  } else {
-                    _valuesB[(k * STUDY_JoinDays + j_ADD)] = Pb;
-                    _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
-
-                    if (STUDY_DisplayRaws == 1) {
-                      if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
-                      } else {                        
-                        Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
-                        Ay_LINES = append(Ay_LINES, _valuesA[(k * STUDY_JoinDays + j_ADD)] * sy_Plot);
-                        Az_LINES = append(Az_LINES, now_k * sz_Plot * STUDY_W_scale);
-                        Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
-                        By_LINES = append(By_LINES, _valuesB[(k * STUDY_JoinDays + j_ADD)] * sy_Plot);
-                        Bz_LINES = append(Bz_LINES, next_k * sz_Plot * STUDY_W_scale);
-                      }
+                  if (STUDY_DisplayRaws == 1) {
+                    if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
+                    } else {                        
+                      Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
+                      Ay_LINES = append(Ay_LINES, _valuesA[(k * STUDY_JoinDays + j_ADD)] * sy_Plot);
+                      Az_LINES = append(Az_LINES, now_k * sz_Plot * STUDY_W_scale);
+                      Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
+                      By_LINES = append(By_LINES, _valuesB[(k * STUDY_JoinDays + j_ADD)] * sy_Plot);
+                      Bz_LINES = append(Bz_LINES, next_k * sz_Plot * STUDY_W_scale);
                     }
                   }
                 }
-              } else {
-                if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("not_the_case\t");
               }
+            } else {
+              if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("not_the_case\t");
             }
           }
         }
