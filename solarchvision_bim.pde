@@ -1,4 +1,3 @@
-// should split load and use functions when selecting each data type
 
 // could split SOLARCHVISION_update_AERIAL to download and update parts.
 
@@ -5813,6 +5812,9 @@ void SOLARCHVISION_update_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_DAY
 
 
     SOLARCHVISION_postProcess_FORECAST_XML();
+    
+    Display_NAEFS_Points = 1;
+    Display_NAEFS_Nearest = 1;     
   }
   
   WORLD_Update = 1;
@@ -6312,9 +6314,9 @@ void SOLARCHVISION_update_CLIMATE_CWEEDS () {
   STUDY_Update = 1;
   ROLLOUT_Update = 1;
   UI_BAR_d_Update = 1;   
- 
+  
   SampleYear_Start = CLIMATE_CWEEDS_start;
-  SampleYear_End = CLIMATE_CWEEDS_end; 
+  SampleYear_End = CLIMATE_CWEEDS_end;     
 }
 
 
@@ -6400,11 +6402,9 @@ void SOLARCHVISION_loadCLIMATE_CWEEDS (String FileName) {
   
   SOLARCHVISION_postProcess_CLIMATE_CWEEDS();
   
-  WORLD_Update = 1;
-  WIN3D_Update = 1;  
-  STUDY_Update = 1;
-  ROLLOUT_Update = 1;
-  UI_BAR_d_Update = 1;    
+  Display_CWEEDS_Points = 1;
+  Display_CWEEDS_Nearest = 1;  
+
 }
 
 
@@ -6532,6 +6532,9 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
     }
 
     SOLARCHVISION_postProcess_CLIMATE_CLMREC();
+    
+    Display_CLMREC_Points = 1;
+    Display_CLMREC_Nearest = 1;       
   
   }
   
@@ -6762,6 +6765,9 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
     if (dir.isFile()) SOLARCHVISION_loadCLIMATE_TMYEPW(the_source);
     else println("FILE NOT FOUND:", the_source);
 
+    Display_TMYEPW_Points = 1;
+    Display_TMYEPW_Nearest = 1; 
+
   }
   
   WORLD_Update = 1;
@@ -6769,6 +6775,7 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
   STUDY_Update = 1;
   ROLLOUT_Update = 1;
   UI_BAR_d_Update = 1;    
+
 }
 
 void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
@@ -6971,7 +6978,6 @@ void SOLARCHVISION_download_OBSERVATION_XML () {
 
 void SOLARCHVISION_update_OBSERVATION_XML () {
 
-
   OBSERVATION_XML_values = new float [24][365][num_Layers][(1 + OBSERVATION_XML_end - OBSERVATION_XML_start)];
   OBSERVATION_XML_flags = new boolean [24][365][num_Layers][(1 + OBSERVATION_XML_end - OBSERVATION_XML_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
@@ -7048,69 +7054,13 @@ void SOLARCHVISION_update_OBSERVATION_XML () {
       }
       THE_HOUR = now_i;
     }
+    
+    SOLARCHVISION_postProcess_OBSERVATION_XML();
+    
+    Display_SWOB_Points = 1;
+    Display_SWOB_Nearest = 1;   
   }
 
-  int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
-
-  for (int l = 0; l < num_Layers; l += 1) {
-    if (LAYERS_Text[l].equals("")) {
-    } else {
-      for (int k = 0; k < (1 + OBSERVATION_XML_end - OBSERVATION_XML_start); k += 1) {
-        float pre_v = FLOAT_undefined;
-        int pre_num = 0;
-
-        for (int j_for = 0; j_for <= OBSERVATION_XML_maxDays; j_for += 1) { // should be controlled.
-          int j = (int(j_for + TIME_Date - OBSERVATION_XML_maxDays + 365 - 286) % 365); // should be controlled.
-
-          for (int i = 0; i < 24; i += 1) {
-            if (is_undefined_FLOAT(OBSERVATION_XML_values[i][j][l][k]) == true) {
-              if (is_undefined_FLOAT(pre_v) == false) {
-                pre_num += 1;
-
-                float next_v = FLOAT_undefined;
-                int next_i = i;
-                int next_j = j;
-                int next_num = 0;
-                while ((next_num < MAX_SEARCH) && (is_undefined_FLOAT(next_v) == true)) {
-                  next_num += 1;
-                  next_i += 1;
-                  if (next_i == 24) {
-                    next_i -= 24;
-                    next_j += 1;
-                  }
-                  if (next_j == 365) {
-                    next_j = 0;
-                  }
-                  if (is_undefined_FLOAT(OBSERVATION_XML_values[next_i][next_j][l][k]) == true) {
-                  } else {
-                    next_v = OBSERVATION_XML_values[next_i][next_j][l][k];
-
-                    if (l == LAYER_winddir) {
-                      if ((next_v - pre_v) > 180) next_v -= 360;
-                      if ((next_v - pre_v) < -180) next_v += 360;
-                    }
-                  }
-                }
-                if (next_num < MAX_SEARCH) {
-                  if (l == LAYER_winddir) OBSERVATION_XML_values[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
-                  else OBSERVATION_XML_values[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
-
-                  OBSERVATION_XML_flags[i][j][l][k] = false;
-                } else {
-                  OBSERVATION_XML_flags[i][j][l][k] = false;
-                }
-              }
-            } else {
-              OBSERVATION_XML_flags[i][j][l][k] = true;
-              pre_v = OBSERVATION_XML_values[i][j][l][k];
-              pre_num = 0;
-            }
-          }
-        }
-      }
-    }
-  }
-  
   WORLD_Update = 1;
   WIN3D_Update = 1;  
   STUDY_Update = 1;
@@ -7241,6 +7191,71 @@ void SOLARCHVISION_loadOBSERVATION_XML (String FileName, int Load_Layer) {
   
 }
 
+
+void SOLARCHVISION_postProcess_OBSERVATION_XML () {
+  
+  int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
+
+  for (int l = 0; l < num_Layers; l += 1) {
+    if (LAYERS_Text[l].equals("")) {
+    } else {
+      for (int k = 0; k < (1 + OBSERVATION_XML_end - OBSERVATION_XML_start); k += 1) {
+        float pre_v = FLOAT_undefined;
+        int pre_num = 0;
+
+        for (int j_for = 0; j_for <= OBSERVATION_XML_maxDays; j_for += 1) { // should be controlled.
+          int j = (int(j_for + TIME_Date - OBSERVATION_XML_maxDays + 365 - 286) % 365); // should be controlled.
+
+          for (int i = 0; i < 24; i += 1) {
+            if (is_undefined_FLOAT(OBSERVATION_XML_values[i][j][l][k]) == true) {
+              if (is_undefined_FLOAT(pre_v) == false) {
+                pre_num += 1;
+
+                float next_v = FLOAT_undefined;
+                int next_i = i;
+                int next_j = j;
+                int next_num = 0;
+                while ((next_num < MAX_SEARCH) && (is_undefined_FLOAT(next_v) == true)) {
+                  next_num += 1;
+                  next_i += 1;
+                  if (next_i == 24) {
+                    next_i -= 24;
+                    next_j += 1;
+                  }
+                  if (next_j == 365) {
+                    next_j = 0;
+                  }
+                  if (is_undefined_FLOAT(OBSERVATION_XML_values[next_i][next_j][l][k]) == true) {
+                  } else {
+                    next_v = OBSERVATION_XML_values[next_i][next_j][l][k];
+
+                    if (l == LAYER_winddir) {
+                      if ((next_v - pre_v) > 180) next_v -= 360;
+                      if ((next_v - pre_v) < -180) next_v += 360;
+                    }
+                  }
+                }
+                if (next_num < MAX_SEARCH) {
+                  if (l == LAYER_winddir) OBSERVATION_XML_values[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  else OBSERVATION_XML_values[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+
+                  OBSERVATION_XML_flags[i][j][l][k] = false;
+                } else {
+                  OBSERVATION_XML_flags[i][j][l][k] = false;
+                }
+              }
+            } else {
+              OBSERVATION_XML_flags[i][j][l][k] = true;
+              pre_v = OBSERVATION_XML_values[i][j][l][k];
+              pre_num = 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
 
 
 
@@ -34157,24 +34172,119 @@ void mouseClicked () {
               SOLARCHVISION_download_LAND_Textures();
             }   
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download NAEFS")) {
-              SOLARCHVISION_download_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-            }     
-     
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download CLMREC")) {
-              SOLARCHVISION_download_CLIMATE_CLMREC();
-            }                      
-
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download SWOB")) {
-              SOLARCHVISION_download_OBSERVATION_XML();
-            }            
-
-            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Aerial")) {
               SOLARCHVISION_update_AERIAL(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download NAEFS")) {
+              SOLARCHVISION_download_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+            }     
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download CLMREC")) {
+              SOLARCHVISION_download_CLIMATE_CLMREC();
+            }                      
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download SWOB")) {
+              SOLARCHVISION_download_OBSERVATION_XML();
+            }            
+            
+            
+            
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][0].equals("Layer")) {
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update TMYEPW")) {
+              CurrentDataSource = dataID_CLIMATE_TMYEPW;
+              
+              Load_CLIMATE_TMYEPW = 1;
+              SOLARCHVISION_update_CLIMATE_TMYEPW();
+            }      
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update CWEEDS")) {
+              CurrentDataSource = dataID_CLIMATE_CWEEDS;
+              
+              Load_CLIMATE_CWEEDS = 1;
+              SOLARCHVISION_update_CLIMATE_CWEEDS();
+            }    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update CLMREC")) {
+              CurrentDataSource = dataID_CLIMATE_CLMREC;
+              
+              Load_CLIMATE_CLMREC = 1;
+              SOLARCHVISION_update_CLIMATE_CLMREC();
+            }   
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update SWOB")) {
+              CurrentDataSource = dataID_OBSERVATION_XML;
+              
+              Load_OBSERVATION_XML = 1;
+              SOLARCHVISION_update_OBSERVATION_XML();
+            } 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update NAEFS")) {
+              CurrentDataSource = dataID_FORECAST_XML;
+              
+              Load_FORECAST_XML = 1;
+              SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+            }                 
+   
+        
+            
+            
+            
+            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Typical Year (TMY)")) {
+              CurrentDataSource = dataID_CLIMATE_TMYEPW;
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              UI_BAR_d_Update = 1;    
+
+              Display_TMYEPW_Points = 1;
+              Display_TMYEPW_Nearest = 1;  
+            } 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
+              CurrentDataSource = dataID_CLIMATE_CWEEDS;
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              UI_BAR_d_Update = 1;    
+
+              Display_CWEEDS_Points = 1;
+              Display_CWEEDS_Nearest = 1;                
+            }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CLMREC)")) {
+              CurrentDataSource = dataID_CLIMATE_CLMREC;
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              UI_BAR_d_Update = 1; 
+
+              Display_CLMREC_Points = 1;
+              Display_CLMREC_Nearest = 1;   
+            }            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
+              CurrentDataSource = dataID_OBSERVATION_XML;
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              UI_BAR_d_Update = 1;      
+  
+              Display_SWOB_Points = 1;
+              Display_SWOB_Nearest = 1;             
+            }                  
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
+              CurrentDataSource = dataID_FORECAST_XML;
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              UI_BAR_d_Update = 1;     
+ 
+              Display_NAEFS_Points = 1;
+              Display_NAEFS_Nearest = 1;                 
+            } 
+     
+            
+
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][0].equals("Layers")) {
               if (UI_BAR_a_selected_child > 0) {
                 if (STUDY_CurrentLayer != UI_BAR_a_selected_child - 1) {
 
@@ -34217,36 +34327,6 @@ void mouseClicked () {
             }            
 
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Typical Year (TMY)")) {
-              CurrentDataSource = dataID_CLIMATE_TMYEPW;
-
-              Load_CLIMATE_TMYEPW = 1;
-              SOLARCHVISION_update_CLIMATE_TMYEPW();
-            } 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
-              CurrentDataSource = dataID_CLIMATE_CWEEDS;
-
-              Load_CLIMATE_CWEEDS = 1;
-              SOLARCHVISION_update_CLIMATE_CWEEDS();
-            }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CLMREC)")) {
-              CurrentDataSource = dataID_CLIMATE_CLMREC;
-
-              Load_CLIMATE_CLMREC = 1;
-              SOLARCHVISION_update_CLIMATE_CLMREC();
-            }            
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
-              CurrentDataSource = dataID_FORECAST_XML;
-
-              Load_FORECAST_XML = 1;
-              SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-            } 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
-              CurrentDataSource = dataID_OBSERVATION_XML;
-
-              Load_OBSERVATION_XML = 1;
-              SOLARCHVISION_update_OBSERVATION_XML();
-            }           
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Wire")) {
               WIN3D_FacesShade = Shade_Surface_Wire;
@@ -47071,11 +47151,11 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Site", "Update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial", 
+    "Site", "Update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial" 
   }
-  , // Locations
+  , 
   {
-    "Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Long-term (CLMREC)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"
+    "Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Long-term (CLMREC)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)", "Update NAEFS", "Update SWOB", "Update CLMREC", "Update CWEEDS", "Update TMYEPW"
   }
   , 
   {
@@ -47095,7 +47175,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Layer"
+    "Layers"
   }
   , // Parameters 
   {
@@ -47128,30 +47208,30 @@ String[][] UI_BAR_a_Items = {
 };
 
 
-int N_Layer_in_Bar_a = 8; 
+int LayersID_in_Bar_a = 8; 
 {
 
-  UI_BAR_a_Items[N_Layer_in_Bar_a] = new String [num_Layers + 12];
+  UI_BAR_a_Items[LayersID_in_Bar_a] = new String [num_Layers + 12];
 
-  UI_BAR_a_Items[N_Layer_in_Bar_a][0] = "Layer";
+  UI_BAR_a_Items[LayersID_in_Bar_a][0] = "Layers";
 
   for (int i = 1; i < num_Layers; i++) {
 
-    UI_BAR_a_Items[N_Layer_in_Bar_a][i] = LAYERS_Title[i - 1][Language_EN];
+    UI_BAR_a_Items[LayersID_in_Bar_a][i] = LAYERS_Title[i - 1][Language_EN];
   }
 
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 0] = "12h accumulated Precipitation";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 1] = "Hourly precipitation";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 2] = "Wind power";  
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 3] = "Accumulated degree day <18°C<";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 4] = "Accumulated radiation on tracker";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 5] = "Accumulated radiation on surface";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 6] = "Radiation on surface inclination";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 7] = "Radiation on solar tracker";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 8] = "Radiation on surface material";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 9] = "Normal trend of parameter";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 10] = "Passive trend of parameter";
-  UI_BAR_a_Items[N_Layer_in_Bar_a][num_Layers + 11] = "Active trend of parameter";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 0] = "12h accumulated Precipitation";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 1] = "Hourly precipitation";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 2] = "Wind power";  
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 3] = "Accumulated degree day <18°C<";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 4] = "Accumulated radiation on tracker";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 5] = "Accumulated radiation on surface";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 6] = "Radiation on surface inclination";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 7] = "Radiation on solar tracker";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 8] = "Radiation on surface material";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 9] = "Normal trend of parameter";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 10] = "Passive trend of parameter";
+  UI_BAR_a_Items[LayersID_in_Bar_a][num_Layers + 11] = "Active trend of parameter";
 }
 
 
