@@ -1,3 +1,5 @@
+// sun path for CWEEDS is not displayed
+
 
 // could split SOLARCHVISION_update_AERIAL to download and update parts.
 
