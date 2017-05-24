@@ -1314,7 +1314,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
   }
 }
 
-int STUDY_skyScenario_Active = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
+int STUDY_skyScenario = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
 String[] STUDY_skyScenario_Title = {
   "", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"
 };
@@ -1324,7 +1324,7 @@ String[] STUDY_skyScenario_FileTXT = {
 
 int FILTER_Hourly = 0;
 int FILTER_Daily = 1;
-int FILTER_Active = FILTER_Daily;
+int STUDY_filter = FILTER_Daily;
 
 int STUDY_TrendJoinHours = 24; //48;
 int STUDY_TrendJoinType = -1; // -1: increasing weights, +1: equal weights
@@ -1533,27 +1533,6 @@ float getParameterFromCurrentDataSource (int now_i, int now_j, int now_k, int Pa
 
   return return_value;
 }  
-
-int SOLARCHVISION_getFilteredScenariosFromActiveDataSource (int now_i, int now_j, int now_k) {
-  
-  int memberCount = 0;
-  
-  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) memberCount = SOLARCHVISION_filter("CLIMATE_TMYEPW", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (CurrentDataSource == dataID_CLIMATE_CWEEDS) memberCount = SOLARCHVISION_filter("CLIMATE_CWEEDS", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (CurrentDataSource == dataID_CLIMATE_CLMREC) memberCount = SOLARCHVISION_filter("CLIMATE_CLMREC", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (CurrentDataSource == dataID_FORECAST_XML) memberCount = SOLARCHVISION_filter("FORECAST_XML", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) memberCount = SOLARCHVISION_filter("OBSERVATION_XML", LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
-  
-  return memberCount;
-}
-
-
-
-
-
-
-
-
 
 
 int STUDY_impact_summary = 0;
@@ -2605,7 +2584,7 @@ void draw () {
 
         pre_STUDY_CurrentLayer = STUDY_CurrentLayer;
 
-        pre_STUDY_SkyScenario = STUDY_skyScenario_Active;
+        pre_STUDY_SkyScenario = STUDY_skyScenario;
 
         pre_STUDY_PlotImpacts = STUDY_PlotImpacts;
 
@@ -4679,19 +4658,19 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 6) {
 
-    STUDY_skyScenario_Active = 4;
+    STUDY_skyScenario = 4;
     SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_skyScenario_Active = 3;
+    STUDY_skyScenario = 3;
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_skyScenario_Active = 2;
+    STUDY_skyScenario = 2;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_skyScenario_Active = 1;
+    STUDY_skyScenario = 1;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_skyScenario_Active = pre_STUDY_SkyScenario;
+    STUDY_skyScenario = pre_STUDY_SkyScenario;
   }  
 
 
@@ -6018,15 +5997,15 @@ void SOLARCHVISION_postProcess_FORECAST_XML () {
                 } else {
                   _valuesO[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
 
-                  if (SOLARCHVISION_filter("CLIMATE_CWEEDS_values", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k) == 1) {
+                  if (SOLARCHVISION_filter(dataID_CLIMATE_CWEEDS, LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k) == 1) {
                     _valuesO_overcast[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
                   }
 
-                  if (SOLARCHVISION_filter("CLIMATE_CWEEDS_values", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k) == 1) {
+                  if (SOLARCHVISION_filter(dataID_CLIMATE_CWEEDS, LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k) == 1) {
                     _valuesO_scattered[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
                   }
 
-                  if (SOLARCHVISION_filter("CLIMATE_CWEEDS_values", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k) == 1) {
+                  if (SOLARCHVISION_filter(dataID_CLIMATE_CWEEDS, LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k) == 1) {
                     _valuesO_clear[i][j][(k * STUDY_JoinDays + j_ADD)] = Float.valueOf(Pa);
                   }
                 }
@@ -6120,14 +6099,14 @@ void SOLARCHVISION_postProcess_FORECAST_XML () {
                             linear_climate = (next_num * _valuesH[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH[next_hour][next_day]) / (pre_num + next_num);
                             current_dist = _valuesH[i][j_for] - linear_climate;
                           } else {                    
-                            if ((SOLARCHVISION_filter("FORECAST_XML_values", LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k)) == 1) {
+                            if ((SOLARCHVISION_filter(dataID_FORECAST_XML, LAYER_cloudcover, FILTER_Daily, 2, i, now_j, k)) == 1) {
                               linear_climate = (next_num * _valuesH_overcast[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_overcast[next_hour][next_day]) / (pre_num + next_num);
                               current_dist = _valuesH_overcast[i][j_for] - linear_climate;
-                            } else if ((SOLARCHVISION_filter("FORECAST_XML_values", LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k)) == 1) {
+                            } else if ((SOLARCHVISION_filter(dataID_FORECAST_XML, LAYER_cloudcover, FILTER_Daily, 3, i, now_j, k)) == 1) {
                               linear_climate = (next_num * _valuesH_scattered[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_scattered[next_hour][next_day]) / (pre_num + next_num);
                               current_dist = _valuesH_scattered[i][j_for] - linear_climate;
                             }
-                            //else if ((SOLARCHVISION_filter("FORECAST_XML_values", LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k)) == 1) {
+                            //else if ((SOLARCHVISION_filter(dataID_FORECAST_XML, LAYER_cloudcover, FILTER_Daily, 4, i, now_j, k)) == 1) {
                             else {
                               linear_climate = (next_num * _valuesH_clear[pre_TIME_Hour][pre_TIME_Day] + pre_num * _valuesH_clear[next_hour][next_day]) / (pre_num + next_num);
                               current_dist = _valuesH_clear[i][j_for] - linear_climate;
@@ -7497,7 +7476,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
   if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
   if (CurrentDataSource == dataID_OBSERVATION_XML) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 
-  switch(STUDY_skyScenario_Active) {
+  switch(STUDY_skyScenario) {
   case 1 : 
     STUDY_Diagrams.stroke(0, 0, 0); 
     STUDY_Diagrams.fill(0, 0, 0); 
@@ -7518,7 +7497,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
 
   STUDY_Diagrams.textAlign(RIGHT, TOP);
 
-  STUDY_Diagrams.text(STUDY_skyScenario_Title[STUDY_skyScenario_Active], (STUDY_j_End - STUDY_j_Start - 0.05) * sx_Plot, (0.3 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  STUDY_Diagrams.text(STUDY_skyScenario_Title[STUDY_skyScenario], (STUDY_j_End - STUDY_j_Start - 0.05) * sx_Plot, (0.3 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 }  
 
 
@@ -8641,7 +8620,7 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
 
 
 
-int SOLARCHVISION_filter (String data_type, int LAYER_cloudcover, int type_of_filter, int scenario_of_sky, int now_i, int now_j, int now_k) {
+int SOLARCHVISION_filter (int dataID, int LAYER_cloudcover, int type_of_filter, int scenario_of_sky, int now_i, int now_j, int now_k) {
 
   float total_sky = 0;
   int num_sky = 0;
@@ -8656,13 +8635,13 @@ int SOLARCHVISION_filter (String data_type, int LAYER_cloudcover, int type_of_fi
 
   for (int q = start_q; q <= end_q; q += 1) {
     float _sky = FLOAT_undefined;
-    if (data_type.equals("OBSERVATION_XML")) _sky = OBSERVATION_XML_values[q][now_j][LAYER_cloudcover][now_k];
-    else if (data_type.equals("FORECAST_XML")) _sky = FORECAST_XML_values[q][now_j][LAYER_cloudcover][now_k];
-    else if (data_type.equals("CLIMATE_CWEEDS")) _sky = CLIMATE_CWEEDS_values[q][now_j][LAYER_cloudcover][now_k];
-    else if (data_type.equals("CLIMATE_CLMREC")) _sky = CLIMATE_CLMREC_values[q][now_j][LAYER_cloudcover][now_k];
-    else if (data_type.equals("CLIMATE_TMYEPW")) _sky = CLIMATE_TMYEPW_values[q][now_j][LAYER_cloudcover][now_k];
+    if (dataID == dataID_OBSERVATION_XML) _sky = OBSERVATION_XML_values[q][now_j][LAYER_cloudcover][now_k];
+    else if (dataID == dataID_FORECAST_XML) _sky = FORECAST_XML_values[q][now_j][LAYER_cloudcover][now_k];
+    else if (dataID == dataID_CLIMATE_CWEEDS) _sky = CLIMATE_CWEEDS_values[q][now_j][LAYER_cloudcover][now_k];
+    else if (dataID == dataID_CLIMATE_CLMREC) _sky = CLIMATE_CLMREC_values[q][now_j][LAYER_cloudcover][now_k];
+    else if (dataID == dataID_CLIMATE_TMYEPW) _sky = CLIMATE_TMYEPW_values[q][now_j][LAYER_cloudcover][now_k];
     else {
-      println("ERROR: This data_type is not declared:", data_type);
+      println("ERROR: This dataID is not declared:", dataID);
     }
 
     if (is_undefined_FLOAT(_sky) == true) {
@@ -8771,7 +8750,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
         } else {
 
-          int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k); 
+          int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k); 
 
           if (memberCount == 1) {
             _values_R_dir = 0.001 * Pa;
@@ -8907,7 +8886,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _values_w_spd[k] = FLOAT_undefined;
                   _values_w_tmp[k] = FLOAT_undefined;
                 } else {
-                  int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
 
                   if ((CurrentDataSource == dataID_FORECAST_XML) && (FORECAST_XML_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
 
@@ -8939,7 +8918,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       float _s = (STUDY_O_scale / 100) * 255 / (0.333 * count_k); 
 
-                      if (STUDY_skyScenario_Active > 1) _s *= 3; // to improve visibility of those cases.
+                      if (STUDY_skyScenario > 1) _s *= 3; // to improve visibility of those cases.
 
                       _s /= float(STUDY_JoinDays);
 
@@ -9020,7 +8999,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _values_w_spd[k] = FLOAT_undefined;
                   _values_w_tmp[k] = FLOAT_undefined;
                 } else {
-                  int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                   
                   if ((CurrentDataSource == dataID_FORECAST_XML) && (FORECAST_XML_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
 
@@ -9052,7 +9031,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       float _s = (STUDY_O_scale / 100) * 255 / (0.333 * count_k) / (STUDY_j_End - STUDY_j_Start);
 
-                      if (STUDY_skyScenario_Active > 1) _s *= 3; // to improve visibility of those cases.
+                      if (STUDY_skyScenario > 1) _s *= 3; // to improve visibility of those cases.
 
                       _s /= float(STUDY_JoinDays);
 
@@ -9529,7 +9508,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         _values_E_dif = FLOAT_undefined;
                       } else {
 
-                        int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                        int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                         
                         if (memberCount == 1) {
                           _values_R_dir = 0.001 * Pa;
@@ -9941,7 +9920,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     _values_E_dif = FLOAT_undefined;
                   } else {
 
-                    int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                     
                     if (memberCount == 1) {
                       _values_R_dir = 0.001 * Pa;
@@ -10653,12 +10632,12 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
         {
-          int keep_filter_type = FILTER_Active;
-          FILTER_Active = FILTER_Hourly;
+          int keep_filter_type = STUDY_filter;
+          STUDY_filter = FILTER_Hourly;
 
           Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE);
 
-          FILTER_Active = keep_filter_type;
+          STUDY_filter = keep_filter_type;
         }
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
@@ -10728,7 +10707,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                 _values_E_dif = FLOAT_undefined;
               } else {
 
-                int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i1, now_j, now_k);
+                int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i1, now_j, now_k);
                 
                 if (memberCount == 1) {
                   _values_R_dir = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
@@ -11484,8 +11463,8 @@ void STUDY_keyPressed (KeyEvent e) {
         ROLLOUT_Update = 1; 
         break;
 
-        //case 'g' :FILTER_Active = (FILTER_Active + 1) % 2; Update_DevelopData = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        //case 'G' :FILTER_Active = (FILTER_Active + 2 - 1) % 2; Update_DevelopData = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        //case 'g' :STUDY_filter = (STUDY_filter + 1) % 2; Update_DevelopData = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        //case 'G' :STUDY_filter = (STUDY_filter + 2 - 1) % 2; Update_DevelopData = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
       case '=' :
         STUDY_V_scale[STUDY_CurrentLayer] *= pow(2.0, (1.0 / 2.0)); 
@@ -11616,25 +11595,25 @@ void STUDY_keyPressed (KeyEvent e) {
         break;
 
       case '!' :
-        STUDY_skyScenario_Active = 1; 
+        STUDY_skyScenario = 1; 
         Update_DevelopData = 1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case '@' :
-        STUDY_skyScenario_Active = 2; 
+        STUDY_skyScenario = 2; 
         Update_DevelopData = 1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case '#' :
-        STUDY_skyScenario_Active = 3; 
+        STUDY_skyScenario = 3; 
         Update_DevelopData = 1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
         break;
       case '$' :
-        STUDY_skyScenario_Active = 4; 
+        STUDY_skyScenario = 4; 
         Update_DevelopData = 1; 
         STUDY_Update = 1; 
         ROLLOUT_Update = 1; 
@@ -25119,7 +25098,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                         _values_E_dif = FLOAT_undefined;
                       } else {
   
-                        int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                        int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                         
                         if (memberCount == 1) {
                           _values_R_dir = 0.001 * Pa; 
@@ -28719,7 +28698,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                     _values_E_dif = FLOAT_undefined;
                   } else {
 
-                    int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                     
                     if (memberCount == 1) {
                       _values_R_dir = 0.001 * Pa;  
@@ -31032,7 +31011,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
                     _values_E_dif = FLOAT_undefined;
                   } else {
 
-                    int memberCount = SOLARCHVISION_getFilteredScenariosFromActiveDataSource(now_i, now_j, now_k);
+                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                     
                     if (memberCount == 1) {
                       _values_R_dir = 0.001 * Pa;
@@ -37977,8 +37956,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
 
     if (SOLARCHVISION_ROLLOUT_child == 3) { // Filters
-      STUDY_skyScenario_Active = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Sky status", STUDY_skyScenario_Active, 1, 4, 1), 1));
-      FILTER_Active = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Hourly/daily filter", FILTER_Active, 0, 1, 1), 1));
+      STUDY_skyScenario = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Sky status", STUDY_skyScenario, 1, 4, 1), 1));
+      STUDY_filter = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Hourly/daily filter", STUDY_filter, 0, 1, 1), 1));
 
       H_Layer_Option = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Climate filter option", H_Layer_Option, -1, 6, 1), 1));
       //SampleYear_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CWEEDS_end, 1), 1));
@@ -49886,10 +49865,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("STUDY_PrintTtitle", STUDY_PrintTtitle);
   newChild1.setFloat("STUDY_T_scale", STUDY_T_scale);
   newChild1.setFloat("STUDY_U_scale", STUDY_U_scale);
-  newChild1.setInt("STUDY_skyScenario_Active", STUDY_skyScenario_Active);
+  newChild1.setInt("STUDY_skyScenario", STUDY_skyScenario);
   newChild1.setInt("FILTER_Hourly", FILTER_Hourly);
   newChild1.setInt("FILTER_Daily", FILTER_Daily);
-  newChild1.setInt("FILTER_Active", FILTER_Active);
+  newChild1.setInt("STUDY_filter", STUDY_filter);
   newChild1.setInt("STUDY_TrendJoinHours", STUDY_TrendJoinHours);
   newChild1.setInt("STUDY_TrendJoinType", STUDY_TrendJoinType);
   newChild1.setInt("TIME_Interval", TIME_Interval);
@@ -51173,10 +51152,10 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY_PrintTtitle = children0[L].getInt("STUDY_PrintTtitle");
       STUDY_T_scale = children0[L].getFloat("STUDY_T_scale");
       STUDY_U_scale = children0[L].getFloat("STUDY_U_scale");
-      STUDY_skyScenario_Active = children0[L].getInt("STUDY_skyScenario_Active");
+      STUDY_skyScenario = children0[L].getInt("STUDY_skyScenario");
       FILTER_Hourly = children0[L].getInt("FILTER_Hourly");
       FILTER_Daily = children0[L].getInt("FILTER_Daily");
-      FILTER_Active = children0[L].getInt("FILTER_Active");
+      STUDY_filter = children0[L].getInt("STUDY_filter");
       STUDY_TrendJoinHours = children0[L].getInt("STUDY_TrendJoinHours");
       STUDY_TrendJoinType = children0[L].getInt("STUDY_TrendJoinType");
       TIME_Interval = children0[L].getInt("TIME_Interval");
@@ -55455,37 +55434,31 @@ void SOLARCHVISION_build_SkySphere (int Tessellation) {
 void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   
   String DATA_reference = "";
-  String DATA_filter = "";
 
   int DATA_start = -1;
   int DATA_end = -1;
   
   if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
-    DATA_filter = "CLIMATE_TMYEPW";
     DATA_start = CLIMATE_TMYEPW_start;
     DATA_end = CLIMATE_TMYEPW_end;
     DATA_reference = Defined_Stations[10] + ".epw";
   }  
   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
-    DATA_filter = "CLIMATE_CWEEDS";
     DATA_start = CLIMATE_CWEEDS_start;
     DATA_end = CLIMATE_CWEEDS_end;    
     DATA_reference = Defined_Stations[9] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/";
   }
   if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
-    DATA_filter = "CLIMATE_CLMREC";
     DATA_start = CLIMATE_CLMREC_start;
     DATA_end = CLIMATE_CLMREC_end;    
     DATA_reference = "Environment and Climate Change Canada website at http://climate.weather.gc.ca/climate_data";
   }  
   if (CurrentDataSource == dataID_FORECAST_XML) {
-    DATA_filter = "FORECAST_XML";
     DATA_start = FORECAST_XML_start;
     DATA_end = FORECAST_XML_end;    
     DATA_reference = nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
   }
   if (CurrentDataSource == dataID_OBSERVATION_XML) {
-    DATA_filter = "OBSERVATION_XML";
     DATA_start = OBSERVATION_XML_start;
     DATA_end = OBSERVATION_XML_end;       
     DATA_reference = "Environment and Climate Change Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/";
@@ -55584,8 +55557,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
 
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + DATA_filter + "_node_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly data(FORECAST)");
+      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
       FILE_outputRaw[(j - STUDY_j_Start)].print("Hour\t");
       for (int k = 0; k < count_k; k += 1) {   
@@ -55594,8 +55567,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputRaw[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + DATA_filter + "_norm_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly normal(FORECAST)");
+      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       FILE_outputNorms[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         FILE_outputNorms[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t");
@@ -55603,8 +55576,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputNorms[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + DATA_filter + "_prob_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "_" + CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario_Active] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
+      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[((365 + j + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
 
       FILE_outputProbs[(j - STUDY_j_Start)].print("Hour:\t");
       FILE_outputProbs[(j - STUDY_j_Start)].println("");
@@ -55659,7 +55632,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
 
             if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
           } else {
-            int memberCount = SOLARCHVISION_filter(DATA_filter, LAYER_cloudcover, FILTER_Active, STUDY_skyScenario_Active, now_i, now_j, now_k);
+            int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
 
             if (memberCount == 1) {
               _valuesA[(k * STUDY_JoinDays + j_ADD)] = Pa;
