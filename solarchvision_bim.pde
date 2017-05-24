@@ -1534,15 +1534,7 @@ int SOLARCHVISION_Y_click2 = -1;
 
 
 
-int ERASE_All = 0;
-int ERASE_Curves = 0;
-int ERASE_Faces = 0;
-int ERASE_Fractals = 0;
-int ERASE_Object2Ds = 0;
-int ERASE_Group3Ds = 0;
-int ERASE_Solids = 0;
-int ERASE_Sections = 0;
-int ERASE_Cameras = 0;
+
 
 int LAND_Tessellation = 0; //2;
 
@@ -2859,98 +2851,7 @@ void draw () {
         }
 
 
-        if (ERASE_Fractals == 1) {
-          SOLARCHVISION_delete_Fractals();
 
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Fractals = 0;
-        }      
-
-        if (ERASE_Object2Ds == 1) {
-          SOLARCHVISION_delete_Object2Ds();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Object2Ds = 0;
-        }        
-
-        if (ERASE_Group3Ds == 1) {
-
-          SOLARCHVISION_delete_Group3Ds();
-
-          SOLARCHVISION_calculate_SolidImpact_selectedSections();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Group3Ds = 0;
-        }
-
-        if (ERASE_Solids == 1) {
-          SOLARCHVISION_delete_Solids();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Solids = 0;
-        }          
-
-        if (ERASE_Sections == 1) {
-          SOLARCHVISION_delete_Sections();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Sections = 0;
-        }       
-
-        if (ERASE_Cameras == 1) {
-          SOLARCHVISION_delete_Cameras();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Cameras = 0;
-        }    
-
-        if (ERASE_Faces == 1) {
-          SOLARCHVISION_delete_Faces();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Faces = 0;
-        }             
-
-        if (ERASE_Curves == 1) {
-          SOLARCHVISION_delete_Curves();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_Curves = 0;
-        }  
-
-        if (ERASE_All == 1) {
-          SOLARCHVISION_delete_All();
-
-          WIN3D_Update = 1;
-
-          ROLLOUT_Update = 1;
-
-          ERASE_All = 0;
-        }  
 
         if (pre_Load_DefaultModels != Load_DefaultModels) {
 
@@ -35676,8 +35577,52 @@ void mouseClicked () {
               WIN3D_Update = 1;
             }
 
-
-
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Fractals")) {
+              SOLARCHVISION_delete_Fractals();
+              WIN3D_Update = 1;
+            }      
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Object2Ds")) {
+              SOLARCHVISION_delete_Object2Ds();
+              WIN3D_Update = 1;
+            }        
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Group3Ds")) {
+              SOLARCHVISION_delete_Group3Ds();
+              WIN3D_Update = 1;
+            }
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Solids")) {
+              SOLARCHVISION_delete_Solids();
+              WIN3D_Update = 1;
+            }          
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Sections")) {
+              SOLARCHVISION_delete_Sections();
+              WIN3D_Update = 1;
+            }       
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Cameras")) {
+              SOLARCHVISION_delete_Cameras();
+              WIN3D_Update = 1;
+            }    
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Faces")) {
+              SOLARCHVISION_delete_Faces();
+              WIN3D_Update = 1;
+            }             
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Curves")) {
+              SOLARCHVISION_delete_Curves();
+              WIN3D_Update = 1;
+            }  
+    
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_All")) {
+              SOLARCHVISION_delete_All();
+              WIN3D_Update = 1;
+            }  
+            
+        
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TargetRoll")) {
               UI_set_to_View_TargetRoll(0);
               SOLARCHVISION_highlight_in_BAR_b("TRL");
@@ -37734,24 +37679,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
 
       OBJECTS_scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
-
-      ERASE_Fractals = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Fractals", ERASE_Fractals, 0, 1, 1), 1));
-
-      ERASE_Object2Ds = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Object2Ds", ERASE_Object2Ds, 0, 1, 1), 1));
-
-      ERASE_Group3Ds = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Group3Ds", ERASE_Group3Ds, 0, 1, 1), 1));
-
-      ERASE_Solids = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Solids", ERASE_Solids, 0, 1, 1), 1));
-
-      ERASE_Faces = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Faces", ERASE_Faces, 0, 1, 1), 1));
-      
-      ERASE_Curves = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Curves", ERASE_Curves, 0, 1, 1), 1));
-
-      ERASE_Sections = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Sections", ERASE_Sections, 0, 1, 1), 1));
-
-      ERASE_Cameras = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_Cameras", ERASE_Cameras, 0, 1, 1), 1));
-
-      ERASE_All = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "ERASE_All", ERASE_All, 0, 1, 1), 1));      
 
       Load_DefaultModels = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, MAX_Default_Models_Number, 1), 1));
     }
@@ -47203,9 +47130,12 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG 3D Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."
+    "Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG 3D Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC.", "ERASE_Fractals", "ERASE_Object2Ds", "ERASE_Group3Ds", "ERASE_Solids", "ERASE_Sections", "ERASE_Cameras", "ERASE_Faces", "ERASE_Curves", "ERASE_All"
   }
 };
+
+
+
 
 
 int LayersID_in_Bar_a = 8; 
