@@ -1,4 +1,3 @@
-// does not display CWEEDS properly when joining more days ...
 
 // could split SOLARCHVISION_update_AERIAL to download and update parts.
 
@@ -55615,6 +55614,13 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
   int _interval = 0;
   _valuesSUM = new float [(1 + DATA_end - DATA_start) * STUDY_JoinDays];
   _valuesNUM = new float [(1 + DATA_end - DATA_start) * STUDY_JoinDays];
+  
+  for (int k = 0; k < (1 + DATA_end - DATA_start) * STUDY_JoinDays; k += 1) { 
+    _valuesA[k] = FLOAT_undefined;
+    _valuesB[k] = FLOAT_undefined;
+    _valuesSUM[k] = 0;
+    _valuesNUM[k] = 0;
+  }  
 
   float[] Ax_LINES = new float [0];
   float[] Ay_LINES = new float [0];
@@ -55681,7 +55687,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) FILE_outputNorms[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
       if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) FILE_outputProbs[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
 
-      for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
+      for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {   
         for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
 
           _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
