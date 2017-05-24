@@ -7938,9 +7938,14 @@ void SOLARCHVISION_DevelopDATA () {
     STUDY_JoinDays = 1;
   }
 
-  int[] startK_endK = STUDY_get_startK_endK();
-  int start_k = startK_endK[0]; 
-  int end_k = startK_endK[1];
+  int start_k = 0;
+  int end_k = -1;
+
+  if (IMPACTS_DataSource == dataID_CLIMATE_TMYEPW) end_k = CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start;
+  if (IMPACTS_DataSource == dataID_CLIMATE_CWEEDS) end_k = CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start;
+  if (IMPACTS_DataSource == dataID_CLIMATE_CLMREC) end_k = CLIMATE_CLMREC_end - CLIMATE_CLMREC_start;
+  if (IMPACTS_DataSource == dataID_FORECAST_XML) end_k = FORECAST_XML_end - FORECAST_XML_start;
+
   int count_k = 1 + end_k - start_k; 
   if (count_k < 0) count_k = 0;
 
@@ -9539,7 +9544,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                     if (SunR[3] > 0) {
 
-                      now_k = k;
+                      now_k = k + start_k;
                       now_i = i;
                       now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -9951,7 +9956,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   float Alpha = 90 - acos_ang(SunR[3]);
                   float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
 
-                  now_k = k;
+                  now_k = k + start_k;
                   now_i = i;
                   now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -10728,7 +10733,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               }
               //-----------------------------------------------------------
 
-              now_k = k;
+              now_k = k + start_k;
 
               now_i1 = floor(i);
               now_i2 = (1 + now_i1) % 24;
@@ -11897,7 +11902,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
 
-                now_k = k;
+                now_k = k + start_k;
 
                 now_i1 = floor(i);
                 now_i2 = (1 + now_i1) % 24;
@@ -25129,7 +25134,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
                     if (SunR[3] > 0) {
   
-                      now_k = k;
+                      now_k = k + start_k;
                       now_i = i;
                       now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
   
@@ -28729,7 +28734,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
                 if (SunR[3] > 0) {
 
-                  now_k = k;
+                  now_k = k + start_k;
                   now_i = i;
                   now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
@@ -31042,7 +31047,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
                 if (SunR[3] > 0) {
 
-                  now_k = k;
+                  now_k = k + start_k;
                   now_i = i;
                   now_j = int(j * STUDY_PerDays + (j_ADD - int(roundTo(0.5 * STUDY_JoinDays, 1))) + TIME_BeginDay + 365) % 365;
 
