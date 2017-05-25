@@ -1,4 +1,8 @@
 
+// Note: different tropo layer exported in obj format but only at frame 0.
+// Note: still cannot use regional layers as tropo.
+
+
 // bug using small STUDY_LevelPix 
 
 // could split SOLARCHVISION_update_AERIAL to download and update parts.
@@ -32,10 +36,6 @@
 // could add join/explode groups ?
 
 
-
-
-
-
 // export and import of curves
 // converting curves to faces e.g. Surface, Extrude, Connect
 
@@ -57,13 +57,6 @@
 // solid rotations inside groups should be translated to locals to avoid problems!
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
-
-
-
-
-
-// Note: different tropo layer exported in obj format but only at frame 0.
-// Note: still cannot use regional layers as tropo.
 
 
 import processing.pdf.*;
@@ -109,8 +102,10 @@ String Object2DFolder_TREES;
 String ExportFolder;
 String ProjectFolder;
 String DiagramsFolder;
-String ScreenShotFolder;
 String Model3DFolder;
+String ViewsFromSkyFolder;
+String ScreenShotFolder;
+
 
 
 String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
@@ -152,9 +147,10 @@ void SOLARCHVISION_update_folders () {
   LandFolder            = ProjectFolder + "/Land";
   
   ExportFolder          = ProjectFolder + "/Export";
-  Model3DFolder         = ExportFolder + "/Model_3D" + "/" + RunStamp;
-  DiagramsFolder        = ExportFolder + "/Diagrams";  
-  ScreenShotFolder      = ExportFolder + "/ScreenShots";
+  DiagramsFolder        = ExportFolder + "/Diagrams" + "/" + RunStamp;
+  Model3DFolder         = ExportFolder + "/Model3D" + "/" + RunStamp;
+  ViewsFromSkyFolder    = ExportFolder + "/ViewsFromSky" + "/" + RunStamp;
+  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + RunStamp;
 
   String[] filenames = SOLARCHVISION_getfiles(ScreenShotFolder);
   if (filenames != null) SavedScreenShots = filenames.length;
@@ -1974,6 +1970,8 @@ void setup () {
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
 
   STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);
+  
+  SKY2D_Diagrams = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
 
 
   Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
@@ -8789,17 +8787,22 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
 
 
-        { // Direct 
-          int RES1 = 50; // 100; 
-          int RES2 = RES1;
-          float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
-
-          PGraphics Image_RGBA = ViewFromTheSky(RES1, RES2, ZOOM, 0, 0, 0, 90-Alpha, 0, Beta);
+        int RES1 = SKY2D_X_View;
+        int RES2 = SKY2D_Y_View;
+        
+        
+        { // Direct
+          STUDY_Diagrams.endDraw(); 
+          ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
+          PImage Image_RGBA = SKY2D_Diagrams.get();
+          STUDY_Diagrams.beginDraw();
+          
+          Image_RGBA.save(ViewsFromSkyFolder + "/" + "Direct" + nf(j,2) + nf(i,2) + ".png");
 
           STUDY_Diagrams.imageMode(CENTER); 
           STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - Alpha) * STUDY_rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY_rect_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
           STUDY_Diagrams.imageMode(CORNER);
-          
+          /*
           if (Materials_DirectArea_Flags[now_i][now_j] == -1) {
 
             Materials_DirectArea_Flags[now_i][now_j] = 1; 
@@ -8841,13 +8844,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
             }
           }
+          */
         }
 
-
+         /*
          { // Diffuse
-           int RES1 = 25; // 100; 
-           int RES2 = RES1;
-           float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
+           STUDY_Diagrams.endDraw(); 
+           ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
+           PImage Image_RGBA = SKY2D_Diagrams.get();
+           STUDY_Diagrams.beginDraw();
            
            if (Materials_DiffuseArea_Flags[now_i][now_j] == -1) {
              
@@ -8918,9 +8923,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
              //---------------------------------------------                          
            }
          }
+         */
          
 
       }
+      
     }
 
     if (STUDY_PrintTtitle != 0) {
@@ -21752,32 +21759,20 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
 float OBJECTS_scale = 1.0;  
 
 
+int SKY2D_X_View = 50;
+int SKY2D_Y_View = 50;
+PGraphics SKY2D_Diagrams;
+float SKY2D_ZOOM = 1;
 
-PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_Coordinate, float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float SKY2D_Z_Coordinate, float SKY2D_RX_Coordinate, float SKY2D_RY_Coordinate, float SKY2D_RZ_Coordinate) {
-
-  PGraphics SKY2D_Diagrams = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);   
+void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float SKY2D_Z_Coordinate, float SKY2D_RX_Coordinate, float SKY2D_RY_Coordinate, float SKY2D_RZ_Coordinate) {
 
   SKY2D_Diagrams.beginDraw();
 
   SKY2D_Diagrams.background(233);
 
-  //float ZOOM = 0.456 * SKY2D_ZOOM_Coordinate * PI / 180;
-  float ZOOM = 0.125 * SKY2D_ZOOM_Coordinate * PI / 180;
-
-  SKY2D_Diagrams.ortho(ZOOM * SKY2D_X_View * -1, ZOOM * SKY2D_X_View * 1, ZOOM  * SKY2D_Y_View * -1, ZOOM  * SKY2D_Y_View * 1, 0.00001, 100000);
+  SKY2D_Diagrams.ortho(SKY2D_X_View * -SKY2D_ZOOM, SKY2D_X_View * SKY2D_ZOOM, SKY2D_Y_View * -SKY2D_ZOOM, SKY2D_Y_View * SKY2D_ZOOM, 0.00001, 100000);
 
   SKY2D_Diagrams.translate(0, 1.0 * SKY2D_Y_View, 0); // << IMPORTANT! 
-
-  SKY2D_Diagrams.pushMatrix();
-
-  SKY2D_Diagrams.translate(0, 0, 0);
-
-  SKY2D_Diagrams.fill(0);
-  SKY2D_Diagrams.textAlign(CENTER, CENTER); 
-  SKY2D_Diagrams.textSize(5 * (SKY2D_ZOOM_Coordinate / 30.0));
-  SKY2D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (SKY2D_ZOOM_Coordinate / 30.0), 0);
-
-  SKY2D_Diagrams.popMatrix();
 
   SKY2D_Diagrams.translate(SKY2D_X_Coordinate, SKY2D_Y_Coordinate, SKY2D_Z_Coordinate);
   SKY2D_Diagrams.rotateX(SKY2D_RX_Coordinate * PI / 180); 
@@ -21785,6 +21780,8 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_C
   SKY2D_Diagrams.rotateZ(SKY2D_RZ_Coordinate * PI / 180); 
 
   SKY2D_Diagrams.hint(ENABLE_DEPTH_TEST);
+  
+  SOLARCHVISION_draw_land(-2);
 
   for (int f = 0; f < allFaces_PNT.length; f++) {
 
@@ -21824,17 +21821,15 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_C
 
         for (int s = 0; s < subFace.length; s++) {
 
-          SKY2D_Diagrams.vertex(subFace[s][0] * WIN3D_Scale3D, -subFace[s][1] * WIN3D_Scale3D, subFace[s][2] * WIN3D_Scale3D);
+          SKY2D_Diagrams.vertex(subFace[s][0] * SKY2D_ZOOM, -subFace[s][1] * SKY2D_ZOOM, subFace[s][2] * SKY2D_ZOOM);
         }
 
         SKY2D_Diagrams.endShape(CLOSE);
       }
     }
   }
-
+  
   SKY2D_Diagrams.endDraw();
-
-  return SKY2D_Diagrams;
 }
 
 
@@ -22493,7 +22488,7 @@ void SOLARCHVISION_draw_STAR3D () {
 
 void SOLARCHVISION_draw_land (int target_window) {
 
-  // target_window: -1:LandGapAsGroup3D, 0:LandMeshAsGroup3D, 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export 5:RAD-export
+  // target_window: -2:SKY2D -1:LandGapAsGroup3D, 0:LandMeshAsGroup3D, 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export 5:RAD-export
 
   boolean proceed = false;
 
@@ -22601,7 +22596,6 @@ void SOLARCHVISION_draw_land (int target_window) {
     }
 
 
-
     num_vertices_added = 0;
 
     int end_turn = 1;
@@ -22696,6 +22690,14 @@ void SOLARCHVISION_draw_land (int target_window) {
                 if (n_Map == q) break;
               }
             }
+            
+            if (target_window == -2) {
+              
+              SKY2D_Diagrams.beginShape();
+              SKY2D_Diagrams.fill(255);
+              SKY2D_Diagrams.noStroke();
+             
+            }
 
             if (target_window == 3) {
 
@@ -22733,6 +22735,10 @@ void SOLARCHVISION_draw_land (int target_window) {
             }    
             
             for (int s = 0; s < subFace.length; s++) {
+              
+              if (target_window == -2) {
+                SKY2D_Diagrams.vertex(subFace[s][0] * SKY2D_ZOOM, -subFace[s][1] * SKY2D_ZOOM, subFace[s][2] * SKY2D_ZOOM);
+              }           
 
               if (Display_LAND_Textures == 0) {
 
@@ -22789,8 +22795,6 @@ void SOLARCHVISION_draw_land (int target_window) {
                 if (target_window == 3) {
                   WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
                 }
-                
-                
                 
                 if (target_window == 5) {
 
@@ -22865,6 +22869,10 @@ void SOLARCHVISION_draw_land (int target_window) {
               }
             }
             
+
+            if (target_window == -2) {
+              SKY2D_Diagrams.endShape(CLOSE);
+            }
 
             if (target_window == 3) {
               WIN3D_Diagrams.endShape(CLOSE);
