@@ -1,5 +1,11 @@
+  
+  int deltaTime = 1; // 3;
+  
+  int TimeSteps = 3;
+  //int TimeSteps = 24 / deltaTime; // upto 36 hours!
+  //int TimeSteps = 36 / deltaTime; // upto 36 hours!
+  
 
-int TROPO_IMAGES_maxHours = 24;
 
 // should define subroutines to perfome this not inside draw! if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
 
@@ -18774,7 +18780,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
           int n = TROPO_level; // <<<<<<<<
 
-          String old_Texture_path = TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[n];
+          String old_Texture_path = FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n];
 
           String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
@@ -21962,45 +21968,41 @@ void SOLARCHVISION_draw_WindFlow () {
 
 PImage[] TROPO_IMAGES_Map;
 
+float[][] TROPO_IMAGES_BoundariesX;
+float[][] TROPO_IMAGES_BoundariesY;
+
 String[] TROPO_IMAGES_Filenames;
 
 
 void SOLARCHVISION_update_TOROPO_IMAGES () {
-
+  
   TROPO_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
 
-  TROPO_IMAGES_Map = new PImage [TROPO_IMAGES_Filenames.length];
+  TROPO_IMAGES_Map = new PImage [TimeSteps];
+  
+  TROPO_IMAGES_BoundariesX = new float[TimeSteps][2];
+  TROPO_IMAGES_BoundariesY = new float[TimeSteps][2];
+  
 
-  for (int i = 0; i < TROPO_IMAGES_Filenames.length; i++) {
 
-    println("Loading:", TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[i]);
+  
+  if (TROPO_IMAGES_Filenames.length == TimeSteps) {
+    
+    println("They are equal!"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-    TROPO_IMAGES_Map[i] = loadImage(TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[i]);
+    for (int i = 0; i < TimeSteps; i++) {
+  
+      println("Loading:", FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
+  
+      TROPO_IMAGES_Map[i] = loadImage(FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
+  
+    }
+  
   }
 }
 
 
 void SOLARCHVISION_download_TOROPO_IMAGES () {
-
-  int deltaTime = 1; // 3;
-  
-  //int TimeSteps = 1;
-  int TimeSteps = 24 / deltaTime; // upto 36 hours!
-  //int TimeSteps = 36 / deltaTime; // upto 36 hours!
-  
-  int DisplayTime = 0;
-
-  
-  TROPO_IMAGES = new PImage[TimeSteps];
-  
-  TROPO_IMAGES_BoundariesX = new float[TimeSteps][2];
-  TROPO_IMAGES_BoundariesY = new float[TimeSteps][2];
-  
-  TROPO_IMAGES_Filenames = new String[TimeSteps];
-  
-    
-  
-
   
   
   int CurrentYear = year();
@@ -22053,7 +22055,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
   
   
   
-  for (int i = 0; i < TROPO_IMAGES.length; i++) {
+  for (int i = 0; i < TROPO_IMAGES_Map.length; i++) {
     
     CurrentHour += 1;
     
@@ -22145,13 +22147,13 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     
     
     
-    /*
+
     String DomainStamp = "GDPS.ETA";
     TROPO_IMAGES_BoundariesX[i][0] = -180;
     TROPO_IMAGES_BoundariesX[i][1] = 180;
     TROPO_IMAGES_BoundariesY[i][0] = 90;
     TROPO_IMAGES_BoundariesY[i][1] = -90;
-    */
+
     
     
     /*
@@ -22171,14 +22173,14 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     TROPO_IMAGES_BoundariesY[i][1] = 72.5;
 */    
     
-
+/*
     //String DomainStamp = "HRDPS.CONTINENTAL";
     String DomainStamp = "RDPS.ETA";
     TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
     TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
     TROPO_IMAGES_BoundariesY[i][0] = LocationLatitude - 5 * cos_ang(LocationLatitude);
     TROPO_IMAGES_BoundariesY[i][1] = LocationLatitude + 5 * cos_ang(LocationLatitude);
-    
+*/    
     
     
     int RES1 = 1200; // 1800;
@@ -22206,101 +22208,26 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     
 
     
-    TROPO_IMAGES[i] = createImage(2, 2, RGB);
+    TROPO_IMAGES_Map[i] = createImage(2, 2, RGB);
     
-    println("Loading:", the_link);
-    
-    TROPO_IMAGES_Filenames[i] = timeStamp + "_" + DomainStamp.replace('.', '_');
-    
-    String the_target = timeStamp + "_" + ParameterStamp + "_" + DomainStamp + ".png";
-    
-    try {
-    
-      saveBytes(the_target, loadBytes(the_link));
-    
-      TROPO_IMAGES[i] = loadImage(the_target);
-      
-      if (ParameterStamp.equals("_NT&STYLES=CLOUD")) { 
-        
-        println("image processing cloud layer");
-        
-        TROPO_IMAGES[i].loadPixels();        
-            
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-        
-          color COL = TROPO_IMAGES[i].get(Image_X, Image_Y);
-          //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-          
-          float COL_A = (COL >> 24 & 0xFF);
-          
-          if (COL_A == 0) {
-            TROPO_IMAGES[i].pixels[np] = color(0,0);
-          }
-          else {
-            
-            float COL_V = (COL >> 16 & 0xFF);
-            
-            //TROPO_IMAGES[i].pixels[np] = color(127 + 0.5 * COL_V, 255 - COL_V);
-            //TROPO_IMAGES[i].pixels[np] = color(255, COL_V);
-            //TROPO_IMAGES[i].pixels[np] = color(255 - 0.5 * COL_V, COL_V);
-            //TROPO_IMAGES[i].pixels[np] = color(255 - 0.25 * COL_V, COL_V);
-            TROPO_IMAGES[i].pixels[np] = color(255 - 0.125 * COL_V, COL_V);
-          }        
-        }
-        
-        TROPO_IMAGES[i].updatePixels();
-        
-        
-      }
-    }
-    
-    catch (Exception e) {
-      
-      println("Can't get!");
-    }
-    
-    
-  }
-}
-
-
-
-
-
-
-
-
-
-
-  
-
-
-    String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + "-swob.xml";
+    String FN = timeStamp + "_" + ParameterStamp + "_" + DomainStamp + ".png";
 
     String the_target = FORECAST_GEOMET_directory + "/" + FN;
 
     File dir = new File(the_target);
     if (!dir.isFile()) {       
 
-      String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
-
       println("Try downloading: " + the_link);
 
       try {
         saveBytes(the_target, loadBytes(the_link));
-      } 
+      }
+      
       catch (Exception e) {
         println("LINK NOT AVAILABLE:", the_link);
       }
     }
-
-
-  
-
-  TROPO_IMAGES_Filenames = SOLARCHVISION_getfiles(FORECAST_GEOMET_directory);
-  
+  }
 
   SOLARCHVISION_update_TOROPO_IMAGES();
 }  
