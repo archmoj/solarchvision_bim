@@ -1,7 +1,11 @@
+
+// note we used .... float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
+
+  int TROPO_IMAGES_Number = 0;
   
   int deltaTime = 1; // 3;
   
-  int TimeSteps = 3;
+  int TimeSteps = 1;
   //int TimeSteps = 24 / deltaTime; // upto 36 hours!
   //int TimeSteps = 36 / deltaTime; // upto 36 hours!
   
@@ -11,7 +15,6 @@
 
 
 // Note: different tropo layer exported in obj format but only at frame 0.
-// Note: still cannot use regional layers as tropo.
 
 
 // bug using small STUDY_LevelPix 
@@ -18806,14 +18809,14 @@ void SOLARCHVISION_export_objects_OBJ () {
       }
 
 
-      float TROPO_IMAGES_OffsetX = 0; //TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
-      float TROPO_IMAGES_OffsetY = 0; //TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
+      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
+      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
 
-      float TROPO_IMAGES_ScaleX = 1; //(TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
-      float TROPO_IMAGES_ScaleY = 1; //(TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
+      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
+      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
 
-      float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
-      float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
+      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
+      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
 
       float delta_Alpha = -BIOSPHERE_drawResolution; 
       float delta_Beta = -BIOSPHERE_drawResolution;
@@ -21991,7 +21994,20 @@ void SOLARCHVISION_update_TOROPO_IMAGES () {
     println("They are equal!"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     for (int i = 0; i < TimeSteps; i++) {
+      
+      String[] Parts = split(TROPO_IMAGES_Filenames[i], '_');
   
+      TROPO_IMAGES_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+      TROPO_IMAGES_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+      TROPO_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+      TROPO_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;      
+      
+      println("TROPO_IMAGES_BoundariesX");
+      println(TROPO_IMAGES_BoundariesX[i]);
+      println("TROPO_IMAGES_BoundariesY");
+      println(TROPO_IMAGES_BoundariesY[i]);
+      
+      
       println("Loading:", FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
   
       TROPO_IMAGES_Map[i] = loadImage(FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
@@ -22147,13 +22163,13 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     
     
     
-
+/*
     String DomainStamp = "GDPS.ETA";
     TROPO_IMAGES_BoundariesX[i][0] = -180;
     TROPO_IMAGES_BoundariesX[i][1] = 180;
     TROPO_IMAGES_BoundariesY[i][0] = 90;
     TROPO_IMAGES_BoundariesY[i][1] = -90;
-
+*/
     
     
     /*
@@ -22165,13 +22181,11 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     */
     
     
-/*    
     String DomainStamp = "HRDPS.CONTINENTAL";
     TROPO_IMAGES_BoundariesX[i][0] = -155;
     TROPO_IMAGES_BoundariesX[i][1] = -40;
     TROPO_IMAGES_BoundariesY[i][0] = 25;
     TROPO_IMAGES_BoundariesY[i][1] = 72.5;
-*/    
     
 /*
     //String DomainStamp = "HRDPS.CONTINENTAL";
@@ -22200,7 +22214,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     BBoxStamp += nf(int(1000 *  TROPO_IMAGES_BoundariesY[i][1]), 0) + "_";    
 
     int the_hour = i * deltaTime; 
-    
+
     String timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
    
     //String the_link = the_layer + "%26time%3D" + timeStamp +"%3A22%3A00Z";
@@ -22210,12 +22224,21 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     
     TROPO_IMAGES_Map[i] = createImage(2, 2, RGB);
     
-    String FN = timeStamp + "_" + ParameterStamp + "_" + DomainStamp + ".png";
+    String FN = "GEOMET_";
+    FN += nf(int(roundTo(-1000 * TROPO_IMAGES_BoundariesX[i][0], 1)), 6) + "_";
+    FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][0], 1)), 6) + "_";
+    FN += nf(int(roundTo(-1000 * TROPO_IMAGES_BoundariesX[i][1], 1)), 6) + "_";
+    FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][1], 1)), 6) + "_";
+    //FN += ParameterStamp + "_";
+    //FN += DomainStamp + "_";
+    FN += timeStamp;
+    FN += ".png";
 
     String the_target = FORECAST_GEOMET_directory + "/" + FN;
 
-    File dir = new File(the_target);
-    if (!dir.isFile()) {       
+    //File dir = new File(the_target);
+    //if (!dir.isFile()) 
+    {       
 
       println("Try downloading: " + the_link);
 
@@ -22244,14 +22267,14 @@ void SOLARCHVISION_draw_TROPO3D () {
 
     for (int TROPO_level = 0; TROPO_level < TROPO_IMAGES_Map.length; TROPO_level++) {
 
-      float TROPO_IMAGES_OffsetX = 0; //TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
-      float TROPO_IMAGES_OffsetY = 0; //TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
+      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
+      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
 
-      float TROPO_IMAGES_ScaleX = 1; //(TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
-      float TROPO_IMAGES_ScaleY = 1; //(TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
+      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
+      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
 
-      float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
-      float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
+      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
+      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
 
       float delta_Alpha = -BIOSPHERE_drawResolution;
       float delta_Beta = -BIOSPHERE_drawResolution;
