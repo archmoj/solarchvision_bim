@@ -1,14 +1,11 @@
 
-// note we used .... float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
 
-  int TROPO_IMAGES_Number = 0;
-  
-  int deltaTime = 1; // 3;
-  
-  int TimeSteps = 1;
-  //int TimeSteps = 24 / deltaTime; // upto 36 hours!
-  //int TimeSteps = 36 / deltaTime; // upto 36 hours!
-  
+
+// note we used .... float r = FLOAT_r_Earth + 5000; for clouds
+
+  int TROPO_deltaTime = 1; 
+  int TROPO_timeSteps = 24;
+
 
 
 // should define subroutines to perfome this not inside draw! if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
@@ -129,7 +126,7 @@ void SOLARCHVISION_update_folders () {
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
   RealtimeDataFolder = ProjectFolder + "/Input/WeatherRealtime";
-  FORECAST_GEOMET_directory = ProjectFolder + "/forecast/FORECAST_GEOMET";
+  FORECAST_GEOMET_directory = ProjectFolder + "/forecast/FORECAST_GEOMET" + "/" + RunStamp;
   FORECAST_GRIB2_directory = ProjectFolder + "/forecast/FORECAST_GRIB2";
   ENSEMBLE_FORECAST_directory = ProjectFolder + "/forecast/FORECAST_NAEFS";
   ENSEMBLE_OBSERVED_directory = ProjectFolder + "/observation/OBSERVATION_SWOB";
@@ -882,10 +879,10 @@ String[][] GRIB2_Domains = {
 
 
 //int GRIB2_DomainSelection = 0; int GRIB2_maxScenarios = 21; // should convert U&V to wind speed and direction!   
-int GRIB2_DomainSelection = 1; int GRIB2_maxScenarios = 21; // should convert U&V to wind speed and direction!
+//int GRIB2_DomainSelection = 1; int GRIB2_maxScenarios = 21; // should convert U&V to wind speed and direction!
 //int GRIB2_DomainSelection = 2; int GRIB2_maxScenarios = 1;
 //int GRIB2_DomainSelection = 3; int GRIB2_maxScenarios = 1;
-//int GRIB2_DomainSelection = 4; int GRIB2_maxScenarios = 1;
+int GRIB2_DomainSelection = 4; int GRIB2_maxScenarios = 1;
 //int GRIB2_DomainSelection = 5; int GRIB2_maxScenarios = 1; // not working now!
 
 {
@@ -1358,11 +1355,11 @@ float SunPath3D_Pallet_PASSIVE_MLT = 1; //1;
 
 int SKY3D_Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = 1; //-1;
-float SKY3D_Pallet_ACTIVE_MLT = 1; //0.5; //0.25;
+float SKY3D_Pallet_ACTIVE_MLT = 0.5; //1; //0.25;
 
 int SKY3D_Pallet_PASSIVE_CLR = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
-float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
+float SKY3D_Pallet_PASSIVE_MLT = 1; //2;
 
 int ELEVATION_Pallet_CLR = 1; 
 int ELEVATION_Pallet_DIR = -1; 
@@ -2984,23 +2981,19 @@ PGraphics WIN3D_Diagrams;
 
 
 
-void SOLARCHVISION_find_which_bakings_to_regenerate() {
+void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
   if (WIN3D_FacesShade == Shade_Global_Solar) {
     rebuild_GlobalSolar_array = 1;
-    WIN3D_Update = 1;
   }
   if (WIN3D_FacesShade == Shade_Vertex_Solar) {
     rebuild_VertexSolar_array = 1;
-    WIN3D_Update = 1;
   }  
   if (Display_SolarImpactImage != 0) {
     rebuild_SolarImpactImage_array = 1;
-    WIN3D_Update = 1;
   }     
   if (Display_WindRoseImage != 0) {
     rebuild_WindRoseImage_array = 1;
-    WIN3D_Update = 1;
   }      
 }  
 
@@ -3068,9 +3061,9 @@ void SOLARCHVISION_draw_WIN3D () {
 
     SOLARCHVISION_draw_MOON3D();
 
-    SOLARCHVISION_draw_EARTH3D();
+    SOLARCHVISION_draw_TROPO3D(STUDY_i_Start, STUDY_i_Start);
 
-    SOLARCHVISION_draw_TROPO3D();
+    SOLARCHVISION_draw_EARTH3D();
 
     SOLARCHVISION_draw_land(3);
 
@@ -18760,11 +18753,11 @@ void SOLARCHVISION_export_objects_OBJ () {
 
   if (Display_TROPO3D_Surface != 0) {
 
-    for (int TROPO_level = 0; TROPO_level < TROPO_IMAGES_Map.length; TROPO_level++) {    
+    for (int TROPO_id = 0; TROPO_id < TROPO_IMAGES_Map.length; TROPO_id++) {    
 
       if (objExport_MaterialLibrary != 0) {
 
-        mtlOutput.println("newmtl TropoSphere_" + nf(TROPO_level, 0));
+        mtlOutput.println("newmtl TropoSphere_" + nf(TROPO_id, 0));
         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
         mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
         mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -18781,7 +18774,7 @@ void SOLARCHVISION_export_objects_OBJ () {
           //int n = 0;
           //if (IMPACTS_DisplayDay < TROPO_IMAGES_Map.length) n = IMPACTS_DisplayDay;
 
-          int n = TROPO_level; // <<<<<<<<
+          int n = TROPO_id; // <<<<<<<<
 
           String old_Texture_path = FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n];
 
@@ -18801,27 +18794,27 @@ void SOLARCHVISION_export_objects_OBJ () {
 
       if (objExport_PolyToPoly == 1) {
         obj_lastGroupNumber += 1;  
-        objOutput.println("g TropoSphere_" + nf(TROPO_level, 0));
+        objOutput.println("g TropoSphere_" + nf(TROPO_id, 0));
       }
 
       if (objExport_MaterialLibrary != 0) {
-        objOutput.println("usemtl TropoSphere_" + nf(TROPO_level, 0));
+        objOutput.println("usemtl TropoSphere_" + nf(TROPO_id, 0));
       }
 
 
-      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
-      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
+      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_id][0] + 180;
+      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_id][1] - 90;
 
-      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
-      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
+      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_id][1] - TROPO_IMAGES_BoundariesX[TROPO_id][0]) / 360.0;
+      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_id][1] - TROPO_IMAGES_BoundariesY[TROPO_id][0]) / 180.0;
 
-      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
-      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
+      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_id][0] + TROPO_IMAGES_BoundariesX[TROPO_id][1]);
+      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_id][0] + TROPO_IMAGES_BoundariesY[TROPO_id][1]);
 
       float delta_Alpha = -BIOSPHERE_drawResolution; 
       float delta_Beta = -BIOSPHERE_drawResolution;
 
-      float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
+      float r = FLOAT_r_Earth + 5000;
 
 
       for (int _turn = 1; _turn < 4; _turn += 1) {
@@ -18921,7 +18914,7 @@ void SOLARCHVISION_export_objects_OBJ () {
             if (objExport_PolyToPoly == 0) {
               if (_turn == 3) {
                 obj_lastGroupNumber += 1;
-                objOutput.println("g TropoSphere_" + nf(TROPO_level, 0) + "_" + nf(f, 0));
+                objOutput.println("g TropoSphere_" + nf(TROPO_id, 0) + "_" + nf(f, 0));
               }
             } 
 
@@ -21969,6 +21962,8 @@ void SOLARCHVISION_draw_WindFlow () {
 }
 
 
+
+
 PImage[] TROPO_IMAGES_Map;
 
 float[][] TROPO_IMAGES_BoundariesX;
@@ -21979,59 +21974,90 @@ String[] TROPO_IMAGES_Filenames;
 
 void SOLARCHVISION_update_TOROPO_IMAGES () {
   
-  TROPO_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
-
-  TROPO_IMAGES_Map = new PImage [TimeSteps];
+  String[] allFilenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
   
-  TROPO_IMAGES_BoundariesX = new float[TimeSteps][2];
-  TROPO_IMAGES_BoundariesY = new float[TimeSteps][2];
-  
+  TROPO_IMAGES_Filenames = new String [TROPO_timeSteps];
 
-
+  TROPO_IMAGES_Map = new PImage [TROPO_timeSteps];
   
-  if (TROPO_IMAGES_Filenames.length == TimeSteps) {
+  TROPO_IMAGES_BoundariesX = new float[TROPO_timeSteps][2];
+  TROPO_IMAGES_BoundariesY = new float[TROPO_timeSteps][2];
+  
+  int LoactationTimeZone = getLoactationTimeZone();
+  
+  int[] rightNow = getNow_inUTC();
+  
+  int CurrentYear = rightNow[0];
+  int CurrentMonth = rightNow[1];
+  int CurrentDay = rightNow[2];
+  int CurrentHour = rightNow[3];
+ 
+  for (int i = 0; i < TROPO_timeSteps; i++) {
     
-    println("They are equal!"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    CurrentHour += 1;
+    
+    if (CurrentHour > 23) {
+      CurrentHour -= 24;
+      CurrentDay += 1;
 
-    for (int i = 0; i < TimeSteps; i++) {
-      
-      String[] Parts = split(TROPO_IMAGES_Filenames[i], '_');
-  
-      TROPO_IMAGES_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
-      TROPO_IMAGES_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
-      TROPO_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
-      TROPO_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;      
-      
-      println("TROPO_IMAGES_BoundariesX");
-      println(TROPO_IMAGES_BoundariesX[i]);
-      println("TROPO_IMAGES_BoundariesY");
-      println(TROPO_IMAGES_BoundariesY[i]);
-      
-      
-      println("Loading:", FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
-  
-      TROPO_IMAGES_Map[i] = loadImage(FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
-  
+      if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+        CurrentDay = 1;
+        CurrentMonth += 1;
+        
+        if (CurrentMonth > 12) {
+          CurrentMonth = 1;
+          CurrentYear += 1;
+        }
+      }
     }
-  
+    
+    
+    
+    for (int q = 0; q < allFilenames.length; q++) {
+      
+      String[] Parts = split(allFilenames[q], '_');
+      
+      //if (Parts[0].equals(nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2))) {
+      if (Parts[0].equals(nf((CurrentHour + LoactationTimeZone) % 24, 2))) {
+        
+        TROPO_IMAGES_Filenames[i] = allFilenames[q];
+        
+        TROPO_IMAGES_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+        TROPO_IMAGES_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+        TROPO_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+        TROPO_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+        
+        println("Loading:", FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
+
+        TROPO_IMAGES_Map[i] = loadImage(FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
+
+        break;        
+      }
+    }
+
   }
 }
 
 
-void SOLARCHVISION_download_TOROPO_IMAGES () {
+int getLoactationTimeZone () {
+  return int(roundTo(LocationLongitude / 15, 15)); 
+}
+
+
+int[] getNow_inUTC () {
   
+  int LoactationTimeZone = getLoactationTimeZone();
   
   int CurrentYear = year();
   int CurrentMonth = month();
   int CurrentDay = day();
   int CurrentHour = hour();
- 
-  int LoactationTimeZone = int(roundTo(LocationLongitude / 15, 15)); // EST
- 
+
+   
   // converting from local time to global time 
   
   if (LoactationTimeZone > 0) {
-    CurrentHour -= abs(LoactationTimeZone);
+    CurrentHour -= LoactationTimeZone;
     
     if (CurrentHour < 0) {
       CurrentHour += 24;
@@ -22068,10 +22094,26 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
       }
     }
   }  
+
+  int[] return_array = {CurrentYear, CurrentMonth, CurrentDay, CurrentHour};
   
+  return return_array;
+}
+
+
+
+void SOLARCHVISION_download_TOROPO_IMAGES () {
+
+  int LoactationTimeZone = getLoactationTimeZone();
   
+  int[] rightNow = getNow_inUTC();
   
-  for (int i = 0; i < TROPO_IMAGES_Map.length; i++) {
+  int CurrentYear = rightNow[0];
+  int CurrentMonth = rightNow[1];
+  int CurrentDay = rightNow[2];
+  int CurrentHour = rightNow[3];
+ 
+  for (int i = 0; i < TROPO_timeSteps; i++) {
     
     CurrentHour += 1;
     
@@ -22207,13 +22249,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     the_layer += nf(TROPO_IMAGES_BoundariesX[i][1], 0, 3) + ",";
     the_layer += nf(TROPO_IMAGES_BoundariesY[i][1], 0, 3);
     
-    String BBoxStamp = "";
-    BBoxStamp += nf(int(1000 * -TROPO_IMAGES_BoundariesX[i][0]), 0) + "_";
-    BBoxStamp += nf(int(1000 *  TROPO_IMAGES_BoundariesY[i][0]), 0) + "_";
-    BBoxStamp += nf(int(1000 * -TROPO_IMAGES_BoundariesX[i][1]), 0) + "_";
-    BBoxStamp += nf(int(1000 *  TROPO_IMAGES_BoundariesY[i][1]), 0) + "_";    
-
-    int the_hour = i * deltaTime; 
+    int the_hour = i * TROPO_deltaTime; 
 
     String timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
    
@@ -22224,31 +22260,63 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     
     TROPO_IMAGES_Map[i] = createImage(2, 2, RGB);
     
-    String FN = "GEOMET_";
+    //String FN = nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2) + "_";
+    String FN = nf((CurrentHour + LoactationTimeZone) % 24, 2) + "_";
     FN += nf(int(roundTo(-1000 * TROPO_IMAGES_BoundariesX[i][0], 1)), 6) + "_";
     FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][0], 1)), 6) + "_";
     FN += nf(int(roundTo(-1000 * TROPO_IMAGES_BoundariesX[i][1], 1)), 6) + "_";
     FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][1], 1)), 6) + "_";
-    //FN += ParameterStamp + "_";
-    //FN += DomainStamp + "_";
-    FN += timeStamp;
     FN += ".png";
 
     String the_target = FORECAST_GEOMET_directory + "/" + FN;
 
-    //File dir = new File(the_target);
-    //if (!dir.isFile()) 
-    {       
+    File dir = new File(the_target);
+    if (!dir.isFile()) {
+      
+      boolean new_file_downloaded = false;
 
       println("Try downloading: " + the_link);
 
       try {
         saveBytes(the_target, loadBytes(the_link));
+        
+        new_file_downloaded = true;
       }
       
       catch (Exception e) {
         println("LINK NOT AVAILABLE:", the_link);
       }
+      
+      if (new_file_downloaded == true) {
+        if (ParameterStamp.equals("_NT&STYLES=CLOUD")) {
+          println("image processing cloud layer");
+          
+          PImage img = loadImage(the_target);
+          img.loadPixels();        
+              
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
+          
+            color COL = img.get(Image_X, Image_Y);
+            //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+            
+            float COL_A = (COL >> 24 & 0xFF);
+            
+            if (COL_A == 0) {
+              img.pixels[np] = color(0,0);
+            }
+            else {
+              float COL_V = (COL >> 16 & 0xFF);
+              img.pixels[np] = color(255 - 0.125 * COL_V, COL_V);
+            }        
+          }
+          img.updatePixels();
+          img.save(the_target);
+        }
+      }
+      
+
     }
   }
 
@@ -22260,26 +22328,26 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
 
 
 
-void SOLARCHVISION_draw_TROPO3D () {
+void SOLARCHVISION_draw_TROPO3D (int start_hour, int end_hour) {
   if (Display_TROPO3D_Surface != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
+      
+    for (int TROPO_id = start_hour; TROPO_id <= end_hour; TROPO_id++) {
 
-    for (int TROPO_level = 0; TROPO_level < TROPO_IMAGES_Map.length; TROPO_level++) {
+      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_id][0] + 180;
+      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_id][1] - 90;
 
-      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
-      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
+      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_id][1] - TROPO_IMAGES_BoundariesX[TROPO_id][0]) / 360.0;
+      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_id][1] - TROPO_IMAGES_BoundariesY[TROPO_id][0]) / 180.0;
 
-      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
-      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
-
-      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
-      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
+      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_id][0] + TROPO_IMAGES_BoundariesX[TROPO_id][1]);
+      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_id][0] + TROPO_IMAGES_BoundariesY[TROPO_id][1]);
 
       float delta_Alpha = -BIOSPHERE_drawResolution;
       float delta_Beta = -BIOSPHERE_drawResolution;
 
-      float r = FLOAT_r_Earth + (TROPO_IMAGES_Map.length - TROPO_level) * 17000;
+      float r = FLOAT_r_Earth + 5000;
 
       for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
         for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -22337,12 +22405,12 @@ void SOLARCHVISION_draw_TROPO3D () {
 
           if (Display_TROPO3D_Texture != 0) {
 
-            WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_level]);
+            WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
           }
 
           for (int s = 0; s < subFace.length; s++) {
 
-            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * TROPO_IMAGES_Map[TROPO_level].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_level].height);
+            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
           }
 
           WIN3D_Diagrams.endShape(CLOSE);
@@ -31605,10 +31673,10 @@ void mouseWheel (MouseEvent event) {
                   if (STUDY_i_End > 23) STUDY_i_End = 0;
 
                   if ((keep_STUDY_i_Start != STUDY_i_Start) || (keep_STUDY_i_End != STUDY_i_End)) {
-                    //Update_DevelopData = 1;
 
                     ROLLOUT_Update = 1;
                     STUDY_Update = 1;
+                    WIN3D_Update = 1;
                     UI_BAR_d_Update = 1;
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -31629,10 +31697,10 @@ void mouseWheel (MouseEvent event) {
                   if (STUDY_JoinDays < 1) STUDY_JoinDays = 1;
 
                   if (keep_STUDY_JoinDays != STUDY_JoinDays) {
-                    //Update_DevelopData = 1;
 
                     ROLLOUT_Update = 1;
                     STUDY_Update = 1;
+                    WIN3D_Update = 1;
                     UI_BAR_d_Update = 1;
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -31667,10 +31735,9 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleYear_Start != SampleYear_Start) || (keep_SampleYear_End != SampleYear_End)) {
 
-                      //Update_DevelopData = 1;
-
                       ROLLOUT_Update = 1;
                       STUDY_Update = 1;
+                      WIN3D_Update = 1;
                       UI_BAR_d_Update = 1;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -31700,10 +31767,9 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleYear_Start != SampleYear_Start) || (keep_SampleYear_End != SampleYear_End)) {
 
-                      //Update_DevelopData = 1;
-
                       ROLLOUT_Update = 1;
                       STUDY_Update = 1;
+                      WIN3D_Update = 1;
                       UI_BAR_d_Update = 1;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -31733,10 +31799,9 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleMember_Start != SampleMember_Start) || (keep_SampleMember_End != SampleMember_End)) {
 
-                      //Update_DevelopData = 1;
-
                       ROLLOUT_Update = 1;
                       STUDY_Update = 1;
+                      WIN3D_Update = 1;
                       UI_BAR_d_Update = 1;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -31766,10 +31831,9 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleStation_Start != SampleStation_Start) || (keep_SampleStation_End != SampleStation_End)) {
 
-                      //Update_DevelopData = 1;
-
                       ROLLOUT_Update = 1;
                       STUDY_Update = 1;
+                      WIN3D_Update = 1;
                       UI_BAR_d_Update = 1;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -47957,6 +48021,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
+            WIN3D_Update = 1;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -47966,6 +48031,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
+            WIN3D_Update = 1;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48004,6 +48070,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
             SOLARCHVISION_update_date(); 
             TIME_BeginDay = int(TIME_BeginDay + (TIME_Date - keep_TIME_Date) + 365) % 365;
             SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+            
+            STUDY_Update = 1; 
+            ROLLOUT_Update = 1;
+            WIN3D_Update = 1;            
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48018,10 +48088,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             if (STUDY_PerDays < 0) STUDY_PerDays = 1;
 
-            Update_DevelopData = 1;
-
             STUDY_Update = 1; 
             ROLLOUT_Update = 1;
+            WIN3D_Update = 1;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48154,10 +48223,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }       
 
-            //Update_DevelopData = 1;
-
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
+            WIN3D_Update = 1;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48210,10 +48278,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }                
 
-            //Update_DevelopData = 1;
-
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
+            WIN3D_Update = 1;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48317,8 +48384,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
         STUDY_ImpactLayer = n;
 
+        STUDY_Update = 1; 
         ROLLOUT_Update = 1;
-        STUDY_Update = 1;
+        WIN3D_Update = 1;
 
         SOLARCHVISION_find_which_bakings_to_regenerate();
       }
