@@ -1,4 +1,5 @@
 
+int TROPO_IMAGES_maxHours = 24;
 
 // should define subroutines to perfome this not inside draw! if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
 
@@ -1975,7 +1976,7 @@ void setup () {
 
 
   Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
-  Load_TROPO_IMAGES(); // <<<<<<<<<<<< should move it below
+
 
   MOON_IMAGE_Map = loadImage(MOON_IMAGE_Filename);
   STAR_IMAGE_Map = loadImage(STAR_IMAGE_Filename);
@@ -2164,236 +2165,152 @@ void draw () {
     textAlign(CENTER, CENTER); 
     textSize(MessageSize);
   } else if (frameCount == 2) {
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_ListWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_ListWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 3) {
     SOLARCHVISION_ListWorldImages();
     SOLARCHVISION_load_WorldViewImage(WORLD_VIEW_Number); // to load the globe image into memory
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_loadObject2DImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_loadObject2DImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 4) {
     SOLARCHVISION_loadObject2DImages();
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_Calendar", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_Calendar", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 5) {
     SOLARCHVISION_Calendar(); 
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_getSWOB_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getSWOB_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 6) {
     SOLARCHVISION_getSWOB_Coordinates(); 
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_getNAEFS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getNAEFS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 7) {
     SOLARCHVISION_getNAEFS_Coordinates(); 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_getCWEEDS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getCWEEDS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 8) {
     SOLARCHVISION_getCWEEDS_Coordinates();  
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_getCLMREC_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getCLMREC_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 9) {
     SOLARCHVISION_getCLMREC_Coordinates();  
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_getTMYEPW_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getTMYEPW_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 10) {
     SOLARCHVISION_getTMYEPW_Coordinates();  
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_date", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_date", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 11) {
-    SOLARCHVISION_update_date(); 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    SOLARCHVISION_update_date();
+    
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_station(start)", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_station(start)", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 12) {
     SOLARCHVISION_update_station(1);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_CLIMATE_TMYEPW", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_CLIMATE_TMYEPW", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 13) {
     SOLARCHVISION_update_station(2);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_CLIMATE_CWEEDS", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_CLIMATE_CWEEDS", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 14) {
     SOLARCHVISION_update_station(3);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_CLIMATE_CLMREC", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_CLIMATE_CLMREC", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 15) {
     SOLARCHVISION_update_station(4);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_ENSEMBLE_OBSERVED", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_ENSEMBLE_OBSERVED", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 16) {
     SOLARCHVISION_update_station(5);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_ENSEMBLE_FORECAST", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_update_ENSEMBLE_FORECAST", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 17) {
     SOLARCHVISION_update_station(6);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_load_LAND_Mesh", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_load_LAND_Mesh", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 18) {
     SOLARCHVISION_update_station(7);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_delete_Fractals", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_delete_Fractals", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 19) {
     SOLARCHVISION_update_station(8);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_delete_Object2Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_delete_Object2Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 20) {
     SOLARCHVISION_update_station(9);
 
-    stroke(0);
-    fill(0);
+    stroke(0); fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
+    stroke(255); fill(255);
     text("SOLARCHVISION_add_Object2Ds_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 21) {
     SOLARCHVISION_update_station(10);
 
-    stroke(0);
-    fill(0);
+    stroke(0); fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_delete_Group3Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_delete_Group3Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 22) {
     SOLARCHVISION_update_models(1);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_add_Model_Main", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_add_Model_Main", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 23) {
     SOLARCHVISION_update_models(2);
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View);
+    
+    stroke(255); fill(255); text("SOLARCHVISION_update_TOROPO_IMAGES", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 24) {
+    SOLARCHVISION_update_TOROPO_IMAGES();
+
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View);    
+ 
+    stroke(255); fill(255); text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+  } else if (frameCount == 25) {
     
     SOLARCHVISION_build_SkySphere(1); //1 - 3
     SOLARCHVISION_resize_GlobalSolar_array();    
     SOLARCHVISION_resize_VertexSolar_array();
 
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("Please wait while integrating the models.", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("Please wait while integrating the models.", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
 
     MESSAGE_X_View = 2 * SOLARCHVISION_W_Pixel;
 
@@ -22045,14 +21962,12 @@ void SOLARCHVISION_draw_WindFlow () {
 
 PImage[] TROPO_IMAGES_Map;
 
-//String TROPO_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Tropo/Winds";
-String TROPO_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Tropo/Winds_less";
-
 String[] TROPO_IMAGES_Filenames;
 
-void Load_TROPO_IMAGES () {
 
-  TROPO_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(TROPO_IMAGES_Path));
+void SOLARCHVISION_update_TOROPO_IMAGES () {
+
+  TROPO_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
 
   TROPO_IMAGES_Map = new PImage [TROPO_IMAGES_Filenames.length];
 
@@ -22063,6 +21978,336 @@ void Load_TROPO_IMAGES () {
     TROPO_IMAGES_Map[i] = loadImage(TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[i]);
   }
 }
+
+
+void SOLARCHVISION_download_TOROPO_IMAGES () {
+
+  int deltaTime = 1; // 3;
+  
+  //int TimeSteps = 1;
+  int TimeSteps = 24 / deltaTime; // upto 36 hours!
+  //int TimeSteps = 36 / deltaTime; // upto 36 hours!
+  
+  int DisplayTime = 0;
+
+  
+  TROPO_IMAGES = new PImage[TimeSteps];
+  
+  TROPO_IMAGES_BoundariesX = new float[TimeSteps][2];
+  TROPO_IMAGES_BoundariesY = new float[TimeSteps][2];
+  
+  TROPO_IMAGES_Filenames = new String[TimeSteps];
+  
+    
+  
+
+  
+  
+  int CurrentYear = year();
+  int CurrentMonth = month();
+  int CurrentDay = day();
+  int CurrentHour = hour();
+ 
+  int LoactationTimeZone = int(roundTo(LocationLongitude / 15, 15)); // EST
+ 
+  // converting from local time to global time 
+  
+  if (LoactationTimeZone > 0) {
+    CurrentHour -= abs(LoactationTimeZone);
+    
+    if (CurrentHour < 0) {
+      CurrentHour += 24;
+      CurrentDay -= 1;
+
+      if (CurrentDay < 1) { 
+        
+        CurrentMonth -= 1;
+        
+        if (CurrentMonth < 1) {
+          CurrentMonth = 12;
+          CurrentYear -= 1;
+        }
+        
+        CurrentDay = CalendarLength[CurrentMonth - 1];
+      }
+    }
+  }
+  else if (LoactationTimeZone < 0) {
+    CurrentHour += abs(LoactationTimeZone);
+    
+    if (CurrentHour > 23) {
+      CurrentHour -= 24;
+      CurrentDay += 1;
+
+      if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+        CurrentDay = 1;
+        CurrentMonth += 1;
+        
+        if (CurrentMonth > 12) {
+          CurrentMonth = 1;
+          CurrentYear += 1;
+        }
+      }
+    }
+  }  
+  
+  
+  
+  for (int i = 0; i < TROPO_IMAGES.length; i++) {
+    
+    CurrentHour += 1;
+    
+    if (CurrentHour > 23) {
+      CurrentHour -= 24;
+      CurrentDay += 1;
+
+      if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+        CurrentDay = 1;
+        CurrentMonth += 1;
+        
+        if (CurrentMonth > 12) {
+          CurrentMonth = 1;
+          CurrentYear += 1;
+        }
+      }
+    }
+    
+
+
+    String the_layer = "http://geo.weather.gc.ca/geomet/?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
+   
+   
+    String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+    //String ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
+    //String ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
+    //String ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
+    //String ParameterStamp = "_UU&STYLES=WINDARROWKMH"; // Wind arrows in km/h
+    //String ParameterStamp = "_UU&STYLES=WINDARROW"; // Wind arrows in knots
+    //String ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
+    //String ParameterStamp = "_TT&STYLES=TEMPSUMMER"; // Air temperaturesummer range
+    //String ParameterStamp = "_TT&STYLES=TEMPWINTER"; // Air temperaturewinter range
+    //String ParameterStamp = "_ES&STYLES=DEWPOINTDEP"; // Dew point depression
+    //String ParameterStamp = "_P0&STYLES=PRESSURE"; // Surface pressure
+    //String ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
+    //String ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
+    //String ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
+    //String ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
+    //String ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
+    //String ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
+    //String ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
+    //String ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
+    //String ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
+    //String ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
+    //String ParameterStamp = "_I0&STYLES=TEMPSOIL"; // Soil Temperature
+    //String ParameterStamp = "_I1&STYLES=WATERCONTENT"; // Water content
+    //String ParameterStamp = "_I2&STYLES=ICECONTENT"; // Soil volumetric ice content
+    //String ParameterStamp = "_I3&STYLES=WATERRETAINED"; // Water retained on the vegetation 
+    //String ParameterStamp = "_I4&STYLES=WATERRETAINED"; // Water retained in the snow pack
+    //String ParameterStamp = "_I5&STYLES=SNOWMASS"; // Snow mass
+    //String ParameterStamp = "_I8&STYLES=ICETHICK"; // Sea ice thickness
+    
+    //String ParameterStamp = "_WGE&STYLES=MS2KTSGUST"; // Windgust estimate intervals in knots
+    //String ParameterStamp = "_WGE&STYLES=MS2KTS"; // Windspeed estimate in knots
+    //String ParameterStamp = "_WGE&STYLES=MS2KMH"; // Windspeed estimate in km/h
+    
+    //String ParameterStamp = "_WGN&STYLES=MS2KTSGUST"; // Windgust minimum intervals in knots
+    //String ParameterStamp = "_WGN&STYLES=MS2KTS"; // Windspeed minimum in knots
+    //String ParameterStamp = "_WGN&STYLES=MS2KMH"; // Windspeed minimum in km/h
+    
+    //String ParameterStamp = "_WGX&STYLES=MS2KTSGUST"; // Windgust maximum intervals in knots
+    //String ParameterStamp = "_WGX&STYLES=MS2KTS"; // Windspeed maximum in knots
+    //String ParameterStamp = "_WGX&STYLES=MS2KMH"; // Windspeed maximum in km/h
+    
+/*
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_GZ";  // Geopotential height
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_UU";  // Winds 
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_NT";  // Total cloud cover
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_TT"; // Air temperature  
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_ES";  // Dew point depression
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_P0";  // Surface pressure
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_PN";  // Sea level pressure
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_PR";  // Quantity of precipitation 
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_RT";  // Total precipitation rate
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_RN";  // Rain (QPF)
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_FR";  // Freezing rain (QPF) 
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_SN";  // Snow (QPF)
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I0";  // Surface and soil temperatures (Deep/Mean) 
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I1";  // Soil volumetric water content (Deep/Mean)
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I2";  // Soil volumetric ice content
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I3";  // Water retained on the vegetation 
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I4";  // Water in the snow pack
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I5";  // Snow mass 
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I8";  // Sea ice thickness
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_WGE";  // Wind gust estimate
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_WGN";  // Wind gust minimum
+  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_WGX";  // Wind gust maximum 
+*/
+    
+    
+    
+    /*
+    String DomainStamp = "GDPS.ETA";
+    TROPO_IMAGES_BoundariesX[i][0] = -180;
+    TROPO_IMAGES_BoundariesX[i][1] = 180;
+    TROPO_IMAGES_BoundariesY[i][0] = 90;
+    TROPO_IMAGES_BoundariesY[i][1] = -90;
+    */
+    
+    
+    /*
+    String DomainStamp = "RDPS.ETA";
+    TROPO_IMAGES_BoundariesX[i][0] = -180;
+    TROPO_IMAGES_BoundariesX[i][1] = 180;
+    TROPO_IMAGES_BoundariesY[i][0] = 0;
+    TROPO_IMAGES_BoundariesY[i][1] = 90;
+    */
+    
+    
+/*    
+    String DomainStamp = "HRDPS.CONTINENTAL";
+    TROPO_IMAGES_BoundariesX[i][0] = -155;
+    TROPO_IMAGES_BoundariesX[i][1] = -40;
+    TROPO_IMAGES_BoundariesY[i][0] = 25;
+    TROPO_IMAGES_BoundariesY[i][1] = 72.5;
+*/    
+    
+
+    //String DomainStamp = "HRDPS.CONTINENTAL";
+    String DomainStamp = "RDPS.ETA";
+    TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
+    TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
+    TROPO_IMAGES_BoundariesY[i][0] = LocationLatitude - 5 * cos_ang(LocationLatitude);
+    TROPO_IMAGES_BoundariesY[i][1] = LocationLatitude + 5 * cos_ang(LocationLatitude);
+    
+    
+    
+    int RES1 = 1200; // 1800;
+    int RES2 = 600; // 900;   
+    
+    the_layer += "&LAYERS=" + DomainStamp + ParameterStamp + "&WIDTH=" + nf(RES1, 0) + "&HEIGHT=" + nf(RES2, 0);
+    the_layer += "&SRS=EPSG%3A4326&BBOX=";
+    the_layer += nf(TROPO_IMAGES_BoundariesX[i][0], 0, 3) + ",";
+    the_layer += nf(TROPO_IMAGES_BoundariesY[i][0], 0, 3) + ",";
+    the_layer += nf(TROPO_IMAGES_BoundariesX[i][1], 0, 3) + ",";
+    the_layer += nf(TROPO_IMAGES_BoundariesY[i][1], 0, 3);
+    
+    String BBoxStamp = "";
+    BBoxStamp += nf(int(1000 * -TROPO_IMAGES_BoundariesX[i][0]), 0) + "_";
+    BBoxStamp += nf(int(1000 *  TROPO_IMAGES_BoundariesY[i][0]), 0) + "_";
+    BBoxStamp += nf(int(1000 * -TROPO_IMAGES_BoundariesX[i][1]), 0) + "_";
+    BBoxStamp += nf(int(1000 *  TROPO_IMAGES_BoundariesY[i][1]), 0) + "_";    
+
+    int the_hour = i * deltaTime; 
+    
+    String timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
+   
+    //String the_link = the_layer + "%26time%3D" + timeStamp +"%3A22%3A00Z";
+    String the_link = the_layer + "%26time%3D" + timeStamp +"%3A00Z";
+    
+
+    
+    TROPO_IMAGES[i] = createImage(2, 2, RGB);
+    
+    println("Loading:", the_link);
+    
+    TROPO_IMAGES_Filenames[i] = timeStamp + "_" + DomainStamp.replace('.', '_');
+    
+    String the_target = timeStamp + "_" + ParameterStamp + "_" + DomainStamp + ".png";
+    
+    try {
+    
+      saveBytes(the_target, loadBytes(the_link));
+    
+      TROPO_IMAGES[i] = loadImage(the_target);
+      
+      if (ParameterStamp.equals("_NT&STYLES=CLOUD")) { 
+        
+        println("image processing cloud layer");
+        
+        TROPO_IMAGES[i].loadPixels();        
+            
+        for (int np = 0; np < (RES1 * RES2); np++) {
+          int Image_X = np % RES1;
+          int Image_Y = np / RES1;
+        
+          color COL = TROPO_IMAGES[i].get(Image_X, Image_Y);
+          //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+          
+          float COL_A = (COL >> 24 & 0xFF);
+          
+          if (COL_A == 0) {
+            TROPO_IMAGES[i].pixels[np] = color(0,0);
+          }
+          else {
+            
+            float COL_V = (COL >> 16 & 0xFF);
+            
+            //TROPO_IMAGES[i].pixels[np] = color(127 + 0.5 * COL_V, 255 - COL_V);
+            //TROPO_IMAGES[i].pixels[np] = color(255, COL_V);
+            //TROPO_IMAGES[i].pixels[np] = color(255 - 0.5 * COL_V, COL_V);
+            //TROPO_IMAGES[i].pixels[np] = color(255 - 0.25 * COL_V, COL_V);
+            TROPO_IMAGES[i].pixels[np] = color(255 - 0.125 * COL_V, COL_V);
+          }        
+        }
+        
+        TROPO_IMAGES[i].updatePixels();
+        
+        
+      }
+    }
+    
+    catch (Exception e) {
+      
+      println("Can't get!");
+    }
+    
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+  
+
+
+    String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + "-swob.xml";
+
+    String the_target = FORECAST_GEOMET_directory + "/" + FN;
+
+    File dir = new File(the_target);
+    if (!dir.isFile()) {       
+
+      String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
+
+      println("Try downloading: " + the_link);
+
+      try {
+        saveBytes(the_target, loadBytes(the_link));
+      } 
+      catch (Exception e) {
+        println("LINK NOT AVAILABLE:", the_link);
+      }
+    }
+
+
+  
+
+  TROPO_IMAGES_Filenames = SOLARCHVISION_getfiles(FORECAST_GEOMET_directory);
+  
+
+  SOLARCHVISION_update_TOROPO_IMAGES();
+}  
+  
+
+
+
 
 
 void SOLARCHVISION_draw_TROPO3D () {
@@ -32842,6 +33087,10 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Land Texture")) { 
               SOLARCHVISION_download_LAND_Textures();
             }   
+            
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Toroposphere")) {
+              SOLARCHVISION_download_TOROPO_IMAGES();
+            }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Aerial")) {
               SOLARCHVISION_update_AERIAL(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
@@ -45849,7 +46098,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Site", "Update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial" 
+    "Site", "Update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download Toroposphere", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial" 
   }
   , 
   {
