@@ -79,16 +79,16 @@ void launch (String[] s) {
 String CLIMATE_TMYEPW_directory;
 String CLIMATE_CWEEDS_directory;
 String CLIMATE_CLMREC_directory;
-String OBSERVATION_XML_directory;
-String FORECAST_XML_directory;
+String ENSEMBLE_OBSERVED_directory;
+String ENSEMBLE_FORECAST_directory;
 String FORECAST_GRIB2_directory;
 String FORECAST_GEOMET_directory;
 
 String[] CLIMATE_TMYEPW_Files;
 String[] CLIMATE_CWEEDS_Files;
 String[] CLIMATE_CLMREC_Files;
-String[] OBSERVATION_XML_XML_Files;
-String[] FORECAST_XML_XML_Files;
+String[] ENSEMBLE_OBSERVED_XML_Files;
+String[] ENSEMBLE_FORECAST_XML_Files;
 
 
 String SOLARCHVISION_version = "2017"; 
@@ -126,8 +126,8 @@ void SOLARCHVISION_update_folders () {
   RealtimeDataFolder = ProjectFolder + "/Input/WeatherRealtime";
   FORECAST_GEOMET_directory = ProjectFolder + "/forecast/FORECAST_GEOMET";
   FORECAST_GRIB2_directory = ProjectFolder + "/forecast/FORECAST_GRIB2";
-  FORECAST_XML_directory = ProjectFolder + "/forecast/FORECAST_NAEFS";
-  OBSERVATION_XML_directory = ProjectFolder + "/observation/OBSERVATION_SWOB";
+  ENSEMBLE_FORECAST_directory = ProjectFolder + "/forecast/FORECAST_NAEFS";
+  ENSEMBLE_OBSERVED_directory = ProjectFolder + "/observation/OBSERVATION_SWOB";
 
   CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
   CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
@@ -136,8 +136,8 @@ void SOLARCHVISION_update_folders () {
   CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
   CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
   CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
-  OBSERVATION_XML_XML_Files = SOLARCHVISION_getfiles(OBSERVATION_XML_directory);
-  FORECAST_XML_XML_Files = SOLARCHVISION_getfiles(FORECAST_XML_directory);  
+  ENSEMBLE_OBSERVED_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
+  ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
 
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
@@ -216,8 +216,8 @@ int pre_CLIMATIC_WeatherForecast;
 int pre_Load_CLIMATE_TMYEPW;
 int pre_Load_CLIMATE_CWEEDS;
 int pre_Load_CLIMATE_CLMREC;
-int pre_Load_FORECAST_XML;
-int pre_Load_OBSERVATION_XML;    
+int pre_Load_ENSEMBLE_FORECAST;
+int pre_Load_ENSEMBLE_OBSERVED;    
 
 int pre_Load_LAND_Mesh;
 int pre_Load_LAND_Textures;
@@ -711,7 +711,7 @@ String MAKE_MainName () {
 
   String s = "";
 
-  if (CurrentDataSource == dataID_FORECAST_XML) s = nf(TIME_Year, 2) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + "_" + nf(STUDY_j_End, 0) + "dayFORECAST_";
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) s = nf(TIME_Year, 2) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + "_" + nf(STUDY_j_End, 0) + "dayFORECAST_";
 
   return s;
 }
@@ -759,8 +759,8 @@ int WIN3D_record_JPG = 0;
 int WIN3D_record_AUTO = 0;
 
 
-int FORECAST_XML_maxDays = 16; // Constant
-int OBSERVATION_XML_maxDays = 3; // Variable
+int ENSEMBLE_FORECAST_maxDays = 16; // Constant
+int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
 
 float STUDY_PerDays = 45; //61; //1; //45; //61; //30.5;
 int STUDY_JoinDays = 1; //30;//STUDY_PerDays; // it should be set up to 1 in order to plot only one day  
@@ -774,16 +774,16 @@ int CLIMATE_CWEEDS_end = 2005;
 int CLIMATE_CLMREC_start = 2000;
 int CLIMATE_CLMREC_end = 2017;
 
-int FORECAST_XML_start = 1; 
-int FORECAST_XML_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
+int ENSEMBLE_FORECAST_start = 1; 
+int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
 
-int OBSERVATION_XML_numNearest = 5;  // <<<<<<<<
+int ENSEMBLE_OBSERVED_numNearest = 5;  // <<<<<<<<
 
-int OBSERVATION_XML_start = 1; 
-int OBSERVATION_XML_end = OBSERVATION_XML_numNearest;
+int ENSEMBLE_OBSERVED_start = 1; 
+int ENSEMBLE_OBSERVED_end = ENSEMBLE_OBSERVED_numNearest;
 
-int[] nearest_Station_OBSERVATION_XML_id = new int [OBSERVATION_XML_numNearest];
-float[] nearest_Station_OBSERVATION_XML_dist = new float [OBSERVATION_XML_numNearest];
+int[] nearest_Station_ENSEMBLE_OBSERVED_id = new int [ENSEMBLE_OBSERVED_numNearest];
+float[] nearest_Station_ENSEMBLE_OBSERVED_dist = new float [ENSEMBLE_OBSERVED_numNearest];
 
 int nearest_Station_CLMREC_id = -1;
 float nearest_Station_CLMREC_dist = FLOAT_undefined;
@@ -808,11 +808,11 @@ boolean[][][][] CLIMATE_CWEEDS_flags;
 float[][][][] CLIMATE_CLMREC_values;
 boolean[][][][] CLIMATE_CLMREC_flags;
 
-float[][][][] FORECAST_XML_values;
-boolean[][][][] FORECAST_XML_flags;
+float[][][][] ENSEMBLE_FORECAST_values;
+boolean[][][][] ENSEMBLE_FORECAST_flags;
 
-float[][][][] OBSERVATION_XML_values;
-boolean[][][][] OBSERVATION_XML_flags;
+float[][][][] ENSEMBLE_OBSERVED_values;
+boolean[][][][] ENSEMBLE_OBSERVED_flags;
 
 
 
@@ -820,8 +820,8 @@ boolean[][][][] OBSERVATION_XML_flags;
 int Load_CLIMATE_TMYEPW = 1;
 int Load_CLIMATE_CWEEDS = 0;
 int Load_CLIMATE_CLMREC = 0;
-int Load_FORECAST_XML = 0;
-int Load_OBSERVATION_XML = 0;
+int Load_ENSEMBLE_FORECAST = 0;
+int Load_ENSEMBLE_OBSERVED = 0;
 
 
 int GRIB2_Year; 
@@ -883,7 +883,7 @@ int GRIB2_DomainSelection = 1; int GRIB2_maxScenarios = 21; // should convert U&
 //int GRIB2_DomainSelection = 5; int GRIB2_maxScenarios = 1; // not working now!
 
 {
-  FORECAST_XML_end += GRIB2_maxScenarios;
+  ENSEMBLE_FORECAST_end += GRIB2_maxScenarios;
 }
 
 
@@ -1480,8 +1480,8 @@ float STUDY_rect_offset_x = 0.5;
 
 PGraphics STUDY_Diagrams;
 
-int dataID_OBSERVATION_XML = 0;
-int dataID_FORECAST_XML = 1;
+int dataID_ENSEMBLE_OBSERVED = 0;
+int dataID_ENSEMBLE_FORECAST = 1;
 int dataID_CLIMATE_CWEEDS = 2;
 int dataID_CLIMATE_CLMREC = 3;
 int dataID_CLIMATE_TMYEPW = 4;
@@ -2051,9 +2051,9 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 4)) SOLARCHVISION_update_CLIMATE_CLMREC();
 
-  if ((Step == 0) || (Step == 5)) SOLARCHVISION_update_OBSERVATION_XML();
+  if ((Step == 0) || (Step == 5)) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
 
-  if ((Step == 0) || (Step == 6)) SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+  if ((Step == 0) || (Step == 6)) SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
   if ((Step == 0) || (Step == 7)) SOLARCHVISION_load_LAND_Mesh();
 
@@ -2298,7 +2298,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_OBSERVATION_XML", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_update_ENSEMBLE_OBSERVED", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 16) {
     SOLARCHVISION_update_station(5);
 
@@ -2308,7 +2308,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_FORECAST_XML", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_update_ENSEMBLE_FORECAST", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 17) {
     SOLARCHVISION_update_station(6);
 
@@ -2439,8 +2439,8 @@ void draw () {
         pre_Load_CLIMATE_TMYEPW = Load_CLIMATE_TMYEPW;
         pre_Load_CLIMATE_CWEEDS = Load_CLIMATE_CWEEDS;
         pre_Load_CLIMATE_CLMREC = Load_CLIMATE_CLMREC;
-        pre_Load_FORECAST_XML = Load_FORECAST_XML;
-        pre_Load_OBSERVATION_XML = Load_OBSERVATION_XML;       
+        pre_Load_ENSEMBLE_FORECAST = Load_ENSEMBLE_FORECAST;
+        pre_Load_ENSEMBLE_OBSERVED = Load_ENSEMBLE_OBSERVED;       
 
         pre_LocationLatitude = LocationLatitude;
         pre_LocationLongitude = LocationLongitude;
@@ -2608,7 +2608,7 @@ void draw () {
           TIME_Hour = int(24 * (TIME_Date - int(TIME_Date)));
           TIME_Date = (TIME_Hour / 24.0) + (286 + SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day)) % 365;
           println("DATE:", TIME_Date, "\tHOUR:", TIME_Hour);
-          SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+          SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
           SOLARCHVISION_draw_ROLLOUT();
         }
@@ -2618,8 +2618,8 @@ void draw () {
         if (pre_Load_CLIMATE_TMYEPW != Load_CLIMATE_TMYEPW) SOLARCHVISION_update_CLIMATE_TMYEPW();
         if (pre_Load_CLIMATE_CWEEDS != Load_CLIMATE_CWEEDS) SOLARCHVISION_update_CLIMATE_CWEEDS();
         if (pre_Load_CLIMATE_CLMREC != Load_CLIMATE_CLMREC) SOLARCHVISION_update_CLIMATE_CLMREC();
-        if (pre_Load_OBSERVATION_XML != Load_OBSERVATION_XML) SOLARCHVISION_update_OBSERVATION_XML();
-        if (pre_Load_FORECAST_XML != Load_FORECAST_XML) SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+        if (pre_Load_ENSEMBLE_OBSERVED != Load_ENSEMBLE_OBSERVED) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+        if (pre_Load_ENSEMBLE_FORECAST != Load_ENSEMBLE_FORECAST) SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
         if (pre_WORLD_AutoView != WORLD_AutoView) {
           WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
@@ -3717,10 +3717,10 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
     }   
 
-    for ( int q = 0; q < OBSERVATION_XML_numNearest; q++) {
+    for ( int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
-      nearest_Station_OBSERVATION_XML_id[q] = -1;
-      nearest_Station_OBSERVATION_XML_dist[q] = FLOAT_undefined;
+      nearest_Station_ENSEMBLE_OBSERVED_id[q] = -1;
+      nearest_Station_ENSEMBLE_OBSERVED_dist[q] = FLOAT_undefined;
   
       for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
         float draw_info = 0;
@@ -3758,24 +3758,24 @@ void SOLARCHVISION_draw_WORLD () {
   
         float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
   
-        if (nearest_Station_OBSERVATION_XML_dist[q] > d) {
+        if (nearest_Station_ENSEMBLE_OBSERVED_dist[q] > d) {
 
           int added_before = 0;
 
           for (int p = 0; p < q; p++) {
-            if (nearest_Station_OBSERVATION_XML_id[p] == f) added_before = 1;
+            if (nearest_Station_ENSEMBLE_OBSERVED_id[p] == f) added_before = 1;
           }
 
           if (added_before == 0) {
-            nearest_Station_OBSERVATION_XML_dist[q] = d;
-            nearest_Station_OBSERVATION_XML_id[q] = f;
+            nearest_Station_ENSEMBLE_OBSERVED_dist[q] = d;
+            nearest_Station_ENSEMBLE_OBSERVED_id[q] = f;
           }
         }        
         
       }    
 
       if (Display_SWOB_Nearest == 1) {   
-        int f = nearest_Station_OBSERVATION_XML_id[q];
+        int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
   
         float _lat = float(STATION_SWOB_INFO[f][3]);
         float _lon = float(STATION_SWOB_INFO[f][4]); 
@@ -4186,8 +4186,8 @@ void SOLARCHVISION_draw_STUDY () {
     if (CurrentDataSource == dataID_CLIMATE_TMYEPW) _text += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
     if (CurrentDataSource == dataID_CLIMATE_CWEEDS) _text += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
     if (CurrentDataSource == dataID_CLIMATE_CLMREC) _text += " based on Environment and Climate Change Canada's Climate website";
-    if (CurrentDataSource == dataID_FORECAST_XML) _text += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
-    if (CurrentDataSource == dataID_OBSERVATION_XML) _text += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) _text += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
+    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) _text += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
 
     //_text += ", www.solarchvision.com";
 
@@ -4291,7 +4291,7 @@ void SOLARCHVISION_Plot_Setup () {
   // -----------------------------------------------
 
   if (STUDY_Setup == -2) {
-    if (CurrentDataSource == dataID_FORECAST_XML) {
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
       pre_TIME_Date = TIME_Date;
       int keep_TIME_BeginDay = TIME_BeginDay;
       int delta = 4;
@@ -4301,28 +4301,28 @@ void SOLARCHVISION_Plot_Setup () {
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = (TIME_BeginDay + delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = (TIME_BeginDay + 2 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = (TIME_BeginDay + 3 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
       TIME_Date = pre_TIME_Date;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = keep_TIME_BeginDay;
     }
   }
@@ -4331,7 +4331,7 @@ void SOLARCHVISION_Plot_Setup () {
   if (STUDY_Setup == -1) {
     pre_CurrentDataSource = CurrentDataSource;
 
-    CurrentDataSource = dataID_FORECAST_XML; 
+    CurrentDataSource = dataID_ENSEMBLE_FORECAST; 
 
     STUDY_DisplaySorted = 0;
     STUDY_DisplayNormals = 0;
@@ -5605,7 +5605,7 @@ void SOLARCHVISION_update_date () {
 
 
 
-void SOLARCHVISION_download_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
   boolean new_files_downloaded = false;
 
@@ -5614,7 +5614,7 @@ void SOLARCHVISION_download_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_D
     } else {
       String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[f] + "_000-384.xml";
       
-      String the_target = FORECAST_XML_directory + "/" + FN;
+      String the_target = ENSEMBLE_FORECAST_directory + "/" + FN;
       
       File dir = new File(the_target);
       if (!dir.isFile()) {
@@ -5641,7 +5641,7 @@ void SOLARCHVISION_download_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_D
 
   if (new_files_downloaded == true) {
     
-    String folder_inout = FORECAST_XML_directory.replace('/', char(92));
+    String folder_inout = ENSEMBLE_FORECAST_directory.replace('/', char(92));
     
     {
       String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
@@ -5651,56 +5651,56 @@ void SOLARCHVISION_download_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_D
       launch(Command1 + " & " + Command2);
     }
     
-    FORECAST_XML_XML_Files = SOLARCHVISION_getfiles(FORECAST_XML_directory);  
+    ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
     
-    Load_FORECAST_XML = 1;
-    SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
+    Load_ENSEMBLE_FORECAST = 1;
+    SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
   }
 }
 
 
-void SOLARCHVISION_update_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  FORECAST_XML_XML_Files = SOLARCHVISION_getfiles(FORECAST_XML_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
+  ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
-  FORECAST_XML_values = new float [24][365][num_Layers][(1 + FORECAST_XML_end - FORECAST_XML_start)];
-  FORECAST_XML_flags = new boolean [24][365][num_Layers][(1 + FORECAST_XML_end - FORECAST_XML_start)]; // true: direct input , false: no-input, interpolated or post-processed
+  ENSEMBLE_FORECAST_values = new float [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
+  ENSEMBLE_FORECAST_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
-        for (int k = 0; k < (1 + FORECAST_XML_end - FORECAST_XML_start); k += 1) {
-          FORECAST_XML_values[i][j][l][k] = FLOAT_undefined;
-          FORECAST_XML_flags[i][j][l][k] = false;
+        for (int k = 0; k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start); k += 1) {
+          ENSEMBLE_FORECAST_values[i][j][l][k] = FLOAT_undefined;
+          ENSEMBLE_FORECAST_flags[i][j][l][k] = false;
         }
       }
     }
   }
 
-  if (Load_FORECAST_XML == 1) {
+  if (Load_ENSEMBLE_FORECAST == 1) {
 
     for (int f = 0; f < num_Layers; f++) {
       if (LAYERS_Text[f].equals("")) {
       } else {
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[f] + "_000-384.xml";
 
-        String the_source = FORECAST_XML_directory + "/" + FN;
+        String the_source = ENSEMBLE_FORECAST_directory + "/" + FN;
 
         File dir = new File(the_source);
-        if (dir.isFile()) SOLARCHVISION_loadFORECAST_XML(the_source, f);
+        if (dir.isFile()) SOLARCHVISION_loadENSEMBLE_FORECAST(the_source, f);
         else println("FILE NOT FOUND:", the_source);
       }
     }
 
-    SOLARCHVISION_setDataFlags(dataID_FORECAST_XML);
-    SOLARCHVISION_postProcess_fillGaps(dataID_FORECAST_XML);
+    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_FORECAST);
+    SOLARCHVISION_postProcess_fillGaps(dataID_ENSEMBLE_FORECAST);
     if (CLIMATIC_SolarForecast == 1) {
       SOLARCHVISION_postProcess_climaticSolarForecast();
     }
     else {
-      SOLARCHVISION_postProcess_solarsUsingCloud(dataID_FORECAST_XML);
+      SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_FORECAST);
     }
-    SOLARCHVISION_postProcess_solarEffects(dataID_FORECAST_XML);
+    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
     
     Display_NAEFS_Points = 1;
     Display_NAEFS_Nearest = 1;     
@@ -5712,8 +5712,8 @@ void SOLARCHVISION_update_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_DAY
   ROLLOUT_Update = 1;
   UI_BAR_d_Update = 1;    
   
-  SampleMember_Start = FORECAST_XML_start;
-  SampleMember_End = FORECAST_XML_end;
+  SampleMember_Start = ENSEMBLE_FORECAST_start;
+  SampleMember_End = ENSEMBLE_FORECAST_end;
 }
 
 
@@ -5722,7 +5722,7 @@ void SOLARCHVISION_update_FORECAST_XML (int THE_YEAR, int THE_MONTH, int THE_DAY
 
 
 
-void SOLARCHVISION_loadFORECAST_XML (String FileName, int Load_Layer) {
+void SOLARCHVISION_loadENSEMBLE_FORECAST (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
@@ -5783,9 +5783,9 @@ void SOLARCHVISION_loadFORECAST_XML (String FileName, int Load_Layer) {
         for (int Lk = 0; Lk < _c.length; Lk++) {
           int k = _c[Lk].getInt("id") - 1;
 
-          if (k < (1 + FORECAST_XML_end - FORECAST_XML_start)) {
+          if (k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)) {
 
-            FORECAST_XML_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
+            ENSEMBLE_FORECAST_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
           }
         }
       }
@@ -6015,6 +6015,7 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
 
     SOLARCHVISION_setDataFlags(dataID_CLIMATE_CLMREC);
     SOLARCHVISION_postProcess_fillGaps(dataID_CLIMATE_CLMREC);
+    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
     SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CLMREC);
     
     Display_CLMREC_Points = 1;
@@ -6232,7 +6233,7 @@ void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
 
 
 
-void SOLARCHVISION_download_OBSERVATION_XML () {
+void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
   
   // this line tries to update the most recent files! << 
   int THE_YEAR = year(); 
@@ -6259,20 +6260,20 @@ void SOLARCHVISION_download_OBSERVATION_XML () {
   }         
   THE_HOUR = now_i;
 
-  for (int j_for = 0; j_for < OBSERVATION_XML_maxDays * 24; j_for += 1) {
+  for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for += 1) {
 
     THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
     THE_DAY = CalendarDate[int(THE_DATE)][1];
 
-    for (int q = 0; q < OBSERVATION_XML_numNearest; q++) {
+    for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
-      int f = nearest_Station_OBSERVATION_XML_id[q];
+      int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
 
       if (f != -1) {
 
         String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
 
-        String the_target = OBSERVATION_XML_directory + "/" + FN;
+        String the_target = ENSEMBLE_OBSERVED_directory + "/" + FN;
 
         File dir = new File(the_target);
         if (!dir.isFile()) {       
@@ -6306,29 +6307,29 @@ void SOLARCHVISION_download_OBSERVATION_XML () {
   }
   
 
-  OBSERVATION_XML_XML_Files = SOLARCHVISION_getfiles(OBSERVATION_XML_directory);
+  ENSEMBLE_OBSERVED_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
   
-  Load_OBSERVATION_XML = 1; 
-  SOLARCHVISION_update_OBSERVATION_XML();
+  Load_ENSEMBLE_OBSERVED = 1; 
+  SOLARCHVISION_update_ENSEMBLE_OBSERVED();
 }
 
-void SOLARCHVISION_update_OBSERVATION_XML () {
+void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
-  OBSERVATION_XML_values = new float [24][365][num_Layers][(1 + OBSERVATION_XML_end - OBSERVATION_XML_start)];
-  OBSERVATION_XML_flags = new boolean [24][365][num_Layers][(1 + OBSERVATION_XML_end - OBSERVATION_XML_start)]; // true: direct input , false: no-input, interpolated or post-processed
+  ENSEMBLE_OBSERVED_values = new float [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
+  ENSEMBLE_OBSERVED_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_Layers; l += 1) {
-        for (int k = 0; k < (1 + OBSERVATION_XML_end - OBSERVATION_XML_start); k += 1) {
-          OBSERVATION_XML_values[i][j][l][k] = FLOAT_undefined;
-          OBSERVATION_XML_flags[i][j][l][k] = false;
+        for (int k = 0; k < (1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start); k += 1) {
+          ENSEMBLE_OBSERVED_values[i][j][l][k] = FLOAT_undefined;
+          ENSEMBLE_OBSERVED_flags[i][j][l][k] = false;
         }
       }
     }
   }
 
-  if (Load_OBSERVATION_XML == 1) {
+  if (Load_ENSEMBLE_OBSERVED == 1) {
 
     // this line tries to update the most recent files! << 
     int THE_YEAR = year(); 
@@ -6355,23 +6356,23 @@ void SOLARCHVISION_update_OBSERVATION_XML () {
     }         
     THE_HOUR = now_i;
 
-    for (int j_for = 0; j_for < OBSERVATION_XML_maxDays * 24; j_for += 1) {
+    for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for += 1) {
 
       THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
       THE_DAY = CalendarDate[int(THE_DATE)][1];
 
-      for (int q = 0; q < OBSERVATION_XML_numNearest; q++) {
+      for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
-        int f = nearest_Station_OBSERVATION_XML_id[q];
+        int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
 
         if (f != -1) {
 
           String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
 
-          String the_source = OBSERVATION_XML_directory + "/" + FN;
+          String the_source = ENSEMBLE_OBSERVED_directory + "/" + FN;
       
           File dir = new File(the_source);
-          if (dir.isFile()) SOLARCHVISION_loadOBSERVATION_XML(the_source, q);
+          if (dir.isFile()) SOLARCHVISION_loadENSEMBLE_OBSERVED(the_source, q);
           else println("FILE NOT FOUND:", the_source);
 
         }
@@ -6391,8 +6392,9 @@ void SOLARCHVISION_update_OBSERVATION_XML () {
       THE_HOUR = now_i;
     }
     
-    SOLARCHVISION_setDataFlags(dataID_OBSERVATION_XML);
-    SOLARCHVISION_postProcess_solarEffects(dataID_OBSERVATION_XML);  
+    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_OBSERVED);
+    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_OBSERVED); // <<<<<<<<<<<<
+    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_OBSERVED);
     
     Display_SWOB_Points = 1;
     Display_SWOB_Nearest = 1;   
@@ -6404,12 +6406,12 @@ void SOLARCHVISION_update_OBSERVATION_XML () {
   ROLLOUT_Update = 1;
   UI_BAR_d_Update = 1;      
   
-  SampleStation_Start = OBSERVATION_XML_start;
-  SampleStation_End = OBSERVATION_XML_end;
+  SampleStation_Start = ENSEMBLE_OBSERVED_start;
+  SampleStation_End = ENSEMBLE_OBSERVED_end;
 }
 
 
-void SOLARCHVISION_loadOBSERVATION_XML (String FileName, int Load_Layer) {
+void SOLARCHVISION_loadENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
@@ -6465,38 +6467,38 @@ void SOLARCHVISION_loadOBSERVATION_XML (String FileName, int Load_Layer) {
     }
 
     if (_a1.equals("stn_pres")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_pressure][Load_Layer] = Float.valueOf(_a2);
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_pressure][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("air_temp")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_drybulb][Load_Layer] = Float.valueOf(_a2);
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_drybulb][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("rel_hum")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_relhum][Load_Layer] = Float.valueOf(_a2);
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_relhum][Load_Layer] = Float.valueOf(_a2);
     } 
 
     if (_a1.equals("tot_cld_amt")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_cloudcover][Load_Layer] = 0.1 * Float.valueOf(_a2);
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_cloudcover][Load_Layer] = 0.1 * Float.valueOf(_a2);
     }    
 
     if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_winddir][Load_Layer] = Float.valueOf(_a2);
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_winddir][Load_Layer] = Float.valueOf(_a2);
     }    
 
     if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_windspd][Load_Layer] = Float.valueOf(_a2);
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_windspd][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("pcpn_amt_pst6hrs")) {
-      OBSERVATION_XML_values[now_i][now_j][LAYER_precipitation_A][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_precipitation_A][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
     }
 
     if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
       if (_a2.equals(STRING_undefined)) {
       } else {
         //if (_a3.equals("W/m²")) {
-        OBSERVATION_XML_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
+        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
         //}
       }
     }
@@ -6505,7 +6507,7 @@ void SOLARCHVISION_loadOBSERVATION_XML (String FileName, int Load_Layer) {
       if (_a2.equals(STRING_undefined)) {
       } else {
         //if (_a3.equals("kJ/m²")) {
-        OBSERVATION_XML_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
+        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
         //}
       }
     }
@@ -6700,8 +6702,8 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
   if (CurrentDataSource == dataID_CLIMATE_TMYEPW) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
   if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);  
-  if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (CurrentDataSource == dataID_OBSERVATION_XML) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 
   switch(STUDY_skyScenario) {
   case 1 : 
@@ -7128,7 +7130,7 @@ void SOLARCHVISION_DevelopDATA () {
 
   float keep_STUDY_PerDays = STUDY_PerDays;
   int keep_STUDY_JoinDays = STUDY_JoinDays;
-  if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
     STUDY_PerDays = 1;
     STUDY_JoinDays = 1;
   }
@@ -7139,7 +7141,7 @@ void SOLARCHVISION_DevelopDATA () {
   if (CurrentDataSource == dataID_CLIMATE_TMYEPW) end_k = CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start;
   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) end_k = CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start;
   if (CurrentDataSource == dataID_CLIMATE_CLMREC) end_k = CLIMATE_CLMREC_end - CLIMATE_CLMREC_start;
-  if (CurrentDataSource == dataID_FORECAST_XML) end_k = FORECAST_XML_end - FORECAST_XML_start;
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) end_k = ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start;
 
   int count_k = 1 + end_k - start_k; 
   if (count_k < 0) count_k = 0;
@@ -7202,7 +7204,7 @@ void SOLARCHVISION_DevelopDATA () {
           if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
           if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
           if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
-          if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
+          if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
 
           T = FLOAT_undefined;
           R_dir = FLOAT_undefined;
@@ -7281,7 +7283,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 0.5;
@@ -7306,7 +7308,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 0.1;
@@ -7328,7 +7330,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
             }
 
 
@@ -7351,7 +7353,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 0.1;
@@ -7373,7 +7375,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = 0.001 * _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 2.5;
@@ -7393,7 +7395,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 1.0;
@@ -7450,13 +7452,13 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             } else {
               _valuesSUM[now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
             }
 
             _valuesSUM[now_k] = 0;
@@ -7519,13 +7521,13 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             } else {
               _valuesSUM[now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
             }
 
             _valuesSUM[now_k] = 0;
@@ -7585,13 +7587,13 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             } else {
               _valuesSUM[now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = FLOAT_undefined;
             }
 
             _valuesSUM[now_k] = 0;
@@ -7614,7 +7616,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 2.5;
@@ -7633,7 +7635,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 4.0;
@@ -7654,7 +7656,7 @@ void SOLARCHVISION_DevelopDATA () {
               if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
               if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
-              if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
+              if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k] = _valuesSUM[now_k];
             }
 
             STUDY_V_scale[LAYER_developed] = 0.05;
@@ -7677,7 +7679,7 @@ void SOLARCHVISION_DevelopDATA () {
                 if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k];
                 if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k];
                 if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k];
-                if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[l][now_j][LAYER_developed][now_k] = FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k];
+                if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[l][now_j][LAYER_developed][now_k] = ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k];
               }
               //STUDY_SumInterval = 24;
               STUDY_V_scale[LAYER_developed] = 10;
@@ -7693,7 +7695,7 @@ void SOLARCHVISION_DevelopDATA () {
                 if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k];
                 if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k];
                 if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k];
-                if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[l][now_j][LAYER_developed][now_k] = FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k];
+                if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[l][now_j][LAYER_developed][now_k] = ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k];
               }
               //STUDY_SumInterval = 12;
               STUDY_V_scale[LAYER_developed] = 10;
@@ -7709,7 +7711,7 @@ void SOLARCHVISION_DevelopDATA () {
                 if (CurrentDataSource == dataID_CLIMATE_TMYEPW) CLIMATE_TMYEPW_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k];
                 if (CurrentDataSource == dataID_CLIMATE_CWEEDS) CLIMATE_CWEEDS_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CWEEDS_values[now_i][now_j][LAYER_developed][now_k];
                 if (CurrentDataSource == dataID_CLIMATE_CLMREC) CLIMATE_CLMREC_values[l][now_j][LAYER_developed][now_k] = CLIMATE_CLMREC_values[now_i][now_j][LAYER_developed][now_k];
-                if (CurrentDataSource == dataID_FORECAST_XML) FORECAST_XML_values[l][now_j][LAYER_developed][now_k] = FORECAST_XML_values[now_i][now_j][LAYER_developed][now_k];
+                if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) ENSEMBLE_FORECAST_values[l][now_j][LAYER_developed][now_k] = ENSEMBLE_FORECAST_values[now_i][now_j][LAYER_developed][now_k];
               }
               //STUDY_SumInterval = 6;
               STUDY_V_scale[LAYER_developed] = 10;
@@ -7862,8 +7864,8 @@ int SOLARCHVISION_filter (int dataID, int LAYER_cloudcover, int type_of_filter, 
 
   for (int q = start_q; q <= end_q; q += 1) {
     float _sky = FLOAT_undefined;
-    if (dataID == dataID_OBSERVATION_XML) _sky = OBSERVATION_XML_values[q][now_j][LAYER_cloudcover][now_k];
-    else if (dataID == dataID_FORECAST_XML) _sky = FORECAST_XML_values[q][now_j][LAYER_cloudcover][now_k];
+    if (dataID == dataID_ENSEMBLE_OBSERVED) _sky = ENSEMBLE_OBSERVED_values[q][now_j][LAYER_cloudcover][now_k];
+    else if (dataID == dataID_ENSEMBLE_FORECAST) _sky = ENSEMBLE_FORECAST_values[q][now_j][LAYER_cloudcover][now_k];
     else if (dataID == dataID_CLIMATE_CWEEDS) _sky = CLIMATE_CWEEDS_values[q][now_j][LAYER_cloudcover][now_k];
     else if (dataID == dataID_CLIMATE_CLMREC) _sky = CLIMATE_CLMREC_values[q][now_j][LAYER_cloudcover][now_k];
     else if (dataID == dataID_CLIMATE_TMYEPW) _sky = CLIMATE_TMYEPW_values[q][now_j][LAYER_cloudcover][now_k];
@@ -8015,7 +8017,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   float keep_STUDY_PerDays = STUDY_PerDays;
   int keep_STUDY_JoinDays = STUDY_JoinDays;
 
-  if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
     STUDY_PerDays = 1;
     STUDY_JoinDays = 1;
   }
@@ -8115,7 +8117,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 } else {
                   int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
 
-                  if ((CurrentDataSource == dataID_FORECAST_XML) && (FORECAST_XML_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
+                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
 
                   if (memberCount == 1) {
 
@@ -8228,7 +8230,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 } else {
                   int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
                   
-                  if ((CurrentDataSource == dataID_FORECAST_XML) && (FORECAST_XML_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
+                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir][now_k] == false)) memberCount = 0;
 
                   if (memberCount == 1) {
 
@@ -8378,7 +8380,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.textAlign(RIGHT, TOP); 
       if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
-      if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text(("[" + String.valueOf(start_k + FORECAST_XML_start) + "-" + String.valueOf(end_k + FORECAST_XML_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(LEFT, TOP); 
@@ -8477,7 +8479,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           String scenario_text = "";
           //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
           //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-          //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
           STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
         }
 
@@ -8510,7 +8512,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         String scenario_text = "";
         //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
         //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-        //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+        //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
         STUDY_Diagrams.text(scenario_text, ((STUDY_j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
 
         STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -8578,7 +8580,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.textAlign(RIGHT, TOP); 
         if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
         if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
-        if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text(("[" + String.valueOf(start_k + FORECAST_XML_start) + "-" + String.valueOf(end_k + FORECAST_XML_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
 
 
         String Model_Description = "";
@@ -8849,7 +8851,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             String scenario_text = "";
             //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
             //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-            //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+            //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / STUDY_U_scale);
           }
         }
@@ -8938,7 +8940,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         String scenario_text = "";
         //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
         //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-        //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+        //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
         STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / STUDY_U_scale);
 
         int keep_STUDY_j_Start = STUDY_j_Start;
@@ -8954,7 +8956,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       String scenario_text = "";
       //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
       //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       STUDY_Diagrams.text(scenario_text, ((STUDY_j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -9017,7 +9019,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
-      if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text(("[" + String.valueOf(start_k + FORECAST_XML_start) + "-" + String.valueOf(end_k + FORECAST_XML_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -9218,7 +9220,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             String scenario_text = "";
             //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
             //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-            //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+            //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / STUDY_U_scale);
           }
         }
@@ -9227,7 +9229,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       String scenario_text = "";
       //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
       //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       STUDY_Diagrams.text(scenario_text, ((STUDY_j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -9292,7 +9294,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
-      if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text(("[" + String.valueOf(start_k + FORECAST_XML_start) + "-" + String.valueOf(end_k + FORECAST_XML_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
 
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -9559,7 +9561,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       String scenario_text = "";
       //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
       //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_FORECAST_XML) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       STUDY_Diagrams.text(scenario_text, ((STUDY_j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -9645,7 +9647,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
-      if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text(("[" + String.valueOf(start_k + FORECAST_XML_start) + "-" + String.valueOf(end_k + FORECAST_XML_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
 
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(CENTER, TOP); 
@@ -10537,7 +10539,7 @@ void STUDY_keyPressed (KeyEvent e) {
         if (TIME_Date == 1.0 * int(TIME_Date)) TIME_Date += 0.5;
         else TIME_Date -= 0.5;
         SOLARCHVISION_update_date(); 
-        SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+        SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
         break;
 
       case ';': 
@@ -10562,7 +10564,7 @@ void STUDY_keyPressed (KeyEvent e) {
          if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
          STUDY_PerDays = int(365 / float(STUDY_j_End - STUDY_j_Start));
          } 
-         if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+         if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
          STUDY_PerDays = 1;
          }
          */
@@ -10587,7 +10589,7 @@ void STUDY_keyPressed (KeyEvent e) {
          if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
          STUDY_PerDays = int(365 / float(STUDY_j_End - STUDY_j_Start));
          } 
-         if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+         if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
          STUDY_PerDays = 1;
          }                  
          */
@@ -10924,7 +10926,7 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
 
     float keep_STUDY_PerDays = STUDY_PerDays;
     int keep_STUDY_JoinDays = STUDY_JoinDays;
-    if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
       STUDY_PerDays = 1;
       STUDY_JoinDays = 1;
     }    
@@ -10946,7 +10948,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
     float keep_STUDY_PerDays = STUDY_PerDays;
     int keep_STUDY_JoinDays = STUDY_JoinDays;
-    if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
       STUDY_PerDays = 1;
       STUDY_JoinDays = 1;
     }    
@@ -21292,7 +21294,7 @@ void SOLARCHVISION_export_objects_OBJ () {
 
     float keep_STUDY_PerDays = STUDY_PerDays;
     int keep_STUDY_JoinDays = STUDY_JoinDays;
-    if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
       STUDY_PerDays = 1;
       STUDY_JoinDays = 1;
     }    
@@ -24094,7 +24096,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   float keep_STUDY_PerDays = STUDY_PerDays;
   int keep_STUDY_JoinDays = STUDY_JoinDays;
-  if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
     STUDY_PerDays = 1;
     STUDY_JoinDays = 1;
   }
@@ -30102,7 +30104,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   float keep_STUDY_PerDays = STUDY_PerDays;
   int keep_STUDY_JoinDays = STUDY_JoinDays;
-  if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
     STUDY_PerDays = 1;
     STUDY_JoinDays = 1;
   }
@@ -32102,7 +32104,7 @@ void mouseWheel (MouseEvent event) {
                     }
                   }                  
 
-                  if (CurrentDataSource == dataID_FORECAST_XML) {
+                  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
                     int keep_SampleMember_Start = SampleMember_Start;
                     int keep_SampleMember_End = SampleMember_End;
 
@@ -32118,10 +32120,10 @@ void mouseWheel (MouseEvent event) {
                     if (SampleMember_End < SampleMember_Start) SampleMember_End = SampleMember_Start;
                     if (SampleMember_Start > SampleMember_End) SampleMember_Start = SampleMember_End; 
 
-                    if (SampleMember_Start < FORECAST_XML_start) SampleMember_Start = FORECAST_XML_start;
-                    if (SampleMember_Start > FORECAST_XML_end) SampleMember_Start = FORECAST_XML_end;
-                    if (SampleMember_End < FORECAST_XML_start) SampleMember_End = FORECAST_XML_start;
-                    if (SampleMember_End > FORECAST_XML_end) SampleMember_End = FORECAST_XML_end;
+                    if (SampleMember_Start < ENSEMBLE_FORECAST_start) SampleMember_Start = ENSEMBLE_FORECAST_start;
+                    if (SampleMember_Start > ENSEMBLE_FORECAST_end) SampleMember_Start = ENSEMBLE_FORECAST_end;
+                    if (SampleMember_End < ENSEMBLE_FORECAST_start) SampleMember_End = ENSEMBLE_FORECAST_start;
+                    if (SampleMember_End > ENSEMBLE_FORECAST_end) SampleMember_End = ENSEMBLE_FORECAST_end;
 
                     if ((keep_SampleMember_Start != SampleMember_Start) || (keep_SampleMember_End != SampleMember_End)) {
 
@@ -32135,7 +32137,7 @@ void mouseWheel (MouseEvent event) {
                     }
                   }   
 
-                  if (CurrentDataSource == dataID_OBSERVATION_XML) {
+                  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
                     int keep_SampleStation_Start = SampleStation_Start;
                     int keep_SampleStation_End = SampleStation_End;
 
@@ -32151,10 +32153,10 @@ void mouseWheel (MouseEvent event) {
                     if (SampleStation_End < SampleStation_Start) SampleStation_End = SampleStation_Start;
                     if (SampleStation_Start > SampleStation_End) SampleStation_Start = SampleStation_End; 
 
-                    if (SampleStation_Start < OBSERVATION_XML_start) SampleStation_Start = OBSERVATION_XML_start;
-                    if (SampleStation_Start > OBSERVATION_XML_end) SampleStation_Start = OBSERVATION_XML_end;
-                    if (SampleStation_End < OBSERVATION_XML_start) SampleStation_End = OBSERVATION_XML_start;
-                    if (SampleStation_End > OBSERVATION_XML_end) SampleStation_End = OBSERVATION_XML_end;
+                    if (SampleStation_Start < ENSEMBLE_OBSERVED_start) SampleStation_Start = ENSEMBLE_OBSERVED_start;
+                    if (SampleStation_Start > ENSEMBLE_OBSERVED_end) SampleStation_Start = ENSEMBLE_OBSERVED_end;
+                    if (SampleStation_End < ENSEMBLE_OBSERVED_start) SampleStation_End = ENSEMBLE_OBSERVED_start;
+                    if (SampleStation_End > ENSEMBLE_OBSERVED_end) SampleStation_End = ENSEMBLE_OBSERVED_end;
 
                     if ((keep_SampleStation_Start != SampleStation_Start) || (keep_SampleStation_End != SampleStation_End)) {
 
@@ -33434,13 +33436,13 @@ void mouseClicked () {
               SOLARCHVISION_update_AERIAL(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download NAEFS")) {
-              SOLARCHVISION_download_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+              SOLARCHVISION_download_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download CLMREC")) {
               SOLARCHVISION_download_CLIMATE_CLMREC();
             }                      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download SWOB")) {
-              SOLARCHVISION_download_OBSERVATION_XML();
+              SOLARCHVISION_download_ENSEMBLE_OBSERVED();
             }            
             
             
@@ -33466,16 +33468,16 @@ void mouseClicked () {
               SOLARCHVISION_update_CLIMATE_CLMREC();
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update SWOB")) {
-              CurrentDataSource = dataID_OBSERVATION_XML;
+              CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
               
-              Load_OBSERVATION_XML = 1;
-              SOLARCHVISION_update_OBSERVATION_XML();
+              Load_ENSEMBLE_OBSERVED = 1;
+              SOLARCHVISION_update_ENSEMBLE_OBSERVED();
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update NAEFS")) {
-              CurrentDataSource = dataID_FORECAST_XML;
+              CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
-              Load_FORECAST_XML = 1;
-              SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+              Load_ENSEMBLE_FORECAST = 1;
+              SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }                 
    
         
@@ -33517,7 +33519,7 @@ void mouseClicked () {
               Display_CLMREC_Nearest = 1;   
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
-              CurrentDataSource = dataID_OBSERVATION_XML;
+              CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
               WORLD_Update = 1;
               WIN3D_Update = 1;  
               STUDY_Update = 1;
@@ -33528,7 +33530,7 @@ void mouseClicked () {
               Display_SWOB_Nearest = 1;             
             }                  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
-              CurrentDataSource = dataID_FORECAST_XML;
+              CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               WORLD_Update = 1;
               WIN3D_Update = 1;  
               STUDY_Update = 1;
@@ -35340,7 +35342,7 @@ void mouseClicked () {
 
                   println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
 
-                  if (CurrentDataSource == dataID_FORECAST_XML) {
+                  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
                     Defined_Stations[0] = STATION_NAEFS_INFO[f][0];
                     Defined_Stations[1] = STATION_NAEFS_INFO[f][1];
                     Defined_Stations[2] = STATION_NAEFS_INFO[f][2];
@@ -35355,7 +35357,7 @@ void mouseClicked () {
 
 
                     SOLARCHVISION_update_station(1);
-                    SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+                    SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
                   }
                 }
               }
@@ -36989,8 +36991,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_NAEFS_Nearest = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
 
       
-      Load_FORECAST_XML = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_FORECAST_XML", Load_FORECAST_XML, 0, 1, 1), 1));
-      Load_OBSERVATION_XML = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_OBSERVATION_XML", Load_OBSERVATION_XML, 0, 1, 1), 1));
+      Load_ENSEMBLE_FORECAST = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_ENSEMBLE_FORECAST", Load_ENSEMBLE_FORECAST, 0, 1, 1), 1));
+      Load_ENSEMBLE_OBSERVED = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_ENSEMBLE_OBSERVED", Load_ENSEMBLE_OBSERVED, 0, 1, 1), 1));
       Load_CLIMATE_CLMREC = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC, 0, 1, 1), 1));
       Load_CLIMATE_CWEEDS = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS, 0, 1, 1), 1));
       Load_CLIMATE_TMYEPW = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW, 0, 1, 1), 1));
@@ -37232,7 +37234,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       STUDY_j_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Number of days to plot", STUDY_j_End, 1, 61, 1), 1));
 
-      OBSERVATION_XML_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "OBSERVATION_XML_maxDays", OBSERVATION_XML_maxDays, 0, 31, 1), 1));
+      ENSEMBLE_OBSERVED_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
           
     }
 
@@ -37247,11 +37249,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SampleYear_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
 //??????
 
-      SampleMember_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start member", SampleMember_Start, FORECAST_XML_start, FORECAST_XML_end, 1), 1));  
-      SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End member", SampleMember_End, FORECAST_XML_start, FORECAST_XML_end, 1), 1));
+      SampleMember_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
+      SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
 
-      SampleStation_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start station", SampleStation_Start, OBSERVATION_XML_start, OBSERVATION_XML_end, 1), 1));  
-      SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End station", SampleStation_End, OBSERVATION_XML_start, OBSERVATION_XML_end, 1), 1));
+      SampleStation_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
+      SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
 
 
     }
@@ -37733,10 +37735,10 @@ void SOLARCHVISION_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY
           }
 
 
-          FORECAST_XML_values[next_i][next_j][l][43 + o] = AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing after member 43
+          ENSEMBLE_FORECAST_values[next_i][next_j][l][43 + o] = AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing after member 43
 
-          println(GRIB2_Domains[GRIB2_DomainSelection][0] + "[" + nf(o, 0) + "]:", next_i, next_j, l, FORECAST_XML_values[next_i][next_j][l][43 + o]);          
-          println("GDPS:", next_i, next_j, l, FORECAST_XML_values[next_i][next_j][l][21]);
+          println(GRIB2_Domains[GRIB2_DomainSelection][0] + "[" + nf(o, 0) + "]:", next_i, next_j, l, ENSEMBLE_FORECAST_values[next_i][next_j][l][43 + o]);          
+          println("GDPS:", next_i, next_j, l, ENSEMBLE_FORECAST_values[next_i][next_j][l][21]);
         }
       }
     }
@@ -48391,7 +48393,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             TIME_Date = (int(roundTo(365.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
             SOLARCHVISION_update_date(); 
             TIME_BeginDay = int(TIME_BeginDay + (TIME_Date - keep_TIME_Date) + 365) % 365;
-            SOLARCHVISION_update_FORECAST_XML(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+            SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48417,7 +48419,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
         float keep_STUDY_PerDays = STUDY_PerDays;
         int keep_STUDY_JoinDays = STUDY_JoinDays;
-        if ((CurrentDataSource == dataID_FORECAST_XML) || (CurrentDataSource == dataID_OBSERVATION_XML)) {
+        if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
           STUDY_PerDays = 1;
           STUDY_JoinDays = 1;
         }
@@ -48483,13 +48485,13 @@ void SOLARCHVISION_draw_window_BAR_d () {
           n1 = 1950;
           n2 = 2050;
         }        
-        if (CurrentDataSource == dataID_FORECAST_XML) {
-          n1 = FORECAST_XML_start;
-          n2 = FORECAST_XML_end;
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+          n1 = ENSEMBLE_FORECAST_start;
+          n2 = ENSEMBLE_FORECAST_end;
         }        
-        if (CurrentDataSource == dataID_OBSERVATION_XML) {
-          n1 = OBSERVATION_XML_start;
-          n2 = OBSERVATION_XML_end;
+        if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+          n1 = ENSEMBLE_OBSERVED_start;
+          n2 = ENSEMBLE_OBSERVED_end;
         }  
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
@@ -48520,7 +48522,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }            
 
-            if (CurrentDataSource == dataID_FORECAST_XML) {
+            if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
               SampleMember_Start = V_selection;
 
               if (SampleMember_Start > SampleMember_End) {
@@ -48531,7 +48533,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }            
 
-            if (CurrentDataSource == dataID_OBSERVATION_XML) {
+            if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
               SampleStation_Start = V_selection;
 
               if (SampleStation_Start > SampleStation_End) {
@@ -48576,7 +48578,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }
 
-            if (CurrentDataSource == dataID_FORECAST_XML) {
+            if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
               SampleMember_End = V_selection;
 
               if (SampleMember_Start > SampleMember_End) {
@@ -48587,7 +48589,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }
 
-            if (CurrentDataSource == dataID_OBSERVATION_XML) {
+            if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
               SampleStation_End = V_selection;
 
               if (SampleStation_Start > SampleStation_End) {
@@ -48618,11 +48620,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
           V_start = SampleYear_Start;
           V_end = SampleYear_End;
         }        
-        if (CurrentDataSource == dataID_FORECAST_XML) {
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
           V_start = SampleMember_Start;
           V_end = SampleMember_End;
         }
-        if (CurrentDataSource == dataID_OBSERVATION_XML) {
+        if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
           V_start = SampleStation_Start;
           V_end = SampleStation_End;
         }        
@@ -48660,14 +48662,14 @@ void SOLARCHVISION_draw_window_BAR_d () {
               txt = nf(j - 5 + n1, 0) + "s";
             }
           }          
-          if (CurrentDataSource == dataID_FORECAST_XML) {
+          if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
             //if ((j % 1 == 0)) {
             txt = nf(j + n1, 0);
             //}
           }
-          if (CurrentDataSource == dataID_OBSERVATION_XML) {
+          if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
             //if ((j % 1 == 0)) {
-            txt = STATION_SWOB_INFO[nearest_Station_OBSERVATION_XML_id[j]][6];
+            txt = STATION_SWOB_INFO[nearest_Station_ENSEMBLE_OBSERVED_id[j]][6];
             //}
           }                 
 
@@ -48775,12 +48777,12 @@ void SOALRCHVISION_refreshDateTabs () {
       STUDY_PerDays = 1;
     }
   } 
-  if (CurrentDataSource == dataID_FORECAST_XML) {
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
     STUDY_PerDays = 1;
   }           
-  if (CurrentDataSource == dataID_OBSERVATION_XML) {
+  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
     if (STUDY_PerDays == 1) { 
-      STUDY_PerDays = int(OBSERVATION_XML_maxDays / float(STUDY_j_End - STUDY_j_Start));
+      STUDY_PerDays = int(ENSEMBLE_OBSERVED_maxDays / float(STUDY_j_End - STUDY_j_Start));
     } else {
       STUDY_PerDays = 1;
     }
@@ -48839,21 +48841,21 @@ int[] get_startK_endK () {
     start_k = 0;
     end_k = 0;   
   }     
-  if (CurrentDataSource == dataID_FORECAST_XML) {
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
 
     start_k = SampleMember_Start;
     end_k = SampleMember_End;
 
-    start_k -= FORECAST_XML_start;
-    end_k -= FORECAST_XML_start;    
+    start_k -= ENSEMBLE_FORECAST_start;
+    end_k -= ENSEMBLE_FORECAST_start;    
   }    
-  if (CurrentDataSource == dataID_OBSERVATION_XML) {
+  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
 
     start_k =  SampleStation_Start;
     end_k =  SampleStation_End;
     
-    start_k -= OBSERVATION_XML_start;
-    end_k -= OBSERVATION_XML_start;     
+    start_k -= ENSEMBLE_OBSERVED_start;
+    end_k -= ENSEMBLE_OBSERVED_start;     
   }   
 
 
@@ -49006,13 +49008,13 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("CLIMATE_CWEEDS_end", CLIMATE_CWEEDS_end);
   newChild1.setInt("CLIMATE_CLMREC_start", CLIMATE_CLMREC_start);
   newChild1.setInt("CLIMATE_CLMREC_end", CLIMATE_CLMREC_end);
-  newChild1.setInt("FORECAST_XML_start", FORECAST_XML_start);
-  newChild1.setInt("FORECAST_XML_end", FORECAST_XML_end);
-  newChild1.setInt("FORECAST_XML_maxDays", FORECAST_XML_maxDays);
-  newChild1.setInt("OBSERVATION_XML_maxDays", OBSERVATION_XML_maxDays);
-  newChild1.setInt("OBSERVATION_XML_numNearest", OBSERVATION_XML_numNearest);
-  newChild1.setInt("OBSERVATION_XML_start", OBSERVATION_XML_start);
-  newChild1.setInt("OBSERVATION_XML_end", OBSERVATION_XML_end);
+  newChild1.setInt("ENSEMBLE_FORECAST_start", ENSEMBLE_FORECAST_start);
+  newChild1.setInt("ENSEMBLE_FORECAST_end", ENSEMBLE_FORECAST_end);
+  newChild1.setInt("ENSEMBLE_FORECAST_maxDays", ENSEMBLE_FORECAST_maxDays);
+  newChild1.setInt("ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays);
+  newChild1.setInt("ENSEMBLE_OBSERVED_numNearest", ENSEMBLE_OBSERVED_numNearest);
+  newChild1.setInt("ENSEMBLE_OBSERVED_start", ENSEMBLE_OBSERVED_start);
+  newChild1.setInt("ENSEMBLE_OBSERVED_end", ENSEMBLE_OBSERVED_end);
   newChild1.setInt("SampleYear_Start", SampleYear_Start);
   newChild1.setInt("SampleYear_End", SampleYear_End);
   newChild1.setInt("SampleMember_Start", SampleMember_Start);
@@ -49022,8 +49024,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW);
   newChild1.setInt("Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS);
   newChild1.setInt("Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC);  
-  newChild1.setInt("Load_FORECAST_XML", Load_FORECAST_XML);
-  newChild1.setInt("Load_OBSERVATION_XML", Load_OBSERVATION_XML);
+  newChild1.setInt("Load_ENSEMBLE_FORECAST", Load_ENSEMBLE_FORECAST);
+  newChild1.setInt("Load_ENSEMBLE_OBSERVED", Load_ENSEMBLE_OBSERVED);
   newChild1.setInt("GRIB2_Month", GRIB2_Month);
   newChild1.setInt("GRIB2_Day", GRIB2_Day);
   newChild1.setInt("GRIB2_ModelRun", GRIB2_ModelRun);
@@ -49125,8 +49127,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("COLOR_STYLE_Number", COLOR_STYLE_Number);
   newChild1.setFloat("STUDY_rect_scale", STUDY_rect_scale);
   newChild1.setFloat("STUDY_rect_offset_x", STUDY_rect_offset_x);
-  newChild1.setInt("dataID_OBSERVATION_XML", dataID_OBSERVATION_XML);
-  newChild1.setInt("dataID_FORECAST_XML", dataID_FORECAST_XML);
+  newChild1.setInt("dataID_ENSEMBLE_OBSERVED", dataID_ENSEMBLE_OBSERVED);
+  newChild1.setInt("dataID_ENSEMBLE_FORECAST", dataID_ENSEMBLE_FORECAST);
   newChild1.setInt("dataID_CLIMATE_CWEEDS", dataID_CLIMATE_CWEEDS);
   newChild1.setInt("dataID_CLIMATE_CLMREC", dataID_CLIMATE_CLMREC);
   newChild1.setInt("dataID_CLIMATE_TMYEPW", dataID_CLIMATE_TMYEPW);
@@ -50290,13 +50292,13 @@ void SOLARCHVISION_load_project (String myFile) {
       CLIMATE_CWEEDS_end = children0[L].getInt("CLIMATE_CWEEDS_end");
       CLIMATE_CLMREC_start = children0[L].getInt("CLIMATE_CLMREC_start");
       CLIMATE_CLMREC_end = children0[L].getInt("CLIMATE_CLMREC_end");
-      FORECAST_XML_start = children0[L].getInt("FORECAST_XML_start");
-      FORECAST_XML_end = children0[L].getInt("FORECAST_XML_end");
-      FORECAST_XML_maxDays = children0[L].getInt("FORECAST_XML_maxDays");
-      OBSERVATION_XML_maxDays = children0[L].getInt("OBSERVATION_XML_maxDays");      
-      OBSERVATION_XML_numNearest = children0[L].getInt("OBSERVATION_XML_numNearest");
-      OBSERVATION_XML_start = children0[L].getInt("OBSERVATION_XML_start");
-      OBSERVATION_XML_end = children0[L].getInt("OBSERVATION_XML_end");
+      ENSEMBLE_FORECAST_start = children0[L].getInt("ENSEMBLE_FORECAST_start");
+      ENSEMBLE_FORECAST_end = children0[L].getInt("ENSEMBLE_FORECAST_end");
+      ENSEMBLE_FORECAST_maxDays = children0[L].getInt("ENSEMBLE_FORECAST_maxDays");
+      ENSEMBLE_OBSERVED_maxDays = children0[L].getInt("ENSEMBLE_OBSERVED_maxDays");      
+      ENSEMBLE_OBSERVED_numNearest = children0[L].getInt("ENSEMBLE_OBSERVED_numNearest");
+      ENSEMBLE_OBSERVED_start = children0[L].getInt("ENSEMBLE_OBSERVED_start");
+      ENSEMBLE_OBSERVED_end = children0[L].getInt("ENSEMBLE_OBSERVED_end");
       SampleYear_Start = children0[L].getInt("SampleYear_Start");
       SampleYear_End = children0[L].getInt("SampleYear_End");
       SampleMember_Start = children0[L].getInt("SampleMember_Start");
@@ -50306,8 +50308,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Load_CLIMATE_TMYEPW = children0[L].getInt("Load_CLIMATE_TMYEPW");
       Load_CLIMATE_CWEEDS = children0[L].getInt("Load_CLIMATE_CWEEDS");
       Load_CLIMATE_CLMREC = children0[L].getInt("Load_CLIMATE_CLMREC");
-      Load_FORECAST_XML = children0[L].getInt("Load_FORECAST_XML");
-      Load_OBSERVATION_XML = children0[L].getInt("Load_OBSERVATION_XML");
+      Load_ENSEMBLE_FORECAST = children0[L].getInt("Load_ENSEMBLE_FORECAST");
+      Load_ENSEMBLE_OBSERVED = children0[L].getInt("Load_ENSEMBLE_OBSERVED");
       GRIB2_Month = children0[L].getInt("GRIB2_Month");
       GRIB2_Day = children0[L].getInt("GRIB2_Day");
       GRIB2_ModelRun = children0[L].getInt("GRIB2_ModelRun");
@@ -50409,8 +50411,8 @@ void SOLARCHVISION_load_project (String myFile) {
       COLOR_STYLE_Number = children0[L].getInt("COLOR_STYLE_Number");
       STUDY_rect_scale = children0[L].getFloat("STUDY_rect_scale");
       STUDY_rect_offset_x = children0[L].getFloat("STUDY_rect_offset_x");
-      dataID_OBSERVATION_XML = children0[L].getInt("dataID_OBSERVATION_XML");
-      dataID_FORECAST_XML = children0[L].getInt("dataID_FORECAST_XML");
+      dataID_ENSEMBLE_OBSERVED = children0[L].getInt("dataID_ENSEMBLE_OBSERVED");
+      dataID_ENSEMBLE_FORECAST = children0[L].getInt("dataID_ENSEMBLE_FORECAST");
       dataID_CLIMATE_CWEEDS = children0[L].getInt("dataID_CLIMATE_CWEEDS");
       dataID_CLIMATE_CLMREC = children0[L].getInt("dataID_CLIMATE_CLMREC");
       dataID_CLIMATE_TMYEPW = children0[L].getInt("dataID_CLIMATE_TMYEPW");
@@ -54494,7 +54496,7 @@ float _values_E_dir = 0.1;
 float _values_E_dif = 0.1;
 
 
-//float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_XML_values[i][j][LAYER_cloudcover][k]);
+//float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]);
 float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
 float[] VECT = {
   0, 0, 0
@@ -54665,7 +54667,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
 
     if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
     if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
-    if (CurrentDataSource == dataID_FORECAST_XML) STUDY_Diagrams.text(("[" + String.valueOf(start_k + FORECAST_XML_start) + "-" + String.valueOf(end_k + FORECAST_XML_start) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_CurrentLayer]) * sx_Plot / STUDY_U_scale);
 
 
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
@@ -54918,11 +54920,11 @@ void setFlag_CurrentDataSource (int i, int j, int k, int Parameter_ID, boolean f
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     CLIMATE_TMYEPW_flags[i][j][Parameter_ID][k] = flag; 
   }  
-  else if (CurrentDataSource == dataID_FORECAST_XML) {
-    FORECAST_XML_flags[i][j][Parameter_ID][k] = flag; 
+  else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    ENSEMBLE_FORECAST_flags[i][j][Parameter_ID][k] = flag; 
   }            
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) {
-    OBSERVATION_XML_flags[i][j][Parameter_ID][k] = flag; 
+  else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    ENSEMBLE_OBSERVED_flags[i][j][Parameter_ID][k] = flag; 
   }   
 
 }  
@@ -54938,11 +54940,11 @@ void setValue_CurrentDataSource (int i, int j, int k, int Parameter_ID, float va
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     CLIMATE_TMYEPW_values[i][j][Parameter_ID][k] = value; 
   }  
-  else if (CurrentDataSource == dataID_FORECAST_XML) {
-    FORECAST_XML_values[i][j][Parameter_ID][k] = value; 
+  else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    ENSEMBLE_FORECAST_values[i][j][Parameter_ID][k] = value; 
   }            
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) {
-    OBSERVATION_XML_values[i][j][Parameter_ID][k] = value; 
+  else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    ENSEMBLE_OBSERVED_values[i][j][Parameter_ID][k] = value; 
   }   
 
 }  
@@ -54961,11 +54963,11 @@ float getValue_CurrentDataSource (int i, int j, int k, int Parameter_ID) {
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     return_value = CLIMATE_TMYEPW_values[i][j][Parameter_ID][k]; 
   }  
-  else if (CurrentDataSource == dataID_FORECAST_XML) {
-    return_value = FORECAST_XML_values[i][j][Parameter_ID][k]; 
+  else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    return_value = ENSEMBLE_FORECAST_values[i][j][Parameter_ID][k]; 
   }            
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) {
-    return_value = OBSERVATION_XML_values[i][j][Parameter_ID][k]; 
+  else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    return_value = ENSEMBLE_OBSERVED_values[i][j][Parameter_ID][k]; 
   }   
 
   return return_value;
@@ -54985,11 +54987,11 @@ int getStart_CurrentDataSource () {
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     return_value = CLIMATE_TMYEPW_start;
   }  
-  else if (CurrentDataSource == dataID_FORECAST_XML) {
-    return_value = FORECAST_XML_start;
+  else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    return_value = ENSEMBLE_FORECAST_start;
   }
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) {
-    return_value = OBSERVATION_XML_start;
+  else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    return_value = ENSEMBLE_OBSERVED_start;
   }
   
   return return_value;
@@ -55008,11 +55010,11 @@ int getEnd_CurrentDataSource () {
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     return_value = CLIMATE_TMYEPW_end;
   }  
-  else if (CurrentDataSource == dataID_FORECAST_XML) {
-    return_value = FORECAST_XML_end;
+  else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    return_value = ENSEMBLE_FORECAST_end;
   }
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) {
-    return_value = OBSERVATION_XML_end;
+  else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    return_value = ENSEMBLE_OBSERVED_end;
   }
   
   return return_value;
@@ -55031,10 +55033,10 @@ String getReference_CurrentDataSource () {
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     return_value = Defined_Stations[10] + ".epw";
   }    
-  else if (CurrentDataSource == dataID_FORECAST_XML) {
+  else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
     return_value = nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[8] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
   }
-  else if (CurrentDataSource == dataID_OBSERVATION_XML) {
+  else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
     return_value = "Environment and Climate Change Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/";
   }
   
@@ -55216,27 +55218,27 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
 
   int num_count = (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start);
 
-  for (int k = 0; k < (1 + FORECAST_XML_end - FORECAST_XML_start); k += 1) {
-    for (int j_for = 0; j_for < FORECAST_XML_maxDays; j_for += 1) { 
+  for (int k = 0; k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start); k += 1) {
+    for (int j_for = 0; j_for < ENSEMBLE_FORECAST_maxDays; j_for += 1) { 
       int j = ((j_for + TIME_BeginDay) % 365);
       for (int i = 0; i < 24; i += 1) {
-        if (is_undefined_FLOAT(FORECAST_XML_values[i][j][LAYER_cloudcover][k]) == true) {
+        if (is_undefined_FLOAT(ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]) == true) {
         } else {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
 
-          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, FORECAST_XML_values[i][j][LAYER_cloudcover][k]);
+          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]);
 
-          FORECAST_XML_values[i][j][LAYER_dirnorrad][k] = SunR[4];
+          ENSEMBLE_FORECAST_values[i][j][LAYER_dirnorrad][k] = SunR[4];
 
-          FORECAST_XML_values[i][j][LAYER_difhorrad][k] = SunR[5];
+          ENSEMBLE_FORECAST_values[i][j][LAYER_difhorrad][k] = SunR[5];
 
-          FORECAST_XML_values[i][j][LAYER_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
+          ENSEMBLE_FORECAST_values[i][j][LAYER_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
 
           //---------------------------------------------------------------------
 
-          float Forecast_CC = FORECAST_XML_values[i][j][LAYER_cloudcover][k];
-          float Forecast_AP = FORECAST_XML_values[i][j][LAYER_pressure][k];
+          float Forecast_CC = ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k];
+          float Forecast_AP = ENSEMBLE_FORECAST_values[i][j][LAYER_pressure][k];
 
           float CC_epsilon = 1.0; // defines a range for finding near previous results: 1.0 results in e.g. 2 < CC < 4 for CC at 3  
           float AP_epsilon = 50.0;
@@ -55293,9 +55295,9 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
             _valuesSUM_DIF /= sum_count;
             _valuesSUM_GLO /= sum_count;
 
-            FORECAST_XML_values[i][j][LAYER_dirnorrad][k] = _valuesSUM_DIR;
-            FORECAST_XML_values[i][j][LAYER_difhorrad][k] = _valuesSUM_DIF;
-            FORECAST_XML_values[i][j][LAYER_glohorrad][k] = _valuesSUM_GLO;
+            ENSEMBLE_FORECAST_values[i][j][LAYER_dirnorrad][k] = _valuesSUM_DIR;
+            ENSEMBLE_FORECAST_values[i][j][LAYER_difhorrad][k] = _valuesSUM_DIF;
+            ENSEMBLE_FORECAST_values[i][j][LAYER_glohorrad][k] = _valuesSUM_GLO;
           } else {
             println("Cannot find simillar conditions in climate file at i:", i, ", j:", j, ", k:", k);
           }
