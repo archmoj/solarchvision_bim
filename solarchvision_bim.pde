@@ -1,4 +1,8 @@
 
+
+// should define subroutines to perfome this not inside draw! if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
+
+
 // Note: different tropo layer exported in obj format but only at frame 0.
 // Note: still cannot use regional layers as tropo.
 
@@ -11,10 +15,6 @@
 
 
 // pick select LandPoint is not written. 
-
-
-
-// should test view from the sun function: if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
 
 
 // diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!" 
@@ -8710,6 +8710,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
   if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
+    
     if (STUDY_PlotImpacts == 6) Impact_TYPE = Impact_ACTIVE; 
     if (STUDY_PlotImpacts == 7) Impact_TYPE = Impact_PASSIVE;
 
@@ -8792,12 +8793,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         
         { // Direct
+        
           STUDY_Diagrams.endDraw(); 
           ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
           PImage Image_RGBA = SKY2D_Diagrams.get();
           STUDY_Diagrams.beginDraw();
+
           
           Image_RGBA.save(ViewsFromSkyFolder + "/" + "Direct" + nf(j,2) + nf(i,2) + ".png");
+
 
           STUDY_Diagrams.imageMode(CENTER); 
           STUDY_Diagrams.image(Image_RGBA, (j + STUDY_rect_offset_x + (90 - Alpha) * STUDY_rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY_rect_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
@@ -8849,10 +8853,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
          /*
          { // Diffuse
-           STUDY_Diagrams.endDraw(); 
-           ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
-           PImage Image_RGBA = SKY2D_Diagrams.get();
-           STUDY_Diagrams.beginDraw();
+            STUDY_Diagrams.endDraw(); 
+            ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
+            PImage Image_RGBA = SKY2D_Diagrams.get();
+            STUDY_Diagrams.beginDraw();
            
            if (Materials_DiffuseArea_Flags[now_i][now_j] == -1) {
              
@@ -8929,7 +8933,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
     }
-
+    
     if (STUDY_PrintTtitle != 0) {
 
       STUDY_Diagrams.stroke(0); 
@@ -21761,8 +21765,9 @@ float OBJECTS_scale = 1.0;
 
 int SKY2D_X_View = 50;
 int SKY2D_Y_View = 50;
+float SKY2D_ZOOM = 5;
 PGraphics SKY2D_Diagrams;
-float SKY2D_ZOOM = 1;
+
 
 void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float SKY2D_Z_Coordinate, float SKY2D_RX_Coordinate, float SKY2D_RY_Coordinate, float SKY2D_RZ_Coordinate) {
 
@@ -21770,7 +21775,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
   SKY2D_Diagrams.background(233);
 
-  SKY2D_Diagrams.ortho(SKY2D_X_View * -SKY2D_ZOOM, SKY2D_X_View * SKY2D_ZOOM, SKY2D_Y_View * -SKY2D_ZOOM, SKY2D_Y_View * SKY2D_ZOOM, 0.00001, 100000);
+  SKY2D_Diagrams.ortho(SKY2D_X_View / -SKY2D_ZOOM, SKY2D_X_View / SKY2D_ZOOM, SKY2D_Y_View / -SKY2D_ZOOM, SKY2D_Y_View / SKY2D_ZOOM, 0.00001, 100000);
 
   SKY2D_Diagrams.translate(0, 1.0 * SKY2D_Y_View, 0); // << IMPORTANT! 
 
@@ -21821,7 +21826,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
         for (int s = 0; s < subFace.length; s++) {
 
-          SKY2D_Diagrams.vertex(subFace[s][0] * SKY2D_ZOOM, -subFace[s][1] * SKY2D_ZOOM, subFace[s][2] * SKY2D_ZOOM);
+          SKY2D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
         }
 
         SKY2D_Diagrams.endShape(CLOSE);
@@ -22737,7 +22742,7 @@ void SOLARCHVISION_draw_land (int target_window) {
             for (int s = 0; s < subFace.length; s++) {
               
               if (target_window == -2) {
-                SKY2D_Diagrams.vertex(subFace[s][0] * SKY2D_ZOOM, -subFace[s][1] * SKY2D_ZOOM, subFace[s][2] * SKY2D_ZOOM);
+                SKY2D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
               }           
 
               if (Display_LAND_Textures == 0) {
