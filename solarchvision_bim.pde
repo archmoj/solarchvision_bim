@@ -9163,6 +9163,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     }    
 
 
+
     for (int j = STUDY_j_Start; j < STUDY_j_End; j += 1) {
 
       float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY_PerDays / STUDY_JoinDays)][3];        
@@ -9473,6 +9474,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
 
 
+
   if (target_window == 3) {
     WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(127);
@@ -9685,7 +9687,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         }
       }
 
-
+/*
       for (int i = 0; i < 360; i += 15) {
 
         String txt = nf((90 - i + 360) % 360, 0);
@@ -9722,6 +9724,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           STUDY_Diagrams.text(txt, ox + x, -y);
         }
       }
+*/
     }
   }
 }
