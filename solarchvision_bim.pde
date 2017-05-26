@@ -121,7 +121,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Project_A01";    
+  ProjectFolder = BaseFolder + "/Projects/Project_B01";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -433,8 +433,8 @@ int Language_Active = Language_EN;
 
 String[] Defined_Stations = {
 
-  "Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-
+  //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
 
@@ -1971,6 +1971,13 @@ void setup () {
 
   SOLARCHVISION_resize_VertexSolar_array(); 
   SOLARCHVISION_resize_GlobalSolar_array();
+  
+  SOLARCHVISION_resize_TOROPO_IMAGES();
+
+  Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
+
+  MOON_IMAGE_Map = loadImage(MOON_IMAGE_Filename);
+  STAR_IMAGE_Map = loadImage(STAR_IMAGE_Filename);
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
@@ -1979,13 +1986,6 @@ void setup () {
   STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);
   
   SKY2D_Diagrams = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
-
-
-  Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
-
-
-  MOON_IMAGE_Map = loadImage(MOON_IMAGE_Filename);
-  STAR_IMAGE_Map = loadImage(STAR_IMAGE_Filename);
 
   SOLARCHVISION_loadDefaultFontStyle();  
 
@@ -18753,177 +18753,181 @@ void SOLARCHVISION_export_objects_OBJ () {
 
   if (Display_TROPO3D_Surface != 0) {
 
-    for (int TROPO_id = 0; TROPO_id < TROPO_IMAGES_Map.length; TROPO_id++) {    
-
-      if (objExport_MaterialLibrary != 0) {
-
-        mtlOutput.println("newmtl TropoSphere_" + nf(TROPO_id, 0));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-        if (Display_TROPO3D_Texture != 0) {
-
-          //int n = 0;
-          //if (IMPACTS_DisplayDay < TROPO_IMAGES_Map.length) n = IMPACTS_DisplayDay;
-
-          int n = TROPO_id; // <<<<<<<<
-
-          String old_Texture_path = FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n];
-
-          String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
-
-          String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
-
-          println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-          saveBytes(new_Texture_path, loadBytes(old_Texture_path));
-
-          //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
-          mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
+    for (int TROPO_id = 0; TROPO_id < TROPO_IMAGES_Map.length; TROPO_id++) {
+  
+      if (TROPO_IMAGES_Filenames[TROPO_id].equals("")) { // not to display empty images 
+      } else {
+  
+        if (objExport_MaterialLibrary != 0) {
+  
+          mtlOutput.println("newmtl TropoSphere_" + nf(TROPO_id, 0));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+          if (Display_TROPO3D_Texture != 0) {
+  
+            //int n = 0;
+            //if (IMPACTS_DisplayDay < TROPO_IMAGES_Map.length) n = IMPACTS_DisplayDay;
+  
+            int n = TROPO_id; // <<<<<<<<
+  
+            String old_Texture_path = FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n];
+  
+            String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+  
+            String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+  
+            println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+  
+            //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
+            mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
+          }
         }
-      }
-
-
-      if (objExport_PolyToPoly == 1) {
-        obj_lastGroupNumber += 1;  
-        objOutput.println("g TropoSphere_" + nf(TROPO_id, 0));
-      }
-
-      if (objExport_MaterialLibrary != 0) {
-        objOutput.println("usemtl TropoSphere_" + nf(TROPO_id, 0));
-      }
-
-
-      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_id][0] + 180;
-      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_id][1] - 90;
-
-      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_id][1] - TROPO_IMAGES_BoundariesX[TROPO_id][0]) / 360.0;
-      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_id][1] - TROPO_IMAGES_BoundariesY[TROPO_id][0]) / 180.0;
-
-      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_id][0] + TROPO_IMAGES_BoundariesX[TROPO_id][1]);
-      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_id][0] + TROPO_IMAGES_BoundariesY[TROPO_id][1]);
-
-      float delta_Alpha = -BIOSPHERE_drawResolution; 
-      float delta_Beta = -BIOSPHERE_drawResolution;
-
-      float r = FLOAT_r_Earth + 5000;
-
-
-      for (int _turn = 1; _turn < 4; _turn += 1) {
-
-        int f = 0;
-        for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-          for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-            f += 1;
-
-            float[][] subFace = new float [4][5];
-
-            for (int s = 0; s < 4; s += 1) {
-
-              float a = Alpha;
-              float b = Beta;
-
-              if ((s == 2) || (s == 3)) {
-                a += delta_Alpha;
+  
+  
+        if (objExport_PolyToPoly == 1) {
+          obj_lastGroupNumber += 1;  
+          objOutput.println("g TropoSphere_" + nf(TROPO_id, 0));
+        }
+  
+        if (objExport_MaterialLibrary != 0) {
+          objOutput.println("usemtl TropoSphere_" + nf(TROPO_id, 0));
+        }
+  
+  
+        float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_id][0] + 180;
+        float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_id][1] - 90;
+  
+        float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_id][1] - TROPO_IMAGES_BoundariesX[TROPO_id][0]) / 360.0;
+        float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_id][1] - TROPO_IMAGES_BoundariesY[TROPO_id][0]) / 180.0;
+  
+        float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_id][0] + TROPO_IMAGES_BoundariesX[TROPO_id][1]);
+        float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_id][0] + TROPO_IMAGES_BoundariesY[TROPO_id][1]);
+  
+        float delta_Alpha = -BIOSPHERE_drawResolution; 
+        float delta_Beta = -BIOSPHERE_drawResolution;
+  
+        float r = FLOAT_r_Earth + 5000;
+  
+  
+        for (int _turn = 1; _turn < 4; _turn += 1) {
+  
+          int f = 0;
+          for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+            for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+              f += 1;
+  
+              float[][] subFace = new float [4][5];
+  
+              for (int s = 0; s < 4; s += 1) {
+  
+                float a = Alpha;
+                float b = Beta;
+  
+                if ((s == 2) || (s == 3)) {
+                  a += delta_Alpha;
+                }
+  
+                if ((s == 1) || (s == 2)) {
+                  b += delta_Beta;
+                }
+  
+                float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+                float y0 = r * sin_ang(b - 90) * cos_ang(a);
+                float z0 = r * sin_ang(a);
+  
+                float _lon = b - CEN_lon;
+                float _lat = a - CEN_lat;
+  
+  
+                // calculating u and v
+                subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
+                subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
+  
+  
+                // rotating to location coordinates 
+                float tb = -LocationLongitude;
+                float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+                float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+                float z1 = z0;
+  
+                float ta = 90 - LocationLatitude;
+                float x2 = x1;
+                float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+                float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+                // move it down!
+                z2 -= FLOAT_r_Earth;
+  
+                subFace[s][0] = x2;
+                subFace[s][1] = y2;
+                subFace[s][2] = z2;
               }
-
-              if ((s == 1) || (s == 2)) {
-                b += delta_Beta;
+  
+              for (int s = 0; s < subFace.length; s++) {
+  
+                float x = subFace[s][0];
+                float y = subFace[s][1];
+                float z = subFace[s][2];
+                float u = subFace[s][3];
+                float v = subFace[s][4];
+  
+                v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+  
+                if (_turn == 1) {
+                  SOLARCHVISION_OBJprintVertex(x, y, z);
+                }
+  
+                if (_turn == 2) {
+  
+                  if (u > 1) u = 1;
+                  if (u < 0) u = 0;
+                  if (v > 1) v = 1;
+                  if (v < 0) v = 0;
+  
+                  SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                }
+  
+                if (_turn == 3) {
+                  obj_lastVertexNumber += 1;
+                  obj_lastVtextureNumber += 1;
+                }
               }
-
-              float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-              float y0 = r * sin_ang(b - 90) * cos_ang(a);
-              float z0 = r * sin_ang(a);
-
-              float _lon = b - CEN_lon;
-              float _lat = a - CEN_lat;
-
-
-              // calculating u and v
-              subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
-              subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
-
-
-              // rotating to location coordinates 
-              float tb = -LocationLongitude;
-              float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-              float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-              float z1 = z0;
-
-              float ta = 90 - LocationLatitude;
-              float x2 = x1;
-              float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-              float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
-              // move it down!
-              z2 -= FLOAT_r_Earth;
-
-              subFace[s][0] = x2;
-              subFace[s][1] = y2;
-              subFace[s][2] = z2;
-            }
-
-            for (int s = 0; s < subFace.length; s++) {
-
-              float x = subFace[s][0];
-              float y = subFace[s][1];
-              float z = subFace[s][2];
-              float u = subFace[s][3];
-              float v = subFace[s][4];
-
-              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-
-              if (_turn == 1) {
-                SOLARCHVISION_OBJprintVertex(x, y, z);
-              }
-
-              if (_turn == 2) {
-
-                if (u > 1) u = 1;
-                if (u < 0) u = 0;
-                if (v > 1) v = 1;
-                if (v < 0) v = 0;
-
-                SOLARCHVISION_OBJprintVtexture(u, v, 0);
-              }
-
+  
+              String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+              String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+              String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+              String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+  
+              String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+              String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+              String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+              String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+  
+              if (objExport_PolyToPoly == 0) {
+                if (_turn == 3) {
+                  obj_lastGroupNumber += 1;
+                  objOutput.println("g TropoSphere_" + nf(TROPO_id, 0) + "_" + nf(f, 0));
+                }
+              } 
+  
               if (_turn == 3) {
-                obj_lastVertexNumber += 1;
-                obj_lastVtextureNumber += 1;
-              }
-            }
-
-            String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-            String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-            String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-
-            String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-            String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-
-            if (objExport_PolyToPoly == 0) {
-              if (_turn == 3) {
-                obj_lastGroupNumber += 1;
-                objOutput.println("g TropoSphere_" + nf(TROPO_id, 0) + "_" + nf(f, 0));
-              }
-            } 
-
-            if (_turn == 3) {
-              obj_lastFaceNumber += 1;            
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              if (objExport_BackSides != 0) {
-                obj_lastFaceNumber += 1;
-                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                obj_lastFaceNumber += 1;            
+                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                if (objExport_BackSides != 0) {
+                  obj_lastFaceNumber += 1;
+                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                }
               }
             }
           }
@@ -21263,7 +21267,7 @@ void SOLARCHVISION_resize_allSections_SolarImpact_array () { // called when STUD
     for (int i = 0; i < allSections_num; i++) {
       for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) { 
         for (int q = 0; q < numberOfImpactVariations; q++) {
-          allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB);
+          allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
         }
       }
     }
@@ -21964,24 +21968,40 @@ void SOLARCHVISION_draw_WindFlow () {
 
 
 
+String[] TROPO_IMAGES_Filenames;
 PImage[] TROPO_IMAGES_Map;
 
 float[][] TROPO_IMAGES_BoundariesX;
 float[][] TROPO_IMAGES_BoundariesY;
 
-String[] TROPO_IMAGES_Filenames;
+
+void SOLARCHVISION_resize_TOROPO_IMAGES () {
+  
+  TROPO_IMAGES_Filenames = new String [TROPO_timeSteps];
+  TROPO_IMAGES_Map = new PImage [TROPO_timeSteps];
+  
+  TROPO_IMAGES_BoundariesX = new float[TROPO_timeSteps][2];
+  TROPO_IMAGES_BoundariesY = new float[TROPO_timeSteps][2];
+  
+  for (int i = 0; i < TROPO_timeSteps; i++) {
+
+    TROPO_IMAGES_Filenames[i] = "";
+    TROPO_IMAGES_Map[i] = createImage(2, 2, RGB); // empty and small
+    
+    TROPO_IMAGES_BoundariesX[i][0] = 0;
+    TROPO_IMAGES_BoundariesX[i][1] = 0;
+    TROPO_IMAGES_BoundariesY[i][0] = 0;
+    TROPO_IMAGES_BoundariesY[i][1] = 0;
+    
+  }
+}
 
 
 void SOLARCHVISION_update_TOROPO_IMAGES () {
   
   String[] allFilenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
   
-  TROPO_IMAGES_Filenames = new String [TROPO_timeSteps];
 
-  TROPO_IMAGES_Map = new PImage [TROPO_timeSteps];
-  
-  TROPO_IMAGES_BoundariesX = new float[TROPO_timeSteps][2];
-  TROPO_IMAGES_BoundariesY = new float[TROPO_timeSteps][2];
   
   int LoactationTimeZone = getLoactationTimeZone();
   
@@ -22258,7 +22278,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     
 
     
-    TROPO_IMAGES_Map[i] = createImage(2, 2, RGB);
+    TROPO_IMAGES_Map[i] = createImage(2, 2, RGB); // empty and small
     
     //String FN = nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2) + "_";
     String FN = nf((CurrentHour + LoactationTimeZone) % 24, 2) + "_";
@@ -22334,86 +22354,90 @@ void SOLARCHVISION_draw_TROPO3D (int start_hour, int end_hour) {
     WIN3D_Diagrams.strokeWeight(1);
       
     for (int TROPO_id = start_hour; TROPO_id <= end_hour; TROPO_id++) {
-
-      float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_id][0] + 180;
-      float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_id][1] - 90;
-
-      float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_id][1] - TROPO_IMAGES_BoundariesX[TROPO_id][0]) / 360.0;
-      float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_id][1] - TROPO_IMAGES_BoundariesY[TROPO_id][0]) / 180.0;
-
-      float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_id][0] + TROPO_IMAGES_BoundariesX[TROPO_id][1]);
-      float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_id][0] + TROPO_IMAGES_BoundariesY[TROPO_id][1]);
-
-      float delta_Alpha = -BIOSPHERE_drawResolution;
-      float delta_Beta = -BIOSPHERE_drawResolution;
-
-      float r = FLOAT_r_Earth + 5000;
-
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-
-          float[][] subFace = new float [4][5];
-
-          for (int s = 0; s < 4; s += 1) {
-
-            float a = Alpha;
-            float b = Beta;
-
-            if ((s == 2) || (s == 3)) {
-              a += delta_Alpha;
+        
+      if (TROPO_IMAGES_Filenames[TROPO_id].equals("")) { // not to display empty images 
+      } else {
+  
+        float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[TROPO_id][0] + 180;
+        float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[TROPO_id][1] - 90;
+  
+        float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[TROPO_id][1] - TROPO_IMAGES_BoundariesX[TROPO_id][0]) / 360.0;
+        float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[TROPO_id][1] - TROPO_IMAGES_BoundariesY[TROPO_id][0]) / 180.0;
+  
+        float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[TROPO_id][0] + TROPO_IMAGES_BoundariesX[TROPO_id][1]);
+        float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[TROPO_id][0] + TROPO_IMAGES_BoundariesY[TROPO_id][1]);
+  
+        float delta_Alpha = -BIOSPHERE_drawResolution;
+        float delta_Beta = -BIOSPHERE_drawResolution;
+  
+        float r = FLOAT_r_Earth + 5000;
+  
+        for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+          for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+  
+            float[][] subFace = new float [4][5];
+  
+            for (int s = 0; s < 4; s += 1) {
+  
+              float a = Alpha;
+              float b = Beta;
+  
+              if ((s == 2) || (s == 3)) {
+                a += delta_Alpha;
+              }
+  
+              if ((s == 1) || (s == 2)) {
+                b += delta_Beta;
+              }
+  
+              float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+              float y0 = r * sin_ang(b - 90) * cos_ang(a);
+              float z0 = r * sin_ang(a);
+  
+              float _lon = b - CEN_lon;
+              float _lat = a - CEN_lat;
+  
+              if (Display_TROPO3D_Texture != 0) {
+                // calculating u and v
+                subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
+                subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
+              }         
+  
+              // rotating to location coordinates 
+              float tb = -LocationLongitude;
+              float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+              float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+              float z1 = z0;
+  
+              float ta = 90 - LocationLatitude;
+              float x2 = x1;
+              float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+              float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+              // move it down!
+              z2 -= FLOAT_r_Earth;
+  
+              subFace[s][0] = x2;
+              subFace[s][1] = y2;
+              subFace[s][2] = z2;
             }
-
-            if ((s == 1) || (s == 2)) {
-              b += delta_Beta;
-            }
-
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
-
-            float _lon = b - CEN_lon;
-            float _lat = a - CEN_lat;
-
+  
+            WIN3D_Diagrams.beginShape();
+  
+            WIN3D_Diagrams.noStroke();
+  
             if (Display_TROPO3D_Texture != 0) {
-              // calculating u and v
-              subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
-              subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
-            }         
-
-            // rotating to location coordinates 
-            float tb = -LocationLongitude;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-            float z1 = z0;
-
-            float ta = 90 - LocationLatitude;
-            float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
-            // move it down!
-            z2 -= FLOAT_r_Earth;
-
-            subFace[s][0] = x2;
-            subFace[s][1] = y2;
-            subFace[s][2] = z2;
+  
+              WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
+            }
+  
+            for (int s = 0; s < subFace.length; s++) {
+  
+              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
+            }
+  
+            WIN3D_Diagrams.endShape(CLOSE);
           }
-
-          WIN3D_Diagrams.beginShape();
-
-          WIN3D_Diagrams.noStroke();
-
-          if (Display_TROPO3D_Texture != 0) {
-
-            WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
-          }
-
-          for (int s = 0; s < subFace.length; s++) {
-
-            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
-          }
-
-          WIN3D_Diagrams.endShape(CLOSE);
         }
       }
     }
@@ -40792,7 +40816,7 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
     int i = 0;
     for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
       for (int q = 0; q < numberOfImpactVariations; q++) { 
-        TempSection_SolarImpact[i][j][q] = createImage(2, 2, RGB);
+        TempSection_SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
       }
     }
   }
@@ -50285,7 +50309,7 @@ void SOLARCHVISION_load_project (String myFile) {
         for (int i = 0; i < ni; i++) {
 
           LAND_Textures_ImagePath[i] = "";
-          LAND_Textures_Map[i] = createImage(2, 2, RGB);
+          LAND_Textures_Map[i] = createImage(2, 2, RGB); // empty and small
         }
       }
     }
@@ -50358,7 +50382,7 @@ void SOLARCHVISION_load_project (String myFile) {
           if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
           } else {
             Object2D_ImagePath[i] = new_Texture_path;
-            Object2D_Images[i] = createImage(2, 2, RGB);
+            Object2D_Images[i] = createImage(2, 2, RGB); // empty and small
             if (Object2D_ImagePath[i].equals("")) {
             } else {
               println("Loading texture(" + i + "):", Object2D_ImagePath[i]);
@@ -50389,7 +50413,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
           String TEXTURE_path = children1[i].getContent();
 
-          allSections_SolidImpact[i] = createImage(2, 2, RGB);
+          allSections_SolidImpact[i] = createImage(2, 2, RGB); // empty and small
 
           println("Loading texture(" + i + "):", TEXTURE_path);
           allSections_SolidImpact[i] = loadImage(TEXTURE_path);
@@ -50414,7 +50438,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
               String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
   
-              allSections_SolarImpact[i][j][k] = createImage(2, 2, RGB);
+              allSections_SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
   
               println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
               allSections_SolarImpact[i][j][k] = loadImage(TEXTURE_path);
