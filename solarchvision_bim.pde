@@ -1,17 +1,14 @@
 
 
 
-// note we used .... float r = FLOAT_r_Earth + 5000; for clouds
+// note we used .... float r = FLOAT_r_Earth + 15000; for clouds
 
-  int TROPO_deltaTime = 1; 
-  int TROPO_timeSteps = 24;
+final int TROPO_deltaTime = 1; 
+final int TROPO_timeSteps = 24;
 
 
 
 // should define subroutines to perfome this not inside draw! if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
-
-
-// Note: different tropo layer exported in obj format but only at frame 0.
 
 
 // bug using small STUDY_LevelPix 
@@ -151,7 +148,7 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   
-  LandFolder            = ProjectFolder + "/Land";
+  LandFolder            = ProjectFolder + "/Land/USE";
   
   ExportFolder          = ProjectFolder + "/Export";
   DiagramsFolder        = ExportFolder + "/Diagrams" + "/" + RunStamp;
@@ -410,10 +407,10 @@ int objExport_UsePalletOrBakeFaces = 0; // 0-1
 
 
 
-int Display_EARTH3D_Surface = 0;
+int Display_EARTH3D_Surface = 1;
 int Display_EARTH3D_Texture = 1;
 
-int Display_TROPO3D_Surface = 0;
+int Display_TROPO3D_Surface = 1;
 int Display_TROPO3D_Texture = 1;
 
 int Display_STAR3D_Surface = 0;
@@ -432,9 +429,9 @@ int Language_Active = Language_EN;
 
 
 String[] Defined_Stations = {
-
+  "Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
+  //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
 
@@ -18817,7 +18814,7 @@ void SOLARCHVISION_export_objects_OBJ () {
         float delta_Alpha = -BIOSPHERE_drawResolution; 
         float delta_Beta = -BIOSPHERE_drawResolution;
   
-        float r = FLOAT_r_Earth + 5000;
+        float r = FLOAT_r_Earth + 15000;
   
   
         for (int _turn = 1; _turn < 4; _turn += 1) {
@@ -22157,7 +22154,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     String the_layer = "http://geo.weather.gc.ca/geomet/?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
    
    
-    String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+    //String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
     //String ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
     //String ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
     //String ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
@@ -22171,7 +22168,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     //String ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
     //String ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
     //String ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
-    //String ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
+    String ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
     //String ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
     //String ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
     //String ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
@@ -22370,7 +22367,7 @@ void SOLARCHVISION_draw_TROPO3D (int start_hour, int end_hour) {
         float delta_Alpha = -BIOSPHERE_drawResolution;
         float delta_Beta = -BIOSPHERE_drawResolution;
   
-        float r = FLOAT_r_Earth + 5000;
+        float r = FLOAT_r_Earth + 15000;
   
         for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
           for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
