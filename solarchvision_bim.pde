@@ -430,8 +430,8 @@ int Language_Active = Language_EN;
 
 String[] Defined_Stations = {
   
-  "TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"
-  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"
+  "Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
@@ -48302,30 +48302,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("LAND_Textures_num", LAND_Textures_num);
 
-  {
-    newChild1 = my_xml.addChild("LAND_Textures_scale_U");
-    int ni = LAND_Textures_scale_U.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAND_Textures_scale_U[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("LAND_Textures_scale_V");
-    int ni = LAND_Textures_scale_V.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAND_Textures_scale_V[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
 
 
   {
@@ -48368,7 +48344,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Path");
-      newChild2.setInt("id", i); 
+      newChild2.setInt("id", i);
+      newChild2.setFloat("scale_U", LAND_Textures_scale_U[i]);
+      newChild2.setFloat("scale_V", LAND_Textures_scale_U[i]);
       newChild2.setContent(LAND_Textures_ImagePath[i]);          
     }
   }
@@ -49613,9 +49591,12 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("LAND_Textures_ImagePath");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-
+      
       XML[] children1 = children0[L].getChildren("Path");       
       for (int i = 0; i < ni; i++) {
+        
+        LAND_Textures_scale_U[i] = children1[i].getFloat("scale_U");
+        LAND_Textures_scale_V[i] = children1[i].getFloat("scale_V");
 
         String new_Texture_path = children1[i].getContent();
 
@@ -49630,28 +49611,6 @@ void SOLARCHVISION_load_project (String myFile) {
             LAND_Textures_Map[i] = loadImage(LAND_Textures_ImagePath[i]);
           }
         }
-      }
-    }
-
-    children0 = FileAll.getChildren("LAND_Textures_scale_U");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      LAND_Textures_scale_U = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        LAND_Textures_scale_U[i] = float(parts[i]);
-      }
-    }
-
-    children0 = FileAll.getChildren("LAND_Textures_scale_V");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      LAND_Textures_scale_V = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        LAND_Textures_scale_V[i] = float(parts[i]);
       }
     }
 
