@@ -48366,12 +48366,11 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1 = my_xml.addChild("LAND_Textures_ImagePath");
     int ni = LAND_Textures_ImagePath.length;
     newChild1.setInt("ni", ni);
-    String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += LAND_Textures_ImagePath[i];
-      if (i < ni - 1) lineSTR += ",";
+      newChild2 = newChild1.addChild("Path");
+      newChild2.setInt("id", i); 
+      newChild2.setContent(LAND_Textures_ImagePath[i]);          
     }
-    newChild1.setContent(lineSTR);
   }
 
 
@@ -49615,11 +49614,10 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
+      XML[] children1 = children0[L].getChildren("Path");       
       for (int i = 0; i < ni; i++) {
 
-        String new_Texture_path = parts[i];
+        String new_Texture_path = children1[i].getContent();
 
         if (LAND_Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         } else {
