@@ -429,7 +429,9 @@ int Language_Active = Language_EN;
 
 
 String[] Defined_Stations = {
-  "Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  
+  "TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"
+  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
@@ -10247,8 +10249,6 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 
 
 void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
-
-  if (FrameVariation == 1) Display_SUN3D_Pattern = 0; // <<<<<<<<<<< to avoid memory problem!
 
   if (Display_SUN3D_Pattern != 0) {
 
@@ -21830,8 +21830,8 @@ void SOLARCHVISION_draw_SKY3D () {
       WIN3D_Diagrams.noStroke();
 
       if (WIN3D_FacesShade == Shade_Surface_Materials) {
-        //WIN3D_Diagrams.fill(255, 255, 255);
-        WIN3D_Diagrams.noFill();
+        WIN3D_Diagrams.fill(c);
+        //WIN3D_Diagrams.noFill();
       } else {
         WIN3D_Diagrams.fill(c);
       }    
@@ -22157,7 +22157,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     String the_layer = "http://geo.weather.gc.ca/geomet/?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
    
    
-    //String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+    String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
     //String ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
     //String ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
     //String ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
@@ -22171,7 +22171,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     //String ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
     //String ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
     //String ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
-    String ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
+    //String ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
     //String ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
     //String ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
     //String ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
@@ -22242,21 +22242,22 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     TROPO_IMAGES_BoundariesY[i][1] = 90;
     */
     
-    
+    /*
     String DomainStamp = "HRDPS.CONTINENTAL";
     TROPO_IMAGES_BoundariesX[i][0] = -155;
     TROPO_IMAGES_BoundariesX[i][1] = -40;
     TROPO_IMAGES_BoundariesY[i][0] = 25;
     TROPO_IMAGES_BoundariesY[i][1] = 72.5;
+    */
     
-/*
-    //String DomainStamp = "HRDPS.CONTINENTAL";
-    String DomainStamp = "RDPS.ETA";
+
+    String DomainStamp = "HRDPS.CONTINENTAL";
+    //String DomainStamp = "RDPS.ETA";
     TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
     TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
     TROPO_IMAGES_BoundariesY[i][0] = LocationLatitude - 5 * cos_ang(LocationLatitude);
     TROPO_IMAGES_BoundariesY[i][1] = LocationLatitude + 5 * cos_ang(LocationLatitude);
-*/    
+    
     
     
     int RES1 = 1200; // 1800;
@@ -22306,7 +22307,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
       catch (Exception e) {
         println("LINK NOT AVAILABLE:", the_link);
       }
-      
+     
       if (new_file_downloaded == true) {
         if (ParameterStamp.equals("_NT&STYLES=CLOUD")) {
           println("image processing cloud layer");
@@ -26345,8 +26346,8 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 //Polar
-int LAND_n_I = 16; //24; 
-int LAND_n_J = 24 + 1; // 48 + 1;     
+int LAND_n_I = 24; //16; //24; 
+int LAND_n_J = 48 + 1; // 24 + 1; // 48 + 1;     
 
 float[][][] LAND_Mesh;
 
