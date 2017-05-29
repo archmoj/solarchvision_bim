@@ -36629,19 +36629,6 @@ void SOLARCHVISION_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY
           
           File dir = new File(the_target);
           if (dir.isFile()) {
-             /*
-
-             for (int n = 0; n < AERIAL_num; n += 1) {
-             
-             LocationLongitude = AERIAL_Locations[n][0];
-             LocationLatitude = AERIAL_Locations[n][1];
-             
-             int o = 0; // now only for deterministic!
-             AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, h, AERIAL_Locations[n][0], AERIAL_Locations[n][1]); 
-             
-             }
-             
-             */
 
             float[][] Points = {
               {
@@ -36838,9 +36825,6 @@ String getWgrib2Filename_MultiplePoints (int k, int l, int h, int part) {
   return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + "_part" + nf(part, 3) + ".txt");
 }
 
-String getWgrib2Filename (int k, int l, int h, float _lon, float _lat) {
-  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
-}
 
 
 
@@ -36945,27 +36929,12 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
   for (int p = 0; p < NUM_ValueFiles; p += 1) { 
 
-    String ValueFilename = getWgrib2Filename_MultiplePoints(k, l, h, p); 
+    String the_target = getWgrib2Filename_MultiplePoints(k, l, h, p); 
 
-    ValueFiles[p] = Wgrib2TempFolder + "/" + ValueFilename;    
+    ValueFiles[p] = Wgrib2TempFolder + "/" + the_target;    
 
-    int runWgrib2 = 1;
-
-    if (filenames != null) {
-      for (int i = 0; i < filenames.length; i++) {
-        if (filenames[i].equals(ValueFilename)) {
-
-          file_lines = loadStrings(ValueFiles[p]);
-
-          if (file_lines.length > 0) {
-            //println("The previous extraction file is found:", ValueFilename);
-            runWgrib2 = 0;
-          }
-        }
-      }
-    }
-
-    if (runWgrib2 == 1) {
+    File dir = new File(the_target);
+    if (!dir.isFile()) {
 
       String Grib2File = getGrib2Folder(GRIB2_DomainSelection) + "/" + getGrib2Filename(k, l, h);
 
@@ -37025,8 +36994,8 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
         for (int i = 0; i < filenames.length; i++) {
           //println(filenames[i]);
 
-          if (filenames[i].equals(ValueFilename)) {
-            //println("The wgrib2 extraction is ready:", ValueFilename);
+          if (filenames[i].equals(the_target)) {
+            //println("The wgrib2 extraction is ready:", the_target);
 
             file_lines = loadStrings(ValueFiles[p]);
 
@@ -37038,7 +37007,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 
     if (_stay != 0) {
-      println("The wgrib2 extraction is not ready:", ValueFilename);
+      println("The wgrib2 extraction is not ready:", the_target);
     } else {
       println(file_lines);
 
@@ -37132,106 +37101,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 
 
-float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
 
-  float theValue = FLOAT_undefined;
-
-  String ValueFilename = getWgrib2Filename(k, l, h, _lon, _lat); 
-
-  String ValueFile = Wgrib2TempFolder + "/" + ValueFilename;
-
-  String[] filenames = SOLARCHVISION_getfiles(Wgrib2TempFolder);
-
-  String[] file_lines = {
-  };
-
-  int runWgrib2 = 1;
-
-  if (filenames != null) {
-    for (int i = 0; i < filenames.length; i++) {
-      if (filenames[i].equals(ValueFilename)) {
-
-        file_lines = loadStrings(ValueFile);
-
-        if (file_lines.length > 0) {
-          //println("The previous extraction file is found:", ValueFilename);
-          runWgrib2 = 0;
-        }
-      }
-    }
-  }
-
-  if (runWgrib2 == 1) {
-    String Grib2File = getGrib2Folder(GRIB2_DomainSelection) + "/" + getGrib2Filename(k, l, h);
-
-    String CommandArguments[] = {
-      "wgrib2", Grib2File.replace('/', char(92)), "-s", "-lon", String.valueOf(_lon), String.valueOf(_lat), ">", ValueFile
-    };
-
-    String[] the_command = {
-      CommandArguments[0] + " " + CommandArguments[1] + " " + CommandArguments[2] + " " + CommandArguments[3] + " " + CommandArguments[4] + " " + CommandArguments[5] + " " + CommandArguments[6]
-    };
-
-    println(CommandArguments);
-    launch(CommandArguments);
-  } 
-
-  int _stay = 1;
-
-  while ((_stay != 0) && (_stay < 100000)) {
-
-    //println(_stay);
-
-    _stay += 1;
-
-    filenames = SOLARCHVISION_getfiles(Wgrib2TempFolder);
-
-    if (filenames != null) {
-      for (int i = 0; i < filenames.length; i++) {
-        //println(filenames[i]);
-
-        if (filenames[i].equals(ValueFilename)) {
-          //println("The wgrib2 extraction is ready:", ValueFilename);
-
-          file_lines = loadStrings(ValueFile);
-
-          if (file_lines.length > 0) _stay = 0;
-        }
-      }
-    }
-  }
-
-  if (_stay != 0) {
-    println("The wgrib2 extraction is not ready:", ValueFilename);
-  } else {
-    //println(file_lines);
-
-    if (file_lines.length > 0) {
-
-      int _posX = file_lines[0].indexOf("lon=");
-      int _posY = file_lines[0].indexOf("lat=");
-      int _posZ = file_lines[0].indexOf("val=");
-
-      float uX = Float.valueOf(file_lines[0].substring(_posX + 4, _posY - 1));
-      float uY = Float.valueOf(file_lines[0].substring(_posY + 4, _posZ - 1));
-
-      if (dist_lon_lat((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180) > 5) { // that means the distance should be less than 5km.
-        println(uX, uY, _lat, _lat);
-        println((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180);
-        println("----------------------------------------");
-      } else {
-        if (_posZ > 0) {
-          theValue = Float.valueOf(file_lines[0].substring(_posZ + 4));
-
-          theValue *= LAYERS_GRIB2_MUL[l];
-          theValue += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C
-        }
-      }
-    }
-  }
-
-  return(theValue);
-}
 
 
 
