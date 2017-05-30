@@ -21820,7 +21820,7 @@ void SOLARCHVISION_draw_SKY3D () {
       }
     } else {
 
-      color c = color(191, 191, 255);
+      color c = color(127, 127, 191);
 
       WIN3D_Diagrams.noStroke();
 
@@ -23456,7 +23456,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
 
   float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = {127,127,127,127}; // default color for undefined values 
+  float[] COL = {63,63,63,127}; // default color for undefined values 
 
   if (is_undefined_FLOAT(_u) == false) { 
     COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
