@@ -1966,9 +1966,9 @@ void setup () {
   SOLARCHVISION_resize_VertexSolar_array(); 
   SOLARCHVISION_resize_GlobalSolar_array();
   
-  SOLARCHVISION_resize_TOROPO_IMAGES();
-
-  Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
+  SOLARCHVISION_resize_TROPO_IMAGES();
+  
+  SOLARCHVISION_resize_EARTH_IMAGES();
 
   MOON_IMAGE_Map = loadImage(MOON_IMAGE_Filename);
   STAR_IMAGE_Map = loadImage(STAR_IMAGE_Filename);
@@ -2044,15 +2044,15 @@ void SOLARCHVISION_update_station (int Step) {
     TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
   }
 
-  if ((Step == 0) || (Step == 2)) SOLARCHVISION_update_CLIMATE_TMYEPW();
+  if ((Step == 0) || (Step == 2)) SOLARCHVISION_load_CLIMATE_TMYEPW();
 
-  if ((Step == 0) || (Step == 3)) SOLARCHVISION_update_CLIMATE_CWEEDS();  
+  if ((Step == 0) || (Step == 3)) SOLARCHVISION_load_CLIMATE_CWEEDS();  
   
-  if ((Step == 0) || (Step == 4)) SOLARCHVISION_update_CLIMATE_CLMREC();
+  if ((Step == 0) || (Step == 4)) SOLARCHVISION_load_CLIMATE_CLMREC();
 
-  if ((Step == 0) || (Step == 5)) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+  if ((Step == 0) || (Step == 5)) SOLARCHVISION_load_ENSEMBLE_OBSERVED();
 
-  if ((Step == 0) || (Step == 6)) SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+  if ((Step == 0) || (Step == 6)) SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
   if ((Step == 0) || (Step == 7)) SOLARCHVISION_load_LAND_Mesh();
 
@@ -2224,31 +2224,31 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_update_CLIMATE_TMYEPW", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_load_CLIMATE_TMYEPW", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 13) {
     SOLARCHVISION_update_station(2);
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_update_CLIMATE_CWEEDS", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_load_CLIMATE_CWEEDS", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 14) {
     SOLARCHVISION_update_station(3);
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_update_CLIMATE_CLMREC", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_load_CLIMATE_CLMREC", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 15) {
     SOLARCHVISION_update_station(4);
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_update_ENSEMBLE_OBSERVED", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_load_ENSEMBLE_OBSERVED", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 16) {
     SOLARCHVISION_update_station(5);
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_update_ENSEMBLE_FORECAST", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_load_ENSEMBLE_FORECAST", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 17) {
     SOLARCHVISION_update_station(6);
 
@@ -2294,15 +2294,21 @@ void draw () {
     SOLARCHVISION_update_models(2);
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View);
-    
-    stroke(255); fill(255); text("SOLARCHVISION_update_TOROPO_IMAGES", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+
+    stroke(255); fill(255); text("SOLARCHVISION_load_EARTH_IMAGES", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 24) {
-    SOLARCHVISION_update_TOROPO_IMAGES();
+    SOLARCHVISION_load_EARTH_IMAGES();
+
+    stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View);    
+    
+    stroke(255); fill(255); text("SOLARCHVISION_load_TROPO_IMAGES", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+  } else if (frameCount == 25) {
+    SOLARCHVISION_load_TROPO_IMAGES();
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View);    
  
     stroke(255); fill(255); text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  } else if (frameCount == 25) {
+  } else if (frameCount == 26) {
     
     SOLARCHVISION_build_SkySphere(1); //1 - 3
     SOLARCHVISION_resize_GlobalSolar_array();    
@@ -2523,18 +2529,18 @@ void draw () {
           TIME_Hour = int(24 * (TIME_Date - int(TIME_Date)));
           TIME_Date = (TIME_Hour / 24.0) + (286 + SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day)) % 365;
           println("DATE:", TIME_Date, "\tHOUR:", TIME_Hour);
-          SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+          SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
           SOLARCHVISION_draw_ROLLOUT();
         }
 
         
 
-        if (pre_Load_CLIMATE_TMYEPW != Load_CLIMATE_TMYEPW) SOLARCHVISION_update_CLIMATE_TMYEPW();
-        if (pre_Load_CLIMATE_CWEEDS != Load_CLIMATE_CWEEDS) SOLARCHVISION_update_CLIMATE_CWEEDS();
-        if (pre_Load_CLIMATE_CLMREC != Load_CLIMATE_CLMREC) SOLARCHVISION_update_CLIMATE_CLMREC();
-        if (pre_Load_ENSEMBLE_OBSERVED != Load_ENSEMBLE_OBSERVED) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
-        if (pre_Load_ENSEMBLE_FORECAST != Load_ENSEMBLE_FORECAST) SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+        if (pre_Load_CLIMATE_TMYEPW != Load_CLIMATE_TMYEPW) SOLARCHVISION_load_CLIMATE_TMYEPW();
+        if (pre_Load_CLIMATE_CWEEDS != Load_CLIMATE_CWEEDS) SOLARCHVISION_load_CLIMATE_CWEEDS();
+        if (pre_Load_CLIMATE_CLMREC != Load_CLIMATE_CLMREC) SOLARCHVISION_load_CLIMATE_CLMREC();
+        if (pre_Load_ENSEMBLE_OBSERVED != Load_ENSEMBLE_OBSERVED) SOLARCHVISION_load_ENSEMBLE_OBSERVED();
+        if (pre_Load_ENSEMBLE_FORECAST != Load_ENSEMBLE_FORECAST) SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
         if (pre_WORLD_AutoView != WORLD_AutoView) {
           WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
@@ -4209,28 +4215,28 @@ void SOLARCHVISION_Plot_Setup () {
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = (TIME_BeginDay + delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = (TIME_BeginDay + 2 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
       TIME_Date -= delta;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = (TIME_BeginDay + 3 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
       TIME_Date = pre_TIME_Date;
       SOLARCHVISION_update_date();
       TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
-      SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+      SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
       TIME_BeginDay = keep_TIME_BeginDay;
     }
   }
@@ -5562,12 +5568,12 @@ void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int 
     ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
     
     Load_ENSEMBLE_FORECAST = 1;
-    SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
+    SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
   }
 }
 
 
-void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void SOLARCHVISION_load_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
   ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
@@ -5705,7 +5711,7 @@ void SOLARCHVISION_loadENSEMBLE_FORECAST (String FileName, int Load_Layer) {
 
 
 
-void SOLARCHVISION_update_CLIMATE_CWEEDS () {
+void SOLARCHVISION_load_CLIMATE_CWEEDS () {
 
   CLIMATE_CWEEDS_values = new float [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)];
   CLIMATE_CWEEDS_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -5861,12 +5867,12 @@ void SOLARCHVISION_download_CLIMATE_CLMREC () {
     CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
     
     Load_CLIMATE_CLMREC = 1;
-    SOLARCHVISION_update_CLIMATE_CLMREC();
+    SOLARCHVISION_load_CLIMATE_CLMREC();
   }
 }
 
 
-void SOLARCHVISION_update_CLIMATE_CLMREC () {
+void SOLARCHVISION_load_CLIMATE_CLMREC () {
 
   CLIMATE_CLMREC_values = new float [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
   CLIMATE_CLMREC_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -6020,7 +6026,7 @@ void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
 
 
 
-void SOLARCHVISION_update_CLIMATE_TMYEPW () {
+void SOLARCHVISION_load_CLIMATE_TMYEPW () {
 
   CLIMATE_TMYEPW_values = new float [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)];
   CLIMATE_TMYEPW_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -6221,10 +6227,10 @@ void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
   ENSEMBLE_OBSERVED_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
   
   Load_ENSEMBLE_OBSERVED = 1; 
-  SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+  SOLARCHVISION_load_ENSEMBLE_OBSERVED();
 }
 
-void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
+void SOLARCHVISION_load_ENSEMBLE_OBSERVED () {
 
   ENSEMBLE_OBSERVED_values = new float [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
   ENSEMBLE_OBSERVED_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -9864,7 +9870,7 @@ void STUDY_keyPressed (KeyEvent e) {
         if (TIME_Date == 1.0 * int(TIME_Date)) TIME_Date += 0.5;
         else TIME_Date -= 0.5;
         SOLARCHVISION_update_date(); 
-        SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+        SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
         break;
 
       case ';': 
@@ -21970,7 +21976,7 @@ float[][] TROPO_IMAGES_BoundariesX;
 float[][] TROPO_IMAGES_BoundariesY;
 
 
-void SOLARCHVISION_resize_TOROPO_IMAGES () {
+void SOLARCHVISION_resize_TROPO_IMAGES () {
   
   TROPO_IMAGES_Filenames = new String [TROPO_timeSteps];
   TROPO_IMAGES_Map = new PImage [TROPO_timeSteps];
@@ -21992,7 +21998,7 @@ void SOLARCHVISION_resize_TOROPO_IMAGES () {
 }
 
 
-void SOLARCHVISION_update_TOROPO_IMAGES () {
+void SOLARCHVISION_load_TROPO_IMAGES () {
   
   String[] allFilenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
   
@@ -22117,7 +22123,7 @@ int[] getNow_inUTC () {
 
 
 
-void SOLARCHVISION_download_TOROPO_IMAGES () {
+void SOLARCHVISION_download_TROPO_IMAGES () {
 
   int LoactationTimeZone = getLoactationTimeZone();
   
@@ -22336,7 +22342,7 @@ void SOLARCHVISION_download_TOROPO_IMAGES () {
     }
   }
 
-  SOLARCHVISION_update_TOROPO_IMAGES();
+  SOLARCHVISION_load_TROPO_IMAGES();
 }  
   
 
@@ -22452,7 +22458,8 @@ String EARTH_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/E
 
 String[] EARTH_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(EARTH_IMAGES_Path));
 
-void Load_EARTH_IMAGES () {
+
+void SOLARCHVISION_resize_EARTH_IMAGES () {
 
   int n = EARTH_IMAGES_Filenames.length;
 
@@ -22460,6 +22467,11 @@ void Load_EARTH_IMAGES () {
 
   EARTH_IMAGES_BoundariesX = new float [n][2];
   EARTH_IMAGES_BoundariesY = new float [n][2];
+  
+}
+
+
+void SOLARCHVISION_load_EARTH_IMAGES () {
 
   for (int i = 0; i < EARTH_IMAGES_Filenames.length; i++) {
 
@@ -31931,7 +31943,7 @@ void mouseDragged () {
 }
 
 
-void SOLARCHVISION_update_Project_info (File selectedFile) {
+void SOLARCHVISION_update_project_info (File selectedFile) {
 
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", "").replace(".Xml", ""); // should work most of the times!
   ProjectFolder =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
@@ -31950,7 +31962,7 @@ void SOLARCHVISION_fileSelected_New (File selectedFile) {
 
     println("New project:", Filename);
 
-    SOLARCHVISION_update_Project_info(selectedFile);
+    SOLARCHVISION_update_project_info(selectedFile);
   }
 }
 
@@ -31966,7 +31978,7 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
 
     SOLARCHVISION_load_project(Filename);
 
-    SOLARCHVISION_update_Project_info(selectedFile);
+    SOLARCHVISION_update_project_info(selectedFile);
   }
 } 
 
@@ -31981,7 +31993,7 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
 
     println("Saving to:", Filename);
 
-    SOLARCHVISION_update_Project_info(selectedFile);
+    SOLARCHVISION_update_project_info(selectedFile);
 
     SOLARCHVISION_save_project(Filename, Display_Output_in_Explorer);
   }
@@ -32419,7 +32431,7 @@ void mouseClicked () {
             }   
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Toroposphere")) {
-              SOLARCHVISION_download_TOROPO_IMAGES();
+              SOLARCHVISION_download_TROPO_IMAGES();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Aerial")) {
@@ -32443,37 +32455,37 @@ void mouseClicked () {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
               
               Load_CLIMATE_TMYEPW = 1;
-              SOLARCHVISION_update_CLIMATE_TMYEPW();
+              SOLARCHVISION_load_CLIMATE_TMYEPW();
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update CWEEDS")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
               
               Load_CLIMATE_CWEEDS = 1;
-              SOLARCHVISION_update_CLIMATE_CWEEDS();
+              SOLARCHVISION_load_CLIMATE_CWEEDS();
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update CLMREC")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
               
               Load_CLIMATE_CLMREC = 1;
-              SOLARCHVISION_update_CLIMATE_CLMREC();
+              SOLARCHVISION_load_CLIMATE_CLMREC();
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update SWOB")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
               
               Load_ENSEMBLE_OBSERVED = 1;
-              SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+              SOLARCHVISION_load_ENSEMBLE_OBSERVED();
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update NAEFS")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
               Load_ENSEMBLE_FORECAST = 1;
-              SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+              SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update Aerial")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
               Load_ENSEMBLE_FORECAST = 1;
-              SOLARCHVISION_update_AERIAL(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+              SOLARCHVISION_load_AERIAL(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }      
    
         
@@ -34353,7 +34365,7 @@ void mouseClicked () {
 
 
                     SOLARCHVISION_update_station(1);
-                    SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+                    SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
                   }
                 }
               }
@@ -34407,7 +34419,7 @@ void mouseClicked () {
                     ROLLOUT_Update = 1;
 
                     SOLARCHVISION_update_station(1);
-                    SOLARCHVISION_update_CLIMATE_CWEEDS();
+                    SOLARCHVISION_load_CLIMATE_CWEEDS();
                   }
                 }
               }
@@ -34463,7 +34475,7 @@ void mouseClicked () {
                     ROLLOUT_Update = 1;
 
                     SOLARCHVISION_update_station(1);
-                    SOLARCHVISION_update_CLIMATE_CLMREC();
+                    SOLARCHVISION_load_CLIMATE_CLMREC();
                   }
                 }
               }
@@ -34516,7 +34528,7 @@ void mouseClicked () {
                     ROLLOUT_Update = 1;
 
                     SOLARCHVISION_update_station(1);
-                    SOLARCHVISION_update_CLIMATE_TMYEPW();
+                    SOLARCHVISION_load_CLIMATE_TMYEPW();
                   }
                 }
               }
@@ -36526,7 +36538,7 @@ void SOLARCHVISION_download_AERIAL (int begin_YEAR, int begin_MONTH, int begin_D
 
 
 
-void SOLARCHVISION_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, int begin_HOUR) {
+void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, int begin_HOUR) {
 
 
   GRIB2_Year = begin_YEAR;
@@ -47296,7 +47308,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             TIME_Date = (int(roundTo(365.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
             SOLARCHVISION_update_date(); 
             TIME_BeginDay = int(TIME_BeginDay + (TIME_Date - keep_TIME_Date) + 365) % 365;
-            SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+            SOLARCHVISION_load_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             
             STUDY_Update = 1; 
             ROLLOUT_Update = 1;
