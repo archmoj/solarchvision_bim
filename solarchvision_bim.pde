@@ -2999,7 +2999,7 @@ void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
 
 
-void SOLARCHVISION_regenerate_desired_bakings() {
+void SOLARCHVISION_regenerate_desired_bakings () {
   
   if (rebuild_VertexSolar_array != 0) {
     SOLARCHVISION_calculate_VertexSolar_array();
@@ -18710,6 +18710,27 @@ void SOLARCHVISION_export_objects_RAD () {
 
 void SOLARCHVISION_export_objects_OBJ_timeSeries () {
 
+  int keep_STUDY_i_Start = STUDY_i_Start;
+  
+  for (int i = 0; i < 24; i += 1) {
+
+    STUDY_i_Start = i;
+    
+    SOLARCHVISION_find_which_bakings_to_regenerate();
+    SOLARCHVISION_regenerate_desired_bakings();
+      
+    
+    SOLARCHVISION_export_objects_OBJ("_" + nf(i, 2));
+  
+  }
+  
+  STUDY_i_Start = keep_STUDY_i_Start;
+}
+
+
+
+void SOLARCHVISION_export_objects_OBJ_dateSeries () {
+
   int keep_IMPACTS_DisplayDay = IMPACTS_DisplayDay;
   
   for (int j = STUDY_j_Start; j <= STUDY_j_End; j += 1) {
@@ -32151,10 +32172,15 @@ void mouseClicked () {
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Execute CommandFile...")) { 
               selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
-            }               
+            } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Export 3D-Model > OBJ (time-series)")) {
               SOLARCHVISION_export_objects_OBJ_timeSeries();
+            } 
+                        
+
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Export 3D-Model > OBJ (date-series)")) {
+              SOLARCHVISION_export_objects_OBJ_dateSeries();
             } 
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Export 3D-Model > OBJ")) {
@@ -45366,7 +45392,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > OBJ", "Export 3D-Model > OBJ (time-series)", "Import 3D-Model...", "Execute CommandFile...", "Preferences", "Quit"
+    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > OBJ", "Export 3D-Model > OBJ (date-series)", "Export 3D-Model > OBJ (time-series)", "Import 3D-Model...", "Execute CommandFile...", "Preferences", "Quit"
   }
   , 
   {
@@ -51022,9 +51048,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("EXECUTE")) {
     selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
   }
-
+  
   else if (Command_CAPITAL.equals("EXPORT.OBJ.TIMESERIES")) {
     SOLARCHVISION_export_objects_OBJ_timeSeries();
+  }    
+
+  else if (Command_CAPITAL.equals("EXPORT.OBJ.DATESERIES")) {
+    SOLARCHVISION_export_objects_OBJ_dateSeries();
   }      
 
   else if (Command_CAPITAL.equals("EXPORT.OBJ")) {
