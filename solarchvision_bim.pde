@@ -426,8 +426,8 @@ int Language_Active = Language_EN;
 String[] Defined_Stations = {
   
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"
-  "Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
@@ -22262,39 +22262,16 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
     
     
     
-/*
-    String DomainStamp = "GDPS.ETA";
-    TROPO_IMAGES_BoundariesX[i][0] = -180;
-    TROPO_IMAGES_BoundariesX[i][1] = 180;
-    TROPO_IMAGES_BoundariesY[i][0] = 90;
-    TROPO_IMAGES_BoundariesY[i][1] = -90;
-*/
-    
-    
-    /*
-    String DomainStamp = "RDPS.ETA";
-    TROPO_IMAGES_BoundariesX[i][0] = -180;
-    TROPO_IMAGES_BoundariesX[i][1] = 180;
-    TROPO_IMAGES_BoundariesY[i][0] = 0;
-    TROPO_IMAGES_BoundariesY[i][1] = 90;
-    */
-    
-    /*
-    String DomainStamp = "HRDPS.CONTINENTAL";
-    TROPO_IMAGES_BoundariesX[i][0] = -155;
-    TROPO_IMAGES_BoundariesX[i][1] = -40;
-    TROPO_IMAGES_BoundariesY[i][0] = 25;
-    TROPO_IMAGES_BoundariesY[i][1] = 72.5;
-    */
-    
 
+//    String DomainStamp = "GDPS.ETA";
+//    String DomainStamp = "RDPS.ETA";
     String DomainStamp = "HRDPS.CONTINENTAL";
-    //String DomainStamp = "RDPS.ETA";
+
     TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
     TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
     TROPO_IMAGES_BoundariesY[i][0] = LocationLatitude - 5 * cos_ang(LocationLatitude);
     TROPO_IMAGES_BoundariesY[i][1] = LocationLatitude + 5 * cos_ang(LocationLatitude);
-    
+
     
     
     int RES1 = 1200; // 1800;
@@ -26456,6 +26433,17 @@ void SOLARCHVISION_update_LAND_Mesh () {
           LAND_Mesh[i][j][2] -= h;
         }
       }
+      
+      
+      // this is to modify the surronding ponits and set them at the same elevation of the the central point 
+      for (int i = 0; i < 2; i += 1) {
+        if (i < LAND_n_I) {
+          for (int j = 0; j < LAND_n_J; j += 1) {
+            LAND_Mesh[i][j][2] = LAND_Mesh[0][0][2];
+          }
+        }
+      }
+      
     }
   }
 
