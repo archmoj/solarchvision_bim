@@ -22201,16 +22201,16 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
       }
     }
     
-    //String the_service = "http://geo.weather.gc.ca/geomet/";
-    String the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
+    String the_service = "http://geo.weather.gc.ca/geomet/";
+    //String the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
 
 
     String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
     
     
-    String ParameterStamp = ""; // when using GOES-R
+    //String ParameterStamp = ""; // when using GOES-R
     
-    //String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+    String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
     //String ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
     //String ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
     //String ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
@@ -22281,8 +22281,8 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
 
 //    String DomainStamp = "GDPS.ETA";
 //    String DomainStamp = "RDPS.ETA";
-//    String DomainStamp = "HRDPS.CONTINENTAL";
-    String DomainStamp = "east_vis_1km"; 
+    String DomainStamp = "HRDPS.CONTINENTAL";
+//    String DomainStamp = "east_vis_1km"; 
 
     TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
     TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
@@ -50367,10 +50367,17 @@ void SOLARCHVISION_load_project (String myFile) {
   UI_BAR_b_Update = 1;
   UI_BAR_d_Update = 1;
 
-  rebuild_VertexSolar_array = 1;
-  rebuild_GlobalSolar_array = 1;
+
+
   rebuild_SolarImpactImage_array = 1;
   rebuild_WindRoseImage_array = 1; 
+
+  //rebuild_VertexSolar_array = 1;
+  rebuild_GlobalSolar_array = 1;
+
+  SOLARCHVISION_resize_VertexSolar_array(); 
+  SOLARCHVISION_resize_GlobalSolar_array();
+
 
   SOLARCHVISION_modify_Viewport_Title();
 }
