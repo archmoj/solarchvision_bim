@@ -116,7 +116,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Project_D01";    
+  ProjectFolder = BaseFolder + "/Projects/Project_E01";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -435,9 +435,13 @@ int STATION_DEF_TMYEPW = 9;
 
 String[] Defined_Stations = {
   
+  
+  
   //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
-  "Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
+  
+  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
@@ -26418,8 +26422,8 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 //Polar
-int LAND_n_I = 16; //24; 
-int LAND_n_J = 24 + 1; // 48 + 1;     
+int LAND_n_I = 24; //16; //24; 
+int LAND_n_J = 48 + 1; //24 + 1; // 48 + 1;     
 
 float[][][] LAND_Mesh;
 
@@ -26486,7 +26490,7 @@ void SOLARCHVISION_update_LAND_Mesh () {
         }
       }
       
-      
+      /*
       // this is to modify the surronding ponits and set them at the same elevation of the the central point 
       for (int i = 0; i < 2; i += 1) {
         if (i < LAND_n_I) {
@@ -26495,6 +26499,7 @@ void SOLARCHVISION_update_LAND_Mesh () {
           }
         }
       }
+      */
       
     }
   }
