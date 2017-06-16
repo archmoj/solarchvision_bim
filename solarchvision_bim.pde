@@ -1,3 +1,4 @@
+String SceneName = "Complex";
 
 
 
@@ -107,6 +108,7 @@ String DiagramsFolder;
 String Model3DFolder;
 String ViewsFromSkyFolder;
 String ScreenShotFolder;
+String ShadingFolder;
 
 
 
@@ -116,7 +118,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/SolidArch_01";    
+  ProjectFolder = BaseFolder + "/Projects/Project_F01";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -142,6 +144,8 @@ void SOLARCHVISION_update_folders () {
   
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  
+  ShadingFolder = ProjectFolder + "/ShadingAnalysis";
   
   LandFolder            = ProjectFolder + "/Land/USE";
   
@@ -27015,11 +27019,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                           String[] STR_SHD = {
                             "F", "T"
                           };
-                          String File_Name = "";
-
-                          File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
-                         
-
+                          String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
                           if (RAD_TYPE == 0) {
                             File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
@@ -27027,7 +27027,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                             File_Name += "DIF_" + STR_SHD[SHD];
                           }
 
-                          File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2) + ".PNG";
+                          File_Name += "_Camera" + nf(Camera_Variation, 2) + ".PNG";
 
 
                           println(File_Name);
@@ -27293,7 +27293,7 @@ void SOLARCHVISION_render_Shadows_selectedSections () {
     SolarImpact_scale_U = allSections_UVERAB[f][4];
     SolarImpact_scale_V = allSections_UVERAB[f][5];
 
-    SceneName = "temp_" + Section_Stamp();
+    SceneName = "Section_" + Section_Stamp();
 
     SOLARCHVISION_render_Shadows_CurrentSection();
   }
@@ -27323,7 +27323,7 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
     SolarImpact_scale_U = allSections_UVERAB[f][4];
     SolarImpact_scale_V = allSections_UVERAB[f][5];
 
-    SceneName = "temp_" + Section_Stamp();
+    SceneName = "Section_" + Section_Stamp();
 
     SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked();
     
@@ -38448,14 +38448,13 @@ String Viewport_Stamp () {
 
 PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
 
-String defaultSceneName = "Complex";
-String SceneName = defaultSceneName;
+
 
 void SOLARCHVISION_render_Shadows_CurrentSection () {
 
   cursor(WAIT);  
 
-  SceneName = "temp_" + Section_Stamp();
+  SceneName = "Section_" + Section_Stamp();
 
 
   int RES1 = SolarImpact_RES1;
@@ -38511,13 +38510,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           String[] STR_SHD = {
             "F", "T"
           };
-          String File_Name = "";
-
-          File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+          String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
 
-          File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
+          File_Name += "_Camera00";
 
           TREES_Diagrams.beginDraw();
 
@@ -39108,9 +39105,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
       String[] STR_SHD = {
         "F", "T"
       };
-      String File_Name = "";
-
-      File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+      String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
       File_Name += "DIF_" + STR_SHD[SHD];
 
@@ -39736,7 +39731,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
       DIFFUSE_Diagrams.endDraw();
 
-      File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00.PNG"; 
+      File_Name += "_Camera00.PNG"; 
 
       DIFFUSE_Diagrams.save(File_Name);
       println(File_Name);
@@ -53019,7 +53014,7 @@ void SOLARCHVISION_PreBakeViewport () {
   int step_HOUR = 1;
   int end_HOUR = 20; // to make it faster. Also the images are not needed out of this period.
 
-  SceneName = "Test" + Viewport_Stamp();
+  SceneName = "Viewport_" + Viewport_Stamp();
 
   int pre_WIN3D_X_View = WIN3D_X_View; 
   int pre_WIN3D_Y_View = WIN3D_Y_View;
@@ -53288,13 +53283,11 @@ void SOLARCHVISION_PreBakeViewport () {
         String[] STR_SHD = {
           "F", "T"
         };
-        String File_Name = "";
-  
-        File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+        String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
   
         File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
   
-        File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2);
+        File_Name += "_Camera" + nf(Camera_Variation, 2);
   
         Direct_RGBA[n_Map][SHD].updatePixels();
         
@@ -53312,13 +53305,11 @@ void SOLARCHVISION_PreBakeViewport () {
     String[] STR_SHD = {
       "F", "T"
     };
-    String File_Name = "";
-
-    File_Name = BaseFolder + "/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+    String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
     File_Name += "DIF_" + STR_SHD[SHD];
     
-    File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(Camera_Variation, 2);
+    File_Name += "_Camera" + nf(Camera_Variation, 2);
     
     Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB); 
     
