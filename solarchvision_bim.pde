@@ -118,7 +118,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Project_F01";    
+  ProjectFolder = BaseFolder + "/Projects/Project_G01";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -439,9 +439,9 @@ int STATION_DEF_TMYEPW = 9;
 
 String[] Defined_Stations = {
   
-  "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
+  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
   
-  //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
+  "Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   
@@ -22216,7 +22216,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
     String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
     
     
-    //String ParameterStamp = ""; // when using GOES-R
+    //String ParameterStamp = ""; // when using GOES
     
     String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
     //String ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
@@ -22285,12 +22285,16 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
 */
     
     
-    
-
-//    String DomainStamp = "GDPS.ETA";
-//    String DomainStamp = "RDPS.ETA";
-    String DomainStamp = "HRDPS.CONTINENTAL";
-//    String DomainStamp = "east_vis_1km"; 
+    String DomainStamp = "";
+    if (ParameterStamp.equals("")) { // when using GOES
+      DomainStamp = "east_vis_1km";
+    }
+    else {
+      //DomainStamp = "GDPS.ETA";
+      //DomainStamp = "RDPS.ETA";
+      DomainStamp = "HRDPS.CONTINENTAL";
+    }
+ 
 
     TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
     TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
@@ -22313,10 +22317,18 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
     
     int the_hour = i * TROPO_deltaTime; 
 
-    String timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
-   
-    //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
-    the_link += "%26time%3D" + timeStamp +"%3A00Z";
+    String timeStamp = "";
+    if (ParameterStamp.equals("")) { // when using GOES
+      timeStamp = "&date=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2);
+    }
+    else {
+    
+      timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
+     
+      //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
+      the_link += "%26time%3D" + timeStamp +"%3A00Z";
+    }
+
     
 
     
@@ -22381,7 +22393,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
 
 
 
-        if (ParameterStamp.equals("")) { // when using GOES-R
+        if (ParameterStamp.equals("")) { // when using GOES
           println("image processing cloud layer");
 
           PImage img = loadImage(the_target);
@@ -26446,18 +26458,18 @@ void SOLARCHVISION_update_LAND_Mesh () {
   try { 
 
     if (Load_LAND_Mesh == 1) {
+      
+      for (int i = 0; i < LAND_n_I; i += 1) {
 
-      for (int j = 0; j < LAND_n_J; j += 1) {
-
-        XML FileALL = loadXML(LandFolder + "/" + nf(j, 0) + ".xml");
+        XML FileALL = loadXML(LandFolder + "/" + nf(i, 0) + ".xml");
 
         XML[] children0 = FileALL.getChildren("result");
 
-        for (int i = 0; i < LAND_n_I; i += 1) {
+        for (int j = 0; j < LAND_n_J; j += 1) {
 
-          String txt_elevation = children0[i].getChild("elevation").getContent();
+          String txt_elevation = children0[j].getChild("elevation").getContent();
 
-          XML[] children1 = children0[i].getChildren("location");
+          XML[] children1 = children0[j].getChildren("location");
 
           String txt_latitude = children1[0].getChild("lat").getContent();
           String txt_longitude = children1[0].getChild("lng").getContent();
@@ -26496,9 +26508,9 @@ void SOLARCHVISION_update_LAND_Mesh () {
       
       /*
       // this is to modify the surronding ponits and set them at the same elevation of the the central point 
-      for (int i = 0; i < 2; i += 1) {
-        if (i < LAND_n_I) {
-          for (int j = 0; j < LAND_n_J; j += 1) {
+      for (int j = 0; j < 2; j += 1) {
+        if (j < LAND_n_J) {
+          for (int i = 0; i < LAND_n_I; i += 1) {
             LAND_Mesh[i][j][2] = LAND_Mesh[0][0][2];
           }
         }
@@ -26530,21 +26542,21 @@ void SOLARCHVISION_download_LAND_Mesh () {
   //float q = 1.25;
   //float q = 1.125;  
   
-  for (int j = 0; j < LAND_n_J; j += 1) {
-
-    float t = j * 360.0 / (LAND_n_J - 1);
+  for (int i = 0; i < LAND_n_I; i += 1) {
     
-    String the_target = LandFolder + "/" + nf(j, 0) + ".xml";
+    String the_target = LandFolder + "/" + nf(i, 0) + ".xml";
     
     File dir = new File(the_target);
     if (!dir.isFile()) {
 
       String the_link = "";
-  
-      for (int i = 0; i < LAND_n_I; i += 1) {
+      
+      for (int j = 0; j < LAND_n_J; j += 1) {
   
         if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
         else the_link += "%7C"; //"|";
+        
+        float t = j * 360.0 / (LAND_n_J - 1);
         
         float r = 0;
         if (i > 0) r = pow(q, i - 1);
