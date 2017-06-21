@@ -7,14 +7,17 @@ String SceneName = "Complex";
 final int TROPO_deltaTime = 1; 
 final int TROPO_timeSteps = 24;
 
+int TYPE_SATELLITE_GOES = 0;
+int TYPE_FORECAST_HRDPS = 1;
+int TYPE_FORECAST_RDPS  = 2;
+int TYPE_FORECAST_GDPS  = 3;
+int WMS_type = TYPE_FORECAST_HRDPS;
 
 
 // should define subroutines to perfome this not inside draw! if ((STUDY_PlotImpacts == 6) || (STUDY_PlotImpacts == 7)) {
 
 
 // bug using small STUDY_LevelPix 
-
-// should write the info on 3D-Pal
 
 
 // pick select LandPoint is not written. 
@@ -77,8 +80,8 @@ String CLIMATE_CWEEDS_directory;
 String CLIMATE_CLMREC_directory;
 String ENSEMBLE_OBSERVED_directory;
 String ENSEMBLE_FORECAST_directory;
-String FORECAST_GRIB2_directory;
-String FORECAST_GEOMET_directory;
+String GRIB2_directory;
+String GEOMET_directory;
 
 String[] CLIMATE_TMYEPW_Files;
 String[] CLIMATE_CWEEDS_Files;
@@ -93,7 +96,6 @@ String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version;
 
 
 
-String RealtimeDataFolder;
 String Wgrib2TempFolder;
 
 String BackgroundFolder;
@@ -122,11 +124,10 @@ void SOLARCHVISION_update_folders () {
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
-  RealtimeDataFolder = ProjectFolder + "/Input/WeatherRealtime";
-  FORECAST_GEOMET_directory = ProjectFolder + "/forecast/FORECAST_GEOMET" + "/" + RunStamp;
-  FORECAST_GRIB2_directory = ProjectFolder + "/forecast/FORECAST_GRIB2";
-  ENSEMBLE_FORECAST_directory = ProjectFolder + "/forecast/FORECAST_NAEFS";
-  ENSEMBLE_OBSERVED_directory = ProjectFolder + "/observation/OBSERVATION_SWOB";
+  GEOMET_directory = ProjectFolder + "/Data/GEOMET" + "/" + RunStamp;
+  GRIB2_directory = ProjectFolder + "/Data/GRIB2";
+  ENSEMBLE_FORECAST_directory = ProjectFolder + "/Data/FORECAST_NAEFS";
+  ENSEMBLE_OBSERVED_directory = ProjectFolder + "/Data/OBSERVATION_SWOB";
 
   CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
   CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
@@ -1533,7 +1534,7 @@ int SOLARCHVISION_Y_click2 = -1;
 
 
 
-int LAND_Tessellation = 0; //2;
+int LAND_Tessellation = 1; //0; //2;
 
 int MODEL3D_Tessellation = 2;
 
@@ -1751,12 +1752,12 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_Coordinate = 0;
 float WIN3D_Y_Coordinate = 10;
-float WIN3D_Z_Coordinate = -100; 
+float WIN3D_Z_Coordinate = 50; 
 float WIN3D_S_Coordinate = 1;
 
 float WIN3D_RX_Coordinate = 90; //75; 
 float WIN3D_RY_Coordinate = 0;
-float WIN3D_RZ_Coordinate = 0; //0; //180; //135;
+float WIN3D_RZ_Coordinate = 180; //0; //180; //135;
 float WIN3D_RS_Coordinate = 5.0;
 
 float WIN3D_Zoom = 60; // / (SOLARCHVISION_H_Pixel / 300.0);
@@ -3362,7 +3363,15 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
     float pal_length = 1 * SOLARCHVISION_H_Pixel * WIN3D_ImageScale / the_scale;
 
+    float y1 = -0.2 * (pal_length / 11.0) + (0.4 * WIN3D_Y_View / the_scale);
+    float y2 = y1 + 0.4 * (pal_length / 11.0);
+
+    float txtSize = y2 - y1;
+
     for (int q = 0; q < 11; q += 1) {
+      
+      float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
+      float x2 = x1 + (pal_length / 11.0);      
 
       float _u = 0.2 * q - 0.5;
 
@@ -3382,11 +3391,6 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
       WIN3D_Diagrams.strokeWeight(0);
 
-      float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
-      float x2 = x1 + (pal_length / 11.0);
-      float y1 = -0.2 * (x2 - x1) + (0.4 * WIN3D_Y_View / the_scale);
-      float y2 = y1 + 0.4 * (x2 - x1);
-
       WIN3D_Diagrams.beginShape();
       WIN3D_Diagrams.vertex(x1, y1, 0);
       WIN3D_Diagrams.vertex(x1, y2, 0);
@@ -3403,8 +3407,6 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
         WIN3D_Diagrams.fill(255);
         WIN3D_Diagrams.strokeWeight(2);
       }  
-
-      float txtSize = y2 - y1;
 
       WIN3D_Diagrams.textSize(txtSize);
       WIN3D_Diagrams.textAlign(CENTER, CENTER);
@@ -3423,6 +3425,9 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       }
     }
 
+    WIN3D_Diagrams.textAlign(LEFT, CENTER);
+    if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text("kW/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+    if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text("%kW°C/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
 
     WIN3D_Diagrams.popMatrix();
   }
@@ -15931,9 +15936,7 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
     }
 
-    int[] new_selectedFace_ids = {
-      0
-    };
+    int[] new_selectedFace_ids = {};
 
     for (int o = selectedGroup3D_ids.length - 1; o >= 0; o--) { 
 
@@ -16076,9 +16079,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
     }
 
-    int[] new_selectedFace_ids = {
-      0
-    };
+    int[] new_selectedFace_ids = {};
 
     for (int o = selectedGroup3D_ids.length - 1; o >= 0; o--) { 
 
@@ -18835,7 +18836,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   
             int n = TROPO_id; // <<<<<<<<
   
-            String old_Texture_path = FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n];
+            String old_Texture_path = GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n];
   
             String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
   
@@ -22055,7 +22056,7 @@ void SOLARCHVISION_resize_TROPO_IMAGES () {
 
 void SOLARCHVISION_load_TROPO_IMAGES () {
   
-  String[] allFilenames = sort(SOLARCHVISION_getfiles(FORECAST_GEOMET_directory));
+  String[] allFilenames = sort(SOLARCHVISION_getfiles(GEOMET_directory));
   
 
   
@@ -22103,15 +22104,17 @@ void SOLARCHVISION_load_TROPO_IMAGES () {
         TROPO_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
         TROPO_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
         
-        println("Loading:", FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
+        println("Loading:", GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
 
-        TROPO_IMAGES_Map[i] = loadImage(FORECAST_GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
+        TROPO_IMAGES_Map[i] = loadImage(GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
 
         break;        
       }
     }
 
   }
+  
+  WIN3D_Update = 1;
 }
 
 
@@ -22192,110 +22195,125 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
  
   for (int i = 0; i < TROPO_timeSteps; i++) {
     
-    CurrentHour += 1;
-    
-    if (CurrentHour > 23) {
-      CurrentHour -= 24;
-      CurrentDay += 1;
+    if (WMS_type == TYPE_SATELLITE_GOES) {
+      
+      CurrentHour -= 1;
+      
+      if (CurrentHour < 0) {
+        CurrentHour += 24;
+        CurrentDay -= 1;
+  
+        if (CurrentDay < 0) { 
+          
+          CurrentMonth -= 1;
 
-      if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
-        CurrentDay = 1;
-        CurrentMonth += 1;
-        
-        if (CurrentMonth > 12) {
-          CurrentMonth = 1;
-          CurrentYear += 1;
+          if (CurrentMonth < 0) {
+            CurrentMonth = 12;
+            CurrentYear -= 1;
+          }
+          
+          CurrentDay = CalendarLength[CurrentMonth - 1];
         }
       }
+          
     }
+    else {
     
-    String the_service = "http://geo.weather.gc.ca/geomet/";
-    //String the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
+      CurrentHour += 1;
+      
+      if (CurrentHour > 23) {
+        CurrentHour -= 24;
+        CurrentDay += 1;
+  
+        if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+          CurrentDay = 1;
+          CurrentMonth += 1;
+          
+          if (CurrentMonth > 12) {
+            CurrentMonth = 1;
+            CurrentYear += 1;
+          }
+        }
+      }
+    
+    }
+    String the_service = "";
+    
+    if (WMS_type == TYPE_SATELLITE_GOES) {
+      the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
+    }
+    else {
+      the_service = "http://geo.weather.gc.ca/geomet/";
+    } 
 
 
     String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
     
     
-    //String ParameterStamp = ""; // when using GOES
-    
-    String ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
-    //String ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
-    //String ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
-    //String ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
-    //String ParameterStamp = "_UU&STYLES=WINDARROWKMH"; // Wind arrows in km/h
-    //String ParameterStamp = "_UU&STYLES=WINDARROW"; // Wind arrows in knots
-    //String ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
-    //String ParameterStamp = "_TT&STYLES=TEMPSUMMER"; // Air temperaturesummer range
-    //String ParameterStamp = "_TT&STYLES=TEMPWINTER"; // Air temperaturewinter range
-    //String ParameterStamp = "_ES&STYLES=DEWPOINTDEP"; // Dew point depression
-    //String ParameterStamp = "_P0&STYLES=PRESSURE"; // Surface pressure
-    //String ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
-    //String ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
-    //String ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
-    //String ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
-    //String ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
-    //String ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
-    //String ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
-    //String ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
-    //String ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
-    //String ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
-    //String ParameterStamp = "_I0&STYLES=TEMPSOIL"; // Soil Temperature
-    //String ParameterStamp = "_I1&STYLES=WATERCONTENT"; // Water content
-    //String ParameterStamp = "_I2&STYLES=ICECONTENT"; // Soil volumetric ice content
-    //String ParameterStamp = "_I3&STYLES=WATERRETAINED"; // Water retained on the vegetation 
-    //String ParameterStamp = "_I4&STYLES=WATERRETAINED"; // Water retained in the snow pack
-    //String ParameterStamp = "_I5&STYLES=SNOWMASS"; // Snow mass
-    //String ParameterStamp = "_I8&STYLES=ICETHICK"; // Sea ice thickness
-    
-    //String ParameterStamp = "_WGE&STYLES=MS2KTSGUST"; // Windgust estimate intervals in knots
-    //String ParameterStamp = "_WGE&STYLES=MS2KTS"; // Windspeed estimate in knots
-    //String ParameterStamp = "_WGE&STYLES=MS2KMH"; // Windspeed estimate in km/h
-    
-    //String ParameterStamp = "_WGN&STYLES=MS2KTSGUST"; // Windgust minimum intervals in knots
-    //String ParameterStamp = "_WGN&STYLES=MS2KTS"; // Windspeed minimum in knots
-    //String ParameterStamp = "_WGN&STYLES=MS2KMH"; // Windspeed minimum in km/h
-    
-    //String ParameterStamp = "_WGX&STYLES=MS2KTSGUST"; // Windgust maximum intervals in knots
-    //String ParameterStamp = "_WGX&STYLES=MS2KTS"; // Windspeed maximum in knots
-    //String ParameterStamp = "_WGX&STYLES=MS2KMH"; // Windspeed maximum in km/h
-    
-/*
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_GZ";  // Geopotential height
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_UU";  // Winds 
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_NT";  // Total cloud cover
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_TT"; // Air temperature  
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_ES";  // Dew point depression
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_P0";  // Surface pressure
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_PN";  // Sea level pressure
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_PR";  // Quantity of precipitation 
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_RT";  // Total precipitation rate
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_RN";  // Rain (QPF)
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_FR";  // Freezing rain (QPF) 
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_SN";  // Snow (QPF)
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I0";  // Surface and soil temperatures (Deep/Mean) 
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I1";  // Soil volumetric water content (Deep/Mean)
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I2";  // Soil volumetric ice content
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I3";  // Water retained on the vegetation 
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I4";  // Water in the snow pack
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I5";  // Snow mass 
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_I8";  // Sea ice thickness
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_WGE";  // Wind gust estimate
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_WGN";  // Wind gust minimum
-  //str += "&QUERY_LAYERS=HRDPS.CONTINENTAL_WGX";  // Wind gust maximum 
-*/
-    
-    
-    String DomainStamp = "";
-    if (ParameterStamp.equals("")) { // when using GOES
-      DomainStamp = "east_vis_1km";
+    String ParameterStamp = ""; 
+
+    if (WMS_type == TYPE_SATELLITE_GOES) {
+      ParameterStamp = ""; 
     }
     else {
-      //DomainStamp = "GDPS.ETA";
-      //DomainStamp = "RDPS.ETA";
+      ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+      //ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
+      //ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
+      //ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
+      //ParameterStamp = "_UU&STYLES=WINDARROWKMH"; // Wind arrows in km/h
+      //ParameterStamp = "_UU&STYLES=WINDARROW"; // Wind arrows in knots
+      //ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
+      //ParameterStamp = "_TT&STYLES=TEMPSUMMER"; // Air temperaturesummer range
+      //ParameterStamp = "_TT&STYLES=TEMPWINTER"; // Air temperaturewinter range
+      //ParameterStamp = "_ES&STYLES=DEWPOINTDEP"; // Dew point depression
+      //ParameterStamp = "_P0&STYLES=PRESSURE"; // Surface pressure
+      //ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
+      //ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
+      //ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
+      //ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
+      //ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
+      //ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
+      //ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
+      //ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
+      //ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
+      //ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
+      //ParameterStamp = "_I0&STYLES=TEMPSOIL"; // Soil Temperature
+      //ParameterStamp = "_I1&STYLES=WATERCONTENT"; // Water content
+      //ParameterStamp = "_I2&STYLES=ICECONTENT"; // Soil volumetric ice content
+      //ParameterStamp = "_I3&STYLES=WATERRETAINED"; // Water retained on the vegetation 
+      //ParameterStamp = "_I4&STYLES=WATERRETAINED"; // Water retained in the snow pack
+      //ParameterStamp = "_I5&STYLES=SNOWMASS"; // Snow mass
+      //ParameterStamp = "_I8&STYLES=ICETHICK"; // Sea ice thickness
+      
+      //ParameterStamp = "_WGE&STYLES=MS2KTSGUST"; // Windgust estimate intervals in knots
+      //ParameterStamp = "_WGE&STYLES=MS2KTS"; // Windspeed estimate in knots
+      //ParameterStamp = "_WGE&STYLES=MS2KMH"; // Windspeed estimate in km/h
+      
+      //ParameterStamp = "_WGN&STYLES=MS2KTSGUST"; // Windgust minimum intervals in knots
+      //ParameterStamp = "_WGN&STYLES=MS2KTS"; // Windspeed minimum in knots
+      //ParameterStamp = "_WGN&STYLES=MS2KMH"; // Windspeed minimum in km/h
+      
+      //ParameterStamp = "_WGX&STYLES=MS2KTSGUST"; // Windgust maximum intervals in knots
+      //ParameterStamp = "_WGX&STYLES=MS2KTS"; // Windspeed maximum in knots
+      //ParameterStamp = "_WGX&STYLES=MS2KMH"; // Windspeed maximum in km/h
+    }
+    
+   
+    
+    String DomainStamp = "";
+    if (WMS_type == TYPE_SATELLITE_GOES) {
+      DomainStamp = "east_vis_1km";
+    }
+    else if (WMS_type == TYPE_FORECAST_HRDPS) {
       DomainStamp = "HRDPS.CONTINENTAL";
     }
- 
-
+    else if (WMS_type == TYPE_FORECAST_RDPS) {
+      DomainStamp = "RDPS.ETA";
+    } 
+    else if (WMS_type == TYPE_FORECAST_GDPS) {
+      DomainStamp = "GDPS.ETA";
+    }
+    
     TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 5;
     TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 5;
     TROPO_IMAGES_BoundariesY[i][0] = LocationLatitude - 5 * cos_ang(LocationLatitude);
@@ -22318,19 +22336,15 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
     int the_hour = i * TROPO_deltaTime; 
 
     String timeStamp = "";
-    if (ParameterStamp.equals("")) { // when using GOES
-      timeStamp = "&date=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2);
+    if (WMS_type == TYPE_SATELLITE_GOES) {
+      timeStamp = "&date=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2) + ":00";
     }
     else {
-    
       timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
-     
-      //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
-      the_link += "%26time%3D" + timeStamp +"%3A00Z";
     }
-
     
-
+    //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
+    the_link += "%26time%3D" + timeStamp +"%3A00Z";
     
     TROPO_IMAGES_Map[i] = createImage(2, 2, RGB); // empty and small
     
@@ -22342,7 +22356,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
     FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][1], 1)), 6) + "_";
     FN += ".png";
 
-    String the_target = FORECAST_GEOMET_directory + "/" + FN;
+    String the_target = GEOMET_directory + "/" + FN;
 
     File dir = new File(the_target);
     if (!dir.isFile()) {
@@ -22393,7 +22407,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
 
 
 
-        if (ParameterStamp.equals("")) { // when using GOES
+        if (WMS_type == TYPE_SATELLITE_GOES) {
           println("image processing cloud layer");
 
           PImage img = loadImage(the_target);
@@ -26747,6 +26761,8 @@ void SOLARCHVISION_update_LAND_Textures () {
       println("ERROR loading LAND_Textures_Map!");
     }
   }
+  
+  WIN3D_Update = 1;
 }
 
 
@@ -36907,7 +36923,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
 
 
 String getGrib2Folder (int s) {
-  return(FORECAST_GRIB2_directory + "/FORECAST_" + GRIB2_Domains[s][1]);
+  return(GRIB2_directory + "/FORECAST_" + GRIB2_Domains[s][1]);
 }
 
 String getGrib2Filename (int k, int l, int h) {
@@ -54753,9 +54769,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed, _valuesSUM[now_k]);
               }
   
-              STUDY_V_scale[LAYER_developed] = 4.0;
+              STUDY_V_scale[LAYER_developed] = 2.0; //4.0;
               STUDY_V_offset[LAYER_developed] = 0; 
-              STUDY_V_belowLine[LAYER_developed] = 1;
+              STUDY_V_belowLine[LAYER_developed] = 0; //1;
               LAYERS_Unit[LAYER_developed] = "mm/h";
               LAYERS_Title[LAYER_developed][Language_EN] = "Hourly Surface Precipitation (interpolated)";
               LAYERS_Title[LAYER_developed][Language_FR] = LAYERS_Title[LAYER_developed][Language_EN]; // ??
