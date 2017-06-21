@@ -18551,10 +18551,7 @@ void SOLARCHVISION_export_objects_RAD () {
   radOutput.println("#SOLARCHVISION");
   radOutput.println();
 
-  if (Display_TROPO_Surface != 0) {
 
-    SOLARCHVISION_draw_TROPO(TYPE_WINDOW_RAD, STUDY_i_Start, STUDY_i_End);
-  }
 
   if (Display_LAND_Surface != 0) {
 
@@ -22113,7 +22110,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
       //ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
       //ParameterStamp = "_UU&STYLES=WINDARROWKMH"; // Wind arrows in km/h
       //ParameterStamp = "_UU&STYLES=WINDARROW"; // Wind arrows in knots
-      ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
+      //ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
       //ParameterStamp = "_TT&STYLES=TEMPSUMMER"; // Air temperaturesummer range
       //ParameterStamp = "_TT&STYLES=TEMPWINTER"; // Air temperaturewinter range
       //ParameterStamp = "_ES&STYLES=DEWPOINTDEP"; // Dew point depression
@@ -22124,7 +22121,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
       //ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
       //ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
       //ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
-      //ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
+      ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
       //ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
       //ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
       //ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
@@ -22446,101 +22443,112 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                 subFace[s][6] = b;
               }
               
-              if (target_window == TYPE_WINDOW_WIN3D) {
-                WIN3D_Diagrams.beginShape();
-                WIN3D_Diagrams.noStroke();
-                if (Display_TROPO_Texture != 0) {
-                  WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
-                }
-                for (int s = 0; s < subFace.length; s++) {
-                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
-                }
-                WIN3D_Diagrams.endShape(CLOSE);
+              boolean UVs_OK = true;
+              
+              for (int s = 0; s < subFace.length; s++) {
+                if (subFace[s][3] < 0) UVs_OK = false;
+                if (subFace[s][3] > 1) UVs_OK = false;
+                if (subFace[s][4] < 0) UVs_OK = false;
+                if (subFace[s][4] > 1) UVs_OK = false;
               }
               
-              if (target_window == TYPE_WINDOW_WORLD) {
-                WORLD_Diagrams.beginShape();
-                WORLD_Diagrams.noStroke();
-                if (Display_TROPO_Texture != 0) {
-                  WORLD_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
+              if (UVs_OK == true) {
+              
+                if (target_window == TYPE_WINDOW_WIN3D) {
+                  WIN3D_Diagrams.beginShape();
+                  WIN3D_Diagrams.noStroke();
+                  if (Display_TROPO_Texture != 0) {
+                    WIN3D_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
+                  }
+                  for (int s = 0; s < subFace.length; s++) {
+                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
+                  }
+                  WIN3D_Diagrams.endShape(CLOSE);
                 }
-      
-                for (int s = 0; s < subFace.length; s++) {
+                
+                if (target_window == TYPE_WINDOW_WORLD) {
+                  WORLD_Diagrams.beginShape();
+                  WORLD_Diagrams.noStroke();
+                  if (Display_TROPO_Texture != 0) {
+                    WORLD_Diagrams.texture(TROPO_IMAGES_Map[TROPO_id]);
+                  }
+        
+                  for (int s = 0; s < subFace.length; s++) {
+                    
+                    float _lat = subFace[s][5];
+                    float _lon = subFace[s][6];
+                    if (_lon > 180) _lon -= 360; // << important!
+            
+                    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+                    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+  
+                    WORLD_Diagrams.vertex(x_point, y_point, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
+                  }
+        
+                  WORLD_Diagrams.endShape(CLOSE);
                   
-                  float _lat = subFace[s][5];
-                  float _lon = subFace[s][6];
-                  if (_lon > 180) _lon -= 360; // << important!
-          
-                  float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-                  float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
-
-                  WORLD_Diagrams.vertex(x_point, y_point, subFace[s][3] * TROPO_IMAGES_Map[TROPO_id].width, subFace[s][4] * TROPO_IMAGES_Map[TROPO_id].height);
                 }
+                
+                if (target_window == TYPE_WINDOW_OBJ) {
+                
+                  for (int s = 0; s < subFace.length; s++) {
       
-                WORLD_Diagrams.endShape(CLOSE);
-                
-              }
-              
-              if (target_window == TYPE_WINDOW_OBJ) {
-              
-                for (int s = 0; s < subFace.length; s++) {
-    
-                  float x = subFace[s][0];
-                  float y = subFace[s][1];
-                  float z = subFace[s][2];
-                  float u = subFace[s][3];
-                  float v = subFace[s][4];
-    
-                  v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-    
-                  if (_turn == 1) {
-                    SOLARCHVISION_OBJprintVertex(x, y, z);
+                    float x = subFace[s][0];
+                    float y = subFace[s][1];
+                    float z = subFace[s][2];
+                    float u = subFace[s][3];
+                    float v = subFace[s][4];
+      
+                    v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+      
+                    if (_turn == 1) {
+                      SOLARCHVISION_OBJprintVertex(x, y, z);
+                    }
+      
+                    if (_turn == 2) {
+      
+                      if (u > 1) u = 1;
+                      if (u < 0) u = 0;
+                      if (v > 1) v = 1;
+                      if (v < 0) v = 0;
+      
+                      SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                    }
+      
+                    if (_turn == 3) {
+                      obj_lastVertexNumber += 1;
+                      obj_lastVtextureNumber += 1;
+                    }
                   }
-    
-                  if (_turn == 2) {
-    
-                    if (u > 1) u = 1;
-                    if (u < 0) u = 0;
-                    if (v > 1) v = 1;
-                    if (v < 0) v = 0;
-    
-                    SOLARCHVISION_OBJprintVtexture(u, v, 0);
-                  }
-    
+      
+                  String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+                  String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+                  String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+                  String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+      
+                  String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+                  String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+                  String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+                  String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+      
+                  if (objExport_PolyToPoly == 0) {
+                    if (_turn == 3) {
+                      obj_lastGroupNumber += 1;
+                      objOutput.println("g TropoSphere_" + nf(TROPO_id, 0) + "_" + nf(f, 0));
+                    }
+                  } 
+      
                   if (_turn == 3) {
-                    obj_lastVertexNumber += 1;
-                    obj_lastVtextureNumber += 1;
+                    obj_lastFaceNumber += 1;            
+                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                    if (objExport_BackSides != 0) {
+                      obj_lastFaceNumber += 1;
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                    }
                   }
+                  
                 }
-    
-                String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-                String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-                String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-                String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-    
-                String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-                String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-                String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-                String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-    
-                if (objExport_PolyToPoly == 0) {
-                  if (_turn == 3) {
-                    obj_lastGroupNumber += 1;
-                    objOutput.println("g TropoSphere_" + nf(TROPO_id, 0) + "_" + nf(f, 0));
-                  }
-                } 
-    
-                if (_turn == 3) {
-                  obj_lastFaceNumber += 1;            
-                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                  if (objExport_BackSides != 0) {
-                    obj_lastFaceNumber += 1;
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                  }
-                }
-                
               }
-              
               
             }
           }
