@@ -22,11 +22,11 @@ int TYPE_WINDOW_WIN3D = 3;
 int TYPE_WINDOW_OBJ = 4;
 int TYPE_WINDOW_RAD = 5;
 
-float WORLD_VIEW_OffsetX;
-float WORLD_VIEW_OffsetY;
+float WORLD_VIEW_OffsetX = 0;
+float WORLD_VIEW_OffsetY = 0;
 
-float WORLD_VIEW_ScaleX;
-float WORLD_VIEW_ScaleY;
+float WORLD_VIEW_ScaleX = 1;
+float WORLD_VIEW_ScaleY = 1;
 
 
 // SOLARCHVISION_draw_TROPO --- we only use the first image!
@@ -137,7 +137,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Project_G01";    
+  ProjectFolder = BaseFolder + "/Projects/Project_H01";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -459,13 +459,13 @@ String[] Defined_Stations = {
   
   //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
   
-  "Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
+  //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
+  "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
 
@@ -22104,7 +22104,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
       ParameterStamp = ""; 
     }
     else {
-      //ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+      ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
       //ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
       //ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
       //ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
@@ -22121,7 +22121,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
       //ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
       //ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
       //ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
-      ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
+      //ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
       //ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
       //ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
       //ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
