@@ -561,7 +561,8 @@ int CreateButton_Poly = 0;
 int CreateButton_Extrude = 0;
 int CreateButton_Tri = 0;
 int CreateButton_Hyper = 0;
-int CreateButton_House = 0; 
+int CreateButton_House1 = 0; 
+int CreateButton_House2 = 0;
 int CreateButton_SuperOBJ = 0;
 int CreateButton_Parametric = 0;
 int CreateButton_Person = 0;
@@ -17575,246 +17576,398 @@ void SOLARCHVISION_convert_Vertex_to_softSelection () {
 
 
 void SOLARCHVISION_add_Octahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
+  
+  if ((rx > 0) && (ry > 0) && (rz > 0)) {    
+    
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    float teta = rot * PI / 180.0;
+  
+    float[] X_ = new float [6];
+    float[] Y_ = new float [6];
+    float[] Z_ = new float [6];
+  
+    float q = pow(2, 0.5);
+  
+    X_[0] = 0;  
+    Y_[0] = 0;  
+    Z_[0] = q;
+    X_[1] = q;  
+    Y_[1] = 0;  
+    Z_[1] = 0;
+    X_[2] = 0;  
+    Y_[2] = q;  
+    Z_[2] = 0;
+    X_[3] = -q;  
+    Y_[3] = 0;  
+    Z_[3] = 0;
+    X_[4] = 0;  
+    Y_[4] = -q;  
+    Z_[4] = 0;
+    X_[5] = 0;  
+    Y_[5] = 0;  
+    Z_[5] = -q;
+  
+    for (int i = 0; i < 6; i += 1) {
+      X_[i] *= rx;
+      Y_[i] *= ry;
+      Z_[i] *= rz;
+  
+      float X_r = X_[i] * cos(teta) - Y_[i] * sin(teta);
+      float Y_r = X_[i] * sin(teta) + Y_[i] * cos(teta);
+      float Z_r = Z_[i];
+  
+      X_[i] = X_r + x;
+      Y_[i] = Y_r + y;
+      Z_[i] = Z_r + z;
+    }
+  
+    int[] v = new int [6];
+  
+    for (int i = 0; i < 6; i++) {
+      v[i] = SOLARCHVISION_add_Vertex(X_[i], Y_[i], Z_[i]);
+    } 
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+    {
+      int[] newFace = {
+        v[1], v[2], v[0]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }      
+  
+    {
+      int[] newFace = {
+        v[2], v[3], v[0]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }      
+  
+    {
+      int[] newFace = {
+        v[3], v[4], v[0]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }      
+  
+    {
+      int[] newFace = {
+        v[4], v[1], v[0]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }      
+  
+    {
+      int[] newFace = {
+        v[1], v[5], v[2]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }      
+  
+    {
+      int[] newFace = {
+        v[2], v[5], v[3]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }      
+    {
+      int[] newFace = {
+        v[3], v[5], v[4]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+  
+    {
+      int[] newFace = {
+        v[4], v[5], v[1]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
+  }            
+}
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
 
-  float teta = rot * PI / 180.0;
-
-  float[] X_ = new float [6];
-  float[] Y_ = new float [6];
-  float[] Z_ = new float [6];
-
-  float q = pow(2, 0.5);
-
-  X_[0] = 0;  
-  Y_[0] = 0;  
-  Z_[0] = q;
-  X_[1] = q;  
-  Y_[1] = 0;  
-  Z_[1] = 0;
-  X_[2] = 0;  
-  Y_[2] = q;  
-  Z_[2] = 0;
-  X_[3] = -q;  
-  Y_[3] = 0;  
-  Z_[3] = 0;
-  X_[4] = 0;  
-  Y_[4] = -q;  
-  Z_[4] = 0;
-  X_[5] = 0;  
-  Y_[5] = 0;  
-  Z_[5] = -q;
-
-  for (int i = 0; i < 6; i += 1) {
-    X_[i] *= rx;
-    Y_[i] *= ry;
-    Z_[i] *= rz;
-
-    float X_r = X_[i] * cos(teta) - Y_[i] * sin(teta);
-    float Y_r = X_[i] * sin(teta) + Y_[i] * cos(teta);
-    float Z_r = Z_[i];
-
-    X_[i] = X_r + x;
-    Y_[i] = Y_r + y;
-    Z_[i] = Z_r + z;
+void SOLARCHVISION_add_House1_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
+ 
+  if ((rx > 0) && (ry > 0) && (rz > 0)) {
+    
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    float teta = rot * PI / 180.0;
+  
+    float x1 = rx;  
+    float x2 = -rx;
+    float x3 = -rx;
+    float x4 = rx;
+  
+    float y1 = ry;  
+    float y2 = ry;
+    float y3 = -ry;
+    float y4 = -ry;
+  
+    float z0 = -rz; 
+    float z1 = rz;
+    float z2 = h2;
+  
+    float[] vx = { 
+      1, -1, -1, 1, 1, -1, -1, 1, 1, -1
+    };
+    float[] vy = { 
+      1, 1, -1, -1, 1, 1, -1, -1, 0, 0
+    };
+    float[] vz = {
+      0, 0, 0, 0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz
+    };
+  
+    for (int i = 0; i < 10; i++) {
+      vx[i] *= rx;
+      vy[i] *= ry;
+      vz[i] *= rz;
+  
+      float vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
+      float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
+      float vz_rot = z + vz[i];
+  
+      vx[i] = vx_rot;
+      vy[i] = vy_rot;
+      vz[i] = vz_rot;
+    }  
+  
+    int b1 = SOLARCHVISION_add_Vertex(vx[0], vy[0], vz[0]);
+    int b2 = SOLARCHVISION_add_Vertex(vx[1], vy[1], vz[1]);
+    int b3 = SOLARCHVISION_add_Vertex(vx[2], vy[2], vz[2]);
+    int b4 = SOLARCHVISION_add_Vertex(vx[3], vy[3], vz[3]);
+  
+    int t1 = SOLARCHVISION_add_Vertex(vx[4], vy[4], vz[4]);
+    int t2 = SOLARCHVISION_add_Vertex(vx[5], vy[5], vz[5]);
+    int t3 = SOLARCHVISION_add_Vertex(vx[6], vy[6], vz[6]);
+    int t4 = SOLARCHVISION_add_Vertex(vx[7], vy[7], vz[7]);
+  
+    int m1 = SOLARCHVISION_add_Vertex(vx[8], vy[8], vz[8]);
+    int m2 = SOLARCHVISION_add_Vertex(vx[9], vy[9], vz[9]);
+  
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+  
+    {//West
+      int[] newFace = {
+        t3, m2, t2, b2, b3
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+    {//Roof-South
+      int[] newFace = {
+        m1, m2, t3, t4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+    {//East
+      int[] newFace = {
+        t1, m1, t4, b4, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//North
+      int[] newFace = {
+        t2, t1, b1, b2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+    {//South
+      int[] newFace = {
+        t4, t3, b3, b4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//Roof-North
+      int[] newFace = {
+        m2, m1, t1, t2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//Bottom
+      int[] newFace = {
+        b4, b3, b2, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
+}
 
-  int[] v = new int [6];
 
-  for (int i = 0; i < 6; i++) {
-    v[i] = SOLARCHVISION_add_Vertex(X_[i], Y_[i], Z_[i]);
-  } 
+void SOLARCHVISION_add_House2_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
 
-  if (m == -1) defaultMaterial = 0;
-  else defaultMaterial = m;
+  if ((rx > 0) && (ry > 0) && (rz > 0)) {
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
 
-  {
-    int[] newFace = {
-      v[1], v[2], v[0]
+    if (ry > rx) {
+      
+      float tmp = rx;
+      rx = ry;
+      ry = tmp;
+      
+      rot += 90;
+    }      
+
+    float teta = rot * PI / 180.0;
+  
+    float x1 = rx;  
+    float x2 = -rx;
+    float x3 = -rx;
+    float x4 = rx;
+  
+    float y1 = ry;  
+    float y2 = ry;
+    float y3 = -ry;
+    float y4 = -ry;
+  
+    float z0 = -rz; 
+    float z1 = rz;
+    float z2 = h2;
+  
+    float[] vx = { 
+      1, -1, -1, 1, 1, -1, -1, 1, 1-ry/rx, -1+ry/rx
     };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }      
-
-  {
-    int[] newFace = {
-      v[2], v[3], v[0]
+    float[] vy = { 
+      1, 1, -1, -1, 1, 1, -1, -1, 0, 0
     };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }      
-
-  {
-    int[] newFace = {
-      v[3], v[4], v[0]
+    float[] vz = {
+      0, 0, 0, 0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz
     };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }      
-
-  {
-    int[] newFace = {
-      v[4], v[1], v[0]
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }      
-
-  {
-    int[] newFace = {
-      v[1], v[5], v[2]
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }      
-
-  {
-    int[] newFace = {
-      v[2], v[5], v[3]
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }      
-  {
-    int[] newFace = {
-      v[3], v[5], v[4]
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }  
-
-  {
-    int[] newFace = {
-      v[4], v[5], v[1]
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-}            
-
-
-
-void SOLARCHVISION_add_House_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
-
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  float teta = rot * PI / 180.0;
-
-  float x1 = rx;  
-  float x2 = -rx;
-  float x3 = -rx;
-  float x4 = rx;
-
-  float y1 = ry;  
-  float y2 = ry;
-  float y3 = -ry;
-  float y4 = -ry;
-
-  float z0 = -rz; 
-  float z1 = rz;
-  float z2 = h2;
-
-  float[] vx = { 
-    1, -1, -1, 1, 1, -1, -1, 1, 1, -1
-  };
-  float[] vy = { 
-    1, 1, -1, -1, 1, 1, -1, -1, 0, 0
-  };
-  //float[] vz = {-1,-1,-1,-1, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
-  float[] vz = {
-    0, 0, 0, 0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz
-  };
-
-  for (int i = 0; i < 10; i++) {
-    vx[i] *= rx;
-    vy[i] *= ry;
-    vz[i] *= rz;
-
-    float vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
-    float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
-    float vz_rot = z + vz[i];
-
-    vx[i] = vx_rot;
-    vy[i] = vy_rot;
-    vz[i] = vz_rot;
-  }  
-
-  int b1 = SOLARCHVISION_add_Vertex(vx[0], vy[0], vz[0]);
-  int b2 = SOLARCHVISION_add_Vertex(vx[1], vy[1], vz[1]);
-  int b3 = SOLARCHVISION_add_Vertex(vx[2], vy[2], vz[2]);
-  int b4 = SOLARCHVISION_add_Vertex(vx[3], vy[3], vz[3]);
-
-  int t1 = SOLARCHVISION_add_Vertex(vx[4], vy[4], vz[4]);
-  int t2 = SOLARCHVISION_add_Vertex(vx[5], vy[5], vz[5]);
-  int t3 = SOLARCHVISION_add_Vertex(vx[6], vy[6], vz[6]);
-  int t4 = SOLARCHVISION_add_Vertex(vx[7], vy[7], vz[7]);
-
-  int m1 = SOLARCHVISION_add_Vertex(vx[8], vy[8], vz[8]);
-  int m2 = SOLARCHVISION_add_Vertex(vx[9], vy[9], vz[9]);
-
-
-  if (m == -1) defaultMaterial = 0;
-  else defaultMaterial = m;
-
-
-  {//West
-    int[] newFace = {
-      t3, m2, t2, b2, b3
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }  
-  {//Roof-South
-    int[] newFace = {
-      m1, m2, t3, t4
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }  
-  {//East
-    int[] newFace = {
-      t1, m1, t4, b4, b1
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }    
-  {//North
-    int[] newFace = {
-      t2, t1, b1, b2
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }  
-  {//South
-    int[] newFace = {
-      t4, t3, b3, b4
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }    
-  {//Roof-North
-    int[] newFace = {
-      m2, m1, t1, t2
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }    
-  {//Bottom
-    int[] newFace = {
-      b4, b3, b2, b1
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
+    
+    for (int i = 0; i < 10; i++) {
+      vx[i] *= rx;
+      vy[i] *= ry;
+      vz[i] *= rz;
+  
+      float vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
+      float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
+      float vz_rot = z + vz[i];
+  
+      vx[i] = vx_rot;
+      vy[i] = vy_rot;
+      vz[i] = vz_rot;
+    }  
+  
+    int b1 = SOLARCHVISION_add_Vertex(vx[0], vy[0], vz[0]);
+    int b2 = SOLARCHVISION_add_Vertex(vx[1], vy[1], vz[1]);
+    int b3 = SOLARCHVISION_add_Vertex(vx[2], vy[2], vz[2]);
+    int b4 = SOLARCHVISION_add_Vertex(vx[3], vy[3], vz[3]);
+  
+    int t1 = SOLARCHVISION_add_Vertex(vx[4], vy[4], vz[4]);
+    int t2 = SOLARCHVISION_add_Vertex(vx[5], vy[5], vz[5]);
+    int t3 = SOLARCHVISION_add_Vertex(vx[6], vy[6], vz[6]);
+    int t4 = SOLARCHVISION_add_Vertex(vx[7], vy[7], vz[7]);
+  
+    int m1 = SOLARCHVISION_add_Vertex(vx[8], vy[8], vz[8]);
+    int m2 = SOLARCHVISION_add_Vertex(vx[9], vy[9], vz[9]);
+  
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+  
+    {//West
+      int[] newFace = {
+        t3, t2, b2, b3
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+    {//Roof-West
+      int[] newFace = {
+        t3, m2, t2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//Roof-South
+      int[] newFace = {
+        m1, m2, t3, t4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+    {//East
+      int[] newFace = {
+        t1, t4, b4, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//Roof-East
+      int[] newFace = {
+        t1, m1, t4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//North
+      int[] newFace = {
+        t2, t1, b1, b2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }  
+    {//South
+      int[] newFace = {
+        t4, t3, b3, b4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//Roof-North
+      int[] newFace = {
+        m2, m1, t1, t2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }    
+    {//Bottom
+      int[] newFace = {
+        b4, b3, b2, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
@@ -17822,226 +17975,242 @@ void SOLARCHVISION_add_House_Core (int m, int tes, int lyr, int vsb, int wgt, in
 
 void SOLARCHVISION_add_Box_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  float teta = rot * PI / 180.0;
-
-  int t1 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z + rz);
-  int t2 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z + rz);
-  int t3 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z + rz);
-  int t4 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z + rz);
-
-  int b1 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
-  int b2 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
-  int b3 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
-  int b4 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
-
-  if (m == -1) defaultMaterial = 0;
-  else defaultMaterial = m;
-
-
-  {//West
-    int[] newFace = {
-      t3, t2, b2, b3
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//Roof
-    int[] newFace = {
-      t1, t2, t3, t4
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//East
-    int[] newFace = {
-      t1, t4, b4, b1
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//North
-    int[] newFace = {
-      t2, t1, b1, b2
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//South
-    int[] newFace = {
-      t4, t3, b3, b4
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//Bottom
-    int[] newFace = {
-      b4, b3, b2, b1
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
+  if ((rx > 0) && (ry > 0) && (rz > 0)) {  
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    float teta = rot * PI / 180.0;
+  
+    int t1 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z + rz);
+    int t2 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z + rz);
+    int t3 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z + rz);
+    int t4 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z + rz);
+  
+    int b1 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
+    int b2 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
+    int b3 = SOLARCHVISION_add_Vertex(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
+    int b4 = SOLARCHVISION_add_Vertex(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+  
+    {//West
+      int[] newFace = {
+        t3, t2, b2, b3
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//Roof
+      int[] newFace = {
+        t1, t2, t3, t4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//East
+      int[] newFace = {
+        t1, t4, b4, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//North
+      int[] newFace = {
+        t2, t1, b1, b2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//South
+      int[] newFace = {
+        t4, t3, b3, b4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//Bottom
+      int[] newFace = {
+        b4, b3, b2, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
 
 void SOLARCHVISION_add_Box_Corners (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int t1 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int t2 = SOLARCHVISION_add_Vertex(x1, y2, z2);
-  int t3 = SOLARCHVISION_add_Vertex(x1, y1, z2);
-  int t4 = SOLARCHVISION_add_Vertex(x2, y1, z2);
-
-  int b1 = SOLARCHVISION_add_Vertex(x2, y2, z1);
-  int b2 = SOLARCHVISION_add_Vertex(x1, y2, z1);
-  int b3 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int b4 = SOLARCHVISION_add_Vertex(x2, y1, z1);
-
-  if (m == -1) defaultMaterial = 0;
-  else defaultMaterial = m;
-
-
-  {//West
-    int[] newFace = {
-      t3, t2, b2, b3
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//Roof
-    int[] newFace = {
-      t1, t2, t3, t4
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//East
-    int[] newFace = {
-      t1, t4, b4, b1
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//North
-    int[] newFace = {
-      t2, t1, b1, b2
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//South
-    int[] newFace = {
-      t4, t3, b3, b4
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
-  }
-  {//Bottom
-    int[] newFace = {
-      b4, b3, b2, b1
-    };
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-    SOLARCHVISION_add_Face(newFace);
+  if ((x1 != x2) || (y1 != y2) || (z1 != z2)) {  
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int t1 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int t2 = SOLARCHVISION_add_Vertex(x1, y2, z2);
+    int t3 = SOLARCHVISION_add_Vertex(x1, y1, z2);
+    int t4 = SOLARCHVISION_add_Vertex(x2, y1, z2);
+  
+    int b1 = SOLARCHVISION_add_Vertex(x2, y2, z1);
+    int b2 = SOLARCHVISION_add_Vertex(x1, y2, z1);
+    int b3 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int b4 = SOLARCHVISION_add_Vertex(x2, y1, z1);
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+  
+    {//West
+      int[] newFace = {
+        t3, t2, b2, b3
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//Roof
+      int[] newFace = {
+        t1, t2, t3, t4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//East
+      int[] newFace = {
+        t1, t4, b4, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//North
+      int[] newFace = {
+        t2, t1, b1, b2
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//South
+      int[] newFace = {
+        t4, t3, b3, b4
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    {//Bottom
+      int[] newFace = {
+        b4, b3, b2, b1
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
 
 void SOLARCHVISION_add_H_shade (int m, int tes, int lyr, int vsb, int wgt, int clz, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  float rx = 0.5 * d * cos_ang(Beta);
-  float ry = 0.5 * d * sin_ang(Beta);
-
-  float wx = w * cos_ang(Beta - 90) * cos_ang(Alpha);
-  float wy = w * sin_ang(Beta - 90) * cos_ang(Alpha);
-  float wz = w * sin_ang(Alpha);
-
-  float x1 = x0 + rx;
-  float y1 = y0 + ry;
-  float z1 = z0;
-
-  float x2 = x0 - rx;
-  float y2 = y0 - ry;
-  float z2 = z0;
-
-  float x3 = wx + x0 - rx;
-  float y3 = wy + y0 - ry;
-  float z3 = wz + z0;
-
-  float x4 = wx + x0 + rx;
-  float y4 = wy + y0 + ry;
-  float z4 = wz + z0;
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-  int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
-
-  {
-    int[] newFace = {
-      v1, v2, v3, v4
-    };
-    SOLARCHVISION_add_Face(newFace);
+  if ((d > 0) && (w > 0)) {
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    float rx = 0.5 * d * cos_ang(Beta);
+    float ry = 0.5 * d * sin_ang(Beta);
+  
+    float wx = w * cos_ang(Beta - 90) * cos_ang(Alpha);
+    float wy = w * sin_ang(Beta - 90) * cos_ang(Alpha);
+    float wz = w * sin_ang(Alpha);
+  
+    float x1 = x0 + rx;
+    float y1 = y0 + ry;
+    float z1 = z0;
+  
+    float x2 = x0 - rx;
+    float y2 = y0 - ry;
+    float z2 = z0;
+  
+    float x3 = wx + x0 - rx;
+    float y3 = wy + y0 - ry;
+    float z3 = wz + z0;
+  
+    float x4 = wx + x0 + rx;
+    float y4 = wy + y0 + ry;
+    float z4 = wz + z0;
+  
+    int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+    int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
+  
+    {
+      int[] newFace = {
+        v1, v2, v3, v4
+      };
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
 
 void SOLARCHVISION_add_V_shade (int m, int tes, int lyr, int vsb, int wgt, int clz, float x0, float y0, float z0, float h, float d, float t, float t0) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  float dx = d * cos_ang(t + t0 - 90);
-  float dy = d * sin_ang(t + t0 - 90);
-
-  float x1 = x0;
-  float y1 = y0;
-  float z1 = z0 - 0.5 * h;
-
-  float x2 = x0;
-  float y2 = y0;
-  float z2 = z0 + 0.5 * h;
-
-  float x3 = x0 + dx;
-  float y3 = y0 + dy;
-  float z3 = z0 + 0.5 * h;
-
-  float x4 = x0 + dx;
-  float y4 = y0 + dy;
-  float z4 = z0 - 0.5 * h;
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-  int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
-
-  {
-    int[] newFace = {
-      v1, v2, v3, v4
-    };
-    SOLARCHVISION_add_Face(newFace);
+  if ((d > 0) && (h > 0)) {  
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    float dx = d * cos_ang(t + t0 - 90);
+    float dy = d * sin_ang(t + t0 - 90);
+  
+    float x1 = x0;
+    float y1 = y0;
+    float z1 = z0 - 0.5 * h;
+  
+    float x2 = x0;
+    float y2 = y0;
+    float z2 = z0 + 0.5 * h;
+  
+    float x3 = x0 + dx;
+    float y3 = y0 + dy;
+    float z3 = z0 + 0.5 * h;
+  
+    float x4 = x0 + dx;
+    float y4 = y0 + dy;
+    float z4 = z0 - 0.5 * h;
+  
+    int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+    int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
+  
+    {
+      int[] newFace = {
+        v1, v2, v3, v4
+      };
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
@@ -18049,133 +18218,222 @@ void SOLARCHVISION_add_V_shade (int m, int tes, int lyr, int vsb, int wgt, int c
 
 void SOLARCHVISION_add_Mesh2 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x3, float y3, float z3) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt; 
-  defaultClose = clz;
-
-  float x2 = x3;
-  float y2 = y3;
-  float z2 = z3;
-
-  float x4 = x1;
-  float y4 = y1;
-  float z4 = z1;
-
-  if (z1 == z3) {
-    y2 = y1;
-    y4 = y3;
-  } else if (y1 == y3) {
-    x2 = x1;
-    x4 = x3;
-  } else if (x1 == x3) {
-    z2 = z1;
-    z4 = z3;
-  }  
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-  int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
-
-
-  {
-    int[] newFace = {
-      v1, v2, v3, v4
-    };
-    SOLARCHVISION_add_Face(newFace);
-  }
-}
-
-void SOLARCHVISION_add_Mesh4 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;  
-  defaultClose = clz;
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-  int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
-
-  {
-    int[] newFace = {
-      v1, v2, v3, v4
-    };
-    SOLARCHVISION_add_Face(newFace);
+  if ((x1 != x3) || (y1 != y3) || (z1 != z3)) {    
+    
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt; 
+    defaultClose = clz;
+  
+    float x2 = x3;
+    float y2 = y3;
+    float z2 = z3;
+  
+    float x4 = x1;
+    float y4 = y1;
+    float z4 = z1;
+  
+    if (z1 == z3) {
+      y2 = y1;
+      y4 = y3;
+    } else if (y1 == y3) {
+      x2 = x1;
+      x4 = x3;
+    } else if (x1 == x3) {
+      z2 = z1;
+      z4 = z3;
+    }  
+  
+    int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+    int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
+  
+  
+    {
+      int[] newFace = {
+        v1, v2, v3, v4
+      };
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
 void SOLARCHVISION_add_Mesh3 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-
-  {
-    int[] newFace = {
-      v1, v2, v3
-    };
-    SOLARCHVISION_add_Face(newFace);
+  if ((x1 != x2) || (y1 != y2) || (z1 != z2)) {  
+    if ((x2 != x3) || (y2 != y3) || (z2 != z3)) {  
+      if ((x1 != x3) || (y1 != y3) || (z1 != z3)) {    
+  
+        defaultMaterial = m;
+        defaultTessellation = tes;
+        defaultLayer = lyr;
+        defaultVisibility = vsb;
+        defaultWeight = wgt;
+        defaultClose = clz;
+      
+        int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+        int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+        int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+      
+        {
+          int[] newFace = {
+            v1, v2, v3
+          };
+          SOLARCHVISION_add_Face(newFace);
+        }
+  
+      }
+    }
   }
 }
+
+
+
+void SOLARCHVISION_add_Mesh4 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
+
+  if ((x1 == x2) && (y1 == y2) && (z1 == z2)) {
+    
+    SOLARCHVISION_add_Mesh3 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x3, y3, z3, x4, y4, z4);
+  }    
+  else if ((x2 == x3) && (y2 == y3) && (z2 == z3)) {
+    
+    SOLARCHVISION_add_Mesh3 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x4, y4, z4);
+  }      
+  else if ((x3 == x4) && (y3 == y4) && (z3 == z4)) {
+    
+    SOLARCHVISION_add_Mesh3 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+  }
+  else if ((x1 == x4) && (y1 == y4) && (z1 == z4)) {
+    
+    SOLARCHVISION_add_Mesh3 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+  }
+  else {
+        
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;  
+    defaultClose = clz;
+  
+    int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+    int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
+  
+    {
+      int[] newFace = {
+        v1, v2, v3, v4
+      };
+      SOLARCHVISION_add_Face(newFace);
+    }
+        
+  }
+
+}
+
+
 
 void SOLARCHVISION_add_Mesh5 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-  int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
-  int v5 = SOLARCHVISION_add_Vertex(x5, y5, z5);
-
-  {
-    int[] newFace = {
-      v1, v2, v3, v4, v5
-    };
-    SOLARCHVISION_add_Face(newFace);
+  if ((x1 == x2) && (y1 == y2) && (z1 == z2)) {
+    
+    SOLARCHVISION_add_Mesh4 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x3, y3, z3, x4, y4, z4, x5, y5, z5);
+  }    
+  else if ((x2 == x3) && (y2 == y3) && (z2 == z3)) {
+    
+    SOLARCHVISION_add_Mesh4 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x4, y4, z4, x5, y5, z5);
+  }      
+  else if ((x3 == x4) && (y3 == y4) && (z3 == z4)) {
+    
+    SOLARCHVISION_add_Mesh4 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x5, y5, z5);
+  }
+  else if ((x4 == x5) && (y4 == y5) && (z4 == z5)) {
+    
+    SOLARCHVISION_add_Mesh4 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+  }
+  else if ((x1 == x5) && (y1 == y5) && (z1 == z5)) {
+    
+    SOLARCHVISION_add_Mesh4 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+  }  
+  else {  
+    
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+    int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
+    int v5 = SOLARCHVISION_add_Vertex(x5, y5, z5);
+  
+    {
+      int[] newFace = {
+        v1, v2, v3, v4, v5
+      };
+      SOLARCHVISION_add_Face(newFace);
+    }
+    
   }
 }
 
+
 void SOLARCHVISION_add_Mesh6 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5, float x6, float y6, float z6) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
-  int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
-  int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
-  int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
-  int v5 = SOLARCHVISION_add_Vertex(x5, y5, z5);
-  int v6 = SOLARCHVISION_add_Vertex(x6, y6, z6);
-
-  {
-    int[] newFace = {
-      v1, v2, v3, v4, v5, v6
-    };
-    SOLARCHVISION_add_Face(newFace);
+  if ((x1 == x2) && (y1 == y2) && (z1 == z2)) {
+    
+    SOLARCHVISION_add_Mesh5 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
+  }    
+  else if ((x2 == x3) && (y2 == y3) && (z2 == z3)) {
+    
+    SOLARCHVISION_add_Mesh5 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x4, y4, z4, x5, y5, z5, x6, y6, z6);
+  }      
+  else if ((x3 == x4) && (y3 == y4) && (z3 == z4)) {
+    
+    SOLARCHVISION_add_Mesh5 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x5, y5, z5, x6, y6, z6);
+  }
+  else if ((x4 == x5) && (y4 == y5) && (z4 == z5)) {
+    
+    SOLARCHVISION_add_Mesh5 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x6, y6, z6);
+  }
+  else if ((x5 == x6) && (y5 == y6) && (z5 == z6)) {
+    
+    SOLARCHVISION_add_Mesh5 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
+  }    
+  else if ((x1 == x6) && (y1 == y6) && (z1 == z6)) {
+    
+    SOLARCHVISION_add_Mesh5 (m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
+  }  
+  else {    
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
+    int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
+    int v3 = SOLARCHVISION_add_Vertex(x3, y3, z3);
+    int v4 = SOLARCHVISION_add_Vertex(x4, y4, z4);
+    int v5 = SOLARCHVISION_add_Vertex(x5, y5, z5);
+    int v6 = SOLARCHVISION_add_Vertex(x6, y6, z6);
+  
+    {
+      int[] newFace = {
+        v1, v2, v3, v4, v5, v6
+      };
+      SOLARCHVISION_add_Face(newFace);
+    }
   }
 }
 
@@ -18184,107 +18442,116 @@ void SOLARCHVISION_add_Mesh6 (int m, int tes, int lyr, int vsb, int wgt, int clz
 
 void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int[] newFace = {
-    SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)
-  };
-  for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n);
-    int[] f = {
-      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
+  if ((r > 0) && (h > 0) && (n > 2)) {
+    
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int[] newFace = {
+      SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)
     };
-    newFace = concat(newFace, f);
-  } 
-
-  SOLARCHVISION_add_Face(newFace);
+    for (int i = 1; i < n; i++) {
+      float t = i * 360.0 / float(n);
+      int[] f = {
+        SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
+      };
+      newFace = concat(newFace, f);
+    } 
+  
+    SOLARCHVISION_add_Face(newFace);
+  }
 }
 
 
 
 void SOLARCHVISION_add_PolygonMesh (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int[] newFace = {
-    SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
-  };
-  for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n) + rot;
-    int[] f = {
-      SOLARCHVISION_add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
+  if ((r > 0) && (n > 2)) {  
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int[] newFace = {
+      SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
     };
-    newFace = concat(newFace, f);
-  } 
-
-  SOLARCHVISION_add_Face(newFace);
+    for (int i = 1; i < n; i++) {
+      float t = i * 360.0 / float(n) + rot;
+      int[] f = {
+        SOLARCHVISION_add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
+      };
+      newFace = concat(newFace, f);
+    } 
+  
+    SOLARCHVISION_add_Face(newFace);
+  }
 }
 
 
 
 void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int[] vT = new int [n];
-  int[] vB = new int [n];
-
-  vT[0] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + 0.5 * h);
-  vB[0] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h);
-
-  int[] newFaceT = {
-    vT[0]
-  };
-  int[] newFaceB = {
-    vB[0]
-  };
-  for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n);
-
-    vT[i] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + 0.5 * h);
-    vB[i] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz - 0.5 * h);
-    int[] fT = {
-      vT[i]
+  if ((r > 0) && (h > 0) && (n > 2)) {  
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int[] vT = new int [n];
+    int[] vB = new int [n];
+  
+    vT[0] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + 0.5 * h);
+    vB[0] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h);
+  
+    int[] newFaceT = {
+      vT[0]
     };
-    int[] fB = {
-      vB[i]
+    int[] newFaceB = {
+      vB[0]
     };
-
-    newFaceT = concat(newFaceT, fT);
-    newFaceB = concat(newFaceB, fB);
-  } 
-
-  if (m == -1) defaultMaterial = 0;
-  else defaultMaterial = m;
-
-  SOLARCHVISION_add_Face(newFaceT);
-
-  if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1)); 
-  SOLARCHVISION_add_Face(newFaceB);
-
-  for (int i = 0; i < n; i++) {
-    int next_i = (i + 1) % n;
-
-    int[] newFace = {
-      vT[i], vB[i], vB[next_i], vT[next_i]
-    };
+    for (int i = 1; i < n; i++) {
+      float t = i * 360.0 / float(n);
+  
+      vT[i] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + 0.5 * h);
+      vB[i] = SOLARCHVISION_add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz - 0.5 * h);
+      int[] fT = {
+        vT[i]
+      };
+      int[] fB = {
+        vB[i]
+      };
+  
+      newFaceT = concat(newFaceT, fT);
+      newFaceB = concat(newFaceB, fB);
+    } 
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+    SOLARCHVISION_add_Face(newFaceT);
+  
     if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1)); 
-    SOLARCHVISION_add_Face(newFace);
+    SOLARCHVISION_add_Face(newFaceB);
+  
+    for (int i = 0; i < n; i++) {
+      int next_i = (i + 1) % n;
+  
+      int[] newFace = {
+        vT[i], vB[i], vB[next_i], vT[next_i]
+      };
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1)); 
+      SOLARCHVISION_add_Face(newFace);
+    }
   }
 }
 
@@ -18295,69 +18562,72 @@ void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int lyr, int vsb, int wgt
 
 void SOLARCHVISION_add_Icosahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float rot) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int[] vT = new int [6];
-  int[] vB = new int [6];
-
-  vT[0] = SOLARCHVISION_add_Vertex(cx, cy, cz + r);
-  vB[0] = SOLARCHVISION_add_Vertex(cx, cy, cz - r);
-
-  for (int i = 1; i <= 5; i++) {
-    float t = i * 72;
-
-    float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
-    float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
-
-    vT[i] = SOLARCHVISION_add_Vertex(cx + R_in * cos_ang(t + rot), cy + R_in * sin_ang(t + rot), cz + H_in);
-    vB[i] = SOLARCHVISION_add_Vertex(cx + R_in * cos_ang(t + 36 + rot), cy + R_in * sin_ang(t + 36 + rot), cz - H_in);
-  } 
-
-
-  if (m == -1) defaultMaterial = 0;
-  else defaultMaterial = m;
-
-  for (int i = 1; i <= 5; i++) {
-
-    int next_i = (i % 5) + 1;
-
-    {
-      int[] newFaceT = new int [3];
-      int[] newFaceB = new int [3];
-
-      newFaceT[0] = vT[i];
-      newFaceT[1] = vT[next_i];
-      newFaceT[2] = vT[0];
-
-      newFaceB[0] = vB[i];
-      newFaceB[1] = vB[next_i];
-      newFaceB[2] = vT[next_i]; 
-
-      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));   
-      SOLARCHVISION_add_Face(newFaceT);
-      SOLARCHVISION_add_Face(newFaceB);
-    }
-
-    {
-      int[] newFaceT = new int [3];
-      int[] newFaceB = new int [3];
-
-      newFaceT[0] = vT[next_i];
-      newFaceT[1] = vT[i];
-      newFaceT[2] = vB[i];
-
-      newFaceB[0] = vB[next_i];
-      newFaceB[1] = vB[i];
-      newFaceB[2] = vB[0];    
-
-      if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
-      SOLARCHVISION_add_Face(newFaceT);
-      SOLARCHVISION_add_Face(newFaceB);
+  if (r > 0) {  
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int[] vT = new int [6];
+    int[] vB = new int [6];
+  
+    vT[0] = SOLARCHVISION_add_Vertex(cx, cy, cz + r);
+    vB[0] = SOLARCHVISION_add_Vertex(cx, cy, cz - r);
+  
+    for (int i = 1; i <= 5; i++) {
+      float t = i * 72;
+  
+      float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
+      float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
+  
+      vT[i] = SOLARCHVISION_add_Vertex(cx + R_in * cos_ang(t + rot), cy + R_in * sin_ang(t + rot), cz + H_in);
+      vB[i] = SOLARCHVISION_add_Vertex(cx + R_in * cos_ang(t + 36 + rot), cy + R_in * sin_ang(t + 36 + rot), cz - H_in);
+    } 
+  
+  
+    if (m == -1) defaultMaterial = 0;
+    else defaultMaterial = m;
+  
+    for (int i = 1; i <= 5; i++) {
+  
+      int next_i = (i % 5) + 1;
+  
+      {
+        int[] newFaceT = new int [3];
+        int[] newFaceB = new int [3];
+  
+        newFaceT[0] = vT[i];
+        newFaceT[1] = vT[next_i];
+        newFaceT[2] = vT[0];
+  
+        newFaceB[0] = vB[i];
+        newFaceB[1] = vB[next_i];
+        newFaceB[2] = vT[next_i]; 
+  
+        if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));   
+        SOLARCHVISION_add_Face(newFaceT);
+        SOLARCHVISION_add_Face(newFaceB);
+      }
+  
+      {
+        int[] newFaceT = new int [3];
+        int[] newFaceB = new int [3];
+  
+        newFaceT[0] = vT[next_i];
+        newFaceT[1] = vT[i];
+        newFaceT[2] = vB[i];
+  
+        newFaceB[0] = vB[next_i];
+        newFaceB[1] = vB[i];
+        newFaceB[2] = vB[0];    
+  
+        if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
+        SOLARCHVISION_add_Face(newFaceT);
+        SOLARCHVISION_add_Face(newFaceB);
+      }
     }
   }
 }  
@@ -18365,111 +18635,114 @@ void SOLARCHVISION_add_Icosahedron (int m, int tes, int lyr, int vsb, int wgt, i
 
 void SOLARCHVISION_create_Face_afterSphericalTessellation (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int[] f) {
 
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultWeight = wgt;
-  defaultClose = clz;
-
-  int A = f[0];
-  int B = f[1];
-  int C = f[2];
-  int D = f[3];
-
-  int M, N;  // 
-  int MM, NN; // MM: mirror of M based on AB; NN: mirror of N baesd on CD
-
-  float[] G;
-
-  { 
-    float[][] the_points = {
-      {
-        allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz
-      }
-      , {
-        allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz
-      }
-      , {
-        allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz
-      }
-    };
-
-    G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
-    M = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-
-    G[0] = (allVertices[C][0] - cx) + (allVertices[D][0] - cx) - (allVertices[M][0] - cx);
-    G[1] = (allVertices[C][1] - cy) + (allVertices[D][1] - cy) - (allVertices[M][1] - cy);
-    G[2] = (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
-    G = SOLARCHVISION_fn_normalize(G);
-    MM = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-  }   
-
-
-  { 
-    float[][] the_points = {
-      {
-        allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz
-      }
-      , {
-        allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz
-      }
-      , {
-        allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz
-      }
-    };
-
-    G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
-    N = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-
-
-    G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (allVertices[N][0] - cx);
-    G[1] = (allVertices[A][1] - cy) + (allVertices[B][1] - cy) - (allVertices[N][1] - cy);
-    G[2] = (allVertices[A][2] - cz) + (allVertices[B][2] - cz) - (allVertices[N][2] - cz);
-    G = SOLARCHVISION_fn_normalize(G);    
-    NN = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-  }
-
-
-
-
-
-  {
-    int[][] newFace_MTLVGC = {
-      {
-        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight, defaultClose
-      }
-    }; 
-
-    allFaces_MTLVGC = (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);
-
-
-    int[][] newFace = {
-      {
-        M, B, N, D
-      }
-    }; 
-
-    allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
-  }
-
-  {
-    int[][] newFace_MTLVGC = {
-      {
-        defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight, defaultClose
-      }
-    }; 
-
-    //allFaces_MTLVGC = (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);
-
-
-    int[][] newFace = {
-      {
-        MM, B, M, A
-      }
-    }; 
-
-    //allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
+  if (r > 0) {
+  
+    defaultMaterial = m;
+    defaultTessellation = tes;
+    defaultLayer = lyr;
+    defaultVisibility = vsb;
+    defaultWeight = wgt;
+    defaultClose = clz;
+  
+    int A = f[0];
+    int B = f[1];
+    int C = f[2];
+    int D = f[3];
+  
+    int M, N;  // 
+    int MM, NN; // MM: mirror of M based on AB; NN: mirror of N baesd on CD
+  
+    float[] G;
+  
+    { 
+      float[][] the_points = {
+        {
+          allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz
+        }
+        , {
+          allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz
+        }
+        , {
+          allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz
+        }
+      };
+  
+      G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
+      M = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+  
+      G[0] = (allVertices[C][0] - cx) + (allVertices[D][0] - cx) - (allVertices[M][0] - cx);
+      G[1] = (allVertices[C][1] - cy) + (allVertices[D][1] - cy) - (allVertices[M][1] - cy);
+      G[2] = (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
+      G = SOLARCHVISION_fn_normalize(G);
+      MM = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    }   
+  
+  
+    { 
+      float[][] the_points = {
+        {
+          allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz
+        }
+        , {
+          allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz
+        }
+        , {
+          allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz
+        }
+      };
+  
+      G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
+      N = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+  
+  
+      G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (allVertices[N][0] - cx);
+      G[1] = (allVertices[A][1] - cy) + (allVertices[B][1] - cy) - (allVertices[N][1] - cy);
+      G[2] = (allVertices[A][2] - cz) + (allVertices[B][2] - cz) - (allVertices[N][2] - cz);
+      G = SOLARCHVISION_fn_normalize(G);    
+      NN = SOLARCHVISION_add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    }
+  
+  
+  
+  
+  
+    {
+      int[][] newFace_MTLVGC = {
+        {
+          defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight, defaultClose
+        }
+      }; 
+  
+      allFaces_MTLVGC = (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);
+  
+  
+      int[][] newFace = {
+        {
+          M, B, N, D
+        }
+      }; 
+  
+      allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
+    }
+  
+    {
+      int[][] newFace_MTLVGC = {
+        {
+          defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility, defaultWeight, defaultClose
+        }
+      }; 
+  
+      //allFaces_MTLVGC = (int[][]) concat(allFaces_MTLVGC, newFace_MTLVGC);
+  
+  
+      int[][] newFace = {
+        {
+          MM, B, M, A
+        }
+      }; 
+  
+      //allFaces_PNT = (int[][]) concat(allFaces_PNT, newFace);
+    }
   }
 }
 
@@ -21322,12 +21595,12 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (n == 1) {
     SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
-    SOLARCHVISION_add_House_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 90);
+    SOLARCHVISION_add_House1_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 90);
   }
 
   if (n == 2) {
     SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
-    SOLARCHVISION_add_House_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
+    SOLARCHVISION_add_House1_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
 
   if (n == 3) {
@@ -21335,13 +21608,13 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     SOLARCHVISION_add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
 
     SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
-    SOLARCHVISION_add_House_Core(7, 0, 0, 1, 0, 0, 25, 25, 0, 6, 6, 6, 6, 0);
+    SOLARCHVISION_add_House1_Core(7, 0, 0, 1, 0, 0, 25, 25, 0, 6, 6, 6, 6, 0);
   }   
 
   if (n == 4) {
     for (int i = 0; i < int (10 + random (10)); i++) {
       SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      SOLARCHVISION_add_House_Core(7, 0, 0, 1, 0, 0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
+      SOLARCHVISION_add_House1_Core(7, 0, 0, 1, 0, 0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
 
@@ -33153,11 +33426,16 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Hyper");
               UI_BAR_b_Update = 1;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("House")) {
-              UI_set_to_Create_House();
-              SOLARCHVISION_highlight_in_BAR_b("House");
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("House1")) {
+              UI_set_to_Create_House1();
+              SOLARCHVISION_highlight_in_BAR_b("House1");
               UI_BAR_b_Update = 1;
             }
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("House2")) {
+              UI_set_to_Create_House2();
+              SOLARCHVISION_highlight_in_BAR_b("House2");
+              UI_BAR_b_Update = 1;
+            }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Box")) {
               UI_set_to_Create_Box();
               SOLARCHVISION_highlight_in_BAR_b("Box");
@@ -35264,7 +35542,7 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory_Group3Ds) { // working with meshes
     
-                    if (CreateButton_SuperOBJ == 1) {
+                    if (CreateButton_SuperOBJ != 0) {
     
                       if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
     
@@ -35286,7 +35564,7 @@ void mouseClicked () {
     
     
     
-                      if (CreateInput_MeshOrSolid == 1) {
+                      if (CreateInput_MeshOrSolid != 0) {
     
                         SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                       }
@@ -35294,7 +35572,7 @@ void mouseClicked () {
     
   
     
-                    if (CreateButton_Tri == 1) {
+                    if (CreateButton_Tri != 0) {
     
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
@@ -35303,30 +35581,41 @@ void mouseClicked () {
                     }
     
 
-                    if (CreateButton_Plane == 1) {
+                    if (CreateButton_Plane != 0) {
     
                       SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     }
                     
-                    if (CreateButton_Poly == 1) {
+                    if (CreateButton_Poly != 0) {
     
                       SOLARCHVISION_add_PolygonMesh(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, CreateInput_PolyDegree, rot);
                     }                    
                     
-                    if (CreateButton_Hyper == 1) {
+                    if (CreateButton_Hyper != 0) {
     
                       SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
                       
     
-                    if (CreateButton_Extrude == 1) {       
+                    if (CreateButton_Extrude != 0) {       
     
                       SOLARCHVISION_add_PolygonExtrude(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
     
-                    if (CreateButton_House == 1) {   
+                    if (CreateButton_House1 != 0) {   
+                      
+                      float h = ry;  
+
+                      SOLARCHVISION_add_House1_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, h, rot);
+                    }
+
+                    if (CreateButton_House2 != 0) {   
+       
+                      float h = ry;   
+          
+                      if (ry > rx) h = rx;            
     
-                      SOLARCHVISION_add_House_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, ry, rot);
+                      SOLARCHVISION_add_House2_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, h, rot);
                     }
     
                     if (CreateButton_Parametric != 0) {
@@ -45500,7 +45789,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "LandMesh >> Group3D", "LandGap >> Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "LandMesh >> Group3D", "LandGap >> Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Fractal", "Tree", "Person", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
@@ -46052,7 +46341,7 @@ String[][] UI_BAR_b_Items = {
   }
   , 
   {
-    "1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
+    "1", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
   }
   , 
   {
@@ -46293,7 +46582,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((UI_BAR_b_Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
           else if ((UI_BAR_b_Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
           else if ((UI_BAR_b_Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
-          else if ((UI_BAR_b_Items[i][j]).equals("House")) UI_set_to_Create_House();
+          else if ((UI_BAR_b_Items[i][j]).equals("House1")) UI_set_to_Create_House1();
+          else if ((UI_BAR_b_Items[i][j]).equals("House2")) UI_set_to_Create_House2();
           else if ((UI_BAR_b_Items[i][j]).equals("Box")) UI_set_to_Create_Box();
           else if ((UI_BAR_b_Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
           else if ((UI_BAR_b_Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
@@ -46546,7 +46836,8 @@ void UI_set_to_Create_Nothing () {
   CreateButton_Extrude = 0;
   CreateButton_Tri = 0;
   CreateButton_Hyper = 0;
-  CreateButton_House = 0; 
+  CreateButton_House1 = 0; 
+  CreateButton_House2 = 0;
   CreateButton_Parametric = 0;
   CreateButton_SuperOBJ = 0;
   CreateButton_Person = 0;
@@ -46697,10 +46988,17 @@ void UI_set_to_Create_Hyper () {
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
-void UI_set_to_Create_House () {
+void UI_set_to_Create_House1 () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_House = 1;
+  CreateButton_House1 = 1;
+  Current_ObjectCategory = ObjectCategory_Group3Ds;
+}
+
+void UI_set_to_Create_House2 () {
+  UI_set_to_Create_Nothing();
+
+  CreateButton_House2 = 1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
@@ -51556,7 +51854,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }  
   }     
 
-  else if (Command_CAPITAL.equals("HOUSE")) {
+  else if (Command_CAPITAL.equals("HOUSE1")) {
     if (parts.length > 1) {
       int m = -1;
       int tes = 0;
@@ -51590,7 +51888,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
-        SOLARCHVISION_add_House_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
+        SOLARCHVISION_add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D_Update = 1;  
         Current_ObjectCategory = ObjectCategory_Group3Ds; 
         UI_BAR_b_Update = 1;
@@ -51598,13 +51896,63 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "House m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+      return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
-      UI_set_to_Create_House();
-      SOLARCHVISION_highlight_in_BAR_b("House");
+      UI_set_to_Create_House1();
+      SOLARCHVISION_highlight_in_BAR_b("House1");
       UI_BAR_b_Update = 1;      
     }  
   }     
+  
+  else if (Command_CAPITAL.equals("HOUSE2")) {
+    if (parts.length > 1) {
+      int m = -1;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int wgt = 0;
+      int clz = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float h = 3;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+
+          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
+          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {   
+        SOLARCHVISION_add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
+        WIN3D_Update = 1;  
+        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        UI_BAR_b_Update = 1;
+        //SOLARCHVISION_select_Last();
+      }
+    }
+    else {
+      return_message = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+
+      UI_set_to_Create_House1();
+      SOLARCHVISION_highlight_in_BAR_b("House2");
+      UI_BAR_b_Update = 1;      
+    }  
+  }       
 
   else if (Command_CAPITAL.equals("CYLINDER")) {
     if (parts.length > 1) {
