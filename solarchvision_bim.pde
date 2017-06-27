@@ -7,20 +7,20 @@ String SceneName = "Complex";
 final int TROPO_deltaTime = 1; 
 final int TROPO_timeSteps = 24;
 
-int TYPE_SATELLITE_GOES = 0;
-int TYPE_FORECAST_HRDPS = 1;
-int TYPE_FORECAST_RDPS  = 2;
-int TYPE_FORECAST_GDPS  = 3;
+final int TYPE_SATELLITE_GOES = 0;
+final int TYPE_FORECAST_HRDPS = 1;
+final int TYPE_FORECAST_RDPS  = 2;
+final int TYPE_FORECAST_GDPS  = 3;
 int WMS_type = TYPE_FORECAST_HRDPS;
 
-int TYPE_WINDOW_SKY2D = -2;
-int TYPE_WINDOW_LandGap = -1;
-int TYPE_WINDOW_LandMesh = 0;
-int TYPE_WINDOW_STUDY = 1;
-int TYPE_WINDOW_WORLD = 2;
-int TYPE_WINDOW_WIN3D = 3;
-int TYPE_WINDOW_OBJ = 4;
-int TYPE_WINDOW_RAD = 5;
+final int TYPE_WINDOW_SKY2D = -2;
+final int TYPE_WINDOW_LandGap = -1;
+final int TYPE_WINDOW_LandMesh = 0;
+final int TYPE_WINDOW_STUDY = 1;
+final int TYPE_WINDOW_WORLD = 2;
+final int TYPE_WINDOW_WIN3D = 3;
+final int TYPE_WINDOW_OBJ = 4;
+final int TYPE_WINDOW_RAD = 5;
 
 float WORLD_VIEW_OffsetX = 0;
 float WORLD_VIEW_OffsetY = 0;
@@ -556,24 +556,26 @@ int CreateInput_PolyDegree = 6;
 int CreateInput_Snap = 0;
 
 
-int CreateButton_Plane = 0;
-int CreateButton_Poly = 0;
-int CreateButton_Extrude = 0;
-int CreateButton_Tri = 0;
-int CreateButton_Hyper = 0;
-int CreateButton_House1 = 0; 
-int CreateButton_House2 = 0;
-int CreateButton_SuperOBJ = 0;
-int CreateButton_Parametric = 0;
-int CreateButton_Person = 0;
-int CreateButton_Plant = 0;
-int CreateButton_Fractal = 0;
-int CreateButton_Face = 0;
-int CreateButton_Vertex = 0;
-int CreateButton_Curve = 0;
-int CreateButton_Solid = 0;
-int CreateButton_Section = 0;
-int CreateButton_Camera = 0;
+final int CREATE_Nothing    = 0;
+final int CREATE_Plane      = 1;
+final int CREATE_Poly       = 2;
+final int CREATE_Extrude    = 3;
+final int CREATE_Tri        = 4;
+final int CREATE_Hyper      = 5;
+final int CREATE_House1     = 6; 
+final int CREATE_House2     = 7;
+final int CREATE_SuperOBJ   = 8;
+final int CREATE_Parametric = 9;
+final int CREATE_Person     = 10;
+final int CREATE_Plant      = 11;
+final int CREATE_Fractal    = 12;
+final int CREATE_Face       = 13;
+final int CREATE_Vertex     = 14;
+final int CREATE_Curve      = 15;
+final int CREATE_Solid      = 16;
+final int CREATE_Section    = 17;
+final int CREATE_Camera     = 18;
+int CreateObject = CREATE_Nothing;
 
 int CreateParametric_Type = 0;
 int CreatePerson_Type = 0;
@@ -586,66 +588,66 @@ float CreateFractal_TrunkSize = 1; //0.5;
 float CreateFractal_LeafSize = 1; //1; 
 
 
-int ObjectCategory_LandPoints = 0; 
-int ObjectCategory_Fractals = 1; 
-int ObjectCategory_Object2Ds = 2; 
-int ObjectCategory_Group3Ds = 3;
-int ObjectCategory_Faces = 4; 
-int ObjectCategory_Vertices = 5;
-int ObjectCategory_SoftVerts = 6;
-int ObjectCategory_Solids = 7;
-int ObjectCategory_Sections = 8;
-int ObjectCategory_Cameras = 9;
-int ObjectCategory_Curves = 10;
+final int ObjectCategory_LandPoints = 0; 
+final int ObjectCategory_Fractals = 1; 
+final int ObjectCategory_Object2Ds = 2; 
+final int ObjectCategory_Group3Ds = 3;
+final int ObjectCategory_Faces = 4; 
+final int ObjectCategory_Vertices = 5;
+final int ObjectCategory_SoftVerts = 6;
+final int ObjectCategory_Solids = 7;
+final int ObjectCategory_Sections = 8;
+final int ObjectCategory_Cameras = 9;
+final int ObjectCategory_Curves = 10;
 
 
 int Current_ObjectCategory = ObjectCategory_Group3Ds; 
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
-int UITASK_LandOrbit_Pan_TargetRollZ = -19;
-int UITASK_LookAtDirection = -18;
-int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; 
-int UITASK_PanY_TargetRollXY_TargetRollZ = -16; 
-int UITASK_PanX_TargetRollXY_TargetRollZ = -15; 
-int UITASK_Pan_TargetRoll = -14; 
-int UITASK_CameraDistance_TargetRollXY_TargetRollZ = -13; 
-int UITASK_CameraRoll_Pan = -12; 
-int UITASK_CameraRollXY_CameraRollZ = -11; 
-int UITASK_TargetRoll_Pan = -10; 
-int UITASK_TargetRollXY_TargetRollZ = -9; 
-int UITASK_AllModelSize = -8; 
-int UITASK_SkydomeSize = -7; 
-int UITASK_Truck_Orbit = -6; 
-int UITASK_3DModelSize_Pan_TargetRoll = -5; 
-int UITASK_Pan_Height = -4; 
-int UITASK_Zoom_Orbit_Pan = -3; 
-int UITASK_RectSelect = -2; 
-int UITASK_PickSelect = -1; 
-int UITASK_Create = 0; 
-int UITASK_Move = 1; 
-int UITASK_Scale = 2; 
-int UITASK_Rotate = 3; 
-int UITASK_Seed_Material = 4; 
-int UITASK_Tessellation = 5; 
-int UITASK_Layer = 6; 
-int UITASK_Visibility = 7; 
-int UITASK_Weight = 8; 
-int UITASK_DegreeMax = 9; 
-int UITASK_DegreeDif = 10; 
-int UITASK_DegreeMin = 11; 
-int UITASK_TrunkSize = 12; 
-int UITASK_LeafSize = 13; 
-int UITASK_AllFractalProps = 14; 
-int UITASK_Pivot = 15; 
-int UITASK_Normal = 16; 
-int UITASK_FirstVertex = 17; 
-int UITASK_Drop = 18; 
-int UITASK_GetLength = 19; 
-int UITASK_PowerX = 20; 
-int UITASK_PowerY = 21; 
-int UITASK_PowerZ = 22; 
-int UITASK_PowerAll = 23; 
+final int UITASK_LandOrbit_Pan_TargetRollZ = -19;
+final int UITASK_LookAtDirection = -18;
+final int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; 
+final int UITASK_PanY_TargetRollXY_TargetRollZ = -16; 
+final int UITASK_PanX_TargetRollXY_TargetRollZ = -15; 
+final int UITASK_Pan_TargetRoll = -14; 
+final int UITASK_CameraDistance_TargetRollXY_TargetRollZ = -13; 
+final int UITASK_CameraRoll_Pan = -12; 
+final int UITASK_CameraRollXY_CameraRollZ = -11; 
+final int UITASK_TargetRoll_Pan = -10; 
+final int UITASK_TargetRollXY_TargetRollZ = -9; 
+final int UITASK_AllModelSize = -8; 
+final int UITASK_SkydomeSize = -7; 
+final int UITASK_Truck_Orbit = -6; 
+final int UITASK_3DModelSize_Pan_TargetRoll = -5; 
+final int UITASK_Pan_Height = -4; 
+final int UITASK_Zoom_Orbit_Pan = -3; 
+final int UITASK_RectSelect = -2; 
+final int UITASK_PickSelect = -1; 
+final int UITASK_Create = 0; 
+final int UITASK_Move = 1; 
+final int UITASK_Scale = 2; 
+final int UITASK_Rotate = 3; 
+final int UITASK_Seed_Material = 4; 
+final int UITASK_Tessellation = 5; 
+final int UITASK_Layer = 6; 
+final int UITASK_Visibility = 7; 
+final int UITASK_Weight = 8; 
+final int UITASK_DegreeMax = 9; 
+final int UITASK_DegreeDif = 10; 
+final int UITASK_DegreeMin = 11; 
+final int UITASK_TrunkSize = 12; 
+final int UITASK_LeafSize = 13; 
+final int UITASK_AllFractalProps = 14; 
+final int UITASK_Pivot = 15; 
+final int UITASK_Normal = 16; 
+final int UITASK_FirstVertex = 17; 
+final int UITASK_Drop = 18; 
+final int UITASK_GetLength = 19; 
+final int UITASK_PowerX = 20; 
+final int UITASK_PowerY = 21; 
+final int UITASK_PowerZ = 22; 
+final int UITASK_PowerAll = 23; 
 
 int WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan; 
 int WIN3D_UI_OptionXorY = 0; // 0-1
@@ -929,18 +931,18 @@ PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
 PrintWriter[] FILE_outputProbs;
 
-int DEV_OP_00 = 8;
-int DEV_OP_01 = 6;
-int DEV_OP_02 = 5;
-int DEV_OP_03 = 7;
-int DEV_OP_04 = 4;
-int DEV_OP_05 = 3;
-int DEV_OP_06 = 10;
-int DEV_OP_07 = 9;
-int DEV_OP_08 = 11;
-int DEV_OP_09 = 0;
-int DEV_OP_10 = 1;
-int DEV_OP_11 = 2;
+final int DEV_OP_00 = 8;
+final int DEV_OP_01 = 6;
+final int DEV_OP_02 = 5;
+final int DEV_OP_03 = 7;
+final int DEV_OP_04 = 4;
+final int DEV_OP_05 = 3;
+final int DEV_OP_06 = 10;
+final int DEV_OP_07 = 9;
+final int DEV_OP_08 = 11;
+final int DEV_OP_09 = 0;
+final int DEV_OP_10 = 1;
+final int DEV_OP_11 = 2;
 
 int Develop_Option = DEV_OP_06; //between 0 - 11...
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues> 
@@ -1411,7 +1413,7 @@ float WindFlow_Pallet_MLT = 1;
 
 
 
-String[][] SOLARCHVISION_WORDS = {
+final String[][] SOLARCHVISION_WORDS = {
   {
     "", ""
   }
@@ -1437,7 +1439,7 @@ String[][] SOLARCHVISION_WORDS = {
   }
 }; 
 
-String[][] CalendarMonth = {
+final String[][] CalendarMonth = {
   {
     "January", "janvier"
   }
@@ -1487,7 +1489,7 @@ String[][] CalendarMonth = {
   }
 };
 
-int[] CalendarLength = {
+final int[] CalendarLength = {
   31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
 };
 String[][] CalendarDay;
@@ -1515,15 +1517,15 @@ float STUDY_rect_offset_x = 0.5;
 
 PGraphics STUDY_Diagrams;
 
-int dataID_ENSEMBLE_OBSERVED = 0;
-int dataID_ENSEMBLE_FORECAST = 1; // also used for Aerial
-int dataID_CLIMATE_CWEEDS = 2;
-int dataID_CLIMATE_CLMREC = 3;
-int dataID_CLIMATE_TMYEPW = 4;
+final int dataID_ENSEMBLE_OBSERVED = 0;
+final int dataID_ENSEMBLE_FORECAST = 1; // also used for Aerial
+final int dataID_CLIMATE_CWEEDS = 2;
+final int dataID_CLIMATE_CLMREC = 3;
+final int dataID_CLIMATE_TMYEPW = 4;
 
 int CurrentDataSource = dataID_CLIMATE_TMYEPW; 
 
-String[] databaseString = {
+final String[] databaseString = {
   "SWOB", "NAEFS", "CWEEDS", "CLMREC", "TMY"
 };
 
@@ -35542,7 +35544,7 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory_Group3Ds) { // working with meshes
     
-                    if (CreateButton_SuperOBJ != 0) {
+                    if (CreateObject == CREATE_SuperOBJ) {
     
                       if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
     
@@ -35572,7 +35574,7 @@ void mouseClicked () {
     
   
     
-                    if (CreateButton_Tri != 0) {
+                    if (CreateObject == CREATE_Tri) {
     
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
@@ -35581,35 +35583,35 @@ void mouseClicked () {
                     }
     
 
-                    if (CreateButton_Plane != 0) {
+                    if (CreateObject == CREATE_Plane) {
     
                       SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     }
                     
-                    if (CreateButton_Poly != 0) {
+                    if (CreateObject == CREATE_Poly) {
     
                       SOLARCHVISION_add_PolygonMesh(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, CreateInput_PolyDegree, rot);
                     }                    
                     
-                    if (CreateButton_Hyper != 0) {
+                    if (CreateObject == CREATE_Hyper) {
     
                       SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
                       
     
-                    if (CreateButton_Extrude != 0) {       
+                    if (CreateObject == CREATE_Extrude) {       
     
                       SOLARCHVISION_add_PolygonExtrude(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
     
-                    if (CreateButton_House1 != 0) {   
+                    if (CreateObject == CREATE_House1) {   
                       
                       float h = ry;  
 
                       SOLARCHVISION_add_House1_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, h, rot);
                     }
 
-                    if (CreateButton_House2 != 0) {   
+                    if (CreateObject == CREATE_House2) {   
        
                       float h = ry;   
           
@@ -35618,7 +35620,7 @@ void mouseClicked () {
                       SOLARCHVISION_add_House2_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, h, rot);
                     }
     
-                    if (CreateButton_Parametric != 0) {
+                    if (CreateObject == CREATE_Parametric) {
     
                       SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, CreateParametric_Type, rot);
                     }
@@ -35626,13 +35628,13 @@ void mouseClicked () {
                   }
   
                   if (Current_ObjectCategory == ObjectCategory_Object2Ds) { // working with object2Ds
-                    if (CreateButton_Person != 0) {
+                    if (CreateObject == CREATE_Person) {
     
                       randomSeed(millis());
                       SOLARCHVISION_add_Object2D_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
                     }
     
-                    if (CreateButton_Plant != 0) {
+                    if (CreateObject == CREATE_Plant) {
                       int n = 0;
                       if (CreatePlant_Type > 0) n = CreatePlant_Type + Object2D_PEOPLE_Files_Num;
     
@@ -35642,7 +35644,7 @@ void mouseClicked () {
                   }    
                   
                   if (Current_ObjectCategory == ObjectCategory_Fractals) { // working with fractals
-                    if (CreateButton_Fractal != 0) {
+                    if (CreateObject == CREATE_Fractal) {
   
                       randomSeed(millis());
                       SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 2 * rz, rot, CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
@@ -35650,7 +35652,7 @@ void mouseClicked () {
                   }
 
                   if (Current_ObjectCategory == ObjectCategory_Vertices) { // working with vertices
-                    if (CreateButton_Vertex != 0) {
+                    if (CreateObject == CREATE_Vertex) {
                       SOLARCHVISION_add_Vertex(x, y, z);
                       
                     }
@@ -35658,7 +35660,7 @@ void mouseClicked () {
 
 
                   if (Current_ObjectCategory == ObjectCategory_Faces) { // working with faces
-                    if (CreateButton_Face != 0) {
+                    if (CreateObject == CREATE_Face) {
                       SOLARCHVISION_add_VertexToLastFace(x, y, z); 
 
                       selectedFace_ids = new int [1];
@@ -35670,7 +35672,7 @@ void mouseClicked () {
                   }      
           
                   if (Current_ObjectCategory == ObjectCategory_Curves) { // working with curves
-                    if (CreateButton_Curve != 0) {
+                    if (CreateObject == CREATE_Curve) {
                       SOLARCHVISION_add_VertexToLastCurve(x, y, z);                   
 
                       selectedCurve_ids = new int [1];
@@ -35684,14 +35686,14 @@ void mouseClicked () {
 
   
                   if (Current_ObjectCategory == ObjectCategory_Solids) { // working with solids
-                     if (CreateButton_Solid != 0) {
+                    if (CreateObject == CREATE_Solid) {
                       SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
-                     }
+                    }
                   }        
   
   
                   if (Current_ObjectCategory == ObjectCategory_Cameras) { // working with cameras
-                     if (CreateButton_Camera != 0) {              
+                    if (CreateObject == CREATE_Camera) {              
     
                       int f = int(RxP[0]);
     
@@ -35747,7 +35749,7 @@ void mouseClicked () {
                   
                   
                   if (Current_ObjectCategory == ObjectCategory_Sections) { // working with sections
-                    if (CreateButton_Section != 0) {
+                    if (CreateObject == CREATE_Section) {
     
                       int createNewSection = 0;
     
@@ -36518,8 +36520,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 4) { // Solid
 
-      CreateButton_SuperOBJ = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateButton_SuperOBJ", CreateButton_SuperOBJ, 0, 1, 1), 1));
-
       //CreateInput_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,0, "CreateInput_powRnd" , CreateInput_powRnd, 0, 1, 1), 1));    
       CreateInput_powAll = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateInput_powAll", CreateInput_powAll, 0.5, CubePower, -2);
       CreateInput_powX = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateInput_powX", CreateInput_powX, 0.5, CubePower, -2); 
@@ -36542,7 +36542,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 6) { // Living
 
-      CreateButton_Fractal = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateButton_Fractal", CreateButton_Fractal, 0, 1, 1), 1));
       CreateFractal_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateFractal_Type", CreateFractal_Type, 0, 0, 1), 1));
       CreateFractal_DegreeMin = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateFractal_DegreeMin", CreateFractal_DegreeMin, 1, 9, 1), 1));
       CreateFractal_DegreeMax = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "CreateFractal_DegreeMax", CreateFractal_DegreeMax, 1, 9, 1), 1));
@@ -46831,24 +46830,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 void UI_set_to_Create_Nothing () {
 
-  CreateButton_Plane = 0;
-  CreateButton_Poly = 0;
-  CreateButton_Extrude = 0;
-  CreateButton_Tri = 0;
-  CreateButton_Hyper = 0;
-  CreateButton_House1 = 0; 
-  CreateButton_House2 = 0;
-  CreateButton_Parametric = 0;
-  CreateButton_SuperOBJ = 0;
-  CreateButton_Person = 0;
-  CreateButton_Plant = 0;
-  CreateButton_Fractal = 0;
-  CreateButton_Face = 0;
-  CreateButton_Vertex = 0;
-  CreateButton_Curve = 0;
-  CreateButton_Solid = 0;
-  CreateButton_Section = 0;
-  CreateButton_Camera = 0;  
+  CreateObject = CREATE_Nothing;
 
   WIN3D_UI_CurrentTask = UITASK_Create;
 
@@ -46859,7 +46841,7 @@ void UI_set_to_Create_Nothing () {
 void UI_set_to_Create_Fractal () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Fractal = 1;
+  CreateObject = CREATE_Fractal;
   Current_ObjectCategory = ObjectCategory_Fractals;
 }  
 
@@ -46867,21 +46849,21 @@ void UI_set_to_Create_Fractal () {
 void UI_set_to_Create_Tree () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Plant = 1;
+  CreateObject = CREATE_Plant;
   Current_ObjectCategory = ObjectCategory_Object2Ds;
 }
 
 void UI_set_to_Create_Person () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Person = 1;
+  CreateObject = CREATE_Person;
   Current_ObjectCategory = ObjectCategory_Object2Ds;
 }
 
 void UI_set_to_Create_Vertex () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Vertex = 1;
+  CreateObject = CREATE_Vertex;
   Current_ObjectCategory = ObjectCategory_Vertices;
 }
 
@@ -46897,7 +46879,7 @@ void UI_set_to_Create_Face () {
   
   SOLARCHVISION_beginNewFace();
 
-  CreateButton_Face = 1;
+  CreateObject = CREATE_Face;
   Current_ObjectCategory = ObjectCategory_Faces;
 }
 
@@ -46913,21 +46895,21 @@ void UI_set_to_Create_Curve () {
   
   SOLARCHVISION_beginNewCurve();
 
-  CreateButton_Curve = 1;
+  CreateObject = CREATE_Curve;
   Current_ObjectCategory = ObjectCategory_Curves;
 }
 
 void UI_set_to_Create_Solid () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Solid = 1;
+  CreateObject = CREATE_Solid;
   Current_ObjectCategory = ObjectCategory_Solids;
 }
 
 void UI_set_to_Create_Section () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Section = 1;
+  CreateObject = CREATE_Section;
   Current_ObjectCategory = ObjectCategory_Sections;
 }
 
@@ -46935,7 +46917,7 @@ void UI_set_to_Create_Section () {
 void UI_set_to_Create_Camera () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Camera = 1;
+  CreateObject = CREATE_Camera;
   Current_ObjectCategory = ObjectCategory_Cameras;
 }
 
@@ -46947,7 +46929,7 @@ void UI_set_to_Create_Camera () {
 void UI_set_to_Create_Parametric (int n) {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Parametric = 1;
+  CreateObject = CREATE_Parametric;
   CreateParametric_Type = n;
 
   Current_ObjectCategory = ObjectCategory_Group3Ds;
@@ -46956,56 +46938,56 @@ void UI_set_to_Create_Parametric (int n) {
 void UI_set_to_Create_Tri () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Tri = 1;
+  CreateObject = CREATE_Tri;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Plane () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Plane = 1;
+  CreateObject = CREATE_Plane;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Poly () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Poly = 1;
+  CreateObject = CREATE_Poly;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Extrude () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Extrude = 1;
+  CreateObject = CREATE_Extrude;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Hyper () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_Hyper = 1;
+  CreateObject = CREATE_Hyper;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_House1 () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_House1 = 1;
+  CreateObject = CREATE_House1;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_House2 () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_House2 = 1;
+  CreateObject = CREATE_House2;
   Current_ObjectCategory = ObjectCategory_Group3Ds;
 }
 
 void UI_set_to_Create_Box () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_SuperOBJ = 1;
+  CreateObject = CREATE_SuperOBJ;
 
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower; 
@@ -47018,7 +47000,7 @@ void UI_set_to_Create_Box () {
 void UI_set_to_Create_Icosahedron () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_SuperOBJ = 1;
+  CreateObject = CREATE_SuperOBJ;
 
   CreateInput_powX = 1;  
   CreateInput_powY = 1; 
@@ -47030,7 +47012,7 @@ void UI_set_to_Create_Icosahedron () {
 void UI_set_to_Create_Octahedron () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_SuperOBJ = 1;
+  CreateObject = CREATE_SuperOBJ;
 
   CreateInput_powX = 1;  
   CreateInput_powY = 1; 
@@ -47042,7 +47024,7 @@ void UI_set_to_Create_Octahedron () {
 void UI_set_to_Create_Sphere () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_SuperOBJ = 1;
+  CreateObject = CREATE_SuperOBJ;
 
   CreateInput_powX = 2;  
   CreateInput_powY = 2; 
@@ -47054,7 +47036,7 @@ void UI_set_to_Create_Sphere () {
 void UI_set_to_Create_Cylinder () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_SuperOBJ = 1;
+  CreateObject = CREATE_SuperOBJ;
 
   CreateInput_powX = 2;  
   CreateInput_powY = 2; 
@@ -47066,7 +47048,7 @@ void UI_set_to_Create_Cylinder () {
 void UI_set_to_Create_Cushion () {
   UI_set_to_Create_Nothing();
 
-  CreateButton_SuperOBJ = 1;
+  CreateObject = CREATE_SuperOBJ;
 
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower;  
@@ -48461,11 +48443,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("COLOR_STYLE_Number", COLOR_STYLE_Number);
   newChild1.setFloat("STUDY_rect_scale", STUDY_rect_scale);
   newChild1.setFloat("STUDY_rect_offset_x", STUDY_rect_offset_x);
-  newChild1.setInt("dataID_ENSEMBLE_OBSERVED", dataID_ENSEMBLE_OBSERVED);
-  newChild1.setInt("dataID_ENSEMBLE_FORECAST", dataID_ENSEMBLE_FORECAST);
-  newChild1.setInt("dataID_CLIMATE_CWEEDS", dataID_CLIMATE_CWEEDS);
-  newChild1.setInt("dataID_CLIMATE_CLMREC", dataID_CLIMATE_CLMREC);
-  newChild1.setInt("dataID_CLIMATE_TMYEPW", dataID_CLIMATE_TMYEPW);
   newChild1.setInt("CurrentDataSource", CurrentDataSource);
   newChild1.setInt("STUDY_impact_summary", STUDY_impact_summary);
   newChild1.setInt("STUDY_ImpactLayer", STUDY_ImpactLayer);
@@ -49722,11 +49699,6 @@ void SOLARCHVISION_load_project (String myFile) {
       COLOR_STYLE_Number = children0[L].getInt("COLOR_STYLE_Number");
       STUDY_rect_scale = children0[L].getFloat("STUDY_rect_scale");
       STUDY_rect_offset_x = children0[L].getFloat("STUDY_rect_offset_x");
-      dataID_ENSEMBLE_OBSERVED = children0[L].getInt("dataID_ENSEMBLE_OBSERVED");
-      dataID_ENSEMBLE_FORECAST = children0[L].getInt("dataID_ENSEMBLE_FORECAST");
-      dataID_CLIMATE_CWEEDS = children0[L].getInt("dataID_CLIMATE_CWEEDS");
-      dataID_CLIMATE_CLMREC = children0[L].getInt("dataID_CLIMATE_CLMREC");
-      dataID_CLIMATE_TMYEPW = children0[L].getInt("dataID_CLIMATE_TMYEPW");
       CurrentDataSource = children0[L].getInt("CurrentDataSource");
       STUDY_impact_summary = children0[L].getInt("STUDY_impact_summary");
       STUDY_ImpactLayer = children0[L].getInt("STUDY_ImpactLayer");
