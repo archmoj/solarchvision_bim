@@ -19087,62 +19087,58 @@ void SOLARCHVISION_export_objects_HTML () {
           
           for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
 
-            if (back_or_front == 1) {
+            
 
-              htmlOutput.println("\t\t\t\t<shape>");
+            htmlOutput.println("\t\t\t\t<shape>");
 
+            
+            if (objExport_MaterialLibrary != 0) {
               
-              if (objExport_MaterialLibrary != 0) {
-                
-                htmlOutput.println("\t\t\t\t\t<Appearance>");
-                
-                htmlOutput.print  ("\t\t\t\t\t\t<Material diffuseColor='");
-                int[] nums = {1,2,3}; // r,g,b
-                for (int i = 0; i < nums.length; i++) {
-                  if (i > 0) {
-                    htmlOutput.print(",");
-                  }  
-                  int j = nums[i];                
-                  htmlOutput.print(nf(Materials_Color[mt][j] / 255.0, 0, 3));
-                }             
-                htmlOutput.println("'></Material>");        
-               
-                htmlOutput.println("\t\t\t\t\t</Appearance>");
-              }              
+              htmlOutput.println("\t\t\t\t\t<Appearance>");
               
-              
-              
-              
-              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet coordIndex='");
-              for (int i = 0; i < subFace.length; i++) {
-                if (i > 0) {
-                  htmlOutput.print(" ");
-                }         
-                htmlOutput.print(nf(i, 0));          
-              }
-              htmlOutput.println(" -1'>");
-              
-              htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-              for (int i = 0; i < subFace.length; i++) {
-                if (i > 0) {
-                  htmlOutput.print(",");
-                }                  
-                htmlOutput.print(nf(subFace[i][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[i][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[i][2], 0, objExport_PrecisionVertex));
-              }                
-              htmlOutput.println("'></Coordinate>");
-              
-              htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-              
-              htmlOutput.println("\t\t\t\t</shape>");
-              
-            } else {
+              htmlOutput.print  ("\t\t\t\t\t\t<Material");
+              htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
+              htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
+              htmlOutput.println("></Material>");        
+             
+              htmlOutput.println("\t\t\t\t\t</Appearance>");
+            }              
+            
+            
+            
+            
+            htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet");
+            
 
-// 0 2 1
-              if (subFace.length == 4) { 
-                
-// 2 0 3
-              }
+            //htmlOutput.print  (" solid=\"false\""); // force two-sided
+
+            
+            htmlOutput.print  (" coordIndex='");
+            for (int i = 0; i < subFace.length; i++) {
+              if (i > 0) {
+                htmlOutput.print(" ");
+              }         
+              htmlOutput.print(nf(i, 0));          
             }
+            htmlOutput.println(" -1'>");
+            
+            htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+            for (int i = 0; i < subFace.length; i++) {
+              if (i > 0) {
+                htmlOutput.print(",");
+              }                  
+              int q = i;
+              if (back_or_front == 0) {
+                q = subFace.length - 1 - i;
+              }
+              htmlOutput.print(nf(subFace[q][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[q][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[q][2], 0, objExport_PrecisionVertex));
+            }                
+            htmlOutput.println("'></Coordinate>");
+            
+            htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+            
+            htmlOutput.println("\t\t\t\t</shape>");
+            
           }
         }
       }
