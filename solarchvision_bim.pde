@@ -19054,6 +19054,19 @@ void SOLARCHVISION_export_objects_HTML () {
 
   if (Display_Model3Ds != 0) {
 
+    int Create_Face_Texture = 0;
+
+    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solid) || (WIN3D_FacesShade == Shade_Vertex_Elevation)) {
+      Create_Face_Texture = 1;
+    }    
+    
+    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
+    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
+    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
+
+    String the_filename = "";
+    String TEXTURE_path = "";        
+
     for (int f = 0; f < allFaces_PNT.length; f++) {
   
       if (allFaces_PNT[f].length > 2) {
@@ -19087,19 +19100,60 @@ void SOLARCHVISION_export_objects_HTML () {
           
           for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
 
-            
-
             htmlOutput.println("\t\t\t\t<shape>");
 
-            
             if (objExport_MaterialLibrary != 0) {
               
               htmlOutput.println("\t\t\t\t\t<Appearance>");
               
-              htmlOutput.print  ("\t\t\t\t\t\t<Material");
-              htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
-              htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
-              htmlOutput.println("></Material>");        
+              if (Create_Face_Texture == 0) {
+              
+                htmlOutput.print  ("\t\t\t\t\t\t<Material");
+                htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
+                htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
+                htmlOutput.println("></Material>");
+        
+              } else {
+                the_filename = "shade_Pallet.bmp";
+      
+                TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+      
+                println("Saving texture:", TEXTURE_path);
+      
+                int RES1 = objExport_PalletResolution; 
+                int RES2 = objExport_PalletResolution / 16;      
+      
+                PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+      
+      
+                Pallet_Texture.loadPixels();
+      
+                for (int np = 0; np < (RES1 * RES2); np++) {
+                  int Image_X = np % RES1;
+                  int Image_Y = np / RES1;
+      
+                  float _val = (Image_X / (0.5 * RES1)) - 1; 
+      
+                  float _u = 0.5 + _val;
+      
+                  if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
+                    if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                  }            
+      
+                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+      
+                  Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+                }
+      
+                Pallet_Texture.updatePixels();   
+      
+                Pallet_Texture.save(TEXTURE_path);      
+      
+      
+                htmlOutput.print  ("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+
+              }
+      
              
               htmlOutput.println("\t\t\t\t\t</Appearance>");
             }              
@@ -19108,10 +19162,6 @@ void SOLARCHVISION_export_objects_HTML () {
             
             
             htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet");
-            
-
-            //htmlOutput.print  (" solid=\"false\""); // force two-sided
-
             
             htmlOutput.print  (" coordIndex='");
             for (int i = 0; i < subFace.length; i++) {
