@@ -405,19 +405,19 @@ float GLOBE_calculatedResolution = 2.5; //1, 2.5, 5
 
 float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
-float objExport_Scale = 1.0; //0.001; // 0.001: 1km --> 1
-int objExport_FlipZYaxis = 1; //1; // 1: to fit in Unity3D
+float Export_Scale = 1.0; //0.001; // 0.001: 1km --> 1
+int Export_FlipZYaxis = 1; //1; // 1: to fit in Unity3D
 
-int objExport_PrecisionVertex = 6; 
-int objExport_PrecisionVtexture = 4;
-int objExport_PolyToPoly = 1; // 0: Exports each group3D to different individual faces, 1: Exports group3D to group3D 
+int Export_PrecisionVertex = 6; 
+int Export_PrecisionVtexture = 4;
+int Export_PolyToPoly = 1; // 0: Exports each group3D to different individual faces, 1: Exports group3D to group3D 
 
-int objExport_MaterialLibrary = 1; // 0-1
-int objExport_BackSides = 1; // 0-1
-int objExport_CombinedMaterial = 1; // 0-1
-int objExport_BakingResolution = 16;
-int objExport_PalletResolution = 256;
-int objExport_UsePalletOrBakeFaces = 0; // 0-1
+int Export_MaterialLibrary = 1; // 0-1
+int Export_BackSides = 1; // 0-1
+int Export_CombinedMaterial = 1; // 0-1
+int Export_BakingResolution = 16;
+int Export_PalletResolution = 256;
+int Export_UsePalletOrBakeFaces = 0; // 0-1
 
 
 
@@ -9141,7 +9141,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
     num_vertices_added = 0;
 
-    if (objExport_MaterialLibrary != 0) {
+    if (Export_MaterialLibrary != 0) {
 
       the_filename = "sunPattern_Pallet.bmp";
 
@@ -9149,8 +9149,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       println("Saving texture:", TEXTURE_path);
 
-      int RES1 = objExport_PalletResolution; 
-      int RES2 = objExport_PalletResolution / 16;      
+      int RES1 = Export_PalletResolution; 
+      int RES2 = Export_PalletResolution / 16;      
 
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -9210,7 +9210,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         obj_lastGroupNumber += 1;
         objOutput.println("g sunPattern");
 
-        if (objExport_MaterialLibrary != 0) {      
+        if (Export_MaterialLibrary != 0) {      
           objOutput.println("usemtl " +  the_filename.replace('.', '_'));
         }
       }
@@ -18774,7 +18774,7 @@ void SOLARCHVISION_export_objects_SCR () {
         float y = allVertices[allFaces_PNT[f][j]][1];
         float z = allVertices[allFaces_PNT[f][j]][2];
 
-        scrOutput.println(nf(x, 0, objExport_PrecisionVertex) + "," + nf(y, 0, objExport_PrecisionVertex) + "," + nf(z, 0, objExport_PrecisionVertex));
+        scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
       }
       scrOutput.println();
       scrOutput.println();
@@ -18791,7 +18791,7 @@ void SOLARCHVISION_export_objects_SCR () {
       float y = allVertices[allCurves_PNT[f][j]][1];
       float z = allVertices[allCurves_PNT[f][j]][2];
 
-      scrOutput.println(nf(x, 0, objExport_PrecisionVertex) + "," + nf(y, 0, objExport_PrecisionVertex) + "," + nf(z, 0, objExport_PrecisionVertex));
+      scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
     }
     
     if (allCurves_MTLVGC[f][0] == 1) {
@@ -18861,7 +18861,7 @@ void SOLARCHVISION_export_objects_RAD () {
         radOutput.println("void plastic " + "SurfaceMaterial_" + nf(mt, 0));
         radOutput.println("0");
         radOutput.println("0");
-        radOutput.println("5 " + nf(r, 0, objExport_PrecisionVtexture) + " " + nf(g, 0, objExport_PrecisionVtexture) + " " + nf(b, 0, objExport_PrecisionVtexture) + " 0 0");
+        radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
 
       }
     }
@@ -18897,7 +18897,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
           
-          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
+          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
 
             if (back_or_front == 1) {
 
@@ -18906,9 +18906,9 @@ void SOLARCHVISION_export_objects_RAD () {
               radOutput.println("0");
               radOutput.println("9");      
               
-              radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[1][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][2], 0, objExport_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
               
               if (subFace.length == 4) {
 
@@ -18917,9 +18917,9 @@ void SOLARCHVISION_export_objects_RAD () {
                 radOutput.println("0");
                 radOutput.println("9");      
                 
-                radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[3][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][2], 0, objExport_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
               }
               
               
@@ -18930,9 +18930,9 @@ void SOLARCHVISION_export_objects_RAD () {
               radOutput.println("0");
               radOutput.println("9");    
               
-              radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[1][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][2], 0, objExport_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
               
               if (subFace.length == 4) { 
                 
@@ -18941,9 +18941,9 @@ void SOLARCHVISION_export_objects_RAD () {
                 radOutput.println("0");
                 radOutput.println("9");                   
                 
-                radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[3][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][2], 0, objExport_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
               }
             }
           }
@@ -19098,11 +19098,11 @@ void SOLARCHVISION_export_objects_HTML () {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
           
-          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
+          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
 
             htmlOutput.println("\t\t\t\t<shape>");
 
-            if (objExport_MaterialLibrary != 0) {
+            if (Export_MaterialLibrary != 0) {
               
               htmlOutput.println("\t\t\t\t\t<Appearance>");
               
@@ -19120,8 +19120,8 @@ void SOLARCHVISION_export_objects_HTML () {
       
                 println("Saving texture:", TEXTURE_path);
       
-                int RES1 = objExport_PalletResolution; 
-                int RES2 = objExport_PalletResolution / 16;      
+                int RES1 = Export_PalletResolution; 
+                int RES2 = Export_PalletResolution / 16;      
       
                 PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
       
@@ -19150,7 +19150,7 @@ void SOLARCHVISION_export_objects_HTML () {
                 Pallet_Texture.save(TEXTURE_path);      
       
       
-                htmlOutput.print  ("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
 
               }
       
@@ -19181,9 +19181,24 @@ void SOLARCHVISION_export_objects_HTML () {
               if (back_or_front == 0) {
                 q = subFace.length - 1 - i;
               }
-              htmlOutput.print(nf(subFace[q][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[q][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[q][2], 0, objExport_PrecisionVertex));
+              htmlOutput.print(nf(subFace[q][0], 0, Export_PrecisionVertex) + " " + nf(subFace[q][1], 0, Export_PrecisionVertex) + " " + nf(subFace[q][2], 0, Export_PrecisionVertex));
             }                
             htmlOutput.println("'></Coordinate>");
+            
+???????????????            
+            
+            htmlOutput.print  ("\t\t\t\t\t\t<texCoordIndex point='");
+            for (int i = 0; i < subFace.length; i++) {
+              if (i > 0) {
+                htmlOutput.print(",");
+              }                  
+              int q = i;
+              if (back_or_front == 0) {
+                q = subFace.length - 1 - i;
+              }
+              htmlOutput.print(nf(subFace[q][0], 0, Export_PrecisionVertex) + " " + nf(subFace[q][1], 0, Export_PrecisionVertex) + " " + nf(subFace[q][2], 0, Export_PrecisionVertex));
+            }                
+            htmlOutput.println("'></texCoordIndex>");            
             
             htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
             
@@ -19272,14 +19287,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   String mtlFilename = Model3DFolder + "/" + fileBasename + ".mtl";
 
 
-  if (objExport_MaterialLibrary != 0) {
+  if (Export_MaterialLibrary != 0) {
     mtlOutput = createWriter(mtlFilename);
     mtlOutput.println("#SOLARCHVISION");
   }
 
   objOutput = createWriter(objFilename);
   objOutput.println("#SOLARCHVISION");
-  if (objExport_MaterialLibrary != 0) {
+  if (Export_MaterialLibrary != 0) {
     objOutput.println("mtllib " + fileBasename + ".mtl");
   }
 
@@ -19310,7 +19325,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
     float CEN_lon = 0;
     float CEN_lat = 0;    
 
-    if (objExport_MaterialLibrary != 0) {
+    if (Export_MaterialLibrary != 0) {
 
       mtlOutput.println("newmtl EarthSphere");
       mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -19354,12 +19369,12 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
     }
 
 
-    if (objExport_PolyToPoly == 1) {
+    if (Export_PolyToPoly == 1) {
       obj_lastGroupNumber += 1;  
       objOutput.println("g EarthSphere");
     }
 
-    if (objExport_MaterialLibrary != 0) {
+    if (Export_MaterialLibrary != 0) {
       objOutput.println("usemtl EarthSphere");
     }
 
@@ -19466,7 +19481,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
 
-          if (objExport_PolyToPoly == 0) {
+          if (Export_PolyToPoly == 0) {
             if (_turn == 3) {
               obj_lastGroupNumber += 1;
               objOutput.println("g EarthSphere_" + nf(f, 0));
@@ -19476,7 +19491,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           if (_turn == 3) {
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExport_BackSides != 0) {
+            if (Export_BackSides != 0) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
@@ -19520,7 +19535,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         String the_filename = "Impact_" + nf(f, 0) + ".bmp";
 
-        if (objExport_MaterialLibrary != 0) {
+        if (Export_MaterialLibrary != 0) {
 
           String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
@@ -19552,12 +19567,12 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         if (Section_Type != 0) {
 
-          if (objExport_PolyToPoly == 1) {
+          if (Export_PolyToPoly == 1) {
             obj_lastGroupNumber += 1;  
             objOutput.println("g Impact_" + nf(f, 0));
           }
 
-          if (objExport_MaterialLibrary != 0) {
+          if (Export_MaterialLibrary != 0) {
             objOutput.println("usemtl " + the_filename.replace('.', '_'));
           }
 
@@ -19604,7 +19619,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
           obj_lastFaceNumber += 1;            
           objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-          if (objExport_BackSides != 0) {
+          if (Export_BackSides != 0) {
             obj_lastFaceNumber += 1;
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
           }
@@ -19618,7 +19633,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   if (Display_Model2Ds != 0) {
 
-    if (objExport_MaterialLibrary != 0) {
+    if (Export_MaterialLibrary != 0) {
 
       int[] Object2D_ImageUsed = new int [Object2D_ImagePath.length];
 
@@ -19721,12 +19736,12 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
       if (allObject2Ds_MAP[f] < 0) t += PI;            
 
-      if (objExport_PolyToPoly == 1) {
+      if (Export_PolyToPoly == 1) {
         obj_lastGroupNumber += 1;  
         objOutput.println("g Object2D_" + nf(f, 0) + "_type" + nf(n, 0));
       }
 
-      if (objExport_MaterialLibrary != 0) {
+      if (Export_MaterialLibrary != 0) {
         objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
       }
 
@@ -19782,14 +19797,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
             String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
             String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);      
 
-            if (objExport_PolyToPoly == 0) {
+            if (Export_PolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println("g Object2D_" + nf(f, 0) + "_ver");
             } 
 
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExport_BackSides != 0) {
+            if (Export_BackSides != 0) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
@@ -19853,14 +19868,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
               String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);      
 
-              if (objExport_PolyToPoly == 0) {
+              if (Export_PolyToPoly == 0) {
                 obj_lastGroupNumber += 1;
                 objOutput.println("g Object2D_" + nf(f, 0) + "_hor" + nf(q, 0));
               } 
 
               obj_lastFaceNumber += 1;            
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              if (objExport_BackSides != 0) {
+              if (Export_BackSides != 0) {
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
               }
@@ -19884,7 +19899,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     if (Create_Face_Texture == 0) {
 
-      if (objExport_MaterialLibrary != 0) {
+      if (Export_MaterialLibrary != 0) {
 
         int[] Materials_Used = new int [Materials_Number];
 
@@ -19928,14 +19943,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         if (allGroup3Ds_Faces[OBJ_NUM][0] <= allGroup3Ds_Faces[OBJ_NUM][1]) {
 
-          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
+          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
 
             num_vertices_added = 0;
 
             for (int _turn = 1; _turn < 4; _turn += 1) {
 
               if (_turn == 3) {
-                if (objExport_PolyToPoly == 1) {
+                if (Export_PolyToPoly == 1) {
                   obj_lastGroupNumber += 1;
                   objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
@@ -19946,7 +19961,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
 
                 if (_turn == 3) {
-                  if (objExport_MaterialLibrary != 0) {
+                  if (Export_MaterialLibrary != 0) {
                     int mt = allFaces_MTLVGC[f][0];
                     if (prev_mt != mt) {
                       objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
@@ -19998,7 +20013,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                     num_vertices_added += subFace.length;
 
-                    if (objExport_PolyToPoly == 0) {
+                    if (Export_PolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                     }                    
@@ -20045,16 +20060,16 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       String the_filename = "";
       String TEXTURE_path = "";
 
-      if (objExport_MaterialLibrary != 0) {
-        if (objExport_UsePalletOrBakeFaces == 0) {
+      if (Export_MaterialLibrary != 0) {
+        if (Export_UsePalletOrBakeFaces == 0) {
           the_filename = "shade_Pallet.bmp";
 
           TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
           println("Saving texture:", TEXTURE_path);
 
-          int RES1 = objExport_PalletResolution; 
-          int RES2 = objExport_PalletResolution / 16;      
+          int RES1 = Export_PalletResolution; 
+          int RES2 = Export_PalletResolution / 16;      
 
           PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -20107,9 +20122,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
           int Number_Of_Face_Subdivisions = 0; // for combined materials we need to know this number before baking each object.
 
-          if (objExport_UsePalletOrBakeFaces == 1) {
+          if (Export_UsePalletOrBakeFaces == 1) {
 
-            if (objExport_MaterialLibrary != 0) {
+            if (Export_MaterialLibrary != 0) {
 
               for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
 
@@ -20139,15 +20154,15 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
+          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
 
             PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
 
             num_vertices_added = 0;
 
-            if (objExport_MaterialLibrary != 0) {
-              if (objExport_UsePalletOrBakeFaces == 1) {
-                if (objExport_CombinedMaterial == 1) {            
+            if (Export_MaterialLibrary != 0) {
+              if (Export_UsePalletOrBakeFaces == 1) {
+                if (Export_CombinedMaterial == 1) {            
 
                   the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + ".bmp";
 
@@ -20179,13 +20194,13 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
               if (_turn == 3) {
 
-                if (objExport_PolyToPoly == 1) {
+                if (Export_PolyToPoly == 1) {
                   obj_lastGroupNumber += 1;
                   objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
 
-                if (objExport_MaterialLibrary != 0) {
-                  if (objExport_CombinedMaterial == 1) { 
+                if (Export_MaterialLibrary != 0) {
+                  if (Export_CombinedMaterial == 1) { 
                     objOutput.println("usemtl " +  the_filename.replace('.', '_'));
                   }
                 }
@@ -20239,11 +20254,11 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                   if (_turn == 1) {   
 
-                    if (objExport_MaterialLibrary != 0) {
+                    if (Export_MaterialLibrary != 0) {
 
 
-                      if (objExport_UsePalletOrBakeFaces == 1) {
-                        if (objExport_CombinedMaterial == 0) { 
+                      if (Export_UsePalletOrBakeFaces == 1) {
+                        if (Export_CombinedMaterial == 0) { 
                           the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
 
                           TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
@@ -20252,10 +20267,10 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                         }
                       }
 
-                      int RES1 = objExport_BakingResolution;
-                      int RES2 = objExport_BakingResolution;                      
+                      int RES1 = Export_BakingResolution;
+                      int RES2 = Export_BakingResolution;                      
 
-                      if (objExport_UsePalletOrBakeFaces == 1) {
+                      if (Export_UsePalletOrBakeFaces == 1) {
                         Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
 
                         Face_Texture[CurrentFaceTextureNumber].beginDraw();
@@ -20263,7 +20278,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-                      if (objExport_UsePalletOrBakeFaces == 1) {
+                      if (Export_UsePalletOrBakeFaces == 1) {
                         Face_Texture[CurrentFaceTextureNumber].noStroke();
                         Face_Texture[CurrentFaceTextureNumber].beginShape(QUADS);
                       }
@@ -20274,7 +20289,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                           255, 255, 255, 255
                         };
 
-                        if (objExport_UsePalletOrBakeFaces == 1) {
+                        if (Export_UsePalletOrBakeFaces == 1) {
 
                           if (WIN3D_FacesShade == Shade_Global_Solar) {
                             int s_next = (s + 1) % subFace.length;
@@ -20308,7 +20323,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                         }
 
                         if (s == 0) {
-                          if (objExport_UsePalletOrBakeFaces == 1) {
+                          if (Export_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(0, 0);
                           }
                           x1 = subFace[s][0];
@@ -20316,7 +20331,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                           z1 = subFace[s][2];
                         }
                         if (s == 1) {
-                          if (objExport_UsePalletOrBakeFaces == 1) {
+                          if (Export_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(RES1, 0);
                           }
                           x2 = subFace[s][0];
@@ -20324,7 +20339,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                           z2 = subFace[s][2];
                         }            
                         if (s == 2) { 
-                          if (objExport_UsePalletOrBakeFaces == 1) {
+                          if (Export_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(RES1, RES2);
                           }
                           x3 = subFace[s][0];
@@ -20332,7 +20347,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                           z3 = subFace[s][2];
                         }          
                         if (s == 3) {
-                          if (objExport_UsePalletOrBakeFaces == 1) {
+                          if (Export_UsePalletOrBakeFaces == 1) {
                             Face_Texture[CurrentFaceTextureNumber].vertex(0, RES2);
                           }
                           x4 = subFace[s][0];
@@ -20341,14 +20356,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                         }
                       }
 
-                      if (objExport_UsePalletOrBakeFaces == 1) {
+                      if (Export_UsePalletOrBakeFaces == 1) {
 
                         //Face_Texture[CurrentFaceTextureNumber].endShape(CLOSE);
                         Face_Texture[CurrentFaceTextureNumber].endShape();
 
                         Face_Texture[CurrentFaceTextureNumber].endDraw();
 
-                        if (objExport_CombinedMaterial == 0) {
+                        if (Export_CombinedMaterial == 0) {
                           Face_Texture[CurrentFaceTextureNumber].save(TEXTURE_path);
 
                           mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -20389,16 +20404,16 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                     float u4 = 0;
                     float v4 = 0;
 
-                    if (objExport_CombinedMaterial == 1) {
+                    if (Export_CombinedMaterial == 1) {
 
-                      if (objExport_UsePalletOrBakeFaces == 1) {
+                      if (Export_UsePalletOrBakeFaces == 1) {
 
                         // also considering two pixles added to the left and right
 
-                        u1 = (CurrentFaceTextureNumber * (2 + objExport_BakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExport_BakingResolution));
+                        u1 = (CurrentFaceTextureNumber * (2 + Export_BakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + Export_BakingResolution));
                         v1 = 1;
 
-                        u2 = (CurrentFaceTextureNumber * (2 + objExport_BakingResolution) + objExport_BakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExport_BakingResolution));
+                        u2 = (CurrentFaceTextureNumber * (2 + Export_BakingResolution) + Export_BakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + Export_BakingResolution));
                         v2 = 1;
 
                         u3 = u2;
@@ -20479,13 +20494,13 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                     num_vertices_added += 4;
 
-                    if (objExport_PolyToPoly == 0) {
+                    if (Export_PolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                     }
 
-                    if (objExport_MaterialLibrary != 0) {
-                      if (objExport_CombinedMaterial == 0) {
+                    if (Export_MaterialLibrary != 0) {
+                      if (Export_CombinedMaterial == 0) {
                         objOutput.println("usemtl " +  the_filename.replace('.', '_'));
                       }
                     }
@@ -20512,14 +20527,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
             }
 
 
-            if (objExport_MaterialLibrary != 0) {
+            if (Export_MaterialLibrary != 0) {
 
-              if (objExport_UsePalletOrBakeFaces == 1) {
+              if (Export_UsePalletOrBakeFaces == 1) {
 
-                if (objExport_CombinedMaterial == 1) {            
+                if (Export_CombinedMaterial == 1) {            
 
-                  int RES1 = (2 + objExport_BakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
-                  int RES2 = objExport_BakingResolution;      
+                  int RES1 = (2 + Export_BakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
+                  int RES2 = Export_BakingResolution;      
 
                   PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
 
@@ -20530,8 +20545,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                     int w = Face_Texture[i].width;
                     int h = Face_Texture[i].height;
 
-                    Combined_Texture.image(Face_Texture[i], i * (2 + objExport_BakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
-                    Combined_Texture.image(Face_Texture[i], i * (2 + objExport_BakingResolution) + 1, 0); // then adding the original on top.
+                    Combined_Texture.image(Face_Texture[i], i * (2 + Export_BakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
+                    Combined_Texture.image(Face_Texture[i], i * (2 + Export_BakingResolution) + 1, 0); // then adding the original on top.
                   }
 
                   Combined_Texture.endDraw();
@@ -20554,7 +20569,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   if (Display_Fractals != 0) {
 
-    if (objExport_MaterialLibrary != 0) {
+    if (Export_MaterialLibrary != 0) {
 
       if (allFractals_num != 0) {
 
@@ -20613,7 +20628,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         num_vertices_added = 0;
 
-        if (objExport_PolyToPoly == 1) {
+        if (Export_PolyToPoly == 1) {
           obj_lastGroupNumber += 1;
           objOutput.println("g Fractal_" + nf(f, 0));
         }    
@@ -20622,7 +20637,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         float Beta = rot; 
 
         for (int _turn = 1; _turn < 4; _turn += 1) {
-          SOLARCHVISION_Plant_branch_objExport_(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+          SOLARCHVISION_Plant_branch_Export_(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
         }
 
         obj_lastVertexNumber += num_vertices_added;
@@ -20641,7 +20656,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     String the_filename = "";
 
-    if (objExport_MaterialLibrary != 0) {
+    if (Export_MaterialLibrary != 0) {
 
       the_filename = "WindFlow_Pallet.bmp";
 
@@ -20649,8 +20664,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
       println("Saving texture:", TEXTURE_path);
 
-      int RES1 = objExport_PalletResolution; 
-      int RES2 = objExport_PalletResolution / 16;       
+      int RES1 = Export_PalletResolution; 
+      int RES2 = Export_PalletResolution / 16;       
 
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -20699,7 +20714,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         obj_lastGroupNumber += 1;
         objOutput.println("g WindFlow");
 
-        if (objExport_MaterialLibrary != 0) {
+        if (Export_MaterialLibrary != 0) {
           objOutput.println("usemtl WindFlow");
         }
       }        
@@ -20836,7 +20851,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       String the_filename = "";
       String TEXTURE_path = "";  
 
-      if (objExport_MaterialLibrary != 0) {
+      if (Export_MaterialLibrary != 0) {
 
         the_filename = "skyPattern_Pallet.bmp";
 
@@ -20844,8 +20859,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         println("Saving texture:", TEXTURE_path);
 
-        int RES1 = objExport_PalletResolution; 
-        int RES2 = objExport_PalletResolution / 16;      
+        int RES1 = Export_PalletResolution; 
+        int RES2 = Export_PalletResolution / 16;      
 
         PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -20891,7 +20906,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       obj_lastGroupNumber += 1;
       objOutput.println("g skyPattern");
 
-      if (objExport_MaterialLibrary != 0) {      
+      if (Export_MaterialLibrary != 0) {      
         objOutput.println("usemtl " +  the_filename.replace('.', '_'));
       }      
 
@@ -20972,7 +20987,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
 
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);  
-              if (objExport_BackSides != 0) {
+              if (Export_BackSides != 0) {
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
               }
@@ -21006,7 +21021,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
     SOLARCHVISION_update_date();
   }
 
-  if (objExport_MaterialLibrary != 0) {
+  if (Export_MaterialLibrary != 0) {
     mtlOutput.flush(); 
     mtlOutput.close();
   }
@@ -21023,16 +21038,16 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
-  float a = x * objExport_Scale;
-  float b = y * objExport_Scale;
-  float c = z * objExport_Scale;
+  float a = x * Export_Scale;
+  float b = y * Export_Scale;
+  float c = z * Export_Scale;
 
-  if (objExport_FlipZYaxis == 0) {
+  if (Export_FlipZYaxis == 0) {
 
-    objOutput.println("v " + nf(a, 0, objExport_PrecisionVertex) + " " +  nf(b, 0, objExport_PrecisionVertex) + " " +  nf(c, 0, objExport_PrecisionVertex));
+    objOutput.println("v " + nf(a, 0, Export_PrecisionVertex) + " " +  nf(b, 0, Export_PrecisionVertex) + " " +  nf(c, 0, Export_PrecisionVertex));
   } else {
 
-    objOutput.println("v " + nf(-a, 0, objExport_PrecisionVertex) + " " +  nf(c, 0, objExport_PrecisionVertex) + " " +  nf(b, 0, objExport_PrecisionVertex));
+    objOutput.println("v " + nf(-a, 0, Export_PrecisionVertex) + " " +  nf(c, 0, Export_PrecisionVertex) + " " +  nf(b, 0, Export_PrecisionVertex));
   }
 }
 
@@ -21040,7 +21055,7 @@ void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
 void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
 
-  objOutput.println("vt " + nf(u, 0, objExport_PrecisionVtexture) + " " + nf(v, 0, objExport_PrecisionVtexture) + " " + nf(w, 0, objExport_PrecisionVtexture));
+  objOutput.println("vt " + nf(u, 0, Export_PrecisionVtexture) + " " + nf(v, 0, Export_PrecisionVtexture) + " " + nf(w, 0, Export_PrecisionVtexture));
 }  
 
 
@@ -22784,7 +22799,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
         
         if (target_window == TYPE_WINDOW_OBJ) {
           
-          if (objExport_MaterialLibrary != 0) {
+          if (Export_MaterialLibrary != 0) {
     
             mtlOutput.println("newmtl TropoSphere_" + nf(TROPO_id, 0));
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -22815,12 +22830,12 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
             }
           }
         
-          if (objExport_PolyToPoly == 1) {
+          if (Export_PolyToPoly == 1) {
             obj_lastGroupNumber += 1;  
             objOutput.println("g TropoSphere_" + nf(TROPO_id, 0));
           }
     
-          if (objExport_MaterialLibrary != 0) {
+          if (Export_MaterialLibrary != 0) {
             objOutput.println("usemtl TropoSphere_" + nf(TROPO_id, 0));
           }     
      
@@ -22991,7 +23006,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                   String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
                   String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
       
-                  if (objExport_PolyToPoly == 0) {
+                  if (Export_PolyToPoly == 0) {
                     if (_turn == 3) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g TropoSphere_" + nf(TROPO_id, 0) + "_" + nf(f, 0));
@@ -23001,7 +23016,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                   if (_turn == 3) {
                     obj_lastFaceNumber += 1;            
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    if (objExport_BackSides != 0) {
+                    if (Export_BackSides != 0) {
                       obj_lastFaceNumber += 1;
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                     }
@@ -23377,7 +23392,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
 
     if (target_window == TYPE_WINDOW_RAD) {
 
-      if (objExport_MaterialLibrary != 0) {
+      if (Export_MaterialLibrary != 0) {
 
         if (Display_LAND_Textures != 0) {           
 
@@ -23393,7 +23408,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
             radOutput.println("void plastic " + "LandMesh_" + nf(n_Map, 0));
             radOutput.println("0");
             radOutput.println("0");
-            radOutput.println("5 " + nf(r, 0, objExport_PrecisionVtexture) + " " + nf(g, 0, objExport_PrecisionVtexture) + " " + nf(b, 0, objExport_PrecisionVtexture) + " 0 0");
+            radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
 
             if (Display_LAND_Textures != 0) {
               if (n_Map != -1) {
@@ -23409,7 +23424,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
     
     if (target_window == TYPE_WINDOW_OBJ) {
 
-      if (objExport_MaterialLibrary != 0) {
+      if (Export_MaterialLibrary != 0) {
 
         if (Display_LAND_Textures != 0) {           
 
@@ -23593,7 +23608,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
 
                 if (Display_LAND_Textures != 0) {
 
-                  if (objExport_MaterialLibrary != 0) {
+                  if (Export_MaterialLibrary != 0) {
                     if (n_Map != -1) {    
                       objOutput.println("usemtl LandMesh_" + nf(n_Map, 0));
                     }
@@ -23673,18 +23688,18 @@ void SOLARCHVISION_draw_LAND (int target_window) {
                     radOutput.println("0");
                     radOutput.println("9");      
                     
-                    radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[1][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[1][2], 0, objExport_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
                     
                     radOutput.println("LandMesh_0" + " polygon " + "LAND");
                     radOutput.println("0");
                     radOutput.println("0");
                     radOutput.println("9");      
                     
-                    radOutput.println(" " + nf(subFace[2][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[2][2], 0, objExport_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[3][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[3][2], 0, objExport_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[0][2], 0, objExport_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
 
                   }
                 }
@@ -23764,7 +23779,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
   
                   obj_lastFaceNumber += 1;
                   objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-                  if (objExport_BackSides != 0) {
+                  if (Export_BackSides != 0) {
                     obj_lastFaceNumber += 1;
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                   }
@@ -37016,19 +37031,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_prob = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
 
 
-      objExport_Scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_Scale", objExport_Scale, .001, 1000, -0.1);
-      objExport_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_FlipZYaxis", objExport_FlipZYaxis, 0, 1, 1), 1));
+      Export_Scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_Scale", Export_Scale, .001, 1000, -0.1);
+      Export_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_FlipZYaxis", Export_FlipZYaxis, 0, 1, 1), 1));
 
-      objExport_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_PrecisionVertex", objExport_PrecisionVertex, 0, 6, 1), 1));
-      objExport_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_PrecisionVtexture", objExport_PrecisionVtexture, 0, 6, 1), 1));
-      objExport_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_PolyToPoly", objExport_PolyToPoly, 0, 1, 1), 1));
+      Export_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_PrecisionVertex", Export_PrecisionVertex, 0, 6, 1), 1));
+      Export_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_PrecisionVtexture", Export_PrecisionVtexture, 0, 6, 1), 1));
+      Export_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_PolyToPoly", Export_PolyToPoly, 0, 1, 1), 1));
 
-      objExport_MaterialLibrary = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_MaterialLibrary", objExport_MaterialLibrary, 0, 1, 1), 1));
-      objExport_BackSides = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_BackSides", objExport_BackSides, 0, 1, 1), 1));
-      objExport_CombinedMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_CombinedMaterial", objExport_CombinedMaterial, 0, 1, 1), 1));      
-      objExport_BakingResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_BakingResolution", objExport_BakingResolution, 4, 256, -2), 1));
-      objExport_PalletResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_PalletResolution", objExport_PalletResolution, 32, 2048, -2), 1));
-      objExport_UsePalletOrBakeFaces = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "objExport_UsePalletOrBakeFaces", objExport_UsePalletOrBakeFaces, 0, 1, 1), 1));
+      Export_MaterialLibrary = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_MaterialLibrary", Export_MaterialLibrary, 0, 1, 1), 1));
+      Export_BackSides = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_BackSides", Export_BackSides, 0, 1, 1), 1));
+      Export_CombinedMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_CombinedMaterial", Export_CombinedMaterial, 0, 1, 1), 1));      
+      Export_BakingResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_BakingResolution", Export_BakingResolution, 4, 256, -2), 1));
+      Export_PalletResolution = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_PalletResolution", Export_PalletResolution, 32, 2048, -2), 1));
+      Export_UsePalletOrBakeFaces = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_UsePalletOrBakeFaces", Export_UsePalletOrBakeFaces, 0, 1, 1), 1));
 
 
       Display_Output_in_Explorer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
@@ -41136,7 +41151,7 @@ void SOLARCHVISION_draw_Fractals () {
 
 
 
-void SOLARCHVISION_Plant_branch_objExport_ (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
+void SOLARCHVISION_Plant_branch_Export_ (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
 
   h *= getRatio_Plant_branch(d);
 
@@ -41226,12 +41241,12 @@ void SOLARCHVISION_Plant_branch_objExport_ (int _turn, float x0, float y0, float
             String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
             String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
 
-            if (objExport_PolyToPoly == 0) {
+            if (Export_PolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println(("g Fractal_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
             }
 
-            if (objExport_MaterialLibrary != 0) {
+            if (Export_MaterialLibrary != 0) {
               objOutput.println("usemtl Fractal_Trunk");
             }
 
@@ -41241,7 +41256,7 @@ void SOLARCHVISION_Plant_branch_objExport_ (int _turn, float x0, float y0, float
         }
       }
 
-      SOLARCHVISION_Plant_branch_objExport_(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
+      SOLARCHVISION_Plant_branch_Export_(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
     }
   } else {
 
@@ -41343,18 +41358,18 @@ void SOLARCHVISION_Plant_branch_objExport_ (int _turn, float x0, float y0, float
           String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);        
 
-          if (objExport_PolyToPoly == 0) {
+          if (Export_PolyToPoly == 0) {
             obj_lastGroupNumber += 1;
             objOutput.println(("g Fractal_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
           }
 
-          if (objExport_MaterialLibrary != 0) {
+          if (Export_MaterialLibrary != 0) {
             objOutput.println("usemtl Fractal_Leaf");
           }
 
           obj_lastFaceNumber += 1;
           objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-          if (objExport_BackSides != 0) {
+          if (Export_BackSides != 0) {
             obj_lastFaceNumber += 1;
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
           }
@@ -48784,17 +48799,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("addToLastGroup3D", addToLastGroup3D);
 
   newChild1.setFloat("BIOSPHERE_drawResolution", BIOSPHERE_drawResolution);
-  newChild1.setFloat("objExport_Scale", objExport_Scale);
-  newChild1.setInt("objExport_FlipZYaxis", objExport_FlipZYaxis);
-  newChild1.setInt("objExport_PrecisionVertex", objExport_PrecisionVertex);
-  newChild1.setInt("objExport_PrecisionVtexture", objExport_PrecisionVtexture);
-  newChild1.setInt("objExport_PolyToPoly", objExport_PolyToPoly);
-  newChild1.setInt("objExport_MaterialLibrary", objExport_MaterialLibrary);
-  newChild1.setInt("objExport_BackSides", objExport_BackSides);
-  newChild1.setInt("objExport_CombinedMaterial", objExport_CombinedMaterial);
-  newChild1.setInt("objExport_BakingResolution", objExport_BakingResolution);
-  newChild1.setInt("objExport_PalletResolution", objExport_PalletResolution);
-  newChild1.setInt("objExport_UsePalletOrBakeFaces", objExport_UsePalletOrBakeFaces);
+  newChild1.setFloat("Export_Scale", Export_Scale);
+  newChild1.setInt("Export_FlipZYaxis", Export_FlipZYaxis);
+  newChild1.setInt("Export_PrecisionVertex", Export_PrecisionVertex);
+  newChild1.setInt("Export_PrecisionVtexture", Export_PrecisionVtexture);
+  newChild1.setInt("Export_PolyToPoly", Export_PolyToPoly);
+  newChild1.setInt("Export_MaterialLibrary", Export_MaterialLibrary);
+  newChild1.setInt("Export_BackSides", Export_BackSides);
+  newChild1.setInt("Export_CombinedMaterial", Export_CombinedMaterial);
+  newChild1.setInt("Export_BakingResolution", Export_BakingResolution);
+  newChild1.setInt("Export_PalletResolution", Export_PalletResolution);
+  newChild1.setInt("Export_UsePalletOrBakeFaces", Export_UsePalletOrBakeFaces);
 
   newChild1.setString("Default_Font", Default_Font);
 
@@ -50040,17 +50055,17 @@ void SOLARCHVISION_load_project (String myFile) {
 
       BIOSPHERE_drawResolution = children0[L].getFloat("BIOSPHERE_drawResolution");
 
-      objExport_Scale = children0[L].getFloat("objExport_Scale");
-      objExport_FlipZYaxis = children0[L].getInt("objExport_FlipZYaxis");
-      objExport_PrecisionVertex = children0[L].getInt("objExport_PrecisionVertex");
-      objExport_PrecisionVtexture = children0[L].getInt("objExport_PrecisionVtexture");
-      objExport_PolyToPoly = children0[L].getInt("objExport_PolyToPoly");
-      objExport_MaterialLibrary  = children0[L].getInt("objExport_MaterialLibrary");
-      objExport_BackSides = children0[L].getInt("objExport_BackSides");
-      objExport_CombinedMaterial = children0[L].getInt("objExport_CombinedMaterial");      
-      objExport_BakingResolution = children0[L].getInt("objExport_BakingResolution");
-      objExport_PalletResolution = children0[L].getInt("objExport_PalletResolution");
-      objExport_UsePalletOrBakeFaces = children0[L].getInt("objExport_UsePalletOrBakeFaces");
+      Export_Scale = children0[L].getFloat("Export_Scale");
+      Export_FlipZYaxis = children0[L].getInt("Export_FlipZYaxis");
+      Export_PrecisionVertex = children0[L].getInt("Export_PrecisionVertex");
+      Export_PrecisionVtexture = children0[L].getInt("Export_PrecisionVtexture");
+      Export_PolyToPoly = children0[L].getInt("Export_PolyToPoly");
+      Export_MaterialLibrary  = children0[L].getInt("Export_MaterialLibrary");
+      Export_BackSides = children0[L].getInt("Export_BackSides");
+      Export_CombinedMaterial = children0[L].getInt("Export_CombinedMaterial");      
+      Export_BakingResolution = children0[L].getInt("Export_BakingResolution");
+      Export_PalletResolution = children0[L].getInt("Export_PalletResolution");
+      Export_UsePalletOrBakeFaces = children0[L].getInt("Export_UsePalletOrBakeFaces");
 
 
       {
