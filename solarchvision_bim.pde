@@ -19075,10 +19075,6 @@ void SOLARCHVISION_export_objects_HTML () {
           Tessellation += MODEL3D_Tessellation;
         }
 
-        if ((allFaces_PNT[f].length != 4) && (Tessellation == 0)) { // also need it for triangles
-          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-        }
-
         if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
         float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
@@ -20168,11 +20164,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         if (allGroup3Ds_Faces[OBJ_NUM][0] <= allGroup3Ds_Faces[OBJ_NUM][1]) {
 
-          int Number_Of_Face_Subdivisions = 0; // for combined materials we need to know this number before baking each object.
-
           for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
-
-            PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
 
             num_vertices_added = 0;
 
@@ -20201,11 +20193,6 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                 int TotalSubNo = 1;  
                 if (allFaces_MTLVGC[f][0] == 0) {
                   Tessellation += MODEL3D_Tessellation;
-                }
-
-
-                if ((allFaces_PNT[f].length != 4) && (Tessellation == 0)) {
-                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
                 }
 
                 if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -20282,18 +20269,6 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                   if (_turn == 2) {
 
-                    float u1 = 0;
-                    float v1 = 1;
-
-                    float u2 = 1;
-                    float v2 = 1;
-
-                    float u3 = 1;
-                    float v3 = 0;
-
-                    float u4 = 0;
-                    float v4 = 0;
-
                     for (int s = 0; s < subFace.length; s++) {
 
                       float _u = 0;
@@ -20335,28 +20310,13 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                         }
                       }
 
-
                       if (u0 > 1) u0 = 1;
                       if (u0 < 0) u0 = 0;
-
-                      if (s == 0) {
-                        u1 = u0;
-                      }
-                      if (s == 1) {
-                        u2 = u0;
-                      }            
-                      if (s == 2) { 
-                        u3 = u0;
-                      }          
-                      if (s == 3) {
-                        u4 = u0;
-                      }
+                      
+                      SOLARCHVISION_OBJprintVtexture(u0, 0.5, 0);
                     }
 
-                    SOLARCHVISION_OBJprintVtexture(u1, 0.5, 0);
-                    SOLARCHVISION_OBJprintVtexture(u2, 0.5, 0);
-                    SOLARCHVISION_OBJprintVtexture(u3, 0.5, 0);
-                    SOLARCHVISION_OBJprintVtexture(u4, 0.5, 0);
+                    
                   }
 
                   if (_turn == 3) {
