@@ -13,14 +13,15 @@ final int TYPE_FORECAST_RDPS  = 2;
 final int TYPE_FORECAST_GDPS  = 3;
 int WMS_type = TYPE_FORECAST_HRDPS;
 
-final int TYPE_WINDOW_SKY2D = -2;
-final int TYPE_WINDOW_LandGap = -1;
+final int TYPE_WINDOW_SKY2D    = -2;
+final int TYPE_WINDOW_LandGap  = -1;
 final int TYPE_WINDOW_LandMesh = 0;
-final int TYPE_WINDOW_STUDY = 1;
-final int TYPE_WINDOW_WORLD = 2;
-final int TYPE_WINDOW_WIN3D = 3;
-final int TYPE_WINDOW_OBJ = 4;
-final int TYPE_WINDOW_RAD = 5;
+final int TYPE_WINDOW_STUDY    = 1;
+final int TYPE_WINDOW_WORLD    = 2;
+final int TYPE_WINDOW_WIN3D    = 3;
+final int TYPE_WINDOW_OBJ      = 4;
+final int TYPE_WINDOW_RAD      = 5;
+final int TYPE_WINDOW_HTML     = 6;
 
 float WORLD_VIEW_OffsetX = 0;
 float WORLD_VIEW_OffsetY = 0;
@@ -19026,6 +19027,125 @@ void SOLARCHVISION_export_objects_RAD () {
 
 
 
+PrintWriter htmlOutput;
+
+void SOLARCHVISION_export_objects_HTML () {
+
+  String fileBasename = ProjectName;
+
+  String htmlFilename = Model3DFolder + "/" + fileBasename + ".html";  
+
+  htmlOutput = createWriter(htmlFilename);
+
+  htmlOutput.println("<html>");
+  htmlOutput.println("\t<head>");
+  htmlOutput.println("\t\t<title>" + ProjectName + "</title>");   
+  htmlOutput.println("\t\t<script type='text/javascript' src='http://www.x3dom.org/download/x3dom.js'></script>");
+  htmlOutput.println("\t\t<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>");
+  htmlOutput.println("\t</head>"); 
+  htmlOutput.println("\t<body>"); 
+  htmlOutput.println("\t\t<x3d width='600px' height='400px'>");  
+  htmlOutput.println("\t\t\t<scene>"); 
+
+  if (Display_LAND_Surface != 0) {
+
+    SOLARCHVISION_draw_LAND(TYPE_WINDOW_HTML);
+  }
+
+  if (Display_Model3Ds != 0) {
+
+    for (int f = 0; f < allFaces_PNT.length; f++) {
+  
+      if (allFaces_PNT[f].length > 2) {
+
+        int mt = allFaces_MTLVGC[f][0];
+
+        int Tessellation = allFaces_MTLVGC[f][1];
+
+        int TotalSubNo = 1;  
+        if (allFaces_MTLVGC[f][0] == 0) {
+          Tessellation += MODEL3D_Tessellation;
+        }
+
+        if ((allFaces_PNT[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
+          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+        }
+
+        if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+        float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+        for (int j = 0; j < allFaces_PNT[f].length; j++) {
+          int vNo = allFaces_PNT[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
+
+        for (int n = 0; n < TotalSubNo; n++) {
+
+          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+          
+          for (int back_or_front = 1 - objExport_BackSides; back_or_front <= 1; back_or_front++) {
+
+            if (back_or_front == 1) {
+
+              htmlOutput.println("\t\t\t\t<shape>");
+              htmlOutput.println("\t\t\t\t\t<Appearance>");
+              htmlOutput.println("\t\t\t\t\t\t<Material diffuseColor='0 1 1'></Material>");
+              htmlOutput.println("\t\t\t\t\t</Appearance>");
+              
+              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet coordIndex='");
+              for (int i = 0; i < subFace.length; i++) {
+                if (i > 0) {
+                  htmlOutput.print(" ");
+                }         
+                htmlOutput.print(nf(i, 0));          
+              }
+              htmlOutput.println(" -1'>");
+              
+              htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+              for (int i = 0; i < subFace.length; i++) {
+                if (i > 0) {
+                  htmlOutput.print(", ");
+                }                  
+                htmlOutput.print(nf(subFace[i][0], 0, objExport_PrecisionVertex) + " " + nf(subFace[i][1], 0, objExport_PrecisionVertex) + " " + nf(subFace[i][2], 0, objExport_PrecisionVertex));
+              }                
+              htmlOutput.println("'></Coordinate>");
+              
+              htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+              
+              htmlOutput.println("\t\t\t\t</shape>");
+              
+            } else {
+
+// 0 2 1
+              if (subFace.length == 4) { 
+                
+// 2 0 3
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  htmlOutput.println("\t\t\t</scene>"); 
+  htmlOutput.println("\t\t</x3d>"); 
+  htmlOutput.println("\t</body>"); 
+  htmlOutput.println("</html>");
+  
+  htmlOutput.flush(); 
+  htmlOutput.close();   
+
+  println("End of creating html file."); 
+
+  SOLARCHVISION_explore_output(htmlFilename);
+  println("File created:" + htmlFilename);
+
+}
+
+
 
 void SOLARCHVISION_export_objects_OBJ_timeSeries () {
 
@@ -32545,6 +32665,10 @@ void mouseClicked () {
               SOLARCHVISION_export_objects_OBJ("");
             }    
             
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Export 3D-Model > HTML")) {
+              SOLARCHVISION_export_objects_HTML();
+            }              
+            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Export 3D-Model > RAD")) {
               SOLARCHVISION_export_objects_RAD();
             }
@@ -45752,7 +45876,7 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > OBJ", "Export 3D-Model > OBJ (date-series)", "Export 3D-Model > OBJ (time-series)", "Import 3D-Model...", "Execute CommandFile...", "Preferences", "Quit"
+    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > HTML", "Export 3D-Model > OBJ", "Export 3D-Model > OBJ (date-series)", "Export 3D-Model > OBJ (time-series)", "Import 3D-Model...", "Execute CommandFile...", "Preferences", "Quit"
   }
   , 
   {
