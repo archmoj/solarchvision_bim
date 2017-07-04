@@ -18824,10 +18824,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
 
 
-  if (Display_LAND_Surface != 0) {
-
-    SOLARCHVISION_draw_LAND(TYPE_WINDOW_RAD);
-  }
+  SOLARCHVISION_draw_LAND(TYPE_WINDOW_RAD);
 
   if (Display_Model3Ds != 0) {
 
@@ -19042,10 +19039,9 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t<x3d width='600px' height='400px'>");  
   htmlOutput.println("\t\t\t<scene>"); 
 
-  if (Display_LAND_Surface != 0) {
 
-    SOLARCHVISION_draw_LAND(TYPE_WINDOW_HTML);
-  }
+  SOLARCHVISION_draw_LAND(TYPE_WINDOW_HTML);
+
 
   if (Display_Model3Ds != 0) {
 
@@ -19548,19 +19544,12 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
-  if (Display_TROPO_Surface != 0) {
 
-    SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
-  }
+  SOLARCHVISION_draw_TROPO(TYPE_WINDOW_OBJ);
+  
+  SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
   
   
-
-  if (Display_LAND_Surface != 0) {
-
-    SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
-  }
-
-
 
   if (Display_Sections != 0) {
 
