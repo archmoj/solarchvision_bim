@@ -18822,11 +18822,132 @@ void SOLARCHVISION_export_objects_RAD () {
   radOutput.println("#SOLARCHVISION");
   radOutput.println();
 
-  SOLARCHVISION_draw_LAND(TYPE_WINDOW_RAD);
+
+
+  if (Display_LAND_Surface != 0) {
+
+    SOLARCHVISION_draw_LAND(TYPE_WINDOW_RAD);
+  }
+
+  if (Display_Model3Ds != 0) {
+
+    int[] Materials_Used = new int [Materials_Number];
+
+    for (int i = 0; i < Materials_Used.length; i++) {
+      Materials_Used[i] = 0;
+    }
+
+    for (int f = 0; f < allFaces_PNT.length; f++) {
+
+      int mt = allFaces_MTLVGC[f][0];
+
+      Materials_Used[mt] += 1;
+    }    
+
+    for (int mt = 0; mt < Materials_Number; mt++) {
+
+      if (Materials_Used[mt] != 0) {
+
+        float a = Materials_Color[mt][0] / 255.0; 
+        float r = Materials_Color[mt][1] / 255.0; 
+        float g = Materials_Color[mt][2] / 255.0; 
+        float b = Materials_Color[mt][3] / 255.0; 
+
+        radOutput.println("void plastic " + "SurfaceMaterial_" + nf(mt, 0));
+        radOutput.println("0");
+        radOutput.println("0");
+        radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
+
+      }
+    }
   
-  SOLARCHVISION_draw_Faces(TYPE_WINDOW_RAD);
+    for (int f = 0; f < allFaces_PNT.length; f++) {
+  
+      if (allFaces_PNT[f].length > 2) {
 
+        int mt = allFaces_MTLVGC[f][0];
 
+        int Tessellation = allFaces_MTLVGC[f][1];
+
+        int TotalSubNo = 1;  
+        if (allFaces_MTLVGC[f][0] == 0) {
+          Tessellation += MODEL3D_Tessellation;
+        }
+
+        if ((allFaces_PNT[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
+          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+        }
+
+        if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+        float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+        for (int j = 0; j < allFaces_PNT[f].length; j++) {
+          int vNo = allFaces_PNT[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
+
+        for (int n = 0; n < TotalSubNo; n++) {
+
+          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+          
+          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
+
+            if (back_or_front == 1) {
+
+              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+              radOutput.println("0");
+              radOutput.println("0");
+              radOutput.println("9");      
+              
+              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+              
+              if (subFace.length == 4) {
+
+                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+                radOutput.println("0");
+                radOutput.println("0");
+                radOutput.println("9");      
+                
+                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+              }
+              
+              
+            } else {
+
+              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+              radOutput.println("0");
+              radOutput.println("0");
+              radOutput.println("9");    
+              
+              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+              
+              if (subFace.length == 4) { 
+                
+                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
+                radOutput.println("0");
+                radOutput.println("0");
+                radOutput.println("9");                   
+                
+                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+              }
+            }
+          }
+        }
+          
+        radOutput.println();
+      }
+    }
+  }
   
   for (int i = 15; i < 180; i += 15) {
     radOutput.println("!gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0");
@@ -19017,7 +19138,9 @@ void SOLARCHVISION_export_objects_HTML () {
       
                 Pallet_Texture.updatePixels();   
       
-                Pallet_Texture.save(TEXTURE_path);      
+                Pallet_Texture.save(TEXTURE_path);  
+            
+                Create_Face_Texture = 0;
       
       
                 htmlOutput.println("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
@@ -19425,10 +19548,17 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
+  if (Display_TROPO_Surface != 0) {
 
-  SOLARCHVISION_draw_TROPO(TYPE_WINDOW_OBJ);
+    SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
+  }
+  
+  
 
-  SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
+  if (Display_LAND_Surface != 0) {
+
+    SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
+  }
 
 
 
@@ -20011,7 +20141,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         Pallet_Texture.updatePixels();   
 
-        Pallet_Texture.save(TEXTURE_path);      
+        Pallet_Texture.save(TEXTURE_path);
+  
+        Create_Face_Texture = 0;      
 
 
         mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -23060,13 +23192,11 @@ void SOLARCHVISION_draw_LAND (int target_window) {
     int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
     float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
 
-    if (Display_LAND_Textures != 0) {   
+    if (target_window == TYPE_WINDOW_RAD) {
 
       if (Export_MaterialLibrary != 0) {
-        
-        if (target_window == TYPE_WINDOW_RAD) {
 
-                
+        if (Display_LAND_Textures != 0) {           
 
           for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
 
@@ -23091,9 +23221,14 @@ void SOLARCHVISION_draw_LAND (int target_window) {
             }
           }
         }
+      }
+    }
+    
+    if (target_window == TYPE_WINDOW_OBJ) {
 
-   
-        if (target_window == TYPE_WINDOW_OBJ) {       
+      if (Export_MaterialLibrary != 0) {
+
+        if (Display_LAND_Textures != 0) {           
 
           for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
 
@@ -23578,11 +23713,6 @@ void SOLARCHVISION_draw_LAND (int target_window) {
 
 
 
-
-
-
-
-
 float[] SOLARCHVISION_vertexRender_Shade_Surface_White (int c) {  
 
   float[] COL = {
@@ -23853,7 +23983,191 @@ int WIN3D_FacesShade = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
 
 
 
+void SOLARCHVISION_draw_Faces () {
 
+  if (Display_Model3Ds != 0) {
+
+    if (MODEL3D_DisplayNormals != 0) {
+
+      for (int f = 0; f < allFaces_PNT.length; f++) {
+
+        int vsb = allFaces_MTLVGC[f][3];
+
+        if (vsb > 0) {
+
+          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
+            base_Vertices[j][0] = allVertices[vNo][0];
+            base_Vertices[j][1] = allVertices[vNo][1];
+            base_Vertices[j][2] = allVertices[vNo][2];
+          }
+
+          float G_x0 = 0;
+          float G_y0 = 0;
+          float G_z0 = 0;
+
+          float G_x1 = 0;
+          float G_y1 = 0;
+          float G_z1 = 0;
+
+          float n = float(base_Vertices.length);
+
+          for (int s = 0; s < base_Vertices.length; s++) {
+
+            int s_next = (s + 1) % base_Vertices.length;
+            int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+
+            PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
+            PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
+            PVector UV = U.cross(V);
+            float[] W = {
+              UV.x, UV.y, UV.z
+            };
+            W = SOLARCHVISION_fn_normalize(W);
+
+            float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_Scale3D;
+            float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_Scale3D;
+            float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_Scale3D;
+
+            float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D_Scale3D;
+            float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D_Scale3D;
+            float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D_Scale3D;
+
+            G_x0 += x0 / n;
+            G_y0 += y0 / n;
+            G_z0 += z0 / n;
+
+            G_x1 += x1 / n;
+            G_y1 += y1 / n;
+            G_z1 += z1 / n;
+          }
+
+          WIN3D_Diagrams.strokeWeight(3);
+          WIN3D_Diagrams.stroke(127, 255, 127);
+          WIN3D_Diagrams.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
+
+          WIN3D_Diagrams.strokeWeight(1);
+          WIN3D_Diagrams.stroke(0, 127, 0);
+
+          for (int s = 0; s < base_Vertices.length; s++) {
+
+            float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_Scale3D;
+            float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_Scale3D;
+            float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_Scale3D;
+
+            WIN3D_Diagrams.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
+          }
+        }
+      }
+    }
+
+    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.stroke(0, 0, 0);
+    if (MODEL3D_DisplayEdges == 0) WIN3D_Diagrams.noStroke();
+
+    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
+    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
+    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
+
+    for (int f = 0; f < allFaces_PNT.length; f++) {
+
+      int vsb = allFaces_MTLVGC[f][3];
+
+      if (vsb > 0) {        
+
+        if (WIN3D_FacesShade == Shade_Surface_Base) {
+
+          WIN3D_Diagrams.fill(255, 255, 255);
+
+          WIN3D_Diagrams.beginShape();
+
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
+
+            WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
+          }    
+
+          WIN3D_Diagrams.endShape(CLOSE);
+        } else {
+
+          int mt = allFaces_MTLVGC[f][0];
+
+          int Tessellation = allFaces_MTLVGC[f][1];
+
+          int TotalSubNo = 1;  
+          if (allFaces_MTLVGC[f][0] == 0) {
+            Tessellation += MODEL3D_Tessellation;
+          }
+          if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+          for (int j = 0; j < allFaces_PNT[f].length; j++) {
+            int vNo = allFaces_PNT[f][j];
+            base_Vertices[j][0] = allVertices[vNo][0];
+            base_Vertices[j][1] = allVertices[vNo][1];
+            base_Vertices[j][2] = allVertices[vNo][2];
+          }
+
+          for (int n = 0; n < TotalSubNo; n++) {
+
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+
+            WIN3D_Diagrams.beginShape();
+
+            for (int s = 0; s < subFace.length; s++) {
+
+              if (WIN3D_FacesShade != Shade_Surface_Wire) {
+
+                float[] COL = {
+                  255, 255, 255, 255
+                };
+
+                if (WIN3D_FacesShade == Shade_Global_Solar) {
+                  int s_next = (s + 1) % subFace.length;
+                  int s_prev = (s + subFace.length - 1) % subFace.length;
+                  
+                  COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }        
+          
+                if (WIN3D_FacesShade == Shade_Vertex_Solar) {
+
+                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }                   
+
+                if (WIN3D_FacesShade == Shade_Vertex_Solid) {
+
+                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }
+
+                if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
+
+                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }
+
+                if (WIN3D_FacesShade == Shade_Surface_Materials) {
+                  COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                }              
+
+                if (WIN3D_FacesShade == Shade_Surface_White) {
+                  COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                }
+           
+                WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
+              } else {
+                WIN3D_Diagrams.noFill();
+              }
+
+              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
+            }
+
+            WIN3D_Diagrams.endShape(CLOSE);
+          }
+        }
+      }
+    }
+  }
+}
 
 
 void SOLARCHVISION_resize_VertexSolar_array () { // called when STUDY_j_End changes
@@ -54866,948 +55180,3 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
  
   CurrentDataSource = keep_CurrentDataSource; 
 }
-
-
-
-/*
-  if (Display_Model3Ds != 0) {
-
-
-  
-    for (int f = 0; f < allFaces_PNT.length; f++) {
-  
-      if (allFaces_PNT[f].length > 2) {
-
-        int mt = allFaces_MTLVGC[f][0];
-
-        int Tessellation = allFaces_MTLVGC[f][1];
-
-        int TotalSubNo = 1;  
-        if (allFaces_MTLVGC[f][0] == 0) {
-          Tessellation += MODEL3D_Tessellation;
-        }
-
-        if ((allFaces_PNT[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
-          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-        }
-
-        if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-        float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-        for (int j = 0; j < allFaces_PNT[f].length; j++) {
-          int vNo = allFaces_PNT[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-
-        for (int n = 0; n < TotalSubNo; n++) {
-
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-          
-          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
-
-            if (back_or_front == 1) {
-
-              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-              radOutput.println("0");
-              radOutput.println("0");
-              radOutput.println("9");      
-              
-              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-              
-              if (subFace.length == 4) {
-
-                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-                radOutput.println("0");
-                radOutput.println("0");
-                radOutput.println("9");      
-                
-                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-              }
-              
-              
-            } else {
-
-              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-              radOutput.println("0");
-              radOutput.println("0");
-              radOutput.println("9");    
-              
-              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-              
-              if (subFace.length == 4) { 
-                
-                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-                radOutput.println("0");
-                radOutput.println("0");
-                radOutput.println("9");                   
-                
-                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-              }
-            }
-          }
-        }
-          
-        radOutput.println();
-      }
-    }
-  }
-  
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void SOLARCHVISION_draw_Faces_OLD () {
-
-  if (Display_Model3Ds != 0) {
-
-    if (MODEL3D_DisplayNormals != 0) {
-
-      for (int f = 0; f < allFaces_PNT.length; f++) {
-
-        int vsb = allFaces_MTLVGC[f][3];
-
-        if (vsb > 0) {
-
-          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-          for (int j = 0; j < allFaces_PNT[f].length; j++) {
-            int vNo = allFaces_PNT[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
-
-          float G_x0 = 0;
-          float G_y0 = 0;
-          float G_z0 = 0;
-
-          float G_x1 = 0;
-          float G_y1 = 0;
-          float G_z1 = 0;
-
-          float n = float(base_Vertices.length);
-
-          for (int s = 0; s < base_Vertices.length; s++) {
-
-            int s_next = (s + 1) % base_Vertices.length;
-            int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
-
-            PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
-            PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
-            PVector UV = U.cross(V);
-            float[] W = {
-              UV.x, UV.y, UV.z
-            };
-            W = SOLARCHVISION_fn_normalize(W);
-
-            float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_Scale3D;
-            float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_Scale3D;
-            float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_Scale3D;
-
-            float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D_Scale3D;
-            float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D_Scale3D;
-            float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D_Scale3D;
-
-            G_x0 += x0 / n;
-            G_y0 += y0 / n;
-            G_z0 += z0 / n;
-
-            G_x1 += x1 / n;
-            G_y1 += y1 / n;
-            G_z1 += z1 / n;
-          }
-
-          WIN3D_Diagrams.strokeWeight(3);
-          WIN3D_Diagrams.stroke(127, 255, 127);
-          WIN3D_Diagrams.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
-
-          WIN3D_Diagrams.strokeWeight(1);
-          WIN3D_Diagrams.stroke(0, 127, 0);
-
-          for (int s = 0; s < base_Vertices.length; s++) {
-
-            float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_Scale3D;
-            float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_Scale3D;
-            float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_Scale3D;
-
-            WIN3D_Diagrams.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
-          }
-        }
-      }
-    }
-
-    WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(0, 0, 0);
-    if (MODEL3D_DisplayEdges == 0) WIN3D_Diagrams.noStroke();
-
-    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
-    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
-    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
-
-    for (int f = 0; f < allFaces_PNT.length; f++) {
-
-      int vsb = allFaces_MTLVGC[f][3];
-
-      if (vsb > 0) {        
-
-        if (WIN3D_FacesShade == Shade_Surface_Base) {
-
-          WIN3D_Diagrams.fill(255, 255, 255);
-
-          WIN3D_Diagrams.beginShape();
-
-          for (int j = 0; j < allFaces_PNT[f].length; j++) {
-            int vNo = allFaces_PNT[f][j];
-
-            WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_Scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_Scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_Scale3D);
-          }    
-
-          WIN3D_Diagrams.endShape(CLOSE);
-        } else {
-
-          int mt = allFaces_MTLVGC[f][0];
-
-          int Tessellation = allFaces_MTLVGC[f][1];
-
-          int TotalSubNo = 1;  
-          if (allFaces_MTLVGC[f][0] == 0) {
-            Tessellation += MODEL3D_Tessellation;
-          }
-          if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-          for (int j = 0; j < allFaces_PNT[f].length; j++) {
-            int vNo = allFaces_PNT[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
-
-          for (int n = 0; n < TotalSubNo; n++) {
-
-            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-            WIN3D_Diagrams.beginShape();
-
-            for (int s = 0; s < subFace.length; s++) {
-
-              if (WIN3D_FacesShade != Shade_Surface_Wire) {
-
-                float[] COL = {
-                  255, 255, 255, 255
-                };
-
-                if (WIN3D_FacesShade == Shade_Global_Solar) {
-                  int s_next = (s + 1) % subFace.length;
-                  int s_prev = (s + subFace.length - 1) % subFace.length;
-                  
-                  COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }        
-          
-                if (WIN3D_FacesShade == Shade_Vertex_Solar) {
-
-                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }                   
-
-                if (WIN3D_FacesShade == Shade_Vertex_Solid) {
-
-                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }
-
-                if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
-
-                  COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }
-
-                if (WIN3D_FacesShade == Shade_Surface_Materials) {
-                  COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                }              
-
-                if (WIN3D_FacesShade == Shade_Surface_White) {
-                  COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                }
-           
-                WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
-              } else {
-                WIN3D_Diagrams.noFill();
-              }
-
-              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
-            }
-
-            WIN3D_Diagrams.endShape(CLOSE);
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
-void SOLARCHVISION_draw_Faces (int target_window) {
-
-  if (MODEL3D_DisplayNormals != 0) {
-  
-    if (Display_Model3Ds == 0) {
-      if (target_window == TYPE_WINDOW_WIN3D) {
-
-  
-        for (int f = 0; f < allFaces_PNT.length; f++) {
-  
-          int vsb = allFaces_MTLVGC[f][3];
-  
-          if (vsb > 0) {
-  
-            float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-            for (int j = 0; j < allFaces_PNT[f].length; j++) {
-              int vNo = allFaces_PNT[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
-  
-            float G_x0 = 0;
-            float G_y0 = 0;
-            float G_z0 = 0;
-  
-            float G_x1 = 0;
-            float G_y1 = 0;
-            float G_z1 = 0;
-  
-            float n = float(base_Vertices.length);
-  
-            for (int s = 0; s < base_Vertices.length; s++) {
-  
-              int s_next = (s + 1) % base_Vertices.length;
-              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
-  
-              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
-              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
-              PVector UV = U.cross(V);
-              float[] W = {
-                UV.x, UV.y, UV.z
-              };
-              W = SOLARCHVISION_fn_normalize(W);
-  
-              float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_Scale3D;
-              float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_Scale3D;
-              float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_Scale3D;
-  
-              float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D_Scale3D;
-              float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D_Scale3D;
-              float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D_Scale3D;
-  
-              G_x0 += x0 / n;
-              G_y0 += y0 / n;
-              G_z0 += z0 / n;
-  
-              G_x1 += x1 / n;
-              G_y1 += y1 / n;
-              G_z1 += z1 / n;
-            }
-  
-            WIN3D_Diagrams.strokeWeight(3);
-            WIN3D_Diagrams.stroke(127, 255, 127);
-            WIN3D_Diagrams.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
-  
-            WIN3D_Diagrams.strokeWeight(1);
-            WIN3D_Diagrams.stroke(0, 127, 0);
-  
-            for (int s = 0; s < base_Vertices.length; s++) {
-  
-              float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_Scale3D;
-              float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_Scale3D;
-              float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_Scale3D;
-  
-              WIN3D_Diagrams.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
-            }
-          }
-        }
-      }  
-    }
-  }
-  
-  
-  boolean proceed = true;
-
-  if (Display_Model3Ds == 0) {
-
-    if ((target_window == TYPE_WINDOW_STUDY) || (target_window == TYPE_WINDOW_WORLD) || (target_window == TYPE_WINDOW_WIN3D) || (target_window == TYPE_WINDOW_OBJ) || (target_window == TYPE_WINDOW_RAD)) {  
-      proceed = false;
-    }
-  }
-    
-  if (proceed == true) {
-
-    if (target_window == TYPE_WINDOW_WIN3D) {
-    
-      WIN3D_Diagrams.strokeWeight(1);
-      WIN3D_Diagrams.stroke(0, 0, 0);
-      if (MODEL3D_DisplayEdges == 0) WIN3D_Diagrams.noStroke();
-    }
-
-    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
-    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
-    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
-
-
-    if (Export_MaterialLibrary != 0) {
-
-      int[] Materials_Used = new int [Materials_Number];
-  
-      for (int i = 0; i < Materials_Used.length; i++) {
-        Materials_Used[i] = 0;
-      }
-  
-      for (int f = 0; f < allFaces_PNT.length; f++) {
-  
-        int mt = allFaces_MTLVGC[f][0];
-  
-        Materials_Used[mt] += 1;
-      }    
-  
-      for (int mt = 0; mt < Materials_Number; mt++) {
-  
-        if (Materials_Used[mt] != 0) {
-  
-          float a = Materials_Color[mt][0] / 255.0; 
-          float r = Materials_Color[mt][1] / 255.0; 
-          float g = Materials_Color[mt][2] / 255.0; 
-          float b = Materials_Color[mt][3] / 255.0; 
-  
-          if (target_window == TYPE_WINDOW_RAD) {
-  
-            radOutput.println("void plastic " + "SurfaceMaterial_" + nf(mt, 0));
-            radOutput.println("0");
-            radOutput.println("0");
-            radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
-          }
-          
-          if (target_window == TYPE_WINDOW_OBJ) {
-
-            mtlOutput.println("newmtl SurfaceMaterial_" + nf(mt, 0));
-            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-            mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
-            mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
-            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-  
-            mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-            mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
-            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-            
-          }
-        }
-      }
-    }
-    
-
-
-    num_vertices_added = 0;
-
-    int end_turn = 1;
-    if (target_window == TYPE_WINDOW_OBJ) end_turn = 3;
-    for (int _turn = 1; _turn <= end_turn; _turn += 1) {
-
-
-      if (target_window == TYPE_WINDOW_OBJ) {
-
-        if (_turn == 3) {
-          
-          if (Display_MODEL3D_Textures != 0) {   
-
-            obj_lastGroupNumber += 1;
-            objOutput.println("g MODEL3DMesh");
-          
-          }
-        }
-      }    
-
-
-
-      int Tessellation = MODEL3D_Tessellation;
-      if (WIN3D_FacesShade == Shade_Surface_Base) {
-        Tessellation = 0;
-      }
-
-      int TotalSubNo = 1;  
-      if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in MODEL3D grid the cell has 4 points.
-
-      int i_start = Skip_MODEL3D_Surface_Center;
-      int i_end = MODEL3D_n_I - 1;
-
-
-
-       
-      for (int i = i_start; i < i_end; i += 1) {
-        
-        for (int j = 0; j < MODEL3D_n_J - 1; j += 1) {
-
-          float[][] base_Vertices = new float [4][3];
-
-          base_Vertices[0][0] = MODEL3D_Mesh[i][j][0];
-          base_Vertices[0][1] = MODEL3D_Mesh[i][j][1];
-          base_Vertices[0][2] = MODEL3D_Mesh[i][j][2];
-
-          base_Vertices[1][0] = MODEL3D_Mesh[i+1][j][0];
-          base_Vertices[1][1] = MODEL3D_Mesh[i+1][j][1];
-          base_Vertices[1][2] = MODEL3D_Mesh[i+1][j][2];
-
-          base_Vertices[2][0] = MODEL3D_Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = MODEL3D_Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = MODEL3D_Mesh[i+1][j+1][2];
-
-          base_Vertices[3][0] = MODEL3D_Mesh[i][j+1][0];
-          base_Vertices[3][1] = MODEL3D_Mesh[i][j+1][1];
-          base_Vertices[3][2] = MODEL3D_Mesh[i][j+1][2];        
-
-          for (int n = 0; n < TotalSubNo; n++) {
-
-            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-            int n_Map = -1; 
-            if (Display_MODEL3D_Textures != 0) { 
-
-              for (int q = 0; q < MODEL3D_Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
-
-                n_Map = q; 
-
-                for (int s = 0; s < subFace.length; s++) {
-
-                  float u = (subFace[s][0] / MODEL3D_Textures_scale_U[q] + 0.5);
-                  float v = (-subFace[s][1] / MODEL3D_Textures_scale_V[q] + 0.5);
-
-                  if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
-
-                    n_Map = -1;
-
-                    break;
-                  }
-                }
-
-                if (n_Map == q) break;
-              }
-            }
-            
-            if (target_window == TYPE_WINDOW_SKY2D) {
-              
-              SKY2D_Diagrams.beginShape();
-              SKY2D_Diagrams.fill(255);
-              SKY2D_Diagrams.noStroke();
-             
-            }
-
-            if (target_window == TYPE_WINDOW_WIN3D) {
-
-              WIN3D_Diagrams.beginShape();
-
-              WIN3D_Diagrams.strokeWeight(1);
-              WIN3D_Diagrams.stroke(0, 0, 0);
-              if (MODEL3D_DisplayEdges == 0) WIN3D_Diagrams.noStroke();
-              if (Display_MODEL3D_Textures != 0) WIN3D_Diagrams.noStroke();
-
-              if (Display_MODEL3D_Textures != 0) {
-                if (n_Map != -1) {
-                  WIN3D_Diagrams.texture(MODEL3D_Textures_Map[n_Map]);
-                } else {
-                  WIN3D_Diagrams.noFill();   
-                  WIN3D_Diagrams.strokeWeight(1);
-                  WIN3D_Diagrams.stroke(0, 0, 0);
-                }
-              }
-            }
-
-            if (target_window == TYPE_WINDOW_OBJ) {
-
-              if (_turn == 3) {
-
-                if (Display_MODEL3D_Textures != 0) {
-
-                  if (Export_MaterialLibrary != 0) {
-                    if (n_Map != -1) {    
-                      objOutput.println("usemtl MODEL3DMesh_" + nf(n_Map, 0));
-                    }
-                  }
-                }
-              }
-            }    
-            
-            for (int s = 0; s < subFace.length; s++) {
-              
-              if (target_window == TYPE_WINDOW_SKY2D) {
-                SKY2D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
-              }           
-
-              if (Display_MODEL3D_Textures == 0) {
-
-                if (WIN3D_FacesShade != Shade_Surface_Wire) {
-
-                  float[] COL = {
-                    255, 255, 255, 255
-                  };
-
-                  if (WIN3D_FacesShade == Shade_Global_Solar) {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }
-
-                  if (WIN3D_FacesShade == Shade_Vertex_Solar) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }  
-                  
-                  if (WIN3D_FacesShade == Shade_Vertex_Solid) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }      
-      
-                  if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }   
-
-                  if (WIN3D_FacesShade == Shade_Surface_White) {
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                  }                   
-
-                  if (WIN3D_FacesShade == Shade_Surface_Materials) {
-                    //COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
-                  }    
-
-          
-                   
-
-                  if (target_window == TYPE_WINDOW_WIN3D) {
-                    WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
-                  }
-                } else {
-
-                  if (target_window == TYPE_WINDOW_WIN3D) {
-                    WIN3D_Diagrams.noFill();
-                  }
-                }
-
-                if (target_window == TYPE_WINDOW_WIN3D) {
-                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
-                }
-                
-                if (target_window == TYPE_WINDOW_RAD) {
-
-                  if (Display_MODEL3D_Textures != 0) {   
-                  
-                    radOutput.println("MODEL3DMesh_0" + " polygon " + "MODEL3D");
-                    radOutput.println("0");
-                    radOutput.println("0");
-                    radOutput.println("9");      
-                    
-                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-                    
-                    radOutput.println("MODEL3DMesh_0" + " polygon " + "MODEL3D");
-                    radOutput.println("0");
-                    radOutput.println("0");
-                    radOutput.println("9");      
-                    
-                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-
-                  }
-                }
-                                
-
-                
-              } else {       
-                
-                float u = 0;
-                float v = 0;
-                if (n_Map != -1) {
-                  u = (subFace[s][0] / MODEL3D_Textures_scale_U[n_Map] + 0.5);
-                  v = (-subFace[s][1] / MODEL3D_Textures_scale_V[n_Map] + 0.5);
-                }
-
-                if (target_window == TYPE_WINDOW_WIN3D) {
-                  if (n_Map != -1) {
-                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, u * MODEL3D_Textures_Map[n_Map].width, v * MODEL3D_Textures_Map[n_Map].height);
-                  }
-                  else {
-                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);                    
-                  }
-                }
-
-                if (target_window == TYPE_WINDOW_OBJ) {
-                  
-                  if (Display_MODEL3D_Textures != 0) {   
-                  
-                    if (_turn == 1) {
-                      SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
-                    }
-                    if (_turn == 2) { 
-  
-                      v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-  
-                      SOLARCHVISION_OBJprintVtexture(u, v, 0);
-                    }
-                    if (_turn == 3) {
-                      num_vertices_added += 1;
-                    }
-                  }
-                }
-                
-             
-              }
-            }
-            
-
-            if (target_window == TYPE_WINDOW_SKY2D) {
-              SKY2D_Diagrams.endShape(CLOSE);
-            }
-
-            if (target_window == TYPE_WINDOW_WIN3D) {
-              WIN3D_Diagrams.endShape(CLOSE);
-            }
-
-            if (target_window == TYPE_WINDOW_OBJ) {
-
-              if (_turn == 3) {
-                
-                if (Display_MODEL3D_Textures != 0) {   
-
-                  String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
-                  String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-                  String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-                  String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-  
-                  String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
-                  String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
-                  String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
-                  String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
-  
-                  obj_lastFaceNumber += 1;
-                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-                  if (Export_BackSides != 0) {
-                    obj_lastFaceNumber += 1;
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                  }
-                }
-              }
-            }
-            
-            
-
-
-            if (Display_MODEL3D_Textures != 0) {
-
-              if (Display_MODEL3D_Depth != 0) {
-
-
-                if (target_window == TYPE_WINDOW_WIN3D) {
-                  WIN3D_Diagrams.fill(223, 223, 223);
-                  WIN3D_Diagrams.noStroke();
-                }
-
-                for (int s = 0; s < subFace.length; s++) {
-
-                  int s_next = (s + 1) % subFace.length;
-                  
-                  float u = 0;
-                  float v = 0;
-                  if (n_Map != -1) {
-                    u = (subFace[s][0] / MODEL3D_Textures_scale_U[n_Map] + 0.5);
-                    v = (-subFace[s][1] / MODEL3D_Textures_scale_V[n_Map] + 0.5);
-                  }
-
-                  float u_next = (subFace[s_next][0] / MODEL3D_Textures_scale_U[n_Map] + 0.5);
-                  float v_next = (-subFace[s_next][1] / MODEL3D_Textures_scale_V[n_Map] + 0.5);
-
-                  if (target_window == TYPE_WINDOW_WIN3D) {
-
-                    WIN3D_Diagrams.beginShape();
-                    
-                    if (n_Map != -1) {
-                      WIN3D_Diagrams.texture(MODEL3D_Textures_Map[n_Map]);                  
-  
-                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, u * MODEL3D_Textures_Map[n_Map].width, v * MODEL3D_Textures_Map[n_Map].height);
-                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_Scale3D, u_next * MODEL3D_Textures_Map[n_Map].width, v_next * MODEL3D_Textures_Map[n_Map].height);
-                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D, u_next * MODEL3D_Textures_Map[n_Map].width, v_next * MODEL3D_Textures_Map[n_Map].height);
-                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D, u * MODEL3D_Textures_Map[n_Map].width, v * MODEL3D_Textures_Map[n_Map].height);
-                    }
-                    else {
-                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D);
-                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_Scale3D);
-                      WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D);
-                      WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_Scale3D);
-                    }
-
-                    WIN3D_Diagrams.endShape(CLOSE);
-                  }
-                }
-              }
-            }
-          }
-        }
-        
-        
-
-      }
-    }
-
-    if (target_window == TYPE_WINDOW_OBJ) {
-      obj_lastVertexNumber += num_vertices_added;
-      obj_lastVtextureNumber += num_vertices_added;
-    }    
-
-    if (target_window == TYPE_WINDOW_WIN3D) {
-      if (Display_MODEL3D_Points != 0) {
-
-        WIN3D_Diagrams.fill(191, 191, 0); 
-        WIN3D_Diagrams.noStroke();
-
-        WIN3D_Diagrams.sphereDetail(6, 4);
-
-        for (int i = 0; i < MODEL3D_n_I; i += 1) {
-          for (int j = 0; j < MODEL3D_n_J; j += 1) {
-
-            float x = MODEL3D_Mesh[i][j][0];
-            float y = MODEL3D_Mesh[i][j][1];
-            float z = MODEL3D_Mesh[i][j][2];
-
-            float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
-
-            WIN3D_Diagrams.pushMatrix();
-            WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_Scale3D, -y * OBJECTS_scale * WIN3D_Scale3D, z * OBJECTS_scale * WIN3D_Scale3D);
-            WIN3D_Diagrams.sphere(R);
-            WIN3D_Diagrams.popMatrix();
-          }
-        }
-      }
-    }
-    
-
-    
-  }
-}
-
-
-
-/*
-  if (Display_Model3Ds != 0) {
-
-
-  
-    for (int f = 0; f < allFaces_PNT.length; f++) {
-  
-      if (allFaces_PNT[f].length > 2) {
-
-        int mt = allFaces_MTLVGC[f][0];
-
-        int Tessellation = allFaces_MTLVGC[f][1];
-
-        int TotalSubNo = 1;  
-        if (allFaces_MTLVGC[f][0] == 0) {
-          Tessellation += MODEL3D_Tessellation;
-        }
-
-        if ((allFaces_PNT[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
-          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-        }
-
-        if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-        float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-        for (int j = 0; j < allFaces_PNT[f].length; j++) {
-          int vNo = allFaces_PNT[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-
-        for (int n = 0; n < TotalSubNo; n++) {
-
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-          
-          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
-
-            if (back_or_front == 1) {
-
-              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-              radOutput.println("0");
-              radOutput.println("0");
-              radOutput.println("9");      
-              
-              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-              
-              if (subFace.length == 4) {
-
-                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-                radOutput.println("0");
-                radOutput.println("0");
-                radOutput.println("9");      
-                
-                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-              }
-              
-              
-            } else {
-
-              radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-              radOutput.println("0");
-              radOutput.println("0");
-              radOutput.println("9");    
-              
-              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-              
-              if (subFace.length == 4) { 
-                
-                radOutput.println("SurfaceMaterial_" + nf(mt, 0) + " polygon " + "FACE");
-                radOutput.println("0");
-                radOutput.println("0");
-                radOutput.println("9");                   
-                
-                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-              }
-            }
-          }
-        }
-          
-        radOutput.println();
-      }
-    }
-  }
-  
-*/
