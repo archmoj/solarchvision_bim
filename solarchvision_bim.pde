@@ -19104,39 +19104,42 @@ void SOLARCHVISION_export_objects_HTML () {
                 the_filename = "shade_Pallet.bmp";
       
                 TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+                
+                if (Create_Face_Texture == 1) {
       
-                println("Saving texture:", TEXTURE_path);
-      
-                int RES1 = Export_PalletResolution; 
-                int RES2 = Export_PalletResolution / 16;      
-      
-                PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-      
-      
-                Pallet_Texture.loadPixels();
-      
-                for (int np = 0; np < (RES1 * RES2); np++) {
-                  int Image_X = np % RES1;
-                  int Image_Y = np / RES1;
-      
-                  float _val = (Image_X / (0.5 * RES1)) - 1; 
-      
-                  float _u = 0.5 + _val;
-      
-                  if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
-                    if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-                  }            
-      
-                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
-      
-                  Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+                  println("Saving texture:", TEXTURE_path);
+        
+                  int RES1 = Export_PalletResolution; 
+                  int RES2 = Export_PalletResolution / 16;      
+        
+                  PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+        
+        
+                  Pallet_Texture.loadPixels();
+        
+                  for (int np = 0; np < (RES1 * RES2); np++) {
+                    int Image_X = np % RES1;
+                    int Image_Y = np / RES1;
+        
+                    float _val = (Image_X / (0.5 * RES1)) - 1; 
+        
+                    float _u = 0.5 + _val;
+        
+                    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
+                      if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                    }            
+        
+                    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+        
+                    Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+                  }
+        
+                  Pallet_Texture.updatePixels();   
+        
+                  Pallet_Texture.save(TEXTURE_path);  
+              
+                  Create_Face_Texture = 2; // image created
                 }
-      
-                Pallet_Texture.updatePixels();   
-      
-                Pallet_Texture.save(TEXTURE_path);  
-            
-                Create_Face_Texture = 0;
       
       
                 htmlOutput.println("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
@@ -19545,7 +19548,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  SOLARCHVISION_draw_TROPO(TYPE_WINDOW_OBJ);
+  SOLARCHVISION_draw_TROPO(TYPE_WINDOW_OBJ, STUDY_i_Start, STUDY_i_End);
   
   SOLARCHVISION_draw_LAND(TYPE_WINDOW_OBJ);
   
@@ -20101,38 +20104,42 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
-        println("Saving texture:", TEXTURE_path);
 
-        int RES1 = Export_PalletResolution; 
-        int RES2 = Export_PalletResolution / 16;      
-
-        PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-
-
-        Pallet_Texture.loadPixels();
-
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-
-          float _val = (Image_X / (0.5 * RES1)) - 1; 
-
-          float _u = 0.5 + _val;
-
-          if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
-            if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-          }            
-
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
-
-          Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        }
-
-        Pallet_Texture.updatePixels();   
-
-        Pallet_Texture.save(TEXTURE_path);
+        if (Create_Face_Texture == 1) { 
+          
+          println("Saving texture:", TEXTURE_path);
   
-        Create_Face_Texture = 0;      
+          int RES1 = Export_PalletResolution; 
+          int RES2 = Export_PalletResolution / 16;      
+  
+          PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+  
+  
+          Pallet_Texture.loadPixels();
+  
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
+  
+            float _val = (Image_X / (0.5 * RES1)) - 1; 
+  
+            float _u = 0.5 + _val;
+  
+            if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
+              if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+            }            
+  
+            float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+  
+            Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+          }
+  
+          Pallet_Texture.updatePixels();   
+  
+          Pallet_Texture.save(TEXTURE_path);
+    
+          Create_Face_Texture = 2; // image created
+        }
 
 
         mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
