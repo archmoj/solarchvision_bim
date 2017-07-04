@@ -3097,9 +3097,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
     SOLARCHVISION_draw_MOON3D();
     
-    SOLARCHVISION_draw_EARTH3D();
-
-
+    SOLARCHVISION_draw_EARTH(TYPE_WINDOW_WIN3D);
 
     SOLARCHVISION_draw_LAND(TYPE_WINDOW_WIN3D);
     
@@ -19372,200 +19370,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-
-
-
-
-
-
-  if (Display_EARTH_Surface != 0) {
-
-    float EARTH_IMAGES_OffsetX = 0;
-    float EARTH_IMAGES_OffsetY = 0;
-
-    float EARTH_IMAGES_ScaleX = 1;
-    float EARTH_IMAGES_ScaleY = 1;
-
-    float CEN_lon = 0;
-    float CEN_lat = 0;    
-
-    if (Export_MaterialLibrary != 0) {
-
-      mtlOutput.println("newmtl EarthSphere");
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-      if (Display_EARTH_Texture != 0) {
-
-        int n = 0;
-        if (IMPACTS_DisplayDay < EARTH_IMAGES_Map.length) n = IMPACTS_DisplayDay;
-
-        String old_Texture_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
-
-        String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
-
-        String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
-
-        println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-        saveBytes(new_Texture_path, loadBytes(old_Texture_path));
-
-        //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
-
-        EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n][0] + 180;
-        EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n][1] - 90;
-
-        EARTH_IMAGES_ScaleX = (EARTH_IMAGES_BoundariesX[n][1] - EARTH_IMAGES_BoundariesX[n][0]) / 360.0;
-        EARTH_IMAGES_ScaleY = (EARTH_IMAGES_BoundariesY[n][1] - EARTH_IMAGES_BoundariesY[n][0]) / 180.0;
-
-        CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n][0] + EARTH_IMAGES_BoundariesX[n][1]);
-        CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n][0] + EARTH_IMAGES_BoundariesY[n][1]);
-      }
-    }
-
-
-    if (Export_PolyToPoly == 1) {
-      obj_lastGroupNumber += 1;  
-      objOutput.println("g EarthSphere");
-    }
-
-    if (Export_MaterialLibrary != 0) {
-      objOutput.println("usemtl EarthSphere");
-    }
-
-
-
-
-    float delta_Alpha = -BIOSPHERE_drawResolution;
-    float delta_Beta = -BIOSPHERE_drawResolution; 
-
-    float r = FLOAT_r_Earth;
-
-
-    for (int _turn = 1; _turn < 4; _turn += 1) {
-
-      int f = 0;
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-          f += 1;
-
-          float[][] subFace = new float [4][5];
-
-          for (int s = 0; s < 4; s += 1) {
-
-            float a = Alpha;
-            float b = Beta;
-
-            if ((s == 2) || (s == 3)) {
-              a += delta_Alpha;
-            }
-
-            if ((s == 1) || (s == 2)) {
-              b += delta_Beta;
-            }
-
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
-
-            float _lon = b - CEN_lon;
-            float _lat = a - CEN_lat;
-
-
-            // calculating u and v
-            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
-            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
-
-
-            // rotating to location coordinates 
-            float tb = -LocationLongitude;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-            float z1 = z0;
-
-            float ta = 90 - LocationLatitude;
-            float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
-            // move it down!
-            z2 -= FLOAT_r_Earth;
-
-            subFace[s][0] = x2;
-            subFace[s][1] = y2;
-            subFace[s][2] = z2;
-          }
-
-          for (int s = 0; s < subFace.length; s++) {
-
-            float x = subFace[s][0];
-            float y = subFace[s][1];
-            float z = subFace[s][2];
-            float u = subFace[s][3];
-            float v = subFace[s][4];
-
-            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-
-            if (_turn == 1) {
-              SOLARCHVISION_OBJprintVertex(x, y, z);
-            }
-
-            if (_turn == 2) {
-
-              if (u > 1) u = 1;
-              if (u < 0) u = 0;
-              if (v > 1) v = 1;
-              if (v < 0) v = 0;
-
-              SOLARCHVISION_OBJprintVtexture(u, v, 0);
-            }
-
-            if (_turn == 3) {
-              obj_lastVertexNumber += 1;
-              obj_lastVtextureNumber += 1;
-            }
-          }
-
-          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-
-          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-
-          if (Export_PolyToPoly == 0) {
-            if (_turn == 3) {
-              obj_lastGroupNumber += 1;
-              objOutput.println("g EarthSphere_" + nf(f, 0));
-            }
-          } 
-
-          if (_turn == 3) {
-            obj_lastFaceNumber += 1;            
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (Export_BackSides != 0) {
-              obj_lastFaceNumber += 1;
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-            }
-          }
-        }
-      }
-    }
-  }
-
-
+  SOLARCHVISION_draw_EARTH(TYPE_WINDOW_OBJ);
 
   SOLARCHVISION_draw_TROPO(TYPE_WINDOW_OBJ, STUDY_i_Start, STUDY_i_End);
   
@@ -22588,18 +22393,18 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
   ///////////////////////////////// for now we only use the first image
   end_hour = start_hour;
   /////////////////////////////////
-  
-  
+
 
   boolean proceed = true;
 
   if ((Display_TROPO_Surface == 0) || (Display_TROPO_Texture == 0)) {
-
-    if ((target_window == TYPE_WINDOW_STUDY) || (target_window == TYPE_WINDOW_WORLD) || (target_window == TYPE_WINDOW_WIN3D) || (target_window == TYPE_WINDOW_OBJ) || (target_window == TYPE_WINDOW_RAD)) {  
-      proceed = false;
-    }
+    proceed = false;
   }
-    
+
+  if ((target_window == TYPE_WINDOW_STUDY) || (target_window == TYPE_WINDOW_WORLD)) {  
+    proceed = false;
+  }
+
   if (proceed == true) {    
 
     WIN3D_Diagrams.strokeWeight(1);
@@ -22890,10 +22695,20 @@ void SOLARCHVISION_load_EARTH_IMAGES () {
 }
 
 
-void SOLARCHVISION_draw_EARTH3D () {
-  if (Display_EARTH_Surface != 0) {
 
-    WIN3D_Diagrams.strokeWeight(1);
+void SOLARCHVISION_draw_EARTH (int target_window) {
+
+  boolean proceed = true;
+
+  if ((Display_EARTH_Surface == 0) || (Display_EARTH_Texture == 0)) {
+    proceed = false;
+  }
+
+  if ((target_window == TYPE_WINDOW_STUDY) || (target_window == TYPE_WINDOW_WORLD)) {  
+    proceed = false;
+  }
+
+  if (proceed == true) {
 
     int n = 0;
     if (IMPACTS_DisplayDay < EARTH_IMAGES_Map.length) n = IMPACTS_DisplayDay;
@@ -22911,72 +22726,206 @@ void SOLARCHVISION_draw_EARTH3D () {
     float delta_Beta = -BIOSPHERE_drawResolution;
 
     float r = FLOAT_r_Earth;
-
-    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-
-        float[][] subFace = new float [4][5];
-
-        for (int s = 0; s < 4; s += 1) {
-
-          float a = Alpha;
-          float b = Beta;
-
-          if ((s == 2) || (s == 3)) {
-            a += delta_Alpha;
-          }
-
-          if ((s == 1) || (s == 2)) {
-            b += delta_Beta;
-          }
-
-          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-          float y0 = r * sin_ang(b - 90) * cos_ang(a);
-          float z0 = r * sin_ang(a);
-
-          float _lon = b - CEN_lon;
-          float _lat = a - CEN_lat;
-
-          if (Display_EARTH_Texture != 0) {
-            // calculating u and v
-            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
-            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
-          }         
-
-          // rotating to location coordinates 
-          float tb = -LocationLongitude;
-          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-          float z1 = z0;
-
-          float ta = 90 - LocationLatitude;
-          float x2 = x1;
-          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
-          // move it down!
-          z2 -= FLOAT_r_Earth;
-
-          subFace[s][0] = x2;
-          subFace[s][1] = y2;
-          subFace[s][2] = z2;
-        }
-
-        WIN3D_Diagrams.beginShape();
-
-        WIN3D_Diagrams.noStroke();
-
+    
+    
+    if (target_window == TYPE_WINDOW_OBJ) {
+    
+      if (Export_MaterialLibrary != 0) {
+  
+        mtlOutput.println("newmtl EarthSphere");
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
         if (Display_EARTH_Texture != 0) {
-
-          WIN3D_Diagrams.texture(EARTH_IMAGES_Map[n]);
+  
+          String old_Texture_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
+  
+          String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+  
+          String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+  
+          println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+          saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+  
+          //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+          mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+  
+          EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n][0] + 180;
+          EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n][1] - 90;
+  
+          EARTH_IMAGES_ScaleX = (EARTH_IMAGES_BoundariesX[n][1] - EARTH_IMAGES_BoundariesX[n][0]) / 360.0;
+          EARTH_IMAGES_ScaleY = (EARTH_IMAGES_BoundariesY[n][1] - EARTH_IMAGES_BoundariesY[n][0]) / 180.0;
+  
+          CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n][0] + EARTH_IMAGES_BoundariesX[n][1]);
+          CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n][0] + EARTH_IMAGES_BoundariesY[n][1]);
         }
+      }
+  
+  
+      if (Export_PolyToPoly == 1) {
+        obj_lastGroupNumber += 1;  
+        objOutput.println("g EarthSphere");
+      }
+  
+      if (Export_MaterialLibrary != 0) {
+        objOutput.println("usemtl EarthSphere");
+      }
+    }
 
-        for (int s = 0; s < subFace.length; s++) {
+    
+    num_vertices_added = 0;
 
-          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_Scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_Scale3D, subFace[s][3] * EARTH_IMAGES_Map[n].width, subFace[s][4] * EARTH_IMAGES_Map[n].height);
+    int end_turn = 1;
+    if (target_window == TYPE_WINDOW_OBJ) end_turn = 3;
+    for (int _turn = 1; _turn <= end_turn; _turn += 1) {
+
+      int f = 0;
+      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+          f += 1;
+  
+          float[][] subFace = new float [4][5];
+  
+          for (int s = 0; s < 4; s += 1) {
+  
+            float a = Alpha;
+            float b = Beta;
+  
+            if ((s == 2) || (s == 3)) {
+              a += delta_Alpha;
+            }
+  
+            if ((s == 1) || (s == 2)) {
+              b += delta_Beta;
+            }
+  
+            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+            float y0 = r * sin_ang(b - 90) * cos_ang(a);
+            float z0 = r * sin_ang(a);
+  
+            float _lon = b - CEN_lon;
+            float _lat = a - CEN_lat;
+  
+            if (Display_EARTH_Texture != 0) {
+              // calculating u and v
+              subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
+            }         
+  
+            // rotating to location coordinates 
+            float tb = -LocationLongitude;
+            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float z1 = z0;
+  
+            float ta = 90 - LocationLatitude;
+            float x2 = x1;
+            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+            // move it down!
+            z2 -= FLOAT_r_Earth;
+  
+            subFace[s][0] = x2;
+            subFace[s][1] = y2;
+            subFace[s][2] = z2;
+          }
+  
+
+          if (target_window == TYPE_WINDOW_WIN3D) {
+            
+            WIN3D_Diagrams.strokeWeight(1);
+            
+            WIN3D_Diagrams.beginShape();
+    
+            WIN3D_Diagrams.noStroke();
+            
+            if (Display_EARTH_Texture != 0) {
+    
+              WIN3D_Diagrams.texture(EARTH_IMAGES_Map[n]);
+            }            
+          }
+  
+          for (int s = 0; s < subFace.length; s++) {
+
+            float x = subFace[s][0];
+            float y = subFace[s][1];
+            float z = subFace[s][2];
+            float u = subFace[s][3];
+            float v = subFace[s][4];
+      
+            if (target_window == TYPE_WINDOW_WIN3D) {
+      
+              WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_Scale3D, -y * OBJECTS_scale * WIN3D_Scale3D, z * OBJECTS_scale * WIN3D_Scale3D, u * EARTH_IMAGES_Map[n].width, v * EARTH_IMAGES_Map[n].height);
+            }
+
+            
+            if (target_window == TYPE_WINDOW_OBJ) {
+              if (_turn == 1) {
+                SOLARCHVISION_OBJprintVertex(x, y, z);
+              }
+  
+              if (_turn == 2) {
+  
+                if (u > 1) u = 1;
+                if (u < 0) u = 0;
+                if (v > 1) v = 1;
+                if (v < 0) v = 0;
+                
+                v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+
+                SOLARCHVISION_OBJprintVtexture(u, v, 0);
+              }
+  
+              if (_turn == 3) {
+                obj_lastVertexNumber += 1;
+                obj_lastVtextureNumber += 1;
+              }       
+            }   
+            
+          }
+          
+          if (target_window == TYPE_WINDOW_WIN3D) {
+            WIN3D_Diagrams.endShape(CLOSE);
+          }
+          
+          if (target_window == TYPE_WINDOW_OBJ) {
+            String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+            String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+            String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+            String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+  
+            String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+            String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+            String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+            String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+  
+            if (Export_PolyToPoly == 0) {
+              if (_turn == 3) {
+                obj_lastGroupNumber += 1;
+                objOutput.println("g EarthSphere_" + nf(f, 0));
+              }
+            } 
+  
+            if (_turn == 3) {
+              obj_lastFaceNumber += 1;            
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+              if (Export_BackSides != 0) {
+                obj_lastFaceNumber += 1;
+                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+              }
+            }          
+          }
         }
-
-        WIN3D_Diagrams.endShape(CLOSE);
       }
     }
   }
@@ -23185,17 +23134,26 @@ void SOLARCHVISION_draw_STAR3D () {
 
 
 
+
+
+
+
 void SOLARCHVISION_draw_LAND (int target_window) {
 
   boolean proceed = true;
 
   if ((Display_LAND_Surface == 0) || (Load_LAND_Mesh == 0)) {
-
-    if ((target_window == TYPE_WINDOW_STUDY) || (target_window == TYPE_WINDOW_WORLD) || (target_window == TYPE_WINDOW_WIN3D) || (target_window == TYPE_WINDOW_OBJ) || (target_window == TYPE_WINDOW_RAD)) {  
-      proceed = false;
-    }
+    proceed = false;
   }
-    
+
+  if ((target_window == TYPE_WINDOW_STUDY) || (target_window == TYPE_WINDOW_WORLD)) {  
+    proceed = false;
+  }
+  
+  if ((target_window == TYPE_WINDOW_LandGap) || (target_window == TYPE_WINDOW_LandMesh)) {  
+    proceed = true;
+  }
+  
   if (proceed == true) {
 
     int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
