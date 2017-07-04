@@ -453,7 +453,7 @@ int STATION_DEF_TMYEPW = 9;
 
 String[] Defined_Stations = {
   
-  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
+  "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
   
   //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
@@ -461,7 +461,7 @@ String[] Defined_Stations = {
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  "VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
+  //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
 
@@ -9140,7 +9140,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       the_filename = "sunPatternPallet.bmp";
 
-      TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+      TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
       println("Saving texture:", TEXTURE_path);
 
@@ -9184,8 +9184,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map
+      //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
     }
   }  
 
@@ -19036,7 +19036,7 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>");
   htmlOutput.println("\t</head>"); 
   htmlOutput.println("\t<body>"); 
-  htmlOutput.println("\t\t<x3d width='600px' height='400px'>");  
+  htmlOutput.println("\t\t<x3d width='800px' height='600px'>");  
   htmlOutput.println("\t\t\t<scene>"); 
 
 
@@ -19093,10 +19093,10 @@ void SOLARCHVISION_export_objects_HTML () {
         
         the_filename = "shadePallet.bmp";
         
-        TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+        TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
         
         htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-        htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+        htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
         htmlOutput.println("\t\t\t\t</Appearance>");
 
         println("Saving texture:", TEXTURE_path);
@@ -19175,22 +19175,22 @@ void SOLARCHVISION_export_objects_HTML () {
             htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet");
             
             htmlOutput.print  (" coordIndex='");
-            for (int i = 0; i < subFace.length; i++) {
-              if (i > 0) {
+            for (int q = 0; q < subFace.length; q++) {
+              if (q > 0) {
                 htmlOutput.print(" ");
               }         
-              htmlOutput.print(nf(i, 0));          
+              htmlOutput.print(nf(q, 0));          
             }
             htmlOutput.println(" -1'>");
             
             htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-            for (int i = 0; i < subFace.length; i++) {
-              if (i > 0) {
+            for (int q = 0; q < subFace.length; q++) {
+              if (q > 0) {
                 htmlOutput.print(",");
               }                  
-              int s = i;
+              int s = q;
               if (back_or_front == 0) {
-                s = subFace.length - 1 - i;
+                s = subFace.length - 1 - q;
               }
               
               htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
@@ -19205,13 +19205,13 @@ void SOLARCHVISION_export_objects_HTML () {
             if (Create_Face_Texture == 1) {
  
               htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
-              for (int i = 0; i < subFace.length; i++) {
-                if (i > 0) {
+              for (int q = 0; q < subFace.length; q++) {
+                if (q > 0) {
                   htmlOutput.print(",");
                 }                  
-                int s = i;
+                int s = q;
                 if (back_or_front == 0) {
-                  s = subFace.length - 1 - i;
+                  s = subFace.length - 1 - q;
                 }
                 
                 float _u = 0;
@@ -19328,7 +19328,7 @@ void SOLARCHVISION_export_objects_OBJ_dateSeries () {
 }
 
 
-String obj_MapsSubfolder = "maps/";
+String Export_MapsSubfolder = "maps/";
 
 PrintWriter mtlOutput;
 PrintWriter objOutput;
@@ -19412,14 +19412,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-        String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+        String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
         println("Copying texture:", old_Texture_path, ">", new_Texture_path);
         saveBytes(new_Texture_path, loadBytes(old_Texture_path));
 
-        //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
 
         EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n][0] + 180;
         EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n][1] - 90;
@@ -19594,7 +19594,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         if (Export_MaterialLibrary != 0) {
 
-          String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+          String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
           if (Display_SolarImpactImage != 0) {
             println("Saving texture:", new_Texture_path);
@@ -19616,8 +19616,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-          //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map
+          //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
         }
 
         int Display_solarch_texture = 0;
@@ -19722,8 +19722,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
             the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-            new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
-            opacity_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + "opacity_" + the_filename;
+            new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+            opacity_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + "opacity_" + the_filename;
 
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -19766,9 +19766,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
             mtlOutput.println("\tTr 1.000"); //  0-1 transparency
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-            //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
-            mtlOutput.println("\tmap_d " + obj_MapsSubfolder + "opacity_" + the_filename); // diffuse map
+            //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+            mtlOutput.println("\tmap_d " + Export_MapsSubfolder + "opacity_" + the_filename); // diffuse map
           }
         }
       }
@@ -20121,7 +20121,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         the_filename = "shadePallet.bmp";
 
-        TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+        TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
         println("Saving texture:", TEXTURE_path);
 
@@ -20168,8 +20168,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-        //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
      
       }
 
@@ -20467,7 +20467,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
       the_filename = "WindFlowPallet.bmp";
 
-      String TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+      String TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
       println("Saving texture:", TEXTURE_path);
 
@@ -20509,8 +20509,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map
+      //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
     }    
 
     num_vertices_added = 0;
@@ -20662,7 +20662,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         the_filename = "skyPatternPallet.bmp";
 
-        TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+        TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
         println("Saving texture:", TEXTURE_path);
 
@@ -20706,8 +20706,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-        //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
       }      
 
       obj_lastGroupNumber += 1;
@@ -22631,14 +22631,14 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
     
               String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-              String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+              String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
     
               println("Copying texture:", old_Texture_path, ">", new_Texture_path);
               saveBytes(new_Texture_path, loadBytes(old_Texture_path));
     
-              //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-              mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
-              mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
+              //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+              mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+              mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
             }
           }
         
@@ -23202,79 +23202,77 @@ void SOLARCHVISION_draw_LAND (int target_window) {
     int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
     float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
 
-    if (target_window == TYPE_WINDOW_RAD) {
+    if (Export_MaterialLibrary != 0) {
 
-      if (Export_MaterialLibrary != 0) {
+      for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
 
-        if (Display_LAND_Textures != 0) {           
+        if (target_window == TYPE_WINDOW_RAD) {
 
-          for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
+          radOutput.println("void plastic " + "LandMap" + nf(n_Map, 0));
+          radOutput.println("0");
+          radOutput.println("0");
+          radOutput.println("5 0 0 0 0 0");
+          
+        }
 
-            int mt = n_Map;
+        if (target_window == TYPE_WINDOW_HTML) {
+          htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
+        }
+        
+        if (target_window == TYPE_WINDOW_OBJ) {
+        
+          mtlOutput.println("newmtl LandMap" + nf(n_Map, 0));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
 
-            float a = Materials_Color[mt][0] / 255.0; 
-            float r = Materials_Color[mt][1] / 255.0; 
-            float g = Materials_Color[mt][2] / 255.0; 
-            float b = Materials_Color[mt][3] / 255.0; 
-    
-            radOutput.println("void plastic " + "LandMesh_" + nf(n_Map, 0));
-            radOutput.println("0");
-            radOutput.println("0");
-            radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+          
+        }
 
-            if (Display_LAND_Textures != 0) {
-              if (n_Map != -1) {
-/*
-    copy the map!
-*/                
+
+        if ((target_window == TYPE_WINDOW_HTML) || (target_window == TYPE_WINDOW_OBJ) || (target_window == TYPE_WINDOW_RAD)) {
+
+          if (Display_LAND_Textures != 0) {
+            if (n_Map != -1) {
+  
+              String old_Texture_path = LAND_Textures_ImagePath[n_Map]; 
+  
+              String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+  
+              String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+  
+              println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+              saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+  
+  
+              if (target_window == TYPE_WINDOW_OBJ) {
+                  
+                //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+                mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
               }
+              
+              if (target_window == TYPE_WINDOW_HTML) {
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+              }                 
+  
             }
           }
         }
+        
+        
+        if (target_window == TYPE_WINDOW_HTML) {
+          htmlOutput.println("\t\t\t\t</Appearance>");
+        }        
+        
       }
-    }
-    
-    if (target_window == TYPE_WINDOW_OBJ) {
 
-      if (Export_MaterialLibrary != 0) {
-
-        if (Display_LAND_Textures != 0) {           
-
-          for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
-
-            mtlOutput.println("newmtl LandMesh_" + nf(n_Map, 0));
-            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-            mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-            mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-
-            if (Display_LAND_Textures != 0) {
-              if (n_Map != -1) {
-
-                String old_Texture_path = LAND_Textures_ImagePath[n_Map]; 
-
-                String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
-
-                String new_Texture_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
-
-                println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-                saveBytes(new_Texture_path, loadBytes(old_Texture_path));
-
-                //mtlOutput.println("\tmap_Ka " + obj_MapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + obj_MapsSubfolder + the_filename); // diffuse map        
-                mtlOutput.println("\tmap_d " + obj_MapsSubfolder + the_filename); // diffuse map
-              }
-            }
-          }
-        }
-      }
     }
     
     if ((target_window == TYPE_WINDOW_LandGap) || (target_window == TYPE_WINDOW_LandMesh)) {
@@ -23305,7 +23303,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
           if (Display_LAND_Textures != 0) {   
 
             obj_lastGroupNumber += 1;
-            objOutput.println("g LandMesh");
+            objOutput.println("g LandMap");
           
           }
         }
@@ -23422,12 +23420,47 @@ void SOLARCHVISION_draw_LAND (int target_window) {
 
                   if (Export_MaterialLibrary != 0) {
                     if (n_Map != -1) {    
-                      objOutput.println("usemtl LandMesh_" + nf(n_Map, 0));
+                      objOutput.println("usemtl LandMap" + nf(n_Map, 0));
                     }
                   }
                 }
               }
             }    
+            
+            if (target_window == TYPE_WINDOW_HTML) {
+
+              htmlOutput.println("\t\t\t\t<shape>");
+  
+              if (n_Map != -1) {   
+                htmlOutput.println("\t\t\t\t\t<Appearance USE='LandMap" + nf(n_Map, 0) + "'></Appearance>");
+              }      
+              
+              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\""); // force two-sided
+              
+              htmlOutput.print  (" coordIndex='");
+              for (int s = 0; s < subFace.length; s++) {
+                if (s > 0) {
+                  htmlOutput.print(" ");
+                }         
+                htmlOutput.print(nf(s, 0));          
+              }
+              htmlOutput.println(" -1'>");
+              
+              htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+              for (int s = 0; s < subFace.length; s++) {
+                if (s > 0) {
+                  htmlOutput.print(",");
+                }                  
+                
+                htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+              }                
+              htmlOutput.println("'></Coordinate>");
+              
+            }
+            
+
+            
+            
             
             for (int s = 0; s < subFace.length; s++) {
               
@@ -23560,8 +23593,39 @@ void SOLARCHVISION_draw_LAND (int target_window) {
                     SOLARCHVISION_add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
                   }
                 }
+                
+                
+                if (target_window == TYPE_WINDOW_HTML) {
+                  
+                  if (n_Map != -1) {   
+                  
+                    if (s == 0) {
+                      htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
+                    }
+                    if (s > 0) {
+                      htmlOutput.print(",");
+                    }                  
+
+                    v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+                    SOLARCHVISION_HTMLprintVtexture(u, v);
+                    
+                    if (s == subFace.length - 1) {
+                      htmlOutput.println("'></TextureCoordinate>");
+                    }       
+                  }              
+   
+                }                
              
               }
+            }
+
+
+            if (target_window == TYPE_WINDOW_HTML) {
+
+              htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+              
+              htmlOutput.println("\t\t\t\t</shape>");
+
             }
             
 
