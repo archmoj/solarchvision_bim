@@ -9138,7 +9138,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
     if (Export_MaterialLibrary != 0) {
 
-      the_filename = "sunPattern_Pallet.bmp";
+      the_filename = "sunPatternPallet.bmp";
 
       TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
@@ -19091,19 +19091,31 @@ void SOLARCHVISION_export_objects_HTML () {
 
             if (Export_MaterialLibrary != 0) {
               
-              htmlOutput.println("\t\t\t\t\t<Appearance>");
-              
               if (Create_Face_Texture == 0) {
-              
+
+                htmlOutput.println("\t\t\t\t\t<Appearance>");
                 htmlOutput.print  ("\t\t\t\t\t\t<Material");
                 htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
                 htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
                 htmlOutput.println("></Material>");
+                htmlOutput.println("\t\t\t\t\t</Appearance>");
         
               } else {
-                the_filename = "shade_Pallet.bmp";
-      
+                
+                the_filename = "shadePallet.bmp";
+                
                 TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
+
+                if (Create_Face_Texture == 1) {
+                
+                  htmlOutput.println("\t\t\t\t\t<Appearance DEF='" + the_filename + "'>");
+                  htmlOutput.println("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t</Appearance>");
+                }
+                else if (Create_Face_Texture == 2) {
+                  htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'>");
+                  htmlOutput.println("\t\t\t\t\t</Appearance>");
+                }
                 
                 if (Create_Face_Texture == 1) {
       
@@ -19140,14 +19152,7 @@ void SOLARCHVISION_export_objects_HTML () {
               
                   Create_Face_Texture = 2; // image created
                 }
-      
-      
-                htmlOutput.println("\t\t\t\t\t\t<ImageTexture url=\""+ obj_MapsSubfolder + the_filename + "\"><ImageTexture/>");
-
-              }
-      
-             
-              htmlOutput.println("\t\t\t\t\t</Appearance>");
+              } 
             }              
             
             
@@ -20100,7 +20105,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
       if (Export_MaterialLibrary != 0) {
 
-        the_filename = "shade_Pallet.bmp";
+        the_filename = "shadePallet.bmp";
 
         TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
@@ -20451,7 +20456,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     if (Export_MaterialLibrary != 0) {
 
-      the_filename = "WindFlow_Pallet.bmp";
+      the_filename = "WindFlowPallet.bmp";
 
       String TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
@@ -20646,7 +20651,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
       if (Export_MaterialLibrary != 0) {
 
-        the_filename = "skyPattern_Pallet.bmp";
+        the_filename = "skyPatternPallet.bmp";
 
         TEXTURE_path = Model3DFolder + "/" + obj_MapsSubfolder + the_filename;
 
