@@ -19126,7 +19126,6 @@ void SOLARCHVISION_export_objects_HTML () {
         
                   PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
         
-        
                   Pallet_Texture.loadPixels();
         
                   for (int np = 0; np < (RES1 * RES2); np++) {
@@ -19150,7 +19149,7 @@ void SOLARCHVISION_export_objects_HTML () {
         
                   Pallet_Texture.save(TEXTURE_path);  
               
-                  Create_Face_Texture = 2; // image created
+                  Create_Face_Texture = 2; // texture created
                 }
               } 
             }              
@@ -20143,7 +20142,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   
           Pallet_Texture.save(TEXTURE_path);
     
-          Create_Face_Texture = 2; // image created
+          Create_Face_Texture = 2; // texture created
         }
 
 
