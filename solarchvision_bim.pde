@@ -25256,10 +25256,10 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
       
                   if (_turn == 2) {
       
-                    SOLARCHVISION_OBJprintVtexture(0, 1 - ratio, 0);
                     SOLARCHVISION_OBJprintVtexture(1, 1 - ratio, 0);
-                    SOLARCHVISION_OBJprintVtexture(1, 1, 0);
+                    SOLARCHVISION_OBJprintVtexture(0, 1 - ratio, 0);
                     SOLARCHVISION_OBJprintVtexture(0, 1, 0);
+                    SOLARCHVISION_OBJprintVtexture(1, 1, 0);
                   }
       
                   if (_turn == 3) {
@@ -25289,6 +25289,37 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
                     }
                   }                    
                 }
+                
+                if (target_window == TYPE_WINDOW_HTML) {
+                  
+                  htmlOutput.println("\t\t\t\t<shape>");
+        
+                  htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
+        
+                  htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+                  
+                  htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+                  htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x3, 0, Export_PrecisionVertex) + " " + nf(y3, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x4, 0, Export_PrecisionVertex) + " " + nf(y4, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                  htmlOutput.println("'></Coordinate>");          
+                  
+                  htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
+                  
+                  SOLARCHVISION_HTMLprintVtexture(1, 1 - ratio);
+                  htmlOutput.print (",");
+                  SOLARCHVISION_HTMLprintVtexture(0, 1 - ratio);
+                  htmlOutput.print (",");
+                  SOLARCHVISION_HTMLprintVtexture(0, 1);
+                  htmlOutput.print (",");
+                  SOLARCHVISION_HTMLprintVtexture(1, 1);                  
+                  htmlOutput.println("'></TextureCoordinate>");
+          
+                  htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+                 
+                  htmlOutput.println("\t\t\t\t</shape>");          
+                }                              
   
                 allObject2Ds_Vertices[nv + 0][0] = x1 / OBJECTS_scale;
                 allObject2Ds_Vertices[nv + 0][1] = y1 / OBJECTS_scale;
