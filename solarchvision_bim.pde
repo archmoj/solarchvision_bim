@@ -40530,8 +40530,7 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   allSections_RES2 = concat(allSections_RES2, TempSection_RES2);
 
   PImage[] TempSection_SolidImpact = {
-    //createImage(RES1, RES2, RGB)
-    createImage(2, 2, RGB) // empty and small
+    createImage(RES1, RES2, RGB)
   }; 
   allSections_SolidImpact = (PImage[]) concat(allSections_SolidImpact, TempSection_SolidImpact);
 
@@ -40568,8 +40567,6 @@ void SOLARCHVISION_draw_Sections (int target_window) {
   allSections_Vertices = new float [4 * allSections_num][3];
 
 
-
-
   boolean proceed = true;
 
   if (Display_Sections == 0) {
@@ -40601,16 +40598,22 @@ void SOLARCHVISION_draw_Sections (int target_window) {
         
         if (Export_MaterialLibrary != 0) {
 
-          String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+          String TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
 
           if ((target_window == TYPE_WINDOW_HTML) || (target_window == TYPE_WINDOW_OBJ)) {
 
             if (Display_SolarImpactImage != 0) {
-              println("Saving texture:", new_Texture_path);
-              allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE].save(new_Texture_path);
+              println("Saving texture:", TEXTURE_path);
+              allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE].save(TEXTURE_path);
             } else if (Display_SolidImpactImage != 0) {
-              println("Saving texture:", new_Texture_path);
-              allSections_SolidImpact[f].save(new_Texture_path);
+              println("Saving texture:", TEXTURE_path);
+              allSections_SolidImpact[f].save(TEXTURE_path);
+            }
+
+            if (target_window == TYPE_WINDOW_HTML) {
+              htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
+              htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+              htmlOutput.println("\t\t\t\t</Appearance>");
             }
   
             if (target_window == TYPE_WINDOW_OBJ) {
@@ -40647,6 +40650,9 @@ void SOLARCHVISION_draw_Sections (int target_window) {
         }
 
 
+        float[][] subFace = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  
+
         num_vertices_added = 0;
       
         int end_turn = 1;
@@ -40656,57 +40662,35 @@ void SOLARCHVISION_draw_Sections (int target_window) {
           boolean display_image = false;
           
           if (target_window == TYPE_WINDOW_WIN3D) {
-          
-
     
             WIN3D_Diagrams.beginShape();
+
+            WIN3D_Diagrams.noStroke();
+            WIN3D_Diagrams.noFill();
   
             if (Display_SolarImpactImage != 0) { 
               
-              if (allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE].width > 2) {
-              
-                WIN3D_Diagrams.texture(allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE]);
-                display_image = true;
-              }
+              WIN3D_Diagrams.texture(allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE]);
+
             } else if (Display_SolidImpactImage != 0) {
               
-              if (allSections_SolidImpact[f].width > 2) {
-                WIN3D_Diagrams.texture(allSections_SolidImpact[f]);
-                display_image = true;
-              }
+              WIN3D_Diagrams.texture(allSections_SolidImpact[f]);
             }  
-            
-            if (display_image == true) {
-              WIN3D_Diagrams.stroke(0);
-              WIN3D_Diagrams.fill(127, 255, 127);  
-            }
-            else {
-              WIN3D_Diagrams.noStroke();
-              WIN3D_Diagrams.noFill();
-            }
-
             
           }
   
-          float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-  
+
           for (int q = 1; q <= 4; q++) {
   
-            float x = ImageVertex[q][0];
-            float y = ImageVertex[q][1];
-            float z = ImageVertex[q][2];
-            float u = ImageVertex[q][3];
-            float v = ImageVertex[q][4];
+            float x = subFace[q][0];
+            float y = subFace[q][1];
+            float z = subFace[q][2];
+            float u = subFace[q][3];
+            float v = subFace[q][4];
   
             if (target_window == TYPE_WINDOW_WIN3D) {
   
-              if (display_image == true) {
-                WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_Scale3D, -y * OBJECTS_scale * WIN3D_Scale3D, z * OBJECTS_scale * WIN3D_Scale3D, u * Section_RES1, v * Section_RES2);
-              }
-              else {
-                WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_Scale3D, -y * OBJECTS_scale * WIN3D_Scale3D, z * OBJECTS_scale * WIN3D_Scale3D);
-              }
-              
+              WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_Scale3D, -y * OBJECTS_scale * WIN3D_Scale3D, z * OBJECTS_scale * WIN3D_Scale3D, u * Section_RES1, v * Section_RES2);
             }
             
             
@@ -40762,12 +40746,65 @@ void SOLARCHVISION_draw_Sections (int target_window) {
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
           }
 
-
-  
-
-          
         }
         
+        
+        if (target_window == TYPE_WINDOW_HTML) {
+          
+          htmlOutput.println("\t\t\t\t<shape>");
+
+          htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
+
+          
+          htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\""); // force two-sided
+          
+          htmlOutput.print  (" coordIndex='");
+          for (int s = 1; s < subFace.length; s++) {
+            if (s > 1) {
+              htmlOutput.print(" ");
+            }         
+            htmlOutput.print(nf(s - 1, 0));          
+          }
+          htmlOutput.println(" -1'>");
+          
+         
+          htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+          for (int s = 1; s < subFace.length; s++) {
+            if (s > 1) {
+              htmlOutput.print(",");
+            }                  
+            
+            htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+          }                
+          htmlOutput.println("'></Coordinate>");          
+          
+          
+          for (int s = 1; s < subFace.length; s++) {
+            
+            float u = subFace[s][3];
+            float v = subFace[s][4];
+            
+            if (s == 1) {
+              htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
+            }
+            if (s > 1) {
+              htmlOutput.print(",");
+            }                  
+  
+            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+            SOLARCHVISION_HTMLprintVtexture(u, v);
+            
+            if (s == subFace.length - 1) {
+              htmlOutput.println("'></TextureCoordinate>");
+            }     
+          }  
+
+        
+  
+          htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+         
+          htmlOutput.println("\t\t\t\t</shape>");          
+        }
     
       }
     }
