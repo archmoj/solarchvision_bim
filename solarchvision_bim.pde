@@ -19034,8 +19034,13 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>");
   htmlOutput.println("\t</head>"); 
   htmlOutput.println("\t<body>"); 
-  htmlOutput.println("\t\t<x3d width='800px' height='600px'>");  
+  htmlOutput.println("\t\t<x3d width='900px' height='600px'>");  
   htmlOutput.println("\t\t\t<scene>"); 
+  
+  htmlOutput.print  ("\t\t\t\t<viewpoint");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(cos(WIN3D_RX_Coordinate) * cos(WIN3D_RZ_Coordinate), 0, 0) + " " + nf(cos(WIN3D_RY_Coordinate) * cos(WIN3D_RZ_Coordinate), 0, 0) + " " + nf(sin(WIN3D_RZ_Coordinate), 0, 0) + " 0'");
+  htmlOutput.println("></viewpoint>");
 
 
 
@@ -25079,7 +25084,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
         int end_turn = 1;
         if (target_window == TYPE_WINDOW_OBJ) end_turn = 3;
         for (int _turn = 1; _turn <= end_turn; _turn += 1) {
-
+          
           for (int back_front = -1; back_front <= 1; back_front += 1) {
             
             if (back_front == 0) {
