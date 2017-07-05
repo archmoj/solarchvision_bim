@@ -25150,7 +25150,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
       
                 htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
       
-                htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+                htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
                 
                 htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
                 htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
@@ -25296,7 +25296,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
         
                   htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
         
-                  htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+                  htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
                   
                   htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
                   htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
@@ -40788,7 +40788,7 @@ void SOLARCHVISION_draw_Sections (int target_window) {
           htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
 
           
-          htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+          htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
          
           htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
           for (int s = 1; s < subFace.length; s++) {
