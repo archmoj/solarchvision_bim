@@ -19046,6 +19046,8 @@ void SOLARCHVISION_export_objects_HTML () {
   SOLARCHVISION_draw_TROPO(TYPE_WINDOW_HTML, STUDY_i_Start, STUDY_i_End);
   
   SOLARCHVISION_draw_Sections(TYPE_WINDOW_HTML);
+  
+  SOLARCHVISION_draw_Object2Ds(TYPE_WINDOW_HTML);
 
   if (Display_Model3Ds != 0) {
 
@@ -24968,14 +24970,14 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
               Opacity_Texture.save(opacity_Texture_path);
               
               if (target_window == TYPE_WINDOW_HTML) {
-                htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
+                htmlOutput.println("\t\t\t\t<Appearance DEF='Object2D_" + the_filename + "'>");
                 htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
                 htmlOutput.println("\t\t\t\t</Appearance>");
               }
   
               if (target_window == TYPE_WINDOW_OBJ) { 
     
-                mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
+                mtlOutput.println("newmtl " + "Object2D_" + the_filename);
                 mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
                 mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
                 mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -25042,13 +25044,14 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
         float rw = rh * Object2D_ImageRatios[n];
 
         float t = PI + WIN3D_RZ_Coordinate * PI / 180.0;
-        if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI; 
-
-        if (allObject2Ds_MAP[f] < 0) t += PI;     
-    
+        if (WIN3D_ViewType == 1) t = atan2(y - WIN3D_CAM_y, x - WIN3D_CAM_x) + 0.5 * PI;
+       
         if ((target_window == TYPE_WINDOW_HTML) || (target_window == TYPE_WINDOW_OBJ)) {
           t = 0;
         }     
+
+        if (allObject2Ds_MAP[f] < 0) t += PI;     
+    
 
         float dx = rw * cos(t);
         float dy = rw * sin(t);
@@ -25109,10 +25112,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
                 }              
                 
                 if (_turn == 2) {
-                  SOLARCHVISION_OBJprintVtexture(0, 0, 0);
-                  SOLARCHVISION_OBJprintVtexture(1, 0, 0);
-                  SOLARCHVISION_OBJprintVtexture(1, 1, 0);
-                  SOLARCHVISION_OBJprintVtexture(0, 1, 0);
+                  htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
                 }     
                 
                 if (_turn == 3) {
@@ -25141,7 +25141,30 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                   }
                 }         
-              }       
+              }   
+          
+          
+              if (target_window == TYPE_WINDOW_HTML) {
+                
+                htmlOutput.println("\t\t\t\t<shape>");
+      
+                htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
+      
+                htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+                
+                htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+                htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
+                htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
+                htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
+                htmlOutput.print  ("," + nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
+                htmlOutput.println("'></Coordinate>");          
+                
+                htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
+        
+                htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+               
+                htmlOutput.println("\t\t\t\t</shape>");          
+              }              
   
               int nv = f * Object2Ds_numDisplayFaces * 4;
               int nf = f * Object2Ds_numDisplayFaces;
@@ -40734,17 +40757,7 @@ void SOLARCHVISION_draw_Sections (int target_window) {
           htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
 
           
-          htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\""); // force two-sided
-          
-          htmlOutput.print  (" coordIndex='");
-          for (int s = 1; s < subFace.length; s++) {
-            if (s > 1) {
-              htmlOutput.print(" ");
-            }         
-            htmlOutput.print(nf(s - 1, 0));          
-          }
-          htmlOutput.println(" -1'>");
-          
+          htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
          
           htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
           for (int s = 1; s < subFace.length; s++) {
