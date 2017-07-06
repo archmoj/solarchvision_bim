@@ -1767,11 +1767,11 @@ int WIN3D_Y_View = SOLARCHVISION_H_Pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_Coordinate = 0;
-float WIN3D_Y_Coordinate = 100; //10;
+float WIN3D_Y_Coordinate = 0; //10;
 float WIN3D_Z_Coordinate = 0; //50; 
 float WIN3D_S_Coordinate = 1;
 
-float WIN3D_RX_Coordinate = 90; //75; 
+float WIN3D_RX_Coordinate = 0; //75; 
 float WIN3D_RY_Coordinate = 0;
 float WIN3D_RZ_Coordinate = 0; //180; //0; //180; //135;
 float WIN3D_RS_Coordinate = 5.0;
@@ -19037,6 +19037,8 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t<x3d width='900px' height='600px'>");  
   htmlOutput.println("\t\t\t<scene>"); 
 
+
+
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM00'");
   htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + "'");
@@ -19048,8 +19050,8 @@ void SOLARCHVISION_export_objects_HTML () {
   float c3 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
   float s3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
 
-  float qw = c1*c2*c3 - s1*s2*s3;
-  float qx = s1*s2*c3 + c1*c2*s3;
+  float qw = c1*c2*c3 + s1*s2*s3;
+  float qx = s1*s2*c3 - c1*c2*s3;
   float qy = s1*c2*c3 + c1*s2*s3;
   float qz = c1*s2*c3 - s1*c2*s3;  
 
@@ -19069,8 +19071,8 @@ void SOLARCHVISION_export_objects_HTML () {
   float c3 = cos_ang(WIN3D_RX_Coordinate * 0.5);
   float s3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
 
-  float qw = c1*c2*c3 - s1*s2*s3;
-  float qx = s1*s2*c3 + c1*c2*s3;
+  float qw = c1*c2*c3 + s1*s2*s3;
+  float qx = s1*s2*c3 - c1*c2*s3;
   float qy = s1*c2*c3 + c1*s2*s3;
   float qz = c1*s2*c3 - s1*c2*s3;  
 
@@ -19089,8 +19091,8 @@ void SOLARCHVISION_export_objects_HTML () {
   float c3 = cos_ang(WIN3D_RY_Coordinate * 0.5);
   float s3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
 
-  float qw = c1*c2*c3 - s1*s2*s3;
-  float qx = s1*s2*c3 + c1*c2*s3;
+  float qw = c1*c2*c3 + s1*s2*s3;
+  float qx = s1*s2*c3 - c1*c2*s3;
   float qy = s1*c2*c3 + c1*s2*s3;
   float qz = c1*s2*c3 - s1*c2*s3;  
 
@@ -19110,8 +19112,8 @@ void SOLARCHVISION_export_objects_HTML () {
   float c3 = cos_ang(WIN3D_RX_Coordinate * 0.5);
   float s3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
 
-  float qw = c1*c2*c3 - s1*s2*s3;
-  float qx = s1*s2*c3 + c1*c2*s3;
+  float qw = c1*c2*c3 + s1*s2*s3;
+  float qx = s1*s2*c3 - c1*c2*s3;
   float qy = s1*c2*c3 + c1*s2*s3;
   float qz = c1*s2*c3 - s1*c2*s3;  
 
@@ -19131,8 +19133,8 @@ void SOLARCHVISION_export_objects_HTML () {
   float c3 = cos_ang(WIN3D_RY_Coordinate * 0.5);
   float s3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
 
-  float qw = c1*c2*c3 - s1*s2*s3;
-  float qx = s1*s2*c3 + c1*c2*s3;
+  float qw = c1*c2*c3 + s1*s2*s3;
+  float qx = s1*s2*c3 - c1*c2*s3;
   float qy = s1*c2*c3 + c1*s2*s3;
   float qz = c1*s2*c3 - s1*c2*s3;  
   
@@ -19151,15 +19153,14 @@ void SOLARCHVISION_export_objects_HTML () {
   float c3 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
   float s3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
 
-  float qw = c1*c2*c3 - s1*s2*s3;
-  float qx = s1*s2*c3 + c1*c2*s3;
+  float qw = c1*c2*c3 + s1*s2*s3;
+  float qx = s1*s2*c3 - c1*c2*s3;
   float qy = s1*c2*c3 + c1*s2*s3;
   float qz = c1*s2*c3 - s1*c2*s3;  
 
   htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></Viewpoint>");
 }
-
 
 
 
