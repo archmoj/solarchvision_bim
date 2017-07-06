@@ -19036,12 +19036,126 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t<body>"); 
   htmlOutput.println("\t\t<x3d width='900px' height='600px'>");  
   htmlOutput.println("\t\t\t<scene>"); 
-  
-  htmlOutput.print  ("\t\t\t\t<viewpoint");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + "'");
-  htmlOutput.print  (" orientation='" + nf(cos(WIN3D_RX_Coordinate) * cos(WIN3D_RZ_Coordinate), 0, 0) + " " + nf(cos(WIN3D_RY_Coordinate) * cos(WIN3D_RZ_Coordinate), 0, 0) + " " + nf(sin(WIN3D_RZ_Coordinate), 0, 0) + " 0'");
-  htmlOutput.println("></viewpoint>");
 
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_A'");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  
+  float t0 = cos(WIN3D_RX_Coordinate * 0.5);
+  float t1 = sin(WIN3D_RX_Coordinate * 0.5);
+  float t2 = cos(WIN3D_RY_Coordinate * 0.5);
+  float t3 = sin(WIN3D_RY_Coordinate * 0.5);
+  float t4 = cos(WIN3D_RZ_Coordinate * 0.5);
+  float t5 = sin(WIN3D_RZ_Coordinate * 0.5);
+
+  float qw = t0 * t2 * t4 + t1 * t3 * t5;
+  float qx = t0 * t3 * t4 - t1 * t2 * t5;
+  float qy = t0 * t2 * t5 + t1 * t3 * t4;
+  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></viewpoint>");
+}
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_B'");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  
+  float t0 = cos(WIN3D_RY_Coordinate * 0.5);
+  float t1 = sin(WIN3D_RY_Coordinate * 0.5);
+  float t2 = cos(WIN3D_RZ_Coordinate * 0.5);
+  float t3 = sin(WIN3D_RZ_Coordinate * 0.5);
+  float t4 = cos(WIN3D_RX_Coordinate * 0.5);
+  float t5 = sin(WIN3D_RX_Coordinate * 0.5);
+
+  float qw = t0 * t2 * t4 + t1 * t3 * t5;
+  float qx = t0 * t3 * t4 - t1 * t2 * t5;
+  float qy = t0 * t2 * t5 + t1 * t3 * t4;
+  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></viewpoint>");
+}
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_C'");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  
+  float t0 = cos(WIN3D_RZ_Coordinate * 0.5);
+  float t1 = sin(WIN3D_RZ_Coordinate * 0.5);
+  float t2 = cos(WIN3D_RX_Coordinate * 0.5);
+  float t3 = sin(WIN3D_RX_Coordinate * 0.5);
+  float t4 = cos(WIN3D_RY_Coordinate * 0.5);
+  float t5 = sin(WIN3D_RY_Coordinate * 0.5);
+
+  float qw = t0 * t2 * t4 + t1 * t3 * t5;
+  float qx = t0 * t3 * t4 - t1 * t2 * t5;
+  float qy = t0 * t2 * t5 + t1 * t3 * t4;
+  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></viewpoint>");
+}
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_D'");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  
+  float t0 = cos(WIN3D_RZ_Coordinate * 0.5);
+  float t1 = sin(WIN3D_RZ_Coordinate * 0.5);
+  float t2 = cos(WIN3D_RY_Coordinate * 0.5);
+  float t3 = sin(WIN3D_RY_Coordinate * 0.5);
+  float t4 = cos(WIN3D_RX_Coordinate * 0.5);
+  float t5 = sin(WIN3D_RX_Coordinate * 0.5);
+
+  float qw = t0 * t2 * t4 + t1 * t3 * t5;
+  float qx = t0 * t3 * t4 - t1 * t2 * t5;
+  float qy = t0 * t2 * t5 + t1 * t3 * t4;
+  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></viewpoint>");
+}
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_E'");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  
+  float t0 = cos(WIN3D_RX_Coordinate * 0.5);
+  float t1 = sin(WIN3D_RX_Coordinate * 0.5);
+  float t2 = cos(WIN3D_RZ_Coordinate * 0.5);
+  float t3 = sin(WIN3D_RZ_Coordinate * 0.5);
+  float t4 = cos(WIN3D_RY_Coordinate * 0.5);
+  float t5 = sin(WIN3D_RY_Coordinate * 0.5);
+
+  float qw = t0 * t2 * t4 + t1 * t3 * t5;
+  float qx = t0 * t3 * t4 - t1 * t2 * t5;
+  float qy = t0 * t2 * t5 + t1 * t3 * t4;
+  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></viewpoint>");
+}
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_F'");
+  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  
+  float t0 = cos(WIN3D_RY_Coordinate * 0.5);
+  float t1 = sin(WIN3D_RY_Coordinate * 0.5);
+  float t2 = cos(WIN3D_RX_Coordinate * 0.5);
+  float t3 = sin(WIN3D_RX_Coordinate * 0.5);
+  float t4 = cos(WIN3D_RZ_Coordinate * 0.5);
+  float t5 = sin(WIN3D_RZ_Coordinate * 0.5);
+
+  float qw = t0 * t2 * t4 + t1 * t3 * t5;
+  float qx = t0 * t3 * t4 - t1 * t2 * t5;
+  float qy = t0 * t2 * t5 + t1 * t3 * t4;
+  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></viewpoint>");
+}
 
 
   SOLARCHVISION_draw_EARTH(TYPE_WINDOW_HTML);
@@ -19107,7 +19221,7 @@ void SOLARCHVISION_export_objects_HTML () {
         TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
         
         htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-        htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+        htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
         htmlOutput.println("\t\t\t\t</Appearance>");
 
         println("Saving texture:", TEXTURE_path);
@@ -19291,6 +19405,17 @@ void SOLARCHVISION_export_objects_HTML () {
   
   htmlOutput.println("\t\t\t</scene>"); 
   htmlOutput.println("\t\t</x3d>"); 
+  
+  
+  htmlOutput.println("\t\t<div id='camera_buttons' style='display: block;'>");
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_A').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_A<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_B').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_B<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_C').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_C<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_D').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_D<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_E').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_E<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_F').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_F<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t</div>");
+  
   htmlOutput.println("\t</body>"); 
   htmlOutput.println("</html>");
   
@@ -22105,7 +22230,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
               }
               
               if (target_window == TYPE_WINDOW_HTML) {
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
               }                    
                   
             }
@@ -22249,7 +22374,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                     htmlOutput.println("\t\t\t\t\t<Appearance USE='TropoSphere" + nf(n_Map, 0) + "'></Appearance>");
                   }      
                   
-                  htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\""); // force two-sided
+                  htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
                   
                   htmlOutput.print  (" coordIndex='");
                   for (int s = 0; s < subFace.length; s++) {
@@ -22518,7 +22643,7 @@ void SOLARCHVISION_draw_EARTH (int target_window) {
           }
           
           if (target_window == TYPE_WINDOW_HTML) {
-            htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
           }                
 
         }
@@ -22609,7 +22734,7 @@ void SOLARCHVISION_draw_EARTH (int target_window) {
               htmlOutput.println("\t\t\t\t\t<Appearance USE='EarthSphere" + nf(n_Map, 0) + "'></Appearance>");
             }      
             
-            htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\""); // force two-sided
+            htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
             
             htmlOutput.print  (" coordIndex='");
             for (int s = 0; s < subFace.length; s++) {
@@ -23039,7 +23164,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
               }
               
               if (target_window == TYPE_WINDOW_HTML) {
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
               }                 
   
             }
@@ -23215,7 +23340,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
                 htmlOutput.println("\t\t\t\t\t<Appearance USE='LandMap" + nf(n_Map, 0) + "'></Appearance>");
               }      
               
-              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid=\"false\""); // force two-sided
+              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
               
               htmlOutput.print  (" coordIndex='");
               for (int s = 0; s < subFace.length; s++) {
@@ -24976,7 +25101,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
               
               if (target_window == TYPE_WINDOW_HTML) {
                 htmlOutput.println("\t\t\t\t<Appearance DEF='Object2D_" + the_filename + "'>");
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
                 htmlOutput.println("\t\t\t\t</Appearance>");
               }
   
@@ -25155,7 +25280,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
       
                 htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
       
-                htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+                htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
                 
                 htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
                 htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
@@ -25301,7 +25426,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
         
                   htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
         
-                  htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+                  htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
                   
                   htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
                   htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
@@ -40649,7 +40774,7 @@ void SOLARCHVISION_draw_Sections (int target_window) {
 
             if (target_window == TYPE_WINDOW_HTML) {
               htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-              htmlOutput.println("\t\t\t\t\t<ImageTexture url=\""+ Export_MapsSubfolder + the_filename + "\"><ImageTexture/>");
+              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
               htmlOutput.println("\t\t\t\t</Appearance>");
             }
   
@@ -40793,7 +40918,7 @@ void SOLARCHVISION_draw_Sections (int target_window) {
           htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
 
           
-          htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid=\"false\" coordIndex='0 1 2 3 -1'>"); // force two-sided
+          htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
          
           htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
           for (int s = 1; s < subFace.length; s++) {
