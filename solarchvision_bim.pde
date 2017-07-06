@@ -19041,39 +19041,39 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_A'");
   htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
   
-  float t0 = cos(WIN3D_RX_Coordinate * 0.5);
-  float t1 = sin(WIN3D_RX_Coordinate * 0.5);
-  float t2 = cos(WIN3D_RY_Coordinate * 0.5);
-  float t3 = sin(WIN3D_RY_Coordinate * 0.5);
-  float t4 = cos(WIN3D_RZ_Coordinate * 0.5);
-  float t5 = sin(WIN3D_RZ_Coordinate * 0.5);
+  float t0 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float t1 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float t2 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float t3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float t4 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t5 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
 
   float qw = t0 * t2 * t4 + t1 * t3 * t5;
   float qx = t0 * t3 * t4 - t1 * t2 * t5;
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
-  htmlOutput.println("></viewpoint>");
+  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.println("></Viewpoint>");
 }
 
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_B'");
   htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
   
-  float t0 = cos(WIN3D_RY_Coordinate * 0.5);
-  float t1 = sin(WIN3D_RY_Coordinate * 0.5);
-  float t2 = cos(WIN3D_RZ_Coordinate * 0.5);
-  float t3 = sin(WIN3D_RZ_Coordinate * 0.5);
-  float t4 = cos(WIN3D_RX_Coordinate * 0.5);
-  float t5 = sin(WIN3D_RX_Coordinate * 0.5);
+  float t0 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float t1 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float t2 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t4 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float t5 = sin_ang(WIN3D_RX_Coordinate * 0.5);
 
   float qw = t0 * t2 * t4 + t1 * t3 * t5;
   float qx = t0 * t3 * t4 - t1 * t2 * t5;
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19081,19 +19081,19 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_C'");
   htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
   
-  float t0 = cos(WIN3D_RZ_Coordinate * 0.5);
-  float t1 = sin(WIN3D_RZ_Coordinate * 0.5);
-  float t2 = cos(WIN3D_RX_Coordinate * 0.5);
-  float t3 = sin(WIN3D_RX_Coordinate * 0.5);
-  float t4 = cos(WIN3D_RY_Coordinate * 0.5);
-  float t5 = sin(WIN3D_RY_Coordinate * 0.5);
+  float t0 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t1 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t2 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float t3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float t4 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float t5 = sin_ang(WIN3D_RY_Coordinate * 0.5);
 
   float qw = t0 * t2 * t4 + t1 * t3 * t5;
   float qx = t0 * t3 * t4 - t1 * t2 * t5;
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19101,19 +19101,19 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_D'");
   htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
   
-  float t0 = cos(WIN3D_RZ_Coordinate * 0.5);
-  float t1 = sin(WIN3D_RZ_Coordinate * 0.5);
-  float t2 = cos(WIN3D_RY_Coordinate * 0.5);
-  float t3 = sin(WIN3D_RY_Coordinate * 0.5);
-  float t4 = cos(WIN3D_RX_Coordinate * 0.5);
-  float t5 = sin(WIN3D_RX_Coordinate * 0.5);
+  float t0 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t1 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t2 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float t3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float t4 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float t5 = sin_ang(WIN3D_RX_Coordinate * 0.5);
 
   float qw = t0 * t2 * t4 + t1 * t3 * t5;
   float qx = t0 * t3 * t4 - t1 * t2 * t5;
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19121,19 +19121,19 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_E'");
   htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
   
-  float t0 = cos(WIN3D_RX_Coordinate * 0.5);
-  float t1 = sin(WIN3D_RX_Coordinate * 0.5);
-  float t2 = cos(WIN3D_RZ_Coordinate * 0.5);
-  float t3 = sin(WIN3D_RZ_Coordinate * 0.5);
-  float t4 = cos(WIN3D_RY_Coordinate * 0.5);
-  float t5 = sin(WIN3D_RY_Coordinate * 0.5);
+  float t0 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float t1 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float t2 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t4 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float t5 = sin_ang(WIN3D_RY_Coordinate * 0.5);
 
   float qw = t0 * t2 * t4 + t1 * t3 * t5;
   float qx = t0 * t3 * t4 - t1 * t2 * t5;
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19141,19 +19141,19 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_F'");
   htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
   
-  float t0 = cos(WIN3D_RY_Coordinate * 0.5);
-  float t1 = sin(WIN3D_RY_Coordinate * 0.5);
-  float t2 = cos(WIN3D_RX_Coordinate * 0.5);
-  float t3 = sin(WIN3D_RX_Coordinate * 0.5);
-  float t4 = cos(WIN3D_RZ_Coordinate * 0.5);
-  float t5 = sin(WIN3D_RZ_Coordinate * 0.5);
+  float t0 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float t1 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float t2 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float t3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float t4 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float t5 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
 
   float qw = t0 * t2 * t4 + t1 * t3 * t5;
   float qx = t0 * t3 * t4 - t1 * t2 * t5;
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
