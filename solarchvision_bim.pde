@@ -19053,7 +19053,7 @@ void SOLARCHVISION_export_objects_HTML () {
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></Viewpoint>");
 }
 
@@ -19073,7 +19073,7 @@ void SOLARCHVISION_export_objects_HTML () {
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19093,7 +19093,7 @@ void SOLARCHVISION_export_objects_HTML () {
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19113,7 +19113,7 @@ void SOLARCHVISION_export_objects_HTML () {
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19133,7 +19133,7 @@ void SOLARCHVISION_export_objects_HTML () {
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
@@ -19153,7 +19153,7 @@ void SOLARCHVISION_export_objects_HTML () {
   float qy = t0 * t2 * t5 + t1 * t3 * t4;
   float qz = t1 * t2 * t4 - t0 * t3 * t5;  
   
-  htmlOutput.print  (" orientation='" + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + " " + nf(qw, 0, 0) + "'");
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></viewpoint>");
 }
 
