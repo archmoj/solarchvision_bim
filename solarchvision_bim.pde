@@ -420,11 +420,11 @@ int Export_PalletResolution = 256;
 
 
 
-int Display_EARTH_Surface = 1;
-int Display_EARTH_Texture = 1;
+int Display_EARTH_Surface = 0;
+int Display_EARTH_Texture = 0;
 
-int Display_TROPO_Surface = 1;
-int Display_TROPO_Texture = 1;
+int Display_TROPO_Surface = 0;
+int Display_TROPO_Texture = 0;
 
 int Display_STAR_Surface = 0;
 int Display_STAR_Texture = 1;
@@ -1771,9 +1771,9 @@ float WIN3D_Y_Coordinate = 10;
 float WIN3D_Z_Coordinate = 50; 
 float WIN3D_S_Coordinate = 1;
 
-float WIN3D_RX_Coordinate = 90; //75; 
+float WIN3D_RX_Coordinate = 0; //90; //75; 
 float WIN3D_RY_Coordinate = 0;
-float WIN3D_RZ_Coordinate = 180; //0; //180; //135;
+float WIN3D_RZ_Coordinate = 0; //180; //0; //180; //135;
 float WIN3D_RS_Coordinate = 5.0;
 
 float WIN3D_Zoom = 60; // / (SOLARCHVISION_H_Pixel / 300.0);
@@ -19038,124 +19038,129 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t\t<scene>"); 
 
 {
-  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_A'");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
-  
-  float t0 = cos_ang(WIN3D_RX_Coordinate * 0.5);
-  float t1 = sin_ang(WIN3D_RX_Coordinate * 0.5);
-  float t2 = cos_ang(WIN3D_RY_Coordinate * 0.5);
-  float t3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
-  float t4 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t5 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM00'");
+  htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + "'");
 
-  float qw = t0 * t2 * t4 + t1 * t3 * t5;
-  float qx = t0 * t3 * t4 - t1 * t2 * t5;
-  float qy = t0 * t2 * t5 + t1 * t3 * t4;
-  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
+  float c1 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float c2 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float c3 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float s1 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float s2 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float s3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
   
+  float qw = c1*c2*c3 - s1*s2*s3;
+  float qx = s1*s2*c3 + c1*c2*s3;
+  float qy = s1*c2*c3 + c1*s2*s3;
+  float qz = c1*s2*c3 - s1*c2*s3;
+
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></Viewpoint>");
+}
+
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM01'");
+  htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + "'");
+  
+  float c1 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float c2 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float c3 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float s1 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float s2 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float s3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  
+  float qw = c1*c2*c3 - s1*s2*s3;
+  float qx = s1*s2*c3 + c1*c2*s3;
+  float qy = s1*c2*c3 + c1*s2*s3;
+  float qz = c1*s2*c3 - s1*c2*s3;
+
   htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></Viewpoint>");
 }
 
 {
-  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_B'");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM02'");
+  htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + "'");
   
-  float t0 = cos_ang(WIN3D_RY_Coordinate * 0.5);
-  float t1 = sin_ang(WIN3D_RY_Coordinate * 0.5);
-  float t2 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t4 = cos_ang(WIN3D_RX_Coordinate * 0.5);
-  float t5 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float c1 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float c2 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float c3 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float s1 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float s2 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float s3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  
+  float qw = c1*c2*c3 - s1*s2*s3;
+  float qx = s1*s2*c3 + c1*c2*s3;
+  float qy = s1*c2*c3 + c1*s2*s3;
+  float qz = c1*s2*c3 - s1*c2*s3;
 
-  float qw = t0 * t2 * t4 + t1 * t3 * t5;
-  float qx = t0 * t3 * t4 - t1 * t2 * t5;
-  float qy = t0 * t2 * t5 + t1 * t3 * t4;
-  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
-  
   htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
-  htmlOutput.println("></viewpoint>");
+  htmlOutput.println("></Viewpoint>");
+}
+
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM03'");
+  htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + "'");
+  
+  float c1 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float c2 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float c3 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float s1 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float s2 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float s3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  
+  float qw = c1*c2*c3 - s1*s2*s3;
+  float qx = s1*s2*c3 + c1*c2*s3;
+  float qy = s1*c2*c3 + c1*s2*s3;
+  float qz = c1*s2*c3 - s1*c2*s3;
+
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></Viewpoint>");
+}
+
+
+{
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM04'");
+  htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + "'");
+  
+  float c1 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float c2 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float c3 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float s1 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float s2 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  float s3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  
+  float qw = c1*c2*c3 - s1*s2*s3;
+  float qx = s1*s2*c3 + c1*c2*s3;
+  float qy = s1*c2*c3 + c1*s2*s3;
+  float qz = c1*s2*c3 - s1*c2*s3;
+
+  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
+  htmlOutput.println("></Viewpoint>");
 }
 
 {
-  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_C'");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
+  htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM05'");
+  htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + "'");
   
-  float t0 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t1 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t2 = cos_ang(WIN3D_RX_Coordinate * 0.5);
-  float t3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
-  float t4 = cos_ang(WIN3D_RY_Coordinate * 0.5);
-  float t5 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float c1 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
+  float c2 = cos_ang(WIN3D_RY_Coordinate * 0.5);
+  float c3 = cos_ang(WIN3D_RX_Coordinate * 0.5);
+  float s1 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
+  float s2 = sin_ang(WIN3D_RY_Coordinate * 0.5);
+  float s3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
+  
+  float qw = c1*c2*c3 - s1*s2*s3;
+  float qx = s1*s2*c3 + c1*c2*s3;
+  float qy = s1*c2*c3 + c1*s2*s3;
+  float qz = c1*s2*c3 - s1*c2*s3;
 
-  float qw = t0 * t2 * t4 + t1 * t3 * t5;
-  float qx = t0 * t3 * t4 - t1 * t2 * t5;
-  float qy = t0 * t2 * t5 + t1 * t3 * t4;
-  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
-  
   htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
-  htmlOutput.println("></viewpoint>");
+  htmlOutput.println("></Viewpoint>");
 }
 
-{
-  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_D'");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
-  
-  float t0 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t1 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t2 = cos_ang(WIN3D_RY_Coordinate * 0.5);
-  float t3 = sin_ang(WIN3D_RY_Coordinate * 0.5);
-  float t4 = cos_ang(WIN3D_RX_Coordinate * 0.5);
-  float t5 = sin_ang(WIN3D_RX_Coordinate * 0.5);
 
-  float qw = t0 * t2 * t4 + t1 * t3 * t5;
-  float qx = t0 * t3 * t4 - t1 * t2 * t5;
-  float qy = t0 * t2 * t5 + t1 * t3 * t4;
-  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
-  
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
-  htmlOutput.println("></viewpoint>");
-}
-
-{
-  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_E'");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
-  
-  float t0 = cos_ang(WIN3D_RX_Coordinate * 0.5);
-  float t1 = sin_ang(WIN3D_RX_Coordinate * 0.5);
-  float t2 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t3 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t4 = cos_ang(WIN3D_RY_Coordinate * 0.5);
-  float t5 = sin_ang(WIN3D_RY_Coordinate * 0.5);
-
-  float qw = t0 * t2 * t4 + t1 * t3 * t5;
-  float qx = t0 * t3 * t4 - t1 * t2 * t5;
-  float qy = t0 * t2 * t5 + t1 * t3 * t4;
-  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
-  
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
-  htmlOutput.println("></viewpoint>");
-}
-
-{
-  htmlOutput.print  ("\t\t\t\t<viewpoint id='cam_F'");
-  htmlOutput.print  (" position='" + nf(WIN3D_X_Coordinate, 0, 0) + " " + nf(WIN3D_Z_Coordinate, 0, 0) + " " + nf(WIN3D_Y_Coordinate, 0, 0) + "'");
-  
-  float t0 = cos_ang(WIN3D_RY_Coordinate * 0.5);
-  float t1 = sin_ang(WIN3D_RY_Coordinate * 0.5);
-  float t2 = cos_ang(WIN3D_RX_Coordinate * 0.5);
-  float t3 = sin_ang(WIN3D_RX_Coordinate * 0.5);
-  float t4 = cos_ang(WIN3D_RZ_Coordinate * 0.5);
-  float t5 = sin_ang(WIN3D_RZ_Coordinate * 0.5);
-
-  float qw = t0 * t2 * t4 + t1 * t3 * t5;
-  float qx = t0 * t3 * t4 - t1 * t2 * t5;
-  float qy = t0 * t2 * t5 + t1 * t3 * t4;
-  float qz = t1 * t2 * t4 - t0 * t3 * t5;  
-  
-  htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
-  htmlOutput.println("></viewpoint>");
-}
 
 
   SOLARCHVISION_draw_EARTH(TYPE_WINDOW_HTML);
@@ -19408,12 +19413,12 @@ void SOLARCHVISION_export_objects_HTML () {
   
   
   htmlOutput.println("\t\t<div id='camera_buttons' style='display: block;'>");
-  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_A').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_A<br><img src='camera.png'></button>");  
-  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_B').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_B<br><img src='camera.png'></button>");  
-  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_C').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_C<br><img src='camera.png'></button>");  
-  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_D').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_D<br><img src='camera.png'></button>");  
-  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_E').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_E<br><img src='camera.png'></button>");  
-  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('cam_F').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>cam_F<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM00').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM00<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM01').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM01<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM02').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM02<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM03').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM03<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM04').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM04<br><img src='camera.png'></button>");  
+  htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM05').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM05<br><img src='camera.png'></button>");  
   htmlOutput.println("\t\t</div>");
   
   htmlOutput.println("\t</body>"); 
