@@ -1,5 +1,12 @@
 String SceneName = "Complex";
 
+//Polar
+int LAND_n_I = 24;  
+int LAND_n_J = 48 + 1;  
+
+int LAND_Surface_SkipStart = 0; 
+int LAND_Surface_SkipEnd = 6; 
+
 
 
 // note we used .... float r = FLOAT_r_Earth + 10000; for clouds
@@ -104,8 +111,8 @@ String GEOMET_directory;
 String[] CLIMATE_TMYEPW_Files;
 String[] CLIMATE_CWEEDS_Files;
 String[] CLIMATE_CLMREC_Files;
-String[] ENSEMBLE_OBSERVED_XML_Files;
-String[] ENSEMBLE_FORECAST_XML_Files;
+String[] ENSEMBLE_OBSERVED_Files;
+String[] ENSEMBLE_FORECAST_Files;
 
 
 String SOLARCHVISION_version = "2017"; 
@@ -138,12 +145,13 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Project_H01";    
+  ProjectFolder = BaseFolder + "/Projects/Bonaventure";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
   GEOMET_directory = ProjectFolder + "/Data/GEOMET" + "/" + RunStamp;
   GRIB2_directory = ProjectFolder + "/Data/GRIB2";
+  
   ENSEMBLE_FORECAST_directory = ProjectFolder + "/Data/FORECAST_NAEFS";
   ENSEMBLE_OBSERVED_directory = ProjectFolder + "/Data/OBSERVATION_SWOB";
 
@@ -151,11 +159,12 @@ void SOLARCHVISION_update_folders () {
   CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
   CLIMATE_CWEEDS_directory = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
   
+  CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
   CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
   CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
-  CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
-  ENSEMBLE_OBSERVED_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
-  ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
+  
+  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
+  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
 
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
@@ -453,7 +462,7 @@ int STATION_DEF_TMYEPW = 9;
 
 String[] Defined_Stations = {
   
-  "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
+  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
   
   //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
@@ -461,6 +470,7 @@ String[] Defined_Stations = {
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
@@ -1572,7 +1582,7 @@ int Display_LAND_Surface = 1;
 int Display_LAND_Points = 0;
 int Display_LAND_Textures = 1;
 int Display_LAND_Depth = 0;
-int Skip_LAND_Surface_Center = 0; //5;
+
 
 
 int Display_SolidImpact_Points = 0;
@@ -5609,7 +5619,7 @@ void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int 
       launch(Command1 + " & " + Command2);
     }
     
-    ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
+    ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
     
     Load_ENSEMBLE_FORECAST = 1;
     SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
@@ -5619,7 +5629,7 @@ void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int 
 
 void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  ENSEMBLE_FORECAST_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
+  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
   ENSEMBLE_FORECAST_values = new float [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
   ENSEMBLE_FORECAST_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -6268,7 +6278,7 @@ void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
   }
   
 
-  ENSEMBLE_OBSERVED_XML_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
+  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
   
   Load_ENSEMBLE_OBSERVED = 1; 
   SOLARCHVISION_update_ENSEMBLE_OBSERVED();
@@ -19037,8 +19047,8 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t<x3d width='900px' height='600px'>");  
   htmlOutput.println("\t\t\t<scene>"); 
 
-
-
+  htmlOutput.println("\t\t\t\t<viewpoint position='0 0 100'></Viewpoint>");
+/*
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM00'");
   htmlOutput.print  (" position='" + nf(WIN3D_CAM_x, 0, 0) + " " + nf(WIN3D_CAM_y, 0, 0) + " " + nf(WIN3D_CAM_z, 0, 0) + "'");
@@ -19161,7 +19171,7 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  (" orientation='" + nf(qw, 0, 0) + " " + nf(qx, 0, 0) + " " + nf(qy, 0, 0) + " " + nf(qz, 0, 0) + "'");
   htmlOutput.println("></Viewpoint>");
 }
-
+*/
 
 
   SOLARCHVISION_draw_EARTH(TYPE_WINDOW_HTML);
@@ -19264,143 +19274,152 @@ void SOLARCHVISION_export_objects_HTML () {
     }
 
 
-    for (int f = 0; f < allFaces_PNT.length; f++) {
-  
-      if (allFaces_PNT[f].length > 2) {
+    for (int OBJ_NUM = 0; OBJ_NUM < allGroup3Ds_num; OBJ_NUM++) {
 
-        int mt = allFaces_MTLVGC[f][0];
+      if (allGroup3Ds_Faces[OBJ_NUM][0] <= allGroup3Ds_Faces[OBJ_NUM][1]) {
 
-        int Tessellation = allFaces_MTLVGC[f][1];
-
-        int TotalSubNo = 1;  
-        if (allFaces_MTLVGC[f][0] == 0) {
-          Tessellation += MODEL3D_Tessellation;
-        }
-
-        if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-        float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-        for (int j = 0; j < allFaces_PNT[f].length; j++) {
-          int vNo = allFaces_PNT[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-
-        for (int n = 0; n < TotalSubNo; n++) {
-
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-          
-          for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
-
-            htmlOutput.println("\t\t\t\t<shape>");
-
-            if (Create_Face_Texture == 0) {
-              htmlOutput.println("\t\t\t\t\t<Appearance USE='SurfaceMaterial" + nf(mt, 0) + "'></Appearance>");
+        htmlOutput.println("\t\t\t\t<group>");
+        
+        for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
+      
+          if (allFaces_PNT[f].length > 2) {
+            
+            int mt = allFaces_MTLVGC[f][0];
+    
+            int Tessellation = allFaces_MTLVGC[f][1];
+    
+            int TotalSubNo = 1;  
+            if (allFaces_MTLVGC[f][0] == 0) {
+              Tessellation += MODEL3D_Tessellation;
             }
-            else {
-              htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
-            }              
-
-            
-            htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet");
-            
-            htmlOutput.print  (" coordIndex='");
-            for (int q = 0; q < subFace.length; q++) {
-              if (q > 0) {
-                htmlOutput.print(" ");
-              }         
-              htmlOutput.print(nf(q, 0));          
+    
+            if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+            float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+            for (int j = 0; j < allFaces_PNT[f].length; j++) {
+              int vNo = allFaces_PNT[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
             }
-            htmlOutput.println(" -1'>");
-            
-            htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-            for (int q = 0; q < subFace.length; q++) {
-              if (q > 0) {
-                htmlOutput.print(",");
-              }                  
-              int s = q;
-              if (back_or_front == 0) {
-                s = subFace.length - 1 - q;
-              }
+    
+            for (int n = 0; n < TotalSubNo; n++) {
+    
+              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
               
-              htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
-            }                
-            htmlOutput.println("'></Coordinate>");
-
-
-
-
-
-
-            if (Create_Face_Texture == 1) {
- 
-              htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
-              for (int q = 0; q < subFace.length; q++) {
-                if (q > 0) {
-                  htmlOutput.print(",");
-                }                  
-                int s = q;
-                if (back_or_front == 0) {
-                  s = subFace.length - 1 - q;
+              for (int back_or_front = 1 - Export_BackSides; back_or_front <= 1; back_or_front++) {
+    
+                htmlOutput.println("\t\t\t\t\t<shape>");
+    
+                if (Create_Face_Texture == 0) {
+                  htmlOutput.println("\t\t\t\t\t\t<Appearance USE='SurfaceMaterial" + nf(mt, 0) + "'></Appearance>");
+                }
+                else {
+                  htmlOutput.println("\t\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
+                }              
+    
+                
+                htmlOutput.print  ("\t\t\t\t\t\t<IndexedFaceSet");
+                
+                htmlOutput.print  (" coordIndex='");
+                for (int q = 0; q < subFace.length; q++) {
+                  if (q > 0) {
+                    htmlOutput.print(" ");
+                  }         
+                  htmlOutput.print(nf(q, 0));          
+                }
+                htmlOutput.println(" -1'>");
+                
+                htmlOutput.print  ("\t\t\t\t\t\t\t<Coordinate point='");
+                for (int q = 0; q < subFace.length; q++) {
+                  if (q > 0) {
+                    htmlOutput.print(",");
+                  }                  
+                  int s = q;
+                  if (back_or_front == 0) {
+                    s = subFace.length - 1 - q;
+                  }
+                  
+                  htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                }                
+                htmlOutput.println("'></Coordinate>");
+    
+    
+    
+    
+    
+    
+                if (Create_Face_Texture == 1) {
+     
+                  htmlOutput.print  ("\t\t\t\t\t\t\t<TextureCoordinate point='");
+                  for (int q = 0; q < subFace.length; q++) {
+                    if (q > 0) {
+                      htmlOutput.print(",");
+                    }                  
+                    int s = q;
+                    if (back_or_front == 0) {
+                      s = subFace.length - 1 - q;
+                    }
+                    
+                    float _u = 0;
+      
+        
+                    if (WIN3D_FacesShade == Shade_Global_Solar) {
+                      int s_next = (s + 1) % subFace.length;
+                      int s_prev = (s + subFace.length - 1) % subFace.length;
+        
+                      if (back_or_front == 0) {
+                        int s_temp = s_next;
+                        s_next = s_prev;
+                        s_prev = s_temp;
+                      }
+        
+                      _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }
+        
+                    if (WIN3D_FacesShade == Shade_Vertex_Solar) {
+                      
+                      _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }                            
+        
+                    if (WIN3D_FacesShade == Shade_Vertex_Solid) {
+        
+                      _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }                  
+        
+                    if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
+        
+                      _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }
+        
+        
+                    float u0 = 0.5 * (_u + 0.5);
+        
+                    if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
+                      if (Impact_TYPE == Impact_ACTIVE) {
+                        u0 = _u;
+                      }
+                    }
+        
+                    if (u0 > 1) u0 = 1;
+                    if (u0 < 0) u0 = 0;
+      
+                    SOLARCHVISION_HTMLprintVtexture(u0, 0.5);
+                  }                
+                  
+                  htmlOutput.println("'></TextureCoordinate>");           
                 }
                 
-                float _u = 0;
-  
-    
-                if (WIN3D_FacesShade == Shade_Global_Solar) {
-                  int s_next = (s + 1) % subFace.length;
-                  int s_prev = (s + subFace.length - 1) % subFace.length;
-    
-                  if (back_or_front == 0) {
-                    int s_temp = s_next;
-                    s_next = s_prev;
-                    s_prev = s_temp;
-                  }
-    
-                  _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }
-    
-                if (WIN3D_FacesShade == Shade_Vertex_Solar) {
-                  
-                  _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }                            
-    
-                if (WIN3D_FacesShade == Shade_Vertex_Solid) {
-    
-                  _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }                  
-    
-                if (WIN3D_FacesShade == Shade_Vertex_Elevation) {
-    
-                  _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }
-    
-    
-                float u0 = 0.5 * (_u + 0.5);
-    
-                if ((WIN3D_FacesShade == Shade_Global_Solar) || (WIN3D_FacesShade == Shade_Vertex_Solar)) {
-                  if (Impact_TYPE == Impact_ACTIVE) {
-                    u0 = _u;
-                  }
-                }
-    
-                if (u0 > 1) u0 = 1;
-                if (u0 < 0) u0 = 0;
-  
-                SOLARCHVISION_HTMLprintVtexture(u0, 0.5);
-              }                
-              
-              htmlOutput.println("'></TextureCoordinate>");           
+        
+                htmlOutput.println("\t\t\t\t\t\t</IndexedFaceSet>");
+               
+                htmlOutput.println("\t\t\t\t\t</shape>");
+                
+              }
             }
-            
-    
-            htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-           
-            htmlOutput.println("\t\t\t\t</shape>");
-            
           }
         }
+        htmlOutput.println("\t\t\t\t</group>");
       }
     }
   }
@@ -19412,7 +19431,7 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t\t</scene>"); 
   htmlOutput.println("\t\t</x3d>"); 
   
-  
+/*  
   htmlOutput.println("\t\t<div id='camera_buttons' style='display: block;'>");
   htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM00').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM00<br><img src='camera.png'></button>");  
   htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM01').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM01<br><img src='camera.png'></button>");  
@@ -19421,7 +19440,8 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM04').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM04<br><img src='camera.png'></button>");  
   htmlOutput.println("\t\t\t<button  onclick=\"document.getElementById('CAM05').setAttribute('set_bind','true');\" style='border: none; background: transparent; display: block'>CAM05<br><img src='camera.png'></button>");  
   htmlOutput.println("\t\t</div>");
-  
+*/
+
   htmlOutput.println("\t</body>"); 
   htmlOutput.println("</html>");
   
@@ -20682,7 +20702,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
   if ((Display_LAND_Textures != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
 
-    for (int i = Skip_LAND_Surface_Center; i < LAND_n_I - 1; i += 1) {
+    for (int i = LAND_Surface_SkipStart; i < LAND_n_I - 1 - LAND_Surface_SkipEnd; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
 
         float[][] base_Vertices = new float [4][3];
@@ -20813,7 +20833,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     }
   } else {
 
-    for (int i = Skip_LAND_Surface_Center; i < LAND_n_I - 1; i += 1) {
+    for (int i = LAND_Surface_SkipStart; i < LAND_n_I - 1 - LAND_Surface_SkipEnd; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
 
         float[][] base_Vertices = new float [4][3];
@@ -21160,18 +21180,6 @@ void SOLARCHVISION_delete_Group3Ds () {
 
 
 
-void SOLARCHVISION_add_3Dbase (int m, int tes, int lyr, int vsb, int wgt, int clz) {
-
-  if (Load_LAND_Mesh != 0) {
-
-    for (int i = 0; i < Skip_LAND_Surface_Center; i += 1) {  
-      for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        // Material -2 for colored elevations
-        SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, wgt, clz, LAND_Mesh[i][j][0], LAND_Mesh[i][j][1], LAND_Mesh[i][j][2], LAND_Mesh[i+1][j][0], LAND_Mesh[i+1][j][1], LAND_Mesh[i+1][j][2], LAND_Mesh[i+1][j+1][0], LAND_Mesh[i+1][j+1][1], LAND_Mesh[i+1][j+1][2], LAND_Mesh[i][j+1][0], LAND_Mesh[i][j+1][1], LAND_Mesh[i][j+1][2]);
-      }
-    }
-  }
-}  
 
 int MAX_Default_Models_Number = 7;
 
@@ -23234,12 +23242,12 @@ void SOLARCHVISION_draw_LAND (int target_window) {
       int TotalSubNo = 1;  
       if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
 
-      int i_start = Skip_LAND_Surface_Center;
-      int i_end = LAND_n_I - 1;
+      int i_start = LAND_Surface_SkipStart;
+      int i_end = LAND_n_I - 1 - LAND_Surface_SkipEnd;
 
       if (target_window == TYPE_WINDOW_LandGap) {
         i_start = 0;
-        i_end = Skip_LAND_Surface_Center;
+        i_end = LAND_Surface_SkipStart;
         
         target_window = TYPE_WINDOW_LandMesh; // because the rest is simillar to that
       }
@@ -23283,7 +23291,8 @@ void SOLARCHVISION_draw_LAND (int target_window) {
                   float u = (subFace[s][0] / LAND_Textures_scale_U[q] + 0.5);
                   float v = (-subFace[s][1] / LAND_Textures_scale_V[q] + 0.5);
 
-                  if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+                  //if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+                  if ((0.05 > u) || (u > 0.95) || (0.05 > v) || (v > 0.95)) { // simply not to include the legends printed at the margin
 
                     n_Map = -1;
 
@@ -27005,9 +27014,7 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 
-//Polar
-int LAND_n_I = 24; //16; //24; 
-int LAND_n_J = 48 + 1; //24 + 1; // 48 + 1;     
+
 
 float[][][] LAND_Mesh;
 
@@ -36828,7 +36835,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Load_LAND_Textures = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Load_LAND_Textures", Load_LAND_Textures, 0, 1, 1), 1));
       Load_LAND_Mesh = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Load_LAND_Mesh", Load_LAND_Mesh, 0, 1, 1), 1));
-      Skip_LAND_Surface_Center = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Skip_LAND_Surface_Center", Skip_LAND_Surface_Center, 0, LAND_n_I - 1, 1), 1));
+      LAND_Surface_SkipStart = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LAND_Surface_SkipStart", LAND_Surface_SkipStart, 0, LAND_n_I - 1, 1), 1));
+      LAND_Surface_SkipEnd = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "LAND_Surface_SkipEnd", LAND_Surface_SkipEnd, 0, LAND_n_I - 1, 1), 1));
       Display_LAND_Surface = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Surface", Display_LAND_Surface, 0, 1, 1), 1));
       Display_LAND_Textures = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Textures", Display_LAND_Textures, 0, 1, 1), 1));
       Display_LAND_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 1, 0, "Display_LAND_Points", Display_LAND_Points, 0, 1, 1), 1));     
@@ -39505,7 +39513,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
         
         
-              for (int Li = Skip_LAND_Surface_Center; Li < LAND_n_I - 1; Li += 1) {
+              for (int Li = LAND_Surface_SkipStart; Li < LAND_n_I - 1 - LAND_Surface_SkipEnd; Li += 1) {
                 for (int Lj = 0; Lj < LAND_n_J - 1; Lj += 1) {
         
                   float[][] base_Vertices = new float [4][3];
@@ -40118,7 +40126,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
       
       
-            for (int Li = Skip_LAND_Surface_Center; Li < LAND_n_I - 1; Li += 1) {
+            for (int Li = LAND_Surface_SkipStart; Li < LAND_n_I - 1 - LAND_Surface_SkipEnd; Li += 1) {
               for (int Lj = 0; Lj < LAND_n_J - 1; Lj += 1) {
       
                 float[][] base_Vertices = new float [4][3];
@@ -43875,6 +43883,8 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 
 void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
+  
+  println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);
 
   float[] A = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
   float[] B = SOLARCHVISION_translateInside_ReferencePivot(dx, dy, dz);
@@ -48877,7 +48887,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_LAND_Points", Display_LAND_Points);
   newChild1.setInt("Display_LAND_Textures", Display_LAND_Textures);
   newChild1.setInt("Display_LAND_Depth", Display_LAND_Depth);
-  newChild1.setInt("Skip_LAND_Surface_Center", Skip_LAND_Surface_Center);
+  newChild1.setInt("LAND_Surface_SkipStart", LAND_Surface_SkipStart);
+  newChild1.setInt("LAND_Surface_SkipEnd", LAND_Surface_SkipEnd);
   newChild1.setInt("Display_SolidImpact_Points", Display_SolidImpact_Points);
   newChild1.setInt("Display_SolidImpact_Lines", Display_SolidImpact_Lines);
   newChild1.setInt("MODEL3D_DisplayVertices", MODEL3D_DisplayVertices);       
@@ -50130,7 +50141,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_LAND_Points = children0[L].getInt("Display_LAND_Points");
       Display_LAND_Textures = children0[L].getInt("Display_LAND_Textures");
       Display_LAND_Depth = children0[L].getInt("Display_LAND_Depth");
-      Skip_LAND_Surface_Center = children0[L].getInt("Skip_LAND_Surface_Center");
+      LAND_Surface_SkipStart = children0[L].getInt("LAND_Surface_SkipStart");
+      LAND_Surface_SkipEnd = children0[L].getInt("LAND_Surface_SkipEnd");
       Display_SolidImpact_Points = children0[L].getInt("Display_SolidImpact_Points");
       Display_SolidImpact_Lines = children0[L].getInt("Display_SolidImpact_Lines");
       MODEL3D_DisplayVertices = children0[L].getInt("MODEL3D_DisplayVertices");  
