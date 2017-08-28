@@ -145,7 +145,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Test02";    
+  ProjectFolder = BaseFolder + "/Projects/Dokhi";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -464,10 +464,12 @@ String[] Defined_Stations = {
   
   //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
   
-  "Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
+  //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"FIROUZKOH_Mergan", "XX", "IR", "35.698970", "52.642485", "52.5", "2075", "", "", "IRN_Semnan_XX_IR"
+  "Chahbahar_Karand", "XX", "IR", "25.3242", "60.6517", "52.5", "0", "", "", "IRN_Chahbahar_XX_IR"
+  
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
@@ -27015,16 +27017,7 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
 
 
 
-float[] getLandGrid (int i, int j) {
 
-  float[] xy = new float [2];
- 
-  x =  ?
-  
-  
-  return xy;
-  
-}
 
 
 float[][][] LAND_Mesh;
@@ -27115,19 +27108,16 @@ void SOLARCHVISION_update_LAND_Mesh () {
 }
 
 
-
-
-
 void SOLARCHVISION_download_LAND_Mesh () {
 
   LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
 
-  double stp_lat = 1.0 / 2224.5968; // equals to 50m 
+  double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<< Note: for many locations this one is applied
 
   double stp_lon = stp_lat / cos_ang(LocationLatitude);   
   
   //float q = 2;
-  float q = pow(2, 0.5);
+  float q = pow(2, 0.5); // <<<<<<<< Note: for many locations this one is applied
   //float q = 1.25;
   //float q = 1.125;  
   
@@ -27144,8 +27134,6 @@ void SOLARCHVISION_download_LAND_Mesh () {
   
         if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
         else the_link += "%7C"; //"|";
-        
-        
         
         float t = j * 360.0 / (LAND_n_J - 1);
         
