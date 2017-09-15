@@ -27040,6 +27040,18 @@ double[] getLandGrid (int i, int j) {
   
 }
 
+float[] convert_lonlat2XY (double _lon, double _lat) {
+
+  double du = ((_lon - LocationLongitude) / 180.0) * (PI * DOUBLE_r_Earth);
+  double dv = ((_lat - LocationLatitude) / 180.0) * (PI * DOUBLE_r_Earth);
+
+  float x = (float) du * cos_ang((float) _lat);
+  float y = (float) dv;   
+  
+  float[] XY = {x, y};
+  
+  return XY;
+}
 
 float[][][] LAND_Mesh;
 
@@ -27079,15 +27091,11 @@ void SOLARCHVISION_update_LAND_Mesh () {
           double _lon = Double.parseDouble(txt_longitude); 
           double _lat = Double.parseDouble(txt_latitude); 
 
-          double du = ((_lon - LocationLongitude) / 180.0) * (PI * DOUBLE_r_Earth);
-          double dv = ((_lat - LocationLatitude) / 180.0) * (PI * DOUBLE_r_Earth);
+          float[] XY = convert_lonlat2XY(_lon, _lat);
 
-          float x = (float) du * cos_ang((float) _lat);
-          float y = (float) dv; 
+          float x = XY[0];
+          float y = XY[1]; 
           float z = float(txt_elevation);
-
-          //println(i, j);
-          //println(x,y,z);
 
           LAND_Mesh[i][j][0] = x;      
           LAND_Mesh[i][j][1] = y;      
@@ -27129,6 +27137,36 @@ void SOLARCHVISION_update_LAND_Mesh () {
 }
 
 
+
+void SOLARCHVISION_flat_LAND_Mesh () {
+
+  LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
+
+  for (int i = 0; i < LAND_n_I; i += 1) {
+    
+   
+    for (int j = 0; j < LAND_n_J; j += 1) {
+
+     
+      double[] LON_LAT = getLandGrid(i,j);
+      
+      double _lon = LON_LAT[0];
+      double _lat = LON_LAT[1]; 
+
+      float[] XY = convert_lonlat2XY(_lon, _lat);
+
+      LAND_Mesh[i][j][0] = XY[0];      
+      LAND_Mesh[i][j][1] = XY[1];      
+      LAND_Mesh[i][j][2] = 0; 
+
+    }
+
+  }
+
+  Load_LAND_Mesh = 1;
+  SOLARCHVISION_update_LAND_Mesh();
+
+}
 
 
 
