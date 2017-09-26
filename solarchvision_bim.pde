@@ -720,8 +720,8 @@ int TIME_ModelRun = 0; //12;
 
 int TIME_Hour = TIME_ModelRun; //hour(); 
 int TIME_Year = year(); 
-int TIME_Month = 3; //month();
-int TIME_Day = 28; //day(); 
+int TIME_Month = month();
+int TIME_Day = day(); 
 
 int TIME_BeginDay;
 float TIME_Date;
@@ -806,7 +806,7 @@ int WIN3D_record_AUTO = 0;
 
 
 int ENSEMBLE_FORECAST_maxDays = 16; // Constant
-int ENSEMBLE_OBSERVED_maxDays = 31 + 28; // Variable
+int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
 
 float STUDY_PerDays = 45; //61; //1; //45; //61; //30.5;
 int STUDY_JoinDays = 1; //30;//STUDY_PerDays; // it should be set up to 1 in order to plot only one day  
