@@ -145,7 +145,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Test03";    
+  ProjectFolder = BaseFolder + "/Projects/Nima";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -471,8 +471,9 @@ String[] Defined_Stations = {
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  "Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
+  //"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
   //"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
+  "Toronto_Nima", "ON", "CA", "43.80", "-79.60", "-75", "95", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
@@ -719,8 +720,8 @@ int TIME_ModelRun = 0; //12;
 
 int TIME_Hour = TIME_ModelRun; //hour(); 
 int TIME_Year = year(); 
-int TIME_Month = month();
-int TIME_Day = day(); 
+int TIME_Month = 3; //month();
+int TIME_Day = 28; //day(); 
 
 int TIME_BeginDay;
 float TIME_Date;
@@ -805,7 +806,7 @@ int WIN3D_record_AUTO = 0;
 
 
 int ENSEMBLE_FORECAST_maxDays = 16; // Constant
-int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
+int ENSEMBLE_OBSERVED_maxDays = 31 + 28; // Variable
 
 float STUDY_PerDays = 45; //61; //1; //45; //61; //30.5;
 int STUDY_JoinDays = 1; //30;//STUDY_PerDays; // it should be set up to 1 in order to plot only one day  
@@ -822,7 +823,7 @@ int CLIMATE_CLMREC_end = 2017;
 int ENSEMBLE_FORECAST_start = 1; 
 int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
 
-int ENSEMBLE_OBSERVED_numNearest = 5;  // <<<<<<<<
+int ENSEMBLE_OBSERVED_numNearest = 3;  // <<<<<<<<
 
 int ENSEMBLE_OBSERVED_start = 1; 
 int ENSEMBLE_OBSERVED_end = ENSEMBLE_OBSERVED_numNearest;
@@ -842,7 +843,7 @@ int SampleMember_Start = 1;
 int SampleMember_End = 43;
 
 int SampleStation_Start = 1; 
-int SampleStation_End = 1;
+int SampleStation_End = ENSEMBLE_OBSERVED_numNearest;
 
 float[][][][] CLIMATE_TMYEPW_values;
 boolean[][][][] CLIMATE_TMYEPW_flags;
@@ -54515,9 +54516,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       _FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly data(FORECAST)");
+      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly data");
 
       FILE_outputRaw[(j - STUDY_j_Start)].print("Hour\t");
       for (int k = 0; k < count_k; k += 1) {   
@@ -54526,8 +54526,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputRaw[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly normal(FORECAST)");
+      FILE_outputNorms[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly normal");
       FILE_outputNorms[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         FILE_outputNorms[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t");
@@ -54535,8 +54535,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputNorms[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter("/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
+      FILE_outputProbs[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly probabilities");
 
       FILE_outputProbs[(j - STUDY_j_Start)].print("Hour:\t");
       FILE_outputProbs[(j - STUDY_j_Start)].println("");
@@ -54638,6 +54638,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
 
       if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].println();
 
+
       _interval += 1; 
       if ((_interval % STUDY_SumInterval) == 0) {
         for (int k = 0; k < count_k; k += 1) {
@@ -54672,15 +54673,22 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
         SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
-
-    if (Export_STUDY_info_node == 1) {
-      if ((STUDY_DisplayRaws == 1) || (STUDY_DisplayNormals == 1) || (STUDY_DisplayProbs == 1)) {
-        FILE_outputRaw[(j - STUDY_j_Start)].println("Source: " + DATA_reference);
-        FILE_outputRaw[(j - STUDY_j_Start)].println("Post-processed by SOLARCHVISION 2017: www.solarchvision.com");
-        FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
-        FILE_outputRaw[(j - STUDY_j_Start)].close();
-      }
+    
+    if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
+      FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
+      FILE_outputRaw[(j - STUDY_j_Start)].close();
     }
+
+    if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
+      FILE_outputNorms[(j - STUDY_j_Start)].flush(); 
+      FILE_outputNorms[(j - STUDY_j_Start)].close();
+    }
+
+    if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
+      FILE_outputProbs[(j - STUDY_j_Start)].flush(); 
+      FILE_outputProbs[(j - STUDY_j_Start)].close();
+    }
+    
 
   }
 
