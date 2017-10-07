@@ -145,7 +145,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Nima";    
+  ProjectFolder = BaseFolder + "/Projects/Esfahan";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -468,12 +468,13 @@ String[] Defined_Stations = {
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"FIROUZKOH_Mergan", "XX", "IR", "35.698970", "52.642485", "52.5", "2075", "", "", "IRN_Semnan_XX_IR"
+  "ESFAHAN", "XX", "IR", "32.617", "51.667", "52.5", "1590", "", "", "IRN_Esfahan_ZZ_IR"
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
   //"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
-  "Toronto_Nima", "ON", "CA", "43.80", "-79.60", "-75", "95", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
+  //"Toronto_Nima", "ON", "CA", "43.80", "-79.60", "-75", "95", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
   //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 };
 
