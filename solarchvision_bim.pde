@@ -145,7 +145,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/SOLID";    
+  ProjectFolder = BaseFolder + "/Projects/Roodbar";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -462,13 +462,15 @@ int STATION_DEF_TMYEPW = 9;
 
 String[] Defined_Stations = {
   
-  "SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
+  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
   
   //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
   //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
   //"FIROUZKOH_Mergan", "XX", "IR", "35.698970", "52.642485", "52.5", "2075", "", "", "IRN_Semnan_XX_IR"
   //"ESFAHAN", "XX", "IR", "32.617", "51.667", "52.5", "1590", "", "", "IRN_Esfahan_ZZ_IR"
+  //"Ghareh_Khach", "XX", "IR", "39.263", "44.463", "52.5", "1686", "", "", "IRN_GharehKhach_XX_IR"
+  "Roodbar", "XX", "IR", "36.826", "49.426", "52.5", "194", "", "", "IRN_Rasht_YY_IR"
   
   //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
