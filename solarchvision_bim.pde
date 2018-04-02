@@ -10,12 +10,11 @@ class solarchvision_STATION {
   private float elevation = 0;
   private float latitude = 0;
   private float longitude = 0;
-  private float timelong = 0;  
+  private float timelong = 0;
+  private String code = "";  
   private String city = "";
   private String province = "";
   private String country = "";
-  private String ICAO = "";
-  private String WMO = "";
   private String filename_NAEFS = "";
   private String filename_CWEEDS = "";
   private String filename_TMYEPW = "";
@@ -24,12 +23,11 @@ class solarchvision_STATION {
   public float getElevation () { return this.elevation; } 
   public float getLatitude () { return this.latitude; }
   public float getLongitude () { return this.longitude; } 
-  public float getTimelong () { return this.timelong; }   
+  public float getTimelong () { return this.timelong; }
+  public String getCode () { return this.code; }  
   public String getCity () { return this.city; } 
   public String getProvince () { return this.province; } 
   public String getCountry () { return this.country; }
-  public String getICAO () { return this.ICAO; }
-  public String getWMO () { return this.WMO; }
   public String getFilename_NAEFS () { return this.filename_NAEFS; }
   public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
   public String getFilename_TMYEPW () { return this.filename_TMYEPW; } 
@@ -46,6 +44,9 @@ class solarchvision_STATION {
   }
   public void setTimelong (float timelong) {
     this.timelong = timelong;
+  }
+  public void setCode (String code) {
+    this.code = code;
   }  
   public void setCity (String city) {
     this.city = city;
@@ -55,12 +56,6 @@ class solarchvision_STATION {
   }
   public void setCountry (String country) {
     this.country = country;
-  }
-  public void setICAO (String ICAO) {
-    this.ICAO = ICAO;
-  }
-  public void setWMO (String WMO) {
-    this.WMO = WMO;
   }
   public void setFilename_NAEFS (String filename_NAEFS) {
     this.filename_NAEFS = filename_NAEFS;
@@ -76,18 +71,19 @@ class solarchvision_STATION {
     
   }  
   
-  public solarchvision_STATION (String city, String province, String Country, 
+  public solarchvision_STATION (String code, String city, String province, String Country, 
                          float latitude, float longitude, float timelong, float elevation, 
-                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW, String ICAO, String WMO) {
+                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
   
+    this.code = code;
     this.city = city;
     this.province = province;
     this.country = country;
-    this.ICAO = ICAO;
-    this.WMO = WMO;    
+    
     this.filename_NAEFS = filename_NAEFS;
     this.filename_CWEEDS = filename_CWEEDS;
     this.filename_TMYEPW = filename_TMYEPW;
+    
     this.elevation = elevation;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -99,14 +95,16 @@ class solarchvision_STATION {
     
     XML child = xml.addChild(this.CLASS_STAMP);
     
+    child.setString("code", this.getCode());
+    child.setString("city", this.getCity());
+    child.setString("province", this.getProvince());
+    child.setString("country", this.getCountry());
+
     child.setFloat("elevation", this.getElevation());
     child.setFloat("latitude", this.getLatitude());
     child.setFloat("longitude", this.getLongitude());
     child.setFloat("timelong", this.getTimelong());
-   
-    child.setString("city", this.getCity());
-    child.setString("province", this.getProvince());
-    child.setString("country", this.getCountry());
+    
     child.setString("filename_NAEFS", this.getFilename_NAEFS());
     child.setString("filename_CWEEDS", this.getFilename_CWEEDS());
     child.setString("filename_TMYEPW", this.getFilename_TMYEPW());
@@ -117,14 +115,16 @@ class solarchvision_STATION {
     
     XML child = xml.getChild(this.CLASS_STAMP);
     
+    this.setCode(child.getString("code"));
+    this.setCity(child.getString("city"));
+    this.setProvince(child.getString("province"));
+    this.setCountry(child.getString("country"));
+
     this.setElevation(child.getFloat("elevation"));
     this.setLatitude(child.getFloat("latitude"));
     this.setLongitude(child.getFloat("longitude"));
     this.setTimelong(child.getFloat("timelong"));
     
-    this.setCity(child.getString("city"));
-    this.setProvince(child.getString("province"));
-    this.setCountry(child.getString("country"));
     this.setFilename_NAEFS(child.getString("filename_NAEFS"));
     this.setFilename_CWEEDS(child.getString("filename_CWEEDS"));
     this.setFilename_TMYEPW(child.getString("filename_TMYEPW"));    
@@ -133,7 +133,7 @@ class solarchvision_STATION {
 
 solarchvision_STATION STATION = new solarchvision_STATION(
 
-  "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR", "", ""
+  "", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
   
 );
   
@@ -253,82 +253,47 @@ void inputCoordinates_CLMREC () {
 
 
 
-
-
-String[][] SWOB_Coordinates;
+solarchvision_STATION[] SWOB_Coordinates;
 
 void inputCoordinates_SWOB () {
-  try {
-    String[] FileALL = loadStrings(CoordinateFolder + "/SWOB_UTF8.txt");
 
-    String lineSTR;
-    String[] input;
+  String[] FileALL = loadStrings(CoordinateFolder + "/SWOB_UTF8.txt");
 
-    int SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
+  String lineSTR;
 
-    SWOB_Coordinates = new String [SWOB_NUMBER][12]; 
+  int num_stn = FileALL.length - 1; // to skip the first description line 
 
-    int n_Locations = 0;
+  SWOB_Coordinates = new solarchvision_STATION [num_stn]; 
 
-    for (int f = 0; f < SWOB_NUMBER; f++) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
+  for (int f = 0; f < num_stn; f++) {
+    lineSTR = FileALL[f + 1]; // to skip the first description line  
 
-      String StationNameEnglish = "";
-      String StationNameFrench = "";
-      String StationProvince = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationICAO = "";
-      String StationWMO = ""; 
-      String StationClimate = "";
-      String StationDST = ""; //Daylight saving time
-      String StationSTD = ""; //Standard Time      
-      String StationType = ""; // MAN/AUTO
+    String[] parts = split(lineSTR, '\t');
+    
+    float latitude = float(parts[5]);
+    float longitude = float(parts[6]);    
+    
+    SWOB_Coordinates[f] = new solarchvision_STATION(); 
 
-      String[] parts = split(lineSTR, '\t');
+    String code = parts[6];
+    if (parts[4].equals("Manned")) code += "-MAN";
+    if (parts[4].equals("Auto")) code = "-AUTO";
 
-      if (12 < parts.length) {
-
-        StationNameFrench = parts[1];
-        StationNameEnglish = parts[2];
-        StationProvince = parts[3];
-
-        StationType = parts[4];
-        if (StationType.equals("Manned")) StationType = "MAN";
-        if (StationType.equals("Auto")) StationType = "AUTO";
-
-        StationLatitude = float(parts[5]);
-        StationLongitude = float(parts[6]);
-        StationElevation = float(parts[7]);
-
-        StationICAO = parts[8];
-        StationWMO = parts[9];
-        StationClimate = parts[10];
-        StationDST = parts[11];
-        StationSTD = parts[12]; 
-
-        SWOB_Coordinates[n_Locations][0] = StationNameEnglish;
-        SWOB_Coordinates[n_Locations][1] = StationNameFrench;
-        SWOB_Coordinates[n_Locations][2] = StationProvince;
-        SWOB_Coordinates[n_Locations][3] = String.valueOf(StationLatitude);
-        SWOB_Coordinates[n_Locations][4] = String.valueOf(StationLongitude);
-        SWOB_Coordinates[n_Locations][5] = String.valueOf(StationElevation);
-        SWOB_Coordinates[n_Locations][6] = StationICAO;
-        SWOB_Coordinates[n_Locations][7] = StationWMO;
-        SWOB_Coordinates[n_Locations][8] = StationClimate;
-        SWOB_Coordinates[n_Locations][9] = StationDST;
-        SWOB_Coordinates[n_Locations][10] = StationSTD;
-        SWOB_Coordinates[n_Locations][11] = StationType;
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading SWOB coordinates.");
+    SWOB_Coordinates[f].setCode(code);
+    SWOB_Coordinates[f].setCity(parts[2]);
+    SWOB_Coordinates[f].setProvince(parts[3]);
+    SWOB_Coordinates[f].setCountry("CA");
+    SWOB_Coordinates[f].setLatitude(latitude);
+    SWOB_Coordinates[f].setLongitude(longitude);
+    SWOB_Coordinates[f].setTimelong(roundTo(longitude, 15));
+    SWOB_Coordinates[f].setElevation(float(parts[7]));
+    //SWOB_Coordinates[f].setFilename_SWOB(?);
+    
   }
 }
+
+
+
 
 
 
@@ -4251,8 +4216,8 @@ void SOLARCHVISION_draw_WORLD () {
   
         if (Display_SWOB_Points != 0) draw_info = true;
   
-        float _lat = float(SWOB_Coordinates[f][3]);
-        float _lon = float(SWOB_Coordinates[f][4]); 
+        float _lat = SWOB_Coordinates[f].getLatitude();
+        float _lon = SWOB_Coordinates[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!
   
         if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = false;
@@ -4276,7 +4241,7 @@ void SOLARCHVISION_draw_WORLD () {
             WORLD.Diagrams.fill(0);      
             WORLD.Diagrams.textAlign(RIGHT, CENTER); 
             WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-            WORLD.Diagrams.text(SWOB_Coordinates[f][6], x_point, y_point);
+            WORLD.Diagrams.text(SWOB_Coordinates[f].getCode(), x_point, y_point);
           }
         }
   
@@ -4301,8 +4266,8 @@ void SOLARCHVISION_draw_WORLD () {
       if (Display_SWOB_Nearest) {   
         int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
   
-        float _lat = float(SWOB_Coordinates[f][3]);
-        float _lon = float(SWOB_Coordinates[f][4]); 
+        float _lat = SWOB_Coordinates[f].getLatitude();
+        float _lon = SWOB_Coordinates[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!
   
         float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
@@ -4313,8 +4278,8 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD.Diagrams.fill(0);      
         WORLD.Diagrams.textAlign(RIGHT, CENTER);
         WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-        WORLD.Diagrams.text(SWOB_Coordinates[f][6], x_point, y_point);
-        //println(SWOB_Coordinates[f][6]);
+        WORLD.Diagrams.text(SWOB_Coordinates[f].getCode(), x_point, y_point);
+        //println(SWOB_Coordinates[f].getCode());
       }  
       
     }
@@ -6454,7 +6419,7 @@ void SOLARCHVISION_download_CLIMATE_CLMREC () {
         File dir = new File(the_target);
         if (!dir.isFile()) {          
           
-          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getICAO() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
           
           println("Try downloading: " + the_link);
     
@@ -6793,14 +6758,14 @@ void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
 
       if (f != -1) {
 
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f][6] + "-" + SWOB_Coordinates[f][11] + "-swob.xml";
+        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
 
         String the_target = ENSEMBLE_OBSERVED_directory + "/" + FN;
 
         File dir = new File(the_target);
         if (!dir.isFile()) {       
 
-          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + SWOB_Coordinates[f][6] + "/" + FN;
+          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + SWOB_Coordinates[f].getCode() + "/" + FN;
   
           println("Try downloading: " + the_link);
   
@@ -6889,7 +6854,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
         if (f != -1) {
 
-          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f][6] + "-" + SWOB_Coordinates[f][11] + "-swob.xml";
+          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
 
           String the_source = ENSEMBLE_OBSERVED_directory + "/" + FN;
       
@@ -48543,7 +48508,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
             //if ((j % 1 == 0)) {
-            txt = SWOB_Coordinates[nearest_Station_ENSEMBLE_OBSERVED_id[j]][6];
+            txt = SWOB_Coordinates[nearest_Station_ENSEMBLE_OBSERVED_id[j]].getCode();
             //}
           }                 
 
