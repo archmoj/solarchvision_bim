@@ -51,8 +51,52 @@ solarchvision_UITASK UITASK = new solarchvision_UITASK();
 
 
 
+class solarchvision_CREATE {
+
+  final int Nothing    = 0;
+  final int Plane      = 1;
+  final int Poly       = 2;
+  final int Extrude    = 3;
+  final int Tri        = 4;
+  final int Hyper      = 5;
+  final int House1     = 6; 
+  final int House2     = 7;
+  final int SuperOBJ   = 8;
+  final int Parametric = 9;
+  final int Person     = 10;
+  final int Plant      = 11;
+  final int Fractal    = 12;
+  final int Face       = 13;
+  final int Vertex     = 14;
+  final int Curve      = 15;
+  final int Solid      = 16;
+  final int Section    = 17;
+  final int Camera     = 18;
+  
+}
+
+solarchvision_CREATE CREATE = new solarchvision_CREATE();
 
 
+
+
+class solarchvision_ObjectCategory {
+  
+  final int LandPoints = 0; 
+  final int Fractals = 1; 
+  final int Object2Ds = 2; 
+  final int Group3Ds = 3;
+  final int Faces = 4; 
+  final int Vertices = 5;
+  final int SoftVerts = 6;
+  final int Solids = 7;
+  final int Sections = 8;
+  final int Cameras = 9;
+  final int Curves = 10;
+  
+}
+
+solarchvision_ObjectCategory ObjectCategory = new solarchvision_ObjectCategory(); 
 
 
 
@@ -626,26 +670,8 @@ int CreateInput_PolyDegree = 6;
 int CreateInput_Snap = 0;
 
 
-final int CREATE_Nothing    = 0;
-final int CREATE_Plane      = 1;
-final int CREATE_Poly       = 2;
-final int CREATE_Extrude    = 3;
-final int CREATE_Tri        = 4;
-final int CREATE_Hyper      = 5;
-final int CREATE_House1     = 6; 
-final int CREATE_House2     = 7;
-final int CREATE_SuperOBJ   = 8;
-final int CREATE_Parametric = 9;
-final int CREATE_Person     = 10;
-final int CREATE_Plant      = 11;
-final int CREATE_Fractal    = 12;
-final int CREATE_Face       = 13;
-final int CREATE_Vertex     = 14;
-final int CREATE_Curve      = 15;
-final int CREATE_Solid      = 16;
-final int CREATE_Section    = 17;
-final int CREATE_Camera     = 18;
-int CreateObject = CREATE_Nothing;
+
+int CreateObject = CREATE.Nothing;
 
 int CreateParametric_Type = 0;
 int CreatePerson_Type = 0;
@@ -658,20 +684,10 @@ float CreateFractal_TrunkSize = 1; //0.5;
 float CreateFractal_LeafSize = 1; //1; 
 
 
-final int ObjectCategory_LandPoints = 0; 
-final int ObjectCategory_Fractals = 1; 
-final int ObjectCategory_Object2Ds = 2; 
-final int ObjectCategory_Group3Ds = 3;
-final int ObjectCategory_Faces = 4; 
-final int ObjectCategory_Vertices = 5;
-final int ObjectCategory_SoftVerts = 6;
-final int ObjectCategory_Solids = 7;
-final int ObjectCategory_Sections = 8;
-final int ObjectCategory_Cameras = 9;
-final int ObjectCategory_Curves = 10;
 
 
-int Current_ObjectCategory = ObjectCategory_Group3Ds; 
+
+int Current_ObjectCategory = ObjectCategory.Group3Ds; 
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
@@ -10794,7 +10810,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '0' :
         Display_LAND_Surface = (Display_LAND_Surface + 1) % 2;
         if (Display_LAND_Surface != 0) {
-          Current_ObjectCategory = ObjectCategory_LandPoints;
+          Current_ObjectCategory = ObjectCategory.LandPoints;
           UI_BAR_b_Update = 1;
         }
         WIN3D_Update = 1; 
@@ -10804,7 +10820,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '1' :
         Display_Fractals = (Display_Fractals + 1) % 2;
         if (Display_Fractals != 0) {
-          Current_ObjectCategory = ObjectCategory_Fractals;
+          Current_ObjectCategory = ObjectCategory.Fractals;
           UI_BAR_b_Update = 1;
         }
         WIN3D_Update = 1; 
@@ -10814,7 +10830,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '2' :
         Display_Model2Ds = (Display_Model2Ds + 1) % 2;
         if (Display_Model2Ds != 0) {
-          Current_ObjectCategory = ObjectCategory_Object2Ds;
+          Current_ObjectCategory = ObjectCategory.Object2Ds;
           UI_BAR_b_Update = 1;
         }
         WIN3D_Update = 1; 
@@ -10824,7 +10840,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '3' :
         Display_Model3Ds = (Display_Model3Ds + 1) % 2;
         if (Display_Model3Ds != 0) {
-          Current_ObjectCategory = ObjectCategory_Group3Ds;
+          Current_ObjectCategory = ObjectCategory.Group3Ds;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -10834,7 +10850,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '4' :
         Display_Model3Ds = (Display_Model3Ds + 1) % 2;
         if (Display_Model3Ds != 0) {
-          Current_ObjectCategory = ObjectCategory_Faces;
+          Current_ObjectCategory = ObjectCategory.Faces;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -10844,7 +10860,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '5' :
         Display_Model3Ds = (Display_Model3Ds + 1) % 2;
         if (Display_Model3Ds != 0) {
-          Current_ObjectCategory = ObjectCategory_Vertices;
+          Current_ObjectCategory = ObjectCategory.Vertices;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -10854,7 +10870,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '6' :
         Display_Model3Ds = (Display_Model3Ds + 1) % 2;
         if (Display_Model3Ds != 0) {
-          Current_ObjectCategory = ObjectCategory_Curves;
+          Current_ObjectCategory = ObjectCategory.Curves;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -10864,7 +10880,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '7' :
         Display_Solids = (Display_Solids + 1) % 2;
         if (Display_Solids != 0) {
-          Current_ObjectCategory = ObjectCategory_Solids;
+          Current_ObjectCategory = ObjectCategory.Solids;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -10874,7 +10890,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '8' :
         Display_Sections = (Display_Sections + 1) % 2;
         if (Display_Sections != 0) {
-          Current_ObjectCategory = ObjectCategory_Sections;
+          Current_ObjectCategory = ObjectCategory.Sections;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -10884,7 +10900,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       case '9' :
         Display_Cameras = (Display_Cameras + 1) % 2;
         if (Display_Cameras != 0) {
-          Current_ObjectCategory = ObjectCategory_Cameras;
+          Current_ObjectCategory = ObjectCategory.Cameras;
           UI_BAR_b_Update = 1;
         } 
         WIN3D_Update = 1; 
@@ -12331,10 +12347,10 @@ int SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float sy
 
 void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     int number_of_Fractal_before = allFractals_num; 
 
@@ -12371,7 +12387,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     int n1 = Object2D_PEOPLE_Files_Num;
 
@@ -12409,7 +12425,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     int number_of_Faces_before = allFaces_PNT.length;
 
@@ -12488,7 +12504,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     int number_of_Curves_before = allCurves_PNT.length;
 
@@ -12570,7 +12586,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     int number_of_Solid_before = allSolids_DEF.length; 
 
@@ -12608,7 +12624,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
   }    
 
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     int number_of_Section_before = allSections_num; 
 
@@ -12642,7 +12658,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     int number_of_Camera_before = allCameras_num; 
 
@@ -12677,7 +12693,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
   }  
 
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     int n1 = Object2D_PEOPLE_Files_Num;
 
@@ -13018,11 +13034,11 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
 
   int run_process = 0;
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Faces) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Curves) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Fractals) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory.Solids) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory.Faces) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory.Curves) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory.Fractals) run_process = 1;
 
   if (run_process == 1) {
 
@@ -13042,7 +13058,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
     addToLastGroup3D = 1;
 
 
-    if (Current_ObjectCategory == ObjectCategory_Fractals) {
+    if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
       for (int o = 0; o < selectedFractal_ids.length; o++) {
 
@@ -13065,7 +13081,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
       }
     }  
 
-    if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+    if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
       int n1 = Object2D_PEOPLE_Files_Num;
 
@@ -13088,7 +13104,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
     }
 
 
-    if (Current_ObjectCategory == ObjectCategory_Solids) {
+    if (Current_ObjectCategory == ObjectCategory.Solids) {
 
       for (int o = 0; o < selectedSolid_ids.length; o++) {
 
@@ -13115,7 +13131,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
 
 
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) {
+    if (Current_ObjectCategory == ObjectCategory.Faces) {
 
       for (int o = 0; o < selectedFace_ids.length; o++) {
 
@@ -13179,7 +13195,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
     }
 
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) {
+    if (Current_ObjectCategory == ObjectCategory.Curves) {
 
       for (int o = 0; o < selectedCurve_ids.length; o++) {
 
@@ -13256,7 +13272,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
     selectedGroup3D_ids[0] = allGroup3Ds_num - 1;
 
 
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 731");
@@ -13268,7 +13284,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
 
 void SOLARCHVISION_ungroup_Selection () {
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -13309,9 +13325,9 @@ void SOLARCHVISION_deleteEmptyGroups_Scene () {
 
   int pre_Current_ObjectCategory = Current_ObjectCategory;
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {  
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {  
 
     selectedGroup3D_ids = new int [0];
 
@@ -13345,12 +13361,12 @@ void SOLARCHVISION_deleteEmptyGroups_Scene () {
 
 void SOLARCHVISION_delete_Selection () {
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
   }
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     selectedCamera_ids = sort(selectedCamera_ids);
 
@@ -13385,7 +13401,7 @@ void SOLARCHVISION_delete_Selection () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     selectedSection_ids = sort(selectedSection_ids);
 
@@ -13444,7 +13460,7 @@ void SOLARCHVISION_delete_Selection () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     selectedFractal_ids = sort(selectedFractal_ids);
 
@@ -13518,7 +13534,7 @@ void SOLARCHVISION_delete_Selection () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     selectedObject2D_ids = sort(selectedObject2D_ids);
 
@@ -13560,7 +13576,7 @@ void SOLARCHVISION_delete_Selection () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     selectedSolid_ids = sort(selectedSolid_ids);
 
@@ -13591,7 +13607,7 @@ void SOLARCHVISION_delete_Selection () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     selectedFace_ids = sort(selectedFace_ids);
 
@@ -13627,7 +13643,7 @@ void SOLARCHVISION_delete_Selection () {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     selectedCurve_ids = sort(selectedCurve_ids);
 
@@ -13662,7 +13678,7 @@ void SOLARCHVISION_delete_Selection () {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
     
     /////////////////////////////
     //SOLARCHVISION_hold_project();
@@ -13937,7 +13953,7 @@ void SOLARCHVISION_delete_Selection () {
 
 
 
-  if ((Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Vertices) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Group3Ds)) { 
 
     println("deleteIsolatedVerticesSelection");
 
@@ -14127,7 +14143,7 @@ void SOLARCHVISION_selectIsolatedVertices_Scene () {
     }
   } 
 
-  Current_ObjectCategory = ObjectCategory_Vertices; 
+  Current_ObjectCategory = ObjectCategory.Vertices; 
   UI_BAR_b_Update = 1;
 
   println("SOLARCHVISION_calculate_selection_BoundingBox 31");
@@ -14138,19 +14154,19 @@ void SOLARCHVISION_selectIsolatedVertices_Scene () {
 
 void SOLARCHVISION_selectNearVertices_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       SOLARCHVISION_convert_Face_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) { 
+    if (Current_ObjectCategory == ObjectCategory.Curves) { 
 
       SOLARCHVISION_convert_Curve_to_Vertex();
     }
@@ -14212,19 +14228,19 @@ void SOLARCHVISION_selectNearVertices_Selection () {
 
 void SOLARCHVISION_weldSceneVertices_Selection (float max_distance) {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       SOLARCHVISION_convert_Face_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) { 
+    if (Current_ObjectCategory == ObjectCategory.Curves) { 
 
       SOLARCHVISION_convert_Curve_to_Vertex();
     }
@@ -14321,19 +14337,19 @@ void SOLARCHVISION_weldSceneVertices_Selection (float max_distance) {
 
 void SOLARCHVISION_weldObjectsVertices_Selection (float max_distance) {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       SOLARCHVISION_convert_Face_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) { 
+    if (Current_ObjectCategory == ObjectCategory.Curves) { 
 
       SOLARCHVISION_convert_Curve_to_Vertex();
     }
@@ -14427,7 +14443,7 @@ void SOLARCHVISION_weldObjectsVertices_Selection (float max_distance) {
 
 void SOLARCHVISION_repositionVertices_Selection () {
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) { 
+  if (Current_ObjectCategory == ObjectCategory.Vertices) { 
 
     SOLARCHVISION_calculate_selection_BoundingBox();
 
@@ -14449,19 +14465,19 @@ void SOLARCHVISION_repositionVertices_Selection () {
 
 void SOLARCHVISION_separateVertices_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       SOLARCHVISION_convert_Face_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) { 
+    if (Current_ObjectCategory == ObjectCategory.Curves) { 
 
       SOLARCHVISION_convert_Curve_to_Vertex();
     }
@@ -14505,9 +14521,9 @@ void SOLARCHVISION_separateVertices_Selection () {
 
 void SOLARCHVISION_inserCornerOpennings_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -14516,7 +14532,7 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -14659,7 +14675,7 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 37");
@@ -14671,9 +14687,9 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
 
 void SOLARCHVISION_insertParallelOpennings_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -14682,7 +14698,7 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -14856,7 +14872,7 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 38");
@@ -14869,9 +14885,9 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
 
 void SOLARCHVISION_insertRotatedOpennings_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -14880,7 +14896,7 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15033,7 +15049,7 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 39");
@@ -15045,9 +15061,9 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
 
 void SOLARCHVISION_insertEdgeOpennings_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15056,7 +15072,7 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15204,7 +15220,7 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 40");
@@ -15217,9 +15233,9 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
 
 void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15228,7 +15244,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15398,7 +15414,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 41");
@@ -15411,9 +15427,9 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
 
 void SOLARCHVISION_tessellateRectangularFaceSelection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15422,7 +15438,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15569,7 +15585,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 42");
@@ -15582,9 +15598,9 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
 
 void SOLARCHVISION_tessellateTriangularFaceSelection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15593,7 +15609,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15723,7 +15739,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 43");
@@ -15738,9 +15754,9 @@ void SOLARCHVISION_forceTriangulateFaces_Selection () {
   // this function is the copy of above function (SOLARCHVISION_tessellateTriangularFaceSelection) 
   // but only processed the faces with degrees above 3.
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15749,7 +15765,7 @@ void SOLARCHVISION_forceTriangulateFaces_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15881,7 +15897,7 @@ void SOLARCHVISION_forceTriangulateFaces_Selection () {
 
     selectedFace_ids = new_selectedFace_ids;
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 43bbb");
@@ -15894,9 +15910,9 @@ void SOLARCHVISION_forceTriangulateFaces_Selection () {
 
 void SOLARCHVISION_autoNormalFaces_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15905,7 +15921,7 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -15915,7 +15931,7 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
     }
 
 
-    if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) {
+    if ((Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Group3Ds)) {
 
 
       for (int o = 0; o < selectedFace_ids.length; o++) {
@@ -15956,7 +15972,7 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
       }
     }
 
-    Current_ObjectCategory = ObjectCategory_Faces; 
+    Current_ObjectCategory = ObjectCategory.Faces; 
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 3700");
@@ -15968,9 +15984,9 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
 
 void SOLARCHVISION_extrudeFaceEdges_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -15979,7 +15995,7 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
       selectedFace_ids = sort(selectedFace_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       selectedFace_ids = sort(selectedFace_ids);
 
@@ -16111,9 +16127,9 @@ void SOLARCHVISION_extrudeFaceEdges_Selection () {
 
 void SOLARCHVISION_extrudeCurveEdges_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Curves)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Curves)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
@@ -16122,7 +16138,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
       selectedCurve_ids = sort(selectedCurve_ids);
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) { 
+    if (Current_ObjectCategory == ObjectCategory.Curves) { 
 
       selectedCurve_ids = sort(selectedCurve_ids);
 
@@ -16246,7 +16262,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
 
     selectedFace_ids = new_selectedFace_ids;
     
-    Current_ObjectCategory = ObjectCategory_Faces;
+    Current_ObjectCategory = ObjectCategory.Faces;
     UI_BAR_b_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 101b");
@@ -16258,19 +16274,19 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
 
 void SOLARCHVISION_offsetVertices_Selection (int _type, float _amount) {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Faces) { 
+    if (Current_ObjectCategory == ObjectCategory.Faces) { 
 
       SOLARCHVISION_convert_Face_to_Vertex();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Curves) { 
+    if (Current_ObjectCategory == ObjectCategory.Curves) { 
 
       SOLARCHVISION_convert_Curve_to_Vertex();
     }
@@ -16404,14 +16420,14 @@ void SOLARCHVISION_offsetVertices_Selection (int _type, float _amount) {
 
 void SOLARCHVISION_changeVisibilityFaces_Selection (int new_vsb) {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Face();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Vertices) { 
+    if (Current_ObjectCategory == ObjectCategory.Vertices) { 
 
       SOLARCHVISION_convert_Vertex_to_Face();
     }
@@ -16452,14 +16468,14 @@ void SOLARCHVISION_reverseVisibilityFaces_Scene () {
 
 void SOLARCHVISION_changeVisibilityCurves_Selection (int new_vsb) {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
-    if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
       SOLARCHVISION_convert_Group3D_to_Curve();
     }
 
-    if (Current_ObjectCategory == ObjectCategory_Vertices) { 
+    if (Current_ObjectCategory == ObjectCategory.Vertices) { 
 
       SOLARCHVISION_convert_Vertex_to_Curve();
     }
@@ -16501,7 +16517,7 @@ void SOLARCHVISION_reverseVisibilityCurves_Scene () {
 
 void SOLARCHVISION_isolate_Selection () {
 
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
+  if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices)) { 
 
     SOLARCHVISION_changeVisibilityFaces_Scene(0);
     SOLARCHVISION_changeVisibilityFaces_Selection(1);
@@ -16514,7 +16530,7 @@ void SOLARCHVISION_isolate_Selection () {
 
 void SOLARCHVISION_select_Last () {
   
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
     selectedSection_ids = new int [0];
     
     if (allSections_num > 0) {
@@ -16523,7 +16539,7 @@ void SOLARCHVISION_select_Last () {
     }
   }   
   
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
     selectedCamera_ids = new int [0];
     
     if (allCameras_num > 0) {
@@ -16532,7 +16548,7 @@ void SOLARCHVISION_select_Last () {
     }
   }   
   
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
     selectedSolid_ids = new int [0];
     
     if (allSolids_DEF.length > 0) {
@@ -16541,7 +16557,7 @@ void SOLARCHVISION_select_Last () {
     }
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
     selectedFractal_ids = new int [0];
     
     if (allFractals_num > 0) {
@@ -16550,7 +16566,7 @@ void SOLARCHVISION_select_Last () {
     }
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
     selectedObject2D_ids = new int [0];
     
     if (allObject2Ds_num > 0) {
@@ -16559,7 +16575,7 @@ void SOLARCHVISION_select_Last () {
     }
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
     selectedGroup3D_ids = new int [0];
 
     if (allGroup3Ds_num > 0) {
@@ -16568,7 +16584,7 @@ void SOLARCHVISION_select_Last () {
     }
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
     selectedFace_ids = new int [0];
     
     if (allFaces_PNT.length > 0) {
@@ -16577,7 +16593,7 @@ void SOLARCHVISION_select_Last () {
     }
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
     selectedVertex_ids = new int [0];
     
     if (allVertices.length > 0) {
@@ -16587,7 +16603,7 @@ void SOLARCHVISION_select_Last () {
   } 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
     selectedCurve_ids = new int [0];
     
     if (allCurves_PNT.length > 0) {
@@ -16604,21 +16620,21 @@ void SOLARCHVISION_select_Last () {
 
 void SOLARCHVISION_deselect_All () {
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
     selectedLandPoint_ids = new int [0];
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {  
+  if (Current_ObjectCategory == ObjectCategory.Sections) {  
     selectedSection_ids = new int [0];
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {  
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {  
     selectedCamera_ids = new int [0];
   }  
 
 
 
-  if ((Current_ObjectCategory == ObjectCategory_Fractals) || (Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Object2Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts) || (Current_ObjectCategory == ObjectCategory_Solids)) {  
+  if ((Current_ObjectCategory == ObjectCategory.Fractals) || (Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Object2Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices) || (Current_ObjectCategory == ObjectCategory.SoftVerts) || (Current_ObjectCategory == ObjectCategory.Solids)) {  
 
     selectedFractal_ids = new int [0];
 
@@ -16641,70 +16657,70 @@ void SOLARCHVISION_deselect_All () {
 
 void SOLARCHVISION_select_All () {
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
     selectedLandPoint_ids = new int [LAND_n_I * LAND_n_J];
     for (int i = 0; i < selectedLandPoint_ids.length; i++) { 
       selectedLandPoint_ids[i] = i;
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
     selectedFractal_ids = new int [allFractals_num];
     for (int i = 0; i < selectedFractal_ids.length; i++) { 
       selectedFractal_ids[i] = i;
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
     selectedObject2D_ids = new int [allObject2Ds_num];
     for (int i = 0; i < selectedObject2D_ids.length; i++) { 
       selectedObject2D_ids[i] = i;
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
     selectedGroup3D_ids = new int [allGroup3Ds_num];
     for (int i = 0; i < selectedGroup3D_ids.length; i++) { 
       selectedGroup3D_ids[i] = i;
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
     selectedFace_ids = new int [allFaces_PNT.length];
     for (int i = 0; i < selectedFace_ids.length; i++) { 
       selectedFace_ids[i] = i;
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
     selectedVertex_ids = new int [allVertices.length];
     for (int i = 0; i < selectedVertex_ids.length; i++) { 
       selectedVertex_ids[i] = i;
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
     selectedCurve_ids = new int [allCurves_PNT.length];
     for (int i = 0; i < selectedCurve_ids.length; i++) { 
       selectedCurve_ids[i] = i;
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
     selectedSolid_ids = new int [allSolids_DEF.length];
     for (int i = 0; i < selectedSolid_ids.length; i++) { 
       selectedSolid_ids[i] = i;
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
     selectedSection_ids = new int [allSections_num];
     for (int i = 0; i < selectedSection_ids.length; i++) { 
       selectedSection_ids[i] = i;
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
     selectedCamera_ids = new int [allCameras_num];
     for (int i = 0; i < selectedCamera_ids.length; i++) { 
       selectedCamera_ids[i] = i;
@@ -16718,7 +16734,7 @@ void SOLARCHVISION_select_All () {
 
 void SOLARCHVISION_reverse_Selection () {
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
     int[] pre_selectedLandPoint_ids = sort(selectedLandPoint_ids);
 
     selectedLandPoint_ids = new int [0];
@@ -16746,7 +16762,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }     
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
     int[] pre_selectedFractal_ids = sort(selectedFractal_ids);
 
     selectedFractal_ids = new int [0];
@@ -16774,7 +16790,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
     int[] pre_selectedObject2D_ids = sort(selectedObject2D_ids);
 
     selectedObject2D_ids = new int [0];
@@ -16802,7 +16818,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
     int[] pre_selectedGroup3D_ids = sort(selectedGroup3D_ids);
 
     selectedGroup3D_ids = new int [0];
@@ -16830,7 +16846,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
     int[] pre_selectedFace_ids = sort(selectedFace_ids);
 
     selectedFace_ids = new int [0];
@@ -16858,7 +16874,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
     int[] pre_selectedCurve_ids = sort(selectedCurve_ids);
 
     selectedCurve_ids = new int [0];
@@ -16887,7 +16903,7 @@ void SOLARCHVISION_reverse_Selection () {
   }  
 
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
     int[] pre_selectedVertex_ids = sort(selectedVertex_ids);
 
     selectedVertex_ids = new int [0];
@@ -16915,7 +16931,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
     int[] pre_selectedSolid_ids = sort(selectedSolid_ids);
 
     selectedSolid_ids = new int [0];
@@ -16943,7 +16959,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }      
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
     int[] pre_selectedSection_ids = sort(selectedSection_ids);
 
     selectedSection_ids = new int [0];
@@ -16971,7 +16987,7 @@ void SOLARCHVISION_reverse_Selection () {
     }
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
     int[] pre_selectedCamera_ids = sort(selectedCamera_ids);
 
     selectedCamera_ids = new int [0];
@@ -30186,7 +30202,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselect_All();
 
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30236,7 +30252,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30287,7 +30303,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30337,7 +30353,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     int f = int(RxP[0]);
 
@@ -30398,7 +30414,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     SOLARCHVISION_calculate_selection_BoundingBox();
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30446,7 +30462,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     SOLARCHVISION_calculate_selection_BoundingBox();
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30494,7 +30510,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
   }
   
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
 
     int f = int(RxP[0]);
 
@@ -30563,7 +30579,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30614,7 +30630,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30663,7 +30679,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     SOLARCHVISION_calculate_selection_BoundingBox();
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     int OBJ_NUM = int(RxP[0]);
 
@@ -30719,7 +30735,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselect_All();
 
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < LAND_n_I * LAND_n_J; OBJ_NUM++) {
 
@@ -30811,7 +30827,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allFractals_Faces.length; OBJ_NUM++) {
 
@@ -30904,7 +30920,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }    
 
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allGroup3Ds_num; OBJ_NUM++) {
 
@@ -31045,7 +31061,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allFaces_PNT.length; OBJ_NUM++) {
 
@@ -31133,7 +31149,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
     }
   }                
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allCurves_PNT.length; OBJ_NUM++) {
 
@@ -31222,7 +31238,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }    
 
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allVertices.length; OBJ_NUM++) {
 
@@ -31298,7 +31314,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
     }
   }             
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     for (int f = 0; f < allObject2Ds_Faces.length; f++) {
 
@@ -31399,7 +31415,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     for (int f = 0; f < allSolids_Faces.length; f++) {
 
@@ -31499,7 +31515,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allSections_Faces.length; OBJ_NUM++) {
 
@@ -31592,7 +31608,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }  
 
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     for (int OBJ_NUM = 0; OBJ_NUM < allCameras_Faces.length; OBJ_NUM++) {
 
@@ -32766,7 +32782,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
       //println(selectedGroup3D_ids[i]);
     }
 
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
 
     SOLARCHVISION_calculate_selection_BoundingBox();
 
@@ -34358,155 +34374,155 @@ void mouseClicked () {
               WIN3D_Update = 1;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Solid")) {
-              Current_ObjectCategory = ObjectCategory_Solids;
+              Current_ObjectCategory = ObjectCategory.Solids;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Section")) {
-              Current_ObjectCategory = ObjectCategory_Sections;
+              Current_ObjectCategory = ObjectCategory.Sections;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Camera")) {
-              Current_ObjectCategory = ObjectCategory_Cameras;
+              Current_ObjectCategory = ObjectCategory.Cameras;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select LandPoint")) {
-              Current_ObjectCategory = ObjectCategory_LandPoints;
+              Current_ObjectCategory = ObjectCategory.LandPoints;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Fractal")) {
-              Current_ObjectCategory = ObjectCategory_Fractals;
+              Current_ObjectCategory = ObjectCategory.Fractals;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Object2D")) {
-              Current_ObjectCategory = ObjectCategory_Object2Ds;
+              Current_ObjectCategory = ObjectCategory.Object2Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Group3D")) {
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Face")) {
-              Current_ObjectCategory = ObjectCategory_Faces;
+              Current_ObjectCategory = ObjectCategory.Faces;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Curve")) {
-              Current_ObjectCategory = ObjectCategory_Curves;
+              Current_ObjectCategory = ObjectCategory.Curves;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Vertex")) {
-              Current_ObjectCategory = ObjectCategory_Vertices;
+              Current_ObjectCategory = ObjectCategory.Vertices;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Soft Selection")) {
               SOLARCHVISION_convert_Vertex_to_softSelection();
 
-              Current_ObjectCategory = ObjectCategory_SoftVerts;
+              Current_ObjectCategory = ObjectCategory.SoftVerts;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex >> Group3D")) {
               SOLARCHVISION_convert_Vertex_to_Group3D();
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Face >> Group3D")) {
               SOLARCHVISION_convert_Face_to_Group3D();
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Face")) {
               SOLARCHVISION_convert_Group3D_to_Face();
-              Current_ObjectCategory = ObjectCategory_Faces;
+              Current_ObjectCategory = ObjectCategory.Faces;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Curve >> Group3D")) {
               SOLARCHVISION_convert_Curve_to_Group3D();
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Curve")) {
               SOLARCHVISION_convert_Group3D_to_Curve();
-              Current_ObjectCategory = ObjectCategory_Curves;
+              Current_ObjectCategory = ObjectCategory.Curves;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Curve >> Vertex")) {
               SOLARCHVISION_convert_Curve_to_Vertex();
-              Current_ObjectCategory = ObjectCategory_Vertices;
+              Current_ObjectCategory = ObjectCategory.Vertices;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex >> Curve")) {
               SOLARCHVISION_convert_Vertex_to_Curve();
-              Current_ObjectCategory = ObjectCategory_Curves;
+              Current_ObjectCategory = ObjectCategory.Curves;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Vertex")) {
               SOLARCHVISION_convert_Group3D_to_Vertex();
-              Current_ObjectCategory = ObjectCategory_Vertices;
+              Current_ObjectCategory = ObjectCategory.Vertices;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Face >> Vertex")) {
               SOLARCHVISION_convert_Face_to_Vertex();
-              Current_ObjectCategory = ObjectCategory_Vertices;
+              Current_ObjectCategory = ObjectCategory.Vertices;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex >> Face")) {
               SOLARCHVISION_convert_Vertex_to_Face();
-              Current_ObjectCategory = ObjectCategory_Faces;
+              Current_ObjectCategory = ObjectCategory.Faces;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Solid >> Group3D")) {
               SOLARCHVISION_convert_Solid_to_Group3D();
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Solid")) {
               SOLARCHVISION_convert_Group3D_to_Solid();
-              Current_ObjectCategory = ObjectCategory_Solids;
+              Current_ObjectCategory = ObjectCategory.Solids;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Object2D >> Group3D")) {
               SOLARCHVISION_convert_Object2D_to_Group3D();
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Object2D")) {
               SOLARCHVISION_convert_Group3D_to_Object2D();
-              Current_ObjectCategory = ObjectCategory_Object2Ds;
+              Current_ObjectCategory = ObjectCategory.Object2Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Fractal >> Group3D")) {
               SOLARCHVISION_convert_Fractal_to_Group3D();
-              Current_ObjectCategory = ObjectCategory_Group3Ds;
+              Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Fractal")) {
               SOLARCHVISION_convert_Group3D_to_Fractal();
-              Current_ObjectCategory = ObjectCategory_Fractals;
+              Current_ObjectCategory = ObjectCategory.Fractals;
               WIN3D_Update = 1;
               UI_BAR_b_Update = 1;
             }            
@@ -35355,17 +35371,17 @@ void mouseClicked () {
 
                 } else {
  
-                  if (Current_ObjectCategory == ObjectCategory_Curves) {
+                  if (Current_ObjectCategory == ObjectCategory.Curves) {
                     RxP = SOLARCHVISION_intersect_Curves(ray_start, ray_direction);
-                  } else if (Current_ObjectCategory == ObjectCategory_Cameras) {
+                  } else if (Current_ObjectCategory == ObjectCategory.Cameras) {
                     RxP = SOLARCHVISION_intersect_Cameras(ray_start, ray_direction);
-                  } else if (Current_ObjectCategory == ObjectCategory_Sections) {
+                  } else if (Current_ObjectCategory == ObjectCategory.Sections) {
                     RxP = SOLARCHVISION_intersect_Sections(ray_start, ray_direction);
-                  } else if (Current_ObjectCategory == ObjectCategory_Solids) {
+                  } else if (Current_ObjectCategory == ObjectCategory.Solids) {
                     RxP = SOLARCHVISION_intersect_Solids(ray_start, ray_direction);
-                  } else if (Current_ObjectCategory == ObjectCategory_Fractals) {
+                  } else if (Current_ObjectCategory == ObjectCategory.Fractals) {
                     RxP = SOLARCHVISION_intersect_Fractals(ray_start, ray_direction);
-                  } else if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+                  } else if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
                     RxP = SOLARCHVISION_intersect_Object2Ds(ray_start, ray_direction);
                   } else {
                     RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
@@ -35387,7 +35403,7 @@ void mouseClicked () {
                   float y1 = FLOAT_undefined;
                   float z1 = FLOAT_undefined;
   
-                  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+                  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
   
                     float[] P = SOLARCHVISION_getPivot();
   
@@ -35396,28 +35412,28 @@ void mouseClicked () {
                     z1 = P[2];
                   }
   
-                  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+                  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
   
                     x1 = allObject2Ds_XYZS[selectedObject2D_ids[selectedObject2D_ids.length - 1]][0]; 
                     y1 = allObject2Ds_XYZS[selectedObject2D_ids[selectedObject2D_ids.length - 1]][1]; 
                     z1 = allObject2Ds_XYZS[selectedObject2D_ids[selectedObject2D_ids.length - 1]][2];
                   }
   
-                  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+                  if (Current_ObjectCategory == ObjectCategory.Fractals) {
   
                     x1 = allFractals_XYZSR[selectedFractal_ids[selectedFractal_ids.length - 1]][0]; 
                     y1 = allFractals_XYZSR[selectedFractal_ids[selectedFractal_ids.length - 1]][1]; 
                     z1 = allFractals_XYZSR[selectedFractal_ids[selectedFractal_ids.length - 1]][2];
                   }            
   
-                  if (Current_ObjectCategory == ObjectCategory_Solids) {
+                  if (Current_ObjectCategory == ObjectCategory.Solids) {
   
                     x1 = allSolids_DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][0]; 
                     y1 = allSolids_DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][1]; 
                     z1 = allSolids_DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][2];
                   }                 
   
-                  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+                  if (Current_ObjectCategory == ObjectCategory.Vertices) {
   
                     x1 = allVertices[selectedVertex_ids[selectedVertex_ids.length - 1]][0]; 
                     y1 = allVertices[selectedVertex_ids[selectedVertex_ids.length - 1]][1]; 
@@ -35466,7 +35482,7 @@ void mouseClicked () {
   
                   if ((WIN3D_UI_TaskModifyParameter != 0) && (WIN3D_UI_CurrentTask >= UITASK.Seed_Material)) { // Pick/Assign properties 
   
-                    if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves)) {
+                    if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves)) {
   
                       int f = int(RxP[0]);
   
@@ -35532,7 +35548,7 @@ void mouseClicked () {
   
                       if (WIN3D_UI_CurrentTask == UITASK.Normal) { //Normal
   
-                        if (Current_ObjectCategory == ObjectCategory_Faces) {
+                        if (Current_ObjectCategory == ObjectCategory.Faces) {
   
                           selectedFace_ids = new int [1];
                           selectedFace_ids[0] = f;       
@@ -35587,7 +35603,7 @@ void mouseClicked () {
                           }
                         }
   
-                        if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+                        if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
                           int OBJ_NUM = 0;
                           for (int i = 0; i < allGroup3Ds_num; i++) {
                             if ((allGroup3Ds_Faces[i][0] <= f) && (f <= allGroup3Ds_Faces[i][1])) {
@@ -35651,7 +35667,7 @@ void mouseClicked () {
   
                       if (WIN3D_UI_CurrentTask == UITASK.FirstVertex) { //FirstVertex
   
-                        if (Current_ObjectCategory == ObjectCategory_Faces) {
+                        if (Current_ObjectCategory == ObjectCategory.Faces) {
   
                           selectedFace_ids = new int [1];
                           selectedFace_ids[0] = f;
@@ -35688,7 +35704,7 @@ void mouseClicked () {
                         }
                         
                         
-                        if (Current_ObjectCategory == ObjectCategory_Curves) {
+                        if (Current_ObjectCategory == ObjectCategory.Curves) {
   
                           selectedCurve_ids = new int [1];
                           selectedCurve_ids[0] = f;
@@ -35736,7 +35752,7 @@ void mouseClicked () {
   
   
   
-                    if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+                    if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
   
                       int OBJ_NUM = int(RxP[0]);
   
@@ -35767,7 +35783,7 @@ void mouseClicked () {
                     }      
   
   
-                    if (Current_ObjectCategory == ObjectCategory_Fractals) {
+                    if (Current_ObjectCategory == ObjectCategory.Fractals) {
   
                       int OBJ_NUM = int(RxP[0]);
   
@@ -35875,7 +35891,7 @@ void mouseClicked () {
                   }
   
   
-                  if ((Current_ObjectCategory != ObjectCategory_Fractals) && (Current_ObjectCategory != ObjectCategory_Object2Ds) && (Current_ObjectCategory != ObjectCategory_LandPoints) && (Current_ObjectCategory != ObjectCategory_Cameras) && (Current_ObjectCategory != ObjectCategory_Sections)) {
+                  if ((Current_ObjectCategory != ObjectCategory.Fractals) && (Current_ObjectCategory != ObjectCategory.Object2Ds) && (Current_ObjectCategory != ObjectCategory.LandPoints) && (Current_ObjectCategory != ObjectCategory.Cameras) && (Current_ObjectCategory != ObjectCategory.Sections)) {
   
                     x -= rx * selection_alignX;
                     y -= ry * selection_alignY;
@@ -35884,8 +35900,8 @@ void mouseClicked () {
   
   
   
-                  //if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Solids) || (Current_ObjectCategory == ObjectCategory_Fractals) || (Current_ObjectCategory == ObjectCategory_Object2Ds)) {
-                  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+                  //if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Solids) || (Current_ObjectCategory == ObjectCategory.Fractals) || (Current_ObjectCategory == ObjectCategory.Object2Ds)) {
+                  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
   
                     if (addToLastGroup3D == 0) {
   
@@ -35894,9 +35910,9 @@ void mouseClicked () {
                   }
   
   
-                  if (Current_ObjectCategory == ObjectCategory_Group3Ds) { // working with meshes
+                  if (Current_ObjectCategory == ObjectCategory.Group3Ds) { // working with meshes
     
-                    if (CreateObject == CREATE_SuperOBJ) {
+                    if (CreateObject == CREATE.SuperOBJ) {
     
                       if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
     
@@ -35926,7 +35942,7 @@ void mouseClicked () {
     
   
     
-                    if (CreateObject == CREATE_Tri) {
+                    if (CreateObject == CREATE.Tri) {
     
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                       SOLARCHVISION_add_Mesh3(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
@@ -35935,35 +35951,35 @@ void mouseClicked () {
                     }
     
 
-                    if (CreateObject == CREATE_Plane) {
+                    if (CreateObject == CREATE.Plane) {
     
                       SOLARCHVISION_add_Mesh4(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     }
                     
-                    if (CreateObject == CREATE_Poly) {
+                    if (CreateObject == CREATE.Poly) {
     
                       SOLARCHVISION_add_PolygonMesh(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, CreateInput_PolyDegree, rot);
                     }                    
                     
-                    if (CreateObject == CREATE_Hyper) {
+                    if (CreateObject == CREATE.Hyper) {
     
                       SOLARCHVISION_add_PolygonHyper(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
                       
     
-                    if (CreateObject == CREATE_Extrude) {       
+                    if (CreateObject == CREATE.Extrude) {       
     
                       SOLARCHVISION_add_PolygonExtrude(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, 2 * rz, CreateInput_PolyDegree, rot);
                     }
     
-                    if (CreateObject == CREATE_House1) {   
+                    if (CreateObject == CREATE.House1) {   
                       
                       float h = ry;  
 
                       SOLARCHVISION_add_House1_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, h, rot);
                     }
 
-                    if (CreateObject == CREATE_House2) {   
+                    if (CreateObject == CREATE.House2) {   
        
                       float h = ry;   
           
@@ -35972,21 +35988,21 @@ void mouseClicked () {
                       SOLARCHVISION_add_House2_Core(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, h, rot);
                     }
     
-                    if (CreateObject == CREATE_Parametric) {
+                    if (CreateObject == CREATE.Parametric) {
     
                       SOLARCHVISION_add_ParametricSurface(DEFAULT_CreateMaterial, DEFAULT_CreateTessellation, DEFAULT_CreateLayer, DEFAULT_CreateVisibility, DEFAULT_CreateWeight, DEFAULT_CreateClose, x, y, z, rx, ry, rz, CreateParametric_Type, rot);
                     }
                     
                   }
   
-                  if (Current_ObjectCategory == ObjectCategory_Object2Ds) { // working with object2Ds
-                    if (CreateObject == CREATE_Person) {
+                  if (Current_ObjectCategory == ObjectCategory.Object2Ds) { // working with object2Ds
+                    if (CreateObject == CREATE.Person) {
     
                       randomSeed(millis());
                       SOLARCHVISION_add_Object2D_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
                     }
     
-                    if (CreateObject == CREATE_Plant) {
+                    if (CreateObject == CREATE.Plant) {
                       int n = 0;
                       if (CreatePlant_Type > 0) n = CreatePlant_Type + Object2D_PEOPLE_Files_Num;
     
@@ -35995,24 +36011,24 @@ void mouseClicked () {
                     }
                   }    
                   
-                  if (Current_ObjectCategory == ObjectCategory_Fractals) { // working with fractals
-                    if (CreateObject == CREATE_Fractal) {
+                  if (Current_ObjectCategory == ObjectCategory.Fractals) { // working with fractals
+                    if (CreateObject == CREATE.Fractal) {
   
                       randomSeed(millis());
                       SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 2 * rz, rot, CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
                     }        
                   }
 
-                  if (Current_ObjectCategory == ObjectCategory_Vertices) { // working with vertices
-                    if (CreateObject == CREATE_Vertex) {
+                  if (Current_ObjectCategory == ObjectCategory.Vertices) { // working with vertices
+                    if (CreateObject == CREATE.Vertex) {
                       SOLARCHVISION_add_Vertex(x, y, z);
                       
                     }
                   }    
 
 
-                  if (Current_ObjectCategory == ObjectCategory_Faces) { // working with faces
-                    if (CreateObject == CREATE_Face) {
+                  if (Current_ObjectCategory == ObjectCategory.Faces) { // working with faces
+                    if (CreateObject == CREATE.Face) {
                       SOLARCHVISION_add_VertexToLastFace(x, y, z); 
 
                       selectedFace_ids = new int [1];
@@ -36023,8 +36039,8 @@ void mouseClicked () {
                     }
                   }      
           
-                  if (Current_ObjectCategory == ObjectCategory_Curves) { // working with curves
-                    if (CreateObject == CREATE_Curve) {
+                  if (Current_ObjectCategory == ObjectCategory.Curves) { // working with curves
+                    if (CreateObject == CREATE.Curve) {
                       SOLARCHVISION_add_VertexToLastCurve(x, y, z);                   
 
                       selectedCurve_ids = new int [1];
@@ -36037,15 +36053,15 @@ void mouseClicked () {
                       
 
   
-                  if (Current_ObjectCategory == ObjectCategory_Solids) { // working with solids
-                    if (CreateObject == CREATE_Solid) {
+                  if (Current_ObjectCategory == ObjectCategory.Solids) { // working with solids
+                    if (CreateObject == CREATE.Solid) {
                       SOLARCHVISION_add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                     }
                   }        
   
   
-                  if (Current_ObjectCategory == ObjectCategory_Cameras) { // working with cameras
-                    if (CreateObject == CREATE_Camera) {              
+                  if (Current_ObjectCategory == ObjectCategory.Cameras) { // working with cameras
+                    if (CreateObject == CREATE.Camera) {              
     
                       int f = int(RxP[0]);
     
@@ -36100,8 +36116,8 @@ void mouseClicked () {
                   }
                   
                   
-                  if (Current_ObjectCategory == ObjectCategory_Sections) { // working with sections
-                    if (CreateObject == CREATE_Section) {
+                  if (Current_ObjectCategory == ObjectCategory.Sections) { // working with sections
+                    if (CreateObject == CREATE.Section) {
     
                       int createNewSection = 0;
     
@@ -37930,7 +37946,7 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {    
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {    
 
     if (selectedLandPoint_displayPoints != 0) {
 
@@ -37974,7 +37990,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     if (selectedCamera_displayEdges != 0) {
 
@@ -38019,7 +38035,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     if (selectedSection_displayEdges != 0) {
 
@@ -38064,7 +38080,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     if (selectedSolid_displayEdges != 0) {
 
@@ -38116,7 +38132,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }  
   
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     if (selectedObject2D_displayEdges != 0) {
 
@@ -38166,7 +38182,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     if (selectedFractal_displayEdges != 0) {
 
@@ -38212,7 +38228,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {    
+  if (Current_ObjectCategory == ObjectCategory.Faces) {    
 
     if (selectedFace_displayEdges != 0) {
 
@@ -38317,7 +38333,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }
   
   
-  if (Current_ObjectCategory == ObjectCategory_Curves) {    
+  if (Current_ObjectCategory == ObjectCategory.Curves) {    
 
     if (selectedCurve_displayVertexCount != 0) {
 
@@ -38361,7 +38377,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }
 
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {    
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {    
 
     if (selectedVertex_displayVertices != 0) {
 
@@ -38402,7 +38418,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {    
+  if (Current_ObjectCategory == ObjectCategory.SoftVerts) {    
 
     if (selectedVertex_displayVertices != 0) {
 
@@ -38449,7 +38465,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {    
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {    
 
     if (selectedGroup3D_displayEdges != 0) {
 
@@ -42212,37 +42228,37 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
   int[] theVertices = new int [0];
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
     theVertices = selectedCamera_ids;
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
     theVertices = selectedSection_ids;
   } 
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
     theVertices = selectedSolid_ids;
   } 
 
-  if ((Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts)) {
+  if ((Current_ObjectCategory == ObjectCategory.Vertices) || (Current_ObjectCategory == ObjectCategory.SoftVerts)) {
     theVertices = selectedVertex_ids;
   }
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
     theVertices = SOLARCHVISION_get_selectedFace_Vertices();
   }  
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
     theVertices = SOLARCHVISION_get_selectedCurve_Vertices();
   }    
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
     theVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
   }
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
     theVertices = selectedObject2D_ids;
   }
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
     theVertices = selectedFractal_ids;
   }  
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
     theVertices = selectedLandPoint_ids;
   }    
 
@@ -42258,7 +42274,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   float rotY = 0;
   float rotZ = 0;
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) { 
 
     if (selectedGroup3D_ids.length > 0) {
     
@@ -42313,7 +42329,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     float y = 0;
     float z = 0;
 
-    if (Current_ObjectCategory == ObjectCategory_Cameras) {
+    if (Current_ObjectCategory == ObjectCategory.Cameras) {
       int n = theVertices[q];
 
       if (n < allCameras_num) {
@@ -42338,7 +42354,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       }
     }  
 
-    if (Current_ObjectCategory == ObjectCategory_Sections) {
+    if (Current_ObjectCategory == ObjectCategory.Sections) {
       int n = theVertices[q];
 
       if (n < allSections_num) {
@@ -42363,7 +42379,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       }
     }  
 
-    if (Current_ObjectCategory == ObjectCategory_Solids) {
+    if (Current_ObjectCategory == ObjectCategory.Solids) {
       int n = theVertices[q];
 
       if (n < allSolids_DEF.length) {
@@ -42392,28 +42408,28 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     }  
 
 
-    if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts)) {
+    if ((Current_ObjectCategory == ObjectCategory.Group3Ds) || (Current_ObjectCategory == ObjectCategory.Faces) || (Current_ObjectCategory == ObjectCategory.Curves) || (Current_ObjectCategory == ObjectCategory.Vertices) || (Current_ObjectCategory == ObjectCategory.SoftVerts)) {
       int n = theVertices[q];
 
       x = allVertices[n][0];
       y = allVertices[n][1];
       z = allVertices[n][2];
     }
-    if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+    if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
       int n = theVertices[q];
 
       x = allObject2Ds_XYZS[n][0];
       y = allObject2Ds_XYZS[n][1];
       z = allObject2Ds_XYZS[n][2];
     }     
-    if (Current_ObjectCategory == ObjectCategory_Fractals) {
+    if (Current_ObjectCategory == ObjectCategory.Fractals) {
       int n = theVertices[q];
 
       x = allFractals_XYZSR[n][0];
       y = allFractals_XYZSR[n][1];
       z = allFractals_XYZSR[n][2];
     }  
-    if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+    if (Current_ObjectCategory == ObjectCategory.LandPoints) {
       int n = theVertices[q];
 
       int OBJ_NUM = n;
@@ -43823,56 +43839,56 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
   z0 = O[2];    
 
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     SOLARCHVISION_scale_selectedCameras(x0, y0, z0, sx, sy, sz);
   }   
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     SOLARCHVISION_scale_selectedSections(sx, sy);
   }   
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
     SOLARCHVISION_scale_selectedSolids(x0, y0, z0, sx, sy, sz);
   }       
 
-  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
+  if (Current_ObjectCategory == ObjectCategory.SoftVerts) {
 
     SOLARCHVISION_softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
 
     SOLARCHVISION_scale_selectedVertices(x0, y0, z0, sx, sy, sz);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     SOLARCHVISION_scale_selectedFaces(x0, y0, z0, sx, sy, sz);
   }  
   
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     SOLARCHVISION_scale_selectedCurves(x0, y0, z0, sx, sy, sz);
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     SOLARCHVISION_scale_selectedGroup3Ds(x0, y0, z0, sx, sy, sz);
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     SOLARCHVISION_scale_selectedObject2Ds(x0, y0, z0, sx, sy, sz);
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     SOLARCHVISION_scale_selectedFractals(x0, y0, z0, sx, sy, sz);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
     SOLARCHVISION_scale_selectedLandPoints(x0, y0, z0, sx, sy, sz);
   }
@@ -43892,57 +43908,57 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
   z0 = B[2] - A[2];  
 
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     SOLARCHVISION_rotate_selectedCameras(x0, y0, z0, r, the_Vector);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     SOLARCHVISION_rotate_selectedSections(r);
   }   
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     SOLARCHVISION_rotate_selectedSolids(x0, y0, z0, r, the_Vector);
   }       
 
-  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
+  if (Current_ObjectCategory == ObjectCategory.SoftVerts) {
 
     SOLARCHVISION_softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
 
     SOLARCHVISION_rotate_selectedVertices(x0, y0, z0, r, the_Vector);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     SOLARCHVISION_rotate_selectedFaces(x0, y0, z0, r, the_Vector);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     SOLARCHVISION_rotate_selectedCurves(x0, y0, z0, r, the_Vector);
   }  
   
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     SOLARCHVISION_rotate_selectedGroup3Ds(r, the_Vector);
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     SOLARCHVISION_rotate_selectedObject2Ds(x0, y0, z0, r, the_Vector);
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     SOLARCHVISION_rotate_selectedFractals(x0, y0, z0, r, the_Vector);
   }   
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
     SOLARCHVISION_rotate_selectedLandPoints(x0, y0, z0, r, the_Vector);
   }
@@ -43967,57 +43983,57 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     SOLARCHVISION_move_selectedCameras(dx, dy, dz);
   }     
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     SOLARCHVISION_move_selectedSections(dx, dy, dz);
   }   
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     SOLARCHVISION_move_selectedSolids(dx, dy, dz);
   }      
 
-  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
+  if (Current_ObjectCategory == ObjectCategory.SoftVerts) {
 
     SOLARCHVISION_softMove_selectedVertices(dx, dy, dz);
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
 
     SOLARCHVISION_move_selectedVertices(dx, dy, dz);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     SOLARCHVISION_move_selectedFaces(dx, dy, dz);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     SOLARCHVISION_move_selectedCurves(dx, dy, dz);
   }
   
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     SOLARCHVISION_move_selectedGroup3Ds(dx, dy, dz);
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     SOLARCHVISION_move_selectedObject2Ds(dx, dy, dz);
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     SOLARCHVISION_move_selectedFractals(dx, dy, dz);
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
     SOLARCHVISION_move_selectedLandPoints(dx, dy, dz);
   }
@@ -44027,31 +44043,31 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 void SOLARCHVISION_drop_Selection () {
 
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
   }     
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
   }   
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
   }      
 
-  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
+  if (Current_ObjectCategory == ObjectCategory.SoftVerts) {
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {
+  if (Current_ObjectCategory == ObjectCategory.Vertices) {
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
     for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
 
@@ -44103,7 +44119,7 @@ void SOLARCHVISION_drop_Selection () {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     for (int o = selectedFractal_ids.length - 1; o >= 0; o--) {
 
@@ -44155,7 +44171,7 @@ void SOLARCHVISION_drop_Selection () {
     }
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_LandPoints) {
+  if (Current_ObjectCategory == ObjectCategory.LandPoints) {
   }
 }
 
@@ -44163,7 +44179,7 @@ void SOLARCHVISION_drop_Selection () {
 
 void SOLARCHVISION_changeProperties_Selection (int p) {
 
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+  if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
     for (int o = selectedCamera_ids.length - 1; o >= 0; o--) {
 
@@ -44183,7 +44199,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
     }
   }    
 
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
+  if (Current_ObjectCategory == ObjectCategory.Sections) {
 
     int Solids_updated = 0;  
 
@@ -44225,7 +44241,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
   }  
 
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory.Solids) {
 
     int Solids_updated = 0;  
 
@@ -44277,7 +44293,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
   }    
 
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
+  if (Current_ObjectCategory == ObjectCategory.Faces) {
 
     for (int o = selectedFace_ids.length - 1; o >= 0; o--) {
 
@@ -44327,7 +44343,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
     }
   }  
 
-  if (Current_ObjectCategory == ObjectCategory_Curves) {
+  if (Current_ObjectCategory == ObjectCategory.Curves) {
 
     for (int o = selectedCurve_ids.length - 1; o >= 0; o--) {
 
@@ -44377,7 +44393,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
     for (int o = selectedGroup3D_ids.length - 1; o >= 0; o--) {
 
@@ -44475,7 +44491,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
     for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = selectedObject2D_ids[o];
@@ -44525,7 +44541,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
     }
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  if (Current_ObjectCategory == ObjectCategory.Fractals) {
 
     for (int o = selectedFractal_ids.length - 1; o >= 0; o--) {
 
@@ -47038,7 +47054,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("LayerType")) {
           Current_ObjectCategory = j - 1;
 
-          if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
+          if (Current_ObjectCategory == ObjectCategory.SoftVerts) {
             SOLARCHVISION_convert_Vertex_to_softSelection();
           }
 
@@ -47313,7 +47329,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 void UI_set_to_Create_Nothing () {
 
-  CreateObject = CREATE_Nothing;
+  CreateObject = CREATE.Nothing;
 
   WIN3D_UI_CurrentTask = UITASK.Create;
 
@@ -47324,30 +47340,30 @@ void UI_set_to_Create_Nothing () {
 void UI_set_to_Create_Fractal () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Fractal;
-  Current_ObjectCategory = ObjectCategory_Fractals;
+  CreateObject = CREATE.Fractal;
+  Current_ObjectCategory = ObjectCategory.Fractals;
 }  
 
 
 void UI_set_to_Create_Tree () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Plant;
-  Current_ObjectCategory = ObjectCategory_Object2Ds;
+  CreateObject = CREATE.Plant;
+  Current_ObjectCategory = ObjectCategory.Object2Ds;
 }
 
 void UI_set_to_Create_Person () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Person;
-  Current_ObjectCategory = ObjectCategory_Object2Ds;
+  CreateObject = CREATE.Person;
+  Current_ObjectCategory = ObjectCategory.Object2Ds;
 }
 
 void UI_set_to_Create_Vertex () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Vertex;
-  Current_ObjectCategory = ObjectCategory_Vertices;
+  CreateObject = CREATE.Vertex;
+  Current_ObjectCategory = ObjectCategory.Vertices;
 }
 
 void UI_set_to_Create_Face () {
@@ -47362,8 +47378,8 @@ void UI_set_to_Create_Face () {
   
   SOLARCHVISION_beginNewFace();
 
-  CreateObject = CREATE_Face;
-  Current_ObjectCategory = ObjectCategory_Faces;
+  CreateObject = CREATE.Face;
+  Current_ObjectCategory = ObjectCategory.Faces;
 }
 
 void UI_set_to_Create_Curve () {
@@ -47378,30 +47394,30 @@ void UI_set_to_Create_Curve () {
   
   SOLARCHVISION_beginNewCurve();
 
-  CreateObject = CREATE_Curve;
-  Current_ObjectCategory = ObjectCategory_Curves;
+  CreateObject = CREATE.Curve;
+  Current_ObjectCategory = ObjectCategory.Curves;
 }
 
 void UI_set_to_Create_Solid () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Solid;
-  Current_ObjectCategory = ObjectCategory_Solids;
+  CreateObject = CREATE.Solid;
+  Current_ObjectCategory = ObjectCategory.Solids;
 }
 
 void UI_set_to_Create_Section () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Section;
-  Current_ObjectCategory = ObjectCategory_Sections;
+  CreateObject = CREATE.Section;
+  Current_ObjectCategory = ObjectCategory.Sections;
 }
 
 
 void UI_set_to_Create_Camera () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Camera;
-  Current_ObjectCategory = ObjectCategory_Cameras;
+  CreateObject = CREATE.Camera;
+  Current_ObjectCategory = ObjectCategory.Cameras;
 }
 
 
@@ -47412,132 +47428,132 @@ void UI_set_to_Create_Camera () {
 void UI_set_to_Create_Parametric (int n) {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Parametric;
+  CreateObject = CREATE.Parametric;
   CreateParametric_Type = n;
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Tri () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Tri;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.Tri;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Plane () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Plane;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.Plane;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Poly () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Poly;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.Poly;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Extrude () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Extrude;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.Extrude;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Hyper () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_Hyper;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.Hyper;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_House1 () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_House1;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.House1;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_House2 () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_House2;
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  CreateObject = CREATE.House2;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Box () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_SuperOBJ;
+  CreateObject = CREATE.SuperOBJ;
 
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower; 
   CreateInput_powZ = CubePower;             
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 
 void UI_set_to_Create_Icosahedron () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_SuperOBJ;
+  CreateObject = CREATE.SuperOBJ;
 
   CreateInput_powX = 1;  
   CreateInput_powY = 1; 
   CreateInput_powZ = 1;            
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Octahedron () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_SuperOBJ;
+  CreateObject = CREATE.SuperOBJ;
 
   CreateInput_powX = 1;  
   CreateInput_powY = 1; 
   CreateInput_powZ = 1;            
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Sphere () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_SuperOBJ;
+  CreateObject = CREATE.SuperOBJ;
 
   CreateInput_powX = 2;  
   CreateInput_powY = 2; 
   CreateInput_powZ = 2;            
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Cylinder () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_SuperOBJ;
+  CreateObject = CREATE.SuperOBJ;
 
   CreateInput_powX = 2;  
   CreateInput_powY = 2; 
   CreateInput_powZ = CubePower;             
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 void UI_set_to_Create_Cushion () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE_SuperOBJ;
+  CreateObject = CREATE.SuperOBJ;
 
   CreateInput_powX = CubePower;   
   CreateInput_powY = CubePower;  
   CreateInput_powZ = 2;            
 
-  Current_ObjectCategory = ObjectCategory_Group3Ds;
+  Current_ObjectCategory = ObjectCategory.Group3Ds;
 }
 
 
@@ -52070,16 +52086,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory_Group3Ds; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory_Object2Ds; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("fractals")) {Current_ObjectCategory = ObjectCategory_Fractals; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory_Vertices; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory_Faces; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("lines")) {Current_ObjectCategory = ObjectCategory_Curves; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("solids")) {Current_ObjectCategory = ObjectCategory_Solids; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory_Sections; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory_Cameras; UI_BAR_b_Update = 1;}
-        else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory_LandPoints; UI_BAR_b_Update = 1;}
+             if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory.Group3Ds; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory.Object2Ds; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("fractals")) {Current_ObjectCategory = ObjectCategory.Fractals; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory.Vertices; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory.Faces; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("lines")) {Current_ObjectCategory = ObjectCategory.Curves; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("solids")) {Current_ObjectCategory = ObjectCategory.Solids; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory.Sections; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory.Cameras; UI_BAR_b_Update = 1;}
+        else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory.LandPoints; UI_BAR_b_Update = 1;}
       }
       
       for (int q = 1; q < parts.length; q++) {
@@ -52117,7 +52133,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       SOLARCHVISION_add_Object2D_single(t, m, x, y, z, 2.5);
       WIN3D_Update = 1;  
-      Current_ObjectCategory = ObjectCategory_Object2Ds; 
+      Current_ObjectCategory = ObjectCategory.Object2Ds; 
       UI_BAR_b_Update = 1;
       //SOLARCHVISION_select_Last();
     }
@@ -52151,7 +52167,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (h != 0) {
         SOLARCHVISION_add_Object2D_single(t, m, x, y, z, h);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Object2Ds; 
+        Current_ObjectCategory = ObjectCategory.Object2Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52198,7 +52214,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (h != 0) {
         SOLARCHVISION_add_Fractal(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Fractals; 
+        Current_ObjectCategory = ObjectCategory.Fractals; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52244,7 +52260,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {   
         SOLARCHVISION_add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52292,7 +52308,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52342,7 +52358,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52392,7 +52408,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52440,7 +52456,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52486,7 +52502,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (d != 0) {   
         SOLARCHVISION_add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52543,7 +52559,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {   
         SOLARCHVISION_add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52593,7 +52609,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52642,7 +52658,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52686,7 +52702,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (d != 0) {   
         SOLARCHVISION_add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52734,7 +52750,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Group3Ds; 
+        Current_ObjectCategory = ObjectCategory.Group3Ds; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52782,7 +52798,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52828,7 +52844,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (d != 0) {   
         SOLARCHVISION_add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52875,7 +52891,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
         SOLARCHVISION_add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52924,7 +52940,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -52979,7 +52995,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53040,7 +53056,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53107,7 +53123,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       {   
         SOLARCHVISION_add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53152,7 +53168,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (w != 0)) {
         SOLARCHVISION_add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces;
+        Current_ObjectCategory = ObjectCategory.Faces;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53197,7 +53213,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Faces; 
+        Current_ObjectCategory = ObjectCategory.Faces; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53243,7 +53259,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {   
         SOLARCHVISION_add_Solid(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Solids; 
+        Current_ObjectCategory = ObjectCategory.Solids; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53285,7 +53301,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((t > 0) && (i > 0) && (j > 0) && (w > 0) && (h > 0)) {   
         SOLARCHVISION_add_Section(t, u, v, e, r, w, h, i, j);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Sections; 
+        Current_ObjectCategory = ObjectCategory.Sections; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53328,7 +53344,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((s != 0) && (a != 0)) {   
         SOLARCHVISION_add_Camera(t, x, y, z, s, rx, ry, rz, a);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Cameras; 
+        Current_ObjectCategory = ObjectCategory.Cameras; 
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53372,7 +53388,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (points.length > 1) {   
         SOLARCHVISION_add_Spline(m, tes, lyr, vsb, wgt, clz, points);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Curves;
+        Current_ObjectCategory = ObjectCategory.Curves;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53421,7 +53437,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if ((r != 0) && (deg > 2)) {   
         SOLARCHVISION_add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
         WIN3D_Update = 1;  
-        Current_ObjectCategory = ObjectCategory_Curves;
+        Current_ObjectCategory = ObjectCategory.Curves;
         UI_BAR_b_Update = 1;
         //SOLARCHVISION_select_Last();
       }
@@ -53456,97 +53472,97 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   
   else if (Command_CAPITAL.equals("VERTEX>GROUP")) {
     SOLARCHVISION_convert_Vertex_to_Group3D();
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("FACE>GROUP")) {
     SOLARCHVISION_convert_Face_to_Group3D();
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
     SOLARCHVISION_convert_Group3D_to_Face();
-    Current_ObjectCategory = ObjectCategory_Faces;
+    Current_ObjectCategory = ObjectCategory.Faces;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }    
   else if (Command_CAPITAL.equals("CURVE>GROUP")) {
     SOLARCHVISION_convert_Curve_to_Group3D();
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("GROUP>CURVE")) {
     SOLARCHVISION_convert_Group3D_to_Curve();
-    Current_ObjectCategory = ObjectCategory_Curves;
+    Current_ObjectCategory = ObjectCategory.Curves;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }            
   else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
     SOLARCHVISION_convert_Curve_to_Vertex();
-    Current_ObjectCategory = ObjectCategory_Vertices;
+    Current_ObjectCategory = ObjectCategory.Vertices;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   } 
   else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
     SOLARCHVISION_convert_Vertex_to_Curve();
-    Current_ObjectCategory = ObjectCategory_Curves;
+    Current_ObjectCategory = ObjectCategory.Curves;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }               
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
     SOLARCHVISION_convert_Group3D_to_Vertex();
-    Current_ObjectCategory = ObjectCategory_Vertices;
+    Current_ObjectCategory = ObjectCategory.Vertices;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }  
   else if (Command_CAPITAL.equals("FACE>VERTEX")) {
     SOLARCHVISION_convert_Face_to_Vertex();
-    Current_ObjectCategory = ObjectCategory_Vertices;
+    Current_ObjectCategory = ObjectCategory.Vertices;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   } 
   else if (Command_CAPITAL.equals("VERTEX>FACE")) {
     SOLARCHVISION_convert_Vertex_to_Face();
-    Current_ObjectCategory = ObjectCategory_Faces;
+    Current_ObjectCategory = ObjectCategory.Faces;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }    
   else if (Command_CAPITAL.equals("SOLID>GROUP")) {
     SOLARCHVISION_convert_Solid_to_Group3D();
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("GROUP>SOLID")) {
     SOLARCHVISION_convert_Group3D_to_Solid();
-    Current_ObjectCategory = ObjectCategory_Solids;
+    Current_ObjectCategory = ObjectCategory.Solids;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }                
   else if (Command_CAPITAL.equals("OBJ2D>GROUP")) {
     SOLARCHVISION_convert_Object2D_to_Group3D();
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("GROUP>OBJ2D")) {
     SOLARCHVISION_convert_Group3D_to_Object2D();
-    Current_ObjectCategory = ObjectCategory_Object2Ds;
+    Current_ObjectCategory = ObjectCategory.Object2Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("FRACTAL>GROUP")) {
     SOLARCHVISION_convert_Fractal_to_Group3D();
-    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }             
   else if (Command_CAPITAL.equals("GROUP>FRACTAL")) {
     SOLARCHVISION_convert_Group3D_to_Fractal();
-    Current_ObjectCategory = ObjectCategory_Fractals;
+    Current_ObjectCategory = ObjectCategory.Fractals;
     WIN3D_Update = 1;
     UI_BAR_b_Update = 1;
   }              
