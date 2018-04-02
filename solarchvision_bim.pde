@@ -14,6 +14,8 @@ class solarchvision_STATION {
   private String city = "";
   private String province = "";
   private String country = "";
+  private String ICAO = "";
+  private String WMO = "";
   private String filename_NAEFS = "";
   private String filename_CWEEDS = "";
   private String filename_TMYEPW = "";
@@ -26,6 +28,8 @@ class solarchvision_STATION {
   public String getCity () { return this.city; } 
   public String getProvince () { return this.province; } 
   public String getCountry () { return this.country; }
+  public String getICAO () { return this.ICAO; }
+  public String getWMO () { return this.WMO; }
   public String getFilename_NAEFS () { return this.filename_NAEFS; }
   public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
   public String getFilename_TMYEPW () { return this.filename_TMYEPW; } 
@@ -52,6 +56,12 @@ class solarchvision_STATION {
   public void setCountry (String country) {
     this.country = country;
   }
+  public void setICAO (String ICAO) {
+    this.ICAO = ICAO;
+  }
+  public void setWMO (String WMO) {
+    this.WMO = WMO;
+  }
   public void setFilename_NAEFS (String filename_NAEFS) {
     this.filename_NAEFS = filename_NAEFS;
   }
@@ -68,11 +78,13 @@ class solarchvision_STATION {
   
   public solarchvision_STATION (String city, String province, String Country, 
                          float latitude, float longitude, float timelong, float elevation, 
-                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
+                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW, String ICAO, String WMO) {
   
     this.city = city;
     this.province = province;
     this.country = country;
+    this.ICAO = ICAO;
+    this.WMO = WMO;    
     this.filename_NAEFS = filename_NAEFS;
     this.filename_CWEEDS = filename_CWEEDS;
     this.filename_TMYEPW = filename_TMYEPW;
@@ -121,22 +133,8 @@ class solarchvision_STATION {
 
 solarchvision_STATION STATION = new solarchvision_STATION(
 
-  //"SolidArch_01", "XX", "AT", 47.267286, 11.398778, 15, 573.5, "", "", "AUT_Innsbruck.111200_IWEC"
-  //"Brossard_Oakland", "QC", "CA", 45.433760, -73.461702, -75, 36, "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
-  //"TEHRAN_Pasargad", "XX", "IR", 35.731165, 51.531360, 52.5, 1672, "", "", "IRN_TEHRAN_XX_IR"
-  //"TEHRAN_Jordan", "XX", "IR", 35.77, 51.419995, 52.5, 1672, "", "", "IRN_TEHRAN_XX_IR"
-  //"FIROUZKOH_Mergan", "XX", "IR", 35.698970, 52.642485, 52.5, 2075, "", "", "IRN_Semnan_XX_IR"
-  //"ESFAHAN", "XX", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
-  //"Ghareh_Khach", "XX", "IR", 39.263, 44.463, 52.5, 1686, "", "", "IRN_GharehKhach_XX_IR"
+  "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR", "", ""
   
-  "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
-  
-  //"Rue de Biencourt", "QC", "CA", 45.458781, -73.596112, -75, 36, "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Montreal_CMC", "QC", "CA", 45.4834, -73.7879", "-75, 36, "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Place_Bonaventure", "QC", "CA", 45.4995, -73.5650, -75, 30, "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  //"Ryerson_University", "ON", "CA", 43.6593, -79.3779, -75, 95, "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
-  //"Toronto_Nima", "ON", "CA", 43.80, -79.60, -75, 95, "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
-  //"VANCOUVER_Harbour", "BC", "CA", 49.295353, -123.121869, -120, 2.5, "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
 );
   
 
@@ -219,78 +217,40 @@ void inputCoordinates_CWEEDS () {
 
 
 
-
-
-String[][] CLMREC_Coordinates;
+solarchvision_STATION[] CLMREC_Coordinates;
 
 void inputCoordinates_CLMREC () {
-  
-  try {
-    String[] FileALL = loadStrings(CoordinateFolder + "/CLMREC_UTF8_EN.txt");
 
-    String lineSTR;
-    String[] input;
+  String[] FileALL = loadStrings(CoordinateFolder + "/CLMREC_UTF8_EN.txt");
 
-    int CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
+  String lineSTR;
 
-    CLMREC_Coordinates = new String [CLMREC_NUMBER][11]; 
+  int num_stn = FileALL.length - 1; // to skip the first description line 
 
-    int n_Locations = 0;
+  CLMREC_Coordinates = new solarchvision_STATION [num_stn]; 
 
-    for (int f = 0; f < CLMREC_NUMBER; f++) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
+  for (int f = 0; f < num_stn; f++) {
+    lineSTR = FileALL[f + 1]; // to skip the first description line  
 
-      String StationNameEnglish = "";
-      String StationProvince = "";
-      String StationCountry = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationICAO = "";
-      String StationWMO = ""; 
-      String StationClimate = "";
-      int StationStart = -1;
-      int StationEnd = -1;
+    String[] parts = split(lineSTR, ',');
+    
+    CLMREC_Coordinates[f] = new solarchvision_STATION(); 
 
-      String[] parts = split(lineSTR, ',');
+    float latitude = float(parts[6]);
+    float longitude = float(parts[7]);
 
-      if (12 < parts.length) {
-        
-        StationCountry = "CA";
-        StationProvince = parts[1];
-        StationNameEnglish = parts[0].replace('/', '_');
-
-        StationLatitude = float(parts[6]);
-        StationLongitude = float(parts[7]);
-        StationElevation = float(parts[10]);
-
-        StationICAO = parts[3];
-        StationWMO = parts[4];
-        StationClimate = parts[2];
-        
-        StationStart = int(parts[13]);
-        StationEnd = int(parts[14]);
-
-        CLMREC_Coordinates[n_Locations][0] = StationNameEnglish;
-        CLMREC_Coordinates[n_Locations][1] = StationProvince;
-        CLMREC_Coordinates[n_Locations][2] = StationCountry;
-        CLMREC_Coordinates[n_Locations][3] = String.valueOf(StationLatitude);
-        CLMREC_Coordinates[n_Locations][4] = String.valueOf(StationLongitude);
-        CLMREC_Coordinates[n_Locations][5] = String.valueOf(StationElevation);
-        CLMREC_Coordinates[n_Locations][6] = StationICAO;
-        CLMREC_Coordinates[n_Locations][7] = StationWMO;
-        CLMREC_Coordinates[n_Locations][8] = StationClimate;
-        CLMREC_Coordinates[n_Locations][9] = String.valueOf(StationStart);
-        CLMREC_Coordinates[n_Locations][10] = String.valueOf(StationEnd);
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading CLMREC coordinates.");
+    CLMREC_Coordinates[f].setCity(parts[0].replace('/', '_'));
+    CLMREC_Coordinates[f].setProvince(parts[1]);
+    CLMREC_Coordinates[f].setCountry("CA");
+    CLMREC_Coordinates[f].setLatitude(latitude);
+    CLMREC_Coordinates[f].setLongitude(longitude);
+    CLMREC_Coordinates[f].setTimelong(roundTo(longitude, 15));
+    CLMREC_Coordinates[f].setElevation(float(parts[10]));
+    //CLMREC_Coordinates[f].setFilename_CLMREC(?);
   }
 }
+
+
 
 
 
@@ -4500,51 +4460,48 @@ void SOLARCHVISION_draw_WORLD () {
 
       if (Display_CLMREC_Points != 0) draw_info = true;
       
-      if (int(CLMREC_Coordinates[f][10]) == 2016) { // only use stations with this condition
+      float _lat = CLMREC_Coordinates[f].getLatitude();
+      float _lon = CLMREC_Coordinates[f].getLongitude(); 
+      if (_lon > 180) _lon -= 360; // << important!
 
-        float _lat = float(CLMREC_Coordinates[f][3]);
-        float _lon = float(CLMREC_Coordinates[f][4]); 
-        if (_lon > 180) _lon -= 360; // << important!
-  
-        if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = false;
-        if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = false;
-        if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = false;
-        if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = false; 
-  
-        if (draw_info) {
-  
-          float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
-          float y_point = WORLD.dY * ((-1 * (_lat - WORLD.oY) / 180.0) + 0.5) / WORLD.sY;
-  
-          WORLD.Diagrams.strokeWeight(1 * WORLD.ImageScale);
-          WORLD.Diagrams.stroke(0, 0, 0, 191);
-          WORLD.Diagrams.noFill();
-          WORLD.Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
-  
-          if (Display_CLMREC_Points > 1) {
-            WORLD.Diagrams.strokeWeight(0);
-            WORLD.Diagrams.stroke(0);
-            WORLD.Diagrams.fill(0);      
-            WORLD.Diagrams.textAlign(RIGHT, CENTER); 
-            WORLD.Diagrams.textSize(0.5 * MessageSize * WORLD.ImageScale);
-            WORLD.Diagrams.text(CLMREC_Coordinates[f][0], x_point, y_point);
-          }
+      if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = false;
+      if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = false;
+      if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = false;
+      if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = false; 
+
+      if (draw_info) {
+
+        float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
+        float y_point = WORLD.dY * ((-1 * (_lat - WORLD.oY) / 180.0) + 0.5) / WORLD.sY;
+
+        WORLD.Diagrams.strokeWeight(1 * WORLD.ImageScale);
+        WORLD.Diagrams.stroke(0, 0, 0, 191);
+        WORLD.Diagrams.noFill();
+        WORLD.Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
+
+        if (Display_CLMREC_Points > 1) {
+          WORLD.Diagrams.strokeWeight(0);
+          WORLD.Diagrams.stroke(0);
+          WORLD.Diagrams.fill(0);      
+          WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+          WORLD.Diagrams.textSize(0.5 * MessageSize * WORLD.ImageScale);
+          WORLD.Diagrams.text(CLMREC_Coordinates[f].getCity(), x_point, y_point);
         }
-  
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-  
-        if (nearest_WORLD_CLMREC_dist > d) {
-          nearest_WORLD_CLMREC_dist = d;
-          nearest_WORLD_CLMREC = f;
-        }
+      }
+
+      float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+
+      if (nearest_WORLD_CLMREC_dist > d) {
+        nearest_WORLD_CLMREC_dist = d;
+        nearest_WORLD_CLMREC = f;
       }
     } 
 
     if (Display_CLMREC_Nearest) {   
       int f = nearest_WORLD_CLMREC;
 
-      float _lat = float(CLMREC_Coordinates[f][3]);
-      float _lon = float(CLMREC_Coordinates[f][4]);  
+      float _lat = CLMREC_Coordinates[f].getLatitude();
+      float _lon = CLMREC_Coordinates[f].getLongitude();  
       if (_lon > 180) _lon -= 360; // << important!      
 
       float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
@@ -4555,8 +4512,8 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD.Diagrams.fill(0);      
       WORLD.Diagrams.textAlign(RIGHT, CENTER); 
       WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-      WORLD.Diagrams.text(CLMREC_Coordinates[f][0], x_point, y_point);
-      //println(CLMREC_Coordinates[f][0]);
+      WORLD.Diagrams.text(CLMREC_Coordinates[f].getCity(), x_point, y_point);
+      //println(CLMREC_Coordinates[f].getCity());
     }
 
     int nearest_WORLD_TMYEPW = -1;
@@ -6490,14 +6447,14 @@ void SOLARCHVISION_download_CLIMATE_CLMREC () {
         int THE_YEAR = k + CLIMATE_CLMREC_start;
         int THE_MONTH = m + 1;
     
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id][0] + ".csv";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
           
         String the_target = CLIMATE_CLMREC_directory + "/" + FN;
           
         File dir = new File(the_target);
         if (!dir.isFile()) {          
           
-          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getICAO() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
           
           println("Try downloading: " + the_link);
     
@@ -6542,10 +6499,11 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
     
     for (int f = 0; f < CLMREC_Coordinates.length; f++) {
       
-      if (int(CLMREC_Coordinates[f][10]) == 2016) { // only use stations with this condition
+      //if (int(CLMREC_Coordinates[f].getEndyear()) == 2016) 
+      { // only use stations with this condition
 
-        float _lat = float(CLMREC_Coordinates[f][3]);
-        float _lon = float(CLMREC_Coordinates[f][4]); 
+        float _lat = CLMREC_Coordinates[f].getLatitude();
+        float _lon = CLMREC_Coordinates[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!
   
         float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
@@ -6565,7 +6523,7 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
         int THE_YEAR = k + CLIMATE_CLMREC_start;
         int THE_MONTH = m + 1;
     
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id][0] + ".csv";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
         
         String the_source = CLIMATE_CLMREC_directory + "/" + FN;
         
@@ -35302,10 +35260,11 @@ void mouseClicked () {
 
               for (int f = 0; f < CLMREC_Coordinates.length; f++) {
                 
-                if (int(CLMREC_Coordinates[f][10]) == 2016) { // only use stations with this condition
+                //if (int(CLMREC_Coordinates[f].getEndyear()) == 2016) 
+                { // only use stations with this condition
 
-                  float _lat = float(CLMREC_Coordinates[f][3]);
-                  float _lon = float(CLMREC_Coordinates[f][4]); 
+                  float _lat = CLMREC_Coordinates[f].getLatitude();
+                  float _lon = CLMREC_Coordinates[f].getLongitude(); 
                   if (_lon > 180) _lon -= 360; // << important!
   
                   float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
@@ -35320,26 +35279,26 @@ void mouseClicked () {
               {
                 int f = nearest_WORLD_CLMREC;
 
-                if (STATION.getFilename_CWEEDS().equals(CLMREC_Coordinates[f][6])) {
+                if (STATION.getFilename_CWEEDS().equals(CLMREC_Coordinates[f].getFilename_CWEEDS())) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon);                   
 
-                  STATION.setFilename_CWEEDS(CLMREC_Coordinates[f][6]); // CLMREC filename
+                  STATION.setFilename_CWEEDS(CLMREC_Coordinates[f].getFilename_CWEEDS()); // CLMREC filename
 
-                  println("nearest CLMREC filename:", CLMREC_Coordinates[f][6]);       
+                  println("nearest CLMREC filename:", CLMREC_Coordinates[f].getFilename_CWEEDS());       
 
                   if (CurrentDataSource == dataID_CLIMATE_CLMREC) { 
 
-                    STATION.setCity(CLMREC_Coordinates[f][0]);
-                    STATION.setProvince(CLMREC_Coordinates[f][1]);
-                    STATION.setCountry(CLMREC_Coordinates[f][2]); 
+                    STATION.setCity(CLMREC_Coordinates[f].getCity());
+                    STATION.setProvince(CLMREC_Coordinates[f].getProvince());
+                    STATION.setCountry(CLMREC_Coordinates[f].getCountry()); 
 
-                    //STATION.setLatitude(float(CLMREC_Coordinates[f][3]));
-                    //STATION.setLongitude(float(CLMREC_Coordinates[f][4]));
-                    STATION.setElevation(float(CLMREC_Coordinates[f][5]));
-                    STATION.setTimelong(roundTo(STATION.getLongitude(), 15));   
+                    //STATION.setLatitude(CLMREC_Coordinates[f].getLatitude());
+                    //STATION.setLongitude(CLMREC_Coordinates[f].getLongitude());
+                    STATION.setElevation(CLMREC_Coordinates[f].getElevation());
+                    STATION.setTimelong(CLMREC_Coordinates[f].getTimelong());   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
