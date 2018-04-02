@@ -156,7 +156,7 @@ class solarchvision_WORLD {
     
     
     
-  int NAEFS_NUMBER = 0;
+
   String[][] NAEFS_INFO;
   
   void inputCoordinates_NAEFS () {
@@ -166,13 +166,13 @@ class solarchvision_WORLD {
       String lineSTR;
       String[] input;
   
-      this.NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
+      int NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-      this.NAEFS_INFO = new String [this.NAEFS_NUMBER][7]; 
+      this.NAEFS_INFO = new String [NAEFS_NUMBER][7]; 
   
       int n_Locations = 0;
   
-      for (int f = 0; f < this.NAEFS_NUMBER; f += 1) {
+      for (int f = 0; f < NAEFS_NUMBER; f += 1) {
         lineSTR = FileALL[f + 1]; // to skip the first description line  
   
         String StationNameEnglish = "";
@@ -234,7 +234,6 @@ class solarchvision_WORLD {
   }
   
   
-  int CWEEDS_NUMBER = 0;
   String[][] CWEEDS_INFO;
   
   void inputCoordinates_CWEEDS () {
@@ -244,13 +243,13 @@ class solarchvision_WORLD {
       String lineSTR;
       String[] input;
   
-      this.CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
+      int CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-      this.CWEEDS_INFO = new String [this.CWEEDS_NUMBER][7]; 
+      this.CWEEDS_INFO = new String [CWEEDS_NUMBER][7]; 
   
       int n_Locations = 0;
   
-      for (int f = 0; f < this.CWEEDS_NUMBER; f += 1) {
+      for (int f = 0; f < CWEEDS_NUMBER; f += 1) {
         lineSTR = FileALL[f + 1]; // to skip the first description line  
   
         String StationNameEnglish = "";
@@ -294,7 +293,7 @@ class solarchvision_WORLD {
   }
   
   
-  int CLMREC_NUMBER = 0;
+  
   String[][] CLMREC_INFO;
   
   void inputCoordinates_CLMREC () {
@@ -305,13 +304,13 @@ class solarchvision_WORLD {
       String lineSTR;
       String[] input;
   
-      this.CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
+      int CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-      this.CLMREC_INFO = new String [this.CLMREC_NUMBER][11]; 
+      this.CLMREC_INFO = new String [CLMREC_NUMBER][11]; 
   
       int n_Locations = 0;
   
-      for (int f = 0; f < this.CLMREC_NUMBER; f += 1) {
+      for (int f = 0; f < CLMREC_NUMBER; f += 1) {
         lineSTR = FileALL[f + 1]; // to skip the first description line  
   
         String StationNameEnglish = "";
@@ -368,7 +367,7 @@ class solarchvision_WORLD {
   
   
   
-  int SWOB_NUMBER = 0;
+
   String[][] SWOB_INFO;
   
   void inputCoordinates_SWOB () {
@@ -378,13 +377,13 @@ class solarchvision_WORLD {
       String lineSTR;
       String[] input;
   
-      this.SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
+      int SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-      this.SWOB_INFO = new String [this.SWOB_NUMBER][12]; 
+      this.SWOB_INFO = new String [SWOB_NUMBER][12]; 
   
       int n_Locations = 0;
   
-      for (int f = 0; f < this.SWOB_NUMBER; f += 1) {
+      for (int f = 0; f < SWOB_NUMBER; f += 1) {
         lineSTR = FileALL[f + 1]; // to skip the first description line  
   
         String StationNameEnglish = "";
@@ -445,7 +444,7 @@ class solarchvision_WORLD {
   }
   
   
-  int TMYEPW_NUMBER = 0;
+
   String[][] TMYEPW_INFO;
   
   void inputCoordinates_TMYEPW () {
@@ -455,13 +454,13 @@ class solarchvision_WORLD {
       String lineSTR;
       String[] input;
   
-      this.TMYEPW_NUMBER = FileALL.length - 1; // to skip the first description line 
+      int TMYEPW_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-      this.TMYEPW_INFO = new String [this.TMYEPW_NUMBER][9]; 
+      this.TMYEPW_INFO = new String [TMYEPW_NUMBER][9]; 
   
       int n_Locations = 0;
   
-      for (int f = 0; f < this.TMYEPW_NUMBER; f += 1) {
+      for (int f = 0; f < TMYEPW_NUMBER; f += 1) {
         lineSTR = FileALL[f + 1]; // to skip the first description line  
   
         String StationNameEnglish = "";
