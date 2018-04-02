@@ -1,60 +1,65 @@
 class solarchvision_STATION {
 
-  String name = "";
-  String province = "";
-  String country = "";
-  String filename_NAEFS = "";
-  String filename_CWEEDS = "";
-  String filename_TMYEPW = "";
-  float elevation = 0;
-  float latitude = 0;
-  float longitude = 0;
-  float timelong = 0;
+  private final static String CLASS_STAMP = "STATION";
   
-  String getName () {return this.name;} 
-  String getProvince () {return this.province;} 
-  String getCountry () {return this.country;}
-  String getFilename_NAEFS () {return this.filename_NAEFS;}
-  String getFilename_CWEEDS () {return this.filename_CWEEDS;}
-  String getFilename_TMYEPW () {return this.filename_TMYEPW;} 
-  float getElevation () {return this.elevation;} 
-  float getLatitude () {return this.latitude;}
-  float getLongitude () {return this.longitude;} 
-  float getTimelong () {return this.timelong;} 
+  private float elevation = 0;
+  private float latitude = 0;
+  private float longitude = 0;
+  private float timelong = 0;  
+  private String name = "";
+  private String province = "";
+  private String country = "";
+  private String filename_NAEFS = "";
+  private String filename_CWEEDS = "";
+  private String filename_TMYEPW = "";
+
+
+  public float getElevation () {return this.elevation;} 
+  public float getLatitude () {return this.latitude;}
+  public float getLongitude () {return this.longitude;} 
+  public float getTimelong () {return this.timelong;}   
+  public String getName () {return this.name;} 
+  public String getProvince () {return this.province;} 
+  public String getCountry () {return this.country;}
+  public String getFilename_NAEFS () {return this.filename_NAEFS;}
+  public String getFilename_CWEEDS () {return this.filename_CWEEDS;}
+  public String getFilename_TMYEPW () {return this.filename_TMYEPW;} 
+
   
-  void setName (String name) {
-    this.name = name;
-  }
-  void setProvince (String province) {
-    this.province = province;
-  }
-  void setCountry (String country) {
-    this.country = country;
-  }
-  void setFilename_NAEFS (String filename_NAEFS) {
-    this.filename_NAEFS = filename_NAEFS;
-  }
-  void setFilename_CWEEDS (String filename_CWEEDS) {
-    this.filename_CWEEDS = filename_CWEEDS;
-  }
-  void setFilename_TMYEPW (String filename_TMYEPW) {
-    this.filename_TMYEPW = filename_TMYEPW;
-  }  
-  void setElevation (float elevation) {
+  public void setElevation (float elevation) {
     this.elevation = elevation;
   }
-  void setLatitude (float latitude) {
+  public void setLatitude (float latitude) {
     this.latitude = latitude;
   }
-  void setLongitude (float longitude) {
+  public void setLongitude (float longitude) {
     this.longitude = longitude;
   }
-  void setTimelong (float timelong) {
+  public void setTimelong (float timelong) {
     this.timelong = timelong;
+  }  
+  public void setName (String name) {
+    this.name = name;
   }
+  public void setProvince (String province) {
+    this.province = province;
+  }
+  public void setCountry (String country) {
+    this.country = country;
+  }
+  public void setFilename_NAEFS (String filename_NAEFS) {
+    this.filename_NAEFS = filename_NAEFS;
+  }
+  public void setFilename_CWEEDS (String filename_CWEEDS) {
+    this.filename_CWEEDS = filename_CWEEDS;
+  }
+  public void setFilename_TMYEPW (String filename_TMYEPW) {
+    this.filename_TMYEPW = filename_TMYEPW;
+  }  
+
   
   
-  solarchvision_STATION (String name, String province, String Country, 
+  public solarchvision_STATION (String name, String province, String Country, 
                          float latitude, float longitude, float timelong, float elevation, 
                          String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
   
@@ -69,32 +74,64 @@ class solarchvision_STATION {
     this.longitude = longitude;
     this.timelong = timelong;
   }
+  
+  
+  public void to_XML (XML xml) {
+    
+    XML child = xml.addChild(this.CLASS_STAMP);
+    
+    child.setFloat("elevation", this.getElevation());
+    child.setFloat("latitude", this.getLatitude());
+    child.setFloat("longitude", this.getLongitude());
+    child.setFloat("timelong", this.getTimelong());
+   
+    child.setString("name", this.getName());
+    child.setString("province", this.getProvince());
+    child.setString("country", this.getCountry());
+    child.setString("filename_NAEFS", this.getFilename_NAEFS());
+    child.setString("filename_CWEEDS", this.getFilename_CWEEDS());
+    child.setString("filename_TMYEPW", this.getFilename_TMYEPW());
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    XML child = xml.getChild(this.CLASS_STAMP);
+    
+    STATION.setElevation(child.getFloat("elevation"));
+    STATION.setLatitude(child.getFloat("latitude"));
+    STATION.setLongitude(child.getFloat("longitude"));
+    STATION.setTimelong(child.getFloat("timelong"));
+    
+    STATION.setName(child.getString("name"));
+    STATION.setProvince(child.getString("province"));
+    STATION.setCountry(child.getString("country"));
+    STATION.setFilename_NAEFS(child.getString("filename_NAEFS"));
+    STATION.setFilename_CWEEDS(child.getString("filename_CWEEDS"));
+    STATION.setFilename_TMYEPW(child.getString("filename_TMYEPW"));    
+  }  
 }
 
-solarchvision_STATION STATION = new solarchvision_STATION("Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR");
+solarchvision_STATION STATION = new solarchvision_STATION(
 
-/*
-String[] Defined_Station = {
+  //"SolidArch_01", "XX", "AT", 47.267286, 11.398778, 15, 573.5, "", "", "AUT_Innsbruck.111200_IWEC"
+  //"Brossard_Oakland", "QC", "CA", 45.433760, -73.461702, -75, 36, "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
+  //"TEHRAN_Pasargad", "XX", "IR", 35.731165, 51.531360, 52.5, 1672, "", "", "IRN_TEHRAN_XX_IR"
+  //"TEHRAN_Jordan", "XX", "IR", 35.77, 51.419995, 52.5, 1672, "", "", "IRN_TEHRAN_XX_IR"
+  //"FIROUZKOH_Mergan", "XX", "IR", 35.698970, 52.642485, 52.5, 2075, "", "", "IRN_Semnan_XX_IR"
+  //"ESFAHAN", "XX", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
+  //"Ghareh_Khach", "XX", "IR", 39.263, 44.463, 52.5, 1686, "", "", "IRN_GharehKhach_XX_IR"
   
-  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
+  "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
   
-  //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
-  //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
-  //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
-  //"FIROUZKOH_Mergan", "XX", "IR", "35.698970", "52.642485", "52.5", "2075", "", "", "IRN_Semnan_XX_IR"
-  //"ESFAHAN", "XX", "IR", "32.617", "51.667", "52.5", "1590", "", "", "IRN_Esfahan_ZZ_IR"
-  //"Ghareh_Khach", "XX", "IR", "39.263", "44.463", "52.5", "1686", "", "", "IRN_GharehKhach_XX_IR"
+  //"Rue de Biencourt", "QC", "CA", 45.458781, -73.596112, -75, 36, "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"Montreal_CMC", "QC", "CA", 45.4834, -73.7879", "-75, 36, "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"Place_Bonaventure", "QC", "CA", 45.4995, -73.5650, -75, 30, "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
+  //"Ryerson_University", "ON", "CA", 43.6593, -79.3779, -75, 95, "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
+  //"Toronto_Nima", "ON", "CA", 43.80, -79.60, -75, 95, "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
+  //"VANCOUVER_Harbour", "BC", "CA", 49.295353, -123.121869, -120, 2.5, "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
+);
   
-  
-  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  //"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
-  //"Toronto_Nima", "ON", "CA", "43.80", "-79.60", "-75", "95", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
-  //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
-};
-*/
-
 
 
 
@@ -48773,21 +48810,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   my_xml.setName("SOLARCHVISION_" + SOLARCHVISION_version + "_project");
 
-  println("Saving:STATION");
-  {
-    newChild1 = my_xml.addChild("STATION");
-    newChild1.setFloat("elevation", STATION.getElevation());
-    newChild1.setFloat("latitude", STATION.getLatitude());
-    newChild1.setFloat("longitude", STATION.getLongitude());
-    newChild1.setFloat("timelong", STATION.getTimelong());
-    
-    newChild1.setString("name", STATION.getName());
-    newChild1.setString("province", STATION.getProvince());
-    newChild1.setString("country", STATION.getCountry());
-    newChild1.setString("filename_NAEFS", STATION.getFilename_NAEFS());
-    newChild1.setString("filename_CWEEDS", STATION.getFilename_CWEEDS());
-    newChild1.setString("filename_TMYEPW", STATION.getFilename_TMYEPW());
-  }
+  STATION.to_XML(my_xml);
+
 
   newChild1 = my_xml.addChild("SOLARCHVISION_variables");
 
@@ -50018,20 +50042,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     XML[] children0;
    
-    children0 = FileAll.getChildren("STATION");
-    for (int L = 0; L < children0.length; L++) {
-    
-      STATION.setElevation(children0[L].getFloat("elevation"));
-      STATION.setLatitude(children0[L].getFloat("latitude"));
-      STATION.setLongitude(children0[L].getFloat("longitude"));
-      STATION.setTimelong(children0[L].getFloat("timelong"));
-      STATION.setName(children0[L].getString("name"));
-      STATION.setProvince(children0[L].getString("province"));
-      STATION.setCountry(children0[L].getString("country"));
-      STATION.setFilename_NAEFS(children0[L].getString("filename_NAEFS"));
-      STATION.setFilename_CWEEDS(children0[L].getString("filename_CWEEDS"));
-      STATION.setFilename_TMYEPW(children0[L].getString("filename_TMYEPW"));    
-    } 
+    STATION.from_XML(FileAll);
 
     children0 = FileAll.getChildren("SOLARCHVISION_variables");
     for (int L = 0; L < children0.length; L++) {
