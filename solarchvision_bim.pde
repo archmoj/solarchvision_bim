@@ -98,17 +98,17 @@ class solarchvision_STATION {
     
     XML child = xml.getChild(this.CLASS_STAMP);
     
-    STATION.setElevation(child.getFloat("elevation"));
-    STATION.setLatitude(child.getFloat("latitude"));
-    STATION.setLongitude(child.getFloat("longitude"));
-    STATION.setTimelong(child.getFloat("timelong"));
+    this.setElevation(child.getFloat("elevation"));
+    this.setLatitude(child.getFloat("latitude"));
+    this.setLongitude(child.getFloat("longitude"));
+    this.setTimelong(child.getFloat("timelong"));
     
-    STATION.setName(child.getString("name"));
-    STATION.setProvince(child.getString("province"));
-    STATION.setCountry(child.getString("country"));
-    STATION.setFilename_NAEFS(child.getString("filename_NAEFS"));
-    STATION.setFilename_CWEEDS(child.getString("filename_CWEEDS"));
-    STATION.setFilename_TMYEPW(child.getString("filename_TMYEPW"));    
+    this.setName(child.getString("name"));
+    this.setProvince(child.getString("province"));
+    this.setCountry(child.getString("country"));
+    this.setFilename_NAEFS(child.getString("filename_NAEFS"));
+    this.setFilename_CWEEDS(child.getString("filename_CWEEDS"));
+    this.setFilename_TMYEPW(child.getString("filename_TMYEPW"));    
   }  
 }
 
@@ -138,49 +138,49 @@ solarchvision_STATION STATION = new solarchvision_STATION(
 
 class solarchvision_UITASK {
  
-  final int LandOrbit_Pan_TargetRollZ = -19;
-  final int LookAtDirection = -18;
-  final int DistMouseXY_TargetRollXY_TargetRollZ = -17; 
-  final int PanY_TargetRollXY_TargetRollZ = -16; 
-  final int PanX_TargetRollXY_TargetRollZ = -15; 
-  final int Pan_TargetRoll = -14; 
-  final int CameraDistance_TargetRollXY_TargetRollZ = -13; 
-  final int CameraRoll_Pan = -12; 
-  final int CameraRollXY_CameraRollZ = -11; 
-  final int TargetRoll_Pan = -10; 
-  final int TargetRollXY_TargetRollZ = -9; 
-  final int AllModelSize = -8; 
-  final int SkydomeSize = -7; 
-  final int Truck_Orbit = -6; 
-  final int ModelSize_Pan_TargetRoll = -5; 
-  final int Pan_Height = -4; 
-  final int Zoom_Orbit_Pan = -3; 
-  final int RectSelect = -2; 
-  final int PickSelect = -1; 
-  final int Create = 0; 
-  final int Move = 1; 
-  final int Scale = 2; 
-  final int Rotate = 3; 
-  final int Seed_Material = 4; 
-  final int Tessellation = 5; 
-  final int Layer = 6; 
-  final int Visibility = 7; 
-  final int Weight = 8; 
-  final int DegreeMax = 9; 
-  final int DegreeDif = 10; 
-  final int DegreeMin = 11; 
-  final int TrunkSize = 12; 
-  final int LeafSize = 13; 
-  final int AllFractalProps = 14; 
-  final int Pivot = 15; 
-  final int Normal = 16; 
-  final int FirstVertex = 17; 
-  final int Drop = 18; 
-  final int GetLength = 19; 
-  final int PowerX = 20; 
-  final int PowerY = 21; 
-  final int PowerZ = 22; 
-  final int PowerAll = 23;  
+  private final static int LandOrbit_Pan_TargetRollZ = -19;
+  private final static int LookAtDirection = -18;
+  private final static int DistMouseXY_TargetRollXY_TargetRollZ = -17; 
+  private final static int PanY_TargetRollXY_TargetRollZ = -16; 
+  private final static int PanX_TargetRollXY_TargetRollZ = -15; 
+  private final static int Pan_TargetRoll = -14; 
+  private final static int CameraDistance_TargetRollXY_TargetRollZ = -13; 
+  private final static int CameraRoll_Pan = -12; 
+  private final static int CameraRollXY_CameraRollZ = -11; 
+  private final static int TargetRoll_Pan = -10; 
+  private final static int TargetRollXY_TargetRollZ = -9; 
+  private final static int AllModelSize = -8; 
+  private final static int SkydomeSize = -7; 
+  private final static int Truck_Orbit = -6; 
+  private final static int ModelSize_Pan_TargetRoll = -5; 
+  private final static int Pan_Height = -4; 
+  private final static int Zoom_Orbit_Pan = -3; 
+  private final static int RectSelect = -2; 
+  private final static int PickSelect = -1; 
+  private final static int Create = 0; 
+  private final static int Move = 1; 
+  private final static int Scale = 2; 
+  private final static int Rotate = 3; 
+  private final static int Seed_Material = 4; 
+  private final static int Tessellation = 5; 
+  private final static int Layer = 6; 
+  private final static int Visibility = 7; 
+  private final static int Weight = 8; 
+  private final static int DegreeMax = 9; 
+  private final static int DegreeDif = 10; 
+  private final static int DegreeMin = 11; 
+  private final static int TrunkSize = 12; 
+  private final static int LeafSize = 13; 
+  private final static int AllFractalProps = 14; 
+  private final static int Pivot = 15; 
+  private final static int Normal = 16; 
+  private final static int FirstVertex = 17; 
+  private final static int Drop = 18; 
+  private final static int GetLength = 19; 
+  private final static int PowerX = 20; 
+  private final static int PowerY = 21; 
+  private final static int PowerZ = 22; 
+  private final static int PowerAll = 23;  
   
 }
 
@@ -191,25 +191,25 @@ solarchvision_UITASK UITASK = new solarchvision_UITASK();
 
 class solarchvision_CREATE {
 
-  final int Nothing    = 0;
-  final int Plane      = 1;
-  final int Poly       = 2;
-  final int Extrude    = 3;
-  final int Tri        = 4;
-  final int Hyper      = 5;
-  final int House1     = 6; 
-  final int House2     = 7;
-  final int SuperOBJ   = 8;
-  final int Parametric = 9;
-  final int Person     = 10;
-  final int Plant      = 11;
-  final int Fractal    = 12;
-  final int Face       = 13;
-  final int Vertex     = 14;
-  final int Curve      = 15;
-  final int Solid      = 16;
-  final int Section    = 17;
-  final int Camera     = 18;
+  private final static int Nothing    = 0;
+  private final static int Plane      = 1;
+  private final static int Poly       = 2;
+  private final static int Extrude    = 3;
+  private final static int Tri        = 4;
+  private final static int Hyper      = 5;
+  private final static int House1     = 6; 
+  private final static int House2     = 7;
+  private final static int SuperOBJ   = 8;
+  private final static int Parametric = 9;
+  private final static int Person     = 10;
+  private final static int Plant      = 11;
+  private final static int Fractal    = 12;
+  private final static int Face       = 13;
+  private final static int Vertex     = 14;
+  private final static int Curve      = 15;
+  private final static int Solid      = 16;
+  private final static int Section    = 17;
+  private final static int Camera     = 18;
   
 }
 
@@ -220,17 +220,17 @@ solarchvision_CREATE CREATE = new solarchvision_CREATE();
 
 class solarchvision_ObjectCategory {
   
-  final int LandPoints = 0; 
-  final int Fractals = 1; 
-  final int Object2Ds = 2; 
-  final int Group3Ds = 3;
-  final int Faces = 4; 
-  final int Vertices = 5;
-  final int SoftVerts = 6;
-  final int Solids = 7;
-  final int Sections = 8;
-  final int Cameras = 9;
-  final int Curves = 10;
+  private final static int LandPoints = 0; 
+  private final static int Fractals = 1; 
+  private final static int Object2Ds = 2; 
+  private final static int Group3Ds = 3;
+  private final static int Faces = 4; 
+  private final static int Vertices = 5;
+  private final static int SoftVerts = 6;
+  private final static int Solids = 7;
+  private final static int Sections = 8;
+  private final static int Cameras = 9;
+  private final static int Curves = 10;
   
 }
 
