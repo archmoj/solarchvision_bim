@@ -1,3 +1,61 @@
+class solarchvision_UITASK {
+ 
+  final int LandOrbit_Pan_TargetRollZ = -19;
+  final int LookAtDirection = -18;
+  final int DistMouseXY_TargetRollXY_TargetRollZ = -17; 
+  final int PanY_TargetRollXY_TargetRollZ = -16; 
+  final int PanX_TargetRollXY_TargetRollZ = -15; 
+  final int Pan_TargetRoll = -14; 
+  final int CameraDistance_TargetRollXY_TargetRollZ = -13; 
+  final int CameraRoll_Pan = -12; 
+  final int CameraRollXY_CameraRollZ = -11; 
+  final int TargetRoll_Pan = -10; 
+  final int TargetRollXY_TargetRollZ = -9; 
+  final int AllModelSize = -8; 
+  final int SkydomeSize = -7; 
+  final int Truck_Orbit = -6; 
+  final int ModelSize_Pan_TargetRoll = -5; 
+  final int Pan_Height = -4; 
+  final int Zoom_Orbit_Pan = -3; 
+  final int RectSelect = -2; 
+  final int PickSelect = -1; 
+  final int Create = 0; 
+  final int Move = 1; 
+  final int Scale = 2; 
+  final int Rotate = 3; 
+  final int Seed_Material = 4; 
+  final int Tessellation = 5; 
+  final int Layer = 6; 
+  final int Visibility = 7; 
+  final int Weight = 8; 
+  final int DegreeMax = 9; 
+  final int DegreeDif = 10; 
+  final int DegreeMin = 11; 
+  final int TrunkSize = 12; 
+  final int LeafSize = 13; 
+  final int AllFractalProps = 14; 
+  final int Pivot = 15; 
+  final int Normal = 16; 
+  final int FirstVertex = 17; 
+  final int Drop = 18; 
+  final int GetLength = 19; 
+  final int PowerX = 20; 
+  final int PowerY = 21; 
+  final int PowerZ = 22; 
+  final int PowerAll = 23;  
+  
+}
+
+solarchvision_UITASK UITASK = new solarchvision_UITASK();
+
+
+
+
+
+
+
+
+
 String SceneName = "Complex";
 
 //Polar
@@ -617,51 +675,9 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 
 int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
-final int UITASK_LandOrbit_Pan_TargetRollZ = -19;
-final int UITASK_LookAtDirection = -18;
-final int UITASK_DistMouseXY_TargetRollXY_TargetRollZ = -17; 
-final int UITASK_PanY_TargetRollXY_TargetRollZ = -16; 
-final int UITASK_PanX_TargetRollXY_TargetRollZ = -15; 
-final int UITASK_Pan_TargetRoll = -14; 
-final int UITASK_CameraDistance_TargetRollXY_TargetRollZ = -13; 
-final int UITASK_CameraRoll_Pan = -12; 
-final int UITASK_CameraRollXY_CameraRollZ = -11; 
-final int UITASK_TargetRoll_Pan = -10; 
-final int UITASK_TargetRollXY_TargetRollZ = -9; 
-final int UITASK_AllModelSize = -8; 
-final int UITASK_SkydomeSize = -7; 
-final int UITASK_Truck_Orbit = -6; 
-final int UITASK_3DModelSize_Pan_TargetRoll = -5; 
-final int UITASK_Pan_Height = -4; 
-final int UITASK_Zoom_Orbit_Pan = -3; 
-final int UITASK_RectSelect = -2; 
-final int UITASK_PickSelect = -1; 
-final int UITASK_Create = 0; 
-final int UITASK_Move = 1; 
-final int UITASK_Scale = 2; 
-final int UITASK_Rotate = 3; 
-final int UITASK_Seed_Material = 4; 
-final int UITASK_Tessellation = 5; 
-final int UITASK_Layer = 6; 
-final int UITASK_Visibility = 7; 
-final int UITASK_Weight = 8; 
-final int UITASK_DegreeMax = 9; 
-final int UITASK_DegreeDif = 10; 
-final int UITASK_DegreeMin = 11; 
-final int UITASK_TrunkSize = 12; 
-final int UITASK_LeafSize = 13; 
-final int UITASK_AllFractalProps = 14; 
-final int UITASK_Pivot = 15; 
-final int UITASK_Normal = 16; 
-final int UITASK_FirstVertex = 17; 
-final int UITASK_Drop = 18; 
-final int UITASK_GetLength = 19; 
-final int UITASK_PowerX = 20; 
-final int UITASK_PowerY = 21; 
-final int UITASK_PowerZ = 22; 
-final int UITASK_PowerAll = 23; 
 
-int WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan; 
+
+int WIN3D_UI_CurrentTask = UITASK.Zoom_Orbit_Pan; 
 int WIN3D_UI_OptionXorY = 0; // 0-1
 int WIN3D_UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. Fractals
 
@@ -31931,7 +31947,7 @@ void mouseWheel (MouseEvent event) {
               float z0 = P[2];
 
 
-              if (WIN3D_UI_CurrentTask == UITASK_Rotate) { // rotate
+              if (WIN3D_UI_CurrentTask == UITASK.Rotate) { // rotate
 
                 float r = 5 * Wheel_Value;
 
@@ -31942,7 +31958,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }   
 
-              if (WIN3D_UI_CurrentTask == UITASK_Scale) { // scale
+              if (WIN3D_UI_CurrentTask == UITASK.Scale) { // scale
 
                 float s = pow(pow(2.0, 0.25), Wheel_Value);
 
@@ -31971,7 +31987,7 @@ void mouseWheel (MouseEvent event) {
               }       
 
 
-              if (WIN3D_UI_CurrentTask == UITASK_Move) { // move
+              if (WIN3D_UI_CurrentTask == UITASK.Move) { // move
 
                 float d = Wheel_Value;
 
@@ -32002,7 +32018,7 @@ void mouseWheel (MouseEvent event) {
 
 
               if (WIN3D_UI_TaskModifyParameter == 0) {
-                if (WIN3D_UI_CurrentTask >= UITASK_Seed_Material) { // other properties
+                if (WIN3D_UI_CurrentTask >= UITASK.Seed_Material) { // other properties
 
                   int p = int(Wheel_Value);
 
@@ -32016,7 +32032,7 @@ void mouseWheel (MouseEvent event) {
 
 
 
-              if ((WIN3D_UI_CurrentTask == UITASK_Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK_CameraRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll)) { // viewport:zoom
+              if ((WIN3D_UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK.CameraRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK.TargetRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D_ViewType == 1) {
                   WIN3D_Z_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
@@ -32027,7 +32043,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_Pan_Height) { // viewport:elevation
+              if (WIN3D_UI_CurrentTask == UITASK.Pan_Height) { // viewport:elevation
 
                 if (Wheel_Value > 0) WIN3D_Zoom = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_Zoom)); 
                 if (Wheel_Value < 0) WIN3D_Zoom = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_Zoom));
@@ -32035,7 +32051,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }  
 
-              if (WIN3D_UI_CurrentTask == UITASK_3DModelSize_Pan_TargetRoll) { // viewport:3DModelSize
+              if (WIN3D_UI_CurrentTask == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
 
                 if (Wheel_Value > 0) OBJECTS_scale *= pow(2.0, 0.25);
                 if (Wheel_Value < 0) OBJECTS_scale /= pow(2.0, 0.25);
@@ -32043,7 +32059,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }          
 
-              if (WIN3D_UI_CurrentTask == UITASK_Truck_Orbit) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == UITASK.Truck_Orbit) { // viewport:different functions with wheel
 
                 if (WIN3D_UI_TaskModifyParameter == 0) { // Truck
 
@@ -32085,7 +32101,7 @@ void mouseWheel (MouseEvent event) {
               }  
 
 
-              if (WIN3D_UI_CurrentTask == UITASK_SkydomeSize) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == UITASK.SkydomeSize) { // viewport:different functions with wheel
 
                 if (WIN3D_UI_TaskModifyParameter == 0) { // SkydomeSize
 
@@ -32096,7 +32112,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_AllModelSize) { // viewport:different functions with wheel
+              if (WIN3D_UI_CurrentTask == UITASK.AllModelSize) { // viewport:different functions with wheel
 
                 if (WIN3D_UI_TaskModifyParameter == 0) { // AllModelSize
 
@@ -32114,7 +32130,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }    
 
-              if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRoolZ
+              if (WIN3D_UI_CurrentTask == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRoolZ
 
                 if (WIN3D_UI_OptionXorY == 0) {   
                   WIN3D_RX_Coordinate += Wheel_Value * WIN3D_RS_Coordinate;
@@ -32131,7 +32147,7 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRoolZ
+              if (WIN3D_UI_CurrentTask == UITASK.CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRoolZ
 
                 if (WIN3D_UI_OptionXorY == 0) {   
 
@@ -32146,35 +32162,35 @@ void mouseWheel (MouseEvent event) {
                 WIN3D_Update = 1;
               }            
 
-              if (WIN3D_UI_CurrentTask == UITASK_CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
+              if (WIN3D_UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
 
                 SOLARCHVISION_move_3DViewport_towards_Selection(pow(2, -0.5 * Wheel_Value));
 
                 WIN3D_Update = 1;
               }              
 
-              if (WIN3D_UI_CurrentTask == UITASK_PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
+              if (WIN3D_UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
 
                 WIN3D_X_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
 
                 WIN3D_Update = 1;
               }         
 
-              if (WIN3D_UI_CurrentTask == UITASK_PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
+              if (WIN3D_UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
 
                 WIN3D_Y_Coordinate += Wheel_Value * WIN3D_S_Coordinate * OBJECTS_scale;
 
                 WIN3D_Update = 1;
               }      
 
-              if ((WIN3D_UI_CurrentTask == UITASK_DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK_PickSelect)) { // viewport:DistMouseXY
+              if ((WIN3D_UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK.PickSelect)) { // viewport:DistMouseXY
 
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
                 WIN3D_Update = 1;
               }
 
-              if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
+              if (WIN3D_UI_CurrentTask == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
 
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
@@ -32253,7 +32269,7 @@ void mouseReleased () {
           if (WIN3D_Include == 1) {
             if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
 
-              if ((WIN3D_UI_CurrentTask == UITASK_RectSelect) || (WIN3D_UI_CurrentTask > UITASK_Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
+              if ((WIN3D_UI_CurrentTask == UITASK.RectSelect) || (WIN3D_UI_CurrentTask > UITASK.Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
 
                 float corner1x = SOLARCHVISION_X_click1 - 0.5 * WIN3D_X_View - WIN3D_CX_View;
                 float corner1y = SOLARCHVISION_Y_click1 - 0.5 * WIN3D_Y_View - WIN3D_CY_View;
@@ -32285,7 +32301,7 @@ void mouseReleased () {
               }
 
 
-              if (WIN3D_UI_CurrentTask == UITASK_GetLength) {      
+              if (WIN3D_UI_CurrentTask == UITASK.GetLength) {      
 
                 float x1 = 0;
                 float y1 = 0;
@@ -32433,7 +32449,7 @@ void mouseDragged () {
             float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
             float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
 
-            if (WIN3D_UI_CurrentTask == UITASK_LandOrbit_Pan_TargetRollZ) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraLandOrbit
 
@@ -32451,7 +32467,7 @@ void mouseDragged () {
               }
             } 
 
-            if ((WIN3D_UI_CurrentTask == UITASK_PanX_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK_PanY_TargetRollXY_TargetRollZ)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
 
@@ -32468,7 +32484,7 @@ void mouseDragged () {
               }
             } 
 
-            if ((WIN3D_UI_CurrentTask == UITASK_Pan_TargetRoll) || (WIN3D_UI_CurrentTask == UITASK_DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK_PickSelect)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK.Pan_TargetRoll) || (WIN3D_UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D_UI_CurrentTask == UITASK.PickSelect)) { // viewport
 
               if (mouseButton == LEFT) { // Pan
 
@@ -32489,7 +32505,7 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D_UI_CurrentTask == UITASK_CameraRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK_CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK.CameraRoll_Pan) || (WIN3D_UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRoll
 
@@ -32509,7 +32525,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_CameraRollXY_CameraRollZ) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK.CameraRollXY_CameraRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
 
@@ -32526,7 +32542,7 @@ void mouseDragged () {
               }
             }            
 
-            if (WIN3D_UI_CurrentTask == UITASK_TargetRoll_Pan) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK.TargetRoll_Pan) { // viewport
 
               if (mouseButton == LEFT) { // TargetRoll
 
@@ -32547,7 +32563,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_TargetRollXY_TargetRollZ) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK.TargetRollXY_TargetRollZ) { // viewport
 
               if (mouseButton == LEFT) { // TargetRollXY
 
@@ -32568,7 +32584,7 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D_UI_CurrentTask == UITASK_Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK_SkydomeSize) || (WIN3D_UI_CurrentTask == UITASK_AllModelSize)) { // viewport
+            if ((WIN3D_UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || (WIN3D_UI_CurrentTask == UITASK.SkydomeSize) || (WIN3D_UI_CurrentTask == UITASK.AllModelSize)) { // viewport
 
               if (mouseButton == LEFT) { // orbit
 
@@ -32587,7 +32603,7 @@ void mouseDragged () {
               }
             }  
 
-            if (WIN3D_UI_CurrentTask == UITASK_Pan_Height) { 
+            if (WIN3D_UI_CurrentTask == UITASK.Pan_Height) { 
 
               if (mouseButton == LEFT) { // move Y
 
@@ -32604,7 +32620,7 @@ void mouseDragged () {
               }
             }
 
-            if (WIN3D_UI_CurrentTask == UITASK_3DModelSize_Pan_TargetRoll) { // viewport
+            if (WIN3D_UI_CurrentTask == UITASK.ModelSize_Pan_TargetRoll) { // viewport
 
               if (mouseButton == LEFT) { // Pan
 
@@ -32625,7 +32641,7 @@ void mouseDragged () {
               }
             }
 
-            if (WIN3D_UI_CurrentTask == UITASK_Truck_Orbit) { // viewport:different functions
+            if (WIN3D_UI_CurrentTask == UITASK.Truck_Orbit) { // viewport:different functions
 
               if (WIN3D_UI_TaskModifyParameter == 0) { // Truck
 
@@ -35288,7 +35304,7 @@ void mouseClicked () {
             Image_X = SOLARCHVISION_X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
             Image_Y = SOLARCHVISION_Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
             
-            if (WIN3D_UI_CurrentTask == UITASK_LookAtDirection) { // viewport:LookAtDirection
+            if (WIN3D_UI_CurrentTask == UITASK.LookAtDirection) { // viewport:LookAtDirection
 
               SOLARCHVISION_look_3DViewport_towards_Direction(Image_X, Image_Y);
 
@@ -35334,7 +35350,7 @@ void mouseClicked () {
                 RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
               } else if (mouseButton == LEFT) {
 
-                if ((WIN3D_UI_CurrentTask == UITASK_Create) || (WIN3D_UI_CurrentTask == UITASK_Move)) {
+                if ((WIN3D_UI_CurrentTask == UITASK.Create) || (WIN3D_UI_CurrentTask == UITASK.Move)) {
                    RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
 
                 } else {
@@ -35365,7 +35381,7 @@ void mouseClicked () {
   
               if (RxP[0] >= 0) {
   
-                if (WIN3D_UI_CurrentTask == UITASK_Move) { // move
+                if (WIN3D_UI_CurrentTask == UITASK.Move) { // move
   
                   float x1 = FLOAT_undefined;
                   float y1 = FLOAT_undefined;
@@ -35448,27 +35464,27 @@ void mouseClicked () {
   
                 if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
   
-                  if ((WIN3D_UI_TaskModifyParameter != 0) && (WIN3D_UI_CurrentTask >= UITASK_Seed_Material)) { // Pick/Assign properties 
+                  if ((WIN3D_UI_TaskModifyParameter != 0) && (WIN3D_UI_CurrentTask >= UITASK.Seed_Material)) { // Pick/Assign properties 
   
                     if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Curves)) {
   
                       int f = int(RxP[0]);
   
-                      if ((WIN3D_UI_CurrentTask == UITASK_Seed_Material) || (WIN3D_UI_CurrentTask == UITASK_Tessellation) || (WIN3D_UI_CurrentTask == UITASK_Layer) || (WIN3D_UI_CurrentTask == UITASK_Visibility) || (WIN3D_UI_CurrentTask == UITASK_Weight)) {
+                      if ((WIN3D_UI_CurrentTask == UITASK.Seed_Material) || (WIN3D_UI_CurrentTask == UITASK.Tessellation) || (WIN3D_UI_CurrentTask == UITASK.Layer) || (WIN3D_UI_CurrentTask == UITASK.Visibility) || (WIN3D_UI_CurrentTask == UITASK.Weight)) {
   
                         if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
-                          if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) DEFAULT_CreateMaterial = allFaces_MTLVGC[f][0];
-                          if (WIN3D_UI_CurrentTask == UITASK_Tessellation) DEFAULT_CreateTessellation = allFaces_MTLVGC[f][1];
-                          if (WIN3D_UI_CurrentTask == UITASK_Layer) DEFAULT_CreateLayer = allFaces_MTLVGC[f][2];
-                          if (WIN3D_UI_CurrentTask == UITASK_Visibility) DEFAULT_CreateVisibility = allFaces_MTLVGC[f][3];
-                          if (WIN3D_UI_CurrentTask == UITASK_Weight) DEFAULT_CreateWeight = allFaces_MTLVGC[f][4];
+                          if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) DEFAULT_CreateMaterial = allFaces_MTLVGC[f][0];
+                          if (WIN3D_UI_CurrentTask == UITASK.Tessellation) DEFAULT_CreateTessellation = allFaces_MTLVGC[f][1];
+                          if (WIN3D_UI_CurrentTask == UITASK.Layer) DEFAULT_CreateLayer = allFaces_MTLVGC[f][2];
+                          if (WIN3D_UI_CurrentTask == UITASK.Visibility) DEFAULT_CreateVisibility = allFaces_MTLVGC[f][3];
+                          if (WIN3D_UI_CurrentTask == UITASK.Weight) DEFAULT_CreateWeight = allFaces_MTLVGC[f][4];
                         } 
                         if (WIN3D_UI_TaskModifyParameter == 2) { // Assign(sub) 
-                          if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) allFaces_MTLVGC[f][0] = DEFAULT_CreateMaterial;
-                          if (WIN3D_UI_CurrentTask == UITASK_Tessellation) allFaces_MTLVGC[f][1] = DEFAULT_CreateTessellation;
-                          if (WIN3D_UI_CurrentTask == UITASK_Layer) allFaces_MTLVGC[f][2] = DEFAULT_CreateLayer;
-                          if (WIN3D_UI_CurrentTask == UITASK_Visibility) allFaces_MTLVGC[f][3] = DEFAULT_CreateVisibility;
-                          if (WIN3D_UI_CurrentTask == UITASK_Weight) allFaces_MTLVGC[f][4] = DEFAULT_CreateWeight;
+                          if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) allFaces_MTLVGC[f][0] = DEFAULT_CreateMaterial;
+                          if (WIN3D_UI_CurrentTask == UITASK.Tessellation) allFaces_MTLVGC[f][1] = DEFAULT_CreateTessellation;
+                          if (WIN3D_UI_CurrentTask == UITASK.Layer) allFaces_MTLVGC[f][2] = DEFAULT_CreateLayer;
+                          if (WIN3D_UI_CurrentTask == UITASK.Visibility) allFaces_MTLVGC[f][3] = DEFAULT_CreateVisibility;
+                          if (WIN3D_UI_CurrentTask == UITASK.Weight) allFaces_MTLVGC[f][4] = DEFAULT_CreateWeight;
                         }
                         if (WIN3D_UI_TaskModifyParameter == 3) { // Assign(all) 
                           int OBJ_NUM = 0;
@@ -35480,16 +35496,16 @@ void mouseClicked () {
                           }
 
                           for (int q = allGroup3Ds_Faces[OBJ_NUM][0]; q <= allGroup3Ds_Faces[OBJ_NUM][1]; q++) {                    
-                            if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) allFaces_MTLVGC[q][0] = DEFAULT_CreateMaterial;
-                            if (WIN3D_UI_CurrentTask == UITASK_Tessellation) allFaces_MTLVGC[q][1] = DEFAULT_CreateTessellation;
-                            if (WIN3D_UI_CurrentTask == UITASK_Layer) allFaces_MTLVGC[q][2] = DEFAULT_CreateLayer;
-                            if (WIN3D_UI_CurrentTask == UITASK_Visibility) allFaces_MTLVGC[q][3] = DEFAULT_CreateVisibility;
-                            if (WIN3D_UI_CurrentTask == UITASK_Weight) allFaces_MTLVGC[q][4] = DEFAULT_CreateWeight;
+                            if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) allFaces_MTLVGC[q][0] = DEFAULT_CreateMaterial;
+                            if (WIN3D_UI_CurrentTask == UITASK.Tessellation) allFaces_MTLVGC[q][1] = DEFAULT_CreateTessellation;
+                            if (WIN3D_UI_CurrentTask == UITASK.Layer) allFaces_MTLVGC[q][2] = DEFAULT_CreateLayer;
+                            if (WIN3D_UI_CurrentTask == UITASK.Visibility) allFaces_MTLVGC[q][3] = DEFAULT_CreateVisibility;
+                            if (WIN3D_UI_CurrentTask == UITASK.Weight) allFaces_MTLVGC[q][4] = DEFAULT_CreateWeight;
                           }
                         }
                       }
   
-                      if (WIN3D_UI_CurrentTask == UITASK_Pivot) {
+                      if (WIN3D_UI_CurrentTask == UITASK.Pivot) {
                         if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
                           //?????????????????????????????????????????????????
                         }     
@@ -35514,7 +35530,7 @@ void mouseClicked () {
                         }
                       }
   
-                      if (WIN3D_UI_CurrentTask == UITASK_Normal) { //Normal
+                      if (WIN3D_UI_CurrentTask == UITASK.Normal) { //Normal
   
                         if (Current_ObjectCategory == ObjectCategory_Faces) {
   
@@ -35633,7 +35649,7 @@ void mouseClicked () {
                       }   
   
   
-                      if (WIN3D_UI_CurrentTask == UITASK_FirstVertex) { //FirstVertex
+                      if (WIN3D_UI_CurrentTask == UITASK.FirstVertex) { //FirstVertex
   
                         if (Current_ObjectCategory == ObjectCategory_Faces) {
   
@@ -35731,7 +35747,7 @@ void mouseClicked () {
                       int n1 = Object2D_PEOPLE_Files_Num;
                       int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
   
-                      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+                      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
   
                         if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
                           if (n <= n1) { // case: people 
@@ -35756,15 +35772,15 @@ void mouseClicked () {
                       int OBJ_NUM = int(RxP[0]);
   
                       if (WIN3D_UI_TaskModifyParameter == 1) { // Pick 
-                        if (WIN3D_UI_CurrentTask == UITASK_DegreeMax) CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
-                        if (WIN3D_UI_CurrentTask == UITASK_DegreeDif) {
+                        if (WIN3D_UI_CurrentTask == UITASK.DegreeMax) CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
+                        if (WIN3D_UI_CurrentTask == UITASK.DegreeDif) {
                           CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM]; 
                           CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
                         }
-                        if (WIN3D_UI_CurrentTask == UITASK_DegreeMin) CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
-                        if (WIN3D_UI_CurrentTask == UITASK_TrunkSize) CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
-                        if (WIN3D_UI_CurrentTask == UITASK_LeafSize) CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
-                        if (WIN3D_UI_CurrentTask == UITASK_AllFractalProps) { // all properties
+                        if (WIN3D_UI_CurrentTask == UITASK.DegreeMin) CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
+                        if (WIN3D_UI_CurrentTask == UITASK.TrunkSize) CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+                        if (WIN3D_UI_CurrentTask == UITASK.LeafSize) CreateFractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
+                        if (WIN3D_UI_CurrentTask == UITASK.AllFractalProps) { // all properties
                           CreateFractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
                           CreateFractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
                           CreateFractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
@@ -35772,15 +35788,15 @@ void mouseClicked () {
                         }
                       } 
                       if (WIN3D_UI_TaskModifyParameter == 2) { //Assign
-                        if (WIN3D_UI_CurrentTask == UITASK_DegreeMax) allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;                    
-                        if (WIN3D_UI_CurrentTask == UITASK_DegreeDif) {
+                        if (WIN3D_UI_CurrentTask == UITASK.DegreeMax) allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;                    
+                        if (WIN3D_UI_CurrentTask == UITASK.DegreeDif) {
                           allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax; 
                           allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;
                         }                 
-                        if (WIN3D_UI_CurrentTask == UITASK_DegreeMin) allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
-                        if (WIN3D_UI_CurrentTask == UITASK_TrunkSize) allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
-                        if (WIN3D_UI_CurrentTask == UITASK_LeafSize) allFractals_LeafSize[OBJ_NUM] = CreateFractal_LeafSize;
-                        if (WIN3D_UI_CurrentTask == UITASK_AllFractalProps) { // all properties
+                        if (WIN3D_UI_CurrentTask == UITASK.DegreeMin) allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
+                        if (WIN3D_UI_CurrentTask == UITASK.TrunkSize) allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
+                        if (WIN3D_UI_CurrentTask == UITASK.LeafSize) allFractals_LeafSize[OBJ_NUM] = CreateFractal_LeafSize;
+                        if (WIN3D_UI_CurrentTask == UITASK.AllFractalProps) { // all properties
                           allFractals_DegreeMax[OBJ_NUM] = CreateFractal_DegreeMax;
                           allFractals_DegreeMin[OBJ_NUM] = CreateFractal_DegreeMin;                    
                           allFractals_TrunkSize[OBJ_NUM] = CreateFractal_TrunkSize;                    
@@ -35791,13 +35807,13 @@ void mouseClicked () {
   
                     WIN3D_Update = 1;                 
                     ROLLOUT_Update = 1;
-                  } else if ((WIN3D_UI_CurrentTask != UITASK_Create) && (WIN3D_UI_CurrentTask != UITASK_Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
+                  } else if ((WIN3D_UI_CurrentTask != UITASK.Create) && (WIN3D_UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
   
                     SOLARCHVISION_PickSelect(RxP);
                   }
                 }
   
-                if (WIN3D_UI_CurrentTask == UITASK_Create) { // create
+                if (WIN3D_UI_CurrentTask == UITASK.Create) { // create
                   
                   int keep_number_of_Group3Ds = allGroup3Ds_num;
                   int keep_number_of_Object2Ds = allObject2Ds_num;
@@ -44155,7 +44171,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int f = OBJ_NUM;
 
-      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
         int n = allCameras_Type[f];
         n += p;
         if (n > 1) n = 0;
@@ -44177,7 +44193,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int f = OBJ_NUM;
 
-      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
         int n = allSections_Type[f];
         n += p;
         if (n > 3) n = 0;
@@ -44187,7 +44203,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         Solids_updated = 1;
       }        
 
-      if (WIN3D_UI_CurrentTask == UITASK_Tessellation) {
+      if (WIN3D_UI_CurrentTask == UITASK.Tessellation) {
         int n = allSections_RES1[f];
         if (p > 0) n *= 2;
         if (p < 0) n /= 2;
@@ -44219,7 +44235,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int f = OBJ_NUM;
 
-      if ((WIN3D_UI_CurrentTask == UITASK_PowerX) ||  (WIN3D_UI_CurrentTask == UITASK_PowerY) ||  (WIN3D_UI_CurrentTask == UITASK_PowerZ) ||  (WIN3D_UI_CurrentTask == UITASK_PowerAll)) {
+      if ((WIN3D_UI_CurrentTask == UITASK.PowerX) ||  (WIN3D_UI_CurrentTask == UITASK.PowerY) ||  (WIN3D_UI_CurrentTask == UITASK.PowerZ) ||  (WIN3D_UI_CurrentTask == UITASK.PowerAll)) {
 
 
         float Solid_powX = Solid_get_powX(f);
@@ -44229,10 +44245,10 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         float n = 2;
 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerX) n = Solid_powX; 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerY) n = Solid_powY; 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerZ) n = Solid_powZ; 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerAll) {
+        if (WIN3D_UI_CurrentTask == UITASK.PowerX) n = Solid_powX; 
+        if (WIN3D_UI_CurrentTask == UITASK.PowerY) n = Solid_powY; 
+        if (WIN3D_UI_CurrentTask == UITASK.PowerZ) n = Solid_powZ; 
+        if (WIN3D_UI_CurrentTask == UITASK.PowerAll) {
           n = Solid_powX;
         }          
 
@@ -44242,10 +44258,10 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if (n > CubePower) n = StarPower;
         if (n < StarPower) n = CubePower;
 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerX) Solid_powX = n; 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerY) Solid_powY = n; 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerZ) Solid_powZ = n; 
-        if (WIN3D_UI_CurrentTask == UITASK_PowerAll) {
+        if (WIN3D_UI_CurrentTask == UITASK.PowerX) Solid_powX = n; 
+        if (WIN3D_UI_CurrentTask == UITASK.PowerY) Solid_powY = n; 
+        if (WIN3D_UI_CurrentTask == UITASK.PowerZ) Solid_powZ = n; 
+        if (WIN3D_UI_CurrentTask == UITASK.PowerAll) {
           Solid_powX = n;
           Solid_powY = n;
           Solid_powZ = n;
@@ -44269,7 +44285,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int f = OBJ_NUM;
 
-      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
         int n = allFaces_MTLVGC[f][0];
         n += p;
         if (n > 8) n = 0;
@@ -44277,7 +44293,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFaces_MTLVGC[f][0] = n;
       }
 
-      if (WIN3D_UI_CurrentTask == UITASK_Tessellation) {
+      if (WIN3D_UI_CurrentTask == UITASK.Tessellation) {
         int n = allFaces_MTLVGC[f][1];
         n += p;
         if (n > 4) n = 0;
@@ -44285,7 +44301,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFaces_MTLVGC[f][1] = n;
       }   
 
-      if (WIN3D_UI_CurrentTask == UITASK_Layer) {
+      if (WIN3D_UI_CurrentTask == UITASK.Layer) {
         int n = allFaces_MTLVGC[f][2];
         n += p;
         if (n > 16) n = 0;
@@ -44293,7 +44309,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFaces_MTLVGC[f][2] = n;
       }  
 
-      if (WIN3D_UI_CurrentTask == UITASK_Visibility) {
+      if (WIN3D_UI_CurrentTask == UITASK.Visibility) {
         int n = allFaces_MTLVGC[f][3];
         n += p;
         if (n > 2) n = 0;
@@ -44301,7 +44317,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFaces_MTLVGC[f][3] = n;
       }
       
-      if (WIN3D_UI_CurrentTask == UITASK_Weight) {
+      if (WIN3D_UI_CurrentTask == UITASK.Weight) {
         int n = allFaces_MTLVGC[f][4];
         n += p;
         if (n > 20) n = -20;
@@ -44319,7 +44335,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int f = OBJ_NUM;
 
-      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
         int n = allCurves_MTLVGC[f][0];
         n += p;
         if (n > 8) n = 0;
@@ -44327,7 +44343,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allCurves_MTLVGC[f][0] = n;
       }
 
-      if (WIN3D_UI_CurrentTask == UITASK_Tessellation) {
+      if (WIN3D_UI_CurrentTask == UITASK.Tessellation) {
         int n = allCurves_MTLVGC[f][1];
         n += p;
         if (n > 4) n = 0;
@@ -44335,7 +44351,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allCurves_MTLVGC[f][1] = n;
       }   
 
-      if (WIN3D_UI_CurrentTask == UITASK_Layer) {
+      if (WIN3D_UI_CurrentTask == UITASK.Layer) {
         int n = allCurves_MTLVGC[f][2];
         n += p;
         if (n > 16) n = 0;
@@ -44343,7 +44359,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allCurves_MTLVGC[f][2] = n;
       }  
 
-      if (WIN3D_UI_CurrentTask == UITASK_Visibility) {
+      if (WIN3D_UI_CurrentTask == UITASK.Visibility) {
         int n = allCurves_MTLVGC[f][3];
         n += p;
         if (n > 2) n = 0;
@@ -44351,7 +44367,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allCurves_MTLVGC[f][3] = n;
       }
       
-      if (WIN3D_UI_CurrentTask == UITASK_Weight) {
+      if (WIN3D_UI_CurrentTask == UITASK.Weight) {
         int n = allCurves_MTLVGC[f][4];
         n += p;
         if (n > 20) n = -20;
@@ -44370,7 +44386,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allFaces_PNT.length)) {
 
-          if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+          if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
             int n = allFaces_MTLVGC[f][0];
             n += p;
             if (n > 8) n = 0;
@@ -44378,7 +44394,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allFaces_MTLVGC[f][0] = n;
           }
 
-          if (WIN3D_UI_CurrentTask == UITASK_Tessellation) {
+          if (WIN3D_UI_CurrentTask == UITASK.Tessellation) {
             int n = allFaces_MTLVGC[f][1];
             n += p;
             if (n > 4) n = 0;
@@ -44386,7 +44402,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allFaces_MTLVGC[f][1] = n;
           }      
 
-          if (WIN3D_UI_CurrentTask == UITASK_Layer) {
+          if (WIN3D_UI_CurrentTask == UITASK.Layer) {
             int n = allFaces_MTLVGC[f][2];
             n += p;
             if (n > 16) n = 0;
@@ -44394,7 +44410,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allFaces_MTLVGC[f][2] = n;
           }  
 
-          if (WIN3D_UI_CurrentTask == UITASK_Visibility) {
+          if (WIN3D_UI_CurrentTask == UITASK.Visibility) {
             int n = allFaces_MTLVGC[f][3];
             n += p;
             if (n > 2) n = 0;
@@ -44402,7 +44418,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allFaces_MTLVGC[f][3] = n;
           }
           
-          if (WIN3D_UI_CurrentTask == UITASK_Weight) {
+          if (WIN3D_UI_CurrentTask == UITASK.Weight) {
             int n = allFaces_MTLVGC[f][4];
             n += p;
             if (n > 20) n = -20;
@@ -44415,7 +44431,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       for (int f = allGroup3Ds_Curves[OBJ_NUM][0]; f <= allGroup3Ds_Curves[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allCurves_PNT.length)) {
 
-          if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+          if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
             int n = allCurves_MTLVGC[f][0];
             n += p;
             if (n > 8) n = 0;
@@ -44423,7 +44439,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allCurves_MTLVGC[f][0] = n;
           }
 
-          if (WIN3D_UI_CurrentTask == UITASK_Tessellation) {
+          if (WIN3D_UI_CurrentTask == UITASK.Tessellation) {
             int n = allCurves_MTLVGC[f][1];
             n += p;
             if (n > 4) n = 0;
@@ -44431,7 +44447,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allCurves_MTLVGC[f][1] = n;
           }      
 
-          if (WIN3D_UI_CurrentTask == UITASK_Layer) {
+          if (WIN3D_UI_CurrentTask == UITASK.Layer) {
             int n = allCurves_MTLVGC[f][2];
             n += p;
             if (n > 16) n = 0;
@@ -44439,7 +44455,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allCurves_MTLVGC[f][2] = n;
           }  
 
-          if (WIN3D_UI_CurrentTask == UITASK_Visibility) {
+          if (WIN3D_UI_CurrentTask == UITASK.Visibility) {
             int n = allCurves_MTLVGC[f][3];
             n += p;
             if (n > 2) n = 0;
@@ -44447,7 +44463,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             allCurves_MTLVGC[f][3] = n;
           }
           
-          if (WIN3D_UI_CurrentTask == UITASK_Weight) {
+          if (WIN3D_UI_CurrentTask == UITASK.Weight) {
             int n = allCurves_MTLVGC[f][4];
             n += p;
             if (n > 20) n = -20;
@@ -44464,7 +44480,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int OBJ_NUM = selectedObject2D_ids[o];
 
-      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
 
         int n = allObject2Ds_MAP[OBJ_NUM];
         int sign_n = 1;
@@ -44515,11 +44531,11 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       int OBJ_NUM = selectedFractal_ids[o];
 
-      if (WIN3D_UI_CurrentTask == UITASK_Seed_Material) {
+      if (WIN3D_UI_CurrentTask == UITASK.Seed_Material) {
 
         allFractals_Seed[OBJ_NUM] += p;
       } 
-      if (WIN3D_UI_CurrentTask == UITASK_DegreeMax) {
+      if (WIN3D_UI_CurrentTask == UITASK.DegreeMax) {
         int q = allFractals_DegreeMax[OBJ_NUM];
 
         q += p;
@@ -44531,7 +44547,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         CreateFractal_DegreeMax = q;
         ROLLOUT_Update = 1;
       }
-      if (WIN3D_UI_CurrentTask == UITASK_DegreeDif) {
+      if (WIN3D_UI_CurrentTask == UITASK.DegreeDif) {
         int q1 = allFractals_DegreeMin[OBJ_NUM];
         int q2 = allFractals_DegreeMax[OBJ_NUM];
         q1 += p;
@@ -44559,7 +44575,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           ROLLOUT_Update = 1;
         }
       }
-      if (WIN3D_UI_CurrentTask == UITASK_DegreeMin) {
+      if (WIN3D_UI_CurrentTask == UITASK.DegreeMin) {
         int q = allFractals_DegreeMin[OBJ_NUM];
 
         q += p;
@@ -44571,7 +44587,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         CreateFractal_DegreeMin = q;
         ROLLOUT_Update = 1;
       }        
-      if (WIN3D_UI_CurrentTask == UITASK_TrunkSize) {
+      if (WIN3D_UI_CurrentTask == UITASK.TrunkSize) {
         float q = allFractals_TrunkSize[OBJ_NUM];
 
         q += 0.25 * p;
@@ -44583,7 +44599,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         CreateFractal_TrunkSize = q;
         ROLLOUT_Update = 1;
       }
-      if (WIN3D_UI_CurrentTask == UITASK_LeafSize) {
+      if (WIN3D_UI_CurrentTask == UITASK.LeafSize) {
         float q = allFractals_LeafSize[OBJ_NUM];
 
         q += 0.25 * p;
@@ -47299,7 +47315,7 @@ void UI_set_to_Create_Nothing () {
 
   CreateObject = CREATE_Nothing;
 
-  WIN3D_UI_CurrentTask = UITASK_Create;
+  WIN3D_UI_CurrentTask = UITASK.Create;
 
   ROLLOUT_Update = 1;
 }
@@ -47528,7 +47544,7 @@ void UI_set_to_Create_Cushion () {
 
 
 void UI_set_to_Modify_Move (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Move;
+  WIN3D_UI_CurrentTask = UITASK.Move;
 
   selected_posVector = n;
 
@@ -47536,7 +47552,7 @@ void UI_set_to_Modify_Move (int n) {
 }
 
 void UI_set_to_Modify_Scale (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Scale;
+  WIN3D_UI_CurrentTask = UITASK.Scale;
 
   selected_scaleVector = n;
 
@@ -47545,7 +47561,7 @@ void UI_set_to_Modify_Scale (int n) {
 
 
 void UI_set_to_Modify_Rotate (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Rotate;
+  WIN3D_UI_CurrentTask = UITASK.Rotate;
 
   selected_rotVector = n;
 
@@ -47553,35 +47569,35 @@ void UI_set_to_Modify_Rotate (int n) {
 }
 
 void UI_set_to_Modify_Seed (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Seed_Material;
+  WIN3D_UI_CurrentTask = UITASK.Seed_Material;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_Tessellation (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Tessellation;
+  WIN3D_UI_CurrentTask = UITASK.Tessellation;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_Layer (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Layer;
+  WIN3D_UI_CurrentTask = UITASK.Layer;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_Visibility (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Visibility;
+  WIN3D_UI_CurrentTask = UITASK.Visibility;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_Weight (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Weight;
+  WIN3D_UI_CurrentTask = UITASK.Weight;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
@@ -47590,63 +47606,63 @@ void UI_set_to_Modify_Weight (int n) {
 // the same messages of WIN3D_UI_CurrentTask=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
 
 void UI_set_to_Modify_DegreeMax (int n) {
-  WIN3D_UI_CurrentTask = UITASK_DegreeMax;
+  WIN3D_UI_CurrentTask = UITASK.DegreeMax;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_DegreeDif (int n) {
-  WIN3D_UI_CurrentTask = UITASK_DegreeDif;
+  WIN3D_UI_CurrentTask = UITASK.DegreeDif;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_DegreeMin (int n) {
-  WIN3D_UI_CurrentTask = UITASK_DegreeMin;
+  WIN3D_UI_CurrentTask = UITASK.DegreeMin;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_TrunkSize (int n) {
-  WIN3D_UI_CurrentTask = UITASK_TrunkSize;
+  WIN3D_UI_CurrentTask = UITASK.TrunkSize;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_LeafSize (int n) {
-  WIN3D_UI_CurrentTask = UITASK_LeafSize;
+  WIN3D_UI_CurrentTask = UITASK.LeafSize;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_AllFractalProps (int n) {
-  WIN3D_UI_CurrentTask = UITASK_AllFractalProps;
+  WIN3D_UI_CurrentTask = UITASK.AllFractalProps;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_Pivot (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Pivot;
+  WIN3D_UI_CurrentTask = UITASK.Pivot;
   WIN3D_UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_Normal (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Normal;
+  WIN3D_UI_CurrentTask = UITASK.Normal;
   WIN3D_UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
   ROLLOUT_Update = 1;
 }
 
 void UI_set_to_Modify_FirstVertex (int n) {
-  WIN3D_UI_CurrentTask = UITASK_FirstVertex;
+  WIN3D_UI_CurrentTask = UITASK.FirstVertex;
   WIN3D_UI_TaskModifyParameter = n; // 1:default
 
   ROLLOUT_Update = 1;
@@ -47656,7 +47672,7 @@ void UI_set_to_Modify_FirstVertex (int n) {
 
 
 void UI_set_to_Modify_Drop (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Drop;
+  WIN3D_UI_CurrentTask = UITASK.Drop;
 
   WIN3D_UI_TaskModifyParameter = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
 
@@ -47665,7 +47681,7 @@ void UI_set_to_Modify_Drop (int n) {
 
 
 void UI_set_to_Modify_GetLength (int n) {
-  WIN3D_UI_CurrentTask = UITASK_GetLength;
+  WIN3D_UI_CurrentTask = UITASK.GetLength;
 
   WIN3D_UI_TaskModifyParameter = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane) 
 
@@ -47674,10 +47690,10 @@ void UI_set_to_Modify_GetLength (int n) {
 
 void UI_set_to_Modify_Power (int n) {
 
-  if (n == 0) WIN3D_UI_CurrentTask = UITASK_PowerX; // x 
-  if (n == 1) WIN3D_UI_CurrentTask = UITASK_PowerY; // y 
-  if (n == 2) WIN3D_UI_CurrentTask = UITASK_PowerZ; // z 
-  if (n == 3) WIN3D_UI_CurrentTask = UITASK_PowerAll; // xyz
+  if (n == 0) WIN3D_UI_CurrentTask = UITASK.PowerX; // x 
+  if (n == 1) WIN3D_UI_CurrentTask = UITASK.PowerY; // y 
+  if (n == 2) WIN3D_UI_CurrentTask = UITASK.PowerZ; // z 
+  if (n == 3) WIN3D_UI_CurrentTask = UITASK.PowerAll; // xyz
 
   WIN3D_UI_TaskModifyParameter = 0; // 0:change
 
@@ -47702,7 +47718,7 @@ void UI_set_to_View_ProjectionType (int n) {
 
 void UI_set_to_View_ClickSelect (int n) {
 
-  WIN3D_UI_CurrentTask = UITASK_PickSelect;
+  WIN3D_UI_CurrentTask = UITASK.PickSelect;
 
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1;
@@ -47716,7 +47732,7 @@ void UI_set_to_View_ClickSelect (int n) {
 }
 
 void UI_set_to_View_WindowSelect (int n) {
-  WIN3D_UI_CurrentTask = UITASK_RectSelect;
+  WIN3D_UI_CurrentTask = UITASK.RectSelect;
 
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1;
@@ -47757,17 +47773,17 @@ void UI_set_to_View_PivotZ (int n) {
 void UI_set_to_View_Truck (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan;
+    WIN3D_UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
+    WIN3D_UI_CurrentTask = UITASK.Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
+    WIN3D_UI_CurrentTask = UITASK.Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -47779,7 +47795,7 @@ void UI_set_to_View_Truck (int n) {
 void UI_set_to_View_DistMouseXY (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_DistMouseXY_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
   }
 
   ROLLOUT_Update = 1;
@@ -47790,7 +47806,7 @@ void UI_set_to_View_DistMouseXY (int n) {
 void UI_set_to_View_CameraDistance (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_CameraDistance_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
   }
 
   ROLLOUT_Update = 1;
@@ -47801,17 +47817,17 @@ void UI_set_to_View_CameraDistance (int n) {
 void UI_set_to_View_CameraRoll (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_CameraRoll_Pan;
+    WIN3D_UI_CurrentTask = UITASK.CameraRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_CameraRollXY_CameraRollZ;
+    WIN3D_UI_CurrentTask = UITASK.CameraRollXY_CameraRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_CameraRollXY_CameraRollZ;
+    WIN3D_UI_CurrentTask = UITASK.CameraRollXY_CameraRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -47824,17 +47840,17 @@ void UI_set_to_View_CameraRoll (int n) {
 void UI_set_to_View_TargetRoll (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_TargetRoll_Pan;
+    WIN3D_UI_CurrentTask = UITASK.TargetRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK.TargetRollXY_TargetRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK.TargetRollXY_TargetRollZ;
     WIN3D_UI_TaskModifyParameter = 0;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -47846,17 +47862,17 @@ void UI_set_to_View_TargetRoll (int n) {
 void UI_set_to_View_Orbit (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_Zoom_Orbit_Pan;
+    WIN3D_UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
+    WIN3D_UI_CurrentTask = UITASK.Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 1;            
     WIN3D_UI_OptionXorY = 0;
   } 
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_Truck_Orbit;
+    WIN3D_UI_CurrentTask = UITASK.Truck_Orbit;
     WIN3D_UI_TaskModifyParameter = 1;            
     WIN3D_UI_OptionXorY = 1;
   }           
@@ -47868,7 +47884,7 @@ void UI_set_to_View_Orbit (int n) {
 
 void UI_set_to_View_LandOrbit (int n) {
 
-  WIN3D_UI_CurrentTask = UITASK_LandOrbit_Pan_TargetRollZ;
+  WIN3D_UI_CurrentTask = UITASK.LandOrbit_Pan_TargetRollZ;
 
   ROLLOUT_Update = 1;
 }  
@@ -47893,7 +47909,7 @@ void UI_set_to_View_LookAtSelection (int n) {
 
 void UI_set_to_View_LookAtDirection (int n) {
 
-  WIN3D_UI_CurrentTask = UITASK_LookAtDirection;
+  WIN3D_UI_CurrentTask = UITASK.LookAtDirection;
 
   ROLLOUT_Update = 1;
 }  
@@ -47922,15 +47938,15 @@ void UI_set_to_View_LookAtOrigin (int n) {
 void UI_set_to_View_Pan (int n) {
 
   if (n == 0) {
-    WIN3D_UI_CurrentTask = UITASK_Pan_TargetRoll;
+    WIN3D_UI_CurrentTask = UITASK.Pan_TargetRoll;
   }
 
   if (n == 1) {
-    WIN3D_UI_CurrentTask = UITASK_PanX_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK.PanX_TargetRollXY_TargetRollZ;
   }
 
   if (n == 2) {
-    WIN3D_UI_CurrentTask = UITASK_PanY_TargetRollXY_TargetRollZ;
+    WIN3D_UI_CurrentTask = UITASK.PanY_TargetRollXY_TargetRollZ;
   }
 
 
@@ -47938,7 +47954,7 @@ void UI_set_to_View_Pan (int n) {
 }  
 
 void UI_set_to_View_ZOOM (int n) {
-  WIN3D_UI_CurrentTask = UITASK_Pan_Height;
+  WIN3D_UI_CurrentTask = UITASK.Pan_Height;
 
   if (n == 1) {
     WIN3D_Zoom = 60;
@@ -47950,7 +47966,7 @@ void UI_set_to_View_ZOOM (int n) {
 
 void UI_set_to_View_3DModelSize () {
 
-  WIN3D_UI_CurrentTask = UITASK_3DModelSize_Pan_TargetRoll;
+  WIN3D_UI_CurrentTask = UITASK.ModelSize_Pan_TargetRoll;
 
   WIN3D_Update = 1;  
 
@@ -47959,7 +47975,7 @@ void UI_set_to_View_3DModelSize () {
 
 void UI_set_to_View_SkydomeSize () {
 
-  WIN3D_UI_CurrentTask = UITASK_SkydomeSize;
+  WIN3D_UI_CurrentTask = UITASK.SkydomeSize;
 
   WIN3D_Update = 1;  
 
@@ -47968,7 +47984,7 @@ void UI_set_to_View_SkydomeSize () {
 
 void UI_set_to_View_AllModelSize () {
 
-  WIN3D_UI_CurrentTask = UITASK_AllModelSize;
+  WIN3D_UI_CurrentTask = UITASK.AllModelSize;
 
   WIN3D_Update = 1;  
 
@@ -55653,3 +55669,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
  
   CurrentDataSource = keep_CurrentDataSource; 
 }
+
+
+
+
+
+
