@@ -452,8 +452,8 @@ int pre_Load_ENSEMBLE_OBSERVED;
 int pre_Load_LAND_Mesh;
 int pre_Load_LAND_Textures;
 
-float pre_LocationLatitude;
-float pre_LocationLongitude;
+float pre_LocationLAT;
+float pre_LocationLON;
 
 int pre_WORLD_AutoView;
 
@@ -880,17 +880,15 @@ String getFilename_SolarImpact () {
 
 
 
-String LocationName;
-String LocationProvince;
-float LocationLatitude;
-float LocationLongitude;
-float LocationTimeZone;
-float LocationElevation;
-float LocationDeltaNoon;
+
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
 
+
+float LocationLAT = 0.0;
+float LocationLON = 0.0;
+float LocationELE = 0.0;
 
 float LocationLAT_step = 0.1;
 float LocationLON_step = 0.1;
@@ -2182,19 +2180,13 @@ void SOLARCHVISION_update_station (int Step) {
 
     WORLD_Update = 1;
     WIN3D_Update = 1; 
-    STUDY_Update = 1;    
+    STUDY_Update = 1;
 
-    LocationName = STATION.getName();
-    LocationProvince = STATION.getProvince();
+    LocationLAT = STATION.getLatitude();
+    LocationLON = STATION.getLongitude();
 
-    LocationLatitude = STATION.getLatitude();
-    LocationLongitude = STATION.getLongitude();
-    LocationTimeZone = STATION.getTimelong();
-    LocationElevation = STATION.getElevation();
-    LocationDeltaNoon = (LocationTimeZone - LocationLongitude) / 15.0;
-
-    WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
-
+    WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
+    
     TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
   }
 
@@ -2517,8 +2509,8 @@ void draw () {
         pre_Load_ENSEMBLE_FORECAST = Load_ENSEMBLE_FORECAST;
         pre_Load_ENSEMBLE_OBSERVED = Load_ENSEMBLE_OBSERVED;       
 
-        pre_LocationLatitude = LocationLatitude;
-        pre_LocationLongitude = LocationLongitude;
+        pre_LocationLAT = LocationLAT;
+        pre_LocationLON = LocationLON;
 
         pre_WORLD_AutoView = WORLD_AutoView;
 
@@ -2697,14 +2689,14 @@ void draw () {
         if (pre_Load_ENSEMBLE_FORECAST != Load_ENSEMBLE_FORECAST) SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
         if (pre_WORLD_AutoView != WORLD_AutoView) {
-          WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
+          WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
         }
 
 
 
-        if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
+        if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
 
-          WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
+          WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
           WORLD_Update = 1;
         }
 
@@ -3207,9 +3199,9 @@ void SOLARCHVISION_draw_WIN3D () {
 
     SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY_scale);
 
-    SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY_scale, LocationLatitude);
+    SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY_scale);
 
-    SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale, LocationLatitude);
+    SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
 
     SOLARCHVISION_draw_STAR3D();
 
@@ -3250,7 +3242,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
     for (int n = 0; n < AERIAL_num; n += 1) {
 
-      if ((AERIAL_Center_Longitude == LocationLongitude) && (AERIAL_Center_Latitude == LocationLatitude)) {
+      if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
 
         float _tgl = AERIAL_Locations[n][2];
         float _lat = AERIAL_Locations[n][1];
@@ -3632,7 +3624,7 @@ void SOLARCHVISION_draw_WORLD () {
 
       //try {
 
-      if ((AERIAL_Center_Longitude == LocationLongitude) && (AERIAL_Center_Latitude == LocationLatitude)) {
+      if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
 
         float _lat = AERIAL_Locations[n][1];
         float _lon = AERIAL_Locations[n][0]; 
@@ -3782,8 +3774,8 @@ void SOLARCHVISION_draw_WORLD () {
 
 
     {
-      float _lat = LocationLatitude;
-      float _lon = LocationLongitude; 
+      float _lat = STATION.getLatitude();
+      float _lon = STATION.getLongitude(); 
       if (_lon > 180) _lon -= 360; // << important!
 
       float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
@@ -3835,7 +3827,7 @@ void SOLARCHVISION_draw_WORLD () {
           }
         }
   
-        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_Station_ENSEMBLE_OBSERVED_dist[q] > d) {
 
@@ -3914,7 +3906,7 @@ void SOLARCHVISION_draw_WORLD () {
         }
       }
 
-      float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+      float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
       if (nearest_STATION_NAEFS_dist > d) {
         nearest_STATION_NAEFS_dist = d;
@@ -3979,7 +3971,7 @@ void SOLARCHVISION_draw_WORLD () {
         }
       }
 
-      float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+      float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
       if (nearest_STATION_CWEEDS_dist > d) {
         nearest_STATION_CWEEDS_dist = d;
@@ -4046,7 +4038,7 @@ void SOLARCHVISION_draw_WORLD () {
           }
         }
   
-        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_STATION_CLMREC_dist > d) {
           nearest_STATION_CLMREC_dist = d;
@@ -4111,7 +4103,7 @@ void SOLARCHVISION_draw_WORLD () {
         }
       }
 
-      float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+      float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
       if (nearest_STATION_TMYEPW_dist > d) {
         nearest_STATION_TMYEPW_dist = d;
@@ -5842,7 +5834,7 @@ void SOLARCHVISION_loadENSEMBLE_FORECAST (String FileName, int Load_Layer) {
 
         //println(now_i, now_j);
 
-        now_i -= int(-LocationTimeZone / 15);
+        now_i -= int(-STATION.getTimelong() / 15);
         if (now_i < 0) {
           now_i += 24;
           now_j -= 1;
@@ -6063,7 +6055,7 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
         float _lon = float(STATION_CLMREC_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
-        float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_Station_CLMREC_dist > d) {
   
@@ -6326,7 +6318,7 @@ void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
   int now_i = int(THE_HOUR);
   int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
 
-  now_i += int(-LocationTimeZone / 15);
+  now_i += int(-STATION.getTimelong() / 15);
   if (now_i > 23) {
     now_i -= 24;
     now_j += 1;
@@ -6422,7 +6414,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
     int now_i = int(THE_HOUR);
     int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
 
-    now_i += int(-LocationTimeZone / 15);
+    now_i += int(-STATION.getTimelong() / 15);
     if (now_i > 23) {
       now_i -= 24;
       now_j += 1;
@@ -6517,7 +6509,7 @@ void SOLARCHVISION_loadENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
 
   //println(now_i, now_j);
 
-  now_i -= int(-LocationTimeZone / 15);
+  now_i -= int(-STATION.getTimelong() / 15);
 
   if (now_i < 0) {
     now_i += 24;
@@ -6779,11 +6771,11 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
   STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
   STUDY_Diagrams.textAlign(LEFT, TOP);
 
-  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);  
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
-  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + LocationName + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getName() + "\n"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getName() + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (CurrentDataSource == dataID_CLIMATE_CLMREC) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getName() + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);  
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getName() + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
+  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) STUDY_Diagrams.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getName() + "\n(" + nf(TIME_Year, 4) + "_" + nf(TIME_Month, 2) + "_" + nf(TIME_Day, 2) + "_" + nf(TIME_Hour, 2) + ")"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 
   switch(STUDY_skyScenario) {
   case 1 : 
@@ -7435,7 +7427,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
       for (int i = 0; i < 24; i += 1) {
 
         float HOUR_ANGLE = i; 
-        float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+        float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
         int now_k = k + start_k;
         int now_i = i;
@@ -8161,8 +8153,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -8187,7 +8179,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 for (int i = 0; i < 24; i += 1) {
                   if (STUDY_isInHourlyRange(i) == 1) {              
                     float HOUR_ANGLE = i; 
-                    float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                    float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
                     if (SunR[3] > 0) {
 
@@ -8247,9 +8239,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
                 if (_valuesNUM != 0) {
-                  //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
-                  //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
-                  float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                  //float _valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
+                  //float _valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
+                  float _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
 
                   _valuesSUM_RAD *= _valuesMUL;
                   _valuesSUM_EFF_P *= _valuesMUL;
@@ -8577,8 +8569,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -8598,7 +8590,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if ((i > _sunrise) && (i < _sunset)) {
 
                   float HOUR_ANGLE = i; 
-                  float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                  float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
                   float Alpha = 90 - acos_ang(SunR[3]);
                   float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
@@ -8841,8 +8833,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-      float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-      float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+      float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+      float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
       int[] Normals_COL_N;
       Normals_COL_N = new int [9];
@@ -8853,7 +8845,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //for (int i = 12; i <= 12; i += 2) {
 
         float HOUR_ANGLE = i; 
-        float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+        float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
         float Alpha = 90 - acos_ang(SunR[3]);
         float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
@@ -9346,8 +9338,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -9372,7 +9364,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
             for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
 
               float HOUR_ANGLE = i; 
-              float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+              float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
               float Alpha = 90 - acos_ang(SunR[3]);
               float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
@@ -9381,12 +9373,12 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               if (Alpha < 0) {              
 
                 if (SunR[1] > 0) { 
-                  float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
+                  float[] SunR_rise = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunrise);
 
                   Alpha = 0;
                   Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);
                 } else {
-                  float[] SunR_set = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunset);
+                  float[] SunR_set = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunset);
 
                   Alpha = 0;
                   Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);
@@ -9463,7 +9455,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float _valuesSUM = FLOAT_undefined; 
 
               float HOUR_ANGLE = i; 
-              float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+              float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
               float Alpha = 90 - acos_ang(SunR[3]);
               float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
@@ -9493,8 +9485,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {  
           if (STUDY_isInHourlyRange(i) == 1) {
@@ -9664,8 +9656,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, myDATE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, myDATE);        
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), myDATE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), myDATE);        
 
         float myHOUR_step = 1.0 / float(TES_hour);
 
@@ -9676,15 +9668,15 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           float HourA = myHOUR;
           float HourB = myHOUR + myHOUR_step;
 
-          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, HourA);
-          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, HourB);
+          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourA);
+          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourB);
 
           if ((SunA[3] < 0) && (SunB[3] > 0)) {
-            SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, _sunrise);
+            SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunrise);
             SunA[3] = 0;
           }
           if ((SunA[3] > 0) && (SunB[3] < 0)) {
-            SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, _sunset);
+            SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunset);
             SunB[3] = 0;
           }
 
@@ -9748,8 +9740,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         }
 
         for (int myDATE = myDATE_start; myDATE <= myDATE_end; myDATE += myDATE_step) {
-          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (myDATE + myDATE_step), myHOUR);
+          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, myHOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (myDATE + myDATE_step), myHOUR);
           if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
 
             if (target_window == TYPE_WINDOW_WIN3D) {        
@@ -10433,7 +10425,7 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
   }
 }
 
-void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
 
   if (Display_SUN_Path != 0) {
 
@@ -10523,8 +10515,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
         //println(j, now_j, DATE_ANGLE);
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -10539,7 +10531,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
               if (STUDY_isInHourlyRange(i) == 1) {
 
                 float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
                 now_k = k + start_k;
 
@@ -10594,8 +10586,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
                   WIN3D_Diagrams.strokeWeight(4);
 
-                  float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE - 0.5 * (1.0 / float(TES_hour)));
-                  float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE + 0.5 * (1.0 / float(TES_hour)));
+                  float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE - 0.5 * (1.0 / float(TES_hour)));
+                  float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE + 0.5 * (1.0 / float(TES_hour)));
 
                   float x1 = SunA[1] * WIN3D_Scale3D * s_SunPath;
                   float y1 = SunA[2] * WIN3D_Scale3D * s_SunPath;
@@ -10628,7 +10620,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
 int Display_SolarRotation = 0;
 
-void SOLARCHVISION_draw_SolarRotation (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+void SOLARCHVISION_draw_SolarRotation (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
 
   if (Display_SolarRotation != 0) {
 
@@ -10641,8 +10633,8 @@ void SOLARCHVISION_draw_SolarRotation (float x_SunPath, float y_SunPath, float z
     for (int j = 90; j <= 270; j += 30) {
       float HOUR_step = 1;
       for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
+        float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, (HOUR + HOUR_step));
         WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_Scale3D, -s_SunPath * SunA[2] * WIN3D_Scale3D, s_SunPath * SunA[3] * WIN3D_Scale3D, s_SunPath * SunB[1] * WIN3D_Scale3D, -s_SunPath * SunB[2] * WIN3D_Scale3D, s_SunPath * SunB[3] * WIN3D_Scale3D);
       }
     }
@@ -10650,8 +10642,8 @@ void SOLARCHVISION_draw_SolarRotation (float x_SunPath, float y_SunPath, float z
     for (int HOUR = 0; HOUR <= 24; HOUR += 1) {
       float DATE_step = 1;
       for (int j = 0; j <= 360; j += DATE_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
+        float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (j + DATE_step), HOUR);
         WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_Scale3D, -s_SunPath * SunA[2] * WIN3D_Scale3D, s_SunPath * SunA[3] * WIN3D_Scale3D, s_SunPath * SunB[1] * WIN3D_Scale3D, -s_SunPath * SunB[2] * WIN3D_Scale3D, s_SunPath * SunB[3] * WIN3D_Scale3D);
       }
     }
@@ -11522,7 +11514,7 @@ float EquationOfTime (float DateAngle) {
 
 float FLOAT_e = 2.7182818284;
 
-float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAngle, float HourAngleOrigin, float CloudCover) {
+float[] SOLARCHVISION_SunPositionRadiation (float DateAngle, float HourAngleOrigin, float CloudCover) {
   float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle); 
 
   float Declination = 23.45 * sin_ang(DateAngle - 180.0);
@@ -11532,8 +11524,8 @@ float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAn
   float c = cos_ang(Declination) *  sin_ang(15.0 * HourAngleOrigin);
 
   float x = c; 
-  float y = -(a * cos_ang(LocationLatitude) + b * sin_ang(LocationLatitude));
-  float z = -a * sin_ang(LocationLatitude) + b * cos_ang(LocationLatitude);
+  float y = -(a * cos_ang(STATION.getLatitude()) + b * sin_ang(STATION.getLatitude()));
+  float z = -a * sin_ang(STATION.getLatitude()) + b * cos_ang(STATION.getLatitude());
 
   float Io = 1367.0; // W/m²
   Io = Io * (1.0 - (0.0334 * sin_ang(DateAngle)));
@@ -11541,7 +11533,7 @@ float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAn
   float ALT_ = (asin_ang(z)) * PI / 180; 
   float ALT_true = ALT_ + 0.061359 * (0.1594 + 1.1230 * ALT_ + 0.065656 * ALT_ * ALT_) / (1 + 28.9344 * ALT_ + 277.3971 * ALT_ * ALT_);
 
-  float PPo = pow(FLOAT_e, (-LocationElevation / 8435.2));
+  float PPo = pow(FLOAT_e, (-STATION.getElevation() / 8435.2));
   float Bb = ((sin_ang (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_true + 6.07995), -1.6364)));
   float m = PPo / Bb;
 
@@ -20892,7 +20884,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
                 if (g < 56) { // not on grass (light green) 
 
-                  //if (z + LocationElevation > 5) { // not in water (below see level)
+                  //if (z + STATION.getElevation() > 5) { // not in water (below see level)
 
                   //float s = 5 + random(10); 
                   float s = 5 + random(12.5);
@@ -20981,7 +20973,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
             float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
 
-            if (z + LocationElevation > 0) { // i.e. above sea level 
+            if (z + STATION.getElevation() > 0) { // i.e. above sea level 
 
               if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
 
@@ -21957,7 +21949,7 @@ void SOLARCHVISION_load_TROPO_IMAGES () {
 
 
 int getLoactationTimeZone () {
-  return int(roundTo(LocationLongitude / 15, 15)); 
+  return int(roundTo(STATION.getLongitude() / 15, 15)); 
 }
 
 
@@ -22152,10 +22144,10 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
       DomainStamp = "GDPS.ETA";
     }
     
-    TROPO_IMAGES_BoundariesX[i][0] = LocationLongitude - 15;
-    TROPO_IMAGES_BoundariesX[i][1] = LocationLongitude + 15;
-    TROPO_IMAGES_BoundariesY[i][0] = LocationLatitude - 15 * cos_ang(LocationLatitude);
-    TROPO_IMAGES_BoundariesY[i][1] = LocationLatitude + 15 * cos_ang(LocationLatitude);
+    TROPO_IMAGES_BoundariesX[i][0] = STATION.getLongitude() - 15;
+    TROPO_IMAGES_BoundariesX[i][1] = STATION.getLongitude() + 15;
+    TROPO_IMAGES_BoundariesY[i][0] = STATION.getLatitude() - 15 * cos_ang(STATION.getLatitude());
+    TROPO_IMAGES_BoundariesY[i][1] = STATION.getLatitude() + 15 * cos_ang(STATION.getLatitude());
 
     
     
@@ -22432,12 +22424,12 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                 }         
     
                 // rotating to location coordinates 
-                float tb = -LocationLongitude;
+                float tb = -STATION.getLongitude();
                 float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
                 float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
                 float z1 = z0;
     
-                float ta = 90 - LocationLatitude;
+                float ta = 90 - STATION.getLatitude();
                 float x2 = x1;
                 float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
                 float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
@@ -22829,12 +22821,12 @@ void SOLARCHVISION_draw_EARTH (int target_window) {
             }         
   
             // rotating to location coordinates 
-            float tb = -LocationLongitude;
+            float tb = -STATION.getLongitude();
             float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
             float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
             float z1 = z0;
   
-            float ta = 90 - LocationLatitude;
+            float ta = 90 - STATION.getLatitude();
             float x2 = x1;
             float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
             float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
@@ -23065,14 +23057,14 @@ void SOLARCHVISION_draw_MOON3D () {
           float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
           float z1 = z0;
 
-          float ta = -90 - LocationLatitude;
+          float ta = -90 - STATION.getLatitude();
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
 
           // move it up here!
-          y2 += d * sin_ang(-LocationLatitude);      
-          z2 += d * cos_ang(-LocationLatitude);
+          y2 += d * sin_ang(-STATION.getLatitude());      
+          z2 += d * cos_ang(-STATION.getLatitude());
 
           subFace[s][0] = x2;
           subFace[s][1] = y2;
@@ -23162,7 +23154,7 @@ void SOLARCHVISION_draw_STAR3D () {
           float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
           float z1 = z0;
 
-          float ta = -90 - LocationLatitude;
+          float ta = -90 - STATION.getLatitude();
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
@@ -23173,8 +23165,8 @@ void SOLARCHVISION_draw_STAR3D () {
           z2 *= 1000000.0;
 
           // move it to scale here!
-          y2 += 1000000.0 * d * sin_ang(-LocationLatitude);      
-          z2 += 1000000.0 * d * cos_ang(-LocationLatitude);
+          y2 += 1000000.0 * d * sin_ang(-STATION.getLatitude());      
+          z2 += 1000000.0 * d * cos_ang(-STATION.getLatitude());
 
           subFace[s][0] = x2;
           subFace[s][1] = y2;
@@ -24441,8 +24433,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
               float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
   
-              float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-              float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+              float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+              float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
   
               int[] Normals_COL_N;
   
@@ -24471,7 +24463,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                   if (STUDY_isInHourlyRange(i) == 1) {
   
                     float HOUR_ANGLE = i; 
-                    float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                    float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
   
                     if (SunR[3] > 0) {
   
@@ -24562,9 +24554,9 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               
   
               if (_valuesNUM != 0) {
-                //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
-                //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
-                float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                //float _valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
+                //float _valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
+                float _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
   
                 _valuesSUM_RAD *= _valuesMUL;
                 _valuesSUM_EFF_P *= _valuesMUL;
@@ -27125,7 +27117,7 @@ double[] getLandGrid (int i, int j) {
 
   double stp_lat = 1.0 / 2224.5968; // equals to 50m 
 
-  double stp_lon = stp_lat / cos_ang(LocationLatitude);   
+  double stp_lon = stp_lat / cos_ang(STATION.getLatitude());   
   
   //float q = 2;
   float q = pow(2, 0.5);
@@ -27137,8 +27129,8 @@ double[] getLandGrid (int i, int j) {
   float r = 0;
   if (i > 0) r = pow(q, i - 1);
 
-  double _lon = LocationLongitude + stp_lon * r * cos_ang(t);
-  double _lat = LocationLatitude + stp_lat * r * sin_ang(t);
+  double _lon = STATION.getLongitude() + stp_lon * r * cos_ang(t);
+  double _lat = STATION.getLatitude() + stp_lat * r * sin_ang(t);
   
   double[] LON_LAT = {_lon, _lat};
   
@@ -27148,8 +27140,8 @@ double[] getLandGrid (int i, int j) {
 
 float[] convert_lonlat2XY (double _lon, double _lat) {
 
-  double du = ((_lon - LocationLongitude) / 180.0) * (PI * DOUBLE_r_Earth);
-  double dv = ((_lat - LocationLatitude) / 180.0) * (PI * DOUBLE_r_Earth);
+  double du = ((_lon - STATION.getLongitude()) / 180.0) * (PI * DOUBLE_r_Earth);
+  double dv = ((_lat - STATION.getLatitude()) / 180.0) * (PI * DOUBLE_r_Earth);
 
   float x = (float) du * cos_ang((float) _lat);
   float y = (float) dv;   
@@ -27352,7 +27344,7 @@ void SOLARCHVISION_download_LAND_Textures () {
     File dir = new File(the_target);
     if (!dir.isFile()) {    
     
-      String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(LocationLatitude, 0, 5) + "," + nf(LocationLongitude, 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
+      String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(STATION.getLatitude(), 0, 5) + "," + nf(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
      
       println("Try downloading: " + the_link);
   
@@ -27667,8 +27659,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
         int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
         if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
@@ -27711,7 +27703,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
               if (STUDY_isInHourlyRange(i) == 1) {
 
                 float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
                 if (SunR[3] > 0) {
 
@@ -27827,9 +27819,9 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
             float _valuesMUL = 0;
 
             if (_valuesNUM != 0) {
-              //_valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
-              //_valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
-              _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+              //_valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
+              //_valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
+              _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
             }
 
 
@@ -29994,8 +29986,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-    float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-    float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+    float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+    float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
     int[] Normals_COL_N;
     Normals_COL_N = new int [9];
@@ -30020,7 +30012,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
               if (STUDY_isInHourlyRange(i) == 1) {
 
                 float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
                 if (SunR[3] > 0) {
 
@@ -30080,9 +30072,9 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
 
             if (_valuesNUM != 0) {
-              //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
-              //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
-              float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+              //float _valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
+              //float _valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
+              float _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
 
               _valuesSUM_RAD *= _valuesMUL;
               _valuesSUM_EFF_P *= _valuesMUL;
@@ -32016,7 +32008,7 @@ void mouseWheel (MouseEvent event) {
               if (WORLD_Viewport_ZOOM > 6) WORLD_Viewport_ZOOM = 6;
 
               if (keep_WORLD_Viewport_ZOOM != WORLD_Viewport_ZOOM) {
-                WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
+                WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
 
                 WORLD_Update = 1;
               }
@@ -35139,22 +35131,22 @@ void mouseClicked () {
 
             float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
             float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
-            //float mouse_lon = LocationLongitude;
-            //float mouse_lat = LocationLatitude;
+            //float mouse_lon = STATION.getLongitude();
+            //float mouse_lat = STATION.getLatitude();
 
 
-            pre_LocationLatitude = LocationLatitude;
-            pre_LocationLongitude = LocationLongitude;
+            pre_LocationLAT = LocationLAT;
+            pre_LocationLON = LocationLON;
 
-            LocationLatitude = mouse_lat;
-            LocationLongitude = mouse_lon;
+            STATION.setLatitude(mouse_lat);
+            STATION.setLongitude(mouse_lon);
 
             if (mouseButton == LEFT) {
               WORLD_Viewport_ZOOM = 6;
             }
 
-            if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
-              WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
+            if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
+              WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
             } 
 
 
@@ -35169,7 +35161,7 @@ void mouseClicked () {
                 float _lon = float(STATION_NAEFS_INFO[f][4]); 
                 if (_lon > 180) _lon -= 360; // << important!
 
-                float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+                float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
                 if (nearest_STATION_NAEFS_dist > d) {
                   nearest_STATION_NAEFS_dist = d;
@@ -35222,7 +35214,7 @@ void mouseClicked () {
                 float _lon = float(STATION_CWEEDS_INFO[f][4]); 
                 if (_lon > 180) _lon -= 360; // << important!
 
-                float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+                float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
                 if (nearest_STATION_CWEEDS_dist > d) {
                   nearest_STATION_CWEEDS_dist = d;
@@ -35277,7 +35269,7 @@ void mouseClicked () {
                   float _lon = float(STATION_CLMREC_INFO[f][4]); 
                   if (_lon > 180) _lon -= 360; // << important!
   
-                  float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+                  float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
                   if (nearest_STATION_CLMREC_dist > d) {
                     nearest_STATION_CLMREC_dist = d;
@@ -35332,7 +35324,7 @@ void mouseClicked () {
                 float _lon = float(STATION_TMYEPW_INFO[f][4]); 
                 if (_lon > 180) _lon -= 360; // << important!
 
-                float d = dist_lon_lat(_lon, _lat, LocationLongitude, LocationLatitude);
+                float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
                 if (nearest_STATION_TMYEPW_dist > d) {
                   nearest_STATION_TMYEPW_dist = d;
@@ -36822,9 +36814,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       //WORLD_AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Auto Fit", WORLD_AutoView, 0, 1, 1), 1));
       //WORLD_VIEW_Number = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, WORLD_Viewports_num - 1, 1), 1));
 
-      LocationLatitude = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Latitude", LocationLatitude, -85, 85, LocationLAT_step);
-      LocationLongitude = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Longitude", LocationLongitude, -180, 180, LocationLON_step);
-      //LocationElevation = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Elevation", LocationElevation, -100, 8000, LocationELE_step);
+      LocationLAT = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
+      LocationLON = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
+      //LocationELE = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, LocationELE_step);
 
       LocationLAT_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
       LocationLON_step = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
@@ -37398,8 +37390,8 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
   AERIAL_Data = new float [49][num_Layers][AERIAL_num][GRIB2_maxScenarios];
   AERIAL_Flags = new int [49][num_Layers][AERIAL_num][GRIB2_maxScenarios];
   AERIAL_Locations = new float [AERIAL_num][3]; // lon, lat, tgl
-  AERIAL_Center_Longitude = LocationLongitude;
-  AERIAL_Center_Latitude = LocationLatitude;
+  AERIAL_Center_Longitude = STATION.getLongitude();
+  AERIAL_Center_Latitude = STATION.getLatitude();
 
   for (int h = 0; h < GRIB2_TGL_number; h += 1) {
     GRIB2_TGL_Selected[h] = 0; // deselect all layers first.
@@ -37590,7 +37582,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
             int now_i = int(THE_HOUR);
             int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
   
-            now_i -= int(-LocationTimeZone / 15);
+            now_i -= int(-STATION.getTimelong() / 15);
             if (now_i < 0) {
               now_i += 24;
               now_j -= 1;
@@ -37696,7 +37688,7 @@ String getGrib2Filename (int k, int l, int h) {
 
 
 String getWgrib2Filename_MultiplePoints (int k, int l, int h, int part) {
-  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + "_part" + nf(part, 3) + ".txt");
+  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(STATION.getLongitude(), 0, 4) + "X" + nf(STATION.getLatitude(), 0, 4) + "_part" + nf(part, 3) + ".txt");
 }
 
 
@@ -39148,7 +39140,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
 String NearLatitude_Stamp () {
 
-  int Round_Latitude = int(roundTo(LocationLatitude, 5));
+  int Round_Latitude = int(roundTo(STATION.getLatitude(), 5));
   if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
   if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
 
@@ -39244,7 +39236,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
       for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period.
 
         float HOUR_ANGLE = i; 
-        float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+        float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
         float[] SunR_Rotated = SunR; 
         int SunR_Rotated_check = 3;
 
@@ -48781,15 +48773,23 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   my_xml.setName("SOLARCHVISION_" + SOLARCHVISION_version + "_project");
 
-  newChild1 = my_xml.addChild("SOLARCHVISION_variables");
+  println("Saving:STATION");
+  {
+    newChild1 = my_xml.addChild("STATION");
+    newChild1.setFloat("elevation", STATION.getElevation());
+    newChild1.setFloat("latitude", STATION.getLatitude());
+    newChild1.setFloat("longitude", STATION.getLongitude());
+    newChild1.setFloat("timelong", STATION.getTimelong());
+    
+    newChild1.setString("name", STATION.getName());
+    newChild1.setString("province", STATION.getProvince());
+    newChild1.setString("country", STATION.getCountry());
+    newChild1.setString("filename_NAEFS", STATION.getFilename_NAEFS());
+    newChild1.setString("filename_CWEEDS", STATION.getFilename_CWEEDS());
+    newChild1.setString("filename_TMYEPW", STATION.getFilename_TMYEPW());
+  }
 
-  newChild1.setString("LocationName", LocationName);
-  newChild1.setString("LocationProvince", LocationProvince);
-  newChild1.setFloat("LocationLatitude", LocationLatitude);
-  newChild1.setFloat("LocationLongitude", LocationLongitude);
-  newChild1.setFloat("LocationElevation", LocationElevation);
-  newChild1.setFloat("LocationTimeZone", LocationTimeZone);
-  newChild1.setFloat("LocationDeltaNoon", LocationDeltaNoon);
+  newChild1 = my_xml.addChild("SOLARCHVISION_variables");
 
   newChild1.setInt("Display_Output_in_Explorer", Display_Output_in_Explorer);
   newChild1.setInt("Display_Model3Ds", Display_Model3Ds);
@@ -48877,11 +48877,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("TIME_Hour", TIME_Hour); 
   newChild1.setInt("TIME_BeginDay", TIME_BeginDay);
   newChild1.setFloat("TIME_Date", TIME_Date);
-
-  newChild1.setFloat("LocationLAT_step", LocationLAT_step);
-  newChild1.setFloat("LocationLON_step", LocationLON_step);
-  newChild1.setFloat("LocationELE_step", LocationELE_step);
-
 
   newChild1.setInt("STUDY_j_Start", STUDY_j_Start);
   newChild1.setInt("STUDY_j_End", STUDY_j_End);
@@ -50021,17 +50016,25 @@ void SOLARCHVISION_load_project (String myFile) {
 
   if (continue_process == 1) { 
 
-    XML[] children0 = FileAll.getChildren("SOLARCHVISION_variables");
-
+    XML[] children0;
+   
+    children0 = FileAll.getChildren("STATION");
     for (int L = 0; L < children0.length; L++) {
+    
+      STATION.setElevation(children0[L].getFloat("elevation"));
+      STATION.setLatitude(children0[L].getFloat("latitude"));
+      STATION.setLongitude(children0[L].getFloat("longitude"));
+      STATION.setTimelong(children0[L].getFloat("timelong"));
+      STATION.setName(children0[L].getString("name"));
+      STATION.setProvince(children0[L].getString("province"));
+      STATION.setCountry(children0[L].getString("country"));
+      STATION.setFilename_NAEFS(children0[L].getString("filename_NAEFS"));
+      STATION.setFilename_CWEEDS(children0[L].getString("filename_CWEEDS"));
+      STATION.setFilename_TMYEPW(children0[L].getString("filename_TMYEPW"));    
+    } 
 
-      LocationName = children0[L].getString("LocationName");
-      LocationProvince = children0[L].getString("LocationProvince");     
-      LocationLatitude = children0[L].getFloat("LocationLatitude");
-      LocationLongitude = children0[L].getFloat("LocationLongitude");
-      LocationElevation = children0[L].getFloat("LocationElevation");
-      LocationTimeZone = children0[L].getFloat("LocationTimeZone");
-      LocationDeltaNoon = children0[L].getFloat("LocationDeltaNoon");
+    children0 = FileAll.getChildren("SOLARCHVISION_variables");
+    for (int L = 0; L < children0.length; L++) {
 
       Display_Output_in_Explorer = children0[L].getInt("Display_Output_in_Explorer");
       Display_Model3Ds = children0[L].getInt("Display_Model3Ds");
@@ -50119,11 +50122,6 @@ void SOLARCHVISION_load_project (String myFile) {
       TIME_Hour = children0[L].getInt("TIME_Hour"); 
       TIME_BeginDay = children0[L].getInt("TIME_BeginDay");
       TIME_Date = children0[L].getFloat("TIME_Date");
-
-      LocationLAT_step = children0[L].getFloat("LocationLAT_step");
-      LocationLON_step = children0[L].getFloat("LocationLON_step");
-      LocationELE_step = children0[L].getFloat("LocationELE_step");
-
 
       STUDY_i_Start = children0[L].getInt("STUDY_i_Start");
       STUDY_i_End = children0[L].getInt("STUDY_i_End");
@@ -51184,6 +51182,7 @@ void SOLARCHVISION_load_project (String myFile) {
         GRIB2_TGL_Selected[i] = int(parts[i]);
       }
     }
+    
   }
   println("End of loading project.");
 
@@ -51201,7 +51200,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
   WORLD_AutoView = 1;
 
-  WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
+  WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
 
   SOLARCHVISION_update_frame_layout();
 
@@ -54106,7 +54105,7 @@ void SOLARCHVISION_PreBakeViewport () {
           
           float HOUR_ANGLE = i;
     
-          float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+          float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
           float[] DirectVector = {
             SunR[1], SunR[2], SunR[3]
@@ -54362,8 +54361,8 @@ float _values_E_dir = 0.1;
 float _values_E_dif = 0.1;
 
 
-//float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]);
-float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, 0, 12, 0);
+//float[] SunR = SOLARCHVISION_SunPositionRadiation( DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]);
+float[] SunR = SOLARCHVISION_SunPositionRadiation(0, 12, 0);
 float[] VECT = {
   0, 0, 0
 }; 
@@ -54597,8 +54596,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       _FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
-      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly data");
+      FILE_outputRaw[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getName() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getName() + "\tHourly data");
 
       FILE_outputRaw[(j - STUDY_j_Start)].print("Hour\t");
       for (int k = 0; k < count_k; k += 1) {   
@@ -54607,8 +54606,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputRaw[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
-      FILE_outputNorms[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly normal");
+      FILE_outputNorms[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getName() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getName() + "\tHourly normal");
       FILE_outputNorms[(j - STUDY_j_Start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         FILE_outputNorms[(j - STUDY_j_Start)].print(STAT_N_Title[l] + "\t");
@@ -54616,8 +54615,8 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       FILE_outputNorms[(j - STUDY_j_Start)].println("");
     }
     if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
-      FILE_outputProbs[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + LocationName + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-      FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + LocationName + "\tHourly probabilities");
+      FILE_outputProbs[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getName() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getName() + "\tHourly probabilities");
 
       FILE_outputProbs[(j - STUDY_j_Start)].print("Hour:\t");
       FILE_outputProbs[(j - STUDY_j_Start)].println("");
@@ -55038,7 +55037,7 @@ void SOLARCHVISION_postProcess_solarsUsingCloud (int desired_DataSource) {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
 
-          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, CL);
+          float[] SunR = SOLARCHVISION_SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, CL);
 
           setValue_CurrentDataSource(i, j, k, LAYER_dirnorrad, SunR[4]);
 
@@ -55100,7 +55099,7 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
 
-          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]);
+          float[] SunR = SOLARCHVISION_SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]);
 
           ENSEMBLE_FORECAST_values[i][j][LAYER_dirnorrad][k] = SunR[4];
 
@@ -55314,7 +55313,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
             float HOUR_ANGLE = now_i; 
   
-            float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+            float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
   
   
   
