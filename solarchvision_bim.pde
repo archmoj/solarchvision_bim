@@ -1,3 +1,104 @@
+class solarchvision_STATION {
+
+  String name = "";
+  String province = "";
+  String country = "";
+  String filename_NAEFS = "";
+  String filename_CWEEDS = "";
+  String filename_TMYEPW = "";
+  float elevation = 0;
+  float latitude = 0;
+  float longitude = 0;
+  float timelong = 0;
+  
+  String getName () {return this.name;} 
+  String getProvince () {return this.province;} 
+  String getCountry () {return this.country;}
+  String getFilename_NAEFS () {return this.filename_NAEFS;}
+  String getFilename_CWEEDS () {return this.filename_CWEEDS;}
+  String getFilename_TMYEPW () {return this.filename_TMYEPW;} 
+  float getElevation () {return this.elevation;} 
+  float getLatitude () {return this.latitude;}
+  float getLongitude () {return this.longitude;} 
+  float getTimelong () {return this.timelong;} 
+  
+  void setName (String name) {
+    this.name = name;
+  }
+  void setProvince (String province) {
+    this.province = province;
+  }
+  void setCountry (String country) {
+    this.country = country;
+  }
+  void setFilename_NAEFS (String filename_NAEFS) {
+    this.filename_NAEFS = filename_NAEFS;
+  }
+  void setFilename_CWEEDS (String filename_CWEEDS) {
+    this.filename_CWEEDS = filename_CWEEDS;
+  }
+  void setFilename_TMYEPW (String filename_TMYEPW) {
+    this.filename_TMYEPW = filename_TMYEPW;
+  }  
+  void setElevation (float elevation) {
+    this.elevation = elevation;
+  }
+  void setLatitude (float latitude) {
+    this.latitude = latitude;
+  }
+  void setLongitude (float longitude) {
+    this.longitude = longitude;
+  }
+  void setTimelong (float timelong) {
+    this.timelong = timelong;
+  }
+  
+  
+  solarchvision_STATION (String name, String province, String Country, 
+                         float latitude, float longitude, float timelong, float elevation, 
+                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
+  
+    this.name = name;
+    this.province = province;
+    this.country = country;
+    this.filename_NAEFS = filename_NAEFS;
+    this.filename_CWEEDS = filename_CWEEDS;
+    this.filename_TMYEPW = filename_TMYEPW;
+    this.elevation = elevation;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.timelong = timelong;
+  }
+}
+
+solarchvision_STATION STATION = new solarchvision_STATION("Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR");
+
+/*
+String[] Defined_Station = {
+  
+  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
+  
+  //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
+  //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
+  //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
+  //"FIROUZKOH_Mergan", "XX", "IR", "35.698970", "52.642485", "52.5", "2075", "", "", "IRN_Semnan_XX_IR"
+  //"ESFAHAN", "XX", "IR", "32.617", "51.667", "52.5", "1590", "", "", "IRN_Esfahan_ZZ_IR"
+  //"Ghareh_Khach", "XX", "IR", "39.263", "44.463", "52.5", "1686", "", "", "IRN_GharehKhach_XX_IR"
+  
+  
+  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
+  //"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
+  //"Toronto_Nima", "ON", "CA", "43.80", "-79.60", "-75", "95", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
+  //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
+};
+*/
+
+
+
+
+
 class solarchvision_UITASK {
  
   final int LandOrbit_Pan_TargetRollZ = -19;
@@ -550,37 +651,6 @@ int Language_EN = 0;
 int Language_FR = 1;
 int Language_Active = Language_EN;
 
-
-int STATION_DEF_NAME = 0;
-int STATION_DEF_PROVINCE = 1;
-int STATION_DEF_COUNTRY = 2;
-int STATION_DEF_LATITUDE = 3;
-int STATION_DEF_LONGITUDE = 4;
-int STATION_DEF_LONG_TIME = 5;
-int STATION_DEF_ELEVATION = 6;
-int STATION_DEF_NAEFS = 7;
-int STATION_DEF_CWEEDS = 8;
-int STATION_DEF_TMYEPW = 9;
-
-String[] Defined_Stations = {
-  
-  //"SolidArch_01", "XX", "AT", "47.267286", "11.398778", "15", "573.5", "", "", "AUT_Innsbruck.111200_IWEC"
-  
-  //"Brossard_Oakland", "QC", "CA", "45.433760", "-73.461702", "-75", "36", "SAINT-HUBERT_QC_CA", "QC_ST-HUBERT-A_4552_7342_7500", "CAN_PQ_St.Hubert.713710_CWEC"
-  //"TEHRAN_Pasargad", "XX", "IR", "35.731165", "51.531360", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
-  //"TEHRAN_Jordan", "XX", "IR", "35.770000", "51.419995", "52.5", "1672", "", "", "IRN_TEHRAN_XX_IR"
-  //"FIROUZKOH_Mergan", "XX", "IR", "35.698970", "52.642485", "52.5", "2075", "", "", "IRN_Semnan_XX_IR"
-  //"ESFAHAN", "XX", "IR", "32.617", "51.667", "52.5", "1590", "", "", "IRN_Esfahan_ZZ_IR"
-  //"Ghareh_Khach", "XX", "IR", "39.263", "44.463", "52.5", "1686", "", "", "IRN_GharehKhach_XX_IR"
-  "Roodbar", "XX", "IR", "36.826", "49.426", "52.5", "194", "", "", "IRN_Rasht_YY_IR"
-  
-  //"Rue de Biencourt", "QC", "CA", "45.458781", "-73.596112", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  //"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"
-  //"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"
-  //"Toronto_Nima", "ON", "CA", "43.80", "-79.60", "-75", "95", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-MET-RES-STN_4380_7955_7500", "CAN_ON_Toronto.716240_CWEC"
-  //"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"
-};
 
 
 
@@ -2114,13 +2184,13 @@ void SOLARCHVISION_update_station (int Step) {
     WIN3D_Update = 1; 
     STUDY_Update = 1;    
 
-    LocationName = Defined_Stations[STATION_DEF_NAME];
-    LocationProvince = Defined_Stations[STATION_DEF_PROVINCE];
+    LocationName = STATION.getName();
+    LocationProvince = STATION.getProvince();
 
-    LocationLatitude = float(Defined_Stations[STATION_DEF_LATITUDE]);
-    LocationLongitude = float(Defined_Stations[STATION_DEF_LONGITUDE]);
-    LocationTimeZone = float(Defined_Stations[STATION_DEF_LONG_TIME]);
-    LocationElevation = float(Defined_Stations[STATION_DEF_ELEVATION]);
+    LocationLatitude = STATION.getLatitude();
+    LocationLongitude = STATION.getLongitude();
+    LocationTimeZone = STATION.getTimelong();
+    LocationElevation = STATION.getElevation();
     LocationDeltaNoon = (LocationTimeZone - LocationLongitude) / 15.0;
 
     WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLongitude, LocationLatitude);
@@ -2276,14 +2346,14 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getNAEFS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getFilename_NAEFS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 7) {
-    SOLARCHVISION_getNAEFS_Coordinates(); 
+    SOLARCHVISION_getFilename_NAEFS_Coordinates(); 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getCWEEDS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getFilename_CWEEDS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 8) {
-    SOLARCHVISION_getCWEEDS_Coordinates();  
+    SOLARCHVISION_getFilename_CWEEDS_Coordinates();  
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255); fill(255); text("SOLARCHVISION_getCLMREC_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
@@ -2291,9 +2361,9 @@ void draw () {
     SOLARCHVISION_getCLMREC_Coordinates();  
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getTMYEPW_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("SOLARCHVISION_getFilename_TMYEPW_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 10) {
-    SOLARCHVISION_getTMYEPW_Coordinates();  
+    SOLARCHVISION_getFilename_TMYEPW_Coordinates();  
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255); fill(255); text("SOLARCHVISION_update_date", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
@@ -5618,7 +5688,7 @@ void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int 
   for (int f = 0; f < num_Layers; f++) {
     if (LAYERS_Text[f].equals("")) {
     } else {
-      String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_DEF_NAEFS] + "_" + LAYERS_Text[f] + "_000-384.xml";
+      String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
       
       String the_target = ENSEMBLE_FORECAST_directory + "/" + FN;
       
@@ -5688,7 +5758,7 @@ void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int TH
     for (int f = 0; f < num_Layers; f++) {
       if (LAYERS_Text[f].equals("")) {
       } else {
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_DEF_NAEFS] + "_" + LAYERS_Text[f] + "_000-384.xml";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
 
         String the_source = ENSEMBLE_FORECAST_directory + "/" + FN;
 
@@ -5822,7 +5892,7 @@ void SOLARCHVISION_update_CLIMATE_CWEEDS () {
 
   if (Load_CLIMATE_CWEEDS == 1) {
 
-    String FN = Defined_Stations[STATION_DEF_CWEEDS] + ".wy2";
+    String FN = STATION.getFilename_CWEEDS() + ".wy2";
     
     String the_source = CLIMATE_CWEEDS_directory + "/" + FN;
 
@@ -6136,7 +6206,7 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
 
   if (Load_CLIMATE_TMYEPW == 1) {
 
-    String FN = Defined_Stations[STATION_DEF_TMYEPW] + ".epw";
+    String FN = STATION.getFilename_TMYEPW() + ".epw";
 
     String the_source = CLIMATE_TMYEPW_directory + "/" + FN;
 
@@ -11800,7 +11870,7 @@ void SOLARCHVISION_load_WorldViewImage (int n) {
 int STATION_NAEFS_NUMBER = 0;
 String[][] STATION_NAEFS_INFO;
 
-void SOLARCHVISION_getNAEFS_Coordinates () {
+void SOLARCHVISION_getFilename_NAEFS_Coordinates () {
   try {
     String[] FileALL = loadStrings(WorldDataFolder + "/NAEFS_UTF8.txt");
 
@@ -11878,7 +11948,7 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
 int STATION_CWEEDS_NUMBER = 0;
 String[][] STATION_CWEEDS_INFO;
 
-void SOLARCHVISION_getCWEEDS_Coordinates () {
+void SOLARCHVISION_getFilename_CWEEDS_Coordinates () {
   try {
     String[] FileALL = loadStrings(WorldDataFolder + "/CWEEDS_UTF8.txt");
 
@@ -12089,7 +12159,7 @@ void SOLARCHVISION_getSWOB_Coordinates () {
 int STATION_TMYEPW_NUMBER = 0;
 String[][] STATION_TMYEPW_INFO;
 
-void SOLARCHVISION_getTMYEPW_Coordinates () {
+void SOLARCHVISION_getFilename_TMYEPW_Coordinates () {
   try {
     String[] FileALL = loadStrings(WorldDataFolder + "/EPW_UTF8.txt");
 
@@ -35110,24 +35180,24 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_NAEFS;
 
-                if (Defined_Stations[STATION_DEF_NAEFS].equals(STATION_NAEFS_INFO[f][6])) {
+                if (STATION.getFilename_NAEFS().equals(STATION_NAEFS_INFO[f][6])) {
                 } else {
 
-                  Defined_Stations[STATION_DEF_LATITUDE] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_DEF_LONGITUDE] = nf(mouse_lon, 0, 0); 
+                  STATION.setLatitude(mouse_lat);                
+                  STATION.setLongitude(mouse_lon);
 
-                  Defined_Stations[STATION_DEF_NAEFS] = STATION_NAEFS_INFO[f][6]; // naefs filename
+                  STATION.setFilename_NAEFS(STATION_NAEFS_INFO[f][6]); // naefs filename
 
                   println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
 
                   if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-                    Defined_Stations[STATION_DEF_NAME] = STATION_NAEFS_INFO[f][0];
-                    Defined_Stations[STATION_DEF_PROVINCE] = STATION_NAEFS_INFO[f][1];
-                    Defined_Stations[STATION_DEF_COUNTRY] = STATION_NAEFS_INFO[f][2];
+                    STATION.setName(STATION_NAEFS_INFO[f][0]);
+                    STATION.setProvince(STATION_NAEFS_INFO[f][1]);
+                    STATION.setCountry(STATION_NAEFS_INFO[f][2]);
 
-                    //Defined_Stations[STATION_DEF_LATITUDE] = STATION_NAEFS_INFO[f][3];
-                    //Defined_Stations[STATION_DEF_LONGITUDE] = STATION_NAEFS_INFO[f][4];
-                    Defined_Stations[STATION_DEF_LONG_TIME] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
+                    //STATION.setLatitude(float(STATION_NAEFS_INFO[f][3]));
+                    //STATION.setLongitude(float(STATION_NAEFS_INFO[f][4]));
+                    STATION.setTimelong(roundTo(float(STATION_NAEFS_INFO[f][2]), 15));                      
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -35163,26 +35233,26 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_CWEEDS;
 
-                if (Defined_Stations[STATION_DEF_CWEEDS].equals(STATION_CWEEDS_INFO[f][6])) {
+                if (STATION.getFilename_CWEEDS().equals(STATION_CWEEDS_INFO[f][6])) {
                 } else {
 
-                  Defined_Stations[STATION_DEF_LATITUDE] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_DEF_LONGITUDE] = nf(mouse_lon, 0, 0); 
+                  STATION.setLatitude(mouse_lat);                
+                  STATION.setLongitude(mouse_lon); 
 
-                  Defined_Stations[STATION_DEF_CWEEDS] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
+                  STATION.setFilename_CWEEDS(STATION_CWEEDS_INFO[f][6]); // CWEEDS filename
 
                   println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
 
                   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) { 
 
-                    Defined_Stations[STATION_DEF_NAME] = STATION_CWEEDS_INFO[f][0];
-                    Defined_Stations[STATION_DEF_PROVINCE] = STATION_CWEEDS_INFO[f][1];
-                    Defined_Stations[STATION_DEF_COUNTRY] = STATION_CWEEDS_INFO[f][2]; 
+                    STATION.setName(STATION_CWEEDS_INFO[f][0]);
+                    STATION.setProvince(STATION_CWEEDS_INFO[f][1]);
+                    STATION.setCountry(STATION_CWEEDS_INFO[f][2]); 
 
-                    //Defined_Stations[STATION_DEF_LATITUDE] = STATION_CWEEDS_INFO[f][3];
-                    //Defined_Stations[STATION_DEF_LONGITUDE] = STATION_CWEEDS_INFO[f][4];
-                    Defined_Stations[STATION_DEF_LONG_TIME] = STATION_CWEEDS_INFO[f][6]; 
-                    Defined_Stations[STATION_DEF_ELEVATION] = STATION_CWEEDS_INFO[f][5];   
+                    //STATION.setLatitude(float(STATION_CWEEDS_INFO[f][3]));
+                    //STATION.setLongitude(float(STATION_CWEEDS_INFO[f][4]));
+                    STATION.setTimelong(float(STATION_CWEEDS_INFO[f][6])); 
+                    STATION.setElevation(float(STATION_CWEEDS_INFO[f][5]));   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -35219,26 +35289,26 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_CLMREC;
 
-                if (Defined_Stations[STATION_DEF_CWEEDS].equals(STATION_CLMREC_INFO[f][6])) {
+                if (STATION.getFilename_CWEEDS().equals(STATION_CLMREC_INFO[f][6])) {
                 } else {
 
-                  Defined_Stations[STATION_DEF_LATITUDE] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_DEF_LONGITUDE] = nf(mouse_lon, 0, 0); 
+                  STATION.setLatitude(mouse_lat);                
+                  STATION.setLongitude(mouse_lon);                   
 
-                  Defined_Stations[STATION_DEF_CWEEDS] = STATION_CLMREC_INFO[f][6]; // CLMREC filename
+                  STATION.setFilename_CWEEDS(STATION_CLMREC_INFO[f][6]); // CLMREC filename
 
                   println("nearest CLMREC filename:", STATION_CLMREC_INFO[f][6]);       
 
                   if (CurrentDataSource == dataID_CLIMATE_CLMREC) { 
 
-                    Defined_Stations[STATION_DEF_NAME] = STATION_CLMREC_INFO[f][0];
-                    Defined_Stations[STATION_DEF_PROVINCE] = STATION_CLMREC_INFO[f][1];
-                    Defined_Stations[STATION_DEF_COUNTRY] = STATION_CLMREC_INFO[f][2]; 
+                    STATION.setName(STATION_CLMREC_INFO[f][0]);
+                    STATION.setProvince(STATION_CLMREC_INFO[f][1]);
+                    STATION.setCountry(STATION_CLMREC_INFO[f][2]); 
 
-                    //Defined_Stations[STATION_DEF_LATITUDE] = STATION_CLMREC_INFO[f][3];
-                    //Defined_Stations[STATION_DEF_LONGITUDE] = STATION_CLMREC_INFO[f][4];
-                    Defined_Stations[STATION_DEF_LONG_TIME] = STATION_CLMREC_INFO[f][6]; 
-                    Defined_Stations[STATION_DEF_ELEVATION] = STATION_CLMREC_INFO[f][5];   
+                    //STATION.setLatitude(float(STATION_CLMREC_INFO[f][3]));
+                    //STATION.setLongitude(float(STATION_CLMREC_INFO[f][4]));
+                    STATION.setTimelong(float(STATION_CLMREC_INFO[f][6])); 
+                    STATION.setElevation(float(STATION_CLMREC_INFO[f][5]));   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -35273,25 +35343,25 @@ void mouseClicked () {
               {
                 int f = nearest_STATION_TMYEPW;
 
-                if (Defined_Stations[STATION_DEF_TMYEPW].equals(STATION_TMYEPW_INFO[f][8])) {
+                if (STATION.getFilename_TMYEPW().equals(STATION_TMYEPW_INFO[f][8])) {
                 } else {
 
-                  Defined_Stations[STATION_DEF_LATITUDE] = nf(mouse_lat, 0, 0);                
-                  Defined_Stations[STATION_DEF_LONGITUDE] = nf(mouse_lon, 0, 0); 
+                  STATION.setLatitude(mouse_lat);                
+                  STATION.setLongitude(mouse_lon);
 
-                  Defined_Stations[STATION_DEF_TMYEPW] = STATION_TMYEPW_INFO[f][8]; // epw filename
+                  STATION.setFilename_TMYEPW(STATION_TMYEPW_INFO[f][8]); // epw filename
 
                   println("nearest epw filename:", STATION_TMYEPW_INFO[f][8]);       
 
                   if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {     
-                    Defined_Stations[STATION_DEF_NAME] = STATION_TMYEPW_INFO[f][0];
-                    Defined_Stations[STATION_DEF_PROVINCE] = STATION_TMYEPW_INFO[f][1];
-                    Defined_Stations[STATION_DEF_COUNTRY] = STATION_TMYEPW_INFO[f][2]; 
+                    STATION.setName(STATION_TMYEPW_INFO[f][0]);
+                    STATION.setProvince(STATION_TMYEPW_INFO[f][1]);
+                    STATION.setCountry(STATION_TMYEPW_INFO[f][2]); 
 
-                    //Defined_Stations[STATION_DEF_LATITUDE] = STATION_TMYEPW_INFO[f][3];
-                    //Defined_Stations[STATION_DEF_LONGITUDE] = STATION_TMYEPW_INFO[f][4];
-                    Defined_Stations[STATION_DEF_LONG_TIME] = STATION_TMYEPW_INFO[f][6]; 
-                    Defined_Stations[STATION_DEF_ELEVATION] = STATION_TMYEPW_INFO[f][5];    
+                    //STATION.setLatitude(float(STATION_TMYEPW_INFO[f][3]));
+                    //STATION.setLongitude(float(STATION_TMYEPW_INFO[f][4]));
+                    STATION.setTimelong(float(STATION_TMYEPW_INFO[f][6])); 
+                    STATION.setElevation(float(STATION_TMYEPW_INFO[f][5]));    
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -49264,16 +49334,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
   }
 
-  println("Saving:STATION");
-  {
-    newChild1 = my_xml.addChild("DEFINED_STATION");
-    newChild1.setInt("ni", Defined_Stations.length);
-    for (int i = 0; i < Defined_Stations.length; i++) {
-      newChild2 = newChild1.addChild("Property");
-      newChild2.setInt("id", i);
-      newChild2.setContent(Defined_Stations[i]);
-    }
-  }
 
   println("Saving:LAND_Mesh");
   {
@@ -50503,20 +50563,6 @@ void SOLARCHVISION_load_project (String myFile) {
             }
           }
         }
-      }
-    }
-
-    println("Loading:STATION");
-    children0 = FileAll.getChildren("DEFINED_STATION");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-
-      XML[] children1 = children0[L].getChildren("Property");         
-
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-
-        Defined_Stations[i] = lineSTR;
       }
     }
 
@@ -53830,8 +53876,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("LONLAT")) {
     if (parts.length > 2) {
       
-      Defined_Stations[STATION_DEF_LATITUDE] = parts[2];
-      Defined_Stations[STATION_DEF_LONGITUDE] = parts[1];
+      STATION.setLatitude(float(parts[2]));
+      STATION.setLongitude(float(parts[1]));
       
       SOLARCHVISION_update_station(1);
     }
@@ -54852,16 +54898,16 @@ String getReference_CurrentDataSource () {
   String return_value = "";
 
   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
-    return_value = Defined_Stations[STATION_DEF_CWEEDS] + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/";
+    return_value = STATION.getFilename_CWEEDS() + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/";
   }
   else if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
     return_value  = "Environment and Climate Change Canada website at http://climate.weather.gc.ca/climate_data";
   }  
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
-    return_value = Defined_Stations[STATION_DEF_TMYEPW] + ".epw";
+    return_value = STATION.getFilename_TMYEPW() + ".epw";
   }    
   else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    return_value = nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + Defined_Stations[STATION_DEF_NAEFS] + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
+    return_value = nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[STUDY_CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
   }
   else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
     return_value = "Environment and Climate Change Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/";
