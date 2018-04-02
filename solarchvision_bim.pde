@@ -1,3 +1,168 @@
+
+class solarchvision_WORLD {
+
+  private final static String CLASS_STAMP = "WORLD";
+  
+  int CX_View = int(1.5 * SOLARCHVISION_H_Pixel);
+  int CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
+  int X_View = int(2.0 * SOLARCHVISION_H_Pixel);
+  int Y_View = SOLARCHVISION_H_Pixel;
+  float R_View = float(Y_View) / float(X_View);
+  
+  boolean Update = true;
+  boolean Include = true;
+  
+  
+  int Viewports_num;
+  int Viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
+
+  int AutoView = 1;
+
+  
+  
+  
+
+  
+  boolean record_JPG = false;
+  boolean record_PDF = false;
+  boolean record_AUTO = false;  
+
+  float ImageScale = 1.0;
+  
+  String DataFolder;
+  
+  String ViewFolder;
+  
+  PImage ViewImage;
+  
+  PGraphics Diagrams;
+  
+
+  
+  int VIEW_Number = 0;
+
+  float VIEW_OffsetX = 0;
+  float VIEW_OffsetY = 0;
+
+  float VIEW_ScaleX = 1;
+  float VIEW_ScaleY = 1;
+  
+  String[][] VIEW_Name;
+  float[][] VIEW_BoundariesX;
+  float[][] VIEW_BoundariesY; 
+  int[] VIEW_GridDisplay;
+  String[] VIEW_Filenames;  
+  
+  void listAllImages () {
+  
+    this.VIEW_Filenames = sort(SOLARCHVISION_getfiles(this.ViewFolder));
+  
+    this.Viewports_num = this.VIEW_Filenames.length;
+  
+    this.VIEW_Name = new String [this.Viewports_num][2];
+  
+    this.VIEW_BoundariesX = new float [this.Viewports_num][2];
+    this.VIEW_BoundariesY = new float [this.Viewports_num][2];
+  
+    this.VIEW_GridDisplay = new int [this.Viewports_num];
+  
+    for (int i = 0; i < this.Viewports_num; i += 1) {
+      String MapFilename = this.ViewFolder + "/" + this.VIEW_Filenames[i];
+  
+      String[] Parts = split(this.VIEW_Filenames[i], '_');
+  
+      this.VIEW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+      this.VIEW_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+      this.VIEW_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+      this.VIEW_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+  
+      this.VIEW_Name[i][0] = Parts[5];
+      this.VIEW_Name[i][1] = Parts[6];
+  
+      float a = (this.VIEW_BoundariesY[i][1] - this.VIEW_BoundariesY[i][0]) / 2;
+      if (a < 1) a = 1;
+      this.VIEW_GridDisplay[i] = int(a);
+    }
+  }  
+  
+  
+  int FindGoodViewport (float pointLongitude, float pointLatitude) {
+  
+    int return_VIEWPORT = this.VIEW_Number;
+  
+    if (this.AutoView == 1) {
+  
+      float d1 = FLOAT_undefined;
+      float d2 = FLOAT_undefined;
+  
+      for (int i = 0; i < this.Viewports_num; i++) {
+  
+        int check_it = 0; 
+  
+        String started_with = this.VIEW_Filenames[i].substring(0, 1);
+  
+        if (this.Viewport_ZOOM == 1) {
+          if (started_with.equals("A")) check_it = 1;
+        } else if (this.Viewport_ZOOM == 2) {
+          if (started_with.equals("B")) check_it = 1;
+        } else if (this.Viewport_ZOOM == 3) {
+          if (started_with.equals("C")) check_it = 1;
+        } else if (this.Viewport_ZOOM == 4) {
+          if (started_with.equals("D")) check_it = 1;
+        } else if (this.Viewport_ZOOM == 5) {
+          if (started_with.equals("E")) check_it = 1;
+        } else {
+          check_it = 1;
+        }
+  
+        if (check_it == 1) {  
+  
+          if (isInside(pointLongitude, pointLatitude, this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1]) == 1) {
+            float d_Center = dist(pointLongitude, pointLatitude, 0.5 * (this.VIEW_BoundariesX[i][0] + this.VIEW_BoundariesX[i][1]), 0.5 * (this.VIEW_BoundariesY[i][0] + this.VIEW_BoundariesY[i][1]));
+            float d_Size = dist(this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1]);
+  
+            if (d2 > 0.95 * d_Size) {
+              if (d1 > d_Center) {
+                d1 = d_Center;
+                d2 = d_Size;
+  
+                return_VIEWPORT = i;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+    if (return_VIEWPORT != this.VIEW_Number) {
+      this.loadImages(return_VIEWPORT);
+  
+      if (Display_EARTH_Surface) WIN3D_Update = true;
+    }
+  
+    return (return_VIEWPORT);
+  }
+  
+  
+  void loadImages (int n) {
+
+    println("Loading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
+  
+    this.ViewImage = loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[n]);
+  }
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
 class solarchvision_STATION {
 
   private final static String CLASS_STAMP = "STATION";
@@ -294,11 +459,7 @@ final int TROPO_timeSteps = 24;
 
 
 
-float WORLD_VIEW_OffsetX = 0;
-float WORLD_VIEW_OffsetY = 0;
 
-float WORLD_VIEW_ScaleX = 1;
-float WORLD_VIEW_ScaleY = 1;
 
 
 // SOLARCHVISION_draw_TROPO --- we only use the first image!
@@ -388,8 +549,8 @@ String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version;
 String Wgrib2TempFolder;
 
 String BackgroundFolder;
-String WorldViewFolder;
-String WorldDataFolder;
+
+
 String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
@@ -431,8 +592,8 @@ void SOLARCHVISION_update_folders () {
   ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
 
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
-  WorldDataFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  WORLD.ViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  WORLD.DataFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
@@ -961,9 +1122,7 @@ boolean STUDY_record_JPG = false;
 boolean STUDY_record_PDF = false;
 boolean STUDY_record_AUTO = false;
 
-boolean WORLD_record_JPG = false;
-boolean WORLD_record_PDF = false;
-boolean WORLD_record_AUTO = false;
+
 
 boolean WIN3D_record_JPG = false;
 boolean WIN3D_record_AUTO = false;
@@ -1783,8 +1942,6 @@ int STUDY_Setup = 14; //4; //12; //13;
 
 float STUDY_ImageScale = 1.0;
 
-float WORLD_ImageScale = 1.0;
-
 float WIN3D_ImageScale = 1.0;
 
 
@@ -1922,6 +2079,11 @@ void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
 
 
+String[] Object2D_ImagePath;
+int Object2D_PEOPLE_Files_Num = 0;
+int Object2D_TREES_Files_Num = 0;
+
+
 
 int SOLARCHVISION_H_Pixel = 275; //300; 
 int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.75); 
@@ -1933,6 +2095,9 @@ int SOLARCHVISION_A_Pixel = int(1.5 * MessageSize); // menu bar
 int SOLARCHVISION_B_Pixel = int(2.75 * MessageSize); // 3D tool bar
 int SOLARCHVISION_C_Pixel = int(3.0 * MessageSize); // command bar
 int SOLARCHVISION_D_Pixel = int(4.5 * MessageSize); // time bar
+
+
+solarchvision_WORLD WORLD = new solarchvision_WORLD();
 
 
 float WIN3D_Scale3D; 
@@ -1972,29 +2137,7 @@ boolean WIN3D_Include = true;
 
 
 
-int WORLD_CX_View = int(1.5 * SOLARCHVISION_H_Pixel);
-int WORLD_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-int WORLD_X_View = int(2.0 * SOLARCHVISION_H_Pixel);
-int WORLD_Y_View = SOLARCHVISION_H_Pixel;
-float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
-boolean WORLD_Update = true;
-boolean WORLD_Include = true;
-
-int WORLD_VIEW_Number = 0;
-int WORLD_AutoView = 1;
-
-String[][] WORLD_VIEW_Name;
-float[][] WORLD_VIEW_BoundariesX;
-float[][] WORLD_VIEW_BoundariesY; 
-int[] WORLD_VIEW_GridDisplay;
-String[] WORLD_VIEW_Filenames;
-String[] Object2D_ImagePath;
-int Object2D_PEOPLE_Files_Num = 0;
-int Object2D_TREES_Files_Num = 0;
-
-int WORLD_Viewports_num;
-int WORLD_Viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
 
 
 int STUDY_CX_View = 0;
@@ -2188,7 +2331,7 @@ void setup () {
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
-  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
+  WORLD.Diagrams = createGraphics(WORLD.X_View, WORLD.Y_View, P2D);  
 
   STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);
   
@@ -2239,14 +2382,14 @@ void SOLARCHVISION_update_station (int Step) {
     rebuild_SolarImpactImage_array = 1;
     rebuild_WindRoseImage_array = 1;    
 
-    WORLD_Update = true;
+    WORLD.Update = true;
     WIN3D_Update = true; 
     STUDY_Update = true;
 
     LocationLAT = STATION.getLatitude();
     LocationLON = STATION.getLongitude();
 
-    WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
+    WORLD.VIEW_Number = WORLD.FindGoodViewport(LocationLON, LocationLAT);
     
     TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
   }
@@ -2374,10 +2517,10 @@ void draw () {
   } else if (frameCount == 2) {
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_ListWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("WORLD.listAllImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 3) {
-    SOLARCHVISION_ListWorldImages();
-    SOLARCHVISION_load_WorldViewImage(WORLD_VIEW_Number); // to load the globe image into memory
+    WORLD.listAllImages();
+    WORLD.loadImages(WORLD.VIEW_Number); // to load the globe image into memory
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
@@ -2573,7 +2716,7 @@ void draw () {
         pre_LocationLAT = LocationLAT;
         pre_LocationLON = LocationLON;
 
-        pre_WORLD_AutoView = WORLD_AutoView;
+        pre_WORLD_AutoView = WORLD.AutoView;
 
         pre_Load_LAND_Mesh = Load_LAND_Mesh;
         pre_Load_LAND_Textures = Load_LAND_Textures;
@@ -2749,16 +2892,16 @@ void draw () {
         if (pre_Load_ENSEMBLE_OBSERVED != Load_ENSEMBLE_OBSERVED) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
         if (pre_Load_ENSEMBLE_FORECAST != Load_ENSEMBLE_FORECAST) SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-        if (pre_WORLD_AutoView != WORLD_AutoView) {
-          WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
+        if (pre_WORLD_AutoView != WORLD.AutoView) {
+          WORLD.VIEW_Number = WORLD.FindGoodViewport(LocationLON, LocationLAT);
         }
 
 
 
         if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
 
-          WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
-          WORLD_Update = true;
+          WORLD.VIEW_Number = WORLD.FindGoodViewport(LocationLON, LocationLAT);
+          WORLD.Update = true;
         }
 
 
@@ -3076,7 +3219,7 @@ void draw () {
     if (FRAME_record_AUTO) {
       if (STUDY_Update) FRAME_record_JPG = true;
       if (WIN3D_Update) FRAME_record_JPG = true;
-      if (WORLD_Update) FRAME_record_JPG = true;
+      if (WORLD.Update) FRAME_record_JPG = true;
       //if (UI_BAR_a_Update == 1) FRAME_record_JPG = true;
       //if (UI_BAR_b_Update == 1) FRAME_record_JPG = true;
       //if (UI_BAR_d_Update == 1) FRAME_record_JPG = true;
@@ -3115,20 +3258,20 @@ void draw () {
        
        if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
        
-       WORLD_Update = true;
+       WORLD.Update = true;
        WIN3D_Update = true; // <<<<<<<<<<<
        }
        }
        */
 
-      if (WORLD_Include) {
-        if (WORLD_Update) {
+      if (WORLD.Include) {
+        if (WORLD.Update) {
 
           SOLARCHVISION_draw_WORLD();
         }
       }
 
-      if (WORLD_record_PDF == false) {      
+      if (WORLD.record_PDF == false) {      
         if (WIN3D_Include) {
           if (WIN3D_Update) {
             
@@ -3161,7 +3304,7 @@ void draw () {
           FRAME_record_JPG = false;
         }
       } else {
-        WORLD_record_PDF = false;
+        WORLD.record_PDF = false;
       }
     } else {
       STUDY_record_PDF = false;
@@ -3169,7 +3312,7 @@ void draw () {
 
 
     //WIN3D_Update = 0;
-    //WORLD_Update = false;
+    //WORLD.Update = false;
     //STUDY_Update = false;
 
     //noLoop(); // <<<<<<<<<<<<
@@ -3624,62 +3767,62 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
 
 
-PGraphics WORLD_Diagrams;
+
 
 void SOLARCHVISION_draw_WORLD () {
 
-  if (WORLD_Update) {
+  if (WORLD.Update) {
 
-    if (WORLD_record_PDF) WORLD_ImageScale = 1;
-    else if (WORLD_record_JPG) WORLD_ImageScale = 2;
-    else WORLD_ImageScale = 1;
+    if (WORLD.record_PDF) WORLD.ImageScale = 1;
+    else if (WORLD.record_JPG) WORLD.ImageScale = 2;
+    else WORLD.ImageScale = 1;
 
     //////////////////////////////////
-    WORLD_X_View *= WORLD_ImageScale;
-    WORLD_Y_View *= WORLD_ImageScale;  
+    WORLD.X_View *= WORLD.ImageScale;
+    WORLD.Y_View *= WORLD.ImageScale;  
     //////////////////////////////////  
 
-    if (WORLD_record_PDF) {
+    if (WORLD.record_PDF) {
       println("PDF:begin");
-      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filename(CreateStamp(1) + "WORLD_") + ".pdf");
-      beginRecord(WORLD_Diagrams);
-    } else if (WORLD_ImageScale != 1) {
+      WORLD.Diagrams = createGraphics(WORLD.X_View, WORLD.Y_View, PDF, MAKE_Filename(CreateStamp(1) + "WORLD.") + ".pdf");
+      beginRecord(WORLD.Diagrams);
+    } else if (WORLD.ImageScale != 1) {
       println("IMG:high-res");
-      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
-      WORLD_Diagrams.beginDraw();
+      WORLD.Diagrams = createGraphics(WORLD.X_View, WORLD.Y_View, P2D);
+      WORLD.Diagrams.beginDraw();
     } else {
-      WORLD_Diagrams.beginDraw();
+      WORLD.Diagrams.beginDraw();
     }
 
-    WORLD_Diagrams.background(0, 0, 0);
+    WORLD.Diagrams.background(0, 0, 0);
 
-    WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
+    WORLD.Diagrams.image(WORLD.ViewImage, 0, 0, WORLD.X_View, WORLD.Y_View);
 
-    WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-    WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+    WORLD.VIEW_OffsetX = WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0] + 180;
+    WORLD.VIEW_OffsetY = WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1] - 90;
 
-    WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-    WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;    
+    WORLD.VIEW_ScaleX = (WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1] - WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) / 360.0;
+    WORLD.VIEW_ScaleY = (WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1] - WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) / 180.0;    
 
-    float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
-    float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
-    float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
-    float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
+    float _lon1 = WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0];
+    float _lon2 = WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1];
+    float _lat1 = WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0];
+    float _lat2 = WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1];
 
-    int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-    int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
-    int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-    int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
+    int x_point1 = int(WORLD.X_View * (( 1 * (_lon1 - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX);
+    int y_point1 = int(WORLD.Y_View * ((-1 * (_lat1 - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY);
+    int x_point2 = int(WORLD.X_View * (( 1 * (_lon2 - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX);
+    int y_point2 = int(WORLD.Y_View * ((-1 * (_lat2 - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY); 
 
 
 
     SOLARCHVISION_draw_TROPO(TypeWindow.WORLD, STUDY_i_Start, STUDY_i_End);
 
 
-    float R_station = 2 * WORLD_ImageScale;
-    if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
+    float R_station = 2 * WORLD.ImageScale;
+    if (WORLD.VIEW_GridDisplay[WORLD.VIEW_Number] == 1) R_station = 5; 
 
-    WORLD_Diagrams.ellipseMode(CENTER);
+    WORLD.Diagrams.ellipseMode(CENTER);
 
     for (int n = 0; n < AERIAL_num; n += 1) {
 
@@ -3691,11 +3834,11 @@ void SOLARCHVISION_draw_WORLD () {
         float _lon = AERIAL_Locations[n][0]; 
         if (_lon > 180) _lon -= 360; // << important!
 
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+        float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+        float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY; 
 
-        WORLD_Diagrams.pushMatrix();
-        WORLD_Diagrams.translate(x_point, y_point);
+        WORLD.Diagrams.pushMatrix();
+        WORLD.Diagrams.translate(x_point, y_point);
 
         if (AERIAL_graphOption == 0) {
           //-----------------------------
@@ -3719,29 +3862,29 @@ void SOLARCHVISION_draw_WORLD () {
                 float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
 
                 if (_turn == 1) {
-                  WORLD_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
-                  WORLD_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);           
+                  WORLD.Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
+                  WORLD.Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);           
 
-                  WORLD_Diagrams.strokeWeight(0);
-                  WORLD_Diagrams.ellipse(0, 0, R_station, R_station);
+                  WORLD.Diagrams.strokeWeight(0);
+                  WORLD.Diagrams.ellipse(0, 0, R_station, R_station);
                 }
 
                 if (_turn == 2) {
-                  WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-                  WORLD_Diagrams.textAlign(CENTER, CENTER);
+                  WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+                  WORLD.Diagrams.textAlign(CENTER, CENTER);
 
                   _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
 
                   if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-                    WORLD_Diagrams.stroke(127);
-                    WORLD_Diagrams.fill(127);
-                    WORLD_Diagrams.strokeWeight(0);
+                    WORLD.Diagrams.stroke(127);
+                    WORLD.Diagrams.fill(127);
+                    WORLD.Diagrams.strokeWeight(0);
                   } else {
-                    WORLD_Diagrams.stroke(255);
-                    WORLD_Diagrams.fill(255);
-                    WORLD_Diagrams.strokeWeight(2 * WORLD_ImageScale);
+                    WORLD.Diagrams.stroke(255);
+                    WORLD.Diagrams.fill(255);
+                    WORLD.Diagrams.strokeWeight(2 * WORLD.ImageScale);
                   }              
-                  if (is_undefined_FLOAT(_val) == false) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0, 0);
+                  if (is_undefined_FLOAT(_val) == false) WORLD.Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0, 0);
                 }
               }
             }
@@ -3769,22 +3912,22 @@ void SOLARCHVISION_draw_WORLD () {
                 float R = 0.25 * R_station * AERIAL_Data[GRIB2_Hour][LAYER_windspd][n][o];
 
                 float R_in = 0.0 * R; 
-                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD_ImageScale;
-                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * WORLD_ImageScale;
-                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * WORLD_ImageScale;
-                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * WORLD_ImageScale;                      
+                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD.ImageScale;
+                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * WORLD.ImageScale;
+                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * WORLD.ImageScale;
+                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * WORLD.ImageScale;                      
 
-                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD_ImageScale;
-                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta))) * WORLD_ImageScale;
-                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta))) * WORLD_ImageScale;
-                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta))) * WORLD_ImageScale;          
+                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD.ImageScale;
+                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta))) * WORLD.ImageScale;
+                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta))) * WORLD.ImageScale;
+                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta))) * WORLD.ImageScale;          
 
-                //float ox = -0.5 * (R * cos_ang(90 - teta)) * WORLD_ImageScale;
-                //float oy = -0.5 * (R * -sin_ang(90 - teta)) * WORLD_ImageScale;
-                //float ox = -1 * (R * cos_ang(90 - teta)) * WORLD_ImageScale;
-                //float oy = -1 * (R * -sin_ang(90 - teta)) * WORLD_ImageScale;
-                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0 * WORLD_ImageScale;
-                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0 * WORLD_ImageScale;            
+                //float ox = -0.5 * (R * cos_ang(90 - teta)) * WORLD.ImageScale;
+                //float oy = -0.5 * (R * -sin_ang(90 - teta)) * WORLD.ImageScale;
+                //float ox = -1 * (R * cos_ang(90 - teta)) * WORLD.ImageScale;
+                //float oy = -1 * (R * -sin_ang(90 - teta)) * WORLD.ImageScale;
+                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0 * WORLD.ImageScale;
+                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0 * WORLD.ImageScale;            
 
                 float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
                 if (PAL_DIR == -1) _u = 1 - _u;
@@ -3794,37 +3937,37 @@ void SOLARCHVISION_draw_WORLD () {
                 float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
 
                 if (_turn == 1) {
-                  WORLD_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
-                  WORLD_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);           
+                  WORLD.Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]);
+                  WORLD.Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);           
 
-                  WORLD_Diagrams.strokeWeight(0);
-                  //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-                  WORLD_Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
+                  WORLD.Diagrams.strokeWeight(0);
+                  //WORLD.Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                  WORLD.Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
                 }
 
                 if (_turn == 2) {
-                  WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-                  WORLD_Diagrams.textAlign(CENTER, CENTER);
+                  WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+                  WORLD.Diagrams.textAlign(CENTER, CENTER);
 
                   _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
 
                   if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-                    WORLD_Diagrams.stroke(127);
-                    WORLD_Diagrams.fill(127);
-                    WORLD_Diagrams.strokeWeight(0);
+                    WORLD.Diagrams.stroke(127);
+                    WORLD.Diagrams.fill(127);
+                    WORLD.Diagrams.strokeWeight(0);
                   } else {
-                    WORLD_Diagrams.stroke(255);
-                    WORLD_Diagrams.fill(255);
-                    WORLD_Diagrams.strokeWeight(2 * WORLD_ImageScale);
+                    WORLD.Diagrams.stroke(255);
+                    WORLD.Diagrams.fill(255);
+                    WORLD.Diagrams.strokeWeight(2 * WORLD.ImageScale);
                   }              
-                  if (is_undefined_FLOAT(_val) == false) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0, 0);
+                  if (is_undefined_FLOAT(_val) == false) WORLD.Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0, 0);
                 }
               }
             }
           }
         }
 
-        WORLD_Diagrams.popMatrix();
+        WORLD.Diagrams.popMatrix();
       }
       //}
       //catch (Exception e) {
@@ -3839,14 +3982,14 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = STATION.getLongitude(); 
       if (_lon > 180) _lon -= 360; // << important!
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+      float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+      float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY; 
 
-      WORLD_Diagrams.strokeWeight(3 * WORLD_ImageScale);
-      WORLD_Diagrams.stroke(0, 0, 127, 255);
-      WORLD_Diagrams.noFill();
+      WORLD.Diagrams.strokeWeight(3 * WORLD.ImageScale);
+      WORLD.Diagrams.stroke(0, 0, 127, 255);
+      WORLD.Diagrams.noFill();
 
-      WORLD_Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
+      WORLD.Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
     }   
 
     for ( int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
@@ -3863,28 +4006,28 @@ void SOLARCHVISION_draw_WORLD () {
         float _lon = float(STATION_SWOB_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
-        if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-        if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+        if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
+        if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = 0;
+        if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = 0;
+        if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = 0; 
   
         if (draw_info == 1) {
   
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+          float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+          float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
   
-          WORLD_Diagrams.strokeWeight(0);
-          WORLD_Diagrams.stroke(191, 0, 0, 191);
-          WORLD_Diagrams.fill(191, 0, 0, 191);      
-          WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
+          WORLD.Diagrams.strokeWeight(0);
+          WORLD.Diagrams.stroke(191, 0, 0, 191);
+          WORLD.Diagrams.fill(191, 0, 0, 191);      
+          WORLD.Diagrams.ellipse(x_point, y_point, R_station, R_station);
   
           if (Display_SWOB_Points > 1) {
-            WORLD_Diagrams.strokeWeight(0);
-            WORLD_Diagrams.stroke(0);
-            WORLD_Diagrams.fill(0);      
-            WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-            WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-            WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
+            WORLD.Diagrams.strokeWeight(0);
+            WORLD.Diagrams.stroke(0);
+            WORLD.Diagrams.fill(0);      
+            WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+            WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+            WORLD.Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
           }
         }
   
@@ -3913,15 +4056,15 @@ void SOLARCHVISION_draw_WORLD () {
         float _lon = float(STATION_SWOB_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+        float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
   
-        WORLD_Diagrams.strokeWeight(0);
-        WORLD_Diagrams.stroke(0);
-        WORLD_Diagrams.fill(0);      
-        WORLD_Diagrams.textAlign(RIGHT, CENTER);
-        WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-        WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
+        WORLD.Diagrams.strokeWeight(0);
+        WORLD.Diagrams.stroke(0);
+        WORLD.Diagrams.fill(0);      
+        WORLD.Diagrams.textAlign(RIGHT, CENTER);
+        WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+        WORLD.Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
         //println(STATION_SWOB_INFO[f][6]);
       }  
       
@@ -3941,29 +4084,29 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_NAEFS_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
 
-      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+      if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
+      if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = 0;
+      if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = 0;
+      if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = 0; 
 
       if (draw_info == 1) {
 
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+        float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-        WORLD_Diagrams.strokeWeight(0);
-        WORLD_Diagrams.stroke(0, 63, 0, 127);
-        WORLD_Diagrams.fill(0, 63, 0, 127);
+        WORLD.Diagrams.strokeWeight(0);
+        WORLD.Diagrams.stroke(0, 63, 0, 127);
+        WORLD.Diagrams.fill(0, 63, 0, 127);
 
-        WORLD_Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
+        WORLD.Diagrams.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
 
         if (Display_NAEFS_Points > 1) {
-          WORLD_Diagrams.strokeWeight(0);
-          WORLD_Diagrams.stroke(0);
-          WORLD_Diagrams.fill(0);      
-          WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-          WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+          WORLD.Diagrams.strokeWeight(0);
+          WORLD.Diagrams.stroke(0);
+          WORLD.Diagrams.fill(0);      
+          WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+          WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+          WORLD.Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
         }
       }
 
@@ -3982,15 +4125,15 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_NAEFS_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!      
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+      float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-      WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+      WORLD.Diagrams.strokeWeight(0);
+      WORLD.Diagrams.stroke(0);
+      WORLD.Diagrams.fill(0);      
+      WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+      WORLD.Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
       //println(STATION_NAEFS_INFO[f][0]);
     }
 
@@ -4007,28 +4150,28 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_CWEEDS_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
 
-      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+      if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
+      if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = 0;
+      if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = 0;
+      if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = 0; 
 
       if (draw_info == 1) {
 
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+        float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-        WORLD_Diagrams.strokeWeight(2 * WORLD_ImageScale);
-        WORLD_Diagrams.stroke(0, 0, 0, 191);
-        WORLD_Diagrams.noFill();
-        WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+        WORLD.Diagrams.strokeWeight(2 * WORLD.ImageScale);
+        WORLD.Diagrams.stroke(0, 0, 0, 191);
+        WORLD.Diagrams.noFill();
+        WORLD.Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
 
         if (Display_CWEEDS_Points > 1) {
-          WORLD_Diagrams.strokeWeight(0);
-          WORLD_Diagrams.stroke(0);
-          WORLD_Diagrams.fill(0);      
-          WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-          WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
+          WORLD.Diagrams.strokeWeight(0);
+          WORLD.Diagrams.stroke(0);
+          WORLD.Diagrams.fill(0);      
+          WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+          WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+          WORLD.Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
         }
       }
 
@@ -4047,15 +4190,15 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_CWEEDS_INFO[f][4]);  
       if (_lon > 180) _lon -= 360; // << important!      
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+      float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-      WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
+      WORLD.Diagrams.strokeWeight(0);
+      WORLD.Diagrams.stroke(0);
+      WORLD.Diagrams.fill(0);      
+      WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+      WORLD.Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
       //println(STATION_CWEEDS_INFO[f][0]);
     }
 
@@ -4074,28 +4217,28 @@ void SOLARCHVISION_draw_WORLD () {
         float _lon = float(STATION_CLMREC_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
-        if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-        if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+        if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
+        if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = 0;
+        if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = 0;
+        if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = 0; 
   
         if (draw_info == 1) {
   
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+          float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+          float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
   
-          WORLD_Diagrams.strokeWeight(1 * WORLD_ImageScale);
-          WORLD_Diagrams.stroke(0, 0, 0, 191);
-          WORLD_Diagrams.noFill();
-          WORLD_Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
+          WORLD.Diagrams.strokeWeight(1 * WORLD.ImageScale);
+          WORLD.Diagrams.stroke(0, 0, 0, 191);
+          WORLD.Diagrams.noFill();
+          WORLD.Diagrams.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
   
           if (Display_CLMREC_Points > 1) {
-            WORLD_Diagrams.strokeWeight(0);
-            WORLD_Diagrams.stroke(0);
-            WORLD_Diagrams.fill(0);      
-            WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-            WORLD_Diagrams.textSize(0.5 * MessageSize * WORLD_ImageScale);
-            WORLD_Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
+            WORLD.Diagrams.strokeWeight(0);
+            WORLD.Diagrams.stroke(0);
+            WORLD.Diagrams.fill(0);      
+            WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+            WORLD.Diagrams.textSize(0.5 * MessageSize * WORLD.ImageScale);
+            WORLD.Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
           }
         }
   
@@ -4115,15 +4258,15 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_CLMREC_INFO[f][4]);  
       if (_lon > 180) _lon -= 360; // << important!      
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+      float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-      WORLD_Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
+      WORLD.Diagrams.strokeWeight(0);
+      WORLD.Diagrams.stroke(0);
+      WORLD.Diagrams.fill(0);      
+      WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+      WORLD.Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
       //println(STATION_CLMREC_INFO[f][0]);
     }
 
@@ -4139,28 +4282,28 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_TMYEPW_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
 
-      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+      if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
+      if (_lon > WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][1]) draw_info = 0;
+      if (_lat < WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][0]) draw_info = 0;
+      if (_lat > WORLD.VIEW_BoundariesY[WORLD.VIEW_Number][1]) draw_info = 0; 
 
       if (draw_info == 1) {
 
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+        float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-        WORLD_Diagrams.strokeWeight(2 * WORLD_ImageScale);
-        WORLD_Diagrams.stroke(255, 0, 0, 127);
-        WORLD_Diagrams.noFill();
-        WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+        WORLD.Diagrams.strokeWeight(2 * WORLD.ImageScale);
+        WORLD.Diagrams.stroke(255, 0, 0, 127);
+        WORLD.Diagrams.noFill();
+        WORLD.Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
 
         if (Display_TMYEPW_Points > 1) {
-          WORLD_Diagrams.strokeWeight(0);
-          WORLD_Diagrams.stroke(0);
-          WORLD_Diagrams.fill(0);      
-          WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-          WORLD_Diagrams.text(STATION_TMYEPW_INFO[f][0], x_point, y_point);
+          WORLD.Diagrams.strokeWeight(0);
+          WORLD.Diagrams.stroke(0);
+          WORLD.Diagrams.fill(0);      
+          WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+          WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+          WORLD.Diagrams.text(STATION_TMYEPW_INFO[f][0], x_point, y_point);
         }
       }
 
@@ -4179,57 +4322,57 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_TMYEPW_INFO[f][4]);  
       if (_lon > 180) _lon -= 360; // << important!      
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+      float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY;
 
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MessageSize * WORLD_ImageScale);
-      WORLD_Diagrams.text(STATION_TMYEPW_INFO[f][0], x_point, y_point);
+      WORLD.Diagrams.strokeWeight(0);
+      WORLD.Diagrams.stroke(0);
+      WORLD.Diagrams.fill(0);      
+      WORLD.Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
+      WORLD.Diagrams.text(STATION_TMYEPW_INFO[f][0], x_point, y_point);
       //println(STATION_TMYEPW_INFO[f][0]);
     }
 
 
-    WORLD_Diagrams.strokeWeight(0);
+    WORLD.Diagrams.strokeWeight(0);
 
 
-    if (WORLD_record_PDF) {
+    if (WORLD.record_PDF) {
       endRecord();
 
-      String myFile = MAKE_Filename(CreateStamp(0) + "WORLD_") + ".pdf";
+      String myFile = MAKE_Filename(CreateStamp(0) + "WORLD.") + ".pdf";
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);
     } else {
-      WORLD_Diagrams.endDraw();
+      WORLD.Diagrams.endDraw();
 
-      if ((WORLD_record_JPG) || (WORLD_record_AUTO)) {
-        String myFile = MAKE_Filename(CreateStamp(1) + "WORLD_") + ".jpg";
-        WORLD_Diagrams.save(myFile);
+      if ((WORLD.record_JPG) || (WORLD.record_AUTO)) {
+        String myFile = MAKE_Filename(CreateStamp(1) + "WORLD.") + ".jpg";
+        WORLD.Diagrams.save(myFile);
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       }
 
       imageMode(CORNER);
-      image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View / WORLD_ImageScale, WORLD_Y_View / WORLD_ImageScale);
+      image(WORLD.Diagrams, WORLD.CX_View, WORLD.CY_View, WORLD.X_View / WORLD.ImageScale, WORLD.Y_View / WORLD.ImageScale);
     }
 
 
     //////////////////////////////////
-    WORLD_X_View /= WORLD_ImageScale;
-    WORLD_Y_View /= WORLD_ImageScale;  
+    WORLD.X_View /= WORLD.ImageScale;
+    WORLD.Y_View /= WORLD.ImageScale;  
     //////////////////////////////////
 
-    if ((WORLD_ImageScale != 1) || (WORLD_record_PDF)) {
-      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
-      WORLD_Update = false; //1;
+    if ((WORLD.ImageScale != 1) || (WORLD.record_PDF)) {
+      WORLD.Diagrams = createGraphics(WORLD.X_View, WORLD.Y_View, P2D);
+      WORLD.Update = false; //1;
     } else {
-      WORLD_Update = false;
+      WORLD.Update = false;
     }
 
 
-    if ((WORLD_record_JPG) || (WORLD_record_AUTO == false)) WORLD_record_JPG = false;
+    if ((WORLD.record_JPG) || (WORLD.record_AUTO == false)) WORLD.record_JPG = false;
   }
 }
 
@@ -5836,7 +5979,7 @@ void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int TH
     Display_NAEFS_Nearest = true;     
   }
   
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -5955,7 +6098,7 @@ void SOLARCHVISION_update_CLIMATE_CWEEDS () {
 
   }
   
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -6154,7 +6297,7 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
   
   }
   
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -6272,7 +6415,7 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
 
   }
   
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -6352,7 +6495,7 @@ void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
   SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_TMYEPW);
   SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_TMYEPW);
   
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -6533,7 +6676,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
     Display_SWOB_Nearest = true;   
   }
 
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -9558,8 +9701,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                 WIN3D_Diagrams.beginShape();
                 WIN3D_Diagrams.noStroke();
               } else if (target_window == TypeWindow.WORLD) {
-                WORLD_Diagrams.beginShape();
-                WORLD_Diagrams.noStroke();
+                WORLD.Diagrams.beginShape();
+                WORLD.Diagrams.noStroke();
               } else if (target_window == TypeWindow.STUDY) {
                 STUDY_Diagrams.beginShape();
                 STUDY_Diagrams.noStroke();
@@ -9672,7 +9815,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               } else if (target_window == TypeWindow.WIN3D) {
                 WIN3D_Diagrams.endShape(CLOSE);
               } else if (target_window == TypeWindow.WORLD) {
-                WORLD_Diagrams.endShape(CLOSE);
+                WORLD.Diagrams.endShape(CLOSE);
               } else if (target_window == TypeWindow.STUDY) {
                 STUDY_Diagrams.endShape(CLOSE);
               }
@@ -9697,8 +9840,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(127);
   } else if (target_window == TypeWindow.WORLD) {
-    WORLD_Diagrams.strokeWeight(1);
-    WORLD_Diagrams.stroke(127);
+    WORLD.Diagrams.strokeWeight(1);
+    WORLD.Diagrams.stroke(127);
   } else if (target_window == TypeWindow.STUDY) {
     STUDY_Diagrams.strokeWeight(1);
     STUDY_Diagrams.stroke(127);
@@ -9849,9 +9992,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         WIN3D_Diagrams.fill(0);
         WIN3D_Diagrams.textAlign(CENTER, CENTER);
       } else if (target_window == TypeWindow.WORLD) {  
-        WORLD_Diagrams.stroke(0);
-        WORLD_Diagrams.fill(0);
-        WORLD_Diagrams.textAlign(CENTER, CENTER);
+        WORLD.Diagrams.stroke(0);
+        WORLD.Diagrams.fill(0);
+        WORLD.Diagrams.textAlign(CENTER, CENTER);
       } else if (target_window == TypeWindow.STUDY) {  
         STUDY_Diagrams.stroke(0);
         STUDY_Diagrams.fill(0);
@@ -11306,7 +11449,7 @@ void SOLARCHVISION_update_frame_layout () {
 
     STUDY_Include = true;
     WIN3D_Include = true;
-    WORLD_Include = true;
+    WORLD.Include = true;
 
     WIN3D_CX_View = 0;
     WIN3D_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -11315,12 +11458,12 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
-    WORLD_CX_View = int(1.5 * SOLARCHVISION_H_Pixel);
-    WORLD_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WORLD_X_View = int(2.0 * SOLARCHVISION_H_Pixel);
-    WORLD_Y_View = SOLARCHVISION_H_Pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+    WORLD.CX_View = int(1.5 * SOLARCHVISION_H_Pixel);
+    WORLD.CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
+    WORLD.X_View = int(2.0 * SOLARCHVISION_H_Pixel);
+    WORLD.Y_View = SOLARCHVISION_H_Pixel;
+    WORLD.R_View = float(WORLD.Y_View) / float(WORLD.X_View);
+    WORLD.Diagrams = createGraphics(WORLD.X_View, WORLD.Y_View, P2D);
 
     STUDY_CX_View = 0;
     STUDY_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_H_Pixel;
@@ -11332,7 +11475,7 @@ void SOLARCHVISION_update_frame_layout () {
 
     STUDY_Include = false;
     WIN3D_Include = true;
-    WORLD_Include = false;
+    WORLD.Include = false;
 
     WIN3D_CX_View = 0;
     WIN3D_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -11344,7 +11487,7 @@ void SOLARCHVISION_update_frame_layout () {
 
     STUDY_Include = true;
     WIN3D_Include = false;
-    WORLD_Include = false;
+    WORLD.Include = false;
 
     STUDY_CX_View = 0;
     STUDY_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -11356,17 +11499,17 @@ void SOLARCHVISION_update_frame_layout () {
 
     STUDY_Include = false;
     WIN3D_Include = false;
-    WORLD_Include = true;
+    WORLD.Include = true;
 
-    WORLD_CX_View = 0;
-    WORLD_CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WORLD_X_View = 2 * SOLARCHVISION_W_Pixel;
-    WORLD_Y_View = 2 * SOLARCHVISION_H_Pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+    WORLD.CX_View = 0;
+    WORLD.CY_View = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
+    WORLD.X_View = 2 * SOLARCHVISION_W_Pixel;
+    WORLD.Y_View = 2 * SOLARCHVISION_H_Pixel;
+    WORLD.R_View = float(WORLD.Y_View) / float(WORLD.X_View);
+    WORLD.Diagrams = createGraphics(WORLD.X_View, WORLD.Y_View, P2D);
   } 
 
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true; 
   STUDY_Update = true;
 }
@@ -11475,7 +11618,7 @@ void keyPressed (KeyEvent e) {
 
           case 'f' :
             SOLARCHVISION_ResetFontStyle();     
-            WORLD_Update = true;
+            WORLD.Update = true;
             WIN3D_Update = true; 
             STUDY_Update = true;
             ROLLOUT_Update = true; 
@@ -11483,7 +11626,7 @@ void keyPressed (KeyEvent e) {
 
           case 'F' :
             SOLARCHVISION_ResetFontStyle();     
-            WORLD_Update = true;
+            WORLD.Update = true;
             WIN3D_Update = true; 
             STUDY_Update = true;
             ROLLOUT_Update = true; 
@@ -11554,7 +11697,7 @@ void keyPressed (KeyEvent e) {
         }
       }      
 
-      if ((STUDY_Update) || (WORLD_Update) || (WIN3D_Update) || (ROLLOUT_Update)) redraw();
+      if ((STUDY_Update) || (WORLD.Update) || (WIN3D_Update) || (ROLLOUT_Update)) redraw();
     }
   }
 }
@@ -11704,7 +11847,7 @@ void SOLARCHVISION_loadDefaultFontStyle () {
 void SOLARCHVISION_ResetFontStyle () {
 
   textFont(SOLARCHVISION_font);
-  WORLD_Diagrams.textFont(SOLARCHVISION_font);
+  WORLD.Diagrams.textFont(SOLARCHVISION_font);
   WIN3D_Diagrams.textFont(SOLARCHVISION_font);
   STUDY_Diagrams.textFont(SOLARCHVISION_font);
 }
@@ -11806,108 +11949,12 @@ void SOLARCHVISION_loadObject2DImages () {
 
 
 
-void SOLARCHVISION_ListWorldImages () {
-
-  WORLD_VIEW_Filenames = sort(SOLARCHVISION_getfiles(WorldViewFolder));
-
-  WORLD_Viewports_num = WORLD_VIEW_Filenames.length;
-
-  WORLD_VIEW_Name = new String [WORLD_Viewports_num][2];
-
-  WORLD_VIEW_BoundariesX = new float [WORLD_Viewports_num][2];
-  WORLD_VIEW_BoundariesY = new float [WORLD_Viewports_num][2];
-
-  WORLD_VIEW_GridDisplay = new int [WORLD_Viewports_num];
-
-  for (int i = 0; i < WORLD_Viewports_num; i += 1) {
-    String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filenames[i];
-
-    String[] Parts = split(WORLD_VIEW_Filenames[i], '_');
-
-    WORLD_VIEW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
-    WORLD_VIEW_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
-    WORLD_VIEW_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
-    WORLD_VIEW_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
-
-    WORLD_VIEW_Name[i][0] = Parts[5];
-    WORLD_VIEW_Name[i][1] = Parts[6];
-
-    float a = (WORLD_VIEW_BoundariesY[i][1] - WORLD_VIEW_BoundariesY[i][0]) / 2;
-    if (a < 1) a = 1;
-    WORLD_VIEW_GridDisplay[i] = int(a);
-  }
-}
 
 
 
 
 
-int WORLD_FindGoodViewport (float pointLongitude, float pointLatitude) {
 
-  int return_VIEWPORT = WORLD_VIEW_Number;
-
-  if (WORLD_AutoView == 1) {
-
-    float d1 = FLOAT_undefined;
-    float d2 = FLOAT_undefined;
-
-    for (int i = 0; i < WORLD_Viewports_num; i++) {
-
-      int check_it = 0; 
-
-      String started_with = WORLD_VIEW_Filenames[i].substring(0, 1);
-
-      if (WORLD_Viewport_ZOOM == 1) {
-        if (started_with.equals("A")) check_it = 1;
-      } else if (WORLD_Viewport_ZOOM == 2) {
-        if (started_with.equals("B")) check_it = 1;
-      } else if (WORLD_Viewport_ZOOM == 3) {
-        if (started_with.equals("C")) check_it = 1;
-      } else if (WORLD_Viewport_ZOOM == 4) {
-        if (started_with.equals("D")) check_it = 1;
-      } else if (WORLD_Viewport_ZOOM == 5) {
-        if (started_with.equals("E")) check_it = 1;
-      } else {
-        check_it = 1;
-      }
-
-      if (check_it == 1) {  
-
-        if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
-          float d_Center = dist(pointLongitude, pointLatitude, 0.5 * (WORLD_VIEW_BoundariesX[i][0] + WORLD_VIEW_BoundariesX[i][1]), 0.5 * (WORLD_VIEW_BoundariesY[i][0] + WORLD_VIEW_BoundariesY[i][1]));
-          float d_Size = dist(WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
-
-          if (d2 > 0.95 * d_Size) {
-            if (d1 > d_Center) {
-              d1 = d_Center;
-              d2 = d_Size;
-
-              return_VIEWPORT = i;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  if (return_VIEWPORT != WORLD_VIEW_Number) {
-    SOLARCHVISION_load_WorldViewImage(return_VIEWPORT);
-
-    if (Display_EARTH_Surface) WIN3D_Update = true;
-  }
-
-  return (return_VIEWPORT);
-}
-
-
-PImage WORLDViewImage;
-
-void SOLARCHVISION_load_WorldViewImage (int n) {
-
-  println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
-
-  WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
-}
 
 
 
@@ -11923,7 +11970,7 @@ String[][] STATION_NAEFS_INFO;
 
 void SOLARCHVISION_getFilename_NAEFS_Coordinates () {
   try {
-    String[] FileALL = loadStrings(WorldDataFolder + "/NAEFS_UTF8.txt");
+    String[] FileALL = loadStrings(WORLD.DataFolder + "/NAEFS_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -12001,7 +12048,7 @@ String[][] STATION_CWEEDS_INFO;
 
 void SOLARCHVISION_getFilename_CWEEDS_Coordinates () {
   try {
-    String[] FileALL = loadStrings(WorldDataFolder + "/CWEEDS_UTF8.txt");
+    String[] FileALL = loadStrings(WORLD.DataFolder + "/CWEEDS_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -12062,7 +12109,7 @@ String[][] STATION_CLMREC_INFO;
 void SOLARCHVISION_getCLMREC_Coordinates () {
   
   try {
-    String[] FileALL = loadStrings(WorldDataFolder + "/CLMREC_UTF8_EN.txt");
+    String[] FileALL = loadStrings(WORLD.DataFolder + "/CLMREC_UTF8_EN.txt");
 
     String lineSTR;
     String[] input;
@@ -12135,7 +12182,7 @@ String[][] STATION_SWOB_INFO;
 
 void SOLARCHVISION_getSWOB_Coordinates () {
   try {
-    String[] FileALL = loadStrings(WorldDataFolder + "/SWOB_UTF8.txt");
+    String[] FileALL = loadStrings(WORLD.DataFolder + "/SWOB_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -12212,7 +12259,7 @@ String[][] STATION_TMYEPW_INFO;
 
 void SOLARCHVISION_getFilename_TMYEPW_Coordinates () {
   try {
-    String[] FileALL = loadStrings(WorldDataFolder + "/EPW_UTF8.txt");
+    String[] FileALL = loadStrings(WORLD.DataFolder + "/EPW_UTF8.txt");
 
     String lineSTR;
     String[] input;
@@ -22514,10 +22561,10 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
               if (UVs_OK == true) {
               
                 if (target_window == TypeWindow.WORLD) {
-                  WORLD_Diagrams.beginShape();
-                  WORLD_Diagrams.noStroke();
+                  WORLD.Diagrams.beginShape();
+                  WORLD.Diagrams.noStroke();
                   if (Display_TROPO_Texture) {
-                    WORLD_Diagrams.texture(TROPO_IMAGES_Map[n_Map]);
+                    WORLD.Diagrams.texture(TROPO_IMAGES_Map[n_Map]);
                   }
         
                   for (int s = 0; s < subFace.length; s++) {
@@ -22526,13 +22573,13 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                     float _lon = subFace[s][6];
                     if (_lon > 180) _lon -= 360; // << important!
             
-                    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-                    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+                    float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
+                    float y_point = WORLD.Y_View * ((-1 * (_lat - WORLD.VIEW_OffsetY) / 180.0) + 0.5) / WORLD.VIEW_ScaleY; 
   
-                    WORLD_Diagrams.vertex(x_point, y_point, subFace[s][3] * TROPO_IMAGES_Map[n_Map].width, subFace[s][4] * TROPO_IMAGES_Map[n_Map].height);
+                    WORLD.Diagrams.vertex(x_point, y_point, subFace[s][3] * TROPO_IMAGES_Map[n_Map].width, subFace[s][4] * TROPO_IMAGES_Map[n_Map].height);
                   }
         
-                  WORLD_Diagrams.endShape(CLOSE);
+                  WORLD.Diagrams.endShape(CLOSE);
                   
                 }
 
@@ -31881,7 +31928,7 @@ void mouseWheel (MouseEvent event) {
                     ROLLOUT_Update = true;
                     STUDY_Update = true;
                     WIN3D_Update = true;
-                    WORLD_Update = true;
+                    WORLD.Update = true;
                     UI_BAR_d_Update = 1;
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -32053,21 +32100,21 @@ void mouseWheel (MouseEvent event) {
           }
 
 
-          if (WORLD_Include) {
-            if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
+          if (WORLD.Include) {
+            if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.CX_View, WORLD.CY_View, WORLD.CX_View + WORLD.X_View, WORLD.CY_View + WORLD.Y_View) == 1) {
 
-              int keep_WORLD_Viewport_ZOOM = WORLD_Viewport_ZOOM;
+              int keep_WORLD_Viewport_ZOOM = WORLD.Viewport_ZOOM;
 
-              if (Wheel_Value < 0) WORLD_Viewport_ZOOM -= 1;
-              if (Wheel_Value > 0) WORLD_Viewport_ZOOM += 1;
+              if (Wheel_Value < 0) WORLD.Viewport_ZOOM -= 1;
+              if (Wheel_Value > 0) WORLD.Viewport_ZOOM += 1;
 
-              if (WORLD_Viewport_ZOOM < 1) WORLD_Viewport_ZOOM = 1;
-              if (WORLD_Viewport_ZOOM > 6) WORLD_Viewport_ZOOM = 6;
+              if (WORLD.Viewport_ZOOM < 1) WORLD.Viewport_ZOOM = 1;
+              if (WORLD.Viewport_ZOOM > 6) WORLD.Viewport_ZOOM = 6;
 
-              if (keep_WORLD_Viewport_ZOOM != WORLD_Viewport_ZOOM) {
-                WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
+              if (keep_WORLD_Viewport_ZOOM != WORLD.Viewport_ZOOM) {
+                WORLD.VIEW_Number = WORLD.FindGoodViewport(LocationLON, LocationLAT);
 
-                WORLD_Update = true;
+                WORLD.Update = true;
               }
             }
           }    
@@ -32388,7 +32435,7 @@ void mouseReleased () {
 
           SOLARCHVISION_RecordFrame();
 
-          WORLD_Update = true;
+          WORLD.Update = true;
           WIN3D_Update = true;  
           STUDY_Update = true;
           ROLLOUT_Update = true;
@@ -32941,7 +32988,7 @@ void mouseClicked () {
 
         SOLARCHVISION_RecordFrame();
         /*        
-         WORLD_Update = true;
+         WORLD.Update = true;
          WIN3D_Update = true;  
          STUDY_Update = true;
          ROLLOUT_Update = true;
@@ -33182,9 +33229,9 @@ void mouseClicked () {
               STUDY_record_AUTO = false;
               STUDY_record_JPG = false;
               STUDY_record_PDF = false;
-              WORLD_record_AUTO = false;
-              WORLD_record_JPG = false;
-              WORLD_record_PDF = false;
+              WORLD.record_AUTO = false;
+              WORLD.record_JPG = false;
+              WORLD.record_PDF = false;
               WIN3D_record_AUTO = false;
               WIN3D_record_JPG = false;
               FRAME_record_AUTO = false;
@@ -33199,9 +33246,9 @@ void mouseClicked () {
               STUDY_record_AUTO = true;
               STUDY_record_JPG = false;
               STUDY_record_PDF = false;
-              WORLD_record_AUTO = false;
-              WORLD_record_JPG = false;
-              WORLD_record_PDF = false;
+              WORLD.record_AUTO = false;
+              WORLD.record_JPG = false;
+              WORLD.record_PDF = false;
               WIN3D_record_AUTO = false;
               WIN3D_record_JPG = false;
               FRAME_record_AUTO = false;
@@ -33216,9 +33263,9 @@ void mouseClicked () {
               STUDY_record_AUTO = false;
               STUDY_record_JPG = false;
               STUDY_record_PDF = false;
-              WORLD_record_AUTO = true;
-              WORLD_record_JPG = false;
-              WORLD_record_PDF = false;
+              WORLD.record_AUTO = true;
+              WORLD.record_JPG = false;
+              WORLD.record_PDF = false;
               WIN3D_record_AUTO = false;
               WIN3D_record_JPG = false;
               FRAME_record_AUTO = false;
@@ -33233,9 +33280,9 @@ void mouseClicked () {
               STUDY_record_AUTO = false;
               STUDY_record_JPG = false;
               STUDY_record_PDF = false;
-              WORLD_record_AUTO = false;
-              WORLD_record_JPG = false;
-              WORLD_record_PDF = false;
+              WORLD.record_AUTO = false;
+              WORLD.record_JPG = false;
+              WORLD.record_PDF = false;
               WIN3D_record_AUTO = true;
               WIN3D_record_JPG = false;
               FRAME_record_AUTO = false;
@@ -33250,9 +33297,9 @@ void mouseClicked () {
               STUDY_record_AUTO = false;
               STUDY_record_JPG = false;
               STUDY_record_PDF = false;
-              WORLD_record_AUTO = false;
-              WORLD_record_JPG = false;
-              WORLD_record_PDF = false;
+              WORLD.record_AUTO = false;
+              WORLD.record_JPG = false;
+              WORLD.record_PDF = false;
               WIN3D_record_AUTO = false;
               WIN3D_record_JPG = false;
               FRAME_record_AUTO = true;
@@ -33274,13 +33321,13 @@ void mouseClicked () {
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("JPG Location Graph")) { 
-              WORLD_record_JPG = true;
-              WORLD_Update = true;
+              WORLD.record_JPG = true;
+              WORLD.Update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PDF Location Graph")) { 
-              WORLD_record_PDF = true;
-              WORLD_Update = true;
+              WORLD.record_PDF = true;
+              WORLD.Update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("JPG 3D Graph")) { 
@@ -33385,7 +33432,7 @@ void mouseClicked () {
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Typical Year (TMY)")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
-              WORLD_Update = true;
+              WORLD.Update = true;
               WIN3D_Update = true;  
               STUDY_Update = true;
               ROLLOUT_Update = true;
@@ -33396,7 +33443,7 @@ void mouseClicked () {
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
-              WORLD_Update = true;
+              WORLD.Update = true;
               WIN3D_Update = true;  
               STUDY_Update = true;
               ROLLOUT_Update = true;
@@ -33407,7 +33454,7 @@ void mouseClicked () {
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CLMREC)")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
-              WORLD_Update = true;
+              WORLD.Update = true;
               WIN3D_Update = true;  
               STUDY_Update = true;
               ROLLOUT_Update = true;
@@ -33418,7 +33465,7 @@ void mouseClicked () {
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
-              WORLD_Update = true;
+              WORLD.Update = true;
               WIN3D_Update = true;  
               STUDY_Update = true;
               ROLLOUT_Update = true;
@@ -33429,7 +33476,7 @@ void mouseClicked () {
             }                  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
-              WORLD_Update = true;
+              WORLD.Update = true;
               WIN3D_Update = true;  
               STUDY_Update = true;
               ROLLOUT_Update = true;
@@ -33764,61 +33811,61 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide SWOB points")) {
               Display_SWOB_Points = (Display_SWOB_Points + 1) % 2;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
               Display_SWOB_Nearest = !Display_SWOB_Nearest;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
               Display_NAEFS_Points = (Display_NAEFS_Points + 1) % 2;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
               Display_NAEFS_Nearest = !Display_NAEFS_Nearest;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
               Display_CWEEDS_Points = (Display_CWEEDS_Points + 1) % 2;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
               Display_CWEEDS_Nearest = !Display_CWEEDS_Nearest;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CLMREC points")) {
               Display_CLMREC_Points = (Display_CLMREC_Points + 1) % 2;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CLMREC nearest")) {
               Display_CLMREC_Nearest = !Display_CLMREC_Nearest;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide TMYEPW points")) {
               Display_TMYEPW_Points = (Display_TMYEPW_Points + 1) % 2;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide TMYEPW nearest")) {
               Display_TMYEPW_Nearest = !Display_TMYEPW_Nearest;
 
-              WORLD_Update = true;  
+              WORLD.Update = true;  
               ROLLOUT_Update = true;
             }
 
@@ -35183,11 +35230,11 @@ void mouseClicked () {
           UI_BAR_d_Update = 1;
         }  
 
-        if (WORLD_Include) {
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
+        if (WORLD.Include) {
+          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.CX_View, WORLD.CY_View, WORLD.CX_View + WORLD.X_View, WORLD.CY_View + WORLD.Y_View) == 1) {
 
-            float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
-            float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
+            float mouse_lon = 360.0 * ((mouseX - WORLD.CX_View) * WORLD.VIEW_ScaleX / WORLD.X_View - 0.5) + WORLD.VIEW_OffsetX;
+            float mouse_lat = -180.0 * ((mouseY - WORLD.CY_View) * WORLD.VIEW_ScaleY / WORLD.Y_View - 0.5) + WORLD.VIEW_OffsetY;
             //float mouse_lon = STATION.getLongitude();
             //float mouse_lat = STATION.getLatitude();
 
@@ -35199,11 +35246,11 @@ void mouseClicked () {
             STATION.setLongitude(mouse_lon);
 
             if (mouseButton == LEFT) {
-              WORLD_Viewport_ZOOM = 6;
+              WORLD.Viewport_ZOOM = 6;
             }
 
             if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
-              WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
+              WORLD.VIEW_Number = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             } 
 
 
@@ -35426,7 +35473,7 @@ void mouseClicked () {
 
 
 
-            WORLD_Update = true;
+            WORLD.Update = true;
           }
         }
 
@@ -36717,7 +36764,7 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
   if (new_value != v) {
     if (update1 != 0) STUDY_Update = true;
     if (update2 != 0) WIN3D_Update = true;
-    if (update3 != 0) WORLD_Update = true;
+    if (update3 != 0) WORLD.Update = true;
   }
 
   return new_value;
@@ -36868,8 +36915,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 1) { // Point
 
-      //WORLD_AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Auto Fit", WORLD_AutoView, 0, 1, 1), 1));
-      //WORLD_VIEW_Number = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, WORLD_Viewports_num - 1, 1), 1));
+      //WORLD.AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Auto Fit", WORLD.AutoView, 0, 1, 1), 1));
+      //WORLD.VIEW_Number = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_Number, 0, WORLD.Viewports_num - 1, 1), 1));
 
       LocationLAT = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
       LocationLON = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
@@ -37686,7 +37733,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
     Display_NAEFS_Nearest = true;     
   }
   
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true;  
   STUDY_Update = true;
   ROLLOUT_Update = true;
@@ -48276,7 +48323,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = true;
             STUDY_Update = true;
             WIN3D_Update = true;
-            WORLD_Update = true;
+            WORLD.Update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48287,7 +48334,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             ROLLOUT_Update = true;
             STUDY_Update = true;
             WIN3D_Update = true;
-            WORLD_Update = true;
+            WORLD.Update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48806,7 +48853,7 @@ int[] get_startK_endK () {
 
 void SOLARCHVISION_explore_output (String outputFile) {
 
-  if ((Display_Output_in_Explorer == true)  && (STUDY_record_AUTO == false) && (WORLD_record_AUTO == false) && (WIN3D_record_AUTO == false) && (FRAME_record_AUTO == false)) {
+  if ((Display_Output_in_Explorer == true)  && (STUDY_record_AUTO == false) && (WORLD.record_AUTO == false) && (WIN3D_record_AUTO == false) && (FRAME_record_AUTO == false)) {
     launch("explorer /select," + outputFile.replace('/', char(92)));
   }
 }
@@ -49159,7 +49206,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("softSelection_Power", softSelection_Power);
   newChild1.setFloat("softSelection_Radius", softSelection_Radius);
 
-  newChild1.setInt("WORLD_Viewport_ZOOM", WORLD_Viewport_ZOOM);
+  newChild1.setInt("WORLD.Viewport_ZOOM", WORLD.Viewport_ZOOM);
   newChild1.setInt("FrameVariation", FrameVariation);
   newChild1.setInt("Language_Active", Language_Active);
 
@@ -50394,7 +50441,7 @@ void SOLARCHVISION_load_project (String myFile) {
       softSelection_Power = children0[L].getFloat("softSelection_Power");
       softSelection_Radius = children0[L].getFloat("softSelection_Radius");
 
-      WORLD_Viewport_ZOOM = children0[L].getInt("WORLD_Viewport_ZOOM");
+      WORLD.Viewport_ZOOM = children0[L].getInt("WORLD.Viewport_ZOOM");
       FrameVariation = children0[L].getInt("FrameVariation");
       Language_Active = children0[L].getInt("Language_Active");
 
@@ -51229,14 +51276,14 @@ void SOLARCHVISION_load_project (String myFile) {
 
   UI_set_to_Create_Nothing();
 
-  WORLD_AutoView = 1;
+  WORLD.AutoView = 1;
 
-  WORLD_VIEW_Number = WORLD_FindGoodViewport(LocationLON, LocationLAT);
+  WORLD.VIEW_Number = WORLD.FindGoodViewport(LocationLON, LocationLAT);
 
   SOLARCHVISION_update_frame_layout();
 
   ROLLOUT_Update = true;
-  WORLD_Update = true;
+  WORLD.Update = true;
   WIN3D_Update = true; 
   STUDY_Update = true;     
   UI_BAR_a_Update = 1; 
