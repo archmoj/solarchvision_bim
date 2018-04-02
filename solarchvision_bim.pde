@@ -1,4 +1,7 @@
 
+// please define station elevation data for NAEFS points!
+
+
 class solarchvision_WORLD {
 
   private final static String CLASS_STAMP = "WORLD";
@@ -149,6 +152,362 @@ class solarchvision_WORLD {
     println("Loading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
   
     this.ViewImage = loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[n]);
+  }
+    
+    
+    
+  int NAEFS_NUMBER = 0;
+  String[][] NAEFS_INFO;
+  
+  void inputCoordinates_NAEFS () {
+    try {
+      String[] FileALL = loadStrings(this.DataFolder + "/NAEFS_UTF8.txt");
+  
+      String lineSTR;
+      String[] input;
+  
+      this.NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+      this.NAEFS_INFO = new String [this.NAEFS_NUMBER][7]; 
+  
+      int n_Locations = 0;
+  
+      for (int f = 0; f < this.NAEFS_NUMBER; f += 1) {
+        lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+        String StationNameEnglish = "";
+        String StationProvince = "";
+        String StationCountry = "";      
+        float StationLatitude = 0.0;
+        float StationLongitude = 0.0;
+        float StationElevation = 0.0; 
+        String StationFilename = "";
+  
+        String[] parts = split(lineSTR, '\t');
+  
+        if (3 < parts.length) {
+  
+          StationFilename = parts[0];
+  
+          StationNameEnglish = split(StationFilename, '_')[0];
+          StationProvince = split(StationFilename, '_')[1];
+          StationCountry = split(StationFilename, '_')[2];
+  
+          int l = 0;
+  
+          l = parts[1].length();
+          if (((parts[1].substring(l - 1, l)).equals("N")) || ((parts[1].substring(l - 1, l)).equals("S"))) {
+            String[] the_parts = split(parts[1], ':');
+            StationLatitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
+            if ((parts[1].substring(l - 1, l)).equals("S")) StationLatitude *= -1;
+          } else {
+            StationLatitude = float(parts[1]);
+          }
+  
+          l = parts[2].length();
+          if (((parts[2].substring(l - 1, l)).equals("E")) || ((parts[2].substring(l - 1, l)).equals("W"))) {
+            String[] the_parts = split(parts[2], ':');
+            StationLongitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
+            if ((parts[2].substring(l - 1, l)).equals("W")) StationLongitude *= -1;
+          } else {
+            StationLongitude = float(parts[2]);
+          }
+  
+          l = parts[3].length();
+          StationElevation = float(parts[3].substring(0, l - 1));
+  
+          this.NAEFS_INFO[n_Locations][0] = StationNameEnglish;
+          this.NAEFS_INFO[n_Locations][1] = StationProvince;
+          this.NAEFS_INFO[n_Locations][2] = StationCountry;        
+          this.NAEFS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+          this.NAEFS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+          this.NAEFS_INFO[n_Locations][5] = String.valueOf(StationElevation);
+          this.NAEFS_INFO[n_Locations][6] = StationFilename;
+  
+          n_Locations += 1;
+        }
+      }
+    }
+    catch (Exception e) {
+      println("ERROR reading NAEFS coordinates.");
+    }
+  }
+  
+  
+  int CWEEDS_NUMBER = 0;
+  String[][] CWEEDS_INFO;
+  
+  void inputCoordinates_CWEEDS () {
+    try {
+      String[] FileALL = loadStrings(this.DataFolder + "/CWEEDS_UTF8.txt");
+  
+      String lineSTR;
+      String[] input;
+  
+      this.CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+      this.CWEEDS_INFO = new String [this.CWEEDS_NUMBER][7]; 
+  
+      int n_Locations = 0;
+  
+      for (int f = 0; f < this.CWEEDS_NUMBER; f += 1) {
+        lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+        String StationNameEnglish = "";
+        String StationProvince = "";
+        String StationCountry = "";
+        float StationLatitude = 0.0;
+        float StationLongitude = 0.0;
+        float StationElevation = 0.0; 
+        String StationFilename = "";
+  
+        String[] parts = split(lineSTR, '_');
+  
+        if (4 < parts.length) {
+  
+          StationFilename = lineSTR; 
+  
+          StationCountry = "CA";
+          StationProvince = parts[0];
+          StationNameEnglish = parts[1];
+  
+  
+          StationLatitude = float(parts[2]) * 0.01;
+          StationLongitude = float(parts[3]) * -0.01;
+          StationElevation = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  
+          this.CWEEDS_INFO[n_Locations][0] = StationNameEnglish;
+          this.CWEEDS_INFO[n_Locations][1] = StationProvince;
+          this.CWEEDS_INFO[n_Locations][2] = StationCountry;
+          this.CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+          this.CWEEDS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+          this.CWEEDS_INFO[n_Locations][5] = String.valueOf(StationElevation);
+          this.CWEEDS_INFO[n_Locations][6] = StationFilename;
+  
+          n_Locations += 1;
+        }
+      }
+    }
+    catch (Exception e) {
+      println("ERROR reading CWEEDS coordinates.");
+    }
+  }
+  
+  
+  int CLMREC_NUMBER = 0;
+  String[][] CLMREC_INFO;
+  
+  void inputCoordinates_CLMREC () {
+    
+    try {
+      String[] FileALL = loadStrings(this.DataFolder + "/CLMREC_UTF8_EN.txt");
+  
+      String lineSTR;
+      String[] input;
+  
+      this.CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+      this.CLMREC_INFO = new String [this.CLMREC_NUMBER][11]; 
+  
+      int n_Locations = 0;
+  
+      for (int f = 0; f < this.CLMREC_NUMBER; f += 1) {
+        lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+        String StationNameEnglish = "";
+        String StationProvince = "";
+        String StationCountry = "";
+        float StationLatitude = 0.0;
+        float StationLongitude = 0.0;
+        float StationElevation = 0.0; 
+        String StationICAO = "";
+        String StationWMO = ""; 
+        String StationClimate = "";
+        int StationStart = -1;
+        int StationEnd = -1;
+  
+        String[] parts = split(lineSTR, ',');
+  
+        if (12 < parts.length) {
+          
+          StationCountry = "CA";
+          StationProvince = parts[1];
+          StationNameEnglish = parts[0].replace('/', '_');
+  
+          StationLatitude = float(parts[6]);
+          StationLongitude = float(parts[7]);
+          StationElevation = float(parts[10]);
+  
+          StationICAO = parts[3];
+          StationWMO = parts[4];
+          StationClimate = parts[2];
+          
+          StationStart = int(parts[13]);
+          StationEnd = int(parts[14]);
+  
+          this.CLMREC_INFO[n_Locations][0] = StationNameEnglish;
+          this.CLMREC_INFO[n_Locations][1] = StationProvince;
+          this.CLMREC_INFO[n_Locations][2] = StationCountry;
+          this.CLMREC_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+          this.CLMREC_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+          this.CLMREC_INFO[n_Locations][5] = String.valueOf(StationElevation);
+          this.CLMREC_INFO[n_Locations][6] = StationICAO;
+          this.CLMREC_INFO[n_Locations][7] = StationWMO;
+          this.CLMREC_INFO[n_Locations][8] = StationClimate;
+          this.CLMREC_INFO[n_Locations][9] = String.valueOf(StationStart);
+          this.CLMREC_INFO[n_Locations][10] = String.valueOf(StationEnd);
+  
+          n_Locations += 1;
+        }
+      }
+    }
+    catch (Exception e) {
+      println("ERROR reading CLMREC coordinates.");
+    }
+  }
+  
+  
+  
+  int SWOB_NUMBER = 0;
+  String[][] SWOB_INFO;
+  
+  void inputCoordinates_SWOB () {
+    try {
+      String[] FileALL = loadStrings(this.DataFolder + "/SWOB_UTF8.txt");
+  
+      String lineSTR;
+      String[] input;
+  
+      this.SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+      this.SWOB_INFO = new String [this.SWOB_NUMBER][12]; 
+  
+      int n_Locations = 0;
+  
+      for (int f = 0; f < this.SWOB_NUMBER; f += 1) {
+        lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+        String StationNameEnglish = "";
+        String StationNameFrench = "";
+        String StationProvince = "";
+        float StationLatitude = 0.0;
+        float StationLongitude = 0.0;
+        float StationElevation = 0.0; 
+        String StationICAO = "";
+        String StationWMO = ""; 
+        String StationClimate = "";
+        String StationDST = ""; //Daylight saving time
+        String StationSTD = ""; //Standard Time      
+        String StationType = ""; // MAN/AUTO
+  
+        String[] parts = split(lineSTR, '\t');
+  
+        if (12 < parts.length) {
+  
+          StationNameFrench = parts[1];
+          StationNameEnglish = parts[2];
+          StationProvince = parts[3];
+  
+          StationType = parts[4];
+          if (StationType.equals("Manned")) StationType = "MAN";
+          if (StationType.equals("Auto")) StationType = "AUTO";
+  
+          StationLatitude = float(parts[5]);
+          StationLongitude = float(parts[6]);
+          StationElevation = float(parts[7]);
+  
+          StationICAO = parts[8];
+          StationWMO = parts[9];
+          StationClimate = parts[10];
+          StationDST = parts[11];
+          StationSTD = parts[12]; 
+  
+          this.SWOB_INFO[n_Locations][0] = StationNameEnglish;
+          this.SWOB_INFO[n_Locations][1] = StationNameFrench;
+          this.SWOB_INFO[n_Locations][2] = StationProvince;
+          this.SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+          this.SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+          this.SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
+          this.SWOB_INFO[n_Locations][6] = StationICAO;
+          this.SWOB_INFO[n_Locations][7] = StationWMO;
+          this.SWOB_INFO[n_Locations][8] = StationClimate;
+          this.SWOB_INFO[n_Locations][9] = StationDST;
+          this.SWOB_INFO[n_Locations][10] = StationSTD;
+          this.SWOB_INFO[n_Locations][11] = StationType;
+  
+          n_Locations += 1;
+        }
+      }
+    }
+    catch (Exception e) {
+      println("ERROR reading SWOB coordinates.");
+    }
+  }
+  
+  
+  int TMYEPW_NUMBER = 0;
+  String[][] TMYEPW_INFO;
+  
+  void inputCoordinates_TMYEPW () {
+    try {
+      String[] FileALL = loadStrings(this.DataFolder + "/EPW_UTF8.txt");
+  
+      String lineSTR;
+      String[] input;
+  
+      this.TMYEPW_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+      this.TMYEPW_INFO = new String [this.TMYEPW_NUMBER][9]; 
+  
+      int n_Locations = 0;
+  
+      for (int f = 0; f < this.TMYEPW_NUMBER; f += 1) {
+        lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+        String StationNameEnglish = "";
+        String StationProvince = "";
+        String StationCountry = "";
+        float StationLatitude = 0.0;
+        float StationLongitude = 0.0;
+        float StationElevation = 0.0; 
+        float StationTimeZone = 0.0;      
+        String StationWMO = ""; 
+        String StationFilename = "";
+  
+  
+        String[] parts = split(lineSTR, ',');
+  
+        if (10 < parts.length) {
+          StationNameEnglish = parts[1];
+          StationProvince = parts[2];
+          StationCountry = parts[3];
+  
+          StationWMO = parts[5];
+  
+          StationLatitude = float(parts[6]);
+          StationLongitude = float(parts[7]);
+          StationTimeZone = float(parts[8]); 
+          StationElevation = float(parts[9]);
+  
+          StationFilename = parts[10]; 
+  
+          this.TMYEPW_INFO[n_Locations][0] = StationNameEnglish;
+          this.TMYEPW_INFO[n_Locations][1] = StationProvince;
+          this.TMYEPW_INFO[n_Locations][2] = StationCountry;
+          this.TMYEPW_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+          this.TMYEPW_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+          this.TMYEPW_INFO[n_Locations][5] = String.valueOf(StationElevation);      
+          this.TMYEPW_INFO[n_Locations][6] = String.valueOf(StationTimeZone);
+          this.TMYEPW_INFO[n_Locations][7] = StationWMO;
+          this.TMYEPW_INFO[n_Locations][8] = StationFilename;
+  
+          n_Locations += 1;
+        }
+      }
+    }
+    catch (Exception e) {
+      println("ERROR reading TMYEPW coordinates.");
+    }
   }
     
     
@@ -2536,30 +2895,30 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getSWOB_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("WORLD.inputCoordinates_SWOB", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 6) {
-    SOLARCHVISION_getSWOB_Coordinates(); 
+    WORLD.inputCoordinates_SWOB(); 
 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getFilename_NAEFS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("WORLD.inputCoordinates_NAEFS", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 7) {
-    SOLARCHVISION_getFilename_NAEFS_Coordinates(); 
+    WORLD.inputCoordinates_NAEFS(); 
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getFilename_CWEEDS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("WORLD.inputCoordinates_CWEEDS", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 8) {
-    SOLARCHVISION_getFilename_CWEEDS_Coordinates();  
+    WORLD.inputCoordinates_CWEEDS();  
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getCLMREC_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("WORLD.inputCoordinates_CLMREC", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 9) {
-    SOLARCHVISION_getCLMREC_Coordinates();  
+    WORLD.inputCoordinates_CLMREC();  
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_getFilename_TMYEPW_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    stroke(255); fill(255); text("WORLD.inputCoordinates_TMYEPW", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   } else if (frameCount == 10) {
-    SOLARCHVISION_getFilename_TMYEPW_Coordinates();  
+    WORLD.inputCoordinates_TMYEPW();  
     stroke(0); fill(0); rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255); fill(255); text("SOLARCHVISION_update_date", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
@@ -3997,13 +4356,13 @@ void SOLARCHVISION_draw_WORLD () {
       nearest_Station_ENSEMBLE_OBSERVED_id[q] = -1;
       nearest_Station_ENSEMBLE_OBSERVED_dist[q] = FLOAT_undefined;
   
-      for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
+      for (int f = 0; f < WORLD.SWOB_INFO.length; f += 1) {
         float draw_info = 0;
   
         if (Display_SWOB_Points != 0) draw_info = 1;
   
-        float _lat = float(STATION_SWOB_INFO[f][3]);
-        float _lon = float(STATION_SWOB_INFO[f][4]); 
+        float _lat = float(WORLD.SWOB_INFO[f][3]);
+        float _lon = float(WORLD.SWOB_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
         if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
@@ -4027,7 +4386,7 @@ void SOLARCHVISION_draw_WORLD () {
             WORLD.Diagrams.fill(0);      
             WORLD.Diagrams.textAlign(RIGHT, CENTER); 
             WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-            WORLD.Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
+            WORLD.Diagrams.text(WORLD.SWOB_INFO[f][6], x_point, y_point);
           }
         }
   
@@ -4052,8 +4411,8 @@ void SOLARCHVISION_draw_WORLD () {
       if (Display_SWOB_Nearest) {   
         int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
   
-        float _lat = float(STATION_SWOB_INFO[f][3]);
-        float _lon = float(STATION_SWOB_INFO[f][4]); 
+        float _lat = float(WORLD.SWOB_INFO[f][3]);
+        float _lon = float(WORLD.SWOB_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
         float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
@@ -4064,24 +4423,24 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD.Diagrams.fill(0);      
         WORLD.Diagrams.textAlign(RIGHT, CENTER);
         WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-        WORLD.Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
-        //println(STATION_SWOB_INFO[f][6]);
+        WORLD.Diagrams.text(WORLD.SWOB_INFO[f][6], x_point, y_point);
+        //println(WORLD.SWOB_INFO[f][6]);
       }  
       
     }
 
 
 
-    int nearest_STATION_NAEFS = -1;
-    float nearest_STATION_NAEFS_dist = FLOAT_undefined;
+    int nearest_WORLD_NAEFS = -1;
+    float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
 
-    for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
+    for (int f = 0; f < WORLD.NAEFS_INFO.length; f += 1) {
       float draw_info = 0;
 
       if (Display_NAEFS_Points != 0) draw_info = 1;
 
-      float _lat = float(STATION_NAEFS_INFO[f][3]);
-      float _lon = float(STATION_NAEFS_INFO[f][4]); 
+      float _lat = float(WORLD.NAEFS_INFO[f][3]);
+      float _lon = float(WORLD.NAEFS_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
 
       if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
@@ -4106,23 +4465,23 @@ void SOLARCHVISION_draw_WORLD () {
           WORLD.Diagrams.fill(0);      
           WORLD.Diagrams.textAlign(RIGHT, CENTER); 
           WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-          WORLD.Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+          WORLD.Diagrams.text(WORLD.NAEFS_INFO[f][0], x_point, y_point);
         }
       }
 
       float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-      if (nearest_STATION_NAEFS_dist > d) {
-        nearest_STATION_NAEFS_dist = d;
-        nearest_STATION_NAEFS = f;
+      if (nearest_WORLD_NAEFS_dist > d) {
+        nearest_WORLD_NAEFS_dist = d;
+        nearest_WORLD_NAEFS = f;
       }
     }
 
     if (Display_NAEFS_Nearest) {   
-      int f = nearest_STATION_NAEFS;
+      int f = nearest_WORLD_NAEFS;
 
-      float _lat = float(STATION_NAEFS_INFO[f][3]);
-      float _lon = float(STATION_NAEFS_INFO[f][4]); 
+      float _lat = float(WORLD.NAEFS_INFO[f][3]);
+      float _lon = float(WORLD.NAEFS_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!      
 
       float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
@@ -4133,21 +4492,21 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD.Diagrams.fill(0);      
       WORLD.Diagrams.textAlign(RIGHT, CENTER); 
       WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-      WORLD.Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
-      //println(STATION_NAEFS_INFO[f][0]);
+      WORLD.Diagrams.text(WORLD.NAEFS_INFO[f][0], x_point, y_point);
+      //println(WORLD.NAEFS_INFO[f][0]);
     }
 
 
-    int nearest_STATION_CWEEDS = -1;
-    float nearest_STATION_CWEEDS_dist = FLOAT_undefined;
+    int nearest_WORLD_CWEEDS = -1;
+    float nearest_WORLD_CWEEDS_dist = FLOAT_undefined;
 
-    for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
+    for (int f = 0; f < WORLD.CWEEDS_INFO.length; f += 1) {
       float draw_info = 0;
 
       if (Display_CWEEDS_Points != 0) draw_info = 1;
 
-      float _lat = float(STATION_CWEEDS_INFO[f][3]);
-      float _lon = float(STATION_CWEEDS_INFO[f][4]); 
+      float _lat = float(WORLD.CWEEDS_INFO[f][3]);
+      float _lon = float(WORLD.CWEEDS_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
 
       if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
@@ -4171,23 +4530,23 @@ void SOLARCHVISION_draw_WORLD () {
           WORLD.Diagrams.fill(0);      
           WORLD.Diagrams.textAlign(RIGHT, CENTER); 
           WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-          WORLD.Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
+          WORLD.Diagrams.text(WORLD.CWEEDS_INFO[f][0], x_point, y_point);
         }
       }
 
       float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-      if (nearest_STATION_CWEEDS_dist > d) {
-        nearest_STATION_CWEEDS_dist = d;
-        nearest_STATION_CWEEDS = f;
+      if (nearest_WORLD_CWEEDS_dist > d) {
+        nearest_WORLD_CWEEDS_dist = d;
+        nearest_WORLD_CWEEDS = f;
       }
     } 
 
     if (Display_CWEEDS_Nearest) {   
-      int f = nearest_STATION_CWEEDS;
+      int f = nearest_WORLD_CWEEDS;
 
-      float _lat = float(STATION_CWEEDS_INFO[f][3]);
-      float _lon = float(STATION_CWEEDS_INFO[f][4]);  
+      float _lat = float(WORLD.CWEEDS_INFO[f][3]);
+      float _lon = float(WORLD.CWEEDS_INFO[f][4]);  
       if (_lon > 180) _lon -= 360; // << important!      
 
       float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
@@ -4198,23 +4557,23 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD.Diagrams.fill(0);      
       WORLD.Diagrams.textAlign(RIGHT, CENTER); 
       WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-      WORLD.Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
-      //println(STATION_CWEEDS_INFO[f][0]);
+      WORLD.Diagrams.text(WORLD.CWEEDS_INFO[f][0], x_point, y_point);
+      //println(WORLD.CWEEDS_INFO[f][0]);
     }
 
 
-    int nearest_STATION_CLMREC = -1;
-    float nearest_STATION_CLMREC_dist = FLOAT_undefined;
+    int nearest_WORLD_CLMREC = -1;
+    float nearest_WORLD_CLMREC_dist = FLOAT_undefined;
 
-    for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+    for (int f = 0; f < WORLD.CLMREC_INFO.length; f += 1) {
       float draw_info = 0;
 
       if (Display_CLMREC_Points != 0) draw_info = 1;
       
-      if (int(STATION_CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
+      if (int(WORLD.CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
 
-        float _lat = float(STATION_CLMREC_INFO[f][3]);
-        float _lon = float(STATION_CLMREC_INFO[f][4]); 
+        float _lat = float(WORLD.CLMREC_INFO[f][3]);
+        float _lon = float(WORLD.CLMREC_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
         if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
@@ -4238,24 +4597,24 @@ void SOLARCHVISION_draw_WORLD () {
             WORLD.Diagrams.fill(0);      
             WORLD.Diagrams.textAlign(RIGHT, CENTER); 
             WORLD.Diagrams.textSize(0.5 * MessageSize * WORLD.ImageScale);
-            WORLD.Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
+            WORLD.Diagrams.text(WORLD.CLMREC_INFO[f][0], x_point, y_point);
           }
         }
   
         float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
-        if (nearest_STATION_CLMREC_dist > d) {
-          nearest_STATION_CLMREC_dist = d;
-          nearest_STATION_CLMREC = f;
+        if (nearest_WORLD_CLMREC_dist > d) {
+          nearest_WORLD_CLMREC_dist = d;
+          nearest_WORLD_CLMREC = f;
         }
       }
     } 
 
     if (Display_CLMREC_Nearest) {   
-      int f = nearest_STATION_CLMREC;
+      int f = nearest_WORLD_CLMREC;
 
-      float _lat = float(STATION_CLMREC_INFO[f][3]);
-      float _lon = float(STATION_CLMREC_INFO[f][4]);  
+      float _lat = float(WORLD.CLMREC_INFO[f][3]);
+      float _lon = float(WORLD.CLMREC_INFO[f][4]);  
       if (_lon > 180) _lon -= 360; // << important!      
 
       float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
@@ -4266,20 +4625,20 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD.Diagrams.fill(0);      
       WORLD.Diagrams.textAlign(RIGHT, CENTER); 
       WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-      WORLD.Diagrams.text(STATION_CLMREC_INFO[f][0], x_point, y_point);
-      //println(STATION_CLMREC_INFO[f][0]);
+      WORLD.Diagrams.text(WORLD.CLMREC_INFO[f][0], x_point, y_point);
+      //println(WORLD.CLMREC_INFO[f][0]);
     }
 
-    int nearest_STATION_TMYEPW = -1;
-    float nearest_STATION_TMYEPW_dist = FLOAT_undefined;
+    int nearest_WORLD_TMYEPW = -1;
+    float nearest_WORLD_TMYEPW_dist = FLOAT_undefined;
 
-    for (int f = 0; f < STATION_TMYEPW_INFO.length; f += 1) {
+    for (int f = 0; f < WORLD.TMYEPW_INFO.length; f += 1) {
       float draw_info = 0;
 
       if (Display_TMYEPW_Points != 0) draw_info = 1;
 
-      float _lat = float(STATION_TMYEPW_INFO[f][3]);
-      float _lon = float(STATION_TMYEPW_INFO[f][4]); 
+      float _lat = float(WORLD.TMYEPW_INFO[f][3]);
+      float _lon = float(WORLD.TMYEPW_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
 
       if (_lon < WORLD.VIEW_BoundariesX[WORLD.VIEW_Number][0]) draw_info = 0;
@@ -4303,23 +4662,23 @@ void SOLARCHVISION_draw_WORLD () {
           WORLD.Diagrams.fill(0);      
           WORLD.Diagrams.textAlign(RIGHT, CENTER); 
           WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-          WORLD.Diagrams.text(STATION_TMYEPW_INFO[f][0], x_point, y_point);
+          WORLD.Diagrams.text(WORLD.TMYEPW_INFO[f][0], x_point, y_point);
         }
       }
 
       float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-      if (nearest_STATION_TMYEPW_dist > d) {
-        nearest_STATION_TMYEPW_dist = d;
-        nearest_STATION_TMYEPW = f;
+      if (nearest_WORLD_TMYEPW_dist > d) {
+        nearest_WORLD_TMYEPW_dist = d;
+        nearest_WORLD_TMYEPW = f;
       }
     } 
 
     if (Display_TMYEPW_Nearest) {   
-      int f = nearest_STATION_TMYEPW;
+      int f = nearest_WORLD_TMYEPW;
 
-      float _lat = float(STATION_TMYEPW_INFO[f][3]);
-      float _lon = float(STATION_TMYEPW_INFO[f][4]);  
+      float _lat = float(WORLD.TMYEPW_INFO[f][3]);
+      float _lon = float(WORLD.TMYEPW_INFO[f][4]);  
       if (_lon > 180) _lon -= 360; // << important!      
 
       float x_point = WORLD.X_View * (( 1 * (_lon - WORLD.VIEW_OffsetX) / 360.0) + 0.5) / WORLD.VIEW_ScaleX;
@@ -4330,8 +4689,8 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD.Diagrams.fill(0);      
       WORLD.Diagrams.textAlign(RIGHT, CENTER); 
       WORLD.Diagrams.textSize(MessageSize * WORLD.ImageScale);
-      WORLD.Diagrams.text(STATION_TMYEPW_INFO[f][0], x_point, y_point);
-      //println(STATION_TMYEPW_INFO[f][0]);
+      WORLD.Diagrams.text(WORLD.TMYEPW_INFO[f][0], x_point, y_point);
+      //println(WORLD.TMYEPW_INFO[f][0]);
     }
 
 
@@ -6201,14 +6560,14 @@ void SOLARCHVISION_download_CLIMATE_CLMREC () {
         int THE_YEAR = k + CLIMATE_CLMREC_start;
         int THE_MONTH = m + 1;
     
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + WORLD.CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
           
         String the_target = CLIMATE_CLMREC_directory + "/" + FN;
           
         File dir = new File(the_target);
         if (!dir.isFile()) {          
           
-          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + WORLD.CLMREC_INFO[nearest_Station_CLMREC_id][6] + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
           
           println("Try downloading: " + the_link);
     
@@ -6251,12 +6610,12 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
     nearest_Station_CLMREC_id = -1;
     nearest_Station_CLMREC_dist = FLOAT_undefined;
     
-    for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+    for (int f = 0; f < WORLD.CLMREC_INFO.length; f += 1) {
       
-      if (int(STATION_CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
+      if (int(WORLD.CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
 
-        float _lat = float(STATION_CLMREC_INFO[f][3]);
-        float _lon = float(STATION_CLMREC_INFO[f][4]); 
+        float _lat = float(WORLD.CLMREC_INFO[f][3]);
+        float _lon = float(WORLD.CLMREC_INFO[f][4]); 
         if (_lon > 180) _lon -= 360; // << important!
   
         float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
@@ -6276,7 +6635,7 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
         int THE_YEAR = k + CLIMATE_CLMREC_start;
         int THE_MONTH = m + 1;
     
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + STATION_CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + WORLD.CLMREC_INFO[nearest_Station_CLMREC_id][0] + ".csv";
         
         String the_source = CLIMATE_CLMREC_directory + "/" + FN;
         
@@ -6546,14 +6905,14 @@ void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
 
       if (f != -1) {
 
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
+        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + WORLD.SWOB_INFO[f][6] + "-" + WORLD.SWOB_INFO[f][11] + "-swob.xml";
 
         String the_target = ENSEMBLE_OBSERVED_directory + "/" + FN;
 
         File dir = new File(the_target);
         if (!dir.isFile()) {       
 
-          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
+          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + WORLD.SWOB_INFO[f][6] + "/" + FN;
   
           println("Try downloading: " + the_link);
   
@@ -6642,7 +7001,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
         if (f != -1) {
 
-          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
+          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + WORLD.SWOB_INFO[f][6] + "-" + WORLD.SWOB_INFO[f][11] + "-swob.xml";
 
           String the_source = ENSEMBLE_OBSERVED_directory + "/" + FN;
       
@@ -11965,359 +12324,6 @@ void SOLARCHVISION_loadObject2DImages () {
 
 
 
-int STATION_NAEFS_NUMBER = 0;
-String[][] STATION_NAEFS_INFO;
-
-void SOLARCHVISION_getFilename_NAEFS_Coordinates () {
-  try {
-    String[] FileALL = loadStrings(WORLD.DataFolder + "/NAEFS_UTF8.txt");
-
-    String lineSTR;
-    String[] input;
-
-    STATION_NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
-
-    STATION_NAEFS_INFO = new String [STATION_NAEFS_NUMBER][7]; 
-
-    int n_Locations = 0;
-
-    for (int f = 0; f < STATION_NAEFS_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-
-      String StationNameEnglish = "";
-      String StationProvince = "";
-      String StationCountry = "";      
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationFilename = "";
-
-      String[] parts = split(lineSTR, '\t');
-
-      if (3 < parts.length) {
-
-        StationFilename = parts[0];
-
-        StationNameEnglish = split(StationFilename, '_')[0];
-        StationProvince = split(StationFilename, '_')[1];
-        StationCountry = split(StationFilename, '_')[2];
-
-        int l = 0;
-
-        l = parts[1].length();
-        if (((parts[1].substring(l - 1, l)).equals("N")) || ((parts[1].substring(l - 1, l)).equals("S"))) {
-          String[] the_parts = split(parts[1], ':');
-          StationLatitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
-          if ((parts[1].substring(l - 1, l)).equals("S")) StationLatitude *= -1;
-        } else {
-          StationLatitude = float(parts[1]);
-        }
-
-        l = parts[2].length();
-        if (((parts[2].substring(l - 1, l)).equals("E")) || ((parts[2].substring(l - 1, l)).equals("W"))) {
-          String[] the_parts = split(parts[2], ':');
-          StationLongitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
-          if ((parts[2].substring(l - 1, l)).equals("W")) StationLongitude *= -1;
-        } else {
-          StationLongitude = float(parts[2]);
-        }
-
-        l = parts[3].length();
-        StationElevation = float(parts[3].substring(0, l - 1));
-
-        STATION_NAEFS_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_NAEFS_INFO[n_Locations][1] = StationProvince;
-        STATION_NAEFS_INFO[n_Locations][2] = StationCountry;        
-        STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_NAEFS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_NAEFS_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_NAEFS_INFO[n_Locations][6] = StationFilename;
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading NAEFS coordinates.");
-  }
-}
-
-
-int STATION_CWEEDS_NUMBER = 0;
-String[][] STATION_CWEEDS_INFO;
-
-void SOLARCHVISION_getFilename_CWEEDS_Coordinates () {
-  try {
-    String[] FileALL = loadStrings(WORLD.DataFolder + "/CWEEDS_UTF8.txt");
-
-    String lineSTR;
-    String[] input;
-
-    STATION_CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
-
-    STATION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][7]; 
-
-    int n_Locations = 0;
-
-    for (int f = 0; f < STATION_CWEEDS_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-
-      String StationNameEnglish = "";
-      String StationProvince = "";
-      String StationCountry = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationFilename = "";
-
-      String[] parts = split(lineSTR, '_');
-
-      if (4 < parts.length) {
-
-        StationFilename = lineSTR; 
-
-        StationCountry = "CA";
-        StationProvince = parts[0];
-        StationNameEnglish = parts[1];
-
-
-        StationLatitude = float(parts[2]) * 0.01;
-        StationLongitude = float(parts[3]) * -0.01;
-        StationElevation = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        STATION_CWEEDS_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_CWEEDS_INFO[n_Locations][1] = StationProvince;
-        STATION_CWEEDS_INFO[n_Locations][2] = StationCountry;
-        STATION_CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_CWEEDS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_CWEEDS_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_CWEEDS_INFO[n_Locations][6] = StationFilename;
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading CWEEDS coordinates.");
-  }
-}
-
-
-int STATION_CLMREC_NUMBER = 0;
-String[][] STATION_CLMREC_INFO;
-
-void SOLARCHVISION_getCLMREC_Coordinates () {
-  
-  try {
-    String[] FileALL = loadStrings(WORLD.DataFolder + "/CLMREC_UTF8_EN.txt");
-
-    String lineSTR;
-    String[] input;
-
-    STATION_CLMREC_NUMBER = FileALL.length - 1; // to skip the first description line 
-
-    STATION_CLMREC_INFO = new String [STATION_CLMREC_NUMBER][11]; 
-
-    int n_Locations = 0;
-
-    for (int f = 0; f < STATION_CLMREC_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-
-      String StationNameEnglish = "";
-      String StationProvince = "";
-      String StationCountry = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationICAO = "";
-      String StationWMO = ""; 
-      String StationClimate = "";
-      int StationStart = -1;
-      int StationEnd = -1;
-
-      String[] parts = split(lineSTR, ',');
-
-      if (12 < parts.length) {
-        
-        StationCountry = "CA";
-        StationProvince = parts[1];
-        StationNameEnglish = parts[0].replace('/', '_');
-
-        StationLatitude = float(parts[6]);
-        StationLongitude = float(parts[7]);
-        StationElevation = float(parts[10]);
-
-        StationICAO = parts[3];
-        StationWMO = parts[4];
-        StationClimate = parts[2];
-        
-        StationStart = int(parts[13]);
-        StationEnd = int(parts[14]);
-
-        STATION_CLMREC_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_CLMREC_INFO[n_Locations][1] = StationProvince;
-        STATION_CLMREC_INFO[n_Locations][2] = StationCountry;
-        STATION_CLMREC_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_CLMREC_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_CLMREC_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_CLMREC_INFO[n_Locations][6] = StationICAO;
-        STATION_CLMREC_INFO[n_Locations][7] = StationWMO;
-        STATION_CLMREC_INFO[n_Locations][8] = StationClimate;
-        STATION_CLMREC_INFO[n_Locations][9] = String.valueOf(StationStart);
-        STATION_CLMREC_INFO[n_Locations][10] = String.valueOf(StationEnd);
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading CLMREC coordinates.");
-  }
-}
-
-
-
-int STATION_SWOB_NUMBER = 0;
-String[][] STATION_SWOB_INFO;
-
-void SOLARCHVISION_getSWOB_Coordinates () {
-  try {
-    String[] FileALL = loadStrings(WORLD.DataFolder + "/SWOB_UTF8.txt");
-
-    String lineSTR;
-    String[] input;
-
-    STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
-
-    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][12]; 
-
-    int n_Locations = 0;
-
-    for (int f = 0; f < STATION_SWOB_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-
-      String StationNameEnglish = "";
-      String StationNameFrench = "";
-      String StationProvince = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationICAO = "";
-      String StationWMO = ""; 
-      String StationClimate = "";
-      String StationDST = ""; //Daylight saving time
-      String StationSTD = ""; //Standard Time      
-      String StationType = ""; // MAN/AUTO
-
-      String[] parts = split(lineSTR, '\t');
-
-      if (12 < parts.length) {
-
-        StationNameFrench = parts[1];
-        StationNameEnglish = parts[2];
-        StationProvince = parts[3];
-
-        StationType = parts[4];
-        if (StationType.equals("Manned")) StationType = "MAN";
-        if (StationType.equals("Auto")) StationType = "AUTO";
-
-        StationLatitude = float(parts[5]);
-        StationLongitude = float(parts[6]);
-        StationElevation = float(parts[7]);
-
-        StationICAO = parts[8];
-        StationWMO = parts[9];
-        StationClimate = parts[10];
-        StationDST = parts[11];
-        StationSTD = parts[12]; 
-
-        STATION_SWOB_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
-        STATION_SWOB_INFO[n_Locations][2] = StationProvince;
-        STATION_SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
-        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
-        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
-        STATION_SWOB_INFO[n_Locations][9] = StationDST;
-        STATION_SWOB_INFO[n_Locations][10] = StationSTD;
-        STATION_SWOB_INFO[n_Locations][11] = StationType;
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading SWOB coordinates.");
-  }
-}
-
-
-int STATION_TMYEPW_NUMBER = 0;
-String[][] STATION_TMYEPW_INFO;
-
-void SOLARCHVISION_getFilename_TMYEPW_Coordinates () {
-  try {
-    String[] FileALL = loadStrings(WORLD.DataFolder + "/EPW_UTF8.txt");
-
-    String lineSTR;
-    String[] input;
-
-    STATION_TMYEPW_NUMBER = FileALL.length - 1; // to skip the first description line 
-
-    STATION_TMYEPW_INFO = new String [STATION_TMYEPW_NUMBER][9]; 
-
-    int n_Locations = 0;
-
-    for (int f = 0; f < STATION_TMYEPW_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-
-      String StationNameEnglish = "";
-      String StationProvince = "";
-      String StationCountry = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      float StationTimeZone = 0.0;      
-      String StationWMO = ""; 
-      String StationFilename = "";
-
-
-      String[] parts = split(lineSTR, ',');
-
-      if (10 < parts.length) {
-        StationNameEnglish = parts[1];
-        StationProvince = parts[2];
-        StationCountry = parts[3];
-
-        StationWMO = parts[5];
-
-        StationLatitude = float(parts[6]);
-        StationLongitude = float(parts[7]);
-        StationTimeZone = 15 * float(parts[8]); 
-        StationElevation = float(parts[9]);
-
-        StationFilename = parts[10]; 
-
-        STATION_TMYEPW_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_TMYEPW_INFO[n_Locations][1] = StationProvince;
-        STATION_TMYEPW_INFO[n_Locations][2] = StationCountry;
-        STATION_TMYEPW_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_TMYEPW_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_TMYEPW_INFO[n_Locations][5] = String.valueOf(StationElevation);      
-        STATION_TMYEPW_INFO[n_Locations][6] = String.valueOf(StationTimeZone);
-        STATION_TMYEPW_INFO[n_Locations][7] = StationWMO;
-        STATION_TMYEPW_INFO[n_Locations][8] = StationFilename;
-
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ERROR reading TMYEPW coordinates.");
-  }
-}
 
 
 void SOLARCHVISION_beginNewCurve () {
@@ -35256,44 +35262,45 @@ void mouseClicked () {
 
 
             {
-              int nearest_STATION_NAEFS = -1;
-              float nearest_STATION_NAEFS_dist = FLOAT_undefined;
+              int nearest_WORLD_NAEFS = -1;
+              float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
 
-              for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
+              for (int f = 0; f < WORLD.NAEFS_INFO.length; f += 1) {
 
-                float _lat = float(STATION_NAEFS_INFO[f][3]);
-                float _lon = float(STATION_NAEFS_INFO[f][4]); 
+                float _lat = float(WORLD.NAEFS_INFO[f][3]);
+                float _lon = float(WORLD.NAEFS_INFO[f][4]); 
                 if (_lon > 180) _lon -= 360; // << important!
 
                 float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-                if (nearest_STATION_NAEFS_dist > d) {
-                  nearest_STATION_NAEFS_dist = d;
-                  nearest_STATION_NAEFS = f;
+                if (nearest_WORLD_NAEFS_dist > d) {
+                  nearest_WORLD_NAEFS_dist = d;
+                  nearest_WORLD_NAEFS = f;
                 }
               }
 
               {
-                int f = nearest_STATION_NAEFS;
+                int f = nearest_WORLD_NAEFS;
 
-                if (STATION.getFilename_NAEFS().equals(STATION_NAEFS_INFO[f][6])) {
+                if (STATION.getFilename_NAEFS().equals(WORLD.NAEFS_INFO[f][6])) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon);
 
-                  STATION.setFilename_NAEFS(STATION_NAEFS_INFO[f][6]); // naefs filename
+                  STATION.setFilename_NAEFS(WORLD.NAEFS_INFO[f][6]); // naefs filename
 
-                  println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
+                  println("nearest naefs filename:", WORLD.NAEFS_INFO[f][6]);    
 
                   if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-                    STATION.setName(STATION_NAEFS_INFO[f][0]);
-                    STATION.setProvince(STATION_NAEFS_INFO[f][1]);
-                    STATION.setCountry(STATION_NAEFS_INFO[f][2]);
+                    STATION.setName(WORLD.NAEFS_INFO[f][0]);
+                    STATION.setProvince(WORLD.NAEFS_INFO[f][1]);
+                    STATION.setCountry(WORLD.NAEFS_INFO[f][2]);
 
-                    //STATION.setLatitude(float(STATION_NAEFS_INFO[f][3]));
-                    //STATION.setLongitude(float(STATION_NAEFS_INFO[f][4]));
-                    STATION.setTimelong(roundTo(float(STATION_NAEFS_INFO[f][2]), 15));                      
+                    //STATION.setLatitude(float(WORLD.NAEFS_INFO[f][3]));
+                    //STATION.setLongitude(float(WORLD.NAEFS_INFO[f][4]));
+                    STATION.setElevation(0); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                    STATION.setTimelong(roundTo(STATION.getLongitude(), 15));                      
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -35309,46 +35316,46 @@ void mouseClicked () {
 
 
             {
-              int nearest_STATION_CWEEDS = -1;
-              float nearest_STATION_CWEEDS_dist = FLOAT_undefined;
+              int nearest_WORLD_CWEEDS = -1;
+              float nearest_WORLD_CWEEDS_dist = FLOAT_undefined;
 
-              for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
+              for (int f = 0; f < WORLD.CWEEDS_INFO.length; f += 1) {
 
-                float _lat = float(STATION_CWEEDS_INFO[f][3]);
-                float _lon = float(STATION_CWEEDS_INFO[f][4]); 
+                float _lat = float(WORLD.CWEEDS_INFO[f][3]);
+                float _lon = float(WORLD.CWEEDS_INFO[f][4]); 
                 if (_lon > 180) _lon -= 360; // << important!
 
                 float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-                if (nearest_STATION_CWEEDS_dist > d) {
-                  nearest_STATION_CWEEDS_dist = d;
-                  nearest_STATION_CWEEDS = f;
+                if (nearest_WORLD_CWEEDS_dist > d) {
+                  nearest_WORLD_CWEEDS_dist = d;
+                  nearest_WORLD_CWEEDS = f;
                 }
               }
 
               {
-                int f = nearest_STATION_CWEEDS;
+                int f = nearest_WORLD_CWEEDS;
 
-                if (STATION.getFilename_CWEEDS().equals(STATION_CWEEDS_INFO[f][6])) {
+                if (STATION.getFilename_CWEEDS().equals(WORLD.CWEEDS_INFO[f][6])) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon); 
 
-                  STATION.setFilename_CWEEDS(STATION_CWEEDS_INFO[f][6]); // CWEEDS filename
+                  STATION.setFilename_CWEEDS(WORLD.CWEEDS_INFO[f][6]); // CWEEDS filename
 
-                  println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
+                  println("nearest CWEEDS filename:", WORLD.CWEEDS_INFO[f][6]);       
 
                   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) { 
 
-                    STATION.setName(STATION_CWEEDS_INFO[f][0]);
-                    STATION.setProvince(STATION_CWEEDS_INFO[f][1]);
-                    STATION.setCountry(STATION_CWEEDS_INFO[f][2]); 
+                    STATION.setName(WORLD.CWEEDS_INFO[f][0]);
+                    STATION.setProvince(WORLD.CWEEDS_INFO[f][1]);
+                    STATION.setCountry(WORLD.CWEEDS_INFO[f][2]); 
 
-                    //STATION.setLatitude(float(STATION_CWEEDS_INFO[f][3]));
-                    //STATION.setLongitude(float(STATION_CWEEDS_INFO[f][4]));
-                    STATION.setTimelong(float(STATION_CWEEDS_INFO[f][6])); 
-                    STATION.setElevation(float(STATION_CWEEDS_INFO[f][5]));   
+                    //STATION.setLatitude(float(WORLD.CWEEDS_INFO[f][3]));
+                    //STATION.setLongitude(float(WORLD.CWEEDS_INFO[f][4]));
+                    STATION.setElevation(float(WORLD.CWEEDS_INFO[f][5]));
+                    STATION.setTimelong(roundTo(STATION.getLongitude(), 15));   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -35362,49 +35369,49 @@ void mouseClicked () {
             }          
 
             {
-              int nearest_STATION_CLMREC = -1;
-              float nearest_STATION_CLMREC_dist = FLOAT_undefined;
+              int nearest_WORLD_CLMREC = -1;
+              float nearest_WORLD_CLMREC_dist = FLOAT_undefined;
 
-              for (int f = 0; f < STATION_CLMREC_INFO.length; f += 1) {
+              for (int f = 0; f < WORLD.CLMREC_INFO.length; f += 1) {
                 
-                if (int(STATION_CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
+                if (int(WORLD.CLMREC_INFO[f][10]) == 2016) { // only use stations with this condition
 
-                  float _lat = float(STATION_CLMREC_INFO[f][3]);
-                  float _lon = float(STATION_CLMREC_INFO[f][4]); 
+                  float _lat = float(WORLD.CLMREC_INFO[f][3]);
+                  float _lon = float(WORLD.CLMREC_INFO[f][4]); 
                   if (_lon > 180) _lon -= 360; // << important!
   
                   float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
-                  if (nearest_STATION_CLMREC_dist > d) {
-                    nearest_STATION_CLMREC_dist = d;
-                    nearest_STATION_CLMREC = f;
+                  if (nearest_WORLD_CLMREC_dist > d) {
+                    nearest_WORLD_CLMREC_dist = d;
+                    nearest_WORLD_CLMREC = f;
                   }
                 }
               }
 
               {
-                int f = nearest_STATION_CLMREC;
+                int f = nearest_WORLD_CLMREC;
 
-                if (STATION.getFilename_CWEEDS().equals(STATION_CLMREC_INFO[f][6])) {
+                if (STATION.getFilename_CWEEDS().equals(WORLD.CLMREC_INFO[f][6])) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon);                   
 
-                  STATION.setFilename_CWEEDS(STATION_CLMREC_INFO[f][6]); // CLMREC filename
+                  STATION.setFilename_CWEEDS(WORLD.CLMREC_INFO[f][6]); // CLMREC filename
 
-                  println("nearest CLMREC filename:", STATION_CLMREC_INFO[f][6]);       
+                  println("nearest CLMREC filename:", WORLD.CLMREC_INFO[f][6]);       
 
                   if (CurrentDataSource == dataID_CLIMATE_CLMREC) { 
 
-                    STATION.setName(STATION_CLMREC_INFO[f][0]);
-                    STATION.setProvince(STATION_CLMREC_INFO[f][1]);
-                    STATION.setCountry(STATION_CLMREC_INFO[f][2]); 
+                    STATION.setName(WORLD.CLMREC_INFO[f][0]);
+                    STATION.setProvince(WORLD.CLMREC_INFO[f][1]);
+                    STATION.setCountry(WORLD.CLMREC_INFO[f][2]); 
 
-                    //STATION.setLatitude(float(STATION_CLMREC_INFO[f][3]));
-                    //STATION.setLongitude(float(STATION_CLMREC_INFO[f][4]));
-                    STATION.setTimelong(float(STATION_CLMREC_INFO[f][6])); 
-                    STATION.setElevation(float(STATION_CLMREC_INFO[f][5]));   
+                    //STATION.setLatitude(float(WORLD.CLMREC_INFO[f][3]));
+                    //STATION.setLongitude(float(WORLD.CLMREC_INFO[f][4]));
+                    STATION.setElevation(float(WORLD.CLMREC_INFO[f][5]));
+                    STATION.setTimelong(roundTo(STATION.getLongitude(), 15));   
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -35419,45 +35426,45 @@ void mouseClicked () {
 
 
             {
-              int nearest_STATION_TMYEPW = -1;
-              float nearest_STATION_TMYEPW_dist = FLOAT_undefined;
+              int nearest_WORLD_TMYEPW = -1;
+              float nearest_WORLD_TMYEPW_dist = FLOAT_undefined;
 
-              for (int f = 0; f < STATION_TMYEPW_INFO.length; f += 1) {
+              for (int f = 0; f < WORLD.TMYEPW_INFO.length; f += 1) {
 
-                float _lat = float(STATION_TMYEPW_INFO[f][3]);
-                float _lon = float(STATION_TMYEPW_INFO[f][4]); 
+                float _lat = float(WORLD.TMYEPW_INFO[f][3]);
+                float _lon = float(WORLD.TMYEPW_INFO[f][4]); 
                 if (_lon > 180) _lon -= 360; // << important!
 
                 float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-                if (nearest_STATION_TMYEPW_dist > d) {
-                  nearest_STATION_TMYEPW_dist = d;
-                  nearest_STATION_TMYEPW = f;
+                if (nearest_WORLD_TMYEPW_dist > d) {
+                  nearest_WORLD_TMYEPW_dist = d;
+                  nearest_WORLD_TMYEPW = f;
                 }
               }
 
               {
-                int f = nearest_STATION_TMYEPW;
+                int f = nearest_WORLD_TMYEPW;
 
-                if (STATION.getFilename_TMYEPW().equals(STATION_TMYEPW_INFO[f][8])) {
+                if (STATION.getFilename_TMYEPW().equals(WORLD.TMYEPW_INFO[f][8])) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon);
 
-                  STATION.setFilename_TMYEPW(STATION_TMYEPW_INFO[f][8]); // epw filename
+                  STATION.setFilename_TMYEPW(WORLD.TMYEPW_INFO[f][8]); // epw filename
 
-                  println("nearest epw filename:", STATION_TMYEPW_INFO[f][8]);       
+                  println("nearest epw filename:", WORLD.TMYEPW_INFO[f][8]);       
 
                   if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {     
-                    STATION.setName(STATION_TMYEPW_INFO[f][0]);
-                    STATION.setProvince(STATION_TMYEPW_INFO[f][1]);
-                    STATION.setCountry(STATION_TMYEPW_INFO[f][2]); 
+                    STATION.setName(WORLD.TMYEPW_INFO[f][0]);
+                    STATION.setProvince(WORLD.TMYEPW_INFO[f][1]);
+                    STATION.setCountry(WORLD.TMYEPW_INFO[f][2]); 
 
-                    //STATION.setLatitude(float(STATION_TMYEPW_INFO[f][3]));
-                    //STATION.setLongitude(float(STATION_TMYEPW_INFO[f][4]));
-                    STATION.setTimelong(float(STATION_TMYEPW_INFO[f][6])); 
-                    STATION.setElevation(float(STATION_TMYEPW_INFO[f][5]));    
+                    //STATION.setLatitude(float(WORLD.TMYEPW_INFO[f][3]));
+                    //STATION.setLongitude(float(WORLD.TMYEPW_INFO[f][4]));
+                    STATION.setElevation(float(WORLD.TMYEPW_INFO[f][5]));
+                    STATION.setTimelong(15 * float(WORLD.TMYEPW_INFO[f][6]));    
 
                     SOLARCHVISION_ROLLOUT_parent = 0;
                     SOLARCHVISION_ROLLOUT_child = 1;
@@ -48649,7 +48656,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
             //if ((j % 1 == 0)) {
-            txt = STATION_SWOB_INFO[nearest_Station_ENSEMBLE_OBSERVED_id[j]][6];
+            txt = WORLD.SWOB_INFO[nearest_Station_ENSEMBLE_OBSERVED_id[j]][6];
             //}
           }                 
 
