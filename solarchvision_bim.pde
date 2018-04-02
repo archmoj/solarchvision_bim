@@ -1524,9 +1524,9 @@ int STUDY_TrendJoinType = -1; // -1: increasing weights, +1: equal weights
 
 int TIME_Interval = 1; //dT
 
-int Export_STUDY_info_node = 0;
-int Export_STUDY_info_norm = 0;
-int Export_STUDY_info_prob = 0;
+boolean Export_STUDY_info_node = false;
+boolean Export_STUDY_info_norm = false;
+boolean Export_STUDY_info_prob = false;
 
 int STUDY_Pallet_SORT_CLR = -1;
 int STUDY_Pallet_SORT_DIR = -1;
@@ -1767,10 +1767,10 @@ int Camera_Variation = 0; // 1;
 
 
 
-int STUDY_DisplayRaws = 0;
-int STUDY_DisplaySorted = 1;
-int STUDY_DisplayNormals = 1;
-int STUDY_DisplayProbs = 0;
+boolean STUDY_DisplayRaws = false;
+boolean STUDY_DisplaySorted = true;
+boolean STUDY_DisplayNormals = true;
+boolean STUDY_DisplayProbs = false;
 
 int STUDY_SumInterval = 2;
 float STUDY_LevelPix = 8;
@@ -4360,9 +4360,9 @@ void SOLARCHVISION_draw_STUDY () {
     if ((STUDY_record_JPG) || (STUDY_record_AUTO == false)) STUDY_record_JPG = false;
   }
 
-  Export_STUDY_info_node = 0;
-  Export_STUDY_info_norm = 0;
-  Export_STUDY_info_prob = 0;
+  Export_STUDY_info_node = false;
+  Export_STUDY_info_norm = false;
+  Export_STUDY_info_prob = false;
 
   cursor(ARROW);
 } 
@@ -4462,31 +4462,31 @@ void SOLARCHVISION_Plot_Setup () {
 
     CurrentDataSource = dataID_ENSEMBLE_FORECAST; 
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1;
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0; 
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1;
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true;
 
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0; 
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false; 
     SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     CurrentDataSource = pre_CurrentDataSource;
@@ -4631,16 +4631,16 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 7) {
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1; 
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true; 
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0;
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_PlotImpacts = -2;
@@ -4655,16 +4655,16 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 8) {    
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1;
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0; 
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_PlotImpacts = 3;
@@ -4677,16 +4677,16 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 9) {
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1;
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0; 
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_PlotImpacts = 2;
@@ -4698,16 +4698,16 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 10) {
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1;
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0;
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_PlotImpacts = 4;
@@ -4719,16 +4719,16 @@ void SOLARCHVISION_Plot_Setup () {
 
   if (STUDY_Setup == 11) {
 
-    STUDY_DisplaySorted = 0;
-    STUDY_DisplayNormals = 0;
-    STUDY_DisplayRaws = 1;
-    STUDY_DisplayProbs = 1;
+    STUDY_DisplaySorted = false;
+    STUDY_DisplayNormals = false;
+    STUDY_DisplayRaws = true;
+    STUDY_DisplayProbs = true;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
-    STUDY_DisplaySorted = 1;
-    STUDY_DisplayNormals = 1;
-    STUDY_DisplayRaws = 0;
-    STUDY_DisplayProbs = 0;
+    STUDY_DisplaySorted = true;
+    STUDY_DisplayNormals = true;
+    STUDY_DisplayRaws = false;
+    STUDY_DisplayProbs = false;
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_CurrentLayer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_PlotImpacts = 5;
@@ -4741,10 +4741,10 @@ void SOLARCHVISION_Plot_Setup () {
   if (STUDY_Setup == 12) {
 
     if (SOLARCHVISION_automated != 0) {
-      STUDY_DisplaySorted = 0;
-      STUDY_DisplayNormals = 1;
-      STUDY_DisplayRaws = 0;
-      STUDY_DisplayProbs = 1;
+      STUDY_DisplaySorted = false;
+      STUDY_DisplayNormals = true;
+      STUDY_DisplayRaws = false;
+      STUDY_DisplayProbs = true;
     }
 
     STUDY_CurrentLayer = LAYER_windspd; 
@@ -4770,10 +4770,10 @@ void SOLARCHVISION_Plot_Setup () {
   if (STUDY_Setup == 13) {
 
     if (SOLARCHVISION_automated != 0) {
-      STUDY_DisplaySorted = 1;
-      STUDY_DisplayNormals = 1;
-      STUDY_DisplayRaws = 0;
-      STUDY_DisplayProbs = 0;
+      STUDY_DisplaySorted = true;
+      STUDY_DisplayNormals = true;
+      STUDY_DisplayRaws = false;
+      STUDY_DisplayProbs = false;
     }
 
     STUDY_CurrentLayer = STUDY_CurrentLayer = LAYER_dirnorrad; 
@@ -6960,13 +6960,13 @@ void SOLARCHVISION_draw_dataProbs (int i, int j, float[] _valuesSUM, float[] _va
           }   
           STUDY_Diagrams.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (STUDY_SumInterval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, -((min_v + n) * STUDY_Pix) - 0.05 * txt_max_height);
 
-          if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
+          if ((Export_STUDY_info_prob) && (STUDY_DisplayProbs)) {
             FILE_outputProbs[(j - STUDY_j_Start)].print(nfs((min_v + n) * STUDY_Pix / abs(sy_Plot) - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
           }
         }
       }  
 
-      if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
+      if ((Export_STUDY_info_prob) && (STUDY_DisplayProbs)) {
         FILE_outputProbs[(j - STUDY_j_Start)].println("");
       }
     }
@@ -7248,12 +7248,12 @@ void SOLARCHVISION_draw_dataNormals (int i, int j, float[] _valuesA, float[] _va
       STUDY_Diagrams.line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, (j + ((i + 0.5 + TIME_Interval) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot);
     } 
 
-    if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
+    if ((Export_STUDY_info_norm) && (STUDY_DisplayNormals)) {
       if (is_undefined_FLOAT(NormalsA[l]) == false) FILE_outputNorms[(j - STUDY_j_Start)].print(nfs(NormalsA[l] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
       else FILE_outputNorms[(j - STUDY_j_Start)].print("[undefined]\t");
     }
   }
-  if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) FILE_outputNorms[(j - STUDY_j_Start)].println();
+  if ((Export_STUDY_info_norm) && (STUDY_DisplayNormals)) FILE_outputNorms[(j - STUDY_j_Start)].println();
 }  
 
 
@@ -10240,12 +10240,12 @@ void STUDY_keyPressed (KeyEvent e) {
         break;
 
       case 'V' :
-        STUDY_DisplayRaws = int((STUDY_DisplayRaws + 1) % 2); 
+        STUDY_DisplayRaws = !STUDY_DisplayRaws; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
       case 'v' :
-        STUDY_DisplayRaws = int((STUDY_DisplayRaws + 1) % 2); 
+        STUDY_DisplayRaws = !STUDY_DisplayRaws; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
@@ -10283,34 +10283,34 @@ void STUDY_keyPressed (KeyEvent e) {
         break;  
 
       case 'm' :
-        STUDY_DisplaySorted = int((STUDY_DisplaySorted + 1) % 2); 
+        STUDY_DisplaySorted = !STUDY_DisplaySorted; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
       case 'M' :
-        STUDY_DisplaySorted = int((STUDY_DisplaySorted + 1) % 2); 
+        STUDY_DisplaySorted = !STUDY_DisplaySorted; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
 
       case 'n' :
-        STUDY_DisplayNormals = int((STUDY_DisplayNormals + 1) % 2); 
+        STUDY_DisplayNormals = !STUDY_DisplayNormals; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
       case 'N' :
-        STUDY_DisplayNormals = int((STUDY_DisplayNormals + 1) % 2); 
+        STUDY_DisplayNormals = !STUDY_DisplayNormals; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
 
       case 'b' :
-        STUDY_DisplayProbs = int((STUDY_DisplayProbs + 1) % 2); 
+        STUDY_DisplayProbs = !STUDY_DisplayProbs; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
       case 'B' :
-        STUDY_DisplayProbs = int((STUDY_DisplayProbs + 1) % 2); 
+        STUDY_DisplayProbs = !STUDY_DisplayProbs; 
         STUDY_Update = true; 
         ROLLOUT_Update = true; 
         break;
@@ -37182,10 +37182,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_CurrentLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Layer", STUDY_CurrentLayer, 0, (num_Layers - 1), 1), 1));
       STUDY_V_scale[STUDY_CurrentLayer] = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "V_scale[" + nf(STUDY_CurrentLayer, 2) + "]", STUDY_V_scale[STUDY_CurrentLayer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
 
-      STUDY_DisplayRaws = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw data", STUDY_DisplayRaws, 0, 1, 1), 1));
-      STUDY_DisplaySorted = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw sorted", STUDY_DisplaySorted, 0, 1, 1), 1));
-      STUDY_DisplayNormals = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw statistics", STUDY_DisplayNormals, 0, 1, 1), 1));
-      STUDY_DisplayProbs = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw probabilities", STUDY_DisplayProbs, 0, 1, 1), 1));
+      //STUDY_DisplayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw data", STUDY_DisplayRaws, 0, 1, 1), 1));
+      //STUDY_DisplaySorted = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw sorted", STUDY_DisplaySorted, 0, 1, 1), 1));
+      //STUDY_DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw statistics", STUDY_DisplayNormals, 0, 1, 1), 1));
+      //STUDY_DisplayProbs = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Draw probabilities", STUDY_DisplayProbs, 0, 1, 1), 1));
       STUDY_SumInterval = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Probabilities interval", STUDY_SumInterval, 1, 24, 1), 1));
       STUDY_LevelPix = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Probabilities range", STUDY_LevelPix, 2, 32, -2), 1));
     }
@@ -37310,9 +37310,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (SOLARCHVISION_ROLLOUT_child == 1) { // Data
 
-      Export_STUDY_info_node = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII data", Export_STUDY_info_node, 0, 1, 1), 1));
-      Export_STUDY_info_norm = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
-      Export_STUDY_info_prob = int(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
+      //Export_STUDY_info_node = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII data", Export_STUDY_info_node, 0, 1, 1), 1));
+      //Export_STUDY_info_norm = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
+      //Export_STUDY_info_prob = boolean(roundTo(SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 1, 0, 0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
 
 
       Export_Scale = SOLARCHVISION_Spinner(STUDY_X_control, STUDY_Y_control, 0, 0, 0, "Export_Scale", Export_Scale, .001, 1000, -0.1);
@@ -49002,9 +49002,9 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("STUDY_TrendJoinHours", STUDY_TrendJoinHours);
   newChild1.setInt("STUDY_TrendJoinType", STUDY_TrendJoinType);
   newChild1.setInt("TIME_Interval", TIME_Interval);
-  newChild1.setInt("Export_STUDY_info_node", Export_STUDY_info_node);
-  newChild1.setInt("Export_STUDY_info_norm", Export_STUDY_info_norm);
-  newChild1.setInt("Export_STUDY_info_prob", Export_STUDY_info_prob);
+  //newChild1.setBoolean("Export_STUDY_info_node", Export_STUDY_info_node);
+  //newChild1.setBoolean("Export_STUDY_info_norm", Export_STUDY_info_norm);
+  //newChild1.setBoolean("Export_STUDY_info_prob", Export_STUDY_info_prob);
   newChild1.setInt("STUDY_Pallet_SORT_CLR", STUDY_Pallet_SORT_CLR);
   newChild1.setInt("STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR);
   newChild1.setFloat("STUDY_Pallet_SORT_MLT", STUDY_Pallet_SORT_MLT);
@@ -49091,11 +49091,11 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   //newChild1.setBoolean("MODEL3D_DisplayEdges", MODEL3D_DisplayEdges);
   //newChild1.setBoolean("MODEL3D_DisplayNormals", MODEL3D_DisplayNormals);
   //newChild1.setBoolean("Display_WindFlow", Display_WindFlow);
-  newChild1.setInt("Camera_Variation", Camera_Variation);
-  newChild1.setInt("STUDY_DisplayRaws", STUDY_DisplayRaws);
-  newChild1.setInt("STUDY_DisplaySorted", STUDY_DisplaySorted);
-  newChild1.setInt("STUDY_DisplayNormals", STUDY_DisplayNormals);
-  newChild1.setInt("STUDY_DisplayProbs", STUDY_DisplayProbs);
+  //newChild1.setInt("Camera_Variation", Camera_Variation);
+  //newChild1.setBoolean("STUDY_DisplayRaws", STUDY_DisplayRaws);
+  //newChild1.setBoolean("STUDY_DisplaySorted", STUDY_DisplaySorted);
+  //newChild1.setBoolean("STUDY_DisplayNormals", STUDY_DisplayNormals);
+  //newChild1.setBoolean("STUDY_DisplayProbs", STUDY_DisplayProbs);
   newChild1.setInt("STUDY_SumInterval", STUDY_SumInterval);
   newChild1.setFloat("STUDY_LevelPix", STUDY_LevelPix);
   newChild1.setFloat("STUDY_Pix", STUDY_Pix);
@@ -50236,9 +50236,9 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY_TrendJoinHours = children0[L].getInt("STUDY_TrendJoinHours");
       STUDY_TrendJoinType = children0[L].getInt("STUDY_TrendJoinType");
       TIME_Interval = children0[L].getInt("TIME_Interval");
-      Export_STUDY_info_node = children0[L].getInt("Export_STUDY_info_node");
-      Export_STUDY_info_norm = children0[L].getInt("Export_STUDY_info_norm");
-      Export_STUDY_info_prob = children0[L].getInt("Export_STUDY_info_prob");
+      //Export_STUDY_info_node = children0[L].getBoolean("Export_STUDY_info_node");
+      //Export_STUDY_info_norm = children0[L].getBoolean("Export_STUDY_info_norm");
+      //Export_STUDY_info_prob = children0[L].getBoolean("Export_STUDY_info_prob");
       STUDY_Pallet_SORT_CLR = children0[L].getInt("STUDY_Pallet_SORT_CLR");
       STUDY_Pallet_SORT_DIR = children0[L].getInt("STUDY_Pallet_SORT_DIR");
       STUDY_Pallet_SORT_MLT = children0[L].getFloat("STUDY_Pallet_SORT_MLT");
@@ -50326,10 +50326,10 @@ void SOLARCHVISION_load_project (String myFile) {
       //MODEL3D_DisplayNormals = children0[L].getBoolean("MODEL3D_DisplayNormals");
       //Display_WindFlow = children0[L].getBoolean("Display_WindFlow");
       Camera_Variation = children0[L].getInt("Camera_Variation");
-      STUDY_DisplayRaws = children0[L].getInt("STUDY_DisplayRaws");
-      STUDY_DisplaySorted = children0[L].getInt("STUDY_DisplaySorted");
-      STUDY_DisplayNormals = children0[L].getInt("STUDY_DisplayNormals");
-      STUDY_DisplayProbs = children0[L].getInt("STUDY_DisplayProbs");
+      //STUDY_DisplayRaws = children0[L].getBoolean("STUDY_DisplayRaws");
+      //STUDY_DisplaySorted = children0[L].getBoolean("STUDY_DisplaySorted");
+      //STUDY_DisplayNormals = children0[L].getBoolean("STUDY_DisplayNormals");
+      //STUDY_DisplayProbs = children0[L].getBoolean("STUDY_DisplayProbs");
       STUDY_SumInterval = children0[L].getInt("STUDY_SumInterval");
       STUDY_LevelPix = children0[L].getFloat("STUDY_LevelPix");
       STUDY_Pix = children0[L].getFloat("STUDY_Pix");
@@ -54626,7 +54626,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
     if (STUDY_JoinDays > 1) {
       _FilenamesAdd = ("±" + int(STUDY_JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
     }
-    if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
+    if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) {
       FILE_outputRaw[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getName() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
       FILE_outputRaw[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getName() + "\tHourly data");
 
@@ -54636,7 +54636,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       }
       FILE_outputRaw[(j - STUDY_j_Start)].println("");
     }
-    if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
+    if ((Export_STUDY_info_norm) && (STUDY_DisplayNormals)) {
       FILE_outputNorms[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getName() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
       FILE_outputNorms[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getName() + "\tHourly normal");
       FILE_outputNorms[(j - STUDY_j_Start)].print("Hour\t");
@@ -54645,7 +54645,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
       }
       FILE_outputNorms[(j - STUDY_j_Start)].println("");
     }
-    if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
+    if ((Export_STUDY_info_prob) && (STUDY_DisplayProbs)) {
       FILE_outputProbs[(j - STUDY_j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getName() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "_" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "_" + CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
       FILE_outputProbs[(j - STUDY_j_Start)].println(CalendarDay[int((365 + j * STUDY_PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + STUDY_skyScenario_FileTXT[STUDY_skyScenario] + "\t" + LAYERS_Title[STUDY_CurrentLayer][Language_EN] + "(" + LAYERS_Unit[STUDY_CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getName() + "\tHourly probabilities");
 
@@ -54654,9 +54654,9 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) FILE_outputNorms[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
-      if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) FILE_outputProbs[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) FILE_outputRaw[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_norm) && (STUDY_DisplayNormals)) FILE_outputNorms[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
+      if ((Export_STUDY_info_prob) && (STUDY_DisplayProbs)) FILE_outputProbs[(j - STUDY_j_Start)].print(nf(i, 2) + "\t");
 
       for (int k = 0; k < count_k; k += 1) {   
         for (int j_ADD = 0; j_ADD < STUDY_JoinDays; j_ADD += 1) {
@@ -54700,7 +54700,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
           if (is_undefined_FLOAT(Pa) == true) {
             _valuesA[(k * STUDY_JoinDays + j_ADD)] = FLOAT_undefined;
 
-            if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
+            if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
           } else {
             int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY_filter, STUDY_skyScenario, now_i, now_j, now_k);
 
@@ -54711,7 +54711,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
               _valuesSUM[(k * STUDY_JoinDays + j_ADD)] += _valuesA[(k * STUDY_JoinDays + j_ADD)];
               _valuesNUM[(k * STUDY_JoinDays + j_ADD)] += 1;
 
-              if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
+              if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) {
                 if (is_undefined_FLOAT(_valuesA[(k * STUDY_JoinDays + j_ADD)]) == false) FILE_outputRaw[(j - STUDY_j_Start)].print(nfs(_valuesA[(k * STUDY_JoinDays + j_ADD)] - STUDY_V_offset[STUDY_CurrentLayer], 5, 5) + "\t"); 
                 else FILE_outputRaw[(j - STUDY_j_Start)].print("[undefined]\t");
               }
@@ -54726,7 +54726,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
                   _valuesB[(k * STUDY_JoinDays + j_ADD)] = Pb;
                   _valuesB[(k * STUDY_JoinDays + j_ADD)] += STUDY_V_offset[STUDY_CurrentLayer];
 
-                  if (STUDY_DisplayRaws == 1) {
+                  if (STUDY_DisplayRaws) {
                     if ((STUDY_CurrentLayer == LAYER_winddir) && (abs(_valuesB[(k * STUDY_JoinDays + j_ADD)] - _valuesA[(k * STUDY_JoinDays + j_ADD)]) > 180)) {
                     } else {                        
                       Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
@@ -54740,14 +54740,14 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
                 }
               }
             } else {
-              if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].print("not_the_case\t");
+              if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) FILE_outputRaw[(j - STUDY_j_Start)].print("not_the_case\t");
             }
           }
         }
       }
       
 
-      if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) FILE_outputRaw[(j - STUDY_j_Start)].println();
+      if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) FILE_outputRaw[(j - STUDY_j_Start)].println();
 
 
       _interval += 1; 
@@ -54765,7 +54765,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
             }
           }
         }        
-        if (STUDY_DisplayProbs == 1) {
+        if (STUDY_DisplayProbs) {
           SOLARCHVISION_draw_dataProbs(i, j, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
         for (int k = 0; k < count_k; k += 1) {
@@ -54776,26 +54776,26 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }      
 
-      if (STUDY_DisplaySorted == 1) {
+      if (STUDY_DisplaySorted) {
         SOLARCHVISION_draw_dataSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
 
-      if (STUDY_DisplayNormals == 1) {
+      if (STUDY_DisplayNormals) {
         SOLARCHVISION_draw_dataNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
       }
     }
     
-    if ((Export_STUDY_info_node == 1) && (STUDY_DisplayRaws == 1)) {
+    if ((Export_STUDY_info_node) && (STUDY_DisplayRaws)) {
       FILE_outputRaw[(j - STUDY_j_Start)].flush(); 
       FILE_outputRaw[(j - STUDY_j_Start)].close();
     }
 
-    if ((Export_STUDY_info_norm == 1) && (STUDY_DisplayNormals == 1)) {
+    if ((Export_STUDY_info_norm) && (STUDY_DisplayNormals)) {
       FILE_outputNorms[(j - STUDY_j_Start)].flush(); 
       FILE_outputNorms[(j - STUDY_j_Start)].close();
     }
 
-    if ((Export_STUDY_info_prob == 1) && (STUDY_DisplayProbs == 1)) {
+    if ((Export_STUDY_info_prob) && (STUDY_DisplayProbs)) {
       FILE_outputProbs[(j - STUDY_j_Start)].flush(); 
       FILE_outputProbs[(j - STUDY_j_Start)].close();
     }
@@ -54803,7 +54803,7 @@ void SOLARCHVISION_PlotHOURLY (float x_Plot, float y_Plot, float z_Plot, float s
 
   }
 
-  if (STUDY_DisplayRaws == 1) {
+  if (STUDY_DisplayRaws) {
     SOLARCHVISION_draw_dataRaws(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
   }    
 
