@@ -1885,6 +1885,179 @@ class solarchvision_STUDY {
 }
 
 
+
+float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
+
+  float new_value = v;
+
+  if (new_value < min_v) new_value = max_v; 
+  if (new_value > max_v) new_value = min_v;    
+
+  float cx, cy, cr;
+  float w1, w2, h, o, t_o; 
+
+  //w1 = 32.5 * ROLLOUT.S_View;
+  //w2 = 142.5 * ROLLOUT.S_View;
+
+  w1 = 100 * ROLLOUT.S_View;
+  w2 = 200 * ROLLOUT.S_View;
+
+  h = 16 * ROLLOUT.S_View;
+  o = 2 * ROLLOUT.S_View;
+  t_o = h * ROLLOUT.S_View / 8.0;
+
+  STUDY.Y_control += 25 * ROLLOUT.S_View; //(h + 2 * o) * 1.25;
+
+  strokeWeight(0); 
+  stroke(0); 
+  fill(0);
+  rect(x + o, y - (h / 2) - o, 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
+  rect(x + o, y - (h / 2) - o + 0.5 * (h + 2 * o), 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
+  stroke(255); 
+  fill(255);
+  cx = x + o + 0.25 * (h + 2 * o);
+  cy = y - (h / 2) - o + 0.25 * (h + 2 * o);
+  cr = 0.25 * (h + 2 * o);
+  triangle(cx + cr * cos_ang(270), cy + 0.75 * cr * sin_ang(270), cx + 0.75 * cr * cos_ang(30), cy + 0.75 * cr * sin_ang(30), cx + 0.75 * cr * cos_ang(150), cy + 0.75 * cr * sin_ang(150));
+
+  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
+    if (mouseButton == LEFT) {
+
+      if (stp_v < 0) {
+        new_value *= abs(stp_v);
+      } else { 
+        new_value += abs(stp_v);
+      }
+    } else if (mouseButton == RIGHT) {
+
+      new_value = max_v;
+    }
+  }
+
+  cy += 2 * cr;
+  triangle(cx + cr * cos_ang(90), cy + 0.75 * cr * sin_ang(90), cx + 0.75 * cr * cos_ang(210), cy + 0.75 * cr * sin_ang(210), cx + 0.75 * cr * cos_ang(330), cy + 0.75 * cr * sin_ang(330));
+
+  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
+
+    if (mouseButton == LEFT) {
+
+      if (stp_v < 0) {
+        new_value /= abs(stp_v);
+      } else { 
+        new_value -= abs(stp_v);
+      }
+    } else if (mouseButton == RIGHT) {
+
+      new_value = min_v;
+    }
+  }
+
+  if (new_value < min_v) new_value = max_v; 
+  if (new_value > max_v) new_value = min_v; 
+
+
+
+  strokeWeight(0); 
+  stroke(191); 
+  fill(191);
+  rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
+
+  stroke(255); 
+  fill(255);
+  rect(x - w1, y - (h / 2), w1, h);
+
+  float q = 0;
+
+  if (max_v - min_v > 0.001) {
+    q = (new_value - min_v) / (max_v - min_v);
+  }
+
+  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2)) == 1) {
+
+    q = 1;
+
+    if (max_v - min_v > 0.001) {
+      q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
+    }
+
+    new_value = min_v + q * (max_v - min_v);
+
+    if (new_value < min_v) new_value = max_v; 
+    if (new_value > max_v) new_value = min_v;
+
+    ROLLOUT.Update = true;
+  }
+
+  strokeWeight(0); 
+  stroke(191, 255, 191); 
+  fill(191, 255, 191);
+  rect(x - w1, y - (h / 2), q * w1, h);          
+
+
+  strokeWeight(2); 
+  stroke(0); 
+  noFill();
+  rect(x - w1, y - (h / 2), w1, h);    
+
+  strokeWeight(0);
+  stroke(0); 
+  fill(0);
+  textSize(1.0 * h);
+  textAlign(RIGHT, CENTER);
+  if ((new_value == int(new_value)) || (new_value >= 100)) {
+    text(String.valueOf(int(new_value)), x - t_o, y - t_o);
+  } else {
+    text(nf(new_value, 0, 0), x - t_o, y - t_o);
+  }
+
+
+  strokeWeight(0);
+  stroke(0); 
+  fill(0);
+  //textSize(1.0 * h);
+  textSize(0.85 * h);
+  //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_o, y - t_o);
+  textAlign(LEFT, CENTER); 
+  text(caption + ":", x - w1 - w2 + t_o, y - t_o);
+
+  if (new_value != v) {
+    if (update1 != 0) STUDY.Update = true;
+    if (update2 != 0) WIN3D.Update = true;
+    if (update3 != 0) WORLD.Update = true;
+  }
+
+  return new_value;
+}
+
+
+
+String[][] allRollouts = {
+  {
+    "Location & Data", "Point", "Weather", "Space"
+  }
+  , 
+  {
+    "Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Environment", "Viewport", "Simulation"
+  }
+  , 
+  {
+    "Period & Scenarios", "Time", "Ranges", "Filters"
+  }
+  , 
+  {
+    "Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"
+  }
+  , 
+  {
+    "Post-Processing", "Interpolation", "Developed", "Impacts"
+  }
+  , 
+  {
+    "Export Products", "Data", "Media"
+  }
+};
+
+
 class solarchvision_ROLLOUT {
   
   private final static String CLASS_STAMP = "ROLLOUT";
@@ -1901,6 +2074,599 @@ class solarchvision_ROLLOUT {
   
   int parent = 0; // 0: Location, 1: Geometry, 2: Time, etc.
   int child = 1; // number of the category inside e.g. 1, 2, ...
+
+
+  void draw () {
+  
+    stroke(255); 
+    fill(255);
+    strokeWeight(0);
+    rect(this.cX, this.cY, this.dX, this.dY);
+  
+  
+    float h = 20 * this.S_View;
+  
+    STUDY.X_control = this.cX;
+    STUDY.Y_control = this.cY;
+  
+    STUDY.X_control += 307.5 * this.S_View;
+    STUDY.Y_control += 7.5 * this.S_View;
+  
+    if (this.parent >= allRollouts.length) {
+      this.parent = allRollouts.length - 1;
+    }
+  
+    if (this.child >= allRollouts[this.parent].length) {
+      this.child = allRollouts[this.parent].length - 1;
+    }  
+  
+    if (this.parent < allRollouts.length) {
+  
+      for (int i = 0; i < allRollouts.length; i++) {
+  
+        float cx = this.cX + (150 * (i % 2) + 5) * this.S_View;
+        float cy = STUDY.Y_control;
+        float cr = 6.75 * this.S_View;      
+  
+        textAlign(LEFT, CENTER);    
+  
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.S_View, cy + cr) == 1) {
+          this.parent = i;
+          this.child = 1; // <<<<<
+  
+          this.Update = true;
+        }
+  
+        if (i == this.parent) {
+          strokeWeight(2); 
+          stroke(63); 
+          fill(191);
+          rect(cx - 2.5 * this.S_View, cy - 5 * this.S_View, 150 * this.S_View, 2 * 7.5 * this.S_View);
+          strokeWeight(0); 
+  
+          stroke(0); 
+          fill(0);
+          textSize(15 * this.S_View);
+        } else {
+          stroke(127); 
+          fill(127);
+          textSize(15 * this.S_View);
+        }
+  
+        text(nf(i + 1, 0) + ":" + allRollouts[i][0], cx, cy);
+  
+        if (i % 2 == 1) STUDY.Y_control += 15 * this.S_View;
+      }
+  
+      strokeWeight(2); 
+      stroke(63); 
+      fill(63);
+      rect(this.cX, STUDY.Y_control, this.dX, 17.5 * ceil((allRollouts[this.parent].length - 1) / 3.0) * this.S_View);
+      strokeWeight(0);    
+  
+      STUDY.Y_control += 5 * this.S_View;
+  
+      for (int i = 1; i < allRollouts[this.parent].length; i++) {
+  
+        float cx = this.cX + (100 * ((i - 1) % 3) + 10) * this.S_View;
+        float cy = STUDY.Y_control;
+        float cr = 6.75 * this.S_View;        
+  
+        textAlign(LEFT, CENTER);     
+  
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.S_View, cy + cr) == 1) {
+          this.child = i;
+  
+          this.Update = true;
+        }      
+  
+        if (i == this.child) {
+          stroke(255, 127, 0); 
+          fill(255, 127, 0);
+          textSize(15 * this.S_View);
+        } else {
+          stroke(255); 
+          fill(255);
+          textSize(12.5 * this.S_View);
+        }
+  
+        text("[" + nf(i, 0) + "]" + allRollouts[this.parent][i], cx, cy);
+  
+        if (i % 3 == 0) STUDY.Y_control += 15 * this.S_View;
+      }
+  
+      if (allRollouts[this.parent].length % 3 != 1) STUDY.Y_control += 15 * this.S_View;
+  
+      STUDY.Y_control += 15 * this.S_View;
+    }
+  
+  
+  
+  
+    if (this.parent == 0) { // Location & data
+  
+  
+      if (this.child == 1) { // Point
+  
+        //WORLD.AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.AutoView, 0, 1, 1), 1));
+        //WORLD.VIEW_id = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.Viewports_num - 1, 1), 1));
+  
+        LocationLAT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
+        LocationLON = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
+        //LocationELE = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, LocationELE_step);
+  
+        LocationLAT_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
+        LocationLON_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
+        //LocationELE_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
+  
+      }
+  
+      if (this.child == 2) { // Weather
+  
+        Display_TMYEPW_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_TMYEPW_Points", Display_TMYEPW_Points, 0, 2, 1), 1));
+        //Display_TMYEPW_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_TMYEPW_Nearest", Display_TMYEPW_Nearest, 0, 1, 1), 1));
+  
+        Display_CWEEDS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CWEEDS_Points", Display_CWEEDS_Points, 0, 2, 1), 1));
+        //Display_CWEEDS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CWEEDS_Nearest", Display_CWEEDS_Nearest, 0, 1, 1), 1));
+  
+        Display_CLMREC_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CLMREC_Points", Display_CLMREC_Points, 0, 2, 1), 1));
+        //Display_CLMREC_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CLMREC_Nearest", Display_CLMREC_Nearest, 0, 1, 1), 1));
+  
+        Display_SWOB_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_SWOB_Points", Display_SWOB_Points, 0, 2, 1), 1));
+        //Display_SWOB_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_SWOB_Nearest", Display_SWOB_Nearest, 0, 1, 1), 1));
+  
+        Display_NAEFS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Points", Display_NAEFS_Points, 0, 2, 1), 1));
+        //Display_NAEFS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
+  
+        
+        //Load_ENSEMBLE_FORECAST = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_ENSEMBLE_FORECAST", Load_ENSEMBLE_FORECAST, 0, 1, 1), 1));
+        //Load_ENSEMBLE_OBSERVED = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_ENSEMBLE_OBSERVED", Load_ENSEMBLE_OBSERVED, 0, 1, 1), 1));
+        //Load_CLIMATE_CLMREC = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC, 0, 1, 1), 1));
+        //Load_CLIMATE_CWEEDS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS, 0, 1, 1), 1));
+        //Load_CLIMATE_TMYEPW = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW, 0, 1, 1), 1));
+  
+        GRIB2_Hour_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
+        GRIB2_Hour_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
+        GRIB2_Hour_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
+  
+        GRIB2_Layer_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, num_Layers, 1), 1));
+        GRIB2_Layer_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, num_Layers, 1), 1));
+        GRIB2_Layer_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, num_Layers, 1), 1));
+      }
+  
+      if (this.child == 3) { // Space
+  
+        //Display_TROPO_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Surface", Display_TROPO_Surface, 0, 1, 1), 1));
+        //Display_TROPO_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Texture", Display_TROPO_Texture, 0, 1, 1), 1));      
+  
+        //Display_EARTH_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_EARTH_Surface", Display_EARTH_Surface, 0, 1, 1), 1));
+        //Display_EARTH_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_EARTH_Texture", Display_EARTH_Texture, 0, 1, 1), 1));
+  
+        //Display_MOON_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_MOON_Surface", Display_MOON_Surface, 0, 1, 1), 1));
+        //Display_MOON_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_MOON_Texture", Display_MOON_Texture, 0, 1, 1), 1));
+  
+        //Display_STAR_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_STAR_Surface", Display_STAR_Surface, 0, 1, 1), 1));
+        //Display_STAR_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_STAR_Texture", Display_STAR_Texture, 0, 1, 1), 1));      
+  
+        Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
+      }
+    } else if (this.parent == 1) { // Geometries & Space
+  
+      if (this.child == 1) { // General
+  
+        CreateInput_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_MeshOrSolid", CreateInput_MeshOrSolid, 0, 1, 1), 1));
+  
+        MODEL3D_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_Tessellation", MODEL3D_Tessellation, 0, 4, 1), 1));
+  
+        LAND_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Tessellation", LAND_Tessellation, 0, 4, 1), 1));
+  
+        SKY_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Tessellation", SKY_Tessellation, 0, 4, 1), 1));   
+        SKY_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_scale", SKY_scale, 0.0000001, 1000000, -2);
+  
+        BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
+  
+        OBJECTS_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
+  
+        Load_DefaultModels = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, MAX_Default_Models_Number, 1), 1));
+      }
+  
+  
+  
+      if (this.child == 2) { // Create
+  
+        addToLastGroup3D = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup3D", addToLastGroup3D, 0, 1, 1), 1));
+  
+        DEFAULT_CreateMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateMaterial", DEFAULT_CreateMaterial, -1, 8, 1), 1));
+        DEFAULT_CreateTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateTessellation", DEFAULT_CreateTessellation, 0, 6, 1), 1));
+        DEFAULT_CreateLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateLayer", DEFAULT_CreateLayer, 0, 16, 1), 1));
+        DEFAULT_CreateVisibility = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateVisibility", DEFAULT_CreateVisibility, -1, 1, 1), 1));
+        DEFAULT_CreateWeight = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "DEFAULT_CreateWeight" , DEFAULT_CreateWeight, -20, 20, 1), 1));
+        DEFAULT_CreateClose = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "DEFAULT_CreateClose" , DEFAULT_CreateClose, 0, 1, 1), 1));
+  
+        DEFAULT_CreatePivotType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreatePivotType", DEFAULT_CreatePivotType, 0, 4, 1), 1));
+  
+        CreateInput_Orientation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Orientation", CreateInput_Orientation, 0, 360, 15);
+  
+        CreateInput_Length = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Length", CreateInput_Length, -50, 150, -2), 0.5); 
+        CreateInput_Width = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Width", CreateInput_Width, -50, 150, -2), 0.5); 
+        CreateInput_Height = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Height", CreateInput_Height, -50, 150, -2), 0.5);     
+  
+        CreateInput_Volume = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Volume", CreateInput_Volume, 0, 25000, 1000);
+        
+        CreateInput_Snap = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Snap", CreateInput_Snap, 0, 1, 1), 1));
+      }    
+  
+      if (this.child == 3) { // Modify
+  
+        ModifyInput_OpenningDepth = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OpenningDepth", ModifyInput_OpenningDepth, -10, 10, 0.1);
+        ModifyInput_OpenningArea = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OpenningArea", ModifyInput_OpenningArea, 0, 1, 0.05);
+        ModifyInput_OpenningDeviation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OpenningDeviation", ModifyInput_OpenningDeviation, 0, 1, 0.05);
+  
+        ModifyInput_TessellateRows = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_TessellateRows", ModifyInput_TessellateRows, 1, 100, 1), 1));
+        ModifyInput_TessellateColumns = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_TessellateColumns", ModifyInput_TessellateColumns, 1, 100, 1), 1));
+  
+        ModifyInput_OffsetAmount = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OffsetAmount", ModifyInput_OffsetAmount, 0, 25, 0.001);
+  
+        ModifyInput_WeldTreshold = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_WeldTreshold", ModifyInput_WeldTreshold, 0, 10, 0.001);      
+  
+        softSelection_Power = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "softSelection_Power", softSelection_Power, 0.125, 8, -2);
+        softSelection_Radius = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "softSelection_Radius", softSelection_Radius, 0.01, 100, -2);
+  
+        selected_posVector = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_posVector", selected_posVector, 0, 3, 1), 1));
+        selected_rotVector =  int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_rotVector", selected_rotVector, 0, 2, 1), 1));
+        selected_scaleVector =  int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_scaleVector", selected_scaleVector, 0, 3, 1), 1));
+  
+        selected_posValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_posValue", selected_posValue, -50, 50, 1), 1));
+        selected_rotValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_rotValue", selected_rotValue, -180, 180, 5), 5)); 
+        selected_scaleValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_scaleValue", selected_scaleValue, -8, 8, 0.5), 0.5)); 
+  
+        selection_alignX = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selection_alignX", selection_alignX, -1, 1, 1), 1));
+        selection_alignY = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selection_alignY", selection_alignY, -1, 1, 1), 1));
+        selection_alignZ = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selection_alignZ", selection_alignZ, -1, 1, 1), 1));
+      }
+  
+      if (this.child == 4) { // Solid
+  
+        //CreateInput_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "CreateInput_powRnd" , CreateInput_powRnd, 0, 1, 1), 1));    
+        CreateInput_powAll = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powAll", CreateInput_powAll, 0.5, CubePower, -2);
+        CreateInput_powX = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powX", CreateInput_powX, 0.5, CubePower, -2); 
+        CreateInput_powY = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powY", CreateInput_powY, 0.5, CubePower, -2); 
+        CreateInput_powZ = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powZ", CreateInput_powZ, 0.5, CubePower, -2);
+      }  
+  
+      if (this.child == 5) { // Surface
+  
+        CreateInput_SphereDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_SphereDegree", CreateInput_SphereDegree, 0, 5, 1), 1));      
+  
+        CreateInput_CylinderDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_CylinderDegree", CreateInput_CylinderDegree, 3, 36, 1), 1));    
+  
+        CreateInput_PolyDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_PolyDegree", CreateInput_PolyDegree, 3, 36, 1), 1));
+  
+        CreateParametric_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateParametric_Type", CreateParametric_Type, 0, 7, 1), 1));
+        CreatePerson_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePerson_Type", CreatePerson_Type, 0, Object2D_PEOPLE_Files_Num, 1), 1));
+        CreatePlant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePlant_Type", CreatePlant_Type, 0, Object2D_TREES_Files_Num, 1), 1));
+      }
+  
+      if (this.child == 6) { // Living
+  
+        CreateFractal_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_Type", CreateFractal_Type, 0, 0, 1), 1));
+        CreateFractal_DegreeMin = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_DegreeMin", CreateFractal_DegreeMin, 1, 9, 1), 1));
+        CreateFractal_DegreeMax = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_DegreeMax", CreateFractal_DegreeMax, 1, 9, 1), 1));
+        CreateFractal_Seed = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_Seed", CreateFractal_Seed, -1, 32767, 1), 1));
+        CreateFractal_TrunkSize = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_TrunkSize", CreateFractal_TrunkSize, 0, 10, 0.1), 0.1);
+        CreateFractal_LeafSize = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_LeafSize", CreateFractal_LeafSize, 0, 10, 0.1), 0.1);
+      }    
+  
+      if (this.child == 7) { // Environment
+  
+        //Load_LAND_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_LAND_Textures", Load_LAND_Textures, 0, 1, 1), 1));
+        //Load_LAND_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_LAND_Mesh", Load_LAND_Mesh, 0, 1, 1), 1));
+        //LAND_Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Surface_SkipStart", LAND_Surface_SkipStart, 0, LAND_n_I - 1, 1), 1));
+        //LAND_Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Surface_SkipEnd", LAND_Surface_SkipEnd, 0, LAND_n_I - 1, 1), 1));
+        //Display_LAND_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Surface", Display_LAND_Surface, 0, 1, 1), 1));
+        //Display_LAND_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Textures", Display_LAND_Textures, 0, 1, 1), 1));
+        //Display_LAND_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Points", Display_LAND_Points, 0, 1, 1), 1));     
+        //Display_LAND_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Depth", Display_LAND_Depth, 0, 1, 1), 1));
+  
+        //Display_Model2Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model2Ds", Display_Model2Ds, 0, 1, 1), 1));
+        //Display_Fractals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Fractals", Display_Fractals, 0, 1, 1), 1));
+        //Display_Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Leaves", Display_Leaves, 0, 1, 1), 1));
+        //Display_Model3Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model3Ds", Display_Model3Ds, 0, 1, 1), 1));
+  
+        //Display_Solids = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Solids", Display_Solids, 0, 1, 1), 1));
+  
+        //Display_Sections = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Sections", Display_Sections, 0, 1, 1), 1));
+  
+  
+  
+  
+        //Display_WindRoseImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_WindRoseImage", Display_WindRoseImage, 0, 1, 1), 1));
+  
+        WindRose_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_scale", WindRose_scale, 50, 3200, -2);
+        WindRose_RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_resolution", WindRose_RES, 200, 600, 100));
+  
+  
+  
+        //Display_SKY_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SKY_Surface", Display_SKY_Surface, 0, 1, 1), 1));
+  
+        //Display_SUN_Path = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Path", Display_SUN_Path, 0, 1, 1), 1));
+        //Display_SUN_Pattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Pattern", Display_SUN_Pattern, 0, 1, 1), 1));
+      }
+  
+  
+      if (this.child == 8) { // Viewport
+  
+        WIN3D.CurrentCamera = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CurrentCamera", WIN3D.CurrentCamera, 0, allCameras_num, 1), 1));
+  
+        WIN3D.CAM_clipNear = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
+        WIN3D.CAM_clipFar = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
+  
+        //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, Shade_Options_num - 1, 1), 1));
+  
+        //MODEL3D_DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayVertices", MODEL3D_DisplayVertices, 0, 1, 1), 1));
+        //MODEL3D_DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayEdges", MODEL3D_DisplayEdges, 0, 1, 1), 1));
+        //MODEL3D_DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayNormals", MODEL3D_DisplayNormals, 0, 1, 1), 1));
+  
+        //Display_Cameras = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Cameras", Display_Cameras, 0, 1, 1), 1));
+      }    
+  
+  
+      if (this.child == 9) { // Simulation
+  
+        IMPACTS_DisplayDay = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_DisplayDay", IMPACTS_DisplayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
+  
+        //Display_SolarImpactImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SolarImpactImage", Display_SolarImpactImage, 0, 1, 1), 1));
+        //Display_SolidImpactImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SolidImpactImage", Display_SolidImpactImage, 0, 1, 1), 1));
+  
+        SolarImpact_sectionType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolarImpact_sectionType", SolarImpact_sectionType, 0, 3, 1), 1));      
+        SolidImpact_sectionType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_sectionType", SolidImpact_sectionType, 0, 3, 1), 1));
+  
+  
+        SolidImpact_Grade = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Grade", SolidImpact_Grade, 0.0001, 64.0, -2);
+        SolidImpact_Power = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Power", SolidImpact_Power, 0.0001, 64.0, -2);      
+        SolidImpact_Rotation[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Rotation[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_Rotation[SolidImpact_sectionType], -360, 360, -2);
+        SolidImpact_Elevation[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Elevation[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_Elevation[SolidImpact_sectionType], -1000, 1000, -2);
+        SolidImpact_positionStep = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_positionStep", SolidImpact_positionStep, 5, 80, -2);
+  
+        SolidImpact_scale_U[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_scale_U[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_scale_U[SolidImpact_sectionType], 0.125, 3200, -2);
+        SolidImpact_scale_V[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_scale_V[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_scale_V[SolidImpact_sectionType], 0.125, 3200, -2);
+        SolidImpact_offset_U[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_offset_U[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_offset_U[SolidImpact_sectionType], -10000, 10000, -2);
+        SolidImpact_offset_V[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_offset_V[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_offset_V[SolidImpact_sectionType], -10000, 10000, -2);
+  
+  
+        SolidImpact_WindSpeed = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_WindSpeed (m/s)", SolidImpact_WindSpeed, 1, 16, -2); 
+        SolidImpact_WindDirection = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_WindDirection", SolidImpact_WindDirection, 0, 360, 15);
+  
+  
+        Process_subDivisions = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Process_subDivisions", Process_subDivisions, 0, 3, 1), 1));
+  
+        //Display_SolidImpact_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_SolidImpact_Points", Display_SolidImpact_Points, 0, 1, 1), 1));
+        //Display_SolidImpact_Lines = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_SolidImpact_Lines", Display_SolidImpact_Lines, 0, 1, 1), 1));
+  
+        //Display_WindFlow = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_WindFlow", Display_WindFlow, 0, 1, 1), 1));
+      }
+    } else if (this.parent == 2) { // Period & Scenarios
+  
+      if (this.child == 1) { // Time
+  
+        //TIME_Date = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME_Date, 0, 364.5, 0.5);
+        TIME_Date = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME_Date, 0, 364, 1));
+  
+        TIME_Day = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME_Day, 1, 31, 1), 1));
+        TIME_Month = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME_Month, 1, 12, 1), 1));
+        TIME_Year = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME_Year, 1953, 2100, 1), 1));
+  
+        TIME_BeginDay = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME_BeginDay, 0, 364, 1), 1));
+  
+        STUDY.j_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
+  
+        ENSEMBLE_OBSERVED_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
+            
+      }
+  
+      if (this.child == 2) { // Ranges
+        STUDY.i_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
+        STUDY.i_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
+  
+        STUDY.JoinDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.JoinDays", STUDY.JoinDays, 1, 64, -2), 1));
+        
+  //??????
+        SampleYear_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+  //??????
+  
+        SampleMember_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
+        SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
+  
+        SampleStation_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
+        SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
+  
+  
+      }
+  
+      if (this.child == 3) { // Filters
+      
+        STUDY.skyScenario = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
+        STUDY.filter = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
+      }
+    } else if (this.parent == 3) { // Display Options
+  
+      if (this.child == 1) { // 2D-Layers
+  
+        FrameVariation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
+  
+        STUDY.Setup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.Setup, -2, 14, 1), 1));
+  
+        //STUDY.Update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.Update, 0, 1, 1), 1));  
+  
+        STUDY.CurrentLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", STUDY.CurrentLayer, 0, (num_Layers - 1), 1), 1));
+        STUDY.V_scale[STUDY.CurrentLayer] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(STUDY.CurrentLayer, 2) + "]", STUDY.V_scale[STUDY.CurrentLayer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
+  
+        //STUDY.DisplayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.DisplayRaws, 0, 1, 1), 1));
+        //STUDY.DisplaySorted = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.DisplaySorted, 0, 1, 1), 1));
+        //STUDY.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.DisplayNormals, 0, 1, 1), 1));
+        //STUDY.DisplayProbs = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.DisplayProbs, 0, 1, 1), 1));
+        STUDY.SumInterval = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.SumInterval, 1, 24, 1), 1));
+        STUDY.LevelPix = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
+      }
+  
+      if (this.child == 2) { // 2D-Colors
+  
+        //COLOR_STYLE_Current = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
+  
+        STUDY.Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_ACTIVE_CLR", STUDY.Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_ACTIVE_DIR", STUDY.Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        STUDY.Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_ACTIVE_MLT", STUDY.Pallet_ACTIVE_MLT, 0.125, 8, -2);
+  
+        STUDY.Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PASSIVE_CLR", STUDY.Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PASSIVE_DIR", STUDY.Pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        STUDY.Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PASSIVE_MLT", STUDY.Pallet_PASSIVE_MLT, 0.125, 8, -2);       
+  
+        STUDY.Pallet_SORT_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_SORT_CLR", STUDY.Pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.Pallet_SORT_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_SORT_DIR", STUDY.Pallet_SORT_DIR, -2, 2, 2), 1));
+        STUDY.Pallet_SORT_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_SORT_MLT", STUDY.Pallet_SORT_MLT, 0.125, 8, -2);
+  
+        STUDY.Pallet_PROB_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PROB_CLR", STUDY.Pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.Pallet_PROB_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PROB_DIR", STUDY.Pallet_PROB_DIR, -2, 2, 2), 1));
+        STUDY.Pallet_PROB_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PROB_MLT", STUDY.Pallet_PROB_MLT, 0.125, 8, -2);
+  
+        STUDY.O_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
+      }
+  
+      if (this.child == 3) { // 3D-Solar 
+  
+        OBJECTS_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_ACTIVE_CLR", OBJECTS_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        OBJECTS_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT, 0.125, 8, -2);
+  
+        OBJECTS_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        OBJECTS_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.125, 8, -2);
+  
+        SKY_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_CLR", SKY_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SKY_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_DIR", SKY_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        SKY_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_MLT", SKY_Pallet_ACTIVE_MLT, 0.125, 8, -2);
+  
+        SKY_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_CLR", SKY_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SKY_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_DIR", SKY_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        SKY_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_MLT", SKY_Pallet_PASSIVE_MLT, 0.125, 8, -2);
+  
+        SunPath_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_CLR", SunPath_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SunPath_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_DIR", SunPath_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        SunPath_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_MLT", SunPath_Pallet_ACTIVE_MLT, 0.125, 8, -2);
+  
+        SunPath_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_PASSIVE_CLR", SunPath_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SunPath_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_PASSIVE_DIR", SunPath_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        SunPath_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_PASSIVE_MLT", SunPath_Pallet_PASSIVE_MLT, 0.125, 8, -2);
+      }
+  
+  
+  
+  
+      if (this.child == 4) { // 3D-Solid   
+  
+        SOLID_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_CLR", SOLID_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SOLID_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_DIR", SOLID_Pallet_DIR, -2, 2, 2), 1));
+        SOLID_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_MLT", SOLID_Pallet_MLT, 0.0001, 64, -2);      
+  
+        ELEVATION_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        ELEVATION_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
+        ELEVATION_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.001, 0.5, -2);   
+  
+        WindFlow_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_CLR", WindFlow_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        WindFlow_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_DIR", WindFlow_Pallet_DIR, -2, 2, 2), 1));
+        WindFlow_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_MLT", WindFlow_Pallet_MLT, 0.01, 1.0, -2);
+      }      
+  
+  
+      if (this.child == 5) { // Selection
+  
+        //selectedGroup3D_displayPivot = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedGroup3D_displayPivot", selectedGroup3D_displayPivot, 0, 1, 1), 1));
+        //selected_displayReferencePivot = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_displayReferencePivot", selected_displayReferencePivot, 0, 1, 1), 1));
+        //selectedGroup3D_displayBox = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedGroup3D_displayBox", selectedGroup3D_displayBox, 0, 1, 1), 1));
+        //selectedGroup3D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedGroup3D_displayEdges", selectedGroup3D_displayEdges, 0, 1, 1), 1));
+  
+        //selectedFace_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFace_displayEdges", selectedFace_displayEdges, 0, 1, 1), 1));
+        //selectedFace_displayVertexCount = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFace_displayVertexCount", selectedFace_displayVertexCount, 0, 1, 1), 1));
+        //selectedCurve_displayVertexCount = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCurve_displayVertexCount", selectedCurve_displayVertexCount, 0, 1, 1), 1));
+        //selectedVertex_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedVertex_displayVertices", selectedVertex_displayVertices, 0, 1, 1), 1));
+        //selectedCurve_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCurve_displayVertices", selectedCurve_displayVertices, 0, 1, 1), 1));
+  
+        //selectedObject2D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedObject2D_displayEdges", selectedObject2D_displayEdges, 0, 1, 1), 1));
+        //selectedFractal_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFractal_displayEdges", selectedFractal_displayEdges, 0, 1, 1), 1));
+  
+        //selectedSolid_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedSolid_displayEdges", selectedSolid_displayEdges, 0, 1, 1), 1));
+  
+        //selectedSection_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedSection_displayEdges", selectedSection_displayEdges, 0, 1, 1), 1));
+  
+        //selectedCamera_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCamera_displayEdges", selectedCamera_displayEdges, 0, 1, 1), 1));
+  
+        //selectedLandPoint_displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedLandPoint_displayPoints", selectedLandPoint_displayPoints, 0, 1, 1), 1));
+      }
+    } else if (this.parent == 4) { // Post-Processing
+  
+      if (this.child == 1) { // Interpolation
+  
+        Interpolation_Weight = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
+        CLIMATIC_SolarForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
+        CLIMATIC_WeatherForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
+      } 
+      if (this.child == 2) { // Developed
+        Develop_Option = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
+        Develop_DayHour = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
+  
+        STUDY.TrendJoinHours = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
+        STUDY.TrendJoinType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
+  
+        Develop_AngleInclination = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
+        Develop_AngleOrientation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
+      }
+      if (this.child == 3) { // Impacts
+        CurrentDataSource = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
+        STUDY.ImpactLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
+        STUDY.Impacts_Update = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Update impacts", STUDY.Impacts_Update, 0, 1, 1), 1));
+      }
+    } else if (this.parent == 5) { // Export Products
+  
+      if (this.child == 1) { // Data
+  
+        //STUDY.Export_info_node = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.Export_info_node, 0, 1, 1), 1));
+        //STUDY.Export_info_norm = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.Export_info_norm, 0, 1, 1), 1));
+        //STUDY.Export_info_prob = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.Export_info_prob, 0, 1, 1), 1));
+  
+  
+        Export_Scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_Scale", Export_Scale, .001, 1000, -0.1);
+        Export_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_FlipZYaxis", Export_FlipZYaxis, 0, 1, 1), 1));
+  
+        Export_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PrecisionVertex", Export_PrecisionVertex, 0, 6, 1), 1));
+        Export_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PrecisionVtexture", Export_PrecisionVtexture, 0, 6, 1), 1));
+        Export_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PolyToPoly", Export_PolyToPoly, 0, 1, 1), 1));
+  
+        //Export_MaterialLibrary = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_MaterialLibrary", Export_MaterialLibrary, 0, 1, 1), 1));
+        //Export_BackSides = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_BackSides", Export_BackSides, 0, 1, 1), 1));
+        //Export_PalletResolution = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PalletResolution", Export_PalletResolution, 32, 2048, -2), 1));
+  
+  
+        //Display_Output_in_Explorer = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
+      }  
+  
+      if (this.child == 2) { // Media
+  
+        SolidImpact_record_JPG = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", SolidImpact_record_JPG, 0, 1, 1), 1));
+        SolidImpact_record_PDF = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", SolidImpact_record_PDF, 0, 1, 1), 1));
+  
+        SolarImpact_record_JPG = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", SolarImpact_record_JPG, 0, 1, 1), 1));
+      }
+  
+    }    
+  
+    if (this.Include) {
+      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY) == 1) {  
+        SOLARCHVISION_X_clicked = -1;
+        SOLARCHVISION_Y_clicked = -1;
+      }
+    }
+  }
   
 }
 
@@ -4147,7 +4913,7 @@ void draw () {
 
         pre_STUDY_PlotImpacts = STUDY.PlotImpacts;
 
-        SOLARCHVISION_draw_ROLLOUT();
+        ROLLOUT.draw();
 
         if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
           WIN3D.Update = true;
@@ -4209,7 +4975,7 @@ void draw () {
           UI_BAR_d_Update = 1;
 
           SOLARCHVISION_update_date();
-          SOLARCHVISION_draw_ROLLOUT();
+          ROLLOUT.draw();
         }
 
         if ((pre_TIME_Year != TIME_Year) || (pre_TIME_Month != TIME_Month) || (pre_TIME_Day != TIME_Day) || (pre_TIME_Hour != TIME_Hour) || (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) || (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
@@ -4221,7 +4987,7 @@ void draw () {
           println("DATE:", TIME_Date, "\tHOUR:", TIME_Hour);
           SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-          SOLARCHVISION_draw_ROLLOUT();
+          ROLLOUT.draw();
         }
 
         
@@ -36580,772 +37346,13 @@ int isInside (float x, float y, float x1, float y1, float x2, float y2) {
 
 
 
-float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
 
-  float new_value = v;
 
-  if (new_value < min_v) new_value = max_v; 
-  if (new_value > max_v) new_value = min_v;    
 
-  float cx, cy, cr;
-  float w1, w2, h, o, t_o; 
 
-  //w1 = 32.5 * ROLLOUT.S_View;
-  //w2 = 142.5 * ROLLOUT.S_View;
 
-  w1 = 100 * ROLLOUT.S_View;
-  w2 = 200 * ROLLOUT.S_View;
 
-  h = 16 * ROLLOUT.S_View;
-  o = 2 * ROLLOUT.S_View;
-  t_o = h * ROLLOUT.S_View / 8.0;
 
-  STUDY.Y_control += 25 * ROLLOUT.S_View; //(h + 2 * o) * 1.25;
-
-  strokeWeight(0); 
-  stroke(0); 
-  fill(0);
-  rect(x + o, y - (h / 2) - o, 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
-  rect(x + o, y - (h / 2) - o + 0.5 * (h + 2 * o), 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
-  stroke(255); 
-  fill(255);
-  cx = x + o + 0.25 * (h + 2 * o);
-  cy = y - (h / 2) - o + 0.25 * (h + 2 * o);
-  cr = 0.25 * (h + 2 * o);
-  triangle(cx + cr * cos_ang(270), cy + 0.75 * cr * sin_ang(270), cx + 0.75 * cr * cos_ang(30), cy + 0.75 * cr * sin_ang(30), cx + 0.75 * cr * cos_ang(150), cy + 0.75 * cr * sin_ang(150));
-
-  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
-    if (mouseButton == LEFT) {
-
-      if (stp_v < 0) {
-        new_value *= abs(stp_v);
-      } else { 
-        new_value += abs(stp_v);
-      }
-    } else if (mouseButton == RIGHT) {
-
-      new_value = max_v;
-    }
-  }
-
-  cy += 2 * cr;
-  triangle(cx + cr * cos_ang(90), cy + 0.75 * cr * sin_ang(90), cx + 0.75 * cr * cos_ang(210), cy + 0.75 * cr * sin_ang(210), cx + 0.75 * cr * cos_ang(330), cy + 0.75 * cr * sin_ang(330));
-
-  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
-
-    if (mouseButton == LEFT) {
-
-      if (stp_v < 0) {
-        new_value /= abs(stp_v);
-      } else { 
-        new_value -= abs(stp_v);
-      }
-    } else if (mouseButton == RIGHT) {
-
-      new_value = min_v;
-    }
-  }
-
-  if (new_value < min_v) new_value = max_v; 
-  if (new_value > max_v) new_value = min_v; 
-
-
-
-  strokeWeight(0); 
-  stroke(191); 
-  fill(191);
-  rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
-
-  stroke(255); 
-  fill(255);
-  rect(x - w1, y - (h / 2), w1, h);
-
-  float q = 0;
-
-  if (max_v - min_v > 0.001) {
-    q = (new_value - min_v) / (max_v - min_v);
-  }
-
-  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2)) == 1) {
-
-    q = 1;
-
-    if (max_v - min_v > 0.001) {
-      q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
-    }
-
-    new_value = min_v + q * (max_v - min_v);
-
-    if (new_value < min_v) new_value = max_v; 
-    if (new_value > max_v) new_value = min_v;
-
-    ROLLOUT.Update = true;
-  }
-
-  strokeWeight(0); 
-  stroke(191, 255, 191); 
-  fill(191, 255, 191);
-  rect(x - w1, y - (h / 2), q * w1, h);          
-
-
-  strokeWeight(2); 
-  stroke(0); 
-  noFill();
-  rect(x - w1, y - (h / 2), w1, h);    
-
-  strokeWeight(0);
-  stroke(0); 
-  fill(0);
-  textSize(1.0 * h);
-  textAlign(RIGHT, CENTER);
-  if ((new_value == int(new_value)) || (new_value >= 100)) {
-    text(String.valueOf(int(new_value)), x - t_o, y - t_o);
-  } else {
-    text(nf(new_value, 0, 0), x - t_o, y - t_o);
-  }
-
-
-  strokeWeight(0);
-  stroke(0); 
-  fill(0);
-  //textSize(1.0 * h);
-  textSize(0.85 * h);
-  //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_o, y - t_o);
-  textAlign(LEFT, CENTER); 
-  text(caption + ":", x - w1 - w2 + t_o, y - t_o);
-
-  if (new_value != v) {
-    if (update1 != 0) STUDY.Update = true;
-    if (update2 != 0) WIN3D.Update = true;
-    if (update3 != 0) WORLD.Update = true;
-  }
-
-  return new_value;
-}
-
-
-
-String[][] ROLLOUTS = {
-  {
-    "Location & Data", "Point", "Weather", "Space"
-  }
-  , 
-  {
-    "Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Environment", "Viewport", "Simulation"
-  }
-  , 
-  {
-    "Period & Scenarios", "Time", "Ranges", "Filters"
-  }
-  , 
-  {
-    "Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"
-  }
-  , 
-  {
-    "Post-Processing", "Interpolation", "Developed", "Impacts"
-  }
-  , 
-  {
-    "Export Products", "Data", "Media"
-  }
-};
-
-
-
-
-
-void SOLARCHVISION_draw_ROLLOUT () {
-
-  stroke(255); 
-  fill(255);
-  strokeWeight(0);
-  rect(ROLLOUT.cX, ROLLOUT.cY, ROLLOUT.dX, ROLLOUT.dY);
-
-
-  float h = 20 * ROLLOUT.S_View;
-
-  STUDY.X_control = ROLLOUT.cX;
-  STUDY.Y_control = ROLLOUT.cY;
-
-  STUDY.X_control += 307.5 * ROLLOUT.S_View;
-  STUDY.Y_control += 7.5 * ROLLOUT.S_View;
-
-  if (ROLLOUT.parent >= ROLLOUTS.length) {
-    ROLLOUT.parent = ROLLOUTS.length - 1;
-  }
-
-  if (ROLLOUT.child >= ROLLOUTS[ROLLOUT.parent].length) {
-    ROLLOUT.child = ROLLOUTS[ROLLOUT.parent].length - 1;
-  }  
-
-  if (ROLLOUT.parent < ROLLOUTS.length) {
-
-    for (int i = 0; i < ROLLOUTS.length; i++) {
-
-      float cx = ROLLOUT.cX + (150 * (i % 2) + 5) * ROLLOUT.S_View;
-      float cy = STUDY.Y_control;
-      float cr = 6.75 * ROLLOUT.S_View;      
-
-      textAlign(LEFT, CENTER);    
-
-      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * ROLLOUT.S_View, cy + cr) == 1) {
-        ROLLOUT.parent = i;
-        ROLLOUT.child = 1; // <<<<<
-
-        ROLLOUT.Update = true;
-      }
-
-      if (i == ROLLOUT.parent) {
-        strokeWeight(2); 
-        stroke(63); 
-        fill(191);
-        rect(cx - 2.5 * ROLLOUT.S_View, cy - 5 * ROLLOUT.S_View, 150 * ROLLOUT.S_View, 2 * 7.5 * ROLLOUT.S_View);
-        strokeWeight(0); 
-
-        stroke(0); 
-        fill(0);
-        textSize(15 * ROLLOUT.S_View);
-      } else {
-        stroke(127); 
-        fill(127);
-        textSize(15 * ROLLOUT.S_View);
-      }
-
-      text(nf(i + 1, 0) + ":" + ROLLOUTS[i][0], cx, cy);
-
-      if (i % 2 == 1) STUDY.Y_control += 15 * ROLLOUT.S_View;
-    }
-
-    strokeWeight(2); 
-    stroke(63); 
-    fill(63);
-    rect(ROLLOUT.cX, STUDY.Y_control, ROLLOUT.dX, 17.5 * ceil((ROLLOUTS[ROLLOUT.parent].length - 1) / 3.0) * ROLLOUT.S_View);
-    strokeWeight(0);    
-
-    STUDY.Y_control += 5 * ROLLOUT.S_View;
-
-    for (int i = 1; i < ROLLOUTS[ROLLOUT.parent].length; i++) {
-
-      float cx = ROLLOUT.cX + (100 * ((i - 1) % 3) + 10) * ROLLOUT.S_View;
-      float cy = STUDY.Y_control;
-      float cr = 6.75 * ROLLOUT.S_View;        
-
-      textAlign(LEFT, CENTER);     
-
-      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * ROLLOUT.S_View, cy + cr) == 1) {
-        ROLLOUT.child = i;
-
-        ROLLOUT.Update = true;
-      }      
-
-      if (i == ROLLOUT.child) {
-        stroke(255, 127, 0); 
-        fill(255, 127, 0);
-        textSize(15 * ROLLOUT.S_View);
-      } else {
-        stroke(255); 
-        fill(255);
-        textSize(12.5 * ROLLOUT.S_View);
-      }
-
-      text("[" + nf(i, 0) + "]" + ROLLOUTS[ROLLOUT.parent][i], cx, cy);
-
-      if (i % 3 == 0) STUDY.Y_control += 15 * ROLLOUT.S_View;
-    }
-
-    if (ROLLOUTS[ROLLOUT.parent].length % 3 != 1) STUDY.Y_control += 15 * ROLLOUT.S_View;
-
-    STUDY.Y_control += 15 * ROLLOUT.S_View;
-  }
-
-
-
-
-  if (ROLLOUT.parent == 0) { // Location & data
-
-
-    if (ROLLOUT.child == 1) { // Point
-
-      //WORLD.AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.AutoView, 0, 1, 1), 1));
-      //WORLD.VIEW_id = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.Viewports_num - 1, 1), 1));
-
-      LocationLAT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
-      LocationLON = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
-      //LocationELE = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, LocationELE_step);
-
-      LocationLAT_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
-      LocationLON_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
-      //LocationELE_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
-
-    }
-
-    if (ROLLOUT.child == 2) { // Weather
-
-      Display_TMYEPW_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_TMYEPW_Points", Display_TMYEPW_Points, 0, 2, 1), 1));
-      //Display_TMYEPW_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_TMYEPW_Nearest", Display_TMYEPW_Nearest, 0, 1, 1), 1));
-
-      Display_CWEEDS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CWEEDS_Points", Display_CWEEDS_Points, 0, 2, 1), 1));
-      //Display_CWEEDS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CWEEDS_Nearest", Display_CWEEDS_Nearest, 0, 1, 1), 1));
-
-      Display_CLMREC_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CLMREC_Points", Display_CLMREC_Points, 0, 2, 1), 1));
-      //Display_CLMREC_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CLMREC_Nearest", Display_CLMREC_Nearest, 0, 1, 1), 1));
-
-      Display_SWOB_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_SWOB_Points", Display_SWOB_Points, 0, 2, 1), 1));
-      //Display_SWOB_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_SWOB_Nearest", Display_SWOB_Nearest, 0, 1, 1), 1));
-
-      Display_NAEFS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Points", Display_NAEFS_Points, 0, 2, 1), 1));
-      //Display_NAEFS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
-
-      
-      //Load_ENSEMBLE_FORECAST = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_ENSEMBLE_FORECAST", Load_ENSEMBLE_FORECAST, 0, 1, 1), 1));
-      //Load_ENSEMBLE_OBSERVED = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_ENSEMBLE_OBSERVED", Load_ENSEMBLE_OBSERVED, 0, 1, 1), 1));
-      //Load_CLIMATE_CLMREC = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC, 0, 1, 1), 1));
-      //Load_CLIMATE_CWEEDS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS, 0, 1, 1), 1));
-      //Load_CLIMATE_TMYEPW = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW, 0, 1, 1), 1));
-
-      GRIB2_Hour_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
-      GRIB2_Hour_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
-      GRIB2_Hour_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
-
-      GRIB2_Layer_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, num_Layers, 1), 1));
-      GRIB2_Layer_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, num_Layers, 1), 1));
-      GRIB2_Layer_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, num_Layers, 1), 1));
-    }
-
-    if (ROLLOUT.child == 3) { // Space
-
-      //Display_TROPO_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Surface", Display_TROPO_Surface, 0, 1, 1), 1));
-      //Display_TROPO_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Texture", Display_TROPO_Texture, 0, 1, 1), 1));      
-
-      //Display_EARTH_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_EARTH_Surface", Display_EARTH_Surface, 0, 1, 1), 1));
-      //Display_EARTH_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_EARTH_Texture", Display_EARTH_Texture, 0, 1, 1), 1));
-
-      //Display_MOON_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_MOON_Surface", Display_MOON_Surface, 0, 1, 1), 1));
-      //Display_MOON_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_MOON_Texture", Display_MOON_Texture, 0, 1, 1), 1));
-
-      //Display_STAR_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_STAR_Surface", Display_STAR_Surface, 0, 1, 1), 1));
-      //Display_STAR_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_STAR_Texture", Display_STAR_Texture, 0, 1, 1), 1));      
-
-      Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
-    }
-  } else if (ROLLOUT.parent == 1) { // Geometries & Space
-
-    if (ROLLOUT.child == 1) { // General
-
-      CreateInput_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_MeshOrSolid", CreateInput_MeshOrSolid, 0, 1, 1), 1));
-
-      MODEL3D_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_Tessellation", MODEL3D_Tessellation, 0, 4, 1), 1));
-
-      LAND_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Tessellation", LAND_Tessellation, 0, 4, 1), 1));
-
-      SKY_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Tessellation", SKY_Tessellation, 0, 4, 1), 1));   
-      SKY_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_scale", SKY_scale, 0.0000001, 1000000, -2);
-
-      BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
-
-      OBJECTS_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
-
-      Load_DefaultModels = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, MAX_Default_Models_Number, 1), 1));
-    }
-
-
-
-    if (ROLLOUT.child == 2) { // Create
-
-      addToLastGroup3D = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup3D", addToLastGroup3D, 0, 1, 1), 1));
-
-      DEFAULT_CreateMaterial = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateMaterial", DEFAULT_CreateMaterial, -1, 8, 1), 1));
-      DEFAULT_CreateTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateTessellation", DEFAULT_CreateTessellation, 0, 6, 1), 1));
-      DEFAULT_CreateLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateLayer", DEFAULT_CreateLayer, 0, 16, 1), 1));
-      DEFAULT_CreateVisibility = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreateVisibility", DEFAULT_CreateVisibility, -1, 1, 1), 1));
-      DEFAULT_CreateWeight = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "DEFAULT_CreateWeight" , DEFAULT_CreateWeight, -20, 20, 1), 1));
-      DEFAULT_CreateClose = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "DEFAULT_CreateClose" , DEFAULT_CreateClose, 0, 1, 1), 1));
-
-      DEFAULT_CreatePivotType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "DEFAULT_CreatePivotType", DEFAULT_CreatePivotType, 0, 4, 1), 1));
-
-      CreateInput_Orientation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Orientation", CreateInput_Orientation, 0, 360, 15);
-
-      CreateInput_Length = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Length", CreateInput_Length, -50, 150, -2), 0.5); 
-      CreateInput_Width = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Width", CreateInput_Width, -50, 150, -2), 0.5); 
-      CreateInput_Height = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Height", CreateInput_Height, -50, 150, -2), 0.5);     
-
-      CreateInput_Volume = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Volume", CreateInput_Volume, 0, 25000, 1000);
-      
-      CreateInput_Snap = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_Snap", CreateInput_Snap, 0, 1, 1), 1));
-    }    
-
-    if (ROLLOUT.child == 3) { // Modify
-
-      ModifyInput_OpenningDepth = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OpenningDepth", ModifyInput_OpenningDepth, -10, 10, 0.1);
-      ModifyInput_OpenningArea = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OpenningArea", ModifyInput_OpenningArea, 0, 1, 0.05);
-      ModifyInput_OpenningDeviation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OpenningDeviation", ModifyInput_OpenningDeviation, 0, 1, 0.05);
-
-      ModifyInput_TessellateRows = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_TessellateRows", ModifyInput_TessellateRows, 1, 100, 1), 1));
-      ModifyInput_TessellateColumns = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_TessellateColumns", ModifyInput_TessellateColumns, 1, 100, 1), 1));
-
-      ModifyInput_OffsetAmount = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_OffsetAmount", ModifyInput_OffsetAmount, 0, 25, 0.001);
-
-      ModifyInput_WeldTreshold = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "ModifyInput_WeldTreshold", ModifyInput_WeldTreshold, 0, 10, 0.001);      
-
-      softSelection_Power = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "softSelection_Power", softSelection_Power, 0.125, 8, -2);
-      softSelection_Radius = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "softSelection_Radius", softSelection_Radius, 0.01, 100, -2);
-
-      selected_posVector = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_posVector", selected_posVector, 0, 3, 1), 1));
-      selected_rotVector =  int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_rotVector", selected_rotVector, 0, 2, 1), 1));
-      selected_scaleVector =  int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_scaleVector", selected_scaleVector, 0, 3, 1), 1));
-
-      selected_posValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_posValue", selected_posValue, -50, 50, 1), 1));
-      selected_rotValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_rotValue", selected_rotValue, -180, 180, 5), 5)); 
-      selected_scaleValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_scaleValue", selected_scaleValue, -8, 8, 0.5), 0.5)); 
-
-      selection_alignX = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selection_alignX", selection_alignX, -1, 1, 1), 1));
-      selection_alignY = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selection_alignY", selection_alignY, -1, 1, 1), 1));
-      selection_alignZ = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selection_alignZ", selection_alignZ, -1, 1, 1), 1));
-    }
-
-    if (ROLLOUT.child == 4) { // Solid
-
-      //CreateInput_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "CreateInput_powRnd" , CreateInput_powRnd, 0, 1, 1), 1));    
-      CreateInput_powAll = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powAll", CreateInput_powAll, 0.5, CubePower, -2);
-      CreateInput_powX = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powX", CreateInput_powX, 0.5, CubePower, -2); 
-      CreateInput_powY = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powY", CreateInput_powY, 0.5, CubePower, -2); 
-      CreateInput_powZ = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_powZ", CreateInput_powZ, 0.5, CubePower, -2);
-    }  
-
-    if (ROLLOUT.child == 5) { // Surface
-
-      CreateInput_SphereDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_SphereDegree", CreateInput_SphereDegree, 0, 5, 1), 1));      
-
-      CreateInput_CylinderDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_CylinderDegree", CreateInput_CylinderDegree, 3, 36, 1), 1));    
-
-      CreateInput_PolyDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_PolyDegree", CreateInput_PolyDegree, 3, 36, 1), 1));
-
-      CreateParametric_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateParametric_Type", CreateParametric_Type, 0, 7, 1), 1));
-      CreatePerson_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePerson_Type", CreatePerson_Type, 0, Object2D_PEOPLE_Files_Num, 1), 1));
-      CreatePlant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePlant_Type", CreatePlant_Type, 0, Object2D_TREES_Files_Num, 1), 1));
-    }
-
-    if (ROLLOUT.child == 6) { // Living
-
-      CreateFractal_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_Type", CreateFractal_Type, 0, 0, 1), 1));
-      CreateFractal_DegreeMin = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_DegreeMin", CreateFractal_DegreeMin, 1, 9, 1), 1));
-      CreateFractal_DegreeMax = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_DegreeMax", CreateFractal_DegreeMax, 1, 9, 1), 1));
-      CreateFractal_Seed = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_Seed", CreateFractal_Seed, -1, 32767, 1), 1));
-      CreateFractal_TrunkSize = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_TrunkSize", CreateFractal_TrunkSize, 0, 10, 0.1), 0.1);
-      CreateFractal_LeafSize = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateFractal_LeafSize", CreateFractal_LeafSize, 0, 10, 0.1), 0.1);
-    }    
-
-    if (ROLLOUT.child == 7) { // Environment
-
-      //Load_LAND_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_LAND_Textures", Load_LAND_Textures, 0, 1, 1), 1));
-      //Load_LAND_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_LAND_Mesh", Load_LAND_Mesh, 0, 1, 1), 1));
-      //LAND_Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Surface_SkipStart", LAND_Surface_SkipStart, 0, LAND_n_I - 1, 1), 1));
-      //LAND_Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Surface_SkipEnd", LAND_Surface_SkipEnd, 0, LAND_n_I - 1, 1), 1));
-      //Display_LAND_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Surface", Display_LAND_Surface, 0, 1, 1), 1));
-      //Display_LAND_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Textures", Display_LAND_Textures, 0, 1, 1), 1));
-      //Display_LAND_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Points", Display_LAND_Points, 0, 1, 1), 1));     
-      //Display_LAND_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Depth", Display_LAND_Depth, 0, 1, 1), 1));
-
-      //Display_Model2Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model2Ds", Display_Model2Ds, 0, 1, 1), 1));
-      //Display_Fractals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Fractals", Display_Fractals, 0, 1, 1), 1));
-      //Display_Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Leaves", Display_Leaves, 0, 1, 1), 1));
-      //Display_Model3Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model3Ds", Display_Model3Ds, 0, 1, 1), 1));
-
-      //Display_Solids = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Solids", Display_Solids, 0, 1, 1), 1));
-
-      //Display_Sections = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Sections", Display_Sections, 0, 1, 1), 1));
-
-
-
-
-      //Display_WindRoseImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_WindRoseImage", Display_WindRoseImage, 0, 1, 1), 1));
-
-      WindRose_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_scale", WindRose_scale, 50, 3200, -2);
-      WindRose_RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_resolution", WindRose_RES, 200, 600, 100));
-
-
-
-      //Display_SKY_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SKY_Surface", Display_SKY_Surface, 0, 1, 1), 1));
-
-      //Display_SUN_Path = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Path", Display_SUN_Path, 0, 1, 1), 1));
-      //Display_SUN_Pattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Pattern", Display_SUN_Pattern, 0, 1, 1), 1));
-    }
-
-
-    if (ROLLOUT.child == 8) { // Viewport
-
-      WIN3D.CurrentCamera = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CurrentCamera", WIN3D.CurrentCamera, 0, allCameras_num, 1), 1));
-
-      WIN3D.CAM_clipNear = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
-      WIN3D.CAM_clipFar = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
-
-      //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, Shade_Options_num - 1, 1), 1));
-
-      //MODEL3D_DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayVertices", MODEL3D_DisplayVertices, 0, 1, 1), 1));
-      //MODEL3D_DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayEdges", MODEL3D_DisplayEdges, 0, 1, 1), 1));
-      //MODEL3D_DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayNormals", MODEL3D_DisplayNormals, 0, 1, 1), 1));
-
-      //Display_Cameras = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Cameras", Display_Cameras, 0, 1, 1), 1));
-    }    
-
-
-    if (ROLLOUT.child == 9) { // Simulation
-
-      IMPACTS_DisplayDay = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_DisplayDay", IMPACTS_DisplayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
-
-      //Display_SolarImpactImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SolarImpactImage", Display_SolarImpactImage, 0, 1, 1), 1));
-      //Display_SolidImpactImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SolidImpactImage", Display_SolidImpactImage, 0, 1, 1), 1));
-
-      SolarImpact_sectionType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolarImpact_sectionType", SolarImpact_sectionType, 0, 3, 1), 1));      
-      SolidImpact_sectionType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_sectionType", SolidImpact_sectionType, 0, 3, 1), 1));
-
-
-      SolidImpact_Grade = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Grade", SolidImpact_Grade, 0.0001, 64.0, -2);
-      SolidImpact_Power = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Power", SolidImpact_Power, 0.0001, 64.0, -2);      
-      SolidImpact_Rotation[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Rotation[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_Rotation[SolidImpact_sectionType], -360, 360, -2);
-      SolidImpact_Elevation[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_Elevation[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_Elevation[SolidImpact_sectionType], -1000, 1000, -2);
-      SolidImpact_positionStep = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_positionStep", SolidImpact_positionStep, 5, 80, -2);
-
-      SolidImpact_scale_U[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_scale_U[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_scale_U[SolidImpact_sectionType], 0.125, 3200, -2);
-      SolidImpact_scale_V[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_scale_V[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_scale_V[SolidImpact_sectionType], 0.125, 3200, -2);
-      SolidImpact_offset_U[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_offset_U[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_offset_U[SolidImpact_sectionType], -10000, 10000, -2);
-      SolidImpact_offset_V[SolidImpact_sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_offset_V[" + nf(SolidImpact_sectionType, 0) + "]", SolidImpact_offset_V[SolidImpact_sectionType], -10000, 10000, -2);
-
-
-      SolidImpact_WindSpeed = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_WindSpeed (m/s)", SolidImpact_WindSpeed, 1, 16, -2); 
-      SolidImpact_WindDirection = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SolidImpact_WindDirection", SolidImpact_WindDirection, 0, 360, 15);
-
-
-      Process_subDivisions = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Process_subDivisions", Process_subDivisions, 0, 3, 1), 1));
-
-      //Display_SolidImpact_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_SolidImpact_Points", Display_SolidImpact_Points, 0, 1, 1), 1));
-      //Display_SolidImpact_Lines = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_SolidImpact_Lines", Display_SolidImpact_Lines, 0, 1, 1), 1));
-
-      //Display_WindFlow = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_WindFlow", Display_WindFlow, 0, 1, 1), 1));
-    }
-  } else if (ROLLOUT.parent == 2) { // Period & Scenarios
-
-    if (ROLLOUT.child == 1) { // Time
-
-      //TIME_Date = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME_Date, 0, 364.5, 0.5);
-      TIME_Date = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME_Date, 0, 364, 1));
-
-      TIME_Day = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME_Day, 1, 31, 1), 1));
-      TIME_Month = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME_Month, 1, 12, 1), 1));
-      TIME_Year = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME_Year, 1953, 2100, 1), 1));
-
-      TIME_BeginDay = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME_BeginDay, 0, 364, 1), 1));
-
-      STUDY.j_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
-
-      ENSEMBLE_OBSERVED_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
-          
-    }
-
-    if (ROLLOUT.child == 2) { // Ranges
-      STUDY.i_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
-      STUDY.i_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
-
-      STUDY.JoinDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.JoinDays", STUDY.JoinDays, 1, 64, -2), 1));
-      
-//??????
-      SampleYear_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-      SampleYear_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-//??????
-
-      SampleMember_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
-      SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
-
-      SampleStation_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
-      SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
-
-
-    }
-
-    if (ROLLOUT.child == 3) { // Filters
-    
-      STUDY.skyScenario = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
-      STUDY.filter = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
-    }
-  } else if (ROLLOUT.parent == 3) { // Display Options
-
-    if (ROLLOUT.child == 1) { // 2D-Layers
-
-      FrameVariation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
-
-      STUDY.Setup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.Setup, -2, 14, 1), 1));
-
-      //STUDY.Update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.Update, 0, 1, 1), 1));  
-
-      STUDY.CurrentLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", STUDY.CurrentLayer, 0, (num_Layers - 1), 1), 1));
-      STUDY.V_scale[STUDY.CurrentLayer] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(STUDY.CurrentLayer, 2) + "]", STUDY.V_scale[STUDY.CurrentLayer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
-
-      //STUDY.DisplayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.DisplayRaws, 0, 1, 1), 1));
-      //STUDY.DisplaySorted = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.DisplaySorted, 0, 1, 1), 1));
-      //STUDY.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.DisplayNormals, 0, 1, 1), 1));
-      //STUDY.DisplayProbs = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.DisplayProbs, 0, 1, 1), 1));
-      STUDY.SumInterval = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.SumInterval, 1, 24, 1), 1));
-      STUDY.LevelPix = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
-    }
-
-    if (ROLLOUT.child == 2) { // 2D-Colors
-
-      //COLOR_STYLE_Current = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
-
-      STUDY.Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_ACTIVE_CLR", STUDY.Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      STUDY.Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_ACTIVE_DIR", STUDY.Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      STUDY.Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_ACTIVE_MLT", STUDY.Pallet_ACTIVE_MLT, 0.125, 8, -2);
-
-      STUDY.Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PASSIVE_CLR", STUDY.Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      STUDY.Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PASSIVE_DIR", STUDY.Pallet_PASSIVE_DIR, -2, 2, 2), 1));
-      STUDY.Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PASSIVE_MLT", STUDY.Pallet_PASSIVE_MLT, 0.125, 8, -2);       
-
-      STUDY.Pallet_SORT_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_SORT_CLR", STUDY.Pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      STUDY.Pallet_SORT_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_SORT_DIR", STUDY.Pallet_SORT_DIR, -2, 2, 2), 1));
-      STUDY.Pallet_SORT_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_SORT_MLT", STUDY.Pallet_SORT_MLT, 0.125, 8, -2);
-
-      STUDY.Pallet_PROB_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PROB_CLR", STUDY.Pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      STUDY.Pallet_PROB_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PROB_DIR", STUDY.Pallet_PROB_DIR, -2, 2, 2), 1));
-      STUDY.Pallet_PROB_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.Pallet_PROB_MLT", STUDY.Pallet_PROB_MLT, 0.125, 8, -2);
-
-      STUDY.O_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
-    }
-
-    if (ROLLOUT.child == 3) { // 3D-Solar 
-
-      OBJECTS_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_ACTIVE_CLR", OBJECTS_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      OBJECTS_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT, 0.125, 8, -2);
-
-      OBJECTS_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
-      OBJECTS_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.125, 8, -2);
-
-      SKY_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_CLR", SKY_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      SKY_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_DIR", SKY_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      SKY_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_MLT", SKY_Pallet_ACTIVE_MLT, 0.125, 8, -2);
-
-      SKY_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_CLR", SKY_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      SKY_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_DIR", SKY_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
-      SKY_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_MLT", SKY_Pallet_PASSIVE_MLT, 0.125, 8, -2);
-
-      SunPath_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_CLR", SunPath_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      SunPath_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_DIR", SunPath_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      SunPath_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_MLT", SunPath_Pallet_ACTIVE_MLT, 0.125, 8, -2);
-
-      SunPath_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_PASSIVE_CLR", SunPath_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      SunPath_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_PASSIVE_DIR", SunPath_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
-      SunPath_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_PASSIVE_MLT", SunPath_Pallet_PASSIVE_MLT, 0.125, 8, -2);
-    }
-
-
-
-
-    if (ROLLOUT.child == 4) { // 3D-Solid   
-
-      SOLID_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_CLR", SOLID_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      SOLID_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_DIR", SOLID_Pallet_DIR, -2, 2, 2), 1));
-      SOLID_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_MLT", SOLID_Pallet_MLT, 0.0001, 64, -2);      
-
-      ELEVATION_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      ELEVATION_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
-      ELEVATION_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.001, 0.5, -2);   
-
-      WindFlow_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_CLR", WindFlow_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-      WindFlow_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_DIR", WindFlow_Pallet_DIR, -2, 2, 2), 1));
-      WindFlow_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_MLT", WindFlow_Pallet_MLT, 0.01, 1.0, -2);
-    }      
-
-
-    if (ROLLOUT.child == 5) { // Selection
-
-      //selectedGroup3D_displayPivot = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedGroup3D_displayPivot", selectedGroup3D_displayPivot, 0, 1, 1), 1));
-      //selected_displayReferencePivot = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selected_displayReferencePivot", selected_displayReferencePivot, 0, 1, 1), 1));
-      //selectedGroup3D_displayBox = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedGroup3D_displayBox", selectedGroup3D_displayBox, 0, 1, 1), 1));
-      //selectedGroup3D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedGroup3D_displayEdges", selectedGroup3D_displayEdges, 0, 1, 1), 1));
-
-      //selectedFace_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFace_displayEdges", selectedFace_displayEdges, 0, 1, 1), 1));
-      //selectedFace_displayVertexCount = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFace_displayVertexCount", selectedFace_displayVertexCount, 0, 1, 1), 1));
-      //selectedCurve_displayVertexCount = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCurve_displayVertexCount", selectedCurve_displayVertexCount, 0, 1, 1), 1));
-      //selectedVertex_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedVertex_displayVertices", selectedVertex_displayVertices, 0, 1, 1), 1));
-      //selectedCurve_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCurve_displayVertices", selectedCurve_displayVertices, 0, 1, 1), 1));
-
-      //selectedObject2D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedObject2D_displayEdges", selectedObject2D_displayEdges, 0, 1, 1), 1));
-      //selectedFractal_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFractal_displayEdges", selectedFractal_displayEdges, 0, 1, 1), 1));
-
-      //selectedSolid_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedSolid_displayEdges", selectedSolid_displayEdges, 0, 1, 1), 1));
-
-      //selectedSection_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedSection_displayEdges", selectedSection_displayEdges, 0, 1, 1), 1));
-
-      //selectedCamera_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCamera_displayEdges", selectedCamera_displayEdges, 0, 1, 1), 1));
-
-      //selectedLandPoint_displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedLandPoint_displayPoints", selectedLandPoint_displayPoints, 0, 1, 1), 1));
-    }
-  } else if (ROLLOUT.parent == 4) { // Post-Processing
-
-    if (ROLLOUT.child == 1) { // Interpolation
-
-      Interpolation_Weight = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
-      CLIMATIC_SolarForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
-      CLIMATIC_WeatherForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
-    } 
-    if (ROLLOUT.child == 2) { // Developed
-      Develop_Option = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
-      Develop_DayHour = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
-
-      STUDY.TrendJoinHours = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
-      STUDY.TrendJoinType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
-
-      Develop_AngleInclination = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
-      Develop_AngleOrientation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
-    }
-    if (ROLLOUT.child == 3) { // Impacts
-      CurrentDataSource = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
-      STUDY.ImpactLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
-      STUDY.Impacts_Update = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Update impacts", STUDY.Impacts_Update, 0, 1, 1), 1));
-    }
-  } else if (ROLLOUT.parent == 5) { // Export Products
-
-    if (ROLLOUT.child == 1) { // Data
-
-      //STUDY.Export_info_node = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.Export_info_node, 0, 1, 1), 1));
-      //STUDY.Export_info_norm = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.Export_info_norm, 0, 1, 1), 1));
-      //STUDY.Export_info_prob = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.Export_info_prob, 0, 1, 1), 1));
-
-
-      Export_Scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_Scale", Export_Scale, .001, 1000, -0.1);
-      Export_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_FlipZYaxis", Export_FlipZYaxis, 0, 1, 1), 1));
-
-      Export_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PrecisionVertex", Export_PrecisionVertex, 0, 6, 1), 1));
-      Export_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PrecisionVtexture", Export_PrecisionVtexture, 0, 6, 1), 1));
-      Export_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PolyToPoly", Export_PolyToPoly, 0, 1, 1), 1));
-
-      //Export_MaterialLibrary = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_MaterialLibrary", Export_MaterialLibrary, 0, 1, 1), 1));
-      //Export_BackSides = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_BackSides", Export_BackSides, 0, 1, 1), 1));
-      //Export_PalletResolution = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PalletResolution", Export_PalletResolution, 32, 2048, -2), 1));
-
-
-      //Display_Output_in_Explorer = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
-    }  
-
-    if (ROLLOUT.child == 2) { // Media
-
-      SolidImpact_record_JPG = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", SolidImpact_record_JPG, 0, 1, 1), 1));
-      SolidImpact_record_PDF = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", SolidImpact_record_PDF, 0, 1, 1), 1));
-
-      SolarImpact_record_JPG = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", SolarImpact_record_JPG, 0, 1, 1), 1));
-    }
-
-  }    
-
-  if (ROLLOUT.Include) {
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, ROLLOUT.cX, ROLLOUT.cY, ROLLOUT.cX + ROLLOUT.dX, ROLLOUT.cY + ROLLOUT.dY) == 1) {  
-      SOLARCHVISION_X_clicked = -1;
-      SOLARCHVISION_Y_clicked = -1;
-    }
-  }
-}
 
 
 
