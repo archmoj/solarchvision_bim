@@ -574,7 +574,406 @@ class solarchvision_WIN3D {
   PGraphics graphics;
   
   
+
+  void drawView () {
+    
+    if (this.Update) {
   
+      if (this.record_JPG) this.ImageScale = 2; //3;
+      else this.ImageScale = 1;
+  
+      //////////////////////////////////
+      this.dX *= this.ImageScale;
+      this.dY *= this.ImageScale;
+      //////////////////////////////////
+  
+      if (this.ImageScale != 1) {
+        println("IMG:high-res");
+        this.graphics = createGraphics(this.dX, this.dY, P3D);
+      }  
+  
+      this.graphics.beginDraw();  
+  
+      this.scale = this.dY / this.refScale; // fits field of view to window's height
+  
+      this.graphics.background(233);
+  
+      this.graphics.fill(127);
+      this.graphics.strokeWeight(0);
+  
+      this.graphics.pushMatrix();
+  
+      this.graphics.hint(ENABLE_DEPTH_TEST);
+  
+      SOLARCHVISION_record_last3DViewport();
+  
+      SOLARCHVISION_transform_3DViewport();
+  
+      SOLARCHVISION_put_3DViewport();
+  
+      SOLARCHVISION_draw_SKY3D();
+  
+      SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY_scale);
+  
+      SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY_scale);
+  
+      SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
+  
+      SOLARCHVISION_draw_STAR3D();
+  
+      SOLARCHVISION_draw_MOON3D();
+      
+      SOLARCHVISION_draw_EARTH(TypeWindow.WIN3D);
+  
+      SOLARCHVISION_draw_LAND(TypeWindow.WIN3D);
+      
+      SOLARCHVISION_draw_TROPO(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
+  
+      SOLARCHVISION_draw_Faces();
+  
+      SOLARCHVISION_draw_Curves();
+      
+      SOLARCHVISION_draw_Vertices();
+  
+      SOLARCHVISION_draw_Fractals();
+  
+      SOLARCHVISION_draw_WindRoseImage();
+  
+      SOLARCHVISION_draw_Sections(TypeWindow.WIN3D);
+  
+      SOLARCHVISION_draw_Cameras();
+  
+      SOLARCHVISION_draw_Solids();
+  
+      SOLARCHVISION_draw_SolidImpact_lines();
+  
+      SOLARCHVISION_draw_SolidImpact_points();
+  
+      SOLARCHVISION_draw_Object2Ds(TypeWindow.WIN3D);  
+  
+      SOLARCHVISION_draw_WindFlow();
+  
+  
+      this.graphics.sphereDetail(6, 4);
+  
+      for (int n = 0; n < AERIAL_num; n++) {
+  
+        if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
+  
+          float _tgl = AERIAL_Locations[n][2];
+          float _lat = AERIAL_Locations[n][1];
+          float _lon = AERIAL_Locations[n][0]; 
+          if (_lon > 180) _lon -= 360; // << important!
+  
+          double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
+          double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
+  
+          float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+          float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+          float z = _tgl - HeightAboveGround;
+  
+          if (AERIAL_graphOption == 0) {
+            //-----------------------------
+            int PAL_TYPE = 6; //12; 
+            int PAL_DIR = -1;
+            float PAL_Multiplier = 1.0 / 30.0;
+            //-----------------------------
+  
+            for (int o = 0; o < GRIB2_maxScenarios; o++) {
+  
+              float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb][n][o];
+  
+              if (is_undefined_FLOAT(_val) == false) {
+  
+                float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+                float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
+  
+                this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+                this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
+                //this.graphics.noFill();
+  
+                this.graphics.strokeWeight(0); // 2; <<<<<<<<<
+  
+                float R = 5;
+                /*         
+                 this.graphics.beginShape();
+                 for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
+                 this.graphics.vertex((x + R * cos_ang(teta)) * OBJECTS_scale * this.scale, (y + R * sin_ang(teta)) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+                 }
+                 this.graphics.endShape(CLOSE);
+                 */
+                this.graphics.pushMatrix();
+                this.graphics.translate(x * OBJECTS_scale * this.scale, y * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+                this.graphics.sphere(R);
+                this.graphics.popMatrix();
+              }
+            }
+          }
+  
+          if (AERIAL_graphOption == 1) {
+  
+            //-----------------------------
+            int PAL_TYPE = 1;//12; 
+            int PAL_DIR = 1;//-1;
+            float PAL_Multiplier = 0.1;//1.0 / 30.0;
+            //-----------------------------
+  
+            for (int o = 0; o < GRIB2_maxScenarios; o++) {
+  
+              //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb][n][o];
+              float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd][n][o];
+  
+              if (is_undefined_FLOAT(_val) == false) {
+  
+                float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir][n][o];
+                float D_teta = 15; 
+                float R = 5.0 * AERIAL_Data[GRIB2_Hour][LAYER_windspd][n][o];
+  
+                float R_in = 0.0 * R; 
+                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+  
+                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+  
+                //float ox = -0.5 * (R * cos_ang(90 - teta));
+                //float oy = -0.5 * (R * -sin_ang(90 - teta));
+                //float ox = -1 * (R * cos_ang(90 - teta));
+                //float oy = -1 * (R * -sin_ang(90 - teta));
+                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+  
+                float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+                float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
+  
+                this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+                //this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
+                this.graphics.noFill();
+  
+                this.graphics.strokeWeight(2); // 0; <<<<<<<<<
+  
+                this.graphics.beginShape();
+                this.graphics.vertex((x + x1 + ox) * OBJECTS_scale * this.scale, (y + y1 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+                this.graphics.vertex((x + x2 + ox) * OBJECTS_scale * this.scale, (y + y2 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+                this.graphics.vertex((x + x3 + ox) * OBJECTS_scale * this.scale, (y + y3 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+                this.graphics.vertex((x + x4 + ox) * OBJECTS_scale * this.scale, (y + y4 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+                this.graphics.endShape(CLOSE);
+              }
+            }
+          }
+        }
+      }   
+  
+      this.graphics.hint(DISABLE_DEPTH_TEST);
+  
+      SOLARCHVISION_draw_referencePivot();
+  
+      this.graphics.popMatrix();
+  
+  
+      WIN3D.drawPallet();  
+  
+      this.graphics.endDraw();
+  
+      if ((this.record_JPG) || (this.record_AUTO)) {
+        String myFile = MAKE_Filename(CreateStamp(1) + "this.") + ".jpg";
+        this.graphics.save(myFile);
+        SOLARCHVISION_explore_output(myFile);
+        println("File created:" + myFile);
+      }
+  
+      imageMode(CORNER);
+      image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
+  
+  
+  
+      if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;  
+  
+      //////////////////////////////////
+      this.dX /= this.ImageScale;
+      this.dY /= this.ImageScale;  
+      //////////////////////////////////
+  
+      if (this.ImageScale != 1) {
+        this.graphics = createGraphics(this.dX, this.dY, P3D);
+        this.Update = false; //true;
+      } else {
+        this.Update = false;
+  
+        SOLARCHVISION_draw_Perspective_Internally();
+      }
+    }
+  }
+  
+  
+  void drawPallet () {
+  
+    int draw_pal = 0;
+  
+    int PAL_TYPE = 0; 
+    int PAL_DIR = 1;
+    float PAL_Multiplier = 1; 
+  
+    if ((this.FacesShade == Shade_Global_Solar) || (this.FacesShade == Shade_Vertex_Solar)) {
+  
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+        PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
+        PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+        PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+        PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
+      }   
+  
+      draw_pal = 1;
+    }
+  
+    if (this.FacesShade == Shade_Vertex_Elevation) {
+  
+      PAL_TYPE = ELEVATION_Pallet_CLR; 
+      PAL_DIR = ELEVATION_Pallet_DIR; 
+      PAL_Multiplier = ELEVATION_Pallet_MLT; 
+  
+      draw_pal = 1;
+    }
+  
+    if (this.FacesShade == Shade_Vertex_Solid) {
+  
+      PAL_TYPE = SOLID_Pallet_CLR; 
+      PAL_DIR = SOLID_Pallet_DIR;
+      PAL_Multiplier = SOLID_Pallet_MLT;
+  
+      draw_pal = 1;
+    }          
+  
+  
+  
+  
+    if (draw_pal != 0) {
+  
+      float the_scale = 1;
+  
+      if (this.ViewType == 1) {
+        the_scale *= (0.5 / tan(0.5 * this.CAM_fov));
+      } else {
+        float ZOOM = Orthographic_ZOOM();
+        the_scale *= (0.5 / ZOOM);
+      }  
+  
+      this.graphics.pushMatrix();
+  
+      this.CAM_fov = this.Zoom * PI / 180;
+  
+      this.CAM_dist = (0.5 * this.refScale) / tan(0.5 * this.CAM_fov);
+  
+      if (this.ViewType == 1) {
+  
+        float aspect = 1.0 / this.R_View;
+  
+        float zFar = this.CAM_dist * 1000;
+        float zNear = this.CAM_dist * 0.001;
+  
+        this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
+      } else {
+  
+        float ZOOM = Orthographic_ZOOM();
+  
+        this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
+      }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      float pal_length = 1 * SOLARCHVISION_H_Pixel * this.ImageScale / the_scale;
+  
+      float y1 = -0.2 * (pal_length / 11.0) + (0.4 * this.dY / the_scale);
+      float y2 = y1 + 0.4 * (pal_length / 11.0);
+  
+      float txtSize = y2 - y1;
+  
+      for (int q = 0; q < 11; q++) {
+        
+        float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
+        float x2 = x1 + (pal_length / 11.0);      
+  
+        float _u = 0.2 * q - 0.5;
+  
+        if ((this.FacesShade == Shade_Global_Solar) || (this.FacesShade == Shade_Vertex_Solar)) {
+          if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+        }
+  
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u); 
+  
+        this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+        this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+  
+        this.graphics.strokeWeight(0);
+  
+        this.graphics.beginShape();
+        this.graphics.vertex(x1, y1, 0);
+        this.graphics.vertex(x1, y2, 0);
+        this.graphics.vertex(x2, y2, 0);
+        this.graphics.vertex(x2, y1, 0);
+        this.graphics.endShape(CLOSE);    
+  
+        if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
+          this.graphics.stroke(127);
+          this.graphics.fill(127);
+          this.graphics.strokeWeight(0);
+        } else {
+          this.graphics.stroke(255);
+          this.graphics.fill(255);
+          this.graphics.strokeWeight(2);
+        }  
+  
+        this.graphics.textSize(txtSize);
+        this.graphics.textAlign(CENTER, CENTER);
+  
+        if ((this.FacesShade == Shade_Global_Solar) || (this.FacesShade == Shade_Vertex_Solar)) {
+          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        }
+  
+        if (this.FacesShade == Shade_Vertex_Elevation) {
+          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        }
+  
+        if (this.FacesShade == Shade_Vertex_Solid) {
+          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        }
+      }
+  
+      this.graphics.textAlign(LEFT, CENTER);
+      if (Impact_TYPE == Impact_ACTIVE) this.graphics.text("kW/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+      if (Impact_TYPE == Impact_PASSIVE) this.graphics.text("%kW°C/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+  
+      this.graphics.popMatrix();
+    }
+  }  
   
   void keyPressed (KeyEvent e) {
   
@@ -1420,13 +1819,7 @@ class solarchvision_STUDY {
   
   float ImageScale = 1.0;
   
-  
-  
   PGraphics graphics;
-  
-
-  
-  
   
   int isInHourlyRange (float i) {
     int q = -1;
@@ -1881,6 +2274,136 @@ class solarchvision_STUDY {
     }
   }
  
+
+  void drawView () {
+  
+    cursor(WAIT);
+  
+  
+    if (this.Update) {
+  
+      if (this.record_PDF) this.ImageScale = 1;
+      else if (this.record_JPG) this.ImageScale = 2;
+      else this.ImageScale = 1;
+  
+      //////////////////////////////////
+      this.dX *= this.ImageScale;
+      this.dY *= this.ImageScale;  
+      this.T_scale *= this.ImageScale;
+      //////////////////////////////////  
+  
+      if (this.record_PDF) {
+        println("PDF:begin");
+        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + "this.") + ".pdf");
+        beginRecord(this.graphics);
+      } else if (this.ImageScale != 1) {
+        println("IMG:high-res");
+        this.graphics = createGraphics(this.dX, this.dY, P2D);
+        this.graphics.beginDraw();
+      } else {
+        this.graphics.beginDraw();
+      }  
+  
+      DrawnFrame += 1;
+      println("frame:", DrawnFrame);    
+  
+      if (Update_DevelopData == 1) {
+        if (this.CurrentLayer == LAYER_developed) {
+          SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
+    
+        }
+      }     
+  
+  
+      this.S_View = (this.dX / 2100.0);
+      this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+  
+  
+      this.X_Coordinate = -0.333 * this.dX;      
+  
+      this.Y_Coordinate = 1.0 * this.dY;
+  
+  
+      this.graphics.background(255);
+  
+      this.graphics.blendMode(BLEND);
+  
+      this.graphics.strokeJoin(ROUND); 
+  
+      this.graphics.textFont(SOLARCHVISION_font);
+  
+      this.graphics.strokeWeight(0);
+  
+      //this.graphics.translate(this.X_Coordinate * -0.25, this.Y_Coordinate * 0.5); 
+      this.graphics.translate(this.X_Coordinate * -0.425, this.Y_Coordinate * 0.5);
+  
+      SOLARCHVISION_Plot_Setup();
+  
+      //this.graphics.translate(this.X_Coordinate * 0.25, this.Y_Coordinate * 0.5);
+      this.graphics.translate(this.X_Coordinate * 0.425, this.Y_Coordinate * 0.5);
+  
+      this.graphics.strokeWeight(this.T_scale * 1);
+  
+      this.graphics.stroke(63);
+      this.graphics.fill(63);
+      this.graphics.textAlign(CENTER, CENTER);
+  
+      String _text = "SOLARCHVISION post-processing";
+  
+      if (CurrentDataSource == dataID_CLIMATE_TMYEPW) _text += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
+      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) _text += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
+      if (CurrentDataSource == dataID_CLIMATE_CLMREC) _text += " based on Environment and Climate Change Canada's Climate website";
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) _text += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
+      if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) _text += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
+  
+      //_text += ", www.solarchvision.com";
+  
+      this.graphics.textSize(this.dX * 0.01);
+      ///this.graphics.text(_text, this.dX * 0.55, this.dY * -0.1666 / this.R_View, 0);
+  
+      if (this.record_PDF) {
+        endRecord();
+  
+        String myFile = MAKE_Filename(CreateStamp(0) + "this.") + ".pdf";
+        SOLARCHVISION_explore_output(myFile);
+        println("File created:" + myFile);
+      } else {
+        this.graphics.endDraw();
+  
+        if ((this.record_JPG) || (this.record_AUTO)) {
+          String myFile = MAKE_Filename(CreateStamp(1) + "this.") + ".jpg";
+          this.graphics.save(myFile);
+          SOLARCHVISION_explore_output(myFile);
+          println("File created:" + myFile);
+        }
+  
+        imageMode(CORNER);
+        image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
+      }
+  
+      //////////////////////////////////
+      this.dX /= this.ImageScale;
+      this.dY /= this.ImageScale;
+      this.T_scale /= this.ImageScale;
+      //////////////////////////////////
+  
+      if ((this.ImageScale != 1) || (this.record_PDF)) {
+        this.graphics = createGraphics(this.dX, this.dY, P2D);
+        this.Update = false; //1;
+      } else {
+        this.Update = false;
+      }
+  
+  
+      if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;
+    }
+  
+    this.Export_info_node = false;
+    this.Export_info_norm = false;
+    this.Export_info_prob = false;
+  
+    cursor(ARROW);
+  }
  
 }
 
@@ -2076,7 +2599,7 @@ class solarchvision_ROLLOUT {
   int child = 1; // number of the category inside e.g. 1, 2, ...
 
 
-  void draw () {
+  void drawView () {
   
     stroke(255); 
     fill(255);
@@ -4913,7 +5436,7 @@ void draw () {
 
         pre_STUDY_PlotImpacts = STUDY.PlotImpacts;
 
-        ROLLOUT.draw();
+        ROLLOUT.drawView();
 
         if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
           WIN3D.Update = true;
@@ -4975,7 +5498,7 @@ void draw () {
           UI_BAR_d_Update = 1;
 
           SOLARCHVISION_update_date();
-          ROLLOUT.draw();
+          ROLLOUT.drawView();
         }
 
         if ((pre_TIME_Year != TIME_Year) || (pre_TIME_Month != TIME_Month) || (pre_TIME_Day != TIME_Day) || (pre_TIME_Hour != TIME_Hour) || (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) || (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
@@ -4987,7 +5510,7 @@ void draw () {
           println("DATE:", TIME_Date, "\tHOUR:", TIME_Hour);
           SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-          ROLLOUT.draw();
+          ROLLOUT.drawView();
         }
 
         
@@ -5344,7 +5867,7 @@ void draw () {
     if (STUDY.Include) {
       if (STUDY.Update) {
 
-        SOLARCHVISION_draw_STUDY();
+        STUDY.drawView();
       }
     }
     STUDY.Update = false;
@@ -5383,7 +5906,7 @@ void draw () {
             
             SOLARCHVISION_regenerate_desired_bakings();
 
-            SOLARCHVISION_draw_WIN3D();
+            WIN3D.drawView();
           }
         }
 
@@ -5467,404 +5990,9 @@ void SOLARCHVISION_regenerate_desired_bakings () {
 
 
 
-void SOLARCHVISION_draw_WIN3D () {
-  
-  if (WIN3D.Update) {
 
-    if (WIN3D.record_JPG) WIN3D.ImageScale = 2; //3;
-    else WIN3D.ImageScale = 1;
 
-    //////////////////////////////////
-    WIN3D.dX *= WIN3D.ImageScale;
-    WIN3D.dY *= WIN3D.ImageScale;
-    //////////////////////////////////
 
-    if (WIN3D.ImageScale != 1) {
-      println("IMG:high-res");
-      WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
-    }  
-
-    WIN3D.graphics.beginDraw();  
-
-    WIN3D.scale = WIN3D.dY / WIN3D.refScale; // fits field of view to window's height
-
-    WIN3D.graphics.background(233);
-
-    WIN3D.graphics.fill(127);
-    WIN3D.graphics.strokeWeight(0);
-
-    WIN3D.graphics.pushMatrix();
-
-    WIN3D.graphics.hint(ENABLE_DEPTH_TEST);
-
-    SOLARCHVISION_record_last3DViewport();
-
-    SOLARCHVISION_transform_3DViewport();
-
-    SOLARCHVISION_put_3DViewport();
-
-    SOLARCHVISION_draw_SKY3D();
-
-    SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY_scale);
-
-    SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY_scale);
-
-    SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
-
-    SOLARCHVISION_draw_STAR3D();
-
-    SOLARCHVISION_draw_MOON3D();
-    
-    SOLARCHVISION_draw_EARTH(TypeWindow.WIN3D);
-
-    SOLARCHVISION_draw_LAND(TypeWindow.WIN3D);
-    
-    SOLARCHVISION_draw_TROPO(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
-
-    SOLARCHVISION_draw_Faces();
-
-    SOLARCHVISION_draw_Curves();
-    
-    SOLARCHVISION_draw_Vertices();
-
-    SOLARCHVISION_draw_Fractals();
-
-    SOLARCHVISION_draw_WindRoseImage();
-
-    SOLARCHVISION_draw_Sections(TypeWindow.WIN3D);
-
-    SOLARCHVISION_draw_Cameras();
-
-    SOLARCHVISION_draw_Solids();
-
-    SOLARCHVISION_draw_SolidImpact_lines();
-
-    SOLARCHVISION_draw_SolidImpact_points();
-
-    SOLARCHVISION_draw_Object2Ds(TypeWindow.WIN3D);  
-
-    SOLARCHVISION_draw_WindFlow();
-
-
-    WIN3D.graphics.sphereDetail(6, 4);
-
-    for (int n = 0; n < AERIAL_num; n++) {
-
-      if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
-
-        float _tgl = AERIAL_Locations[n][2];
-        float _lat = AERIAL_Locations[n][1];
-        float _lon = AERIAL_Locations[n][0]; 
-        if (_lon > 180) _lon -= 360; // << important!
-
-        double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
-        double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
-
-        float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
-        float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
-        float z = _tgl - HeightAboveGround;
-
-        if (AERIAL_graphOption == 0) {
-          //-----------------------------
-          int PAL_TYPE = 6; //12; 
-          int PAL_DIR = -1;
-          float PAL_Multiplier = 1.0 / 30.0;
-          //-----------------------------
-
-          for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-            float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb][n][o];
-
-            if (is_undefined_FLOAT(_val) == false) {
-
-              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
-
-              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
-
-              WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-              WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
-              //WIN3D.graphics.noFill();
-
-              WIN3D.graphics.strokeWeight(0); // 2; <<<<<<<<<
-
-              float R = 5;
-              /*         
-               WIN3D.graphics.beginShape();
-               for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
-               WIN3D.graphics.vertex((x + R * cos_ang(teta)) * OBJECTS_scale * WIN3D.scale, (y + R * sin_ang(teta)) * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-               }
-               WIN3D.graphics.endShape(CLOSE);
-               */
-              WIN3D.graphics.pushMatrix();
-              WIN3D.graphics.translate(x * OBJECTS_scale * WIN3D.scale, y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-              WIN3D.graphics.sphere(R);
-              WIN3D.graphics.popMatrix();
-            }
-          }
-        }
-
-        if (AERIAL_graphOption == 1) {
-
-          //-----------------------------
-          int PAL_TYPE = 1;//12; 
-          int PAL_DIR = 1;//-1;
-          float PAL_Multiplier = 0.1;//1.0 / 30.0;
-          //-----------------------------
-
-          for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-            //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb][n][o];
-            float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd][n][o];
-
-            if (is_undefined_FLOAT(_val) == false) {
-
-              float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir][n][o];
-              float D_teta = 15; 
-              float R = 5.0 * AERIAL_Data[GRIB2_Hour][LAYER_windspd][n][o];
-
-              float R_in = 0.0 * R; 
-              float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
-
-              float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
-
-              //float ox = -0.5 * (R * cos_ang(90 - teta));
-              //float oy = -0.5 * (R * -sin_ang(90 - teta));
-              //float ox = -1 * (R * cos_ang(90 - teta));
-              //float oy = -1 * (R * -sin_ang(90 - teta));
-              float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-              float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
-
-              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
-
-              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
-
-              WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-              //WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
-              WIN3D.graphics.noFill();
-
-              WIN3D.graphics.strokeWeight(2); // 0; <<<<<<<<<
-
-              WIN3D.graphics.beginShape();
-              WIN3D.graphics.vertex((x + x1 + ox) * OBJECTS_scale * WIN3D.scale, (y + y1 + oy) * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-              WIN3D.graphics.vertex((x + x2 + ox) * OBJECTS_scale * WIN3D.scale, (y + y2 + oy) * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-              WIN3D.graphics.vertex((x + x3 + ox) * OBJECTS_scale * WIN3D.scale, (y + y3 + oy) * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-              WIN3D.graphics.vertex((x + x4 + ox) * OBJECTS_scale * WIN3D.scale, (y + y4 + oy) * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-              WIN3D.graphics.endShape(CLOSE);
-            }
-          }
-        }
-      }
-    }   
-
-    WIN3D.graphics.hint(DISABLE_DEPTH_TEST);
-
-    SOLARCHVISION_draw_referencePivot();
-
-    WIN3D.graphics.popMatrix();
-
-
-    SOLARCHVISION_draw_pallet_on_WIN3D();  
-
-    WIN3D.graphics.endDraw();
-
-    if ((WIN3D.record_JPG) || (WIN3D.record_AUTO)) {
-      String myFile = MAKE_Filename(CreateStamp(1) + "WIN3D.") + ".jpg";
-      WIN3D.graphics.save(myFile);
-      SOLARCHVISION_explore_output(myFile);
-      println("File created:" + myFile);
-    }
-
-    imageMode(CORNER);
-    image(WIN3D.graphics, WIN3D.cX, WIN3D.cY, WIN3D.dX / WIN3D.ImageScale, WIN3D.dY / WIN3D.ImageScale);
-
-
-
-    if ((WIN3D.record_JPG) || (WIN3D.record_AUTO == false)) WIN3D.record_JPG = false;  
-
-    //////////////////////////////////
-    WIN3D.dX /= WIN3D.ImageScale;
-    WIN3D.dY /= WIN3D.ImageScale;  
-    //////////////////////////////////
-
-    if (WIN3D.ImageScale != 1) {
-      WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
-      WIN3D.Update = false; //true;
-    } else {
-      WIN3D.Update = false;
-
-      SOLARCHVISION_draw_Perspective_Internally();
-    }
-  }
-}
-
-void SOLARCHVISION_draw_pallet_on_WIN3D () {
-
-  int draw_pal = 0;
-
-  int PAL_TYPE = 0; 
-  int PAL_DIR = 1;
-  float PAL_Multiplier = 1; 
-
-  if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
-
-    if (Impact_TYPE == Impact_ACTIVE) {
-      PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
-      PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
-      PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
-    }
-    if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
-      PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-      PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
-    }   
-
-    draw_pal = 1;
-  }
-
-  if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
-
-    PAL_TYPE = ELEVATION_Pallet_CLR; 
-    PAL_DIR = ELEVATION_Pallet_DIR; 
-    PAL_Multiplier = ELEVATION_Pallet_MLT; 
-
-    draw_pal = 1;
-  }
-
-  if (WIN3D.FacesShade == Shade_Vertex_Solid) {
-
-    PAL_TYPE = SOLID_Pallet_CLR; 
-    PAL_DIR = SOLID_Pallet_DIR;
-    PAL_Multiplier = SOLID_Pallet_MLT;
-
-    draw_pal = 1;
-  }          
-
-
-
-
-  if (draw_pal != 0) {
-
-    float the_scale = 1;
-
-    if (WIN3D.ViewType == 1) {
-      the_scale *= (0.5 / tan(0.5 * WIN3D.CAM_fov));
-    } else {
-      float ZOOM = Orthographic_ZOOM();
-      the_scale *= (0.5 / ZOOM);
-    }  
-
-    WIN3D.graphics.pushMatrix();
-
-    WIN3D.CAM_fov = WIN3D.Zoom * PI / 180;
-
-    WIN3D.CAM_dist = (0.5 * WIN3D.refScale) / tan(0.5 * WIN3D.CAM_fov);
-
-    if (WIN3D.ViewType == 1) {
-
-      float aspect = 1.0 / WIN3D.R_View;
-
-      float zFar = WIN3D.CAM_dist * 1000;
-      float zNear = WIN3D.CAM_dist * 0.001;
-
-      WIN3D.graphics.translate(0.5 * WIN3D.dX, 0.5 * WIN3D.dY, 0); // << IMPORTANT!
-    } else {
-
-      float ZOOM = Orthographic_ZOOM();
-
-      WIN3D.graphics.translate(0, 1.0 * WIN3D.dY, 0); // << IMPORTANT!
-    }
-
-
-
-
-
-
-
-
-
-    float pal_length = 1 * SOLARCHVISION_H_Pixel * WIN3D.ImageScale / the_scale;
-
-    float y1 = -0.2 * (pal_length / 11.0) + (0.4 * WIN3D.dY / the_scale);
-    float y2 = y1 + 0.4 * (pal_length / 11.0);
-
-    float txtSize = y2 - y1;
-
-    for (int q = 0; q < 11; q++) {
-      
-      float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
-      float x2 = x1 + (pal_length / 11.0);      
-
-      float _u = 0.2 * q - 0.5;
-
-      if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
-        if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-        if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
-      }
-
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
-
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u); 
-
-      WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-      WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-
-      WIN3D.graphics.strokeWeight(0);
-
-      WIN3D.graphics.beginShape();
-      WIN3D.graphics.vertex(x1, y1, 0);
-      WIN3D.graphics.vertex(x1, y2, 0);
-      WIN3D.graphics.vertex(x2, y2, 0);
-      WIN3D.graphics.vertex(x2, y1, 0);
-      WIN3D.graphics.endShape(CLOSE);    
-
-      if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-        WIN3D.graphics.stroke(127);
-        WIN3D.graphics.fill(127);
-        WIN3D.graphics.strokeWeight(0);
-      } else {
-        WIN3D.graphics.stroke(255);
-        WIN3D.graphics.fill(255);
-        WIN3D.graphics.strokeWeight(2);
-      }  
-
-      WIN3D.graphics.textSize(txtSize);
-      WIN3D.graphics.textAlign(CENTER, CENTER);
-
-      if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
-        if (Impact_TYPE == Impact_ACTIVE) WIN3D.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-        if (Impact_TYPE == Impact_PASSIVE) WIN3D.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-      }
-
-      if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
-        WIN3D.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-      }
-
-      if (WIN3D.FacesShade == Shade_Vertex_Solid) {
-        WIN3D.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-      }
-    }
-
-    WIN3D.graphics.textAlign(LEFT, CENTER);
-    if (Impact_TYPE == Impact_ACTIVE) WIN3D.graphics.text("kW/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-    if (Impact_TYPE == Impact_PASSIVE) WIN3D.graphics.text("%kW°C/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-
-    WIN3D.graphics.popMatrix();
-  }
-}
 
 
 
@@ -6481,135 +6609,7 @@ void SOLARCHVISION_draw_WORLD () {
 
 
 
-void SOLARCHVISION_draw_STUDY () {
-
-  cursor(WAIT);
-
-
-  if (STUDY.Update) {
-
-    if (STUDY.record_PDF) STUDY.ImageScale = 1;
-    else if (STUDY.record_JPG) STUDY.ImageScale = 2;
-    else STUDY.ImageScale = 1;
-
-    //////////////////////////////////
-    STUDY.dX *= STUDY.ImageScale;
-    STUDY.dY *= STUDY.ImageScale;  
-    STUDY.T_scale *= STUDY.ImageScale;
-    //////////////////////////////////  
-
-    if (STUDY.record_PDF) {
-      println("PDF:begin");
-      STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, PDF, MAKE_Filename(CreateStamp(1) + "STUDY.") + ".pdf");
-      beginRecord(STUDY.graphics);
-    } else if (STUDY.ImageScale != 1) {
-      println("IMG:high-res");
-      STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-      STUDY.graphics.beginDraw();
-    } else {
-      STUDY.graphics.beginDraw();
-    }  
-
-    DrawnFrame += 1;
-    println("frame:", DrawnFrame);    
-
-    if (Update_DevelopData == 1) {
-      if (STUDY.CurrentLayer == LAYER_developed) {
-        SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-  
-      }
-    }     
-
-
-    STUDY.S_View = (STUDY.dX / 2100.0);
-    STUDY.U_scale = 18.0 / float(STUDY.j_End - STUDY.j_Start);
-
-
-    STUDY.X_Coordinate = -0.333 * STUDY.dX;      
-
-    STUDY.Y_Coordinate = 1.0 * STUDY.dY;
-
-
-    STUDY.graphics.background(255);
-
-    STUDY.graphics.blendMode(BLEND);
-
-    STUDY.graphics.strokeJoin(ROUND); 
-
-    STUDY.graphics.textFont(SOLARCHVISION_font);
-
-    STUDY.graphics.strokeWeight(0);
-
-    //STUDY.graphics.translate(STUDY.X_Coordinate * -0.25, STUDY.Y_Coordinate * 0.5); 
-    STUDY.graphics.translate(STUDY.X_Coordinate * -0.425, STUDY.Y_Coordinate * 0.5);
-
-    SOLARCHVISION_Plot_Setup();
-
-    //STUDY.graphics.translate(STUDY.X_Coordinate * 0.25, STUDY.Y_Coordinate * 0.5);
-    STUDY.graphics.translate(STUDY.X_Coordinate * 0.425, STUDY.Y_Coordinate * 0.5);
-
-    STUDY.graphics.strokeWeight(STUDY.T_scale * 1);
-
-    STUDY.graphics.stroke(63);
-    STUDY.graphics.fill(63);
-    STUDY.graphics.textAlign(CENTER, CENTER);
-
-    String _text = "SOLARCHVISION post-processing";
-
-    if (CurrentDataSource == dataID_CLIMATE_TMYEPW) _text += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
-    if (CurrentDataSource == dataID_CLIMATE_CWEEDS) _text += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
-    if (CurrentDataSource == dataID_CLIMATE_CLMREC) _text += " based on Environment and Climate Change Canada's Climate website";
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) _text += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
-    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) _text += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
-
-    //_text += ", www.solarchvision.com";
-
-    STUDY.graphics.textSize(STUDY.dX * 0.01);
-    ///STUDY.graphics.text(_text, STUDY.dX * 0.55, STUDY.dY * -0.1666 / STUDY.R_View, 0);
-
-    if (STUDY.record_PDF) {
-      endRecord();
-
-      String myFile = MAKE_Filename(CreateStamp(0) + "STUDY.") + ".pdf";
-      SOLARCHVISION_explore_output(myFile);
-      println("File created:" + myFile);
-    } else {
-      STUDY.graphics.endDraw();
-
-      if ((STUDY.record_JPG) || (STUDY.record_AUTO)) {
-        String myFile = MAKE_Filename(CreateStamp(1) + "STUDY.") + ".jpg";
-        STUDY.graphics.save(myFile);
-        SOLARCHVISION_explore_output(myFile);
-        println("File created:" + myFile);
-      }
-
-      imageMode(CORNER);
-      image(STUDY.graphics, STUDY.cX, STUDY.cY, STUDY.dX / STUDY.ImageScale, STUDY.dY / STUDY.ImageScale);
-    }
-
-    //////////////////////////////////
-    STUDY.dX /= STUDY.ImageScale;
-    STUDY.dY /= STUDY.ImageScale;
-    STUDY.T_scale /= STUDY.ImageScale;
-    //////////////////////////////////
-
-    if ((STUDY.ImageScale != 1) || (STUDY.record_PDF)) {
-      STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-      STUDY.Update = false; //1;
-    } else {
-      STUDY.Update = false;
-    }
-
-
-    if ((STUDY.record_JPG) || (STUDY.record_AUTO == false)) STUDY.record_JPG = false;
-  }
-
-  STUDY.Export_info_node = false;
-  STUDY.Export_info_norm = false;
-  STUDY.Export_info_prob = false;
-
-  cursor(ARROW);
-} 
+ 
 
 
 
