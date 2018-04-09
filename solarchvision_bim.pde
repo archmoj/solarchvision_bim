@@ -2,6 +2,42 @@
 // please define station elevation data for CWEEDS points!
 
 
+int num_Layers = 0;  
+
+int addLayer () {
+  num_Layers += 1;
+  return(num_Layers - 1);
+}
+
+int LAYER_windspd200hPa = addLayer();
+int LAYER_thicknesses_1000_500 = addLayer();
+int LAYER_heightp500hPa = addLayer();
+
+int LAYER_ceilingsky = addLayer();
+int LAYER_cloudcover = addLayer();
+
+int LAYER_winddir = addLayer();
+int LAYER_windspd = addLayer();
+
+int LAYER_pressure = addLayer();
+
+int LAYER_drybulb = addLayer();
+
+int LAYER_relhum = addLayer();
+
+int LAYER_dirnorrad = addLayer();
+int LAYER_difhorrad = addLayer();
+int LAYER_glohorrad = addLayer();
+
+int LAYER_direffect = addLayer();
+int LAYER_difeffect = addLayer();
+
+
+int LAYER_precipitation_A = addLayer();
+
+int LAYER_developed = addLayer();
+
+
 
 class solarchvision_STATION {
 
@@ -541,8 +577,8 @@ class solarchvision_WIN3D {
   
   int ViewType = 1; // 0: Ortho 1: Perspective
   
-  boolean Update = true;
-  boolean Include = true;
+  boolean update = true;
+  boolean include = true;
 
 
   boolean record_JPG = false;
@@ -577,7 +613,7 @@ class solarchvision_WIN3D {
 
   void drawView () {
     
-    if (this.Update) {
+    if (this.update) {
   
       if (this.record_JPG) this.ImageScale = 2; //3;
       else this.ImageScale = 1;
@@ -808,9 +844,9 @@ class solarchvision_WIN3D {
   
       if (this.ImageScale != 1) {
         this.graphics = createGraphics(this.dX, this.dY, P3D);
-        this.Update = false; //true;
+        this.update = false; //true;
       } else {
-        this.Update = false;
+        this.update = false;
   
         SOLARCHVISION_draw_Perspective_Internally();
       }
@@ -977,62 +1013,62 @@ class solarchvision_WIN3D {
   
   void keyPressed (KeyEvent e) {
   
-    if (e.isAltDown() == true) {
+    if (e.isAltDown()) {
       if (key == CODED) { 
         switch(keyCode) {
   
         case RIGHT :
           SolidImpact_Rotation[SolidImpact_sectionType] = (SolidImpact_Rotation[SolidImpact_sectionType] + 15) % 360; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
         case LEFT :
           SolidImpact_Rotation[SolidImpact_sectionType] = (SolidImpact_Rotation[SolidImpact_sectionType] + 360 - 15) % 360; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;           
   
         case UP   :
           SolidImpact_Elevation[SolidImpact_sectionType] += SolidImpact_positionStep;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;        
         case DOWN :
           SolidImpact_Elevation[SolidImpact_sectionType] -= SolidImpact_positionStep; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true; 
-          ROLLOUT.Update = true;  
+          this.update = true; 
+          ROLLOUT.update = true;  
           break; 
   
         case 33 :
           SolidImpact_Elevation[SolidImpact_sectionType] += 4 * SolidImpact_positionStep;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;        
         case 34 :
           SolidImpact_Elevation[SolidImpact_sectionType] -= 4 * SolidImpact_positionStep; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break; 
   
         case 35 :
           SolidImpact_scale_U[SolidImpact_sectionType] *= pow(2.0, 0.5); 
           SolidImpact_scale_V[SolidImpact_sectionType] *= pow(2.0, 0.5); 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
         case 36 :
           SolidImpact_scale_U[SolidImpact_sectionType] /= pow(2.0, 0.5); 
           SolidImpact_scale_V[SolidImpact_sectionType] /= pow(2.0, 0.5);                   
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
         }
       } else {
@@ -1041,107 +1077,107 @@ class solarchvision_WIN3D {
         case 'U' :
           SolidImpact_offset_U[SolidImpact_sectionType] += SolidImpact_positionStep;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
         case 'u' :
           SolidImpact_offset_U[SolidImpact_sectionType] -= SolidImpact_positionStep;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;        
         case 'V' :
           SolidImpact_offset_V[SolidImpact_sectionType] += SolidImpact_positionStep;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
         case 'v' :
           SolidImpact_offset_V[SolidImpact_sectionType] -= SolidImpact_positionStep;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;  
   
         case ']' :
           SolidImpact_sectionType = (SolidImpact_sectionType + 1) % 4;
           SolarImpact_sectionType = SolidImpact_sectionType; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
         case '[' :
           SolidImpact_sectionType = (SolidImpact_sectionType + 4 - 1) % 4;
           SolarImpact_sectionType = SolidImpact_sectionType;
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;        
   
         case '0' :
           SolidImpact_Elevation[SolidImpact_sectionType] = 0; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
   
         case '.' :
           SolidImpact_Rotation[SolidImpact_sectionType] = 0; 
           SOLARCHVISION_calculate_SolidImpact_selectedSections();
-          this.Update = true;
-          ROLLOUT.Update = true;                   
+          this.update = true;
+          ROLLOUT.update = true;                   
           break;                  
   
         case '/' :
           SolidImpact_Power *= pow(2.0, 0.5); 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
         case '*' :
           SolidImpact_Power /= pow(2.0, 0.5);  
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
   
         case '+' :
           SolidImpact_Grade *= pow(2.0, 0.5); 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
         case '-' :
           SolidImpact_Grade /= pow(2.0, 0.5); 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
   
         case '>' :
           SolidImpact_Grade /= pow(2.0, 0.25); 
           SolidImpact_Power /= pow(2.0, 0.5); 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
         case '<' :
           SolidImpact_Grade *= pow(2.0, 0.25); 
           SolidImpact_Power *= pow(2.0, 0.5); 
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;
   
   
   
         case ENTER :
           SOLARCHVISION_calculate_WindFlow(); 
-          this.Update = true; 
+          this.update = true; 
           break;
         }
       }
-    } else if (e.isControlDown() == true) {
+    } else if (e.isControlDown()) {
       if (key == CODED) { 
         switch(keyCode) {
         }
@@ -1150,23 +1186,23 @@ class solarchvision_WIN3D {
   
         case '*': 
           SOLARCHVISION_select_All();
-          this.Update = true;
-          ROLLOUT.Update = true;
+          this.update = true;
+          ROLLOUT.update = true;
           break;             
   
         case '.' :
           this.X_Coordinate = 0;
           this.Y_Coordinate = 0;
           //this.Zoom = 60;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '-' :
           this.RX_Coordinate = 90; 
           SOLARCHVISION_reverseTransform_3DViewport(); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;  
   
   
@@ -1186,108 +1222,108 @@ class solarchvision_WIN3D {
           this.CurrentCamera = 0;
           SOLARCHVISION_modify_Viewport_Title();
   
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '0' :
           Display_LAND_Surface = !Display_LAND_Surface;
           if (Display_LAND_Surface) {
             Current_ObjectCategory = ObjectCategory.LandPoints;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           }
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '1' :
           Display_Fractals = !Display_Fractals;
           if (Display_Fractals) {
             Current_ObjectCategory = ObjectCategory.Fractals;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           }
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '2' :
           Display_Model2Ds = !Display_Model2Ds;
           if (Display_Model2Ds) {
             Current_ObjectCategory = ObjectCategory.Object2Ds;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           }
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '3' :
           Display_Model3Ds = !Display_Model3Ds;
           if (Display_Model3Ds) {
             Current_ObjectCategory = ObjectCategory.Group3Ds;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '4' :
           Display_Model3Ds = !Display_Model3Ds;
           if (Display_Model3Ds) {
             Current_ObjectCategory = ObjectCategory.Faces;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;                  
   
         case '5' :
           Display_Model3Ds = !Display_Model3Ds;
           if (Display_Model3Ds) {
             Current_ObjectCategory = ObjectCategory.Vertices;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;  
   
         case '6' :
           Display_Model3Ds = !Display_Model3Ds;
           if (Display_Model3Ds) {
             Current_ObjectCategory = ObjectCategory.Curves;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;                       
   
         case '7' :
           Display_Solids = !Display_Solids;
           if (Display_Solids) {
             Current_ObjectCategory = ObjectCategory.Solids;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
         case '8' :
           Display_Sections = !Display_Sections;
           if (Display_Sections) {
             Current_ObjectCategory = ObjectCategory.Sections;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
         case '9' :
           Display_Cameras = !Display_Cameras;
           if (Display_Cameras) {
             Current_ObjectCategory = ObjectCategory.Cameras;
-            UI_BAR_b_Update = true;
+            UI_BAR_b_update = true;
           } 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
   
@@ -1296,12 +1332,12 @@ class solarchvision_WIN3D {
   
         case ' ' :
           SOLARCHVISION_render_Shadows_selectedSections(); 
-          this.Update = true;
+          this.update = true;
           break;
   
         case ENTER :
           SOLARCHVISION_calculate_SolarImpact_selectedSections();
-          this.Update = true;
+          this.update = true;
           break;
         }
       }
@@ -1314,26 +1350,26 @@ class solarchvision_WIN3D {
   
         case DOWN :
           SOLARCHVISION_rotateZ_3DViewport_around_Selection(this.RS_Coordinate);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case LEFT :
           SOLARCHVISION_rotateXY_3DViewport_around_Selection(-this.RS_Coordinate);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case RIGHT :
           SOLARCHVISION_rotateXY_3DViewport_around_Selection(this.RS_Coordinate);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case UP :
           SOLARCHVISION_rotateZ_3DViewport_around_Selection(-this.RS_Coordinate);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;     
   
         case 33: 
@@ -1343,8 +1379,8 @@ class solarchvision_WIN3D {
   
           SOLARCHVISION_modify_Viewport_Title();
   
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 34: 
@@ -1354,8 +1390,8 @@ class solarchvision_WIN3D {
   
           SOLARCHVISION_modify_Viewport_Title();
   
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 35: 
@@ -1371,8 +1407,8 @@ class solarchvision_WIN3D {
         case 155: // INSERT 
           SOLARCHVISION_deselect_All();
   
-          this.Update = true;
-          ROLLOUT.Update = true;
+          this.update = true;
+          ROLLOUT.update = true;
           break;
         }
       } else {
@@ -1381,145 +1417,145 @@ class solarchvision_WIN3D {
         case DELETE: 
           SOLARCHVISION_delete_Selection();
   
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
   
           break;        
   
         case ',' :
           if (this.ViewType == 1) {
             this.Z_Coordinate += this.S_Coordinate * OBJECTS_scale; 
-            this.Update = true; 
-            ROLLOUT.Update = true;
+            this.update = true; 
+            ROLLOUT.update = true;
           } else {
             this.Zoom /= pow(2.0, 0.25); 
-            this.Update = true; 
-            ROLLOUT.Update = true;
+            this.update = true; 
+            ROLLOUT.update = true;
           }
           break;
   
         case '.' :
           if (this.ViewType == 1) {
             this.Z_Coordinate -= this.S_Coordinate * OBJECTS_scale; 
-            this.Update = true; 
-            ROLLOUT.Update = true;
+            this.update = true; 
+            ROLLOUT.update = true;
           } else {
             this.Zoom *= pow(2.0, 0.25); 
-            this.Update = true; 
-            ROLLOUT.Update = true;
+            this.update = true; 
+            ROLLOUT.update = true;
           }
           break;
   
         case '0' :
           if (this.ViewType == 1) {
             this.Z_Coordinate += this.S_Coordinate * OBJECTS_scale; 
-            this.Update = true; 
-            ROLLOUT.Update = true;
+            this.update = true; 
+            ROLLOUT.update = true;
           } else {
             this.Zoom /= pow(2.0, 0.25); 
-            this.Update = true; 
-            ROLLOUT.Update = true;
+            this.update = true; 
+            ROLLOUT.update = true;
           }
           break;
   
         case '5' :
           SOLARCHVISION_look_3DViewport_towards_Selection(); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '4' :
           this.RZ_Coordinate += this.RS_Coordinate; 
           SOLARCHVISION_reverseTransform_3DViewport(); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '6' :
           this.RZ_Coordinate -= this.RS_Coordinate; 
           SOLARCHVISION_reverseTransform_3DViewport();
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '2' :
           this.RX_Coordinate -= this.RS_Coordinate; 
           SOLARCHVISION_reverseTransform_3DViewport(); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '8' :
           this.RX_Coordinate += this.RS_Coordinate; 
           SOLARCHVISION_reverseTransform_3DViewport(); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '1' :
           this.X_Coordinate += this.S_Coordinate * OBJECTS_scale; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '3' :
           this.X_Coordinate -= this.S_Coordinate * OBJECTS_scale; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
         case '9' :
           this.Y_Coordinate += this.S_Coordinate * OBJECTS_scale; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '7' :
           this.Y_Coordinate -= this.S_Coordinate * OBJECTS_scale; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;                  
   
   
         case '*' : 
           SOLARCHVISION_move_3DViewport_towards_Selection(2.0);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;        
         case '/' :
           SOLARCHVISION_move_3DViewport_towards_Selection(0.5); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
   
         case '+' :
           this.Zoom = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * this.Zoom)); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '-' :
           this.Zoom = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * this.Zoom)); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
         case 'O' :
           this.ViewType = 0; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'o' :
           this.ViewType = 0; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'P' ://this.Zoom = 60;
           this.ViewType = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
         case 'p' ://this.Zoom = 60;
           this.ViewType = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
   
@@ -1527,27 +1563,27 @@ class solarchvision_WIN3D {
         case ']' :
           IMPACTS_DisplayDay += 1;
           if (IMPACTS_DisplayDay > STUDY.j_End) IMPACTS_DisplayDay = 0;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
         case '[' :
           IMPACTS_DisplayDay -= 1;
           if (IMPACTS_DisplayDay < 0) IMPACTS_DisplayDay = STUDY.j_End;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
   
         case ENTER: 
           if (this.FacesShade == Shade_Global_Solar) rebuild_GlobalSolar_array = 1;   
           if (this.FacesShade == Shade_Vertex_Solar) rebuild_VertexSolar_array = 1;
-          this.Update = true;
-          ROLLOUT.Update = true;  
+          this.update = true;
+          ROLLOUT.update = true;  
           break;                  
   
         case ' ': 
           SOLARCHVISION_RecordFrame();
-          ROLLOUT.Update = true; 
+          ROLLOUT.update = true; 
           break;       
          
         }
@@ -1575,8 +1611,8 @@ class solarchvision_WORLD {
   int dX = int(2.0 * SOLARCHVISION_H_Pixel);
   int dY = SOLARCHVISION_H_Pixel;
   
-  boolean Update = true;
-  boolean Include = true;
+  boolean update = true;
+  boolean include = true;
   
   
   int Viewports_num;
@@ -1690,7 +1726,7 @@ class solarchvision_WORLD {
     if (return_VIEWPORT != this.VIEW_id) {
       this.loadImages(return_VIEWPORT);
   
-      if (Display_EARTH_Surface) WIN3D.Update = true;
+      if (Display_EARTH_Surface) WIN3D.update = true;
     }
   
     return (return_VIEWPORT);
@@ -1707,7 +1743,7 @@ class solarchvision_WORLD {
 
   void drawView () {
   
-    if (this.Update) {
+    if (this.update) {
   
       if (this.record_PDF) this.ImageScale = 1;
       else if (this.record_JPG) this.ImageScale = 2;
@@ -2299,9 +2335,9 @@ class solarchvision_WORLD {
   
       if ((this.ImageScale != 1) || (this.record_PDF)) {
         this.graphics = createGraphics(this.dX, this.dY, P2D);
-        this.Update = false; //1;
+        this.update = false; //1;
       } else {
-        this.Update = false;
+        this.update = false;
       }
   
   
@@ -2334,8 +2370,8 @@ class solarchvision_STUDY {
   float R_View = float(dY) / float(dX);
   float S_View;
   
-  boolean Update = true;
-  boolean Include = true;
+  boolean update = true;
+  boolean include = true;
 
   boolean record_JPG = false;
   boolean record_PDF = false;
@@ -2350,8 +2386,8 @@ class solarchvision_STUDY {
 
   float PerDays = 45; //61; //1; //45; //61; //30.5;
   int JoinDays = 1; //30;//PerDays; // it should be set up to 1 in order to plot only one day  
-  int CurrentLayer = LAYER_dirnorrad; //LAYER_developed; //LAYER_drybulb; ; //LAYER_cloudcover; 
   
+  int CurrentLayer = LAYER_dirnorrad; //LAYER_developed; //LAYER_drybulb; ; //LAYER_cloudcover; 
   int DevelopLayer = CurrentLayer;
   
   int PrintTtitle = 1;
@@ -2406,7 +2442,7 @@ class solarchvision_STUDY {
   
   int ImpactLayer = 1; // 4 = Median
   int PlotImpacts = 4; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
-  boolean Impacts_Update = true; 
+  boolean Impacts_update = true; 
   
   boolean DisplayRaws = false;
   boolean DisplaySorted = true;
@@ -2441,7 +2477,7 @@ class solarchvision_STUDY {
   
   void keyPressed (KeyEvent e) {
   
-    if (e.isAltDown() == true) {
+    if (e.isAltDown()) {
       if (key == CODED) { 
         switch(keyCode) {
         }
@@ -2449,38 +2485,38 @@ class solarchvision_STUDY {
         switch(key) {
         case '0' : 
           Camera_Variation = 0; 
-          this.Update = true; 
+          this.update = true; 
           break;
         case '1' : 
           Camera_Variation = 1; 
-          this.Update = true; 
+          this.update = true; 
           break;
         case '2' : 
           Camera_Variation = 2; 
-          this.Update = true; 
+          this.update = true; 
           break;
         case '3' : 
           Camera_Variation = 3; 
-          this.Update = true; 
+          this.update = true; 
           break;
         case '4' : 
           Camera_Variation = 4; 
-          this.Update = true; 
+          this.update = true; 
           break;
         case '5' : 
           Camera_Variation = 5; 
-          this.Update = true; 
+          this.update = true; 
           break;
         case '6' : 
           Camera_Variation = 6; 
-          this.Update = true; 
+          this.update = true; 
           break;
-          //case '7' : Camera_Variation = 7; this.Update = true; break;
-          //case '8' : Camera_Variation = 8; this.Update = true; break;
-          //case '9' : Camera_Variation = 9; this.Update = true; break;
+          //case '7' : Camera_Variation = 7; this.update = true; break;
+          //case '8' : Camera_Variation = 8; this.update = true; break;
+          //case '9' : Camera_Variation = 9; this.update = true; break;
         }
       }
-    } else if (e.isControlDown() == true) {
+    } else if (e.isControlDown()) {
       if (key == CODED) { 
         switch(keyCode) {
           
@@ -2490,18 +2526,18 @@ class solarchvision_STUDY {
   
         case 'r' : 
           this.record_AUTO = !this.record_AUTO; 
-          this.Update = false; 
-          ROLLOUT.Update = true; 
+          this.update = false; 
+          ROLLOUT.update = true; 
           break;
         case 'R' : 
           this.record_AUTO = !this.record_AUTO; 
-          this.Update = false; 
-          ROLLOUT.Update = true; 
+          this.update = false; 
+          ROLLOUT.update = true; 
           break;
   
         }
       }
-    } else if (e.isShiftDown() == true) {
+    } else if (e.isShiftDown()) {
       if (key == CODED) { 
         switch(keyCode) {
         }
@@ -2516,51 +2552,51 @@ class solarchvision_STUDY {
   
         case 112 : //F1
           this.PlotImpacts = -2; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;
         case 113 : //F2
           this.PlotImpacts = -1; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;
         case 114 : //F3
           this.PlotImpacts = 4; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;
         case 115 : //F4
           this.PlotImpacts = 5; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;          
         case 116 : //F5
           this.PlotImpacts = 2; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;
         case 117 : //F6
           this.PlotImpacts = 3; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;                   
         case 118 : //F7
           this.PlotImpacts = 0; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;           
         case 119 : //F8
           this.PlotImpacts = 1; 
-          this.Update = true; 
-          WIN3D.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          WIN3D.update = true;
+          ROLLOUT.update = true; 
           break;
         }
       }
@@ -2580,16 +2616,16 @@ class solarchvision_STUDY {
   
         case ';': 
           this.impact_summary = (this.impact_summary + 1) % 2;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '?' :
           SOALRCHVISION_refreshDateTabs();                   
-          Update_DevelopData = 1;
-          UI_BAR_d_Update = true; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          UI_BAR_d_update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '}' :
@@ -2604,7 +2640,7 @@ class solarchvision_STUDY {
            this.PerDays = 1;
            }
            */
-          Update_DevelopData = 1;
+          update_DevelopData = 1;
   
           rebuild_VertexSolar_array = 1;
           rebuild_GlobalSolar_array = 1;
@@ -2612,9 +2648,9 @@ class solarchvision_STUDY {
           rebuild_WindRoseImage_array = 1;
           SOLARCHVISION_resize_allSections_SolarImpact_array();
   
-          UI_BAR_d_Update = true;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          UI_BAR_d_update = true;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '{' :
@@ -2629,7 +2665,7 @@ class solarchvision_STUDY {
            this.PerDays = 1;
            }                  
            */
-          Update_DevelopData = 1;
+          update_DevelopData = 1;
   
           rebuild_VertexSolar_array = 1; 
           rebuild_GlobalSolar_array = 1;
@@ -2637,49 +2673,49 @@ class solarchvision_STUDY {
           rebuild_WindRoseImage_array = 1;   
           SOLARCHVISION_resize_allSections_SolarImpact_array();
   
-          UI_BAR_d_Update = true; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          UI_BAR_d_update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'a'  :
           Develop_AngleInclination -= 5;
           if (Develop_AngleInclination < -90) Develop_AngleInclination = -90;
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
         case 'A'  :
           Develop_AngleInclination += 5;
           if (Develop_AngleInclination > 90) Develop_AngleInclination = 90;
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'z' :
           Develop_AngleOrientation = (Develop_AngleOrientation - 5 + 360) % 360;
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
         case 'Z' :
           Develop_AngleOrientation = (Develop_AngleOrientation + 5) % 360;
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
         case 'd' :
           Develop_DayHour = (Develop_DayHour + 1) % 4;
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
         case 'D' :
           Develop_DayHour = (Develop_DayHour - 1 + 4) % 4;
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break; 
   
         case '>' :
@@ -2688,8 +2724,8 @@ class solarchvision_STUDY {
           } else {
             this.ImpactLayer = (this.ImpactLayer + 1) % 9;
           }
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
         case '<' :
           if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) {
@@ -2697,123 +2733,123 @@ class solarchvision_STUDY {
           } else {
             this.ImpactLayer = (this.ImpactLayer + 9 - 1) % 9;
           }
-          this.Update = true;
-          ROLLOUT.Update = true; 
+          this.update = true;
+          ROLLOUT.update = true; 
           break;
   
   
   
   
-          //case 'g' :this.filter = (this.filter + 1) % 2; Update_DevelopData = 1; this.Update = true; ROLLOUT.Update = true; break;
-          //case 'G' :this.filter = (this.filter + 2 - 1) % 2; Update_DevelopData = 1; this.Update = true; ROLLOUT.Update = true; break;
+          //case 'g' :this.filter = (this.filter + 1) % 2; update_DevelopData = 1; this.update = true; ROLLOUT.update = true; break;
+          //case 'G' :this.filter = (this.filter + 2 - 1) % 2; update_DevelopData = 1; this.update = true; ROLLOUT.update = true; break;
   
         case '=' :
           this.V_scale[this.CurrentLayer] *= pow(2.0, (1.0 / 2.0)); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '_' :
           this.V_scale[this.CurrentLayer] *= pow(0.5, (1.0 / 2.0)); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'c' :
           COLOR_STYLE_Current = (COLOR_STYLE_Current + 1) % COLOR_STYLE_Number; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'C' :
           COLOR_STYLE_Current = (COLOR_STYLE_Current - 1 + COLOR_STYLE_Number) % COLOR_STYLE_Number; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'V' :
           this.DisplayRaws = !this.DisplayRaws; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'v' :
           this.DisplayRaws = !this.DisplayRaws; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '`' :
           this.JoinDays += 2;
           if (this.JoinDays > 365) this.JoinDays = 365;
-          Update_DevelopData = 1; 
-          UI_BAR_d_Update = true; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          UI_BAR_d_update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '~' :
           this.JoinDays -= 2;
           if (this.JoinDays < 1) this.JoinDays = 1;
-          Update_DevelopData = 1; 
-          UI_BAR_d_Update = true; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          UI_BAR_d_update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'l' :
           Materials_Selection += 1;
           Materials_Selection %= Materials_Number; 
-          Update_DevelopData = 1;
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1;
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'L' :
           Materials_Selection += Materials_Number - 1;
           Materials_Selection %= Materials_Number;
-          Update_DevelopData = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;  
   
         case 'm' :
           this.DisplaySorted = !this.DisplaySorted; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'M' :
           this.DisplaySorted = !this.DisplaySorted; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'n' :
           this.DisplayNormals = !this.DisplayNormals; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'N' :
           this.DisplayNormals = !this.DisplayNormals; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'b' :
           this.DisplayProbs = !this.DisplayProbs; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'B' :
           this.DisplayProbs = !this.DisplayProbs; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'j' :
           if (this.LevelPix < 32) this.LevelPix *= pow(2.0, (1.0 / 1.0)); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'J' :
           if (this.LevelPix > 2) this.LevelPix *= pow(0.5, (1.0 / 1.0)); 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 'i' :
@@ -2822,8 +2858,8 @@ class solarchvision_STUDY {
           else if (this.SumInterval > 1) this.SumInterval -= 1;
           if (this.SumInterval == 5) this.SumInterval = 4;
           println("this.SumInterval =", this.SumInterval);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'I' :
           if (this.SumInterval < 6) this.SumInterval += 1;
@@ -2831,46 +2867,46 @@ class solarchvision_STUDY {
           else this.SumInterval += 24;
           if (this.SumInterval == 5) this.SumInterval = 6;
           println("this.SumInterval =", this.SumInterval);
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case '!' :
           this.skyScenario = 1; 
-          Update_DevelopData = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '@' :
           this.skyScenario = 2; 
-          Update_DevelopData = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '#' :
           this.skyScenario = 3; 
-          Update_DevelopData = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case '$' :
           this.skyScenario = 4; 
-          Update_DevelopData = 1; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          update_DevelopData = 1; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
   
         case 's' : 
           this.record_JPG = true; 
           this.record_PDF = false; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         case 'S' : 
           this.record_PDF = true; 
           this.record_JPG = false; 
-          this.Update = true; 
-          ROLLOUT.Update = true; 
+          this.update = true; 
+          ROLLOUT.update = true; 
           break;
         }
       }
@@ -3650,7 +3686,7 @@ class solarchvision_STUDY {
   
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, this.CurrentLayer); 
           
-            if (is_undefined_FLOAT(Pa) == true) {
+            if (is_undefined_FLOAT(Pa)) {
               _valuesA[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
   
               if ((this.Export_info_node) && (this.DisplayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
@@ -3673,7 +3709,7 @@ class solarchvision_STUDY {
   
                   Pb = getValue_CurrentDataSource(next_i, next_j, next_k, this.CurrentLayer);                 
                   
-                  if (is_undefined_FLOAT(Pb) == true) {
+                  if (is_undefined_FLOAT(Pb)) {
                     _valuesB[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
                   } else {
                     _valuesB[(k * this.JoinDays + j_ADD)] = Pb;
@@ -4192,7 +4228,7 @@ class solarchvision_STUDY {
     cursor(WAIT);
   
   
-    if (this.Update) {
+    if (this.update) {
   
       if (this.record_PDF) this.ImageScale = 1;
       else if (this.record_JPG) this.ImageScale = 2;
@@ -4219,7 +4255,7 @@ class solarchvision_STUDY {
       DrawnFrame += 1;
       println("frame:", DrawnFrame);    
   
-      if (Update_DevelopData == 1) {
+      if (update_DevelopData == 1) {
         if (this.CurrentLayer == LAYER_developed) {
           SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
     
@@ -4301,9 +4337,9 @@ class solarchvision_STUDY {
   
       if ((this.ImageScale != 1) || (this.record_PDF)) {
         this.graphics = createGraphics(this.dX, this.dY, P2D);
-        this.Update = false; //1;
+        this.update = false; //1;
       } else {
-        this.Update = false;
+        this.update = false;
       }
   
   
@@ -4420,7 +4456,7 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
     if (new_value < min_v) new_value = max_v; 
     if (new_value > max_v) new_value = min_v;
 
-    ROLLOUT.Update = true;
+    ROLLOUT.update = true;
   }
 
   strokeWeight(0); 
@@ -4456,9 +4492,9 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
   text(caption + ":", x - w1 - w2 + t_o, y - t_o);
 
   if (new_value != v) {
-    if (update1 != 0) STUDY.Update = true;
-    if (update2 != 0) WIN3D.Update = true;
-    if (update3 != 0) WORLD.Update = true;
+    if (update1 != 0) STUDY.update = true;
+    if (update2 != 0) WIN3D.update = true;
+    if (update3 != 0) WORLD.update = true;
   }
 
   return new_value;
@@ -4504,8 +4540,8 @@ class solarchvision_ROLLOUT {
   float R_View = float(dY) / float(dX);
   float S_View = SOLARCHVISION_H_Pixel / 325.0; //1; //0.75; // ?????
   
-  boolean Update = true;
-  boolean Include = true;
+  boolean update = true;
+  boolean include = true;
   
   int parent = 0; // 0: Location, 1: Geometry, 2: Time, etc.
   int child = 1; // number of the category inside e.g. 1, 2, ...
@@ -4549,7 +4585,7 @@ class solarchvision_ROLLOUT {
           this.parent = i;
           this.child = 1; // <<<<<
   
-          this.Update = true;
+          this.update = true;
         }
   
         if (i == this.parent) {
@@ -4592,7 +4628,7 @@ class solarchvision_ROLLOUT {
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.S_View, cy + cr) == 1) {
           this.child = i;
   
-          this.Update = true;
+          this.update = true;
         }      
   
         if (i == this.child) {
@@ -4932,7 +4968,7 @@ class solarchvision_ROLLOUT {
   
         STUDY.Setup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.Setup, -2, 14, 1), 1));
   
-        //STUDY.Update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.Update, 0, 1, 1), 1));  
+        //STUDY.update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
   
         STUDY.CurrentLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", STUDY.CurrentLayer, 0, (num_Layers - 1), 1), 1));
         STUDY.V_scale[STUDY.CurrentLayer] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(STUDY.CurrentLayer, 2) + "]", STUDY.V_scale[STUDY.CurrentLayer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
@@ -5059,7 +5095,7 @@ class solarchvision_ROLLOUT {
       if (this.child == 3) { // Impacts
         CurrentDataSource = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
         STUDY.ImpactLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
-        //STUDY.Impacts_Update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Update impacts", STUDY.Impacts_Update, 0, 1, 1), 1));
+        //STUDY.Impacts_update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
       }
     } else if (this.parent == 5) { // Export Products
   
@@ -5095,7 +5131,7 @@ class solarchvision_ROLLOUT {
   
     }    
   
-    if (this.Include) {
+    if (this.include) {
       if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY) == 1) {  
         SOLARCHVISION_X_clicked = -1;
         SOLARCHVISION_Y_clicked = -1;
@@ -5218,17 +5254,15 @@ int SOLARCHVISION_C_Pixel = int(3.0 * MessageSize); // command bar
 int SOLARCHVISION_D_Pixel = int(4.5 * MessageSize); // time bar
 
 
+solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
+
+solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
+
 solarchvision_WORLD WORLD = new solarchvision_WORLD();
 
 solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
 
 solarchvision_STUDY STUDY = new solarchvision_STUDY();
-
-solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
-
-solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
-
-
 
 
 
@@ -5978,7 +6012,7 @@ final int DEV_OP_11 = 2;
 int Develop_Option = DEV_OP_06; //between 0 - 11...
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues> 
 
-int Update_DevelopData = 1;
+int update_DevelopData = 1;
 
 
 
@@ -5986,40 +6020,7 @@ int Update_DevelopData = 1;
 
 
 
-int num_Layers = 0;  
 
-int addLayer () {
-  num_Layers += 1;
-  return(num_Layers - 1);
-}
-
-int LAYER_windspd200hPa = addLayer();
-int LAYER_thicknesses_1000_500 = addLayer();
-int LAYER_heightp500hPa = addLayer();
-
-int LAYER_ceilingsky = addLayer();
-int LAYER_cloudcover = addLayer();
-
-int LAYER_winddir = addLayer();
-int LAYER_windspd = addLayer();
-
-int LAYER_pressure = addLayer();
-
-int LAYER_drybulb = addLayer();
-
-int LAYER_relhum = addLayer();
-
-int LAYER_dirnorrad = addLayer();
-int LAYER_difhorrad = addLayer();
-int LAYER_glohorrad = addLayer();
-
-int LAYER_direffect = addLayer();
-int LAYER_difeffect = addLayer();
-
-
-int LAYER_precipitation_A = addLayer();
-
-int LAYER_developed = addLayer();
 
 
 
@@ -6923,9 +6924,9 @@ void SOLARCHVISION_update_station (int Step) {
     rebuild_SolarImpactImage_array = 1;
     rebuild_WindRoseImage_array = 1;    
 
-    WORLD.Update = true;
-    WIN3D.Update = true; 
-    STUDY.Update = true;
+    WORLD.update = true;
+    WIN3D.update = true; 
+    STUDY.update = true;
 
     LocationLAT = STATION.getLatitude();
     LocationLON = STATION.getLongitude();
@@ -7214,18 +7215,18 @@ void draw () {
     SOLARCHVISION_X_clicked = -1;
     SOLARCHVISION_Y_clicked = -1;
     
-    UI_BAR_a_Update = true;
-    UI_BAR_b_Update = true;
-    UI_BAR_c_Update = true;
-    UI_BAR_d_Update = true;
+    UI_BAR_a_update = true;
+    UI_BAR_b_update = true;
+    UI_BAR_c_update = true;
+    UI_BAR_d_update = true;
 
     InitializationStep = frameCount; 
     Last_initializationStep = frameCount;
   } else {
     
-    if (ROLLOUT.Include) {
-      if (ROLLOUT.Update) {
-        ROLLOUT.Update = false;
+    if (ROLLOUT.include) {
+      if (ROLLOUT.update) {
+        ROLLOUT.update = false;
 
         pre_SampleYear_Start = SampleYear_Start;
         pre_SampleYear_End = SampleYear_End;
@@ -7351,48 +7352,48 @@ void draw () {
         ROLLOUT.drawView();
 
         if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
-          WIN3D.Update = true;
-          STUDY.Update = true;
+          WIN3D.update = true;
+          STUDY.update = true;
         }
 
         if (pre_SampleYear_Start != SampleYear_Start) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }            
         if (pre_SampleYear_End != SampleYear_End) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }            
 
         if (pre_SampleMember_Start != SampleMember_Start) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }  
 
         if (pre_SampleMember_End != SampleMember_End) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }  
 
         if (pre_SampleStation_Start != SampleStation_Start) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }  
 
         if (pre_SampleStation_End != SampleStation_End) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }  
 
         if (pre_STUDY_JoinDays != STUDY.JoinDays) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }            
 
         if (pre_STUDY_i_Start != STUDY.i_Start) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }      
 
         if (pre_STUDY_i_End != STUDY.i_End) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }      
 
 
         if (pre_STUDY_j_End != STUDY.j_End) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
 
           rebuild_VertexSolar_array = 1;
           rebuild_GlobalSolar_array = 1;
@@ -7403,18 +7404,18 @@ void draw () {
         }
 
         if (pre_IMPACTS_DisplayDay != IMPACTS_DisplayDay) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }
 
         if (pre_TIME_Date != TIME_Date) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
 
           SOLARCHVISION_update_date();
           ROLLOUT.drawView();
         }
 
         if ((pre_TIME_Year != TIME_Year) || (pre_TIME_Month != TIME_Month) || (pre_TIME_Day != TIME_Day) || (pre_TIME_Hour != TIME_Hour) || (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) || (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
 
           TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
           TIME_Hour = int(24 * (TIME_Date - int(TIME_Date)));
@@ -7442,7 +7443,7 @@ void draw () {
         if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
 
           WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
-          WORLD.Update = true;
+          WORLD.update = true;
         }
 
 
@@ -7450,69 +7451,69 @@ void draw () {
 
         if (pre_Load_LAND_Mesh != Load_LAND_Mesh) {
           SOLARCHVISION_update_LAND_Mesh();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_Load_LAND_Textures != Load_LAND_Textures) {
           SOLARCHVISION_update_LAND_Textures();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
 
 
         if (pre_selectedCamera_displayEdges != selectedCamera_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_selectedSection_displayEdges != selectedSection_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }         
 
         if (pre_selectedSolid_displayEdges != selectedSolid_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }  
 
         if (pre_selectedLandPoint_displayPoints != selectedLandPoint_displayPoints) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }          
 
 
         if (pre_selectedFractal_displayEdges != selectedFractal_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
 
         if (pre_selectedObject2D_displayEdges != selectedObject2D_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
 
 
         if (pre_softSelection_Power != softSelection_Power) {    
           SOLARCHVISION_convert_Vertex_to_softSelection();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }  
 
         if (pre_softSelection_Radius != softSelection_Radius) {
           SOLARCHVISION_convert_Vertex_to_softSelection();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }  
 
 
         if (pre_selection_alignX != selection_alignX) {    
           println("SOLARCHVISION_calculate_selection_BoundingBox 24");    
           SOLARCHVISION_calculate_selection_BoundingBox();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }        
 
         if (pre_selection_alignY != selection_alignY) {   
           println("SOLARCHVISION_calculate_selection_BoundingBox 25");     
           SOLARCHVISION_calculate_selection_BoundingBox();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }      
 
         if (pre_selection_alignZ != selection_alignZ) {        
           println("SOLARCHVISION_calculate_selection_BoundingBox 26");
           SOLARCHVISION_calculate_selection_BoundingBox();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }      
 
         if (pre_selected_posValue != selected_posValue) {
@@ -7539,7 +7540,7 @@ void draw () {
           }            
 
           SOLARCHVISION_move_Selection(dx, dy, dz);
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_selected_rotValue != selected_rotValue) {
 
@@ -7554,7 +7555,7 @@ void draw () {
           int the_Vector = selected_rotVector;
 
           SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_selected_scaleValue != selected_scaleValue) {
 
@@ -7586,44 +7587,44 @@ void draw () {
           }           
 
           SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }        
 
 
         if (pre_selected_displayReferencePivot != selected_displayReferencePivot) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_selectedGroup3D_displayPivot != selectedGroup3D_displayPivot) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }             
 
         if (pre_selectedGroup3D_displayEdges != selectedGroup3D_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_selectedGroup3D_displayBox != selectedGroup3D_displayBox) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
 
         if (pre_selectedFace_displayEdges != selectedFace_displayEdges) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
 
         if (pre_selectedFace_displayVertexCount != selectedFace_displayVertexCount) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
         
         if (pre_selectedCurve_displayVertexCount != selectedCurve_displayVertexCount) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }           
 
         if (pre_selectedVertex_displayVertices != selectedVertex_displayVertices) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
 
         if (pre_selectedCurve_displayVertices != selectedCurve_displayVertices) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }     
 
 
@@ -7631,12 +7632,12 @@ void draw () {
           SOLARCHVISION_apply_currentCamera();
 
           SOLARCHVISION_modify_Viewport_Title();
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
 
         if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }             
 
         if (pre_MODEL3D_Tessellation != MODEL3D_Tessellation) {
@@ -7654,9 +7655,9 @@ void draw () {
 
           SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
-          WIN3D.Update = true;
+          WIN3D.update = true;
 
-          ROLLOUT.Update = true;
+          ROLLOUT.update = true;
         }
 
 
@@ -7665,92 +7666,92 @@ void draw () {
           CreateInput_powY = CreateInput_powAll;
           CreateInput_powZ = CreateInput_powAll;
 
-          ROLLOUT.Update = true;
+          ROLLOUT.update = true;
         }
 
 
         if (pre_SOLID_Pallet_CLR != SOLID_Pallet_CLR) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SOLID_Pallet_DIR != SOLID_Pallet_DIR) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SOLID_Pallet_MLT != SOLID_Pallet_MLT) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_SolidImpact_Grade != SolidImpact_Grade) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SolidImpact_Power != SolidImpact_Power) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SolidImpact_Rotation[SolidImpact_sectionType] != SolidImpact_Rotation[SolidImpact_sectionType]) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SolidImpact_Elevation[SolidImpact_sectionType] != SolidImpact_Elevation[SolidImpact_sectionType]) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_SolidImpact_scale_U[SolidImpact_sectionType] != SolidImpact_scale_U[SolidImpact_sectionType]) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SolidImpact_scale_V[SolidImpact_sectionType] != SolidImpact_scale_V[SolidImpact_sectionType]) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
         if (pre_SolidImpact_offset_U[SolidImpact_sectionType] != SolidImpact_offset_U[SolidImpact_sectionType]) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SolidImpact_offset_V[SolidImpact_sectionType] != SolidImpact_offset_V[SolidImpact_sectionType]) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
 
         if (pre_SolidImpact_Wspd != SolidImpact_WindSpeed) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
         if (pre_SolidImpact_Wdir != SolidImpact_WindDirection) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
 
         if (pre_Process_subDivisions != Process_subDivisions) {
           SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
-          WIN3D.Update = true;
+          WIN3D.update = true;
         }
 
-        if (pre_Display_SolidImpact_Points != Display_SolidImpact_Points) WIN3D.Update = true;
-        if (pre_Display_SolidImpact_Lines != Display_SolidImpact_Lines) WIN3D.Update = true;
+        if (pre_Display_SolidImpact_Points != Display_SolidImpact_Points) WIN3D.update = true;
+        if (pre_Display_SolidImpact_Lines != Display_SolidImpact_Lines) WIN3D.update = true;
 
-        if (pre_MODEL3D_DisplayVertices != MODEL3D_DisplayVertices) WIN3D.Update = true;
-        if (pre_MODEL3D_DisplayEdges != MODEL3D_DisplayEdges) WIN3D.Update = true;
-        if (pre_MODEL3D_DisplayNormals != MODEL3D_DisplayNormals) WIN3D.Update = true;
+        if (pre_MODEL3D_DisplayVertices != MODEL3D_DisplayVertices) WIN3D.update = true;
+        if (pre_MODEL3D_DisplayEdges != MODEL3D_DisplayEdges) WIN3D.update = true;
+        if (pre_MODEL3D_DisplayNormals != MODEL3D_DisplayNormals) WIN3D.update = true;
 
-        if (pre_Display_WindFlow != Display_WindFlow) WIN3D.Update = true;
+        if (pre_Display_WindFlow != Display_WindFlow) WIN3D.update = true;
 
 
         if (STUDY.Setup != pre_STUDY_Setup) {
-          STUDY.Impacts_Update = true;
-          UI_BAR_d_Update = false;
+          STUDY.Impacts_update = true;
+          UI_BAR_d_update = false;
         }
 
         if (CurrentDataSource != pre_CurrentDataSource) {
-          STUDY.Impacts_Update = true;
-          UI_BAR_d_Update = false;
+          STUDY.Impacts_update = true;
+          UI_BAR_d_update = false;
         }
       }
     }
@@ -7758,12 +7759,12 @@ void draw () {
 
 
     if (FRAME_record_AUTO) {
-      if (STUDY.Update) FRAME_record_JPG = true;
-      if (WIN3D.Update) FRAME_record_JPG = true;
-      if (WORLD.Update) FRAME_record_JPG = true;
-      //if (UI_BAR_a_Update) FRAME_record_JPG = true;
-      //if (UI_BAR_b_Update) FRAME_record_JPG = true;
-      //if (UI_BAR_d_Update) FRAME_record_JPG = true;
+      if (STUDY.update) FRAME_record_JPG = true;
+      if (WIN3D.update) FRAME_record_JPG = true;
+      if (WORLD.update) FRAME_record_JPG = true;
+      //if (UI_BAR_a_update) FRAME_record_JPG = true;
+      //if (UI_BAR_b_update) FRAME_record_JPG = true;
+      //if (UI_BAR_d_update) FRAME_record_JPG = true;
     }
 
 
@@ -7771,18 +7772,18 @@ void draw () {
 
     int Illustrations_Animate = 0;
 
-    //if ((STUDY.Update == false) && (WIN3D.Update == false)) {
-    if (STUDY.Update == false) {
+    //if ((STUDY.update == false) && (WIN3D.update == false)) {
+    if (STUDY.update == false) {
       //Illustrations_Animate = 1;
     }
 
-    if (STUDY.Include) {
-      if (STUDY.Update) {
+    if (STUDY.include) {
+      if (STUDY.update) {
 
         STUDY.drawView();
       }
     }
-    STUDY.Update = false;
+    STUDY.update = false;
 
     if (STUDY.record_PDF == false) {
       /*      
@@ -7799,22 +7800,22 @@ void draw () {
        
        if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
        
-       WORLD.Update = true;
-       WIN3D.Update = true; // <<<<<<<<<<<
+       WORLD.update = true;
+       WIN3D.update = true; // <<<<<<<<<<<
        }
        }
        */
 
-      if (WORLD.Include) {
-        if (WORLD.Update) {
+      if (WORLD.include) {
+        if (WORLD.update) {
 
           WORLD.drawView();
         }
       }
 
       if (WORLD.record_PDF == false) {      
-        if (WIN3D.Include) {
-          if (WIN3D.Update) {
+        if (WIN3D.include) {
+          if (WIN3D.update) {
             
             SOLARCHVISION_regenerate_desired_bakings();
 
@@ -7822,19 +7823,19 @@ void draw () {
           }
         }
 
-        if (UI_BAR_a_Update) {
+        if (UI_BAR_a_update) {
           SOLARCHVISION_draw_window_BAR_a();
         }
 
-        if (UI_BAR_b_Update) {
+        if (UI_BAR_b_update) {
           SOLARCHVISION_draw_window_BAR_b();
         }
 
-        if (UI_BAR_c_Update) {
+        if (UI_BAR_c_update) {
           SOLARCHVISION_draw_window_BAR_c();
         }  
 
-        if (UI_BAR_d_Update) {
+        if (UI_BAR_d_update) {
           SOLARCHVISION_draw_window_BAR_d();
         }    
 
@@ -7852,9 +7853,9 @@ void draw () {
     }
 
 
-    //WIN3D.Update = false;
-    //WORLD.Update = false;
-    //STUDY.Update = false;
+    //WIN3D.update = false;
+    //WORLD.update = false;
+    //STUDY.update = false;
 
     //noLoop(); // <<<<<<<<<<<<
     
@@ -8902,7 +8903,7 @@ void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int 
 
 
 
-  if (new_files_downloaded == true) {
+  if (new_files_downloaded) {
     
     String folder_inout = ENSEMBLE_FORECAST_directory.replace('/', char(92));
     
@@ -8970,11 +8971,11 @@ void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int TH
     Display_NAEFS_Nearest = true;     
   }
   
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true;    
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;    
   
   SampleMember_Start = ENSEMBLE_FORECAST_start;
   SampleMember_End = ENSEMBLE_FORECAST_end;
@@ -9089,11 +9090,11 @@ void SOLARCHVISION_update_CLIMATE_CWEEDS () {
 
   }
   
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true;   
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;   
   
   SampleYear_Start = CLIMATE_CWEEDS_start;
   SampleYear_End = CLIMATE_CWEEDS_end;     
@@ -9289,11 +9290,11 @@ void SOLARCHVISION_update_CLIMATE_CLMREC () {
   
   }
   
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true; 
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true; 
 
   SampleYear_Start = CLIMATE_CLMREC_start;
   SampleYear_End = CLIMATE_CLMREC_end;  
@@ -9407,11 +9408,11 @@ void SOLARCHVISION_update_CLIMATE_TMYEPW () {
 
   }
   
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true;    
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;    
 
 }
 
@@ -9487,11 +9488,11 @@ void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
   SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_TMYEPW);
   SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_TMYEPW);
   
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true;  
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;  
   
 }
 
@@ -9668,11 +9669,11 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
     Display_SWOB_Nearest = true;   
   }
 
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true;      
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;      
   
   SampleStation_Start = ENSEMBLE_OBSERVED_start;
   SampleStation_End = ENSEMBLE_OBSERVED_end;
@@ -9937,7 +9938,7 @@ int SOLARCHVISION_filter (int dataID, int LAYER_cloudcover, int type_of_filter, 
       println("ERROR: This dataID is not declared:", dataID);
     }
 
-    if (is_undefined_FLOAT(_sky) == true) {
+    if (is_undefined_FLOAT(_sky)) {
     } else {
       total_sky += _sky;
       num_sky += 1;
@@ -10040,7 +10041,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect);
         Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect);
 
-        if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
+        if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb)) || (is_undefined_FLOAT(Pc)) || (is_undefined_FLOAT(Pd))) {
         } else {
 
           int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k); 
@@ -10051,7 +10052,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
             _values_E_dir = 0.0001 * Pc;
             _values_E_dif = 0; //0.0001 * Pd;
 
-            if (is_undefined_FLOAT(_valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)]) == true) {
+            if (is_undefined_FLOAT(_valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)])) {
               _valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)] = 0;
               _valuesSUM_EFF[(k * STUDY.JoinDays + j_ADD)] = 0;
               _valuesNUM[(k * STUDY.JoinDays + j_ADD)] = 0;
@@ -10174,7 +10175,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd);
                 Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb);
 
-                if (is_undefined_FLOAT(Pa) == true || is_undefined_FLOAT(Pb) == true || is_undefined_FLOAT(Pc) == true) {
+                if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc)) {
                   _values_w_dir[k] = FLOAT_undefined;
                   _values_w_spd[k] = FLOAT_undefined;
                   _values_w_tmp[k] = FLOAT_undefined;
@@ -10287,7 +10288,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd);
                 Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb);
 
-                if (is_undefined_FLOAT(Pa) == true || is_undefined_FLOAT(Pb) == true || is_undefined_FLOAT(Pc) == true) {
+                if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc)) {
                   _values_w_dir[k] = FLOAT_undefined;
                   _values_w_spd[k] = FLOAT_undefined;
                   _values_w_tmp[k] = FLOAT_undefined;
@@ -10458,7 +10459,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
 
-    if (Display_WindRoseImage) WIN3D.Update = true;
+    if (Display_WindRoseImage) WIN3D.update = true;
   } 
 
 
@@ -10467,7 +10468,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((STUDY.PlotImpacts == 0) || (STUDY.PlotImpacts == 1)) {
 
-    if (STUDY.Impacts_Update) {
+    if (STUDY.Impacts_update) {
 
       SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked();
 
@@ -10663,7 +10664,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
 
-    if (Display_SolarImpactImage) WIN3D.Update = true;
+    if (Display_SolarImpactImage) WIN3D.update = true;
   }
 
 
@@ -10794,7 +10795,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect);
                       Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect);
 
-                      if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
+                      if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb)) || (is_undefined_FLOAT(Pc)) || (is_undefined_FLOAT(Pd))) {
                         _values_R_dir = FLOAT_undefined;
                         _values_R_dif = FLOAT_undefined;
                         _values_E_dir = FLOAT_undefined;
@@ -10809,7 +10810,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                           _values_E_dir = 0.001 * Pc;
                           _values_E_dif = 0.001 * Pd;
 
-                          if (is_undefined_FLOAT(_valuesSUM_RAD) == true) {
+                          if (is_undefined_FLOAT(_valuesSUM_RAD)) {
                             _valuesSUM_RAD = 0;
                             _valuesSUM_EFF_P = 0;
                             _valuesSUM_EFF_N = 0;
@@ -11206,7 +11207,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect);
                   Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect);
 
-                  if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
+                  if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb)) || (is_undefined_FLOAT(Pc)) || (is_undefined_FLOAT(Pd))) {
                     _values_R_dir = FLOAT_undefined;
                     _values_R_dif = FLOAT_undefined;
                     _values_E_dir = FLOAT_undefined;
@@ -11221,7 +11222,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       _values_E_dir = 0.001 * Pc;
                       _values_E_dif = 0.001 * Pd;
 
-                      if (is_undefined_FLOAT(_valuesSUM_RAD) == true) {
+                      if (is_undefined_FLOAT(_valuesSUM_RAD)) {
                         _valuesSUM_RAD = 0;
                         _valuesSUM_EFF = 0;
                         _valuesNUM = 0;
@@ -12006,8 +12007,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               Pc2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect);
               Pd2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_difeffect);
               
-              if ((is_undefined_FLOAT(Pa1) == true) || (is_undefined_FLOAT(Pb1) == true) || (is_undefined_FLOAT(Pc1) == true) || (is_undefined_FLOAT(Pd1) == true)
-                || (is_undefined_FLOAT(Pa2) == true) || (is_undefined_FLOAT(Pb2) == true) || (is_undefined_FLOAT(Pc2) == true) || (is_undefined_FLOAT(Pd2) == true)) {
+              if ((is_undefined_FLOAT(Pa1)) || (is_undefined_FLOAT(Pb1)) || (is_undefined_FLOAT(Pc1)) || (is_undefined_FLOAT(Pd1))
+                || (is_undefined_FLOAT(Pa2)) || (is_undefined_FLOAT(Pb2)) || (is_undefined_FLOAT(Pc2)) || (is_undefined_FLOAT(Pd2))) {
                 _values_R_dir = FLOAT_undefined;
                 _values_R_dif = FLOAT_undefined;
                 _values_E_dir = FLOAT_undefined;
@@ -12022,7 +12023,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                   _values_E_dir = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
                   _values_E_dif = 0.001 * (Pd1 * (1 - i_ratio) + Pd2 * i_ratio);
 
-                  if (is_undefined_FLOAT(_valuesSUM_RAD) == true) {
+                  if (is_undefined_FLOAT(_valuesSUM_RAD)) {
                     _valuesSUM_RAD = 0;
                     _valuesSUM_EFF = 0;
                     _valuesNUM = 0;
@@ -12720,7 +12721,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                   
                 }                  
 
-                if ((is_undefined_FLOAT(Pa1) == true) && (is_undefined_FLOAT(Pa2) == true)) {
+                if ((is_undefined_FLOAT(Pa1)) && (is_undefined_FLOAT(Pa2))) {
                 } else {
 
                   float sun_V = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
@@ -12821,9 +12822,9 @@ void SOLARCHVISION_update_frame_layout () {
 
   if (FrameVariation == 0) {
 
-    STUDY.Include = true;
-    WIN3D.Include = true;
-    WORLD.Include = true;
+    STUDY.include = true;
+    WIN3D.include = true;
+    WORLD.include = true;
 
     WIN3D.cX = 0;
     WIN3D.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -12846,9 +12847,9 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
   } else if (FrameVariation == 1) {
 
-    STUDY.Include = false;
-    WIN3D.Include = true;
-    WORLD.Include = false;
+    STUDY.include = false;
+    WIN3D.include = true;
+    WORLD.include = false;
 
     WIN3D.cX = 0;
     WIN3D.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -12858,9 +12859,9 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
   } else if (FrameVariation == 2) {
 
-    STUDY.Include = true;
-    WIN3D.Include = false;
-    WORLD.Include = false;
+    STUDY.include = true;
+    WIN3D.include = false;
+    WORLD.include = false;
 
     STUDY.cX = 0;
     STUDY.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -12870,9 +12871,9 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
   } else if (FrameVariation == 3) {
 
-    STUDY.Include = false;
-    WIN3D.Include = false;
-    WORLD.Include = true;
+    STUDY.include = false;
+    WIN3D.include = false;
+    WORLD.include = true;
 
     WORLD.cX = 0;
     WORLD.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
@@ -12881,9 +12882,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
   } 
 
-  WORLD.Update = true;
-  WIN3D.Update = true; 
-  STUDY.Update = true;
+  WORLD.update = true;
+  WIN3D.update = true; 
+  STUDY.update = true;
 }
 
 
@@ -12913,7 +12914,7 @@ void keyPressed (KeyEvent e) {
 
       if (typeUserCommand == 0) {
 
-        UI_BAR_c_Update = false;
+        UI_BAR_c_update = false;
         
         STUDY.keyPressed(e);
   
@@ -12921,13 +12922,13 @@ void keyPressed (KeyEvent e) {
       }
       else {
         
-        UI_BAR_c_Update = true;
+        UI_BAR_c_update = true;
         
         COMIN_keyPressed(e);
       }
       
 
-      if (e.isAltDown() == true) {
+      if (e.isAltDown()) {
 
         if (key == CODED) { 
           switch(keyCode) {
@@ -12937,16 +12938,16 @@ void keyPressed (KeyEvent e) {
           case 'l' : 
             FrameVariation = (FrameVariation + 1) % 4; 
             SOLARCHVISION_update_frame_layout(); 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 'L' : 
             FrameVariation = (FrameVariation + 4 - 1) % 4; 
             SOLARCHVISION_update_frame_layout(); 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           }
         }
-      } else if (e.isControlDown() == true) {
+      } else if (e.isControlDown()) {
 
         addNewSelectionToPreviousSelection = 1;
 
@@ -12954,35 +12955,35 @@ void keyPressed (KeyEvent e) {
           switch(keyCode) {
           case 112 : //F1
             ROLLOUT.parent = 0; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 113 : //F2
             ROLLOUT.parent = 1; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 114 : //F3
             ROLLOUT.parent = 2; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 115 : //F4
             ROLLOUT.parent = 3; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 116 : //F5
             ROLLOUT.parent = 4; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 117 : //F6
             ROLLOUT.parent = 5; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 118 : //F7
             ROLLOUT.parent = 6; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 119 : //F8
             ROLLOUT.parent = 7; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           }
         } else {
@@ -12990,22 +12991,22 @@ void keyPressed (KeyEvent e) {
 
           case 'f' :
             SOLARCHVISION_ResetFontStyle();     
-            WORLD.Update = true;
-            WIN3D.Update = true; 
-            STUDY.Update = true;
-            ROLLOUT.Update = true; 
+            WORLD.update = true;
+            WIN3D.update = true; 
+            STUDY.update = true;
+            ROLLOUT.update = true; 
             break;
 
           case 'F' :
             SOLARCHVISION_ResetFontStyle();     
-            WORLD.Update = true;
-            WIN3D.Update = true; 
-            STUDY.Update = true;
-            ROLLOUT.Update = true; 
+            WORLD.update = true;
+            WIN3D.update = true; 
+            STUDY.update = true;
+            ROLLOUT.update = true; 
             break;
           }
         }
-      } else if (e.isShiftDown() == true) {
+      } else if (e.isShiftDown()) {
 
         addNewSelectionToPreviousSelection = -1;
 
@@ -13013,35 +13014,35 @@ void keyPressed (KeyEvent e) {
           switch(keyCode) {
           case 112 : //F1
             ROLLOUT.child = 1; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 113 : //F2
             ROLLOUT.child = 2; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 114 : //F3
             ROLLOUT.child = 3; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 115 : //F4
             ROLLOUT.child = 4; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 116 : //F5
             ROLLOUT.child = 5; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 117 : //F6
             ROLLOUT.child = 6; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 118 : //F7
             ROLLOUT.child = 7; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           case 119 : //F8
             ROLLOUT.child = 8; 
-            ROLLOUT.Update = true; 
+            ROLLOUT.update = true; 
             break;
           }
         }
@@ -13062,14 +13063,14 @@ void keyPressed (KeyEvent e) {
 
             case TAB: 
               typeUserCommand = (typeUserCommand + 1) % 2;
-              UI_BAR_c_Update = true;
+              UI_BAR_c_update = true;
               break; 
           }
 
         }
       }      
 
-      if ((STUDY.Update) || (WORLD.Update) || (WIN3D.Update) || (ROLLOUT.Update)) redraw();
+      if ((STUDY.update) || (WORLD.update) || (WIN3D.update) || (ROLLOUT.update)) redraw();
     }
   }
 }
@@ -14460,7 +14461,7 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
 
 
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 731");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -15331,7 +15332,7 @@ void SOLARCHVISION_selectIsolatedVertices_Scene () {
   } 
 
   Current_ObjectCategory = ObjectCategory.Vertices; 
-  UI_BAR_b_Update = true;
+  UI_BAR_b_update = true;
 
   println("SOLARCHVISION_calculate_selection_BoundingBox 31");
   SOLARCHVISION_calculate_selection_BoundingBox();
@@ -15863,7 +15864,7 @@ void SOLARCHVISION_inserCornerOpennings_Selection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 37");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -16060,7 +16061,7 @@ void SOLARCHVISION_insertParallelOpennings_Selection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 38");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -16237,7 +16238,7 @@ void SOLARCHVISION_insertRotatedOpennings_Selection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 39");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -16408,7 +16409,7 @@ void SOLARCHVISION_insertEdgeOpennings_Selection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 40");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -16602,7 +16603,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 41");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -16773,7 +16774,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 42");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -16927,7 +16928,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 43");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -17085,7 +17086,7 @@ void SOLARCHVISION_forceTriangulateFaces_Selection () {
     selectedFace_ids = new_selectedFace_ids;
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 43bbb");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -17160,7 +17161,7 @@ void SOLARCHVISION_autoNormalFaces_Selection () {
     }
 
     Current_ObjectCategory = ObjectCategory.Faces; 
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 3700");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -17450,7 +17451,7 @@ void SOLARCHVISION_extrudeCurveEdges_Selection () {
     selectedFace_ids = new_selectedFace_ids;
     
     Current_ObjectCategory = ObjectCategory.Faces;
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 101b");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -22220,7 +22221,7 @@ void SOLARCHVISION_delete_All () {
   SOLARCHVISION_delete_Sections();
   SOLARCHVISION_delete_Cameras();
 
-  WIN3D.Update = true;
+  WIN3D.update = true;
 }
 
 
@@ -23067,7 +23068,7 @@ void SOLARCHVISION_load_TROPO_IMAGES () {
 
   }
   
-  WIN3D.Update = true;
+  WIN3D.update = true;
 }
 
 
@@ -23327,7 +23328,7 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
         println("LINK NOT AVAILABLE:", the_link);
       }
      
-      if (new_file_downloaded == true) {
+      if (new_file_downloaded) {
         
         if (ParameterStamp.equals("_NT&STYLES=CLOUD")) {
           println("image processing cloud layer");
@@ -23418,7 +23419,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
     proceed = false;
   }
 
-  if (proceed == true) {    
+  if (proceed) {    
 
     for (int n_Map = start_hour; n_Map <= end_hour; n_Map++) {
         
@@ -23577,7 +23578,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
                 if (subFace[s][4] > 1) UVs_OK = false;
               }
               
-              if (UVs_OK == true) {
+              if (UVs_OK) {
               
                 if (target_window == TypeWindow.WORLD) {
                   WORLD.graphics.beginShape();
@@ -23818,7 +23819,7 @@ void SOLARCHVISION_draw_EARTH (int target_window) {
     proceed = false;
   }
 
-  if (proceed == true) {
+  if (proceed) {
 
     int n_Map = 0;
     if (IMPACTS_DisplayDay < EARTH_IMAGES_Map.length) n_Map = IMPACTS_DisplayDay;
@@ -24338,7 +24339,7 @@ void SOLARCHVISION_draw_LAND (int target_window) {
     proceed = true;
   }
   
-  if (proceed == true) {
+  if (proceed) {
 
     int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
     int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
@@ -25593,7 +25594,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                       Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect);
                       Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect);
   
-                      if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
+                      if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb)) || (is_undefined_FLOAT(Pc)) || (is_undefined_FLOAT(Pd))) {
                         _values_R_dir = FLOAT_undefined;
                         _values_R_dif = FLOAT_undefined;
                         _values_E_dir = FLOAT_undefined;
@@ -25608,7 +25609,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                           _values_E_dir = 0.001 * Pc;
                           _values_E_dif = 0.001 * Pd;
   
-                          if (is_undefined_FLOAT(_valuesSUM_RAD) == true) {
+                          if (is_undefined_FLOAT(_valuesSUM_RAD)) {
                             _valuesSUM_RAD = 0;
                             _valuesSUM_EFF_P = 0;
                             _valuesSUM_EFF_N = 0;
@@ -26257,7 +26258,7 @@ void SOLARCHVISION_draw_Object2Ds (int target_window) {
     proceed = false;
   }
   
-  if (proceed == true) {  
+  if (proceed) {  
 
     if (Export_MaterialLibrary) {
     
@@ -26868,11 +26869,11 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                 }
               }
               
-              if (InPoly == true) break;
+              if (InPoly) break;
             }
           }
                 
-          if (InPoly == true) {
+          if (InPoly) {
             
             hit = f;
             
@@ -27019,11 +27020,11 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               }
             }
             
-            if (InPoly == true) break;
+            if (InPoly) break;
           }
         }
               
-        if (InPoly == true) {
+        if (InPoly) {
           hitPoint[f][0] = X_intersect;
           hitPoint[f][1] = Y_intersect;
           hitPoint[f][2] = Z_intersect;
@@ -27198,11 +27199,11 @@ float[] SOLARCHVISION_intersect_selectedFaces (float[] ray_pnt, float[] ray_dir)
                 }
               }
               
-              if (InPoly == true) break;
+              if (InPoly) break;
             }
           }
                 
-          if (InPoly == true) {
+          if (InPoly) {
             hitPoint[f][0] = X_intersect;
             hitPoint[f][1] = Y_intersect;
             hitPoint[f][2] = Z_intersect;
@@ -27438,11 +27439,11 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
               }
             }
             
-            if (InPoly == true) break;
+            if (InPoly) break;
           }
         }
               
-        if (InPoly == true) {
+        if (InPoly) {
           hitPoint[f][0] = X_intersect;
           hitPoint[f][1] = Y_intersect;
           hitPoint[f][2] = Z_intersect;
@@ -27674,7 +27675,7 @@ float[] SOLARCHVISION_intersect_Fractals (float[] ray_pnt, float[] ray_dir) {
       }
     }
           
-    if (InPoly == true) {
+    if (InPoly) {
       hitPoint[f][0] = X_intersect;
       hitPoint[f][1] = Y_intersect;
       hitPoint[f][2] = Z_intersect;
@@ -27764,7 +27765,7 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
       }
     }
           
-    if (InPoly == true) {
+    if (InPoly) {
       hitPoint[f][0] = X_intersect;
       hitPoint[f][1] = Y_intersect;
       hitPoint[f][2] = Z_intersect;
@@ -27856,7 +27857,7 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
       }
     }
           
-    if (InPoly == true) {
+    if (InPoly) {
       hitPoint[f][0] = X_intersect;
       hitPoint[f][1] = Y_intersect;
       hitPoint[f][2] = Z_intersect;
@@ -28065,10 +28066,10 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
         }
       }
       
-      if (InPoly == true) break;
+      if (InPoly) break;
     }
     
-    if (InPoly == true) {
+    if (InPoly) {
       hitPoint[f][0] = X_intersect;
       hitPoint[f][1] = Y_intersect;
       hitPoint[f][2] = Z_intersect;
@@ -28582,7 +28583,7 @@ void SOLARCHVISION_update_LAND_Textures () {
     }
   }
   
-  WIN3D.Update = true;
+  WIN3D.update = true;
 }
 
 
@@ -28833,7 +28834,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                   Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect);
                   Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect);
         
-                  if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
+                  if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb)) || (is_undefined_FLOAT(Pc)) || (is_undefined_FLOAT(Pd))) {
                     _values_R_dir = FLOAT_undefined;
                     _values_R_dif = FLOAT_undefined;
                     _values_E_dir = FLOAT_undefined;
@@ -28887,7 +28888,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                           int Image_Y = np / RES1;
 
                           for (int q = 0; q < numberOfImpactVariations; q++) {
-                            if (is_undefined_FLOAT(Matrix_ARGB[q][0][Image_X][Image_Y]) == true) {
+                            if (is_undefined_FLOAT(Matrix_ARGB[q][0][Image_X][Image_Y])) {
                             
                               Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
                               Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
@@ -29148,7 +29149,7 @@ void SOLARCHVISION_render_Shadows_selectedSections () {
 
   Display_SolarImpactImage = true;
   Display_SolidImpactImage = false;
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -29514,7 +29515,7 @@ void SOLARCHVISION_calculate_WindFlow () {
   cursor(ARROW);  
 
   Display_WindFlow = true;                
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -29597,14 +29598,14 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
 
     float test_v = SOLARCHVISION_get_SolidImpact_atXYZ(test_x, test_y, test_z);        
 
-    if ((test_v < v_min) || (is_undefined_FLOAT(v_min) == true)) {
+    if ((test_v < v_min) || (is_undefined_FLOAT(v_min))) {
       v_min = test_v;
       t_min = test_t;
       x_min = test_x;
       y_min = test_y;
       z_min = test_z;
     }
-    if ((test_v > v_max) || (is_undefined_FLOAT(v_max) == true)) {
+    if ((test_v > v_max) || (is_undefined_FLOAT(v_max))) {
       v_max = test_v;
       t_max = test_t;
       x_max = test_x;
@@ -29612,8 +29613,8 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
       z_max = test_z;
     }
 
-    //if (((abs(test_v - v) < min_dist) && (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ) == true))  {
-    if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ) == true)) {
+    //if (((abs(test_v - v) < min_dist) && (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ)))  {
+    if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ))) {
       //if (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
 
       min_dist = abs(test_v - v);
@@ -29704,7 +29705,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
 
       float test_v = SOLARCHVISION_get_SolidImpact_atXYZ(test_x, test_y, test_z);        
 
-      if ((test_v < v_min) || (is_undefined_FLOAT(v_min) == true)) {
+      if ((test_v < v_min) || (is_undefined_FLOAT(v_min))) {
         v_min = test_v;
         tz_min = test_tz;
         txy_min = test_txy;
@@ -29712,7 +29713,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
         y_min = test_y;
         z_min = test_z;
       }
-      if ((test_v > v_max) || (is_undefined_FLOAT(v_max) == true)) {
+      if ((test_v > v_max) || (is_undefined_FLOAT(v_max))) {
         v_max = test_v;
         tz_max = test_tz;
         txy_max = test_txy;
@@ -29721,7 +29722,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
         z_max = test_z;
       }
 
-      if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ) == true)) {
+      if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ))) {
 
         min_dist = abs(test_v - v);
 
@@ -31142,7 +31143,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
                   Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect);
                   Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect);
         
-                  if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true) || (is_undefined_FLOAT(Pc) == true) || (is_undefined_FLOAT(Pd) == true)) {
+                  if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb)) || (is_undefined_FLOAT(Pc)) || (is_undefined_FLOAT(Pd))) {
                     _values_R_dir = FLOAT_undefined;
                     _values_R_dif = FLOAT_undefined;
                     _values_E_dir = FLOAT_undefined;
@@ -31157,7 +31158,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
                       _values_E_dir = 0.001 * Pc;
                       _values_E_dif = 0.001 * Pd;
 
-                      if (is_undefined_FLOAT(_valuesSUM_RAD) == true) {
+                      if (is_undefined_FLOAT(_valuesSUM_RAD)) {
                         _valuesSUM_RAD = 0;
                         _valuesSUM_EFF_P = 0;
                         _valuesSUM_EFF_N = 0;
@@ -31417,7 +31418,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       selectedLandPoint_ids = (int[]) concat(selectedLandPoint_ids, newObject_id);
     }
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 6");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -31467,7 +31468,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       selectedFractal_ids = (int[]) concat(selectedFractal_ids, newObject_id);
     }
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
 
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 6");
@@ -31518,7 +31519,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       selectedObject2D_ids = (int[]) concat(selectedObject2D_ids, newObject_id);
     }
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 5");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -31536,7 +31537,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
         OBJ_NUM = i;
 
-        WIN3D.Update = true;
+        WIN3D.update = true;
         break;
       }
     }
@@ -31794,7 +31795,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       selectedSolid_ids = (int[]) concat(selectedSolid_ids, newObject_id);
     }
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 6e");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -31845,7 +31846,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       selectedSection_ids = (int[]) concat(selectedSection_ids, newObject_id);
     }
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 6b");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -31894,7 +31895,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       selectedCamera_ids = (int[]) concat(selectedCamera_ids, newObject_id);
     }
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 6c");
     SOLARCHVISION_calculate_selection_BoundingBox();
@@ -32931,11 +32932,11 @@ void mouseWheel (MouseEvent event) {
 
                   if ((keep_STUDY_i_Start != STUDY.i_Start) || (keep_STUDY_i_End != STUDY.i_End)) {
 
-                    ROLLOUT.Update = true;
-                    STUDY.Update = true;
-                    WIN3D.Update = true;
-                    WORLD.Update = true;
-                    UI_BAR_d_Update = true;
+                    ROLLOUT.update = true;
+                    STUDY.update = true;
+                    WIN3D.update = true;
+                    WORLD.update = true;
+                    UI_BAR_d_update = true;
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
                   }
@@ -32956,10 +32957,10 @@ void mouseWheel (MouseEvent event) {
 
                   if (keep_STUDY_JoinDays != STUDY.JoinDays) {
 
-                    ROLLOUT.Update = true;
-                    STUDY.Update = true;
-                    WIN3D.Update = true;
-                    UI_BAR_d_Update = true;
+                    ROLLOUT.update = true;
+                    STUDY.update = true;
+                    WIN3D.update = true;
+                    UI_BAR_d_update = true;
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
                   }
@@ -32993,10 +32994,10 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleYear_Start != SampleYear_Start) || (keep_SampleYear_End != SampleYear_End)) {
 
-                      ROLLOUT.Update = true;
-                      STUDY.Update = true;
-                      WIN3D.Update = true;
-                      UI_BAR_d_Update = true;
+                      ROLLOUT.update = true;
+                      STUDY.update = true;
+                      WIN3D.update = true;
+                      UI_BAR_d_update = true;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
                     }
@@ -33025,10 +33026,10 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleYear_Start != SampleYear_Start) || (keep_SampleYear_End != SampleYear_End)) {
 
-                      ROLLOUT.Update = true;
-                      STUDY.Update = true;
-                      WIN3D.Update = true;
-                      UI_BAR_d_Update = true;
+                      ROLLOUT.update = true;
+                      STUDY.update = true;
+                      WIN3D.update = true;
+                      UI_BAR_d_update = true;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
                     }
@@ -33057,10 +33058,10 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleMember_Start != SampleMember_Start) || (keep_SampleMember_End != SampleMember_End)) {
 
-                      ROLLOUT.Update = true;
-                      STUDY.Update = true;
-                      WIN3D.Update = true;
-                      UI_BAR_d_Update = true;
+                      ROLLOUT.update = true;
+                      STUDY.update = true;
+                      WIN3D.update = true;
+                      UI_BAR_d_update = true;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
                     }
@@ -33089,10 +33090,10 @@ void mouseWheel (MouseEvent event) {
 
                     if ((keep_SampleStation_Start != SampleStation_Start) || (keep_SampleStation_End != SampleStation_End)) {
 
-                      ROLLOUT.Update = true;
-                      STUDY.Update = true;
-                      WIN3D.Update = true;
-                      UI_BAR_d_Update = true;
+                      ROLLOUT.update = true;
+                      STUDY.update = true;
+                      WIN3D.update = true;
+                      UI_BAR_d_update = true;
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
                     }
@@ -33106,7 +33107,7 @@ void mouseWheel (MouseEvent event) {
           }
 
 
-          if (WORLD.Include) {
+          if (WORLD.include) {
             if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY) == 1) {
 
               int keep_WORLD_Viewport_ZOOM = WORLD.Viewport_ZOOM;
@@ -33120,12 +33121,12 @@ void mouseWheel (MouseEvent event) {
               if (keep_WORLD_Viewport_ZOOM != WORLD.Viewport_ZOOM) {
                 WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
 
-                WORLD.Update = true;
+                WORLD.update = true;
               }
             }
           }    
 
-          if (WIN3D.Include) {
+          if (WIN3D.include) {
             if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
 
               float[] P = SOLARCHVISION_getPivot();
@@ -33143,7 +33144,7 @@ void mouseWheel (MouseEvent event) {
 
                 SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }   
 
               if (WIN3D.UI_CurrentTask == UITASK.Scale) { // scale
@@ -33171,7 +33172,7 @@ void mouseWheel (MouseEvent event) {
 
                 SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }       
 
 
@@ -33200,7 +33201,7 @@ void mouseWheel (MouseEvent event) {
 
                 SOLARCHVISION_move_Selection(dx, dy, dz);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }   
 
 
@@ -33212,7 +33213,7 @@ void mouseWheel (MouseEvent event) {
 
                   SOLARCHVISION_changeProperties_Selection(p);
 
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
               }
               
@@ -33228,7 +33229,7 @@ void mouseWheel (MouseEvent event) {
                   WIN3D.Zoom /= pow(2.0, Wheel_Value);
                 }
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (WIN3D.UI_CurrentTask == UITASK.Pan_Height) { // viewport:elevation
@@ -33236,7 +33237,7 @@ void mouseWheel (MouseEvent event) {
                 if (Wheel_Value > 0) WIN3D.Zoom = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D.Zoom)); 
                 if (Wheel_Value < 0) WIN3D.Zoom = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D.Zoom));
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }  
 
               if (WIN3D.UI_CurrentTask == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
@@ -33244,7 +33245,7 @@ void mouseWheel (MouseEvent event) {
                 if (Wheel_Value > 0) OBJECTS_scale *= pow(2.0, 0.25);
                 if (Wheel_Value < 0) OBJECTS_scale /= pow(2.0, 0.25);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }          
 
               if (WIN3D.UI_CurrentTask == UITASK.Truck_Orbit) { // viewport:different functions with wheel
@@ -33255,14 +33256,14 @@ void mouseWheel (MouseEvent event) {
 
                     WIN3D.X_Coordinate += Wheel_Value * WIN3D.S_Coordinate * OBJECTS_scale;
 
-                    WIN3D.Update = true;
+                    WIN3D.update = true;
                   }
 
                   if (WIN3D.UI_OptionXorY == 1) {
 
                     WIN3D.Y_Coordinate += Wheel_Value * WIN3D.S_Coordinate * OBJECTS_scale;
 
-                    WIN3D.Update = true;
+                    WIN3D.update = true;
                   }
                 }
 
@@ -33273,19 +33274,19 @@ void mouseWheel (MouseEvent event) {
 
                     WIN3D.RX_Coordinate += Wheel_Value * WIN3D.RS_Coordinate;
 
-                    WIN3D.Update = true;
+                    WIN3D.update = true;
                   }
 
                   if (WIN3D.UI_OptionXorY == 1) {
 
                     WIN3D.RZ_Coordinate += Wheel_Value * WIN3D.RS_Coordinate;
 
-                    WIN3D.Update = true;
+                    WIN3D.update = true;
                   }
                 }
 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }  
 
 
@@ -33296,7 +33297,7 @@ void mouseWheel (MouseEvent event) {
                   if (Wheel_Value > 0) SKY_scale *= pow(2.0, 0.25);              
                   if (Wheel_Value < 0) SKY_scale /= pow(2.0, 0.25);
 
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
               }
 
@@ -33314,7 +33315,7 @@ void mouseWheel (MouseEvent event) {
                     SKY_scale /= pow(2.0, 0.25);
                   }      
 
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
               }    
 
@@ -33332,7 +33333,7 @@ void mouseWheel (MouseEvent event) {
                   SOLARCHVISION_reverseTransform_3DViewport();
                 }              
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (WIN3D.UI_CurrentTask == UITASK.CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRoolZ
@@ -33347,42 +33348,42 @@ void mouseWheel (MouseEvent event) {
                   SOLARCHVISION_rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D.RS_Coordinate);
                 }    
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }            
 
               if (WIN3D.UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
 
                 SOLARCHVISION_move_3DViewport_towards_Selection(pow(2, -0.5 * Wheel_Value));
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }              
 
               if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
 
                 WIN3D.X_Coordinate += Wheel_Value * WIN3D.S_Coordinate * OBJECTS_scale;
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }         
 
               if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
 
                 WIN3D.Y_Coordinate += Wheel_Value * WIN3D.S_Coordinate * OBJECTS_scale;
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }      
 
               if ((WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport:DistMouseXY
 
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (WIN3D.UI_CurrentTask == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
 
                 SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }      
 
 
@@ -33441,20 +33442,20 @@ void mouseReleased () {
 
           SOLARCHVISION_RecordFrame();
 
-          WORLD.Update = true;
-          WIN3D.Update = true;  
-          STUDY.Update = true;
-          ROLLOUT.Update = true;
-          UI_BAR_a_Update = true;
-          UI_BAR_b_Update = true;
-          UI_BAR_d_Update = true;          
+          WORLD.update = true;
+          WIN3D.update = true;  
+          STUDY.update = true;
+          ROLLOUT.update = true;
+          UI_BAR_a_update = true;
+          UI_BAR_b_update = true;
+          UI_BAR_d_update = true;          
 
           FRAME_drag_JPG = false;
 
           dragging_started = 0;
         } else {        
 
-          if (WIN3D.Include) {
+          if (WIN3D.include) {
             if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
 
               if ((WIN3D.UI_CurrentTask == UITASK.RectSelect) || (WIN3D.UI_CurrentTask > UITASK.Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
@@ -33485,7 +33486,7 @@ void mouseReleased () {
 
                 SOLARCHVISION_reset_selectedRefValues();  
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
 
@@ -33597,7 +33598,7 @@ void mouseReleased () {
                   CreateInput_Orientation = atan2_ang(y2 - y1, x2 - x1) + 90;
                 }
 
-                ROLLOUT.Update = true;
+                ROLLOUT.update = true;
               }
             }
           }
@@ -33622,7 +33623,7 @@ void mouseDragged () {
 
           dragging_started = 1;
         }
-      } else if (WIN3D.Include) {
+      } else if (WIN3D.include) {
         if (isInside(pmouseX, pmouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
           if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
 
@@ -33643,7 +33644,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.RS_Coordinate);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
@@ -33651,7 +33652,7 @@ void mouseDragged () {
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             } 
 
@@ -33661,14 +33662,14 @@ void mouseDragged () {
 
                 SOLARCHVISION_rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.RS_Coordinate);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
 
                 SOLARCHVISION_rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.RS_Coordinate);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             } 
 
@@ -33679,7 +33680,7 @@ void mouseDragged () {
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }      
 
               if (mouseButton == RIGHT) { // TargetRoll
@@ -33689,7 +33690,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_reverseTransform_3DViewport(); 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }            
 
@@ -33701,7 +33702,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.RS_Coordinate);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
@@ -33709,7 +33710,7 @@ void mouseDragged () {
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }  
 
@@ -33719,14 +33720,14 @@ void mouseDragged () {
 
                 SOLARCHVISION_rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.RS_Coordinate);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
 
                 SOLARCHVISION_rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.RS_Coordinate);
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }            
 
@@ -33739,7 +33740,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_reverseTransform_3DViewport(); 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
@@ -33747,7 +33748,7 @@ void mouseDragged () {
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }  
 
@@ -33759,7 +33760,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_reverseTransform_3DViewport(); 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // TargetRollZ
@@ -33768,7 +33769,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_reverseTransform_3DViewport(); 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }            
 
@@ -33779,7 +33780,7 @@ void mouseDragged () {
                 WIN3D.RZ_Coordinate -= 10 * dx * WIN3D.RS_Coordinate; 
                 WIN3D.RX_Coordinate -= 10 * dy * WIN3D.RS_Coordinate;
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
@@ -33787,7 +33788,7 @@ void mouseDragged () {
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }  
 
@@ -33797,14 +33798,14 @@ void mouseDragged () {
 
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale;  
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }              
 
               if (mouseButton == RIGHT) { // move X
 
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }
 
@@ -33815,7 +33816,7 @@ void mouseDragged () {
                 WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                 WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }   
 
               if (mouseButton == RIGHT) { // TargetRoll
@@ -33825,7 +33826,7 @@ void mouseDragged () {
 
                 SOLARCHVISION_reverseTransform_3DViewport(); 
 
-                WIN3D.Update = true;
+                WIN3D.update = true;
               }
             }
 
@@ -33836,13 +33837,13 @@ void mouseDragged () {
                 if (WIN3D.UI_OptionXorY == 0) {
                   if (mouseButton == LEFT) WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                   if (mouseButton == RIGHT) WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {
                   if (mouseButton == RIGHT) WIN3D.X_Coordinate += 100 * dx * WIN3D.S_Coordinate * OBJECTS_scale;  
                   if (mouseButton == LEFT) WIN3D.Y_Coordinate += 100 * dy * WIN3D.S_Coordinate * OBJECTS_scale; 
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
               }
 
@@ -33852,18 +33853,18 @@ void mouseDragged () {
                 if (WIN3D.UI_OptionXorY == 0) {
                   if (mouseButton == LEFT) WIN3D.RX_Coordinate -= 10 * dy * WIN3D.RS_Coordinate;
                   if (mouseButton == RIGHT) WIN3D.RZ_Coordinate -= 10 * dx * WIN3D.RS_Coordinate;
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {
                   if (mouseButton == RIGHT) WIN3D.RX_Coordinate -= 10 * dy * WIN3D.RS_Coordinate;
                   if (mouseButton == LEFT) WIN3D.RZ_Coordinate -= 10 * dx * WIN3D.RS_Coordinate;
-                  WIN3D.Update = true;
+                  WIN3D.update = true;
                 }
               }
 
 
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
           }
         }
@@ -33958,7 +33959,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
     SOLARCHVISION_calculate_selection_BoundingBox();
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
   }
 }     
 
@@ -33975,7 +33976,7 @@ void SOLARCHVISION_SelectFile_Execute_CommandFile (File selectedFile) {
 
     SOLARCHVISION_execute_commands_TXT(Filename);
 
-    WIN3D.Update = true;
+    WIN3D.update = true;
   }
 } 
 
@@ -33994,13 +33995,13 @@ void mouseClicked () {
 
         SOLARCHVISION_RecordFrame();
         /*        
-         WORLD.Update = true;
-         WIN3D.Update = true;  
-         STUDY.Update = true;
-         ROLLOUT.Update = true;
-         UI_BAR_a_Update = true;
-         UI_BAR_b_Update = true;
-         UI_BAR_d_Update = true;          
+         WORLD.update = true;
+         WIN3D.update = true;  
+         STUDY.update = true;
+         ROLLOUT.update = true;
+         UI_BAR_a_update = true;
+         UI_BAR_b_update = true;
+         UI_BAR_d_update = true;          
          
          FRAME_click_JPG = 0;
          */
@@ -34102,120 +34103,120 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Wind pattern (active)")) {
               STUDY.PlotImpacts = -2;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = true;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Wind pattern (passive)")) {
               STUDY.PlotImpacts = -1;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = true;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Urban solar potential (active)")) {
               STUDY.PlotImpacts = 0;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Urban solar potential (passive)")) {
               STUDY.PlotImpacts = 1;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Orientation potential (active)")) {
               STUDY.PlotImpacts = 2;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Orientation potential (passive)")) {
               STUDY.PlotImpacts = 3;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hourly sun position (active)")) {
               STUDY.PlotImpacts = 4;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hourly sun position (passive)")) {
               STUDY.PlotImpacts = 5;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("View from sun & sky (active)")) {
               STUDY.PlotImpacts = 6;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("View from sun & sky (passive)")) {
               STUDY.PlotImpacts = 7;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
               STUDY.PlotImpacts = 8;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
               STUDY.PlotImpacts = 9;
               STUDY.Setup = 14; // <<<<<<<<
-              STUDY.Update = true;
+              STUDY.update = true;
               Display_WindRoseImage = false;
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pre-bake Selected Sections")) {
               SOLARCHVISION_render_Shadows_selectedSections();              
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }         
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Process Active Impact")) {
               STUDY.PlotImpacts = 0;         
               SOLARCHVISION_calculate_SolarImpact_selectedSections();              
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Process Passive Impact")) {
               STUDY.PlotImpacts = 1;         
               SOLARCHVISION_calculate_SolarImpact_selectedSections();              
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }               
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Process Solid Impact")) {
               SOLARCHVISION_calculate_SolidImpact_selectedSections();              
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Run wind 3D-model")) {
               SOLARCHVISION_calculate_WindFlow();              
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
 
             for (int n = -2; n <= 14; n++) { 
               if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Layout " + nf(n, 0))) {
 
                 STUDY.Setup = n;
-                STUDY.Update = true;
+                STUDY.update = true;
 
                 if (STUDY.Setup == 14) {
                 } else {  
@@ -34245,7 +34246,7 @@ void mouseClicked () {
               FRAME_click_JPG = false;
               FRAME_drag_JPG = false;   
 
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("REC. Time Graph")) { 
@@ -34262,7 +34263,7 @@ void mouseClicked () {
               FRAME_click_JPG = false;
               FRAME_drag_JPG = false;   
 
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("REC. Location Graph")) { 
@@ -34279,7 +34280,7 @@ void mouseClicked () {
               FRAME_click_JPG = false;
               FRAME_drag_JPG = false;   
 
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("REC. Solid Graph")) { 
@@ -34296,7 +34297,7 @@ void mouseClicked () {
               FRAME_click_JPG = false;
               FRAME_drag_JPG = false;   
 
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("REC. Screenshot")) { 
@@ -34313,32 +34314,32 @@ void mouseClicked () {
               FRAME_click_JPG = false;
               FRAME_drag_JPG = false;   
 
-              ROLLOUT.Update = true;
+              ROLLOUT.update = true;
             }             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PDF Time Graph")) { 
               STUDY.record_PDF = true;
-              STUDY.Update = true;
+              STUDY.update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("JPG Time Graph")) { 
               STUDY.record_JPG = true;
-              STUDY.Update = true;
+              STUDY.update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("JPG Location Graph")) { 
               WORLD.record_JPG = true;
-              WORLD.Update = true;
+              WORLD.update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PDF Location Graph")) { 
               WORLD.record_PDF = true;
-              WORLD.Update = true;
+              WORLD.update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("JPG 3D Graph")) { 
               WIN3D.record_JPG = true;
-              WIN3D.Update = true;
+              WIN3D.update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Screenshot")) { 
@@ -34353,7 +34354,7 @@ void mouseClicked () {
               FRAME_drag_JPG = true;
             }                
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update Station")) { 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update Station")) { 
               SOLARCHVISION_update_station(0);
             }
             
@@ -34394,37 +34395,37 @@ void mouseClicked () {
             
 
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update TMYEPW")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update TMYEPW")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
               
               Load_CLIMATE_TMYEPW = 1;
               SOLARCHVISION_update_CLIMATE_TMYEPW();
             }      
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update CWEEDS")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update CWEEDS")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
               
               Load_CLIMATE_CWEEDS = 1;
               SOLARCHVISION_update_CLIMATE_CWEEDS();
             }    
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update CLMREC")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update CLMREC")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
               
               Load_CLIMATE_CLMREC = 1;
               SOLARCHVISION_update_CLIMATE_CLMREC();
             }   
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update SWOB")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update SWOB")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
               
               Load_ENSEMBLE_OBSERVED = 1;
               SOLARCHVISION_update_ENSEMBLE_OBSERVED();
             } 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update NAEFS")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update NAEFS")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
               Load_ENSEMBLE_FORECAST = 1;
               SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }    
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Update Aerial")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update Aerial")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
               Load_ENSEMBLE_FORECAST = 1;
@@ -34438,55 +34439,55 @@ void mouseClicked () {
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Typical Year (TMY)")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
-              WORLD.Update = true;
-              WIN3D.Update = true;  
-              STUDY.Update = true;
-              ROLLOUT.Update = true;
-              UI_BAR_d_Update = true;    
+              WORLD.update = true;
+              WIN3D.update = true;  
+              STUDY.update = true;
+              ROLLOUT.update = true;
+              UI_BAR_d_update = true;    
 
               Display_TMYEPW_Points = 1;
               Display_TMYEPW_Nearest = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
-              WORLD.Update = true;
-              WIN3D.Update = true;  
-              STUDY.Update = true;
-              ROLLOUT.Update = true;
-              UI_BAR_d_Update = true;    
+              WORLD.update = true;
+              WIN3D.update = true;  
+              STUDY.update = true;
+              ROLLOUT.update = true;
+              UI_BAR_d_update = true;    
 
               Display_CWEEDS_Points = 1;
               Display_CWEEDS_Nearest = true;                
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CLMREC)")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
-              WORLD.Update = true;
-              WIN3D.Update = true;  
-              STUDY.Update = true;
-              ROLLOUT.Update = true;
-              UI_BAR_d_Update = true; 
+              WORLD.update = true;
+              WIN3D.update = true;  
+              STUDY.update = true;
+              ROLLOUT.update = true;
+              UI_BAR_d_update = true; 
 
               Display_CLMREC_Points = 1;
               Display_CLMREC_Nearest = true;   
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
-              WORLD.Update = true;
-              WIN3D.Update = true;  
-              STUDY.Update = true;
-              ROLLOUT.Update = true;
-              UI_BAR_d_Update = true;      
+              WORLD.update = true;
+              WIN3D.update = true;  
+              STUDY.update = true;
+              ROLLOUT.update = true;
+              UI_BAR_d_update = true;      
   
               Display_SWOB_Points = 1;
               Display_SWOB_Nearest = true;             
             }                  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
-              WORLD.Update = true;
-              WIN3D.Update = true;  
-              STUDY.Update = true;
-              ROLLOUT.Update = true;
-              UI_BAR_d_Update = true;     
+              WORLD.update = true;
+              WIN3D.update = true;  
+              STUDY.update = true;
+              ROLLOUT.update = true;
+              UI_BAR_d_update = true;     
  
               Display_NAEFS_Points = 1;
               Display_NAEFS_Nearest = true;                 
@@ -34505,7 +34506,7 @@ void mouseClicked () {
 
                     STUDY.DevelopLayer = STUDY.CurrentLayer;
 
-                    STUDY.Update = true;
+                    STUDY.update = true;
                   } else {
 
                     if ((Develop_Option == DEV_OP_06) || (Develop_Option == DEV_OP_07) || (Develop_Option == DEV_OP_08)) {
@@ -34519,7 +34520,7 @@ void mouseClicked () {
 
                       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);   
 
-                      STUDY.Update = true;
+                      STUDY.update = true;
                     } else {
 
                       STUDY.DevelopLayer = STUDY.CurrentLayer;
@@ -34530,7 +34531,7 @@ void mouseClicked () {
 
                       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);   
 
-                      STUDY.Update = true;
+                      STUDY.update = true;
                     }
                   }
                 }
@@ -34543,35 +34544,35 @@ void mouseClicked () {
               WIN3D.FacesShade = Shade_Surface_Wire;
               MODEL3D_DisplayEdges = true; //<<<<<<<<<<<<<<<
 
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Base")) {
               WIN3D.FacesShade = Shade_Surface_Base;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface White")) {
               WIN3D.FacesShade = Shade_Surface_White;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Materials")) {
               WIN3D.FacesShade = Shade_Surface_Materials;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Global Solar")) {
               WIN3D.FacesShade = Shade_Global_Solar;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Solar")) {
               WIN3D.FacesShade = Shade_Vertex_Solar;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Solid")) {
               WIN3D.FacesShade = Shade_Vertex_Solid;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Elevation")) {
               WIN3D.FacesShade = Shade_Vertex_Elevation;
-              WIN3D.Update = true;  
+              WIN3D.update = true;  
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Render Viewport")) {
               
@@ -34586,427 +34587,427 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
               Display_LAND_Surface = !Display_LAND_Surface;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
               Display_LAND_Textures = !Display_LAND_Textures;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Points")) {
               Display_LAND_Points = !Display_LAND_Points;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Depth")) {
               Display_LAND_Depth = !Display_LAND_Depth;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Vertices")) {
               MODEL3D_DisplayVertices = !MODEL3D_DisplayVertices;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Edges")) {
               MODEL3D_DisplayEdges = !MODEL3D_DisplayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Normals")) {
               MODEL3D_DisplayNormals = !MODEL3D_DisplayNormals;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Leaves")) {
               Display_Leaves = !Display_Leaves;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Living Objects")) {
               Display_Model2Ds = !Display_Model2Ds;
               Display_Fractals = Display_Model2Ds; // <<<<<<<
               Display_Leaves = Display_Fractals; // <<<<<<
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Building Objects")) {
               Display_Model3Ds = !Display_Model3Ds;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solids")) {
               Display_Solids = !Display_Solids;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sections")) {
               Display_Sections = !Display_Sections;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Cameras")) {
               Display_Cameras = !Display_Cameras;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sky")) {
               Display_SKY_Surface = !Display_SKY_Surface;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sun Path")) {
               Display_SUN_Path = !Display_SUN_Path;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sun Pattern")) {
               Display_SUN_Pattern = !Display_SUN_Pattern;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Star")) {
               Display_STAR_Surface = !Display_STAR_Surface;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Moon")) {
               Display_MOON_Surface = !Display_MOON_Surface;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Earth")) {
               Display_EARTH_Surface = !Display_EARTH_Surface;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Troposphere")) {
               Display_TROPO_Surface = !Display_TROPO_Surface;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solar Section")) {
               Display_SolarImpactImage = !Display_SolarImpactImage;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solid Section")) {
               Display_SolidImpactImage = !Display_SolidImpactImage;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Solids")) {
               selectedSolid_displayEdges = !selectedSolid_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Sections")) {
               selectedSection_displayEdges = !selectedSection_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Cameras")) {
               selectedCamera_displayEdges = !selectedCamera_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected LandPoints")) {
               selectedLandPoint_displayPoints = !selectedLandPoint_displayPoints;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }                  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
               Display_WindFlow = !Display_WindFlow;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Faces")) {
               selectedFace_displayEdges = !selectedFace_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Faces Vertex Count")) {
               selectedFace_displayVertexCount = !selectedFace_displayVertexCount;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Curves Vertex Count")) {
               selectedCurve_displayVertexCount = !selectedCurve_displayVertexCount;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }                   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Vertices")) {
               selectedVertex_displayVertices = !selectedVertex_displayVertices;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Curves")) {
               selectedCurve_displayVertices = !selectedCurve_displayVertices;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected REF Pivot")) {
               selected_displayReferencePivot = !selected_displayReferencePivot;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }        
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Group3D Pivot")) {
               selectedGroup3D_displayPivot = !selectedGroup3D_displayPivot;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Group3D Edges")) {
               selectedGroup3D_displayEdges = !selectedGroup3D_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Group3D Box")) {
               selectedGroup3D_displayBox = !selectedGroup3D_displayBox;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
               selectedObject2D_displayEdges = !selectedObject2D_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected ∞-D Edges")) {
               selectedFractal_displayEdges = !selectedFractal_displayEdges;
 
-              WIN3D.Update = true;  
-              ROLLOUT.Update = true;
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
             }              
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide SWOB points")) {
               Display_SWOB_Points = (Display_SWOB_Points + 1) % 2;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
               Display_SWOB_Nearest = !Display_SWOB_Nearest;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
               Display_NAEFS_Points = (Display_NAEFS_Points + 1) % 2;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
               Display_NAEFS_Nearest = !Display_NAEFS_Nearest;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
               Display_CWEEDS_Points = (Display_CWEEDS_Points + 1) % 2;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
               Display_CWEEDS_Nearest = !Display_CWEEDS_Nearest;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CLMREC points")) {
               Display_CLMREC_Points = (Display_CLMREC_Points + 1) % 2;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CLMREC nearest")) {
               Display_CLMREC_Nearest = !Display_CLMREC_Nearest;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide TMYEPW points")) {
               Display_TMYEPW_Points = (Display_TMYEPW_Points + 1) % 2;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide TMYEPW nearest")) {
               Display_TMYEPW_Nearest = !Display_TMYEPW_Nearest;
 
-              WORLD.Update = true;  
-              ROLLOUT.Update = true;
+              WORLD.update = true;  
+              ROLLOUT.update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Fractal")) {
               UI_set_to_Create_Fractal();
               SOLARCHVISION_highlight_in_BAR_b("Fractal");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Tree")) {
               UI_set_to_Create_Tree();
               SOLARCHVISION_highlight_in_BAR_b("Tree");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Person")) {
               UI_set_to_Create_Person();
               SOLARCHVISION_highlight_in_BAR_b("Person");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Point")) {
               UI_set_to_Create_Vertex();
               SOLARCHVISION_highlight_in_BAR_b("Point");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Spline")) {
               UI_set_to_Create_Curve();
               SOLARCHVISION_highlight_in_BAR_b("Spline");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Surface")) {
               UI_set_to_Create_Face();
               SOLARCHVISION_highlight_in_BAR_b("Surface");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 1")) {
               UI_set_to_Create_Parametric(1);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 2")) {
               UI_set_to_Create_Parametric(2);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 3")) {
               UI_set_to_Create_Parametric(3);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 4")) {
               UI_set_to_Create_Parametric(4);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 5")) {
               UI_set_to_Create_Parametric(5);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 6")) {
               UI_set_to_Create_Parametric(6);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Parametric 7")) {
               UI_set_to_Create_Parametric(7);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Tri")) {
               UI_set_to_Create_Tri();
               SOLARCHVISION_highlight_in_BAR_b("Tri");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Plane")) {
               UI_set_to_Create_Plane();
               SOLARCHVISION_highlight_in_BAR_b("Plane");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Poly")) {
               UI_set_to_Create_Poly();
               SOLARCHVISION_highlight_in_BAR_b("Poly");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Extrude")) {
               UI_set_to_Create_Extrude();
               SOLARCHVISION_highlight_in_BAR_b("Extrude");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hyper")) {
               UI_set_to_Create_Hyper();
               SOLARCHVISION_highlight_in_BAR_b("Hyper");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("House1")) {
               UI_set_to_Create_House1();
               SOLARCHVISION_highlight_in_BAR_b("House1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("House2")) {
               UI_set_to_Create_House2();
               SOLARCHVISION_highlight_in_BAR_b("House2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Box")) {
               UI_set_to_Create_Box();
               SOLARCHVISION_highlight_in_BAR_b("Box");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Icosahedron")) {
               UI_set_to_Create_Icosahedron();
               SOLARCHVISION_highlight_in_BAR_b("Icosahedron");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Octahedron")) {
               UI_set_to_Create_Octahedron();
               SOLARCHVISION_highlight_in_BAR_b("Octahedron");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Sphere")) {
               UI_set_to_Create_Sphere();
               SOLARCHVISION_highlight_in_BAR_b("Sphere");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Cylinder")) {
               UI_set_to_Create_Cylinder();
               SOLARCHVISION_highlight_in_BAR_b("Cylinder");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Cushion")) {
               UI_set_to_Create_Cushion();
               SOLARCHVISION_highlight_in_BAR_b("Cushion");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
 
@@ -35014,26 +35015,26 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Drop on LandSurface")) {
               UI_set_to_Modify_Drop(0);
               SOLARCHVISION_highlight_in_BAR_b("DrL±");
-              UI_BAR_b_Update = true;  
+              UI_BAR_b_update = true;  
 
               SOLARCHVISION_drop_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Drop on ModelSurface (Down)")) {
               UI_set_to_Modify_Drop(1);
               SOLARCHVISION_highlight_in_BAR_b("DrM-");
-              UI_BAR_b_Update = true;  
+              UI_BAR_b_update = true;  
 
               SOLARCHVISION_drop_Selection(); 
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }                      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Drop on ModelSurface (Up)")) {
               UI_set_to_Modify_Drop(2);
               SOLARCHVISION_highlight_in_BAR_b("DrM+");
-              UI_BAR_b_Update = true;  
+              UI_BAR_b_update = true;  
 
               SOLARCHVISION_drop_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
 
 
@@ -35041,158 +35042,158 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get dX")) {
               UI_set_to_Modify_GetLength(0);
               SOLARCHVISION_highlight_in_BAR_b("GLx");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get dY")) {
               UI_set_to_Modify_GetLength(1);
               SOLARCHVISION_highlight_in_BAR_b("GLy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get dZ")) {
               UI_set_to_Modify_GetLength(2);
               SOLARCHVISION_highlight_in_BAR_b("GLz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get dXYZ")) {
               UI_set_to_Modify_GetLength(3);
               SOLARCHVISION_highlight_in_BAR_b("GL³");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get dXY")) {
               UI_set_to_Modify_GetLength(4);
               SOLARCHVISION_highlight_in_BAR_b("GL²");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get Angle")) {
               UI_set_to_Modify_GetLength(5);
               SOLARCHVISION_highlight_in_BAR_b("GLa");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }               
 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("MoveX")) {
               UI_set_to_Modify_Move(0);
               SOLARCHVISION_highlight_in_BAR_b("MVx");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("MoveY")) {
               UI_set_to_Modify_Move(1);
               SOLARCHVISION_highlight_in_BAR_b("MVy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("MoveZ")) {
               UI_set_to_Modify_Move(2);
               SOLARCHVISION_highlight_in_BAR_b("MVz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Move")) {
               UI_set_to_Modify_Move(3);
               SOLARCHVISION_highlight_in_BAR_b("MV³");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ScaleX")) {
               UI_set_to_Modify_Scale(0);
               SOLARCHVISION_highlight_in_BAR_b("SCx");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ScaleY")) {
               UI_set_to_Modify_Scale(1);
               SOLARCHVISION_highlight_in_BAR_b("SCy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ScaleZ")) {
               UI_set_to_Modify_Scale(2);
               SOLARCHVISION_highlight_in_BAR_b("SCz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Scale")) {
               UI_set_to_Modify_Scale(3);
               SOLARCHVISION_highlight_in_BAR_b("SC³");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PowerX")) {
               UI_set_to_Modify_Power(0);
               SOLARCHVISION_highlight_in_BAR_b("PWx");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PowerY")) {
               UI_set_to_Modify_Power(1);
               SOLARCHVISION_highlight_in_BAR_b("PWy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PowerZ")) {
               UI_set_to_Modify_Power(2);
               SOLARCHVISION_highlight_in_BAR_b("PWz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Power")) {
               UI_set_to_Modify_Power(3);
               SOLARCHVISION_highlight_in_BAR_b("PW³");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("RotateX")) {
               UI_set_to_Modify_Rotate(0);
               SOLARCHVISION_highlight_in_BAR_b("RTx");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("RotateY")) {
               UI_set_to_Modify_Rotate(1);
               SOLARCHVISION_highlight_in_BAR_b("RTy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("RotateZ")) {
               UI_set_to_Modify_Rotate(2);
               SOLARCHVISION_highlight_in_BAR_b("RTz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Rotate")) {
               UI_set_to_Modify_Rotate(2);
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pivot")) {
               UI_set_to_Modify_Pivot(0);
               SOLARCHVISION_highlight_in_BAR_b("SPvt0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Pivot")) {
               UI_set_to_Modify_Pivot(1);
               SOLARCHVISION_highlight_in_BAR_b("SPvt1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Pivot")) {
               UI_set_to_Modify_Pivot(2);
               SOLARCHVISION_highlight_in_BAR_b("SPvt2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Save Current ReferenceBox")) {
               SOLARCHVISION_save_current_BoundingBox();
               SOLARCHVISION_highlight_in_BAR_b("<pvt>");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Reset Saved ReferenceBox")) {
               SOLARCHVISION_apply_saved_ReferenceBox();
               SOLARCHVISION_highlight_in_BAR_b(">pvt<");
-              UI_BAR_b_Update = true;  
-              WIN3D.Update = true;
+              UI_BAR_b_update = true;  
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Use Selection ReferenceBox")) {
               SOLARCHVISION_calculate_selection_BoundingBox();
               SOLARCHVISION_highlight_in_BAR_b("|pvt|");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Use Origin ReferenceBox")) {
               SOLARCHVISION_apply_origin_ReferenceBox();
               SOLARCHVISION_highlight_in_BAR_b(".pvt.");
-              UI_BAR_b_Update = true;  
-              WIN3D.Update = true;
+              UI_BAR_b_update = true;  
+              WIN3D.update = true;
             }
 
 
@@ -35204,7 +35205,7 @@ void mouseClicked () {
               selectedGroup3D_ids = new int [1];
               selectedGroup3D_ids[0] = allGroup3Ds_num - 1;
 
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }    
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Begin New Group3D at Pivot")) {
@@ -35214,25 +35215,25 @@ void mouseClicked () {
               selectedGroup3D_ids = new int [1];
               selectedGroup3D_ids[0] = allGroup3Ds_num - 1;       
 
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }              
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Solid")) {
               UI_set_to_Create_Solid();
               SOLARCHVISION_highlight_in_BAR_b("SLD");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Section")) {
               UI_set_to_Create_Section();
               SOLARCHVISION_highlight_in_BAR_b("SEC");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Camera")) {
               UI_set_to_Create_Camera();
               SOLARCHVISION_highlight_in_BAR_b("CAM");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Viewport >> Camera")) {
@@ -35254,8 +35255,8 @@ void mouseClicked () {
               SOLARCHVISION_apply_currentCamera();
               SOLARCHVISION_modify_Viewport_Title();
 
-              WIN3D.Update = true;   
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;   
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Camera >> Viewport")) {
@@ -35274,8 +35275,8 @@ void mouseClicked () {
               WIN3D.CurrentCamera = 0;
               SOLARCHVISION_modify_Viewport_Title();
 
-              WIN3D.Update = true;   
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;   
+              UI_BAR_b_update = true;
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("GoTo Selected Camera")) {
@@ -35284,21 +35285,21 @@ void mouseClicked () {
                 SOLARCHVISION_apply_currentCamera();
                 SOLARCHVISION_modify_Viewport_Title();
   
-                WIN3D.Update = true;   
-                UI_BAR_b_Update = true;
+                WIN3D.update = true;   
+                UI_BAR_b_update = true;
               }
             }
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandMesh >> Group3D")) {
               SOLARCHVISION_draw_LAND(TypeWindow.LandMesh);
               
-              WIN3D.Update = true;   
+              WIN3D.update = true;   
             }          
           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandGap >> Group3D")) {
               SOLARCHVISION_draw_LAND(TypeWindow.LandGap);
 
-              WIN3D.Update = true;   
+              WIN3D.update = true;   
             }                
 
 
@@ -35306,105 +35307,105 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change Seed/Material")) {
               UI_set_to_Modify_Seed(0);
               SOLARCHVISION_highlight_in_BAR_b("Mat0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Seed/Material")) {
               UI_set_to_Modify_Seed(1);
               SOLARCHVISION_highlight_in_BAR_b("Mat1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Seed/Material")) {
               UI_set_to_Modify_Seed(2);
               SOLARCHVISION_highlight_in_BAR_b("Mat2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change Tessellation")) {
               UI_set_to_Modify_Tessellation(0);
               SOLARCHVISION_highlight_in_BAR_b("Tes0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Tessellation")) {
               UI_set_to_Modify_Tessellation(1);
               SOLARCHVISION_highlight_in_BAR_b("Tes1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Tessellation")) {
               UI_set_to_Modify_Tessellation(2);
               SOLARCHVISION_highlight_in_BAR_b("Tes2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change Layer")) {
               UI_set_to_Modify_Layer(0);
               SOLARCHVISION_highlight_in_BAR_b("Lyr0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Layer")) {
               UI_set_to_Modify_Layer(1);
               SOLARCHVISION_highlight_in_BAR_b("Lyr1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Layer")) {
               UI_set_to_Modify_Layer(2);
               SOLARCHVISION_highlight_in_BAR_b("Lyr2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change Visibility")) {
               UI_set_to_Modify_Visibility(0);
               SOLARCHVISION_highlight_in_BAR_b("Vsb0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Visibility")) {
               UI_set_to_Modify_Visibility(1);
               SOLARCHVISION_highlight_in_BAR_b("Vsb1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Visibility")) {
               UI_set_to_Modify_Visibility(2);
               SOLARCHVISION_highlight_in_BAR_b("Vsb2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change Weight")) {
               UI_set_to_Modify_Weight(0);
               SOLARCHVISION_highlight_in_BAR_b("Wgt0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick Weight")) {
               UI_set_to_Modify_Weight(1);
               SOLARCHVISION_highlight_in_BAR_b("Wgt1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign Weight")) {
               UI_set_to_Modify_Weight(2);
               SOLARCHVISION_highlight_in_BAR_b("Wgt2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             } 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flip Normal")) {
               UI_set_to_Modify_Normal(1);
               SOLARCHVISION_highlight_in_BAR_b("Norm1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }                
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-Out Normal")) {
               UI_set_to_Modify_Normal(2);
               SOLARCHVISION_highlight_in_BAR_b("Norm2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Set-In Normal")) {
               UI_set_to_Modify_Normal(3);
               SOLARCHVISION_highlight_in_BAR_b("Norm3");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Get FirstVertex")) {
               UI_set_to_Modify_FirstVertex(1);
               SOLARCHVISION_highlight_in_BAR_b("1stV");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }     
             
 
@@ -35412,97 +35413,97 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
               SOLARCHVISION_highlight_in_BAR_b("dgMax0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick DegreeMax")) {
               UI_set_to_Modify_DegreeMax(1);
               SOLARCHVISION_highlight_in_BAR_b("dgMax1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign DegreeMax")) {
               UI_set_to_Modify_DegreeMax(2);
               SOLARCHVISION_highlight_in_BAR_b("dgMax2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change DegreeDif")) {
               UI_set_to_Modify_DegreeDif(0);
               SOLARCHVISION_highlight_in_BAR_b("dgDif0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick DegreeDif")) {
               UI_set_to_Modify_DegreeDif(1);
               SOLARCHVISION_highlight_in_BAR_b("dgDif1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign DegreeDif")) {
               UI_set_to_Modify_DegreeDif(2);
               SOLARCHVISION_highlight_in_BAR_b("dgDif2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }                 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change DegreeMin")) {
               UI_set_to_Modify_DegreeMin(0);
               SOLARCHVISION_highlight_in_BAR_b("dgMin0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick DegreeMin")) {
               UI_set_to_Modify_DegreeMin(1);
               SOLARCHVISION_highlight_in_BAR_b("dgMin1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign DegreeMin")) {
               UI_set_to_Modify_DegreeMin(2);
               SOLARCHVISION_highlight_in_BAR_b("dgMin2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }     
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
               SOLARCHVISION_highlight_in_BAR_b("trSz0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick TrunkSize")) {
               UI_set_to_Modify_TrunkSize(1);
               SOLARCHVISION_highlight_in_BAR_b("trSz1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign TrunkSize")) {
               UI_set_to_Modify_TrunkSize(2);
               SOLARCHVISION_highlight_in_BAR_b("trSz2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }     
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change LeafSize")) {
               UI_set_to_Modify_LeafSize(0);
               SOLARCHVISION_highlight_in_BAR_b("lfSz0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick LeafSize")) {
               UI_set_to_Modify_LeafSize(1);
               SOLARCHVISION_highlight_in_BAR_b("lfSz1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign LeafSize")) {
               UI_set_to_Modify_LeafSize(2);
               SOLARCHVISION_highlight_in_BAR_b("lfSz2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }     
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("AllFractalProps")) {
               UI_set_to_Modify_AllFractalProps(0);
               SOLARCHVISION_highlight_in_BAR_b("allFP0");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pick AllFractalProps")) {
               UI_set_to_Modify_AllFractalProps(1);
               SOLARCHVISION_highlight_in_BAR_b("allFP1");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Assign AllFractalProps")) {
               UI_set_to_Modify_AllFractalProps(2);
               SOLARCHVISION_highlight_in_BAR_b("allFP2");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }                 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Change DegreeMax")) {
@@ -35525,684 +35526,684 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Orthographic")) {
               UI_set_to_View_ProjectionType(0);
               SOLARCHVISION_highlight_in_BAR_b("P<>");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Perspective")) {
               UI_set_to_View_ProjectionType(1);
               SOLARCHVISION_highlight_in_BAR_b("P><");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Reverse Selection")) {
               SOLARCHVISION_reverse_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Deselect All")) {
               SOLARCHVISION_deselect_All();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select All")) {
               SOLARCHVISION_select_All();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Solid")) {
               Current_ObjectCategory = ObjectCategory.Solids;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Section")) {
               Current_ObjectCategory = ObjectCategory.Sections;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Camera")) {
               Current_ObjectCategory = ObjectCategory.Cameras;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select LandPoint")) {
               Current_ObjectCategory = ObjectCategory.LandPoints;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Fractal")) {
               Current_ObjectCategory = ObjectCategory.Fractals;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Object2D")) {
               Current_ObjectCategory = ObjectCategory.Object2Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Group3D")) {
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Face")) {
               Current_ObjectCategory = ObjectCategory.Faces;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Curve")) {
               Current_ObjectCategory = ObjectCategory.Curves;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Vertex")) {
               Current_ObjectCategory = ObjectCategory.Vertices;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Soft Selection")) {
               SOLARCHVISION_convert_Vertex_to_softSelection();
 
               Current_ObjectCategory = ObjectCategory.SoftVerts;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex >> Group3D")) {
               SOLARCHVISION_convert_Vertex_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Face >> Group3D")) {
               SOLARCHVISION_convert_Face_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Face")) {
               SOLARCHVISION_convert_Group3D_to_Face();
               Current_ObjectCategory = ObjectCategory.Faces;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Curve >> Group3D")) {
               SOLARCHVISION_convert_Curve_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Curve")) {
               SOLARCHVISION_convert_Group3D_to_Curve();
               Current_ObjectCategory = ObjectCategory.Curves;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Curve >> Vertex")) {
               SOLARCHVISION_convert_Curve_to_Vertex();
               Current_ObjectCategory = ObjectCategory.Vertices;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex >> Curve")) {
               SOLARCHVISION_convert_Vertex_to_Curve();
               Current_ObjectCategory = ObjectCategory.Curves;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Vertex")) {
               SOLARCHVISION_convert_Group3D_to_Vertex();
               Current_ObjectCategory = ObjectCategory.Vertices;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Face >> Vertex")) {
               SOLARCHVISION_convert_Face_to_Vertex();
               Current_ObjectCategory = ObjectCategory.Vertices;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Vertex >> Face")) {
               SOLARCHVISION_convert_Vertex_to_Face();
               Current_ObjectCategory = ObjectCategory.Faces;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Solid >> Group3D")) {
               SOLARCHVISION_convert_Solid_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Solid")) {
               SOLARCHVISION_convert_Group3D_to_Solid();
               Current_ObjectCategory = ObjectCategory.Solids;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Object2D >> Group3D")) {
               SOLARCHVISION_convert_Object2D_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Object2D")) {
               SOLARCHVISION_convert_Group3D_to_Object2D();
               Current_ObjectCategory = ObjectCategory.Object2Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Fractal >> Group3D")) {
               SOLARCHVISION_convert_Fractal_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group3D >> Fractal")) {
               SOLARCHVISION_convert_Group3D_to_Fractal();
               Current_ObjectCategory = ObjectCategory.Fractals;
-              WIN3D.Update = true;
-              UI_BAR_b_Update = true;
+              WIN3D.update = true;
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Click Select")) {
               UI_set_to_View_ClickSelect(0);
               SOLARCHVISION_highlight_in_BAR_b("±CS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Click Select+")) {
               UI_set_to_View_ClickSelect(1);
               SOLARCHVISION_highlight_in_BAR_b("+CS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Click Select-")) {
               UI_set_to_View_ClickSelect(2);
               SOLARCHVISION_highlight_in_BAR_b("-CS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }            
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Window Select")) {
               UI_set_to_View_WindowSelect(0);
               SOLARCHVISION_highlight_in_BAR_b("±WS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Window Select+")) {
               UI_set_to_View_WindowSelect(1);
               SOLARCHVISION_highlight_in_BAR_b("+WS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Window Select-")) {
               UI_set_to_View_WindowSelect(2);
               SOLARCHVISION_highlight_in_BAR_b("-WS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select Near Vertices Selection")) {
               SOLARCHVISION_selectNearVertices_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weld Objects Vertices Selection")) {
               SOLARCHVISION_weldObjectsVertices_Selection(ModifyInput_WeldTreshold);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weld Scene Vertices Selection")) {
               SOLARCHVISION_weldSceneVertices_Selection(ModifyInput_WeldTreshold);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Reposition Vertices Selection")) {
               SOLARCHVISION_repositionVertices_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Separate Vertices Selection")) {
               SOLARCHVISION_separateVertices_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Select All Isolated Vertices")) {
               SOLARCHVISION_selectIsolatedVertices_Scene();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Delete All Isolated Vertices")) {
               SOLARCHVISION_deleteIsolatedVertices_Scene();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Delete Isolated Vertices Selection")) {
               SOLARCHVISION_deleteIsolatedVertices_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Delete All Empty Groups")) {
               SOLARCHVISION_deleteEmptyGroups_Scene();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Delete Selection")) {
               SOLARCHVISION_delete_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Dettach from Groups")) {
               SOLARCHVISION_dettachFromGroups_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Ungroup Selection")) {
               SOLARCHVISION_ungroup_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Group Selection")) {
               SOLARCHVISION_group_Selection(1);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Attach to Last Group")) {
               SOLARCHVISION_group_Selection(0);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Duplicate Selection (Identical)")) {
               SOLARCHVISION_duplicate_Selection(0);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Duplicate Selection (Variation)")) {
               SOLARCHVISION_duplicate_Selection(1);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Auto-Normal Faces Selection")) {
               SOLARCHVISION_autoNormalFaces_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Force Triangulate Faces Selection")) {
               SOLARCHVISION_forceTriangulateFaces_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }            
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Insert Corner Opennings")) {
               SOLARCHVISION_inserCornerOpennings_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Insert Parallel Opennings")) {
               SOLARCHVISION_insertParallelOpennings_Selection();              
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Insert Rotated Opennings")) {
               SOLARCHVISION_insertRotatedOpennings_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Insert Edge Opennings")) {
               SOLARCHVISION_insertEdgeOpennings_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             } 
             
  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Tessellate Rows & Columns")) {
               SOLARCHVISION_tessellateRowsColumnsFaceSelection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Tessellate Rectangular")) {
               SOLARCHVISION_tessellateRectangularFaceSelection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Tessellation Triangular")) {
               SOLARCHVISION_tessellateTriangularFaceSelection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Extrude Face Edges")) {
               SOLARCHVISION_extrudeFaceEdges_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Extrude Curve Edges")) {
               SOLARCHVISION_extrudeCurveEdges_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Offset(above) Vertices")) {
               SOLARCHVISION_offsetVertices_Selection(0, abs(ModifyInput_OffsetAmount));
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Offset(below) Vertices")) {
               SOLARCHVISION_offsetVertices_Selection(0, -abs(ModifyInput_OffsetAmount));
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Offset(expand) Vertices")) {
               SOLARCHVISION_offsetVertices_Selection(1, -abs(ModifyInput_OffsetAmount));
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Offset(shrink) Vertices")) {
               SOLARCHVISION_offsetVertices_Selection(1, abs(ModifyInput_OffsetAmount));
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }               
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Reverse Visibility of All Faces")) {
               SOLARCHVISION_reverseVisibilityFaces_Scene();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hide All Faces")) {
               SOLARCHVISION_changeVisibilityFaces_Scene(0);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Unhide All Faces")) {
               SOLARCHVISION_changeVisibilityFaces_Scene(1);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hide Selected Faces")) {
               SOLARCHVISION_changeVisibilityFaces_Selection(0);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Unhide Selected Faces")) {
               SOLARCHVISION_changeVisibilityFaces_Selection(1);
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Isolate Selection")) {
               SOLARCHVISION_isolate_Selection();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }         
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Flatten Selected LandPoints")) {
 
               SOLARCHVISION_flatten_selectedLandPoints();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Fractals")) {
               SOLARCHVISION_delete_Fractals();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }      
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Object2Ds")) {
               SOLARCHVISION_delete_Object2Ds();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }        
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Group3Ds")) {
               SOLARCHVISION_delete_Group3Ds();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Solids")) {
               SOLARCHVISION_delete_Solids();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }          
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Sections")) {
               SOLARCHVISION_delete_Sections();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }       
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Cameras")) {
               SOLARCHVISION_delete_Cameras();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }    
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Faces")) {
               SOLARCHVISION_delete_Faces();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }             
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Curves")) {
               SOLARCHVISION_delete_Curves();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_All")) {
               SOLARCHVISION_delete_All();
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }  
             
         
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TargetRoll")) {
               UI_set_to_View_TargetRoll(0);
               SOLARCHVISION_highlight_in_BAR_b("TRL");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TargetRollZ")) {
               UI_set_to_View_TargetRoll(1);
               SOLARCHVISION_highlight_in_BAR_b("TRLz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TargetRollXY")) {
               UI_set_to_View_TargetRoll(2);
               SOLARCHVISION_highlight_in_BAR_b("TRLxy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("CameraRoll")) {
               UI_set_to_View_CameraRoll(0);
               SOLARCHVISION_highlight_in_BAR_b("CRL");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("CameraRollZ")) {
               UI_set_to_View_CameraRoll(1);
               SOLARCHVISION_highlight_in_BAR_b("CRLz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("CameraRollXY")) {
               UI_set_to_View_CameraRoll(2);
               SOLARCHVISION_highlight_in_BAR_b("CRLxy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Orbit")) {
               UI_set_to_View_Orbit(0);
               SOLARCHVISION_highlight_in_BAR_b("OR");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("OrbitZ")) {
               UI_set_to_View_Orbit(1);
               SOLARCHVISION_highlight_in_BAR_b("ORz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("OrbitXY")) {
               UI_set_to_View_Orbit(2);
               SOLARCHVISION_highlight_in_BAR_b("ORxy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandOrbit")) {
               UI_set_to_View_LandOrbit(0);
               SOLARCHVISION_highlight_in_BAR_b("LNOR");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }   
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Pan")) {
               UI_set_to_View_Pan(0);
               SOLARCHVISION_highlight_in_BAR_b("Pan");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PanX")) {
               UI_set_to_View_Pan(1);
               SOLARCHVISION_highlight_in_BAR_b("PanX");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PanY")) {
               UI_set_to_View_Pan(2);
               SOLARCHVISION_highlight_in_BAR_b("PanY");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Zoom")) {
               UI_set_to_View_ZOOM(0);
               SOLARCHVISION_highlight_in_BAR_b("±ZM");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Zoom as default")) {
               UI_set_to_View_ZOOM(1);
               SOLARCHVISION_highlight_in_BAR_b("0ZM");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TruckX")) {
               UI_set_to_View_Truck(1);
               SOLARCHVISION_highlight_in_BAR_b("DIx");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TruckY")) {
               UI_set_to_View_Truck(2);
               SOLARCHVISION_highlight_in_BAR_b("DIy");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("TruckZ")) {
               UI_set_to_View_Truck(0);
               SOLARCHVISION_highlight_in_BAR_b("DIz");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("DistZ")) {
               UI_set_to_View_Truck(0);
               SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("CameraDistance")) {
               UI_set_to_View_CameraDistance(0);
               SOLARCHVISION_highlight_in_BAR_b("±CDS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("DistMouseXY")) {
               UI_set_to_View_DistMouseXY(0);
               SOLARCHVISION_highlight_in_BAR_b("±CDM");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Look at origin")) {
               UI_set_to_View_LookAtOrigin(0);
               SOLARCHVISION_highlight_in_BAR_b("LAO");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Look at direction")) {
               UI_set_to_View_LookAtDirection(0);
               SOLARCHVISION_highlight_in_BAR_b("LAD");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Look at selection")) {
               UI_set_to_View_LookAtSelection(0);
               SOLARCHVISION_highlight_in_BAR_b("LAS");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
  
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("3DModelSize")) {
               UI_set_to_View_3DModelSize();
               SOLARCHVISION_highlight_in_BAR_b("±SZ");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }          
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("SkydomeSize")) {
               UI_set_to_View_SkydomeSize();
               SOLARCHVISION_highlight_in_BAR_b("±SK");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }       
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("AllModelSize")) {
               UI_set_to_View_AllModelSize();
               SOLARCHVISION_highlight_in_BAR_b("±SA");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }     
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display All Viewports")) {
               UI_set_to_Viewport(0);
               SOLARCHVISION_highlight_in_BAR_b("AllViewports");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge 3D Viewport")) {
               UI_set_to_Viewport(1);
               SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge Time Viewport")) {
               UI_set_to_Viewport(2);
               SOLARCHVISION_highlight_in_BAR_b("ExpandTimeView");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }              
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Enlarge Map Viewport")) {
               UI_set_to_Viewport(3);
               SOLARCHVISION_highlight_in_BAR_b("ExpandMapView");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Top")) {
               UI_set_to_View_3DViewPoint(0);
               SOLARCHVISION_highlight_in_BAR_b("Top");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Front")) {
               UI_set_to_View_3DViewPoint(1);
               SOLARCHVISION_highlight_in_BAR_b("Front");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Left")) {
               UI_set_to_View_3DViewPoint(2);
               SOLARCHVISION_highlight_in_BAR_b("Left");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Back")) {
               UI_set_to_View_3DViewPoint(3);
               SOLARCHVISION_highlight_in_BAR_b("Back");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Right")) {
               UI_set_to_View_3DViewPoint(4);
               SOLARCHVISION_highlight_in_BAR_b("Right");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Bottom")) {
               UI_set_to_View_3DViewPoint(5);
               SOLARCHVISION_highlight_in_BAR_b("Bottom");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("S.W.")) {
               UI_set_to_View_3DViewPoint(6);
               SOLARCHVISION_highlight_in_BAR_b("S.W.");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("S.E.")) {
               UI_set_to_View_3DViewPoint(7);
               SOLARCHVISION_highlight_in_BAR_b("S.E.");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("N.E.")) {
               UI_set_to_View_3DViewPoint(8);
               SOLARCHVISION_highlight_in_BAR_b("N.E.");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("N.W.")) {
               UI_set_to_View_3DViewPoint(9);
               SOLARCHVISION_highlight_in_BAR_b("N.W.");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotX:Minimum")) {
               UI_set_to_View_PivotX(-1);
               SOLARCHVISION_highlight_in_BAR_b("X<");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotX:Center")) {
               UI_set_to_View_PivotX(0);
               SOLARCHVISION_highlight_in_BAR_b("X|");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotX:Maximum")) {
               UI_set_to_View_PivotX(1);
               SOLARCHVISION_highlight_in_BAR_b("X>");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotY:Minimum")) {
               UI_set_to_View_PivotY(-1);
               SOLARCHVISION_highlight_in_BAR_b("Y<");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotY:Center")) {
               UI_set_to_View_PivotY(0);
               SOLARCHVISION_highlight_in_BAR_b("Y|");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotY:Maximum")) {
               UI_set_to_View_PivotY(1);
               SOLARCHVISION_highlight_in_BAR_b("Y>");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotZ:Minimum")) {
               UI_set_to_View_PivotZ(-1);
               SOLARCHVISION_highlight_in_BAR_b("Z<");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotZ:Center")) {
               UI_set_to_View_PivotZ(0);
               SOLARCHVISION_highlight_in_BAR_b("Z|");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("PivotZ:Maximum")) {
               UI_set_to_View_PivotZ(1);
               SOLARCHVISION_highlight_in_BAR_b("Z>");
-              UI_BAR_b_Update = true;
+              UI_BAR_b_update = true;
             }
           }
         }
@@ -36220,23 +36221,23 @@ void mouseClicked () {
         SOLARCHVISION_Y_clicked = mouseY;
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_A_Pixel) == 1) {
-          UI_BAR_a_Update = true;
+          UI_BAR_a_update = true;
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel) == 1) {
-          UI_BAR_b_Update = true;
+          UI_BAR_b_update = true;
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel) == 1) {
-          UI_BAR_c_Update = true;
+          UI_BAR_c_update = true;
           typeUserCommand = 1;
         }  
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel) == 1) {
-          UI_BAR_d_Update = true;
+          UI_BAR_d_update = true;
         }  
 
-        if (WORLD.Include) {
+        if (WORLD.include) {
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY) == 1) {
 
             float mouse_lon = 360.0 * ((mouseX - WORLD.cX) * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
@@ -36304,7 +36305,7 @@ void mouseClicked () {
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;
-                    ROLLOUT.Update = true;
+                    ROLLOUT.update = true;
 
 
                     SOLARCHVISION_update_station(1);
@@ -36359,7 +36360,7 @@ void mouseClicked () {
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;
-                    ROLLOUT.Update = true;
+                    ROLLOUT.update = true;
 
                     SOLARCHVISION_update_station(1);
                     SOLARCHVISION_update_CLIMATE_CWEEDS();
@@ -36416,7 +36417,7 @@ void mouseClicked () {
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;
-                    ROLLOUT.Update = true;
+                    ROLLOUT.update = true;
 
                     SOLARCHVISION_update_station(1);
                     SOLARCHVISION_update_CLIMATE_CLMREC();
@@ -36469,7 +36470,7 @@ void mouseClicked () {
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;
-                    ROLLOUT.Update = true;
+                    ROLLOUT.update = true;
 
                     SOLARCHVISION_update_station(1);
                     SOLARCHVISION_update_CLIMATE_TMYEPW();
@@ -36481,11 +36482,11 @@ void mouseClicked () {
 
 
 
-            WORLD.Update = true;
+            WORLD.update = true;
           }
         }
 
-        if (WIN3D.Include) {
+        if (WIN3D.include) {
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
 
             float Image_X = 0;
@@ -36498,7 +36499,7 @@ void mouseClicked () {
 
               SOLARCHVISION_look_3DViewport_towards_Direction(Image_X, Image_Y);
 
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
             else {
   
@@ -36645,7 +36646,7 @@ void mouseClicked () {
   
                     println("SOLARCHVISION_calculate_selection_BoundingBox 10");
                     SOLARCHVISION_calculate_selection_BoundingBox();
-                    WIN3D.Update = true;
+                    WIN3D.update = true;
                   }
                 }   
   
@@ -36995,8 +36996,8 @@ void mouseClicked () {
                       }
                     }                        
   
-                    WIN3D.Update = true;                 
-                    ROLLOUT.Update = true;
+                    WIN3D.update = true;                 
+                    ROLLOUT.update = true;
                   } else if ((WIN3D.UI_CurrentTask != UITASK.Create) && (WIN3D.UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
   
                     SOLARCHVISION_PickSelect(RxP);
@@ -37272,7 +37273,7 @@ void mouseClicked () {
     
                         SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
     
-                        WIN3D.Update = true;
+                        WIN3D.update = true;
                       }  
     
                       WIN3D.CAM_x = keep_WIN3D_CAM_x;
@@ -37519,8 +37520,8 @@ void mouseClicked () {
     
                         SolarImpact_sectionType = Section_Type;          
     
-                        WIN3D.Update = true; 
-                        ROLLOUT.Update = true;
+                        WIN3D.update = true; 
+                        ROLLOUT.update = true;
     
                       }                  
                     }
@@ -37614,12 +37615,12 @@ void mouseClicked () {
                 }
               }          
   
-              WIN3D.Update = true;
+              WIN3D.update = true;
             }
           }
         }
 
-        ROLLOUT.Update = true;
+        ROLLOUT.update = true;
 
         redraw();
       }
@@ -37981,11 +37982,11 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
     Display_NAEFS_Nearest = true;     
   }
   
-  WORLD.Update = true;
-  WIN3D.Update = true;  
-  STUDY.Update = true;
-  ROLLOUT.Update = true;
-  UI_BAR_d_Update = true;    
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;    
   
   SampleMember_Start = 44; //ENSEMBLE_FORECAST_start;
   SampleMember_End = ENSEMBLE_FORECAST_end;
@@ -41254,7 +41255,7 @@ void SOLARCHVISION_draw_Sections (int target_window) {
     proceed = false;
   }
   
-  if (proceed == true) {
+  if (proceed) {
 
     for (int f = 0; f < allSections_num; f++) {
 
@@ -44034,8 +44035,8 @@ void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
-  WIN3D.Update = true;
-  ROLLOUT.Update = true;
+  WIN3D.update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -44050,8 +44051,8 @@ void SOLARCHVISION_rotate_selectedSections (float r) {
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
 
-  WIN3D.Update = true;
-  ROLLOUT.Update = true;
+  WIN3D.update = true;
+  ROLLOUT.update = true;
 }
 
 void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
@@ -44066,8 +44067,8 @@ void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
 
-  WIN3D.Update = true;
-  ROLLOUT.Update = true;
+  WIN3D.update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -44975,7 +44976,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFractals_DegreeMax[OBJ_NUM] = q;
 
         CreateFractal_DegreeMax = q;
-        ROLLOUT.Update = true;
+        ROLLOUT.update = true;
       }
       if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
         int q1 = allFractals_DegreeMin[OBJ_NUM];
@@ -45002,7 +45003,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           CreateFractal_DegreeMin = q1;
           CreateFractal_DegreeMax = q2;
 
-          ROLLOUT.Update = true;
+          ROLLOUT.update = true;
         }
       }
       if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) {
@@ -45015,7 +45016,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFractals_DegreeMin[OBJ_NUM] = q;
 
         CreateFractal_DegreeMin = q;
-        ROLLOUT.Update = true;
+        ROLLOUT.update = true;
       }        
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
         float q = allFractals_TrunkSize[OBJ_NUM];
@@ -45027,7 +45028,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFractals_TrunkSize[OBJ_NUM] = q;
 
         CreateFractal_TrunkSize = q;
-        ROLLOUT.Update = true;
+        ROLLOUT.update = true;
       }
       if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
         float q = allFractals_LeafSize[OBJ_NUM];
@@ -45039,7 +45040,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         allFractals_LeafSize[OBJ_NUM] = q;
 
         CreateFractal_LeafSize = q;
-        ROLLOUT.Update = true;
+        ROLLOUT.update = true;
       }
     }
   }
@@ -46638,7 +46639,7 @@ void mouseMoved () {
           UI_X_moved = mouseX;
           UI_Y_moved = mouseY;      
 
-          UI_BAR_a_Update = true;     
+          UI_BAR_a_update = true;     
 
           redraw();
         }
@@ -46651,7 +46652,7 @@ void mouseMoved () {
 
 PImage pre_screen;
 
-boolean UI_BAR_a_Update = true;
+boolean UI_BAR_a_update = true;
 
 float UI_BAR_a_width_parent = 4 * SOLARCHVISION_A_Pixel;
 float UI_BAR_a_width_child = 3.5 * UI_BAR_a_width_parent;
@@ -46669,11 +46670,11 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Site", "Update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download Toroposphere", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial" 
+    "Site", "update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download Toroposphere", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial" 
   }
   , 
   {
-    "Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Long-term (CLMREC)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)", "Update NAEFS", "Update SWOB", "Update CLMREC", "Update CWEEDS", "Update TMYEPW", "Update Aerial"
+    "Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Long-term (CLMREC)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)", "update NAEFS", "update SWOB", "update CLMREC", "update CWEEDS", "update TMYEPW", "update Aerial"
   }
   , 
   {
@@ -46758,11 +46759,11 @@ int LayersID_in_Bar_a = 8;
 
 void SOLARCHVISION_draw_window_BAR_a () {
   
-  if (UI_BAR_a_Update) {
+  if (UI_BAR_a_update) {
 
-    //println("Update BAR!");
+    //println("update BAR!");
 
-    UI_BAR_a_Update = false;
+    UI_BAR_a_update = false;
 
     fill(127);
     noStroke();
@@ -47160,12 +47161,12 @@ void SOLARCHVISION_modify_Viewport_Title () {
   UI_BAR_b_Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b 
   SOLARCHVISION_highlight_in_BAR_b(s);
 
-  UI_BAR_b_Update = true;
+  UI_BAR_b_update = true;
 }  
 
 
 
-boolean UI_BAR_b_Update = true;
+boolean UI_BAR_b_update = true;
 
 float UI_BAR_b_tab = SOLARCHVISION_B_Pixel;
 
@@ -47379,9 +47380,9 @@ void SOLARCHVISION_highlight_in_BAR_b (String s) {
 
 void SOLARCHVISION_draw_window_BAR_b () {
 
-  if (UI_BAR_b_Update) {
+  if (UI_BAR_b_update) {
 
-    UI_BAR_b_Update = false;
+    UI_BAR_b_update = false;
 
     fill(0);
     noStroke();
@@ -47472,14 +47473,14 @@ void SOLARCHVISION_draw_window_BAR_b () {
             SOLARCHVISION_convert_Vertex_to_softSelection();
           }
 
-          ROLLOUT.Update = true;   
-          WIN3D.Update = true;
+          ROLLOUT.update = true;   
+          WIN3D.update = true;
         }
 
         if (Bar_Switch.equals("Mesh|Solid")) {
           CreateInput_MeshOrSolid = j - 1;
 
-          ROLLOUT.Update = true;
+          ROLLOUT.update = true;
         }        
 
         if ((Bar_Switch.equals("LivingType")) || (Bar_Switch.equals("BuildingType"))) {
@@ -47747,7 +47748,7 @@ void UI_set_to_Create_Nothing () {
 
   WIN3D.UI_CurrentTask = UITASK.Create;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -47978,7 +47979,7 @@ void UI_set_to_Modify_Move (int n) {
 
   selected_posVector = n;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Scale (int n) {
@@ -47986,7 +47987,7 @@ void UI_set_to_Modify_Scale (int n) {
 
   selected_scaleVector = n;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -47995,42 +47996,42 @@ void UI_set_to_Modify_Rotate (int n) {
 
   selected_rotVector = n;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Seed (int n) {
   WIN3D.UI_CurrentTask = UITASK.Seed_Material;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Tessellation (int n) {
   WIN3D.UI_CurrentTask = UITASK.Tessellation;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Layer (int n) {
   WIN3D.UI_CurrentTask = UITASK.Layer;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Visibility (int n) {
   WIN3D.UI_CurrentTask = UITASK.Visibility;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Weight (int n) {
   WIN3D.UI_CurrentTask = UITASK.Weight;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 // the same messages of WIN3D.UI_CurrentTask=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
@@ -48039,63 +48040,63 @@ void UI_set_to_Modify_DegreeMax (int n) {
   WIN3D.UI_CurrentTask = UITASK.DegreeMax;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_DegreeDif (int n) {
   WIN3D.UI_CurrentTask = UITASK.DegreeDif;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_DegreeMin (int n) {
   WIN3D.UI_CurrentTask = UITASK.DegreeMin;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_TrunkSize (int n) {
   WIN3D.UI_CurrentTask = UITASK.TrunkSize;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_LeafSize (int n) {
   WIN3D.UI_CurrentTask = UITASK.LeafSize;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_AllFractalProps (int n) {
   WIN3D.UI_CurrentTask = UITASK.AllFractalProps;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Pivot (int n) {
   WIN3D.UI_CurrentTask = UITASK.Pivot;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Normal (int n) {
   WIN3D.UI_CurrentTask = UITASK.Normal;
   WIN3D.UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_FirstVertex (int n) {
   WIN3D.UI_CurrentTask = UITASK.FirstVertex;
   WIN3D.UI_TaskModifyParameter = n; // 1:default
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -48106,7 +48107,7 @@ void UI_set_to_Modify_Drop (int n) {
 
   WIN3D.UI_TaskModifyParameter = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -48115,7 +48116,7 @@ void UI_set_to_Modify_GetLength (int n) {
 
   WIN3D.UI_TaskModifyParameter = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane) 
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_Modify_Power (int n) {
@@ -48127,7 +48128,7 @@ void UI_set_to_Modify_Power (int n) {
 
   WIN3D.UI_TaskModifyParameter = 0; // 0:change
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 
@@ -48142,8 +48143,8 @@ void UI_set_to_Modify_Power (int n) {
 void UI_set_to_View_ProjectionType (int n) {
   WIN3D.ViewType = n;
 
-  WIN3D.Update = true; 
-  ROLLOUT.Update = true;
+  WIN3D.update = true; 
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_View_ClickSelect (int n) {
@@ -48158,7 +48159,7 @@ void UI_set_to_View_ClickSelect (int n) {
     addNewSelectionToPreviousSelection = -1;
   }
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_View_WindowSelect (int n) {
@@ -48172,31 +48173,31 @@ void UI_set_to_View_WindowSelect (int n) {
     addNewSelectionToPreviousSelection = -1;
   }
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }    
 
 void UI_set_to_View_PivotX (int n) {
 
   selection_alignX = n;
 
-  WIN3D.Update = true; 
-  ROLLOUT.Update = true;
+  WIN3D.update = true; 
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_View_PivotY (int n) {
 
   selection_alignY = n;
 
-  WIN3D.Update = true; 
-  ROLLOUT.Update = true;
+  WIN3D.update = true; 
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_View_PivotZ (int n) {
 
   selection_alignZ = n;
 
-  WIN3D.Update = true; 
-  ROLLOUT.Update = true;
+  WIN3D.update = true; 
+  ROLLOUT.update = true;
 }      
 
 
@@ -48218,7 +48219,7 @@ void UI_set_to_View_Truck (int n) {
     WIN3D.UI_OptionXorY = 1;
   }           
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48228,7 +48229,7 @@ void UI_set_to_View_DistMouseXY (int n) {
     WIN3D.UI_CurrentTask = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
   }
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48239,7 +48240,7 @@ void UI_set_to_View_CameraDistance (int n) {
     WIN3D.UI_CurrentTask = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
   }
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48262,7 +48263,7 @@ void UI_set_to_View_CameraRoll (int n) {
     WIN3D.UI_OptionXorY = 1;
   }           
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48285,7 +48286,7 @@ void UI_set_to_View_TargetRoll (int n) {
     WIN3D.UI_OptionXorY = 1;
   }           
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48307,7 +48308,7 @@ void UI_set_to_View_Orbit (int n) {
     WIN3D.UI_OptionXorY = 1;
   }           
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48316,7 +48317,7 @@ void UI_set_to_View_LandOrbit (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.LandOrbit_Pan_TargetRollZ;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48328,12 +48329,12 @@ void UI_set_to_View_LookAtSelection (int n) {
   { // automatically set another choice of ineterest
     UI_set_to_View_CameraDistance(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDS");
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
   }
 
-  WIN3D.Update = true;
+  WIN3D.update = true;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48341,7 +48342,7 @@ void UI_set_to_View_LookAtDirection (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.LookAtDirection;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48356,12 +48357,12 @@ void UI_set_to_View_LookAtOrigin (int n) {
 
     UI_set_to_View_Truck(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
   }
 
-  WIN3D.Update = true;
+  WIN3D.update = true;
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 
@@ -48380,7 +48381,7 @@ void UI_set_to_View_Pan (int n) {
   }
 
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }  
 
 void UI_set_to_View_ZOOM (int n) {
@@ -48388,37 +48389,37 @@ void UI_set_to_View_ZOOM (int n) {
 
   if (n == 1) {
     WIN3D.Zoom = 60;
-    WIN3D.Update = true;
+    WIN3D.update = true;
   }
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }      
 
 void UI_set_to_View_3DModelSize () {
 
   WIN3D.UI_CurrentTask = UITASK.ModelSize_Pan_TargetRoll;
 
-  WIN3D.Update = true;  
+  WIN3D.update = true;  
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }      
 
 void UI_set_to_View_SkydomeSize () {
 
   WIN3D.UI_CurrentTask = UITASK.SkydomeSize;
 
-  WIN3D.Update = true;  
+  WIN3D.update = true;  
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }   
 
 void UI_set_to_View_AllModelSize () {
 
   WIN3D.UI_CurrentTask = UITASK.AllModelSize;
 
-  WIN3D.Update = true;  
+  WIN3D.update = true;  
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }   
 
 
@@ -48427,7 +48428,7 @@ void UI_set_to_Viewport (int n) {
   FrameVariation = n;
   SOLARCHVISION_update_frame_layout();
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 }
 
 void UI_set_to_View_3DViewPoint (int n) {
@@ -48487,11 +48488,11 @@ void UI_set_to_View_3DViewPoint (int n) {
   }
 
 
-  UI_BAR_b_Update = true;
+  UI_BAR_b_update = true;
 
-  WIN3D.Update = true;   
+  WIN3D.update = true;   
 
-  ROLLOUT.Update = true;
+  ROLLOUT.update = true;
 } 
 
 
@@ -48502,7 +48503,7 @@ void UI_set_to_View_3DViewPoint (int n) {
 
 
 
-boolean UI_BAR_d_Update = true;
+boolean UI_BAR_d_update = true;
 
 float UI_BAR_d_tab;
 
@@ -48525,9 +48526,9 @@ String[][] UI_BAR_d_Items = {
 
 void SOLARCHVISION_draw_window_BAR_d () {
 
-  if (UI_BAR_d_Update) {
+  if (UI_BAR_d_update) {
 
-    UI_BAR_d_Update = false;
+    UI_BAR_d_update = false;
 
     UI_BAR_d_tab = SOLARCHVISION_D_Pixel / float(UI_BAR_d_Items.length);
 
@@ -48568,10 +48569,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
           if (mouseButton == LEFT) {
             STUDY.i_Start = int(roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
-            ROLLOUT.Update = true;
-            STUDY.Update = true;
-            WIN3D.Update = true;
-            WORLD.Update = true;
+            ROLLOUT.update = true;
+            STUDY.update = true;
+            WIN3D.update = true;
+            WORLD.update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48579,10 +48580,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
           if (mouseButton == RIGHT) {
             STUDY.i_End = int(roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
-            ROLLOUT.Update = true;
-            STUDY.Update = true;
-            WIN3D.Update = true;
-            WORLD.Update = true;
+            ROLLOUT.update = true;
+            STUDY.update = true;
+            WIN3D.update = true;
+            WORLD.update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48622,9 +48623,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
             TIME_BeginDay = int(TIME_BeginDay + (TIME_Date - keep_TIME_Date) + 365) % 365;
             SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             
-            STUDY.Update = true; 
-            ROLLOUT.Update = true;
-            WIN3D.Update = true;            
+            STUDY.update = true; 
+            ROLLOUT.update = true;
+            WIN3D.update = true;            
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48639,9 +48640,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             if (STUDY.PerDays < 0) STUDY.PerDays = 1;
 
-            STUDY.Update = true; 
-            ROLLOUT.Update = true;
-            WIN3D.Update = true;
+            STUDY.update = true; 
+            ROLLOUT.update = true;
+            WIN3D.update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48774,9 +48775,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }       
 
-            ROLLOUT.Update = true;
-            STUDY.Update = true;
-            WIN3D.Update = true;
+            ROLLOUT.update = true;
+            STUDY.update = true;
+            WIN3D.update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48829,9 +48830,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             }                
 
-            ROLLOUT.Update = true;
-            STUDY.Update = true;
-            WIN3D.Update = true;
+            ROLLOUT.update = true;
+            STUDY.update = true;
+            WIN3D.update = true;
 
             SOLARCHVISION_find_which_bakings_to_regenerate();
           }
@@ -48935,9 +48936,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
         STUDY.ImpactLayer = n;
 
-        STUDY.Update = true; 
-        ROLLOUT.Update = true;
-        WIN3D.Update = true;
+        STUDY.update = true; 
+        ROLLOUT.update = true;
+        WIN3D.update = true;
 
         SOLARCHVISION_find_which_bakings_to_regenerate();
       }
@@ -49091,7 +49092,7 @@ int[] get_startK_endK () {
 
 void SOLARCHVISION_explore_output (String outputFile) {
 
-  if ((Display_Output_in_Explorer == true)  && (STUDY.record_AUTO == false) && (WORLD.record_AUTO == false) && (WIN3D.record_AUTO == false) && (FRAME_record_AUTO == false)) {
+  if ((Display_Output_in_Explorer)  && (STUDY.record_AUTO == false) && (WORLD.record_AUTO == false) && (WIN3D.record_AUTO == false) && (FRAME_record_AUTO == false)) {
     launch("explorer /select," + outputFile.replace('/', char(92)));
   }
 }
@@ -49254,7 +49255,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("AERIAL_graphOption", AERIAL_graphOption);
   newChild1.setInt("Develop_Option", Develop_Option);
   newChild1.setInt("Develop_DayHour", Develop_DayHour);
-  newChild1.setInt("Update_DevelopData", Update_DevelopData);
+  newChild1.setInt("update_DevelopData", update_DevelopData);
   newChild1.setInt("num_Layers", num_Layers);
   newChild1.setInt("LAYER_windspd200hPa", LAYER_windspd200hPa);
   newChild1.setInt("LAYER_thicknesses_1000_500", LAYER_thicknesses_1000_500);
@@ -49340,7 +49341,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("STUDY.impact_summary", STUDY.impact_summary);
   newChild1.setInt("STUDY.ImpactLayer", STUDY.ImpactLayer);
   newChild1.setInt("STUDY.PlotImpacts", STUDY.PlotImpacts);
-  //newChild1.setBoolean("STUDY.Impacts_Update", STUDY.Impacts_Update);
+  //newChild1.setBoolean("STUDY.Impacts_update", STUDY.Impacts_update);
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
   newChild1.setInt("LAND_Tessellation", LAND_Tessellation);
@@ -50488,7 +50489,7 @@ void SOLARCHVISION_load_project (String myFile) {
       AERIAL_graphOption = children0[L].getInt("AERIAL_graphOption");
       Develop_Option = children0[L].getInt("Develop_Option");
       Develop_DayHour = children0[L].getInt("Develop_DayHour");
-      Update_DevelopData = children0[L].getInt("Update_DevelopData");
+      update_DevelopData = children0[L].getInt("update_DevelopData");
       num_Layers = children0[L].getInt("num_Layers");
       LAYER_windspd200hPa = children0[L].getInt("LAYER_windspd200hPa");
       LAYER_thicknesses_1000_500 = children0[L].getInt("LAYER_thicknesses_1000_500");
@@ -50574,7 +50575,7 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.impact_summary = children0[L].getInt("STUDY.impact_summary");
       STUDY.ImpactLayer = children0[L].getInt("STUDY.ImpactLayer");
       STUDY.PlotImpacts = children0[L].getInt("STUDY.PlotImpacts");
-      //STUDY.Impacts_Update = children0[L].getBoolean("STUDY.Impacts_Update");
+      //STUDY.Impacts_update = children0[L].getBoolean("STUDY.Impacts_update");
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
       LAND_Tessellation = children0[L].getInt("LAND_Tessellation");
@@ -51520,13 +51521,13 @@ void SOLARCHVISION_load_project (String myFile) {
 
   SOLARCHVISION_update_frame_layout();
 
-  ROLLOUT.Update = true;
-  WORLD.Update = true;
-  WIN3D.Update = true; 
-  STUDY.Update = true;     
-  UI_BAR_a_Update = true; 
-  UI_BAR_b_Update = true;
-  UI_BAR_d_Update = true;
+  ROLLOUT.update = true;
+  WORLD.update = true;
+  WIN3D.update = true; 
+  STUDY.update = true;     
+  UI_BAR_a_update = true; 
+  UI_BAR_b_update = true;
+  UI_BAR_d_update = true;
 
 
 
@@ -52074,15 +52075,15 @@ void SOLARCHVISION_draw_Vertices () {
 
 int typeUserCommand = 0;
 
-boolean UI_BAR_c_Update = true;
+boolean UI_BAR_c_update = true;
 
 String[] allCommands = {"SOLARCHVISION Command Input:", ""};
 String[] allMessages = {"SOLARCHVISION Command Output:", ""};
 
 void SOLARCHVISION_draw_window_BAR_c () {
-  if (UI_BAR_c_Update) {
+  if (UI_BAR_c_update) {
     
-    UI_BAR_c_Update = false;
+    UI_BAR_c_update = false;
     
     int maxDisplayLines = 2;
 
@@ -52133,7 +52134,7 @@ void COMIN_keyPressed (KeyEvent e) {
 
 
 
-  if (e.isAltDown() == true) {
+  if (e.isAltDown()) {
     if (key == CODED) { 
       switch(keyCode) {
       }
@@ -52141,7 +52142,7 @@ void COMIN_keyPressed (KeyEvent e) {
       switch(key) {
       }
     }
-  } else if (e.isControlDown() == true) {
+  } else if (e.isControlDown()) {
     if (key == CODED) { 
       switch(keyCode) {
       }
@@ -52149,7 +52150,7 @@ void COMIN_keyPressed (KeyEvent e) {
       switch(key) {
       }
     }
-  } else if (e.isShiftDown() == true) {
+  } else if (e.isShiftDown()) {
     if (key == CODED) { 
       switch(keyCode) {
       }
@@ -52304,13 +52305,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       SOLARCHVISION_move_Selection(dx, dy, dz);
-      WIN3D.Update = true;
+      WIN3D.update = true;
     }
     else {
       return_message = "Move dx=? dy=? dz=?";
       
       SOLARCHVISION_highlight_in_BAR_b("MV³");
-      UI_BAR_b_Update = true;
+      UI_BAR_b_update = true;
     }
   }  
   
@@ -52338,13 +52339,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }      
       }
       SOLARCHVISION_rotate_Selection(x, y, z, r, v);
-      WIN3D.Update = true;
+      WIN3D.update = true;
     }
     else {
       return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
   
       UI_set_to_Modify_Rotate(2);
-      UI_BAR_b_Update = true;
+      UI_BAR_b_update = true;
     }    
   }    
   
@@ -52377,30 +52378,30 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }           
       }
       SOLARCHVISION_scale_Selection(x, y, z, sx, sy, sz);
-      WIN3D.Update = true;
+      WIN3D.update = true;
     }
     else {
       return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
       
       SOLARCHVISION_highlight_in_BAR_b("SC³");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }        
   }    
   
   else if (Command_CAPITAL.equals("DELETE")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_delete_All(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("selection")) {SOLARCHVISION_delete_Selection(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("group3ds")) {SOLARCHVISION_delete_Group3Ds(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {SOLARCHVISION_delete_Object2Ds(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("fractals")) {SOLARCHVISION_delete_Fractals(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("vertices")) {SOLARCHVISION_deleteIsolatedVertices_Selection(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("faces")) {SOLARCHVISION_delete_Faces(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("lines")) {SOLARCHVISION_delete_Curves(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("solids")) {SOLARCHVISION_delete_Solids(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("sections")) {SOLARCHVISION_delete_Sections(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("cameras")) {SOLARCHVISION_delete_Cameras(); WIN3D.Update = true;}
+             if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("selection")) {SOLARCHVISION_delete_Selection(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("group3ds")) {SOLARCHVISION_delete_Group3Ds(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {SOLARCHVISION_delete_Object2Ds(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("fractals")) {SOLARCHVISION_delete_Fractals(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("vertices")) {SOLARCHVISION_deleteIsolatedVertices_Selection(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("faces")) {SOLARCHVISION_delete_Faces(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("lines")) {SOLARCHVISION_delete_Curves(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("solids")) {SOLARCHVISION_delete_Solids(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("sections")) {SOLARCHVISION_delete_Sections(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("cameras")) {SOLARCHVISION_delete_Cameras(); WIN3D.update = true;}
       }
     }
     else {
@@ -52437,7 +52438,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         if (ry != 0) SOLARCHVISION_rotate_Selection(0, 0, 0, ry, 1);
         if (rz != 0) SOLARCHVISION_rotate_Selection(0, 0, 0, rz, 2);
       }
-      WIN3D.Update = true;
+      WIN3D.update = true;
     }
     else {
       return_message = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
@@ -52447,23 +52448,23 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory.Group3Ds; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory.Object2Ds; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("fractals")) {Current_ObjectCategory = ObjectCategory.Fractals; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory.Vertices; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory.Faces; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("lines")) {Current_ObjectCategory = ObjectCategory.Curves; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("solids")) {Current_ObjectCategory = ObjectCategory.Solids; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory.Sections; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory.Cameras; UI_BAR_b_Update = true;}
-        else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory.LandPoints; UI_BAR_b_Update = true;}
+             if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory.Group3Ds; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory.Object2Ds; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("fractals")) {Current_ObjectCategory = ObjectCategory.Fractals; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory.Vertices; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory.Faces; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("lines")) {Current_ObjectCategory = ObjectCategory.Curves; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("solids")) {Current_ObjectCategory = ObjectCategory.Solids; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("sections")) {Current_ObjectCategory = ObjectCategory.Sections; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("cameras")) {Current_ObjectCategory = ObjectCategory.Cameras; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("landpoints")) {Current_ObjectCategory = ObjectCategory.LandPoints; UI_BAR_b_update = true;}
       }
       
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_select_All(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("reverse")) {SOLARCHVISION_reverse_Selection(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("nothing")) {SOLARCHVISION_deselect_All(); WIN3D.Update = true;}
-        else if (parts[q].toLowerCase().equals("last")) {SOLARCHVISION_select_Last(); WIN3D.Update = true;}
+             if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_select_All(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("reverse")) {SOLARCHVISION_reverse_Selection(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("nothing")) {SOLARCHVISION_deselect_All(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("last")) {SOLARCHVISION_select_Last(); WIN3D.update = true;}
       }
     }
     else {
@@ -52493,9 +52494,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       SOLARCHVISION_add_Object2D_single(t, m, x, y, z, 2.5);
-      WIN3D.Update = true;  
+      WIN3D.update = true;  
       Current_ObjectCategory = ObjectCategory.Object2Ds; 
-      UI_BAR_b_Update = true;
+      UI_BAR_b_update = true;
       //SOLARCHVISION_select_Last();
     }
     else {
@@ -52503,7 +52504,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_Person();
       SOLARCHVISION_highlight_in_BAR_b("Person");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }
      
@@ -52527,9 +52528,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (h != 0) {
         SOLARCHVISION_add_Object2D_single(t, m, x, y, z, h);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Object2Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52538,7 +52539,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Tree();
       SOLARCHVISION_highlight_in_BAR_b("Tree");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }    
  
@@ -52574,9 +52575,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (h != 0) {
         SOLARCHVISION_add_Fractal(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Fractals; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52585,7 +52586,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Fractal();
       SOLARCHVISION_highlight_in_BAR_b("Fractal");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }     
 
@@ -52620,9 +52621,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {   
         SOLARCHVISION_add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52631,7 +52632,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_Box();
       SOLARCHVISION_highlight_in_BAR_b("Box");
-      UI_BAR_b_Update = true;            
+      UI_BAR_b_update = true;            
     }  
   }  
   
@@ -52668,9 +52669,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52679,7 +52680,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_Box();
       SOLARCHVISION_highlight_in_BAR_b("Box");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }     
 
@@ -52718,9 +52719,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52729,7 +52730,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_House1();
       SOLARCHVISION_highlight_in_BAR_b("House1");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }     
   
@@ -52768,9 +52769,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52779,7 +52780,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_House1();
       SOLARCHVISION_highlight_in_BAR_b("House2");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }       
 
@@ -52816,9 +52817,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52827,7 +52828,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Cylinder();
       SOLARCHVISION_highlight_in_BAR_b("Cylinder");
-      UI_BAR_b_Update = true;            
+      UI_BAR_b_update = true;            
     }  
   }   
 
@@ -52862,9 +52863,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (d != 0) {   
         SOLARCHVISION_add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52873,7 +52874,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Sphere();
       SOLARCHVISION_highlight_in_BAR_b("Sphere");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }   
 
@@ -52919,9 +52920,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {   
         SOLARCHVISION_add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52930,7 +52931,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Sphere();
       SOLARCHVISION_highlight_in_BAR_b("Sphere");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }   
 
@@ -52969,9 +52970,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -52980,7 +52981,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Cushion();
       SOLARCHVISION_highlight_in_BAR_b("Cushion");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }   
           
@@ -53018,9 +53019,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         SOLARCHVISION_add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53029,7 +53030,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Octahedron();
       SOLARCHVISION_highlight_in_BAR_b("Octahedron");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }  
 
@@ -53062,9 +53063,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (d != 0) {   
         SOLARCHVISION_add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53073,7 +53074,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Icosahedron();
       SOLARCHVISION_highlight_in_BAR_b("Icosahedron");
-      UI_BAR_b_Update = true;            
+      UI_BAR_b_update = true;            
     }  
   } 
   
@@ -53110,9 +53111,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Group3Ds; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53121,7 +53122,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Extrude();
       SOLARCHVISION_highlight_in_BAR_b("Extrude");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }       
 
@@ -53158,9 +53159,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53169,7 +53170,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Hyper();
       SOLARCHVISION_highlight_in_BAR_b("Hyper");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }       
 
@@ -53204,9 +53205,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (d != 0) {   
         SOLARCHVISION_add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53215,7 +53216,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Plane();
       SOLARCHVISION_highlight_in_BAR_b("Poly");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }  
 
@@ -53251,9 +53252,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
         SOLARCHVISION_add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53300,9 +53301,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         SOLARCHVISION_add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53355,9 +53356,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53416,9 +53417,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         SOLARCHVISION_add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53483,9 +53484,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         SOLARCHVISION_add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53528,9 +53529,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (w != 0)) {
         SOLARCHVISION_add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53573,9 +53574,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         SOLARCHVISION_add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Faces; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53619,9 +53620,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {   
         SOLARCHVISION_add_Solid(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Solids; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53630,7 +53631,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Solid();
       SOLARCHVISION_highlight_in_BAR_b("SLD");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }  
 
@@ -53661,9 +53662,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((t > 0) && (i > 0) && (j > 0) && (w > 0) && (h > 0)) {   
         SOLARCHVISION_add_Section(t, u, v, e, r, w, h, i, j);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Sections; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53672,7 +53673,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Section();
       SOLARCHVISION_highlight_in_BAR_b("SEC");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }
 
@@ -53704,9 +53705,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((s != 0) && (a != 0)) {   
         SOLARCHVISION_add_Camera(t, x, y, z, s, rx, ry, rz, a);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Cameras; 
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53715,7 +53716,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Camera();
       SOLARCHVISION_highlight_in_BAR_b("CAM");
-      UI_BAR_b_Update = true;      
+      UI_BAR_b_update = true;      
     }  
   }  
 
@@ -53748,9 +53749,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (points.length > 1) {   
         SOLARCHVISION_add_Spline(m, tes, lyr, vsb, wgt, clz, points);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Curves;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53759,7 +53760,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       UI_set_to_Create_Curve();
       SOLARCHVISION_highlight_in_BAR_b("Curve");
-      UI_BAR_b_Update = true;                
+      UI_BAR_b_update = true;                
     }  
   }  
   
@@ -53797,9 +53798,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((r != 0) && (deg > 2)) {   
         SOLARCHVISION_add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
-        WIN3D.Update = true;  
+        WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Curves;
-        UI_BAR_b_Update = true;
+        UI_BAR_b_update = true;
         //SOLARCHVISION_select_Last();
       }
     }
@@ -53808,7 +53809,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_Curve();
       SOLARCHVISION_highlight_in_BAR_b("Curve");
-      UI_BAR_b_Update = true;                      
+      UI_BAR_b_update = true;                      
     }  
   } 
   
@@ -53834,351 +53835,351 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("VERTEX>GROUP")) {
     SOLARCHVISION_convert_Vertex_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("FACE>GROUP")) {
     SOLARCHVISION_convert_Face_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
     SOLARCHVISION_convert_Group3D_to_Face();
     Current_ObjectCategory = ObjectCategory.Faces;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }    
   else if (Command_CAPITAL.equals("CURVE>GROUP")) {
     SOLARCHVISION_convert_Curve_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>CURVE")) {
     SOLARCHVISION_convert_Group3D_to_Curve();
     Current_ObjectCategory = ObjectCategory.Curves;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }            
   else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
     SOLARCHVISION_convert_Curve_to_Vertex();
     Current_ObjectCategory = ObjectCategory.Vertices;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   } 
   else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
     SOLARCHVISION_convert_Vertex_to_Curve();
     Current_ObjectCategory = ObjectCategory.Curves;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }               
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
     SOLARCHVISION_convert_Group3D_to_Vertex();
     Current_ObjectCategory = ObjectCategory.Vertices;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }  
   else if (Command_CAPITAL.equals("FACE>VERTEX")) {
     SOLARCHVISION_convert_Face_to_Vertex();
     Current_ObjectCategory = ObjectCategory.Vertices;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   } 
   else if (Command_CAPITAL.equals("VERTEX>FACE")) {
     SOLARCHVISION_convert_Vertex_to_Face();
     Current_ObjectCategory = ObjectCategory.Faces;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }    
   else if (Command_CAPITAL.equals("SOLID>GROUP")) {
     SOLARCHVISION_convert_Solid_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>SOLID")) {
     SOLARCHVISION_convert_Group3D_to_Solid();
     Current_ObjectCategory = ObjectCategory.Solids;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }                
   else if (Command_CAPITAL.equals("OBJ2D>GROUP")) {
     SOLARCHVISION_convert_Object2D_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>OBJ2D")) {
     SOLARCHVISION_convert_Group3D_to_Object2D();
     Current_ObjectCategory = ObjectCategory.Object2Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("FRACTAL>GROUP")) {
     SOLARCHVISION_convert_Fractal_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>FRACTAL")) {
     SOLARCHVISION_convert_Group3D_to_Fractal();
     Current_ObjectCategory = ObjectCategory.Fractals;
-    WIN3D.Update = true;
-    UI_BAR_b_Update = true;
+    WIN3D.update = true;
+    UI_BAR_b_update = true;
   }              
 
   else if (Command_CAPITAL.equals("DISTZ")) {
     UI_set_to_View_Truck(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
   else if (Command_CAPITAL.equals("DISTC")) {
     UI_set_to_View_CameraDistance(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDS");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
   else if (Command_CAPITAL.equals("DISTP")) {
     UI_set_to_View_DistMouseXY(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDM");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
 
 
   else if (Command_CAPITAL.equals("SIZEALL")) {
     UI_set_to_View_AllModelSize();
     SOLARCHVISION_highlight_in_BAR_b("±SA");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
   else if (Command_CAPITAL.equals("SIZESKY")) {
     UI_set_to_View_SkydomeSize();
     SOLARCHVISION_highlight_in_BAR_b("±SK");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
   else if (Command_CAPITAL.equals("SIZE3D")) {
     UI_set_to_View_3DModelSize();
     SOLARCHVISION_highlight_in_BAR_b("±SZ");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
 
   else if (Command_CAPITAL.equals("ALLVIEWPORTS")) {
     UI_set_to_Viewport(0);
     SOLARCHVISION_highlight_in_BAR_b("AllViewports");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }   
   else if (Command_CAPITAL.equals("ENLARGE3D")) {
     UI_set_to_Viewport(1);
     SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   } 
   
   else if (Command_CAPITAL.equals("LOOKORG")) {
     UI_set_to_View_LookAtOrigin(0);
     SOLARCHVISION_highlight_in_BAR_b("LAO");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }   
   else if (Command_CAPITAL.equals("LOOKDIR")) {
     UI_set_to_View_LookAtDirection(0);
     SOLARCHVISION_highlight_in_BAR_b("LAD");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }   
   else if (Command_CAPITAL.equals("LOOKSEL")) {
     UI_set_to_View_LookAtSelection(0);
     SOLARCHVISION_highlight_in_BAR_b("LAS");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }   
   
   else if (Command_CAPITAL.equals("TRUCKZ")) {
     UI_set_to_View_Truck(0);
     SOLARCHVISION_highlight_in_BAR_b("DIz");
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
   }   
   else if (Command_CAPITAL.equals("TRUCKX")) {
     UI_set_to_View_Truck(1);
     SOLARCHVISION_highlight_in_BAR_b("DIx");
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
   }   
   else if (Command_CAPITAL.equals("TRUCKY")) {
     UI_set_to_View_Truck(2);
     SOLARCHVISION_highlight_in_BAR_b("DIy");
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
   }   
 
   else if (Command_CAPITAL.equals("TROLL")) {
     UI_set_to_View_TargetRoll(0);
     SOLARCHVISION_highlight_in_BAR_b("TRL");
-    UI_BAR_b_Update = true;
+    UI_BAR_b_update = true;
   }   
   else if (Command_CAPITAL.equals("TROLLZ")) {
     UI_set_to_View_TargetRoll(1);
     SOLARCHVISION_highlight_in_BAR_b("TRLz");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }   
   else if (Command_CAPITAL.equals("TROLLXY")) {
     UI_set_to_View_TargetRoll(2);
     SOLARCHVISION_highlight_in_BAR_b("TRLxy");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }     
   
   else if (Command_CAPITAL.equals("CROLL")) {
     UI_set_to_View_CameraRoll(0);
     SOLARCHVISION_highlight_in_BAR_b("CRL");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }   
   else if (Command_CAPITAL.equals("CROLLZ")) {
     UI_set_to_View_CameraRoll(1);
     SOLARCHVISION_highlight_in_BAR_b("CRLz");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }   
   else if (Command_CAPITAL.equals("CROLLXY")) {
     UI_set_to_View_CameraRoll(2);
     SOLARCHVISION_highlight_in_BAR_b("CRLxy");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }   
   
   
   else if (Command_CAPITAL.equals("ORBIT")) {
     UI_set_to_View_Orbit(0);
     SOLARCHVISION_highlight_in_BAR_b("OR");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }   
   else if (Command_CAPITAL.equals("ORBITZ")) {
     UI_set_to_View_Orbit(1);
     SOLARCHVISION_highlight_in_BAR_b("ORz");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }   
   else if (Command_CAPITAL.equals("ORBITXY")) {
     UI_set_to_View_Orbit(2);
     SOLARCHVISION_highlight_in_BAR_b("ORxy");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }
   
   else if (Command_CAPITAL.equals("LANDORBIT")) {
     UI_set_to_View_LandOrbit(0);
     SOLARCHVISION_highlight_in_BAR_b("LNOR");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }    
   
   else if (Command_CAPITAL.equals("PAN")) {
     UI_set_to_View_Pan(0);
     SOLARCHVISION_highlight_in_BAR_b("Pan");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }  
   else if (Command_CAPITAL.equals("PANX")) {
     UI_set_to_View_Pan(1);
     SOLARCHVISION_highlight_in_BAR_b("PanX");
-    UI_BAR_b_Update = true;   
+    UI_BAR_b_update = true;   
   }  
   else if (Command_CAPITAL.equals("PANY")) {
     UI_set_to_View_Pan(2);
     SOLARCHVISION_highlight_in_BAR_b("PanY");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
 
   else if (Command_CAPITAL.equals("ZOOM")) {
     UI_set_to_View_ZOOM(0);
     SOLARCHVISION_highlight_in_BAR_b("±ZM");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }    
   else if (Command_CAPITAL.equals("NORMALZOOM")) {
     UI_set_to_View_ZOOM(1);
     SOLARCHVISION_highlight_in_BAR_b("0ZM");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("ORTHOGRAPHIC")) {
     UI_set_to_View_ProjectionType(0);
     SOLARCHVISION_highlight_in_BAR_b("P<>");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("PERSPECTIVE")) {
     UI_set_to_View_ProjectionType(1);
     SOLARCHVISION_highlight_in_BAR_b("P><");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }    
   else if (Command_CAPITAL.equals("TOP")) {
     UI_set_to_View_3DViewPoint(0);
     SOLARCHVISION_highlight_in_BAR_b("Top");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }    
   else if (Command_CAPITAL.equals("FRONT")) {
     UI_set_to_View_3DViewPoint(1);
     SOLARCHVISION_highlight_in_BAR_b("Front");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("LEFT")) {
     UI_set_to_View_3DViewPoint(2);
     SOLARCHVISION_highlight_in_BAR_b("Left");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("BACK")) {
     UI_set_to_View_3DViewPoint(3);
     SOLARCHVISION_highlight_in_BAR_b("Back");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }    
   else if (Command_CAPITAL.equals("RIGHT")) {
     UI_set_to_View_3DViewPoint(4);
     SOLARCHVISION_highlight_in_BAR_b("Right");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("BOTTOM")) {
     UI_set_to_View_3DViewPoint(5);
     SOLARCHVISION_highlight_in_BAR_b("Bottom");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("S.W.")) {
     UI_set_to_View_3DViewPoint(6);
     SOLARCHVISION_highlight_in_BAR_b("S.W.");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }    
   else if (Command_CAPITAL.equals("S.E.")) {
     UI_set_to_View_3DViewPoint(7);
     SOLARCHVISION_highlight_in_BAR_b("S.E.");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("N.E.")) {
     UI_set_to_View_3DViewPoint(8);
     SOLARCHVISION_highlight_in_BAR_b("N.E.");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }  
   else if (Command_CAPITAL.equals("N.W.")) {
     UI_set_to_View_3DViewPoint(9);
     SOLARCHVISION_highlight_in_BAR_b("N.W.");
-    UI_BAR_b_Update = true;    
+    UI_BAR_b_update = true;    
   }    
   
 
   else if (Command_CAPITAL.equals("SHADE.WIRE")) {
     WIN3D.FacesShade = Shade_Surface_Wire;
     MODEL3D_DisplayEdges = true; //<<<<<<<<<<<<<<<
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   }       
   else if (Command_CAPITAL.equals("SHADE.BASE")) {
     WIN3D.FacesShade = Shade_Surface_Base;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   }           
   else if (Command_CAPITAL.equals("SHADE.WHITE")) {
     WIN3D.FacesShade = Shade_Surface_White;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   } 
   else if (Command_CAPITAL.equals("SHADE.MATERIALS")) {
     WIN3D.FacesShade = Shade_Surface_Materials;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   } 
   else if (Command_CAPITAL.equals("SHADE.GLOBAL")) {
     WIN3D.FacesShade = Shade_Global_Solar;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   } 
   else if (Command_CAPITAL.equals("SHADE.REAL")) {
     WIN3D.FacesShade = Shade_Vertex_Solar;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   }           
   else if (Command_CAPITAL.equals("SHADE.SOLID")) {
     WIN3D.FacesShade = Shade_Vertex_Solid;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   }           
   else if (Command_CAPITAL.equals("SHADE.ELEVATION")) {
     WIN3D.FacesShade = Shade_Vertex_Elevation;
-    WIN3D.Update = true;  
+    WIN3D.update = true;  
   }      
   else if (Command_CAPITAL.equals("RENDER.VIEWPORT")) {
     SOLARCHVISION_RenderViewport();            
@@ -54999,7 +55000,7 @@ void SOLARCHVISION_postProcess_fillGaps (int desired_DataSource) {
 
         for (int i = 0; i < 24; i++) {
           
-          if (is_undefined_FLOAT(getValue_CurrentDataSource(i, j, k, l)) == true) {
+          if (is_undefined_FLOAT(getValue_CurrentDataSource(i, j, k, l))) {
             if (is_undefined_FLOAT(pre_v) == false) {
               pre_num += 1;
 
@@ -55007,7 +55008,7 @@ void SOLARCHVISION_postProcess_fillGaps (int desired_DataSource) {
               int next_i = i;
               int next_j = j;
               int next_num = 0;
-              while ((next_num < MAX_SEARCH) && (is_undefined_FLOAT(next_v) == true)) {
+              while ((next_num < MAX_SEARCH) && (is_undefined_FLOAT(next_v))) {
                 next_num += 1;
                 next_i += 1;
                 if (next_i == 24) {
@@ -55131,7 +55132,7 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
     for (int j_for = 0; j_for < ENSEMBLE_FORECAST_maxDays; j_for++) { 
       int j = ((j_for + TIME_BeginDay) % 365);
       for (int i = 0; i < 24; i++) {
-        if (is_undefined_FLOAT(ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k]) == true) {
+        if (is_undefined_FLOAT(ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover][k])) {
         } else {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
@@ -55174,7 +55175,7 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
               }
 
 
-              if ((is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover][q]) == true) || (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure][q]) == true)) {
+              if ((is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover][q])) || (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure][q]))) {
               } else {
                 float CC_dist = abs(Forecast_CC - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover][q]);
                 float AP_dist = abs(Forecast_AP - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure][q]);
@@ -55188,11 +55189,11 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
 
                   sum_count += _weight;
 
-                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad][q]) == true) {
+                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad][q])) {
                   } else _valuesSUM_DIR += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad][q]; 
-                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad][q]) == true) {
+                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad][q])) {
                   } else _valuesSUM_DIF += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad][q]; 
-                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad][q]) == true) {
+                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad][q])) {
                   } else _valuesSUM_GLO += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad][q];
                 }
               }
@@ -55303,7 +55304,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad);
             
-            if (is_undefined_FLOAT(Pa) == true) {
+            if (is_undefined_FLOAT(Pa)) {
               R_dir = FLOAT_undefined;
             } else {
               R_dir = Pa;
@@ -55311,7 +55312,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad);
             
-            if (is_undefined_FLOAT(Pa) == true) {
+            if (is_undefined_FLOAT(Pa)) {
               R_dif = FLOAT_undefined;
             } else {
               R_dif = Pa;
@@ -55319,7 +55320,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb);
             
-            if (is_undefined_FLOAT(Pa) == true) {
+            if (is_undefined_FLOAT(Pa)) {
               T = FLOAT_undefined;
             } else {
               T = Pa;
@@ -55327,7 +55328,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd);
             
-            if (is_undefined_FLOAT(Pa) == true) {
+            if (is_undefined_FLOAT(Pa)) {
               WS = FLOAT_undefined;
             } else {
               WS = Pa;
@@ -55336,7 +55337,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_precipitation_A);
             Pb = getValue_CurrentDataSource(next_i, next_j, now_k, LAYER_precipitation_A);
             
-            if ((is_undefined_FLOAT(Pa) == true) || (is_undefined_FLOAT(Pb) == true)) {
+            if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb))) {
               RAIN = FLOAT_undefined;
             } else {
               RAIN = Pb - Pa;
@@ -55502,7 +55503,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
                 Pa = getValue_CurrentDataSource(new_i, new_j, new_k, STUDY.DevelopLayer);
   
-                if (is_undefined_FLOAT(Pa) == true) {
+                if (is_undefined_FLOAT(Pa)) {
                   T_new = FLOAT_undefined;
                 } else {
                   T_new = Pa;
@@ -55563,7 +55564,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                   
                   Pa = getValue_CurrentDataSource(new_i, new_j, new_k, STUDY.DevelopLayer);
   
-                  if (is_undefined_FLOAT(Pa) == true) {
+                  if (is_undefined_FLOAT(Pa)) {
                     T_new = FLOAT_undefined;
                   } else {
                     T_new = Pa;
@@ -55623,7 +55624,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
                 Pa = getValue_CurrentDataSource(new_i, new_j, new_k, STUDY.DevelopLayer);
   
-                if (is_undefined_FLOAT(Pa) == true) {
+                if (is_undefined_FLOAT(Pa)) {
                   T_new = FLOAT_undefined;
                 } else {
                   T_new = Pa;
@@ -55760,7 +55761,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
   println("developDATA updated!");
 
-  Update_DevelopData = 0;  
+  update_DevelopData = 0;  
 
   STUDY.PerDays = keep_STUDY_PerDays;
   STUDY.JoinDays = keep_STUDY_JoinDays;
