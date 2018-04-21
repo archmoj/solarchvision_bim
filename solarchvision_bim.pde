@@ -1,3 +1,10 @@
+/*
+int CLIMATE_TMYEPW_load = true;
+int CLIMATE_CWEEDS_load = false;
+int CLIMATE_CLMREC_load = false;
+int ENSEMBLE_FORECAST_load = false;
+int ENSEMBLE_OBSERVED_load = false;
+*/
 
 // please define station elevation data for CWEEDS points!
 
@@ -449,7 +456,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
     
     ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
     
-    Load_ENSEMBLE_FORECAST = 1;
+    ENSEMBLE_FORECAST_load = true;
     update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
   }
 }
@@ -473,7 +480,7 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
     }
   }
 
-  if (Load_ENSEMBLE_FORECAST == 1) {
+  if (ENSEMBLE_FORECAST_load) {
 
     for (int f = 0; f < num_Layers; f++) {
       if (LAYERS_Text[f].equals("")) {
@@ -610,7 +617,7 @@ void update_CLIMATE_CWEEDS () {
   }
 
 
-  if (Load_CLIMATE_CWEEDS == 1) {
+  if (CLIMATE_CWEEDS_load) {
 
     String FN = STATION.getFilename_CWEEDS() + ".wy2";
     
@@ -748,7 +755,7 @@ void download_CLIMATE_CLMREC () {
     
     CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
     
-    Load_CLIMATE_CLMREC = 1;
+    CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
   }
 }
@@ -770,7 +777,7 @@ void update_CLIMATE_CLMREC () {
     }
   }
 
-  if (Load_CLIMATE_CLMREC == 1) {
+  if (CLIMATE_CLMREC_load) {
 
     nearest_Station_CLMREC_id = -1;
     nearest_Station_CLMREC_dist = FLOAT_undefined;
@@ -925,7 +932,7 @@ void update_CLIMATE_TMYEPW () {
     }
   }
 
-  if (Load_CLIMATE_TMYEPW == 1) {
+  if (CLIMATE_TMYEPW_load) {
 
     String FN = STATION.getFilename_TMYEPW() + ".epw";
 
@@ -947,6 +954,9 @@ void update_CLIMATE_TMYEPW () {
   UI_BAR_d_update = true;    
 
 }
+
+
+
 
 void load_CLIMATE_TMYEPW (String FileName) {
   String[] FileALL = loadStrings(FileName);
@@ -1030,9 +1040,6 @@ void load_CLIMATE_TMYEPW (String FileName) {
 
 
 
-
-
-
 void download_ENSEMBLE_OBSERVED () {
   
   // this line tries to update the most recent files! << 
@@ -1109,7 +1116,7 @@ void download_ENSEMBLE_OBSERVED () {
 
   ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
   
-  Load_ENSEMBLE_OBSERVED = 1; 
+  ENSEMBLE_OBSERVED_load = true; 
   SOLARCHVISION_update_ENSEMBLE_OBSERVED();
 }
 
@@ -1129,7 +1136,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
     }
   }
 
-  if (Load_ENSEMBLE_OBSERVED == 1) {
+  if (ENSEMBLE_OBSERVED_load) {
 
     // this line tries to update the most recent files! << 
     int THE_YEAR = year(); 
@@ -5613,11 +5620,11 @@ class solarchvision_ROLLOUT {
         //Display_NAEFS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
   
         
-        //Load_ENSEMBLE_FORECAST = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_ENSEMBLE_FORECAST", Load_ENSEMBLE_FORECAST, 0, 1, 1), 1));
-        //Load_ENSEMBLE_OBSERVED = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_ENSEMBLE_OBSERVED", Load_ENSEMBLE_OBSERVED, 0, 1, 1), 1));
-        //Load_CLIMATE_CLMREC = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC, 0, 1, 1), 1));
-        //Load_CLIMATE_CWEEDS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS, 0, 1, 1), 1));
-        //Load_CLIMATE_TMYEPW = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW, 0, 1, 1), 1));
+        //ENSEMBLE_FORECAST_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
+        //ENSEMBLE_OBSERVED_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
+        //CLIMATE_CLMREC_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load, 0, 1, 1), 1));
+        //CLIMATE_CWEEDS_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load, 0, 1, 1), 1));
+        //CLIMATE_TMYEPW_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load, 0, 1, 1), 1));
   
         GRIB2_Hour_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
         GRIB2_Hour_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
@@ -6332,11 +6339,11 @@ int pre_CurrentDataSource;
 int pre_CLIMATIC_SolarForecast;
 int pre_CLIMATIC_WeatherForecast;
 
-int pre_Load_CLIMATE_TMYEPW;
-int pre_Load_CLIMATE_CWEEDS;
-int pre_Load_CLIMATE_CLMREC;
-int pre_Load_ENSEMBLE_FORECAST;
-int pre_Load_ENSEMBLE_OBSERVED;    
+boolean pre_CLIMATE_TMYEPW_load;
+boolean pre_CLIMATE_CWEEDS_load;
+boolean pre_CLIMATE_CLMREC_load;
+boolean pre_ENSEMBLE_FORECAST_load;
+boolean pre_ENSEMBLE_OBSERVED_load;    
 
 boolean pre_Load_LAND_Mesh;
 boolean pre_Load_LAND_Textures;
@@ -6842,11 +6849,11 @@ boolean[][][][] ENSEMBLE_OBSERVED_flags;
 
 
 
-int Load_CLIMATE_TMYEPW = 1;
-int Load_CLIMATE_CWEEDS = 0;
-int Load_CLIMATE_CLMREC = 0;
-int Load_ENSEMBLE_FORECAST = 0;
-int Load_ENSEMBLE_OBSERVED = 0;
+boolean CLIMATE_TMYEPW_load = true;
+boolean CLIMATE_CWEEDS_load = false;
+boolean CLIMATE_CLMREC_load = false;
+boolean ENSEMBLE_FORECAST_load = false;
+boolean ENSEMBLE_OBSERVED_load = false;
 
 
 int GRIB2_Year; 
@@ -8172,11 +8179,11 @@ void draw () {
         pre_CLIMATIC_SolarForecast = CLIMATIC_SolarForecast;
         pre_CLIMATIC_WeatherForecast = CLIMATIC_WeatherForecast;
 
-        pre_Load_CLIMATE_TMYEPW = Load_CLIMATE_TMYEPW;
-        pre_Load_CLIMATE_CWEEDS = Load_CLIMATE_CWEEDS;
-        pre_Load_CLIMATE_CLMREC = Load_CLIMATE_CLMREC;
-        pre_Load_ENSEMBLE_FORECAST = Load_ENSEMBLE_FORECAST;
-        pre_Load_ENSEMBLE_OBSERVED = Load_ENSEMBLE_OBSERVED;       
+        pre_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
+        pre_CLIMATE_CWEEDS_load = CLIMATE_CWEEDS_load;
+        pre_CLIMATE_CLMREC_load = CLIMATE_CLMREC_load;
+        pre_ENSEMBLE_FORECAST_load = ENSEMBLE_FORECAST_load;
+        pre_ENSEMBLE_OBSERVED_load = ENSEMBLE_OBSERVED_load;       
 
         pre_LocationLAT = LocationLAT;
         pre_LocationLON = LocationLON;
@@ -8351,11 +8358,11 @@ void draw () {
 
         
 
-        if (pre_Load_CLIMATE_TMYEPW != Load_CLIMATE_TMYEPW) update_CLIMATE_TMYEPW();
-        if (pre_Load_CLIMATE_CWEEDS != Load_CLIMATE_CWEEDS) update_CLIMATE_CWEEDS();
-        if (pre_Load_CLIMATE_CLMREC != Load_CLIMATE_CLMREC) update_CLIMATE_CLMREC();
-        if (pre_Load_ENSEMBLE_OBSERVED != Load_ENSEMBLE_OBSERVED) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
-        if (pre_Load_ENSEMBLE_FORECAST != Load_ENSEMBLE_FORECAST) update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+        if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();
+        if (pre_CLIMATE_CWEEDS_load != CLIMATE_CWEEDS_load) update_CLIMATE_CWEEDS();
+        if (pre_CLIMATE_CLMREC_load != CLIMATE_CLMREC_load) update_CLIMATE_CLMREC();
+        if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+        if (pre_ENSEMBLE_FORECAST_load != ENSEMBLE_FORECAST_load) update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
         if (pre_WORLD_AutoView != WORLD.AutoView) {
           WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
@@ -34402,37 +34409,37 @@ void mouseClicked () {
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update TMYEPW")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
               
-              Load_CLIMATE_TMYEPW = 1;
+              CLIMATE_TMYEPW_load = true;
               update_CLIMATE_TMYEPW();
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update CWEEDS")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
               
-              Load_CLIMATE_CWEEDS = 1;
+              CLIMATE_CWEEDS_load = true;
               update_CLIMATE_CWEEDS();
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update CLMREC")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
               
-              Load_CLIMATE_CLMREC = 1;
+              CLIMATE_CLMREC_load = true;
               update_CLIMATE_CLMREC();
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update SWOB")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
               
-              Load_ENSEMBLE_OBSERVED = 1;
+              ENSEMBLE_OBSERVED_load = true;
               SOLARCHVISION_update_ENSEMBLE_OBSERVED();
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update NAEFS")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
-              Load_ENSEMBLE_FORECAST = 1;
+              ENSEMBLE_FORECAST_load = true;
               update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("update Aerial")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
               
-              Load_ENSEMBLE_FORECAST = 1;
+              ENSEMBLE_FORECAST_load = true;
               SOLARCHVISION_load_AERIAL(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
             }      
    
@@ -37805,7 +37812,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
     
   
   
-  if (Load_ENSEMBLE_FORECAST == 1) {
+  if (ENSEMBLE_FORECAST_load) {
   
     String the_directory = getGrib2Folder(GRIB2_DomainSelection);
     {  
@@ -49235,11 +49242,11 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("SampleMember_End", SampleMember_End);
   newChild1.setInt("SampleStation_Start", SampleStation_Start);
   newChild1.setInt("SampleStation_End", SampleStation_End);
-  newChild1.setInt("Load_CLIMATE_TMYEPW", Load_CLIMATE_TMYEPW);
-  newChild1.setInt("Load_CLIMATE_CWEEDS", Load_CLIMATE_CWEEDS);
-  newChild1.setInt("Load_CLIMATE_CLMREC", Load_CLIMATE_CLMREC);  
-  newChild1.setInt("Load_ENSEMBLE_FORECAST", Load_ENSEMBLE_FORECAST);
-  newChild1.setInt("Load_ENSEMBLE_OBSERVED", Load_ENSEMBLE_OBSERVED);
+  //newChild1.setBoolean("CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load);
+  //newChild1.setBoolean("CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load);
+  //newChild1.setBoolean("CLIMATE_CLMREC_load", CLIMATE_CLMREC_load);  
+  //newChild1.setBoolean("ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load);
+  //newChild1.setBoolean("ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load);
   newChild1.setInt("GRIB2_Month", GRIB2_Month);
   newChild1.setInt("GRIB2_Day", GRIB2_Day);
   newChild1.setInt("GRIB2_ModelRun", GRIB2_ModelRun);
@@ -50469,11 +50476,11 @@ void SOLARCHVISION_load_project (String myFile) {
       SampleMember_End = children0[L].getInt("SampleMember_End");
       SampleStation_Start = children0[L].getInt("SampleStation_Start");
       SampleStation_End = children0[L].getInt("SampleStation_End");
-      Load_CLIMATE_TMYEPW = children0[L].getInt("Load_CLIMATE_TMYEPW");
-      Load_CLIMATE_CWEEDS = children0[L].getInt("Load_CLIMATE_CWEEDS");
-      Load_CLIMATE_CLMREC = children0[L].getInt("Load_CLIMATE_CLMREC");
-      Load_ENSEMBLE_FORECAST = children0[L].getInt("Load_ENSEMBLE_FORECAST");
-      Load_ENSEMBLE_OBSERVED = children0[L].getInt("Load_ENSEMBLE_OBSERVED");
+      //CLIMATE_TMYEPW_load = children0[L].getBoolean("CLIMATE_TMYEPW_load");
+      //CLIMATE_CWEEDS_load = children0[L].getBoolean("CLIMATE_CWEEDS_load");
+      //CLIMATE_CLMREC_load = children0[L].getBoolean("CLIMATE_CLMREC_load");
+      //ENSEMBLE_FORECAST_load = children0[L].getBoolean("ENSEMBLE_FORECAST_load");
+      //ENSEMBLE_OBSERVED_load = children0[L].getBoolean("ENSEMBLE_OBSERVED_load");
       GRIB2_Month = children0[L].getInt("GRIB2_Month");
       GRIB2_Day = children0[L].getInt("GRIB2_Day");
       GRIB2_ModelRun = children0[L].getInt("GRIB2_ModelRun");
