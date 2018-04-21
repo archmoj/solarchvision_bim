@@ -401,6 +401,929 @@ void inputCoordinates_NAEFS () {
 
 
 
+void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+
+  boolean new_files_downloaded = false;
+
+  for (int f = 0; f < num_Layers; f++) {
+    if (LAYERS_Text[f].equals("")) {
+    } else {
+      String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
+      
+      String the_target = ENSEMBLE_FORECAST_directory + "/" + FN;
+      
+      File dir = new File(the_target);
+      if (!dir.isFile()) {
+        
+        String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + LAYERS_Text[f] + "/raw";
+        String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
+        the_target = the_target + ".bz2";
+    
+        println("Try downloading: " + the_link);
+    
+        try {
+          saveBytes(the_target, loadBytes(the_link));
+    
+          new_files_downloaded = true;
+        } 
+        catch (Exception e) {
+          println("LINK NOT AVAILABLE:", the_link);
+        }
+      }
+    }
+  }
+
+
+
+  if (new_files_downloaded) {
+    
+    String folder_inout = ENSEMBLE_FORECAST_directory.replace('/', char(92));
+    
+    {
+      String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
+      println(Command1);
+      String Command2 = "del " + folder_inout + "\\*.bz2 /q";
+      println(Command2);
+      launch(Command1 + " & " + Command2);
+    }
+    
+    ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
+    
+    Load_ENSEMBLE_FORECAST = 1;
+    SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
+  }
+}
+
+
+void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+
+  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
+
+  ENSEMBLE_FORECAST_values = new float [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
+  ENSEMBLE_FORECAST_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
+
+  for (int i = 0; i < 24; i++) {
+    for (int j = 0; j < 365; j++) {
+      for (int l = 0; l < num_Layers; l++) {
+        for (int k = 0; k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start); k++) {
+          ENSEMBLE_FORECAST_values[i][j][l][k] = FLOAT_undefined;
+          ENSEMBLE_FORECAST_flags[i][j][l][k] = false;
+        }
+      }
+    }
+  }
+
+  if (Load_ENSEMBLE_FORECAST == 1) {
+
+    for (int f = 0; f < num_Layers; f++) {
+      if (LAYERS_Text[f].equals("")) {
+      } else {
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
+
+        String the_source = ENSEMBLE_FORECAST_directory + "/" + FN;
+
+        File dir = new File(the_source);
+        if (dir.isFile()) SOLARCHVISION_loadENSEMBLE_FORECAST(the_source, f);
+        else println("FILE NOT FOUND:", the_source);
+      }
+    }
+
+    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_FORECAST);
+    SOLARCHVISION_postProcess_fillGaps(dataID_ENSEMBLE_FORECAST);
+    if (CLIMATIC_SolarForecast == 1) {
+      SOLARCHVISION_postProcess_climaticSolarForecast();
+    }
+    else {
+      SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_FORECAST);
+    }
+    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
+    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
+    
+    Display_NAEFS_Points = 1;
+    Display_NAEFS_Nearest = true;     
+  }
+  
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;    
+  
+  SampleMember_Start = ENSEMBLE_FORECAST_start;
+  SampleMember_End = ENSEMBLE_FORECAST_end;
+}
+
+
+
+
+
+
+
+void SOLARCHVISION_loadENSEMBLE_FORECAST (String FileName, int Load_Layer) {
+  String lineSTR;
+  String[] input;
+
+  int continue_process = 1;
+
+  XML FileALL = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+
+  try {
+    FileALL = loadXML(FileName);
+  }
+  catch (Exception e) {
+    println("Can't read:", FileName);
+    continue_process = 0;
+  }
+
+  if (continue_process == 1) { 
+
+    //println(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
+
+    XML[] children0 = FileALL.getChildren("forecast");
+
+    for (int Li = 0; Li < children0.length; Li++) {
+
+      int _a1 = children0[Li].getInt("forecast_hour");
+      String _a2 = children0[Li].getString("valid_time");
+
+      //println("Li=", Li, "hour =", _a1, "date:", _a2);
+
+      if (Li >= 0) {
+
+        int THE_YEAR = int(_a2.substring(0, 4));
+        int THE_MONTH = int(_a2.substring(4, 6));
+        int THE_DAY = int(_a2.substring(6, 8));
+        int THE_HOUR = int(_a2.substring(8));
+
+        //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
+
+        int now_i = int(THE_HOUR);
+        int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
+
+        //println(now_i, now_j);
+
+        now_i -= int(-STATION.getTimelong() / 15);
+        if (now_i < 0) {
+          now_i += 24;
+          now_j -= 1;
+          if (now_j < 0) {
+            now_j += 365;
+          }
+        }
+
+        //println(now_i, now_j);
+        //println("-------------");
+
+        XML[] _c = children0[Li].getChildren("model");
+        //println("number of members:", _c.length);
+
+        for (int Lk = 0; Lk < _c.length; Lk++) {
+          int k = _c[Lk].getInt("id") - 1;
+
+          if (k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)) {
+
+            ENSEMBLE_FORECAST_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+void SOLARCHVISION_update_CLIMATE_CWEEDS () {
+
+  CLIMATE_CWEEDS_values = new float [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)];
+  CLIMATE_CWEEDS_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)]; // true: direct input , false: no-input, interpolated or post-processed
+
+  for (int i = 0; i < 24; i++) {
+    for (int j = 0; j < 365; j++) {
+      for (int l = 0; l < num_Layers; l++) {
+        for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k++) {
+          CLIMATE_CWEEDS_values[i][j][l][k] = FLOAT_undefined;
+          CLIMATE_CWEEDS_flags[i][j][l][k] = false;
+        }
+      }
+    }
+  }
+
+
+  if (Load_CLIMATE_CWEEDS == 1) {
+
+    String FN = STATION.getFilename_CWEEDS() + ".wy2";
+    
+    String the_source = CLIMATE_CWEEDS_directory + "/" + FN;
+
+    File dir = new File(the_source);
+    if (dir.isFile()) SOLARCHVISION_loadCLIMATE_CWEEDS(the_source);
+    else println("FILE NOT FOUND:", the_source);
+
+  }
+  
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;   
+  
+  SampleYear_Start = CLIMATE_CWEEDS_start;
+  SampleYear_End = CLIMATE_CWEEDS_end;     
+}
+
+
+void SOLARCHVISION_loadCLIMATE_CWEEDS (String FileName) {
+  String[] FileALL = loadStrings(FileName);
+
+  String lineSTR;
+  String[] input;
+
+
+  println("lines = ", FileALL.length);
+
+  for (int f = 0; f < FileALL.length; f++) {
+
+    lineSTR = FileALL[f];
+    //println(lineSTR);
+
+    int CLIMATE_YEAR = int(lineSTR.substring(6, 10));
+    int CLIMATE_MONTH = int(lineSTR.substring(10, 12));
+    int CLIMATE_DAY = int(lineSTR.substring(12, 14));
+    int CLIMATE_HOUR = int(lineSTR.substring(14, 16));
+
+    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+
+    int i = int(CLIMATE_HOUR) - 1;
+    int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
+    int k = (CLIMATE_YEAR - CLIMATE_CWEEDS_start);
+
+    //println(i);
+
+    CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] = float(lineSTR.substring(85, 90)); // 10 times in Pa
+    CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] = float(lineSTR.substring(91, 95)); // 10 times in °C
+    //CLIMATE_CWEEDS_values[i][j][LAYER_relhum][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
+    CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] = float(lineSTR.substring(20, 24)); // Wh/m²
+    CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] = float(lineSTR.substring(26, 30)); // Wh/m²
+    CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] = float(lineSTR.substring(32, 36)); // Wh/m²
+    CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] = float(lineSTR.substring(105, 109)); // 10 times in m/s
+    CLIMATE_CWEEDS_values[i][j][LAYER_winddir][k] = float(lineSTR.substring(101, 104)); // °
+    CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
+    CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = float(lineSTR.substring(61, 65)); // 0.1 times in m
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] == 99999) CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] = 0.1 * CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k];
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] = 0.1 * CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k];
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] = CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] / 3.6; // Wh/m²
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] = CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] / 3.6; // Wh/m²
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] = CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] / 3.6; // Wh/m²
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] = 0.1 * 3.6 * CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k];
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_winddir][k] == 999) CLIMATE_CWEEDS_values[i][j][LAYER_winddir][k] = FLOAT_undefined;
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover][k] == 99) CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] == 7777) CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = 1000;
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] >= 1000) CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = 1000; // <<<<<<<<<
+
+    if (CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = FLOAT_undefined;
+    else CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = 10 * CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k];
+  }
+  
+  SOLARCHVISION_setDataFlags(dataID_CLIMATE_CWEEDS);
+  SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CWEEDS);
+  SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_CWEEDS);
+  
+  Display_CWEEDS_Points = 1;
+  Display_CWEEDS_Nearest = true;  
+
+}
+
+
+
+
+
+
+
+void SOLARCHVISION_download_CLIMATE_CLMREC () {
+  
+  if (nearest_Station_CLMREC_id != -1) {
+
+    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
+      for (int m = 0; m < 12; m++) {
+      
+        int THE_YEAR = k + CLIMATE_CLMREC_start;
+        int THE_MONTH = m + 1;
+    
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
+          
+        String the_target = CLIMATE_CLMREC_directory + "/" + FN;
+          
+        File dir = new File(the_target);
+        if (!dir.isFile()) {          
+          
+          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          
+          println("Try downloading: " + the_link);
+    
+          try {
+            saveBytes(the_target, loadBytes(the_link));
+          } 
+          catch (Exception e) {
+            println("LINK NOT AVAILABLE:", the_link);
+          }
+        }
+      }
+    }
+    
+    CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
+    
+    Load_CLIMATE_CLMREC = 1;
+    SOLARCHVISION_update_CLIMATE_CLMREC();
+  }
+}
+
+
+void SOLARCHVISION_update_CLIMATE_CLMREC () {
+
+  CLIMATE_CLMREC_values = new float [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
+  CLIMATE_CLMREC_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
+
+  for (int i = 0; i < 24; i++) {
+    for (int j = 0; j < 365; j++) {
+      for (int l = 0; l < num_Layers; l++) {
+        for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
+          CLIMATE_CLMREC_values[i][j][l][k] = FLOAT_undefined;
+          CLIMATE_CLMREC_flags[i][j][l][k] = false;
+        }
+      }
+    }
+  }
+
+  if (Load_CLIMATE_CLMREC == 1) {
+
+    nearest_Station_CLMREC_id = -1;
+    nearest_Station_CLMREC_dist = FLOAT_undefined;
+    
+    for (int f = 0; f < CLMREC_Coordinates.length; f++) {
+      
+      //if (int(CLMREC_Coordinates[f].getEndyear()) == 2016) 
+      { // only use stations with this condition
+
+        float _lat = CLMREC_Coordinates[f].getLatitude();
+        float _lon = CLMREC_Coordinates[f].getLongitude(); 
+        if (_lon > 180) _lon -= 360; // << important!
+  
+        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+  
+        if (nearest_Station_CLMREC_dist > d) {
+  
+          nearest_Station_CLMREC_dist = d;
+          nearest_Station_CLMREC_id = f;
+        }
+      }
+    }
+
+
+    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
+      for (int m = 0; m < 12; m++) {
+      
+        int THE_YEAR = k + CLIMATE_CLMREC_start;
+        int THE_MONTH = m + 1;
+    
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
+        
+        String the_source = CLIMATE_CLMREC_directory + "/" + FN;
+        
+        File dir = new File(the_source);
+        if (dir.isFile()) SOLARCHVISION_loadCLIMATE_CLMREC(the_source);
+        else println("FILE NOT FOUND:", the_source);
+
+      }
+    }
+
+    SOLARCHVISION_setDataFlags(dataID_CLIMATE_CLMREC);
+    SOLARCHVISION_postProcess_fillGaps(dataID_CLIMATE_CLMREC);
+    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
+    SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CLMREC);
+    
+    Display_CLMREC_Points = 1;
+    Display_CLMREC_Nearest = true;       
+  
+  }
+  
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true; 
+
+  SampleYear_Start = CLIMATE_CLMREC_start;
+  SampleYear_End = CLIMATE_CLMREC_end;  
+}
+
+
+void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
+
+  String[] FileALL = loadStrings(FileName);
+
+  String lineSTR;
+  String[] input;
+
+  println("lines = ", FileALL.length);
+
+  for (int f = 18; f < FileALL.length; f++) {
+
+    lineSTR = FileALL[f];
+    //println(lineSTR);
+    
+    lineSTR = lineSTR.replace("\"", ""); 
+    String[] parts = split(lineSTR, ',');
+
+    int CLIMATE_YEAR = int(parts[1]);
+    int CLIMATE_MONTH = int(parts[2]);
+    int CLIMATE_DAY = int(parts[3]);
+    int CLIMATE_HOUR = int(parts[4].substring(0, 2));
+
+    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+
+    int i = int(CLIMATE_HOUR);
+    int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
+    int k = (CLIMATE_YEAR - CLIMATE_CLMREC_start);
+
+    //println(i);
+    
+    if (parts.length > 24) {
+      
+      String str = "";
+      
+      str = parts[24];
+      
+      //println(str);
+       
+      if (str.equals("NA")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
+      else if (str.equals("Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 0;
+      else if (str.equals("Mainly Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 2.5;
+      else if (str.equals("Mostly Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 5;
+      else if (str.equals("Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 7.5;
+      else CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 10;
+      
+      //println(CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k]);
+    
+      str = parts[6];
+      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_drybulb][k] = float(str); // °C
+
+      str = parts[10];
+      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_relhum][k] = float(str); // %
+
+      str = parts[12];
+      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_winddir][k] = float(str) * 10; // °
+
+      str = parts[14];
+      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_windspd][k] = float(str); // km/h
+
+      str = parts[18];
+      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_pressure][k] = float(str) * 10; // hPa
+
+
+    }
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+void SOLARCHVISION_update_CLIMATE_TMYEPW () {
+
+  CLIMATE_TMYEPW_values = new float [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)];
+  CLIMATE_TMYEPW_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)]; // true: direct input , false: no-input, interpolated or post-processed
+
+  for (int i = 0; i < 24; i++) {
+    for (int j = 0; j < 365; j++) {
+      for (int l = 0; l < num_Layers; l++) {
+        for (int k = 0; k < (1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start); k++) {
+          CLIMATE_TMYEPW_values[i][j][l][k] = FLOAT_undefined;
+          CLIMATE_TMYEPW_flags[i][j][l][k] = false;
+        }
+      }
+    }
+  }
+
+  if (Load_CLIMATE_TMYEPW == 1) {
+
+    String FN = STATION.getFilename_TMYEPW() + ".epw";
+
+    String the_source = CLIMATE_TMYEPW_directory + "/" + FN;
+
+    File dir = new File(the_source);
+    if (dir.isFile()) SOLARCHVISION_loadCLIMATE_TMYEPW(the_source);
+    else println("FILE NOT FOUND:", the_source);
+
+    Display_TMYEPW_Points = 1;
+    Display_TMYEPW_Nearest = true; 
+
+  }
+  
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;    
+
+}
+
+void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
+  String[] FileALL = loadStrings(FileName);
+
+  String lineSTR;
+  String[] input;
+
+
+  //println("lines = ", FileALL.length);
+
+  for (int f = 8; f < FileALL.length; f++) {
+
+    lineSTR = FileALL[f];
+
+    String[] parts = split(lineSTR, ',');
+
+    int CLIMATE_YEAR = int(parts[0]);
+    int CLIMATE_MONTH = int(parts[1]);
+    int CLIMATE_DAY = int(parts[2]);
+    int CLIMATE_HOUR = int(parts[3]);
+
+    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+
+    int i = int(CLIMATE_HOUR) - 1;
+    int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
+    int k = 0; // on TMYEPW:TMY files we have only one year 
+
+    //println(i);
+
+    CLIMATE_TMYEPW_values[i][j][LAYER_pressure][k] = float(parts[9]) * 0.01; // 10 times in Pa
+    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb][k] = float(parts[6]); // in °C
+    CLIMATE_TMYEPW_values[i][j][LAYER_relhum][k] = float(parts[8]); // 0 - 110%
+    CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad][k] = float(parts[13]); // Wh/m²
+    CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] = float(parts[14]); // Wh/m²
+    CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] = float(parts[15]); // Wh/m²
+    CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] = float(parts[21]); // in m/s
+    CLIMATE_TMYEPW_values[i][j][LAYER_winddir][k] = float(parts[20]); // ° 
+    CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover][k] = float(parts[23]); // 0.1 times in % ... there is also total_sky_cover on[22]
+    CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = float(parts[25]); // in m
+
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_pressure][k] == 999999) CLIMATE_TMYEPW_values[i][j][LAYER_pressure][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_drybulb][k] == 99.9) CLIMATE_TMYEPW_values[i][j][LAYER_drybulb][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_relhum][k] == 999) CLIMATE_TMYEPW_values[i][j][LAYER_relhum][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad][k] == 9999) CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] >= 9999) CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] < 0) CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] >= 9999) CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] < 0) CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] == 999) CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] = FLOAT_undefined;
+    else CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] = 3.6 * CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k];
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_winddir][k] == 999) CLIMATE_TMYEPW_values[i][j][LAYER_winddir][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover][k] == 99) CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] == 77777) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = 1000;
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] == 88888) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = 1000;
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] >= 1000) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = 1000; 
+
+    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] == 99999) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = FLOAT_undefined;
+  }
+  
+  SOLARCHVISION_setDataFlags(dataID_CLIMATE_TMYEPW);
+  SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_TMYEPW);
+  SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_TMYEPW);
+  
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;  
+  
+}
+
+
+
+
+
+
+void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
+  
+  // this line tries to update the most recent files! << 
+  int THE_YEAR = year(); 
+  int THE_MONTH = month();
+  int THE_DAY = day();
+  int THE_HOUR = hour(); 
+
+
+  float THE_DATE = TIME_Date;
+
+  int now_i = int(THE_HOUR);
+  int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
+
+  now_i += int(-STATION.getTimelong() / 15);
+  if (now_i > 23) {
+    now_i -= 24;
+    now_j += 1;
+    if (now_j > 364) {
+      now_j -= 365;
+      THE_YEAR += 1;
+    }
+    THE_DATE += 1;
+    if (THE_DATE > 364) THE_DATE -= 365;
+  }         
+  THE_HOUR = now_i;
+
+  for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
+
+    THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
+    THE_DAY = CalendarDate[int(THE_DATE)][1];
+
+    for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
+
+      int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
+
+      if (f != -1) {
+
+        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
+
+        String the_target = ENSEMBLE_OBSERVED_directory + "/" + FN;
+
+        File dir = new File(the_target);
+        if (!dir.isFile()) {       
+
+          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + split(SWOB_Coordinates[f].getCode(),'-')[0] + "/" + FN;
+  
+          println("Try downloading: " + the_link);
+  
+          try {
+            saveBytes(the_target, loadBytes(the_link));
+          } 
+          catch (Exception e) {
+            println("LINK NOT AVAILABLE:", the_link);
+          }
+        }
+      }
+    }
+
+    now_i -= 1;
+    if (now_i < 0) {
+      now_i += 24;
+      now_j -= 1;
+      if (now_j < 0) {
+        now_j += 365;
+        THE_YEAR -= 1;
+      }
+      THE_DATE -= 1;
+      if (THE_DATE < 0) THE_DATE += 364;
+    }
+    THE_HOUR = now_i;
+  }
+  
+
+  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
+  
+  Load_ENSEMBLE_OBSERVED = 1; 
+  SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+}
+
+void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
+
+  ENSEMBLE_OBSERVED_values = new float [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
+  ENSEMBLE_OBSERVED_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
+
+  for (int i = 0; i < 24; i++) {
+    for (int j = 0; j < 365; j++) {
+      for (int l = 0; l < num_Layers; l++) {
+        for (int k = 0; k < (1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start); k++) {
+          ENSEMBLE_OBSERVED_values[i][j][l][k] = FLOAT_undefined;
+          ENSEMBLE_OBSERVED_flags[i][j][l][k] = false;
+        }
+      }
+    }
+  }
+
+  if (Load_ENSEMBLE_OBSERVED == 1) {
+
+    // this line tries to update the most recent files! << 
+    int THE_YEAR = year(); 
+    int THE_MONTH = month();
+    int THE_DAY = day();
+    int THE_HOUR = hour(); 
+
+
+    float THE_DATE = TIME_Date;
+
+    int now_i = int(THE_HOUR);
+    int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
+
+    now_i += int(-STATION.getTimelong() / 15);
+    if (now_i > 23) {
+      now_i -= 24;
+      now_j += 1;
+      if (now_j > 364) {
+        now_j -= 365;
+        THE_YEAR += 1;
+      }
+      THE_DATE += 1;
+      if (THE_DATE > 364) THE_DATE -= 365;
+    }         
+    THE_HOUR = now_i;
+
+    for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
+
+      THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
+      THE_DAY = CalendarDate[int(THE_DATE)][1];
+
+      for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
+
+        int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
+
+        if (f != -1) {
+
+          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
+
+          String the_source = ENSEMBLE_OBSERVED_directory + "/" + FN;
+      
+          File dir = new File(the_source);
+          if (dir.isFile()) SOLARCHVISION_loadENSEMBLE_OBSERVED(the_source, q);
+          else println("FILE NOT FOUND:", the_source);
+
+        }
+      }
+
+      now_i -= 1;
+      if (now_i < 0) {
+        now_i += 24;
+        now_j -= 1;
+        if (now_j < 0) {
+          now_j += 365;
+          THE_YEAR -= 1;
+        }
+        THE_DATE -= 1;
+        if (THE_DATE < 0) THE_DATE += 364;
+      }
+      THE_HOUR = now_i;
+    }
+    
+    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_OBSERVED);
+    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_OBSERVED); // <<<<<<<<<<<<
+    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_OBSERVED);
+    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_OBSERVED);
+    
+    Display_SWOB_Points = 1;
+    Display_SWOB_Nearest = true;   
+  }
+
+  WORLD.update = true;
+  WIN3D.update = true;  
+  STUDY.update = true;
+  ROLLOUT.update = true;
+  UI_BAR_d_update = true;      
+  
+  SampleStation_Start = ENSEMBLE_OBSERVED_start;
+  SampleStation_End = ENSEMBLE_OBSERVED_end;
+}
+
+
+void SOLARCHVISION_loadENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
+  String lineSTR;
+  String[] input;
+
+  XML FileALL = loadXML(FileName);
+
+  XML[] children0 = FileALL.getChildren("om:member");
+  XML[] children1 = children0[0].getChildren("om:Observation");
+  XML[] children2 = children1[0].getChildren("om:samplingTime");
+  XML[] children3 = children2[0].getChildren("gml:TimeInstant");
+  XML[] children4 = children3[0].getChildren("gml:timePosition");
+  String _TimeInstant = String.valueOf(children4[0].getContent());
+  //println(_TimeInstant);
+
+  int THE_YEAR = int(_TimeInstant.substring(0, 4));
+  int THE_MONTH = int(_TimeInstant.substring(5, 7));
+  int THE_DAY = int(_TimeInstant.substring(8, 10));
+  int THE_HOUR = int(_TimeInstant.substring(11, 13));
+
+  //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
+
+  int now_i = int(THE_HOUR);
+  int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
+
+  //println(now_i, now_j);
+
+  now_i -= int(-STATION.getTimelong() / 15);
+
+  if (now_i < 0) {
+    now_i += 24;
+    now_j -= 1;
+    if (now_j < 0) {
+      now_j += 365;
+    }
+  }
+
+  //println(now_i, now_j);
+  //println("-------------");
+
+  children2 = children1[0].getChildren("om:result");
+  children3 = children2[0].getChildren("elements");
+  children4 = children3[0].getChildren("element");
+
+  for (int Li = 0; Li < children4.length; Li++) {
+
+    String _a1 = children4[Li].getString("name");
+    String _a2 = children4[Li].getString("value");
+    String _a3 = children4[Li].getString("uom");
+
+    //println("Li=", Li, _a1, _a2, _a3);
+
+    if (_a2.toUpperCase().equals("MSNG")) { // missing values
+      _a2 = String.valueOf(FLOAT_undefined);
+    }
+
+    if (_a1.equals("stn_pres")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_pressure][Load_Layer] = Float.valueOf(_a2);
+    }
+
+    if (_a1.equals("air_temp")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_drybulb][Load_Layer] = Float.valueOf(_a2);
+    }
+
+    if (_a1.equals("rel_hum")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_relhum][Load_Layer] = Float.valueOf(_a2);
+    } 
+
+    if (_a1.equals("tot_cld_amt")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_cloudcover][Load_Layer] = 0.1 * Float.valueOf(_a2);
+    }    
+
+    if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_winddir][Load_Layer] = Float.valueOf(_a2);
+    }    
+
+    if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_windspd][Load_Layer] = Float.valueOf(_a2);
+    }
+
+    if (_a1.equals("pcpn_amt_pst6hrs")) {
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_precipitation_A][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
+    }
+
+    if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
+      if (_a2.equals(STRING_undefined)) {
+      } else {
+        //if (_a3.equals("W/m²")) {
+        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
+        //}
+      }
+    }
+
+    if (_a1.equals("tot_globl_solr_radn_pst1hr")) {
+      if (_a2.equals(STRING_undefined)) {
+      } else {
+        //if (_a3.equals("kJ/m²")) {
+        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
+        //}
+      }
+    }
+    
+  }
+  
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -8864,925 +9787,6 @@ void SOLARCHVISION_update_date () {
   TIME_Month = CalendarDate[int(TIME_Date)][0]; 
   TIME_Day = CalendarDate[int(TIME_Date)][1];
   TIME_Hour = int(24 * (TIME_Date - int(TIME_Date)));
-}
-
-
-
-
-void SOLARCHVISION_download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
-
-  boolean new_files_downloaded = false;
-
-  for (int f = 0; f < num_Layers; f++) {
-    if (LAYERS_Text[f].equals("")) {
-    } else {
-      String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
-      
-      String the_target = ENSEMBLE_FORECAST_directory + "/" + FN;
-      
-      File dir = new File(the_target);
-      if (!dir.isFile()) {
-        
-        String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + LAYERS_Text[f] + "/raw";
-        String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
-        the_target = the_target + ".bz2";
-    
-        println("Try downloading: " + the_link);
-    
-        try {
-          saveBytes(the_target, loadBytes(the_link));
-    
-          new_files_downloaded = true;
-        } 
-        catch (Exception e) {
-          println("LINK NOT AVAILABLE:", the_link);
-        }
-      }
-    }
-  }
-
-
-
-  if (new_files_downloaded) {
-    
-    String folder_inout = ENSEMBLE_FORECAST_directory.replace('/', char(92));
-    
-    {
-      String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
-      println(Command1);
-      String Command2 = "del " + folder_inout + "\\*.bz2 /q";
-      println(Command2);
-      launch(Command1 + " & " + Command2);
-    }
-    
-    ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
-    
-    Load_ENSEMBLE_FORECAST = 1;
-    SOLARCHVISION_update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);    
-  }
-}
-
-
-void SOLARCHVISION_update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
-
-  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
-
-  ENSEMBLE_FORECAST_values = new float [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
-  ENSEMBLE_FORECAST_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
-
-  for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < num_Layers; l++) {
-        for (int k = 0; k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start); k++) {
-          ENSEMBLE_FORECAST_values[i][j][l][k] = FLOAT_undefined;
-          ENSEMBLE_FORECAST_flags[i][j][l][k] = false;
-        }
-      }
-    }
-  }
-
-  if (Load_ENSEMBLE_FORECAST == 1) {
-
-    for (int f = 0; f < num_Layers; f++) {
-      if (LAYERS_Text[f].equals("")) {
-      } else {
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
-
-        String the_source = ENSEMBLE_FORECAST_directory + "/" + FN;
-
-        File dir = new File(the_source);
-        if (dir.isFile()) SOLARCHVISION_loadENSEMBLE_FORECAST(the_source, f);
-        else println("FILE NOT FOUND:", the_source);
-      }
-    }
-
-    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_FORECAST);
-    SOLARCHVISION_postProcess_fillGaps(dataID_ENSEMBLE_FORECAST);
-    if (CLIMATIC_SolarForecast == 1) {
-      SOLARCHVISION_postProcess_climaticSolarForecast();
-    }
-    else {
-      SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_FORECAST);
-    }
-    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
-    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
-    
-    Display_NAEFS_Points = 1;
-    Display_NAEFS_Nearest = true;     
-  }
-  
-  WORLD.update = true;
-  WIN3D.update = true;  
-  STUDY.update = true;
-  ROLLOUT.update = true;
-  UI_BAR_d_update = true;    
-  
-  SampleMember_Start = ENSEMBLE_FORECAST_start;
-  SampleMember_End = ENSEMBLE_FORECAST_end;
-}
-
-
-
-
-
-
-
-void SOLARCHVISION_loadENSEMBLE_FORECAST (String FileName, int Load_Layer) {
-  String lineSTR;
-  String[] input;
-
-  int continue_process = 1;
-
-  XML FileALL = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
-
-  try {
-    FileALL = loadXML(FileName);
-  }
-  catch (Exception e) {
-    println("Can't read:", FileName);
-    continue_process = 0;
-  }
-
-  if (continue_process == 1) { 
-
-    //println(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
-
-    XML[] children0 = FileALL.getChildren("forecast");
-
-    for (int Li = 0; Li < children0.length; Li++) {
-
-      int _a1 = children0[Li].getInt("forecast_hour");
-      String _a2 = children0[Li].getString("valid_time");
-
-      //println("Li=", Li, "hour =", _a1, "date:", _a2);
-
-      if (Li >= 0) {
-
-        int THE_YEAR = int(_a2.substring(0, 4));
-        int THE_MONTH = int(_a2.substring(4, 6));
-        int THE_DAY = int(_a2.substring(6, 8));
-        int THE_HOUR = int(_a2.substring(8));
-
-        //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
-
-        int now_i = int(THE_HOUR);
-        int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
-
-        //println(now_i, now_j);
-
-        now_i -= int(-STATION.getTimelong() / 15);
-        if (now_i < 0) {
-          now_i += 24;
-          now_j -= 1;
-          if (now_j < 0) {
-            now_j += 365;
-          }
-        }
-
-        //println(now_i, now_j);
-        //println("-------------");
-
-        XML[] _c = children0[Li].getChildren("model");
-        //println("number of members:", _c.length);
-
-        for (int Lk = 0; Lk < _c.length; Lk++) {
-          int k = _c[Lk].getInt("id") - 1;
-
-          if (k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)) {
-
-            ENSEMBLE_FORECAST_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
-
-void SOLARCHVISION_update_CLIMATE_CWEEDS () {
-
-  CLIMATE_CWEEDS_values = new float [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)];
-  CLIMATE_CWEEDS_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start)]; // true: direct input , false: no-input, interpolated or post-processed
-
-  for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < num_Layers; l++) {
-        for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k++) {
-          CLIMATE_CWEEDS_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_CWEEDS_flags[i][j][l][k] = false;
-        }
-      }
-    }
-  }
-
-
-  if (Load_CLIMATE_CWEEDS == 1) {
-
-    String FN = STATION.getFilename_CWEEDS() + ".wy2";
-    
-    String the_source = CLIMATE_CWEEDS_directory + "/" + FN;
-
-    File dir = new File(the_source);
-    if (dir.isFile()) SOLARCHVISION_loadCLIMATE_CWEEDS(the_source);
-    else println("FILE NOT FOUND:", the_source);
-
-  }
-  
-  WORLD.update = true;
-  WIN3D.update = true;  
-  STUDY.update = true;
-  ROLLOUT.update = true;
-  UI_BAR_d_update = true;   
-  
-  SampleYear_Start = CLIMATE_CWEEDS_start;
-  SampleYear_End = CLIMATE_CWEEDS_end;     
-}
-
-
-void SOLARCHVISION_loadCLIMATE_CWEEDS (String FileName) {
-  String[] FileALL = loadStrings(FileName);
-
-  String lineSTR;
-  String[] input;
-
-
-  println("lines = ", FileALL.length);
-
-  for (int f = 0; f < FileALL.length; f++) {
-
-    lineSTR = FileALL[f];
-    //println(lineSTR);
-
-    int CLIMATE_YEAR = int(lineSTR.substring(6, 10));
-    int CLIMATE_MONTH = int(lineSTR.substring(10, 12));
-    int CLIMATE_DAY = int(lineSTR.substring(12, 14));
-    int CLIMATE_HOUR = int(lineSTR.substring(14, 16));
-
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-
-    int i = int(CLIMATE_HOUR) - 1;
-    int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
-    int k = (CLIMATE_YEAR - CLIMATE_CWEEDS_start);
-
-    //println(i);
-
-    CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] = float(lineSTR.substring(85, 90)); // 10 times in Pa
-    CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] = float(lineSTR.substring(91, 95)); // 10 times in °C
-    //CLIMATE_CWEEDS_values[i][j][LAYER_relhum][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
-    CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] = float(lineSTR.substring(20, 24)); // Wh/m²
-    CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] = float(lineSTR.substring(26, 30)); // Wh/m²
-    CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] = float(lineSTR.substring(32, 36)); // Wh/m²
-    CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] = float(lineSTR.substring(105, 109)); // 10 times in m/s
-    CLIMATE_CWEEDS_values[i][j][LAYER_winddir][k] = float(lineSTR.substring(101, 104)); // °
-    CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
-    CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = float(lineSTR.substring(61, 65)); // 0.1 times in m
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] == 99999) CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k] = 0.1 * CLIMATE_CWEEDS_values[i][j][LAYER_pressure][k];
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k] = 0.1 * CLIMATE_CWEEDS_values[i][j][LAYER_drybulb][k];
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] = CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad][k] / 3.6; // Wh/m²
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] = CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad][k] / 3.6; // Wh/m²
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] = CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad][k] / 3.6; // Wh/m²
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k] = 0.1 * 3.6 * CLIMATE_CWEEDS_values[i][j][LAYER_windspd][k];
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_winddir][k] == 999) CLIMATE_CWEEDS_values[i][j][LAYER_winddir][k] = FLOAT_undefined;
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover][k] == 99) CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] == 7777) CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = 1000;
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] >= 1000) CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = 1000; // <<<<<<<<<
-
-    if (CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] == 9999) CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = FLOAT_undefined;
-    else CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k] = 10 * CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky][k];
-  }
-  
-  SOLARCHVISION_setDataFlags(dataID_CLIMATE_CWEEDS);
-  SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CWEEDS);
-  SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_CWEEDS);
-  
-  Display_CWEEDS_Points = 1;
-  Display_CWEEDS_Nearest = true;  
-
-}
-
-
-
-
-
-
-
-void SOLARCHVISION_download_CLIMATE_CLMREC () {
-  
-  if (nearest_Station_CLMREC_id != -1) {
-
-    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
-      for (int m = 0; m < 12; m++) {
-      
-        int THE_YEAR = k + CLIMATE_CLMREC_start;
-        int THE_MONTH = m + 1;
-    
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
-          
-        String the_target = CLIMATE_CLMREC_directory + "/" + FN;
-          
-        File dir = new File(the_target);
-        if (!dir.isFile()) {          
-          
-          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
-          
-          println("Try downloading: " + the_link);
-    
-          try {
-            saveBytes(the_target, loadBytes(the_link));
-          } 
-          catch (Exception e) {
-            println("LINK NOT AVAILABLE:", the_link);
-          }
-        }
-      }
-    }
-    
-    CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
-    
-    Load_CLIMATE_CLMREC = 1;
-    SOLARCHVISION_update_CLIMATE_CLMREC();
-  }
-}
-
-
-void SOLARCHVISION_update_CLIMATE_CLMREC () {
-
-  CLIMATE_CLMREC_values = new float [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
-  CLIMATE_CLMREC_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
-
-  for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < num_Layers; l++) {
-        for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
-          CLIMATE_CLMREC_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_CLMREC_flags[i][j][l][k] = false;
-        }
-      }
-    }
-  }
-
-  if (Load_CLIMATE_CLMREC == 1) {
-
-    nearest_Station_CLMREC_id = -1;
-    nearest_Station_CLMREC_dist = FLOAT_undefined;
-    
-    for (int f = 0; f < CLMREC_Coordinates.length; f++) {
-      
-      //if (int(CLMREC_Coordinates[f].getEndyear()) == 2016) 
-      { // only use stations with this condition
-
-        float _lat = CLMREC_Coordinates[f].getLatitude();
-        float _lon = CLMREC_Coordinates[f].getLongitude(); 
-        if (_lon > 180) _lon -= 360; // << important!
-  
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-  
-        if (nearest_Station_CLMREC_dist > d) {
-  
-          nearest_Station_CLMREC_dist = d;
-          nearest_Station_CLMREC_id = f;
-        }
-      }
-    }
-
-
-    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
-      for (int m = 0; m < 12; m++) {
-      
-        int THE_YEAR = k + CLIMATE_CLMREC_start;
-        int THE_MONTH = m + 1;
-    
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
-        
-        String the_source = CLIMATE_CLMREC_directory + "/" + FN;
-        
-        File dir = new File(the_source);
-        if (dir.isFile()) SOLARCHVISION_loadCLIMATE_CLMREC(the_source);
-        else println("FILE NOT FOUND:", the_source);
-
-      }
-    }
-
-    SOLARCHVISION_setDataFlags(dataID_CLIMATE_CLMREC);
-    SOLARCHVISION_postProcess_fillGaps(dataID_CLIMATE_CLMREC);
-    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
-    SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CLMREC);
-    
-    Display_CLMREC_Points = 1;
-    Display_CLMREC_Nearest = true;       
-  
-  }
-  
-  WORLD.update = true;
-  WIN3D.update = true;  
-  STUDY.update = true;
-  ROLLOUT.update = true;
-  UI_BAR_d_update = true; 
-
-  SampleYear_Start = CLIMATE_CLMREC_start;
-  SampleYear_End = CLIMATE_CLMREC_end;  
-}
-
-
-void SOLARCHVISION_loadCLIMATE_CLMREC (String FileName) {
-
-  String[] FileALL = loadStrings(FileName);
-
-  String lineSTR;
-  String[] input;
-
-  println("lines = ", FileALL.length);
-
-  for (int f = 18; f < FileALL.length; f++) {
-
-    lineSTR = FileALL[f];
-    //println(lineSTR);
-    
-    lineSTR = lineSTR.replace("\"", ""); 
-    String[] parts = split(lineSTR, ',');
-
-    int CLIMATE_YEAR = int(parts[1]);
-    int CLIMATE_MONTH = int(parts[2]);
-    int CLIMATE_DAY = int(parts[3]);
-    int CLIMATE_HOUR = int(parts[4].substring(0, 2));
-
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-
-    int i = int(CLIMATE_HOUR);
-    int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
-    int k = (CLIMATE_YEAR - CLIMATE_CLMREC_start);
-
-    //println(i);
-    
-    if (parts.length > 24) {
-      
-      String str = "";
-      
-      str = parts[24];
-      
-      //println(str);
-       
-      if (str.equals("NA")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
-      else if (str.equals("Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 0;
-      else if (str.equals("Mainly Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 2.5;
-      else if (str.equals("Mostly Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 5;
-      else if (str.equals("Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 7.5;
-      else CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k] = 10;
-      
-      //println(CLIMATE_CLMREC_values[i][j][LAYER_cloudcover][k]);
-    
-      str = parts[6];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_drybulb][k] = float(str); // °C
-
-      str = parts[10];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_relhum][k] = float(str); // %
-
-      str = parts[12];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_winddir][k] = float(str) * 10; // °
-
-      str = parts[14];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_windspd][k] = float(str); // km/h
-
-      str = parts[18];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_pressure][k] = float(str) * 10; // hPa
-
-
-    }
-  }
-  
-}
-
-
-
-
-
-
-
-
-
-void SOLARCHVISION_update_CLIMATE_TMYEPW () {
-
-  CLIMATE_TMYEPW_values = new float [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)];
-  CLIMATE_TMYEPW_flags = new boolean [24][365][num_Layers][(1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start)]; // true: direct input , false: no-input, interpolated or post-processed
-
-  for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < num_Layers; l++) {
-        for (int k = 0; k < (1 + CLIMATE_TMYEPW_end - CLIMATE_TMYEPW_start); k++) {
-          CLIMATE_TMYEPW_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_TMYEPW_flags[i][j][l][k] = false;
-        }
-      }
-    }
-  }
-
-  if (Load_CLIMATE_TMYEPW == 1) {
-
-    String FN = STATION.getFilename_TMYEPW() + ".epw";
-
-    String the_source = CLIMATE_TMYEPW_directory + "/" + FN;
-
-    File dir = new File(the_source);
-    if (dir.isFile()) SOLARCHVISION_loadCLIMATE_TMYEPW(the_source);
-    else println("FILE NOT FOUND:", the_source);
-
-    Display_TMYEPW_Points = 1;
-    Display_TMYEPW_Nearest = true; 
-
-  }
-  
-  WORLD.update = true;
-  WIN3D.update = true;  
-  STUDY.update = true;
-  ROLLOUT.update = true;
-  UI_BAR_d_update = true;    
-
-}
-
-void SOLARCHVISION_loadCLIMATE_TMYEPW (String FileName) {
-  String[] FileALL = loadStrings(FileName);
-
-  String lineSTR;
-  String[] input;
-
-
-  //println("lines = ", FileALL.length);
-
-  for (int f = 8; f < FileALL.length; f++) {
-
-    lineSTR = FileALL[f];
-
-    String[] parts = split(lineSTR, ',');
-
-    int CLIMATE_YEAR = int(parts[0]);
-    int CLIMATE_MONTH = int(parts[1]);
-    int CLIMATE_DAY = int(parts[2]);
-    int CLIMATE_HOUR = int(parts[3]);
-
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-
-    int i = int(CLIMATE_HOUR) - 1;
-    int j = SOLARCHVISION_Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
-    int k = 0; // on TMYEPW:TMY files we have only one year 
-
-    //println(i);
-
-    CLIMATE_TMYEPW_values[i][j][LAYER_pressure][k] = float(parts[9]) * 0.01; // 10 times in Pa
-    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb][k] = float(parts[6]); // in °C
-    CLIMATE_TMYEPW_values[i][j][LAYER_relhum][k] = float(parts[8]); // 0 - 110%
-    CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad][k] = float(parts[13]); // Wh/m²
-    CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] = float(parts[14]); // Wh/m²
-    CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] = float(parts[15]); // Wh/m²
-    CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] = float(parts[21]); // in m/s
-    CLIMATE_TMYEPW_values[i][j][LAYER_winddir][k] = float(parts[20]); // ° 
-    CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover][k] = float(parts[23]); // 0.1 times in % ... there is also total_sky_cover on[22]
-    CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = float(parts[25]); // in m
-
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_pressure][k] == 999999) CLIMATE_TMYEPW_values[i][j][LAYER_pressure][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_drybulb][k] == 99.9) CLIMATE_TMYEPW_values[i][j][LAYER_drybulb][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_relhum][k] == 999) CLIMATE_TMYEPW_values[i][j][LAYER_relhum][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad][k] == 9999) CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] >= 9999) CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] < 0) CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] >= 9999) CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] < 0) CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] == 999) CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] = FLOAT_undefined;
-    else CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k] = 3.6 * CLIMATE_TMYEPW_values[i][j][LAYER_windspd][k];
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_winddir][k] == 999) CLIMATE_TMYEPW_values[i][j][LAYER_winddir][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover][k] == 99) CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover][k] = FLOAT_undefined;
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] == 77777) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = 1000;
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] == 88888) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = 1000;
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] >= 1000) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = 1000; 
-
-    if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] == 99999) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky][k] = FLOAT_undefined;
-  }
-  
-  SOLARCHVISION_setDataFlags(dataID_CLIMATE_TMYEPW);
-  SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_TMYEPW);
-  SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_TMYEPW);
-  
-  WORLD.update = true;
-  WIN3D.update = true;  
-  STUDY.update = true;
-  ROLLOUT.update = true;
-  UI_BAR_d_update = true;  
-  
-}
-
-
-
-
-
-
-void SOLARCHVISION_download_ENSEMBLE_OBSERVED () {
-  
-  // this line tries to update the most recent files! << 
-  int THE_YEAR = year(); 
-  int THE_MONTH = month();
-  int THE_DAY = day();
-  int THE_HOUR = hour(); 
-
-
-  float THE_DATE = TIME_Date;
-
-  int now_i = int(THE_HOUR);
-  int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
-
-  now_i += int(-STATION.getTimelong() / 15);
-  if (now_i > 23) {
-    now_i -= 24;
-    now_j += 1;
-    if (now_j > 364) {
-      now_j -= 365;
-      THE_YEAR += 1;
-    }
-    THE_DATE += 1;
-    if (THE_DATE > 364) THE_DATE -= 365;
-  }         
-  THE_HOUR = now_i;
-
-  for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
-
-    THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
-    THE_DAY = CalendarDate[int(THE_DATE)][1];
-
-    for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
-
-      int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
-
-      if (f != -1) {
-
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
-
-        String the_target = ENSEMBLE_OBSERVED_directory + "/" + FN;
-
-        File dir = new File(the_target);
-        if (!dir.isFile()) {       
-
-          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + split(SWOB_Coordinates[f].getCode(),'-')[0] + "/" + FN;
-  
-          println("Try downloading: " + the_link);
-  
-          try {
-            saveBytes(the_target, loadBytes(the_link));
-          } 
-          catch (Exception e) {
-            println("LINK NOT AVAILABLE:", the_link);
-          }
-        }
-      }
-    }
-
-    now_i -= 1;
-    if (now_i < 0) {
-      now_i += 24;
-      now_j -= 1;
-      if (now_j < 0) {
-        now_j += 365;
-        THE_YEAR -= 1;
-      }
-      THE_DATE -= 1;
-      if (THE_DATE < 0) THE_DATE += 364;
-    }
-    THE_HOUR = now_i;
-  }
-  
-
-  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
-  
-  Load_ENSEMBLE_OBSERVED = 1; 
-  SOLARCHVISION_update_ENSEMBLE_OBSERVED();
-}
-
-void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
-
-  ENSEMBLE_OBSERVED_values = new float [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
-  ENSEMBLE_OBSERVED_flags = new boolean [24][365][num_Layers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
-
-  for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < num_Layers; l++) {
-        for (int k = 0; k < (1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start); k++) {
-          ENSEMBLE_OBSERVED_values[i][j][l][k] = FLOAT_undefined;
-          ENSEMBLE_OBSERVED_flags[i][j][l][k] = false;
-        }
-      }
-    }
-  }
-
-  if (Load_ENSEMBLE_OBSERVED == 1) {
-
-    // this line tries to update the most recent files! << 
-    int THE_YEAR = year(); 
-    int THE_MONTH = month();
-    int THE_DAY = day();
-    int THE_HOUR = hour(); 
-
-
-    float THE_DATE = TIME_Date;
-
-    int now_i = int(THE_HOUR);
-    int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
-
-    now_i += int(-STATION.getTimelong() / 15);
-    if (now_i > 23) {
-      now_i -= 24;
-      now_j += 1;
-      if (now_j > 364) {
-        now_j -= 365;
-        THE_YEAR += 1;
-      }
-      THE_DATE += 1;
-      if (THE_DATE > 364) THE_DATE -= 365;
-    }         
-    THE_HOUR = now_i;
-
-    for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
-
-      THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
-      THE_DAY = CalendarDate[int(THE_DATE)][1];
-
-      for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
-
-        int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
-
-        if (f != -1) {
-
-          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
-
-          String the_source = ENSEMBLE_OBSERVED_directory + "/" + FN;
-      
-          File dir = new File(the_source);
-          if (dir.isFile()) SOLARCHVISION_loadENSEMBLE_OBSERVED(the_source, q);
-          else println("FILE NOT FOUND:", the_source);
-
-        }
-      }
-
-      now_i -= 1;
-      if (now_i < 0) {
-        now_i += 24;
-        now_j -= 1;
-        if (now_j < 0) {
-          now_j += 365;
-          THE_YEAR -= 1;
-        }
-        THE_DATE -= 1;
-        if (THE_DATE < 0) THE_DATE += 364;
-      }
-      THE_HOUR = now_i;
-    }
-    
-    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_OBSERVED);
-    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_OBSERVED); // <<<<<<<<<<<<
-    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_OBSERVED);
-    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_OBSERVED);
-    
-    Display_SWOB_Points = 1;
-    Display_SWOB_Nearest = true;   
-  }
-
-  WORLD.update = true;
-  WIN3D.update = true;  
-  STUDY.update = true;
-  ROLLOUT.update = true;
-  UI_BAR_d_update = true;      
-  
-  SampleStation_Start = ENSEMBLE_OBSERVED_start;
-  SampleStation_End = ENSEMBLE_OBSERVED_end;
-}
-
-
-void SOLARCHVISION_loadENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
-  String lineSTR;
-  String[] input;
-
-  XML FileALL = loadXML(FileName);
-
-  XML[] children0 = FileALL.getChildren("om:member");
-  XML[] children1 = children0[0].getChildren("om:Observation");
-  XML[] children2 = children1[0].getChildren("om:samplingTime");
-  XML[] children3 = children2[0].getChildren("gml:TimeInstant");
-  XML[] children4 = children3[0].getChildren("gml:timePosition");
-  String _TimeInstant = String.valueOf(children4[0].getContent());
-  //println(_TimeInstant);
-
-  int THE_YEAR = int(_TimeInstant.substring(0, 4));
-  int THE_MONTH = int(_TimeInstant.substring(5, 7));
-  int THE_DAY = int(_TimeInstant.substring(8, 10));
-  int THE_HOUR = int(_TimeInstant.substring(11, 13));
-
-  //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
-
-  int now_i = int(THE_HOUR);
-  int now_j = SOLARCHVISION_Convert2Date(THE_MONTH, THE_DAY);
-
-  //println(now_i, now_j);
-
-  now_i -= int(-STATION.getTimelong() / 15);
-
-  if (now_i < 0) {
-    now_i += 24;
-    now_j -= 1;
-    if (now_j < 0) {
-      now_j += 365;
-    }
-  }
-
-  //println(now_i, now_j);
-  //println("-------------");
-
-  children2 = children1[0].getChildren("om:result");
-  children3 = children2[0].getChildren("elements");
-  children4 = children3[0].getChildren("element");
-
-  for (int Li = 0; Li < children4.length; Li++) {
-
-    String _a1 = children4[Li].getString("name");
-    String _a2 = children4[Li].getString("value");
-    String _a3 = children4[Li].getString("uom");
-
-    //println("Li=", Li, _a1, _a2, _a3);
-
-    if (_a2.toUpperCase().equals("MSNG")) { // missing values
-      _a2 = String.valueOf(FLOAT_undefined);
-    }
-
-    if (_a1.equals("stn_pres")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_pressure][Load_Layer] = Float.valueOf(_a2);
-    }
-
-    if (_a1.equals("air_temp")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_drybulb][Load_Layer] = Float.valueOf(_a2);
-    }
-
-    if (_a1.equals("rel_hum")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_relhum][Load_Layer] = Float.valueOf(_a2);
-    } 
-
-    if (_a1.equals("tot_cld_amt")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_cloudcover][Load_Layer] = 0.1 * Float.valueOf(_a2);
-    }    
-
-    if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_winddir][Load_Layer] = Float.valueOf(_a2);
-    }    
-
-    if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_windspd][Load_Layer] = Float.valueOf(_a2);
-    }
-
-    if (_a1.equals("pcpn_amt_pst6hrs")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_precipitation_A][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
-    }
-
-    if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
-      if (_a2.equals(STRING_undefined)) {
-      } else {
-        //if (_a3.equals("W/m²")) {
-        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
-        //}
-      }
-    }
-
-    if (_a1.equals("tot_globl_solr_radn_pst1hr")) {
-      if (_a2.equals(STRING_undefined)) {
-      } else {
-        //if (_a3.equals("kJ/m²")) {
-        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
-        //}
-      }
-    }
-    
-  }
-  
 }
 
 
