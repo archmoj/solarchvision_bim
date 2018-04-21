@@ -38,14 +38,21 @@ int numberOfLayers = 0;
 
 class solarchvision_LAYER {
   
+  public int id;  
+  
   public String unit = "";
   public String name = "";
   public String[] descriptions = new String [numberOfLanguages];
+
+  public float V_scale = 1;
+  public float V_offset = 0;
+  public float V_belowLine = 0;  
   
-  public int id;
+  solarchvision_LAYER (float V_scale, float V_offset, float V_belowLine, String unit, String description_EN, String description_FR, String name) {
     
-  solarchvision_LAYER (String unit, String name, String description_EN, String description_FR) {
-    
+    this.V_scale = V_scale;
+    this.V_offset = V_offset;
+    this.V_belowLine = V_belowLine;
     this.unit = unit;
     this.name = name;
     this.descriptions[Language_EN] = description_EN;
@@ -57,37 +64,196 @@ class solarchvision_LAYER {
   
 }
 
-solarchvision_LAYER LAYER_windspd200hPa = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_thicknesses_1000_500 = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_heightp500hPa = new solarchvision_LAYER("", "", "", ""); 
+solarchvision_LAYER LAYER_windspd200hPa = new solarchvision_LAYER(
+  0.5,
+  0,
+  0,
+  "knots",
+  "Wind Speed at 200 hPa",
+  "Vitesse du vent à 200 hPa",  
+  "WIND-200HPA"
+);
 
-solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_relhum = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_dirnorrad = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_difhorrad = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_glohorrad = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_direffect = new solarchvision_LAYER("", "", "", ""); 
-solarchvision_LAYER LAYER_difeffect = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_precipitation_A = new solarchvision_LAYER("", "", "", ""); 
-
-solarchvision_LAYER LAYER_developed = new solarchvision_LAYER("", "", "", ""); 
+solarchvision_LAYER LAYER_thicknesses_1000_500 = new solarchvision_LAYER(
+  1,
+  -500,
+  1,
+  "dam",
+  "Geopotentiel Difference",
+  "Différence de géopotentiel",
+  "PARAMETERS-1000-500HPA"
+);
 
 
+solarchvision_LAYER LAYER_heightp500hPa = new solarchvision_LAYER(
+  1,
+  -500,
+  1,
+  "dam",
+  "Geopotential at 500 hPa",
+  "Géopotentiel à 500 hPa",
+  "HGT-500HPA"
+); 
+
+solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
+  0.01,
+  0,
+  0,
+  "m",
+  "Ceiling height",
+  "Hauteur sous plafond",  
+  ""
+);
+
+
+solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER(
+  10.0,
+  0,
+  0,
+  "tenth",
+  "Total Cloud Cover",
+  "Couvert nuageux total",
+  "TCDC"
+); 
+
+solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER(
+  100.0 / 360.0,
+  0,
+  0,
+  "°",
+  "Surface Wind Direction",
+  "Direction du vent à la surface",
+  "WDIR-SFC"
+); 
+
+solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER(
+  2.0,
+  0,
+  0,
+  "km/h",
+  "Surface Wind Speed",
+  "Vitesse du vent à la surface",
+  "WIND-SFC"
+); 
+
+solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER(
+  2.0,
+  -1000,
+  1,
+  "hPa",
+  "Mean Sea level Pressure",
+  "Pression moyenne au niveau de la mer",
+  "MSLP"
+); 
+
+solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER(
+  2.5 * pow(2, 0.5),
+  0,
+  1,
+  "°C",
+  "Surface Air Temperature",
+  "Température de l'air à la surface",
+  "TMP-SFC"
+); 
+
+solarchvision_LAYER LAYER_relhum = new solarchvision_LAYER(
+  1.0,
+  0,
+  0,
+  "%",
+  "Surface Relative Humidity",
+  "Humidité relative à la surface",
+  "RELH-SFC"
+); 
+
+solarchvision_LAYER LAYER_dirnorrad = new solarchvision_LAYER(
+  0.1,
+  0,
+  0,
+  "W/m²",
+  "Direct normal radiation",
+  "Rayonnement direct normal",
+  ""
+);
+
+solarchvision_LAYER LAYER_difhorrad = new solarchvision_LAYER(
+  0.1,
+  0,
+  0,
+  "W/m²",
+  "Diffuse horizontal radiation",
+  "Diffus rayonnement horizontal",
+  ""
+); 
+
+solarchvision_LAYER LAYER_glohorrad = new solarchvision_LAYER(
+  0.1,
+  0,
+  0,
+  "W/m²",
+  "Global horizontal radiation",
+  "Rayonnement global horizontal",
+  ""
+); 
+
+solarchvision_LAYER LAYER_direffect = new solarchvision_LAYER(
+  0.0025,
+  0,
+  1,
+  "W°C/m²",
+  "Direct normal effect <18°C<",
+  "Effet direct normal <18°C<",
+  ""
+); 
+
+solarchvision_LAYER LAYER_difeffect = new solarchvision_LAYER(
+  0.0025,
+  0,
+  1,
+  "W°C/m²",
+  "Diffuse normal effect <18°C<",
+  "Effet diffus normal <18°C<",
+  ""
+); 
+
+solarchvision_LAYER LAYER_precipitation = new solarchvision_LAYER(
+  4.0,
+  0,
+  0,
+  "mm",
+  "Surface Accumulated Precipitation",
+  "Précipitations accumulées à la surface",
+  "APCP-SFC"
+); 
+
+solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
+  1,
+  0,
+  0,
+  "",
+  "",
+  "",
+  ""
+); 
 
 
 
+
+int[] GRIB2_TGL_Selected = {
+  1, 0, 0, 0
+}; // for levels above ground level 
+int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
+
+{
+
+  LAYER_Unit = new String [numberOfLayers];  
+  LAYER_Descriptions = new String [numberOfLayers][2];
+  LAYER_Name = new String [numberOfLayers];
+  LAYER_GRIB2_LEV = new String [numberOfLayers][GRIB2_TGL_number]; 
+  LAYER_GRIB2_MUL = new float [numberOfLayers];
+  LAYER_GRIB2_ADD = new float [numberOfLayers];
+
+}
 
 
 
@@ -1539,7 +1705,7 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
     }
 
     if (_a1.equals("pcpn_amt_pst6hrs")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_precipitation_A.id][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
+      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_precipitation.id][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
     }
 
     if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
@@ -5170,7 +5336,7 @@ class solarchvision_STUDY {
       this.CurrentLayer = LAYER_windspd.id;
       STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[this.CurrentLayer] * this.S_View), 1.0 * this.S_View);
   
-      this.CurrentLayer = LAYER_precipitation_A.id;
+      this.CurrentLayer = LAYER_precipitation.id;
       STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[this.CurrentLayer] * this.S_View), 1.0 * this.S_View);
   
       this.CurrentLayer = LAYER_relhum.id;
@@ -5345,7 +5511,7 @@ class solarchvision_STUDY {
       this.CurrentLayer = LAYER_windspd.id; 
       STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[this.CurrentLayer] * this.S_View), 1.0 * this.S_View); 
   
-      //this.CurrentLayer = LAYER_precipitation_A.id ; 
+      //this.CurrentLayer = LAYER_precipitation.id ; 
       //this.DevelopLayer = this.CurrentLayer;
       //this.CurrentLayer = LAYER_developed.id; 
       //Develop_Option = DEV_OP_09;
@@ -7498,319 +7664,7 @@ int addNewSelectionToPreviousSelection = 0; // internal
 
 
 
-int[] GRIB2_TGL_Selected = {
-  1, 0, 0, 0
-}; // for levels above ground level 
-int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
 
-{
-  STUDY.V_scale = new float [numberOfLayers];
-  STUDY.V_offset = new float [numberOfLayers];
-  STUDY.V_belowLine = new float [numberOfLayers];
-  LAYER_Unit = new String [numberOfLayers];  
-  LAYER_Descriptions = new String [numberOfLayers][2];
-  LAYER_Name = new String [numberOfLayers];
-  LAYER_GRIB2_LEV = new String [numberOfLayers][GRIB2_TGL_number]; 
-  LAYER_GRIB2_MUL = new float [numberOfLayers];
-  LAYER_GRIB2_ADD = new float [numberOfLayers];
-
-  int i = -1;
-
-  i = LAYER_winddir.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = (100.0/360.0);
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "°";
-    LAYER_Descriptions[i][Language_EN] = "Surface Wind Direction";
-    LAYER_Descriptions[i][Language_FR] = "Direction du vent à la surface";
-    LAYER_Name[i] = "WDIR-SFC";
-    LAYER_GRIB2_LEV[i][0] = "WDIR_TGL_10";
-    LAYER_GRIB2_LEV[i][1] = "WDIR_TGL_40";
-    LAYER_GRIB2_LEV[i][2] = "WDIR_TGL_80";
-    LAYER_GRIB2_LEV[i][3] = "WDIR_TGL_120";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_windspd.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = (10.0/5.0);
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "km/h";
-    LAYER_Descriptions[i][Language_EN] = "Surface Wind Speed";
-    LAYER_Descriptions[i][Language_FR] = "Vitesse du vent à la surface";
-    LAYER_Name[i] = "WIND-SFC";
-    LAYER_GRIB2_LEV[i][0] = "WIND_TGL_10"; // m/sec
-    LAYER_GRIB2_LEV[i][1] = "WIND_TGL_40"; // m/sec
-    LAYER_GRIB2_LEV[i][2] = "WIND_TGL_80"; // m/sec
-    LAYER_GRIB2_LEV[i][3] = "WIND_TGL_120"; // m/sec
-    LAYER_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_precipitation_A.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 4.0;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "mm";
-    LAYER_Descriptions[i][Language_EN] = "Surface Accumulated Precipitation";
-    LAYER_Descriptions[i][Language_FR] = "Précipitations accumulées à la surface";
-    LAYER_Name[i] = "APCP-SFC";
-    LAYER_GRIB2_LEV[i][0] = "APCP_SFC_0"; // kg/m²
-    LAYER_GRIB2_LEV[i][1] = "APCP_SFC_0"; // kg/m²
-    LAYER_GRIB2_LEV[i][2] = "APCP_SFC_0"; // kg/m²
-    LAYER_GRIB2_LEV[i][3] = "APCP_SFC_0"; // kg/m²
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_relhum.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 1.0;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "%";
-    LAYER_Descriptions[i][Language_EN] = "Surface Relative Humidity";
-    LAYER_Descriptions[i][Language_FR] = "Humidité relative à la surface";
-    LAYER_Name[i] = "RELH-SFC";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_drybulb.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = (2.5 * pow(2, 0.5));
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 1;
-    LAYER_Unit[i] = "°C";
-    LAYER_Descriptions[i][Language_EN] = "Surface Air Temperature";
-    LAYER_Descriptions[i][Language_FR] = "Température de l'air à la surface";
-    LAYER_Name[i] = "TMP-SFC";
-    LAYER_GRIB2_LEV[i][0] = "TMP_TGL_2"; // Kelvin
-    LAYER_GRIB2_LEV[i][1] = "TMP_TGL_40"; // Kelvin
-    LAYER_GRIB2_LEV[i][2] = "TMP_TGL_80"; // Kelvin
-    LAYER_GRIB2_LEV[i][3] = "TMP_TGL_120"; // Kelvin
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = -273.15; // °K > °C
-  }
-
-  i = LAYER_dirnorrad.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 0.1;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "W/m²";
-    LAYER_Descriptions[i][Language_EN] = "Direct normal radiation";
-    LAYER_Descriptions[i][Language_FR] = "Rayonnement direct normal";
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_difhorrad.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 0.1;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "W/m²";
-    LAYER_Descriptions[i][Language_EN] = "Diffuse horizontal radiation";
-    LAYER_Descriptions[i][Language_FR] = "Diffus rayonnement horizontal";
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_glohorrad.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 0.1;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "W/m²";
-    LAYER_Descriptions[i][Language_EN] = "Global horizontal radiation";
-    LAYER_Descriptions[i][Language_FR] = "Rayonnement global horizontal";
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_developed.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 1;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "";
-    LAYER_Descriptions[i][Language_EN] = "";
-    LAYER_Descriptions[i][Language_FR] = "";
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_direffect.id;
-  if (i > -1) {
-    STUDY.V_scale[LAYER_direffect.id] = 0.0025;
-    STUDY.V_offset[LAYER_direffect.id] = 0;
-    STUDY.V_belowLine[LAYER_direffect.id] = 1;
-    LAYER_Unit[i] = "W°C/m²";
-    //LAYER_Descriptions[i][Language_EN] = "Direct normal effect (based on 18°C)";
-    LAYER_Descriptions[i][Language_EN] = "Direct normal effect <18°C<";
-    //LAYER_Descriptions[i][Language_FR] = "Effet direct normal (basé sur 18°C)";
-    LAYER_Descriptions[i][Language_FR] = "Effet direct normal <18°C<";
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_difeffect.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 0.0025;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 1;
-    LAYER_Unit[i] = "W°C/m²";
-    //LAYER_Descriptions[i][Language_EN] = "Diffuse normal effect (based on 18°C)";
-    LAYER_Descriptions[i][Language_EN] = "Diffuse normal effect <18°C<";
-    //LAYER_Descriptions[i][Language_FR] = "Effet diffus normal (basé sur 18°C)";
-    LAYER_Descriptions[i][Language_FR] = "Effet diffus normal <18°C<";
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_cloudcover.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 10.0;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "tenth";
-    LAYER_Descriptions[i][Language_EN] = "Total Cloud Cover";
-    LAYER_Descriptions[i][Language_FR] = "Couvert nuageux total";
-    LAYER_Name[i] = "TCDC";
-    LAYER_GRIB2_LEV[i][0] = "TCDC_SFC_0"; // percent
-    LAYER_GRIB2_LEV[i][1] = "TCDC_SFC_0"; // percent
-    LAYER_GRIB2_LEV[i][2] = "TCDC_SFC_0"; // percent
-    LAYER_GRIB2_LEV[i][3] = "TCDC_SFC_0"; // percent
-    LAYER_GRIB2_MUL[i] = 0.1; // percent >> tenth    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_ceilingsky.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 0.01;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "m";
-    LAYER_Descriptions[i][Language_EN] = "Ceiling height";
-    LAYER_Descriptions[i][Language_FR] = "Hauteur sous plafond";  
-    LAYER_Name[i] = "";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_pressure.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 2.0;
-    STUDY.V_offset[i] = -1000;
-    STUDY.V_belowLine[i] = 1;
-    LAYER_Unit[i] = "hPa";
-    LAYER_Descriptions[i][Language_EN] = "Mean Sea level Pressure";
-    LAYER_Descriptions[i][Language_FR] = "Pression moyenne au niveau de la mer";
-    LAYER_Name[i] = "MSLP";
-    LAYER_GRIB2_LEV[i][0] = "PRMSL_MSL_0";
-    LAYER_GRIB2_LEV[i][1] = "PRMSL_MSL_0";
-    LAYER_GRIB2_LEV[i][2] = "PRMSL_MSL_0";
-    LAYER_GRIB2_LEV[i][3] = "PRMSL_MSL_0";
-    LAYER_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_heightp500hPa.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 1;
-    STUDY.V_offset[i] = -500;
-    STUDY.V_belowLine[i] = 1;
-    LAYER_Unit[i] = "dam";
-    LAYER_Descriptions[i][Language_EN] = "Geopotential at 500 hPa";
-    LAYER_Descriptions[i][Language_FR] = "Géopotentiel à 500 hPa";
-    LAYER_Name[i] = "HGT-500HPA";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_thicknesses_1000_500.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 1;
-    STUDY.V_offset[i] = -500;
-    STUDY.V_belowLine[i] = 1;
-    LAYER_Unit[i] = "dam";
-    //LAYER_Descriptions[i][Language_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
-    LAYER_Descriptions[i][Language_EN] = "Geopotentiel Difference";
-    //LAYER_Descriptions[i][Language_FR] = "Épaisseurs (différence de géopotentiel) entre 1000 et 500 hPa";
-    LAYER_Descriptions[i][Language_FR] = "Différence de géopotentiel";
-    LAYER_Name[i] = "PARAMETERS-1000-500HPA";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_windspd200hPa.id;
-  if (i > -1) {
-    STUDY.V_scale[i] = 0.5;
-    STUDY.V_offset[i] = 0;
-    STUDY.V_belowLine[i] = 0;
-    LAYER_Unit[i] = "knots";
-    LAYER_Descriptions[i][Language_EN] = "Wind Speed at 200 hPa";
-    LAYER_Descriptions[i][Language_FR] = "Vitesse du vent à 200 hPa";  
-    LAYER_Name[i] = "WIND-200HPA";
-    LAYER_GRIB2_LEV[i][0] = "";
-    LAYER_GRIB2_LEV[i][1] = "";
-    LAYER_GRIB2_LEV[i][2] = "";
-    LAYER_GRIB2_LEV[i][3] = "";
-    LAYER_GRIB2_MUL[i] = 1;    
-    LAYER_GRIB2_ADD[i] = 0;
-  }
-}
 
 
 
@@ -49340,7 +49194,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("LAYER_glohorrad.id", LAYER_glohorrad.id);
   newChild1.setInt("LAYER_direffect.id", LAYER_direffect.id);
   newChild1.setInt("LAYER_difeffect.id", LAYER_difeffect.id);
-  newChild1.setInt("LAYER_precipitation_A.id", LAYER_precipitation_A.id);
+  newChild1.setInt("LAYER_precipitation.id", LAYER_precipitation.id);
   newChild1.setInt("LAYER_developed.id", LAYER_developed.id);
   newChild1.setFloat("Develop_AngleInclination", Develop_AngleInclination);
   newChild1.setFloat("Develop_AngleOrientation", Develop_AngleOrientation);
@@ -50574,7 +50428,7 @@ void SOLARCHVISION_load_project (String myFile) {
       LAYER_glohorrad.id = children0[L].getInt("LAYER_glohorrad.id");
       LAYER_direffect.id = children0[L].getInt("LAYER_direffect.id");
       LAYER_difeffect.id = children0[L].getInt("LAYER_difeffect.id");
-      LAYER_precipitation_A.id = children0[L].getInt("LAYER_precipitation_A.id");
+      LAYER_precipitation.id = children0[L].getInt("LAYER_precipitation.id");
       LAYER_developed.id = children0[L].getInt("LAYER_developed.id");
       Develop_AngleInclination = children0[L].getFloat("Develop_AngleInclination");
       Develop_AngleOrientation = children0[L].getFloat("Develop_AngleOrientation");
@@ -55402,8 +55256,8 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               WS = Pa;
             }        
   
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_precipitation_A.id);
-            Pb = getValue_CurrentDataSource(next_i, next_j, now_k, LAYER_precipitation_A.id);
+            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_precipitation.id);
+            Pb = getValue_CurrentDataSource(next_i, next_j, now_k, LAYER_precipitation.id);
             
             if ((is_undefined_FLOAT(Pa)) || (is_undefined_FLOAT(Pb))) {
               RAIN = FLOAT_undefined;
