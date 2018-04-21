@@ -18,14 +18,13 @@ boolean is_undefined_FLOAT (float a) {
 
 
 
-
 class solarchvision_ParameterIDs {
 
   public int length = 0;  
   
   private int addID () {
-    this.length++;
-    return(this.length - 1);
+    length++;
+    return(length - 1);
   }  
   
   public int windspd200hPa = addID();
@@ -54,10 +53,22 @@ class solarchvision_ParameterIDs {
   public int precipitation_A = addID();
   
   public int developed = addID();
-   
+    
 }
 
-solarchvision_ParameterIDs ParameterIDs = new solarchvision_ParameterIDs ();
+
+solarchvision_ParameterIDs ParameterIDs = new solarchvision_ParameterIDs(); 
+
+String[] LAYERS_Unit;
+String[][] LAYERS_Title;
+String[] LAYERS_Text; 
+String[][] LAYERS_GRIB2_VAL;
+float[] LAYERS_GRIB2_MUL;
+float[] LAYERS_GRIB2_ADD;  
+
+
+
+
 
 
 
@@ -229,12 +240,6 @@ float Develop_AngleOrientation = 0; // 0 = South, 90 = East
 
 
 
-String[] ParameterIDsS_Unit;
-String[][] ParameterIDsS_Title;
-String[] ParameterIDsS_Text; 
-String[][] ParameterIDsS_GRIB2_VAL;
-float[] ParameterIDsS_GRIB2_MUL;
-float[] ParameterIDsS_GRIB2_ADD;
 
 
 
@@ -625,16 +630,16 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
   boolean new_files_downloaded = false;
 
   for (int f = 0; f < ParameterIDs.length; f++) {
-    if (ParameterIDsS_Text[f].equals("")) {
+    if (LAYERS_Text[f].equals("")) {
     } else {
-      String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + ParameterIDsS_Text[f] + "_000-384.xml";
+      String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
       
       String the_target = ENSEMBLE_FORECAST_directory + "/" + FN;
       
       File dir = new File(the_target);
       if (!dir.isFile()) {
         
-        String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + ParameterIDsS_Text[f] + "/raw";
+        String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + LAYERS_Text[f] + "/raw";
         String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
         the_target = the_target + ".bz2";
     
@@ -695,9 +700,9 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
   if (ENSEMBLE_FORECAST_load) {
 
     for (int f = 0; f < ParameterIDs.length; f++) {
-      if (ParameterIDsS_Text[f].equals("")) {
+      if (LAYERS_Text[f].equals("")) {
       } else {
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + ParameterIDsS_Text[f] + "_000-384.xml";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[f] + "_000-384.xml";
 
         String the_source = ENSEMBLE_FORECAST_directory + "/" + FN;
 
@@ -4078,8 +4083,8 @@ class solarchvision_STUDY {
         this.graphics.fill(0);
         this.graphics.textSize(sx_Plot * 0.200 / this.U_scale);
         this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.text(((nf(-this.V_offset[this.CurrentLayer] + roundTo(i / this.V_scale[this.CurrentLayer], 0.1), 0, 1)) + ParameterIDsS_Unit[this.CurrentLayer]), -5, -i * this.S_View);
-        //this.graphics.text(((String.valueOf(int(-this.V_offset[this.CurrentLayer] + roundTo(i / this.V_scale[this.CurrentLayer], 0.1)))) + ParameterIDsS_Unit[this.CurrentLayer]), -5, -i * this.S_View);
+        this.graphics.text(((nf(-this.V_offset[this.CurrentLayer] + roundTo(i / this.V_scale[this.CurrentLayer], 0.1), 0, 1)) + LAYERS_Unit[this.CurrentLayer]), -5, -i * this.S_View);
+        //this.graphics.text(((String.valueOf(int(-this.V_offset[this.CurrentLayer] + roundTo(i / this.V_scale[this.CurrentLayer], 0.1)))) + LAYERS_Unit[this.CurrentLayer]), -5, -i * this.S_View);
       }
     }
   
@@ -4699,7 +4704,7 @@ class solarchvision_STUDY {
   
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(LEFT, CENTER); 
-      this.graphics.text((ParameterIDsS_Title[this.CurrentLayer][Language_Active]), 0, (0.5 + this.V_belowLine[this.CurrentLayer]) * sx_Plot / this.U_scale);
+      this.graphics.text((LAYERS_Title[this.CurrentLayer][Language_Active]), 0, (0.5 + this.V_belowLine[this.CurrentLayer]) * sx_Plot / this.U_scale);
     }
   
     float Pa = FLOAT_undefined;
@@ -4758,8 +4763,8 @@ class solarchvision_STUDY {
         _FilenamesAdd = ("±" + int(this.JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
       }
       if ((this.Export_info_node) && (this.DisplayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + ParameterIDsS_Title[this.CurrentLayer][Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + ParameterIDsS_Title[this.CurrentLayer][Language_EN] + "(" + ParameterIDsS_Unit[this.CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+        FILE_outputRaw[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[this.CurrentLayer][Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + LAYERS_Title[this.CurrentLayer][Language_EN] + "(" + LAYERS_Unit[this.CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
   
         FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
         for (int k = 0; k < count_k; k++) {   
@@ -4768,8 +4773,8 @@ class solarchvision_STUDY {
         FILE_outputRaw[(j - this.j_Start)].println("");
       }
       if ((this.Export_info_norm) && (this.DisplayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + ParameterIDsS_Title[this.CurrentLayer][Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + ParameterIDsS_Title[this.CurrentLayer][Language_EN] + "(" + ParameterIDsS_Unit[this.CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+        FILE_outputNorms[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[this.CurrentLayer][Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + LAYERS_Title[this.CurrentLayer][Language_EN] + "(" + LAYERS_Unit[this.CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
         FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
         for (int l = 0; l < 9; l++) {
           FILE_outputNorms[(j - this.j_Start)].print(STAT_N_Title[l] + "\t");
@@ -4777,8 +4782,8 @@ class solarchvision_STUDY {
         FILE_outputNorms[(j - this.j_Start)].println("");
       }
       if ((this.Export_info_prob) && (this.DisplayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + ParameterIDsS_Title[this.CurrentLayer][Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + ParameterIDsS_Title[this.CurrentLayer][Language_EN] + "(" + ParameterIDsS_Unit[this.CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+        FILE_outputProbs[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + LAYERS_Title[this.CurrentLayer][Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + LAYERS_Title[this.CurrentLayer][Language_EN] + "(" + LAYERS_Unit[this.CurrentLayer] + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
   
         FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
         FILE_outputProbs[(j - this.j_Start)].println("");
@@ -7482,12 +7487,12 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
   STUDY.V_scale = new float [ParameterIDs.length];
   STUDY.V_offset = new float [ParameterIDs.length];
   STUDY.V_belowLine = new float [ParameterIDs.length];
-  ParameterIDsS_Unit = new String [ParameterIDs.length];  
-  ParameterIDsS_Title = new String [ParameterIDs.length][2];
-  ParameterIDsS_Text = new String [ParameterIDs.length];
-  ParameterIDsS_GRIB2_VAL = new String [ParameterIDs.length][GRIB2_TGL_number]; 
-  ParameterIDsS_GRIB2_MUL = new float [ParameterIDs.length];
-  ParameterIDsS_GRIB2_ADD = new float [ParameterIDs.length];
+  LAYERS_Unit = new String [ParameterIDs.length];  
+  LAYERS_Title = new String [ParameterIDs.length][2];
+  LAYERS_Text = new String [ParameterIDs.length];
+  LAYERS_GRIB2_VAL = new String [ParameterIDs.length][GRIB2_TGL_number]; 
+  LAYERS_GRIB2_MUL = new float [ParameterIDs.length];
+  LAYERS_GRIB2_ADD = new float [ParameterIDs.length];
 
   int i = -1;
 
@@ -7496,16 +7501,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = (100.0/360.0);
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "°";
-    ParameterIDsS_Title[i][Language_EN] = "Surface Wind Direction";
-    ParameterIDsS_Title[i][Language_FR] = "Direction du vent à la surface";
-    ParameterIDsS_Text[i] = "WDIR-SFC";
-    ParameterIDsS_GRIB2_VAL[i][0] = "WDIR_TGL_10";
-    ParameterIDsS_GRIB2_VAL[i][1] = "WDIR_TGL_40";
-    ParameterIDsS_GRIB2_VAL[i][2] = "WDIR_TGL_80";
-    ParameterIDsS_GRIB2_VAL[i][3] = "WDIR_TGL_120";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "°";
+    LAYERS_Title[i][Language_EN] = "Surface Wind Direction";
+    LAYERS_Title[i][Language_FR] = "Direction du vent à la surface";
+    LAYERS_Text[i] = "WDIR-SFC";
+    LAYERS_GRIB2_VAL[i][0] = "WDIR_TGL_10";
+    LAYERS_GRIB2_VAL[i][1] = "WDIR_TGL_40";
+    LAYERS_GRIB2_VAL[i][2] = "WDIR_TGL_80";
+    LAYERS_GRIB2_VAL[i][3] = "WDIR_TGL_120";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.windspd;
@@ -7513,16 +7518,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = (10.0/5.0);
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "km/h";
-    ParameterIDsS_Title[i][Language_EN] = "Surface Wind Speed";
-    ParameterIDsS_Title[i][Language_FR] = "Vitesse du vent à la surface";
-    ParameterIDsS_Text[i] = "WIND-SFC";
-    ParameterIDsS_GRIB2_VAL[i][0] = "WIND_TGL_10"; // m/sec
-    ParameterIDsS_GRIB2_VAL[i][1] = "WIND_TGL_40"; // m/sec
-    ParameterIDsS_GRIB2_VAL[i][2] = "WIND_TGL_80"; // m/sec
-    ParameterIDsS_GRIB2_VAL[i][3] = "WIND_TGL_120"; // m/sec
-    ParameterIDsS_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "km/h";
+    LAYERS_Title[i][Language_EN] = "Surface Wind Speed";
+    LAYERS_Title[i][Language_FR] = "Vitesse du vent à la surface";
+    LAYERS_Text[i] = "WIND-SFC";
+    LAYERS_GRIB2_VAL[i][0] = "WIND_TGL_10"; // m/sec
+    LAYERS_GRIB2_VAL[i][1] = "WIND_TGL_40"; // m/sec
+    LAYERS_GRIB2_VAL[i][2] = "WIND_TGL_80"; // m/sec
+    LAYERS_GRIB2_VAL[i][3] = "WIND_TGL_120"; // m/sec
+    LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.precipitation_A;
@@ -7530,16 +7535,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 4.0;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "mm";
-    ParameterIDsS_Title[i][Language_EN] = "Surface Accumulated Precipitation";
-    ParameterIDsS_Title[i][Language_FR] = "Précipitations accumulées à la surface";
-    ParameterIDsS_Text[i] = "APCP-SFC";
-    ParameterIDsS_GRIB2_VAL[i][0] = "APCP_SFC_0"; // kg/m²
-    ParameterIDsS_GRIB2_VAL[i][1] = "APCP_SFC_0"; // kg/m²
-    ParameterIDsS_GRIB2_VAL[i][2] = "APCP_SFC_0"; // kg/m²
-    ParameterIDsS_GRIB2_VAL[i][3] = "APCP_SFC_0"; // kg/m²
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "mm";
+    LAYERS_Title[i][Language_EN] = "Surface Accumulated Precipitation";
+    LAYERS_Title[i][Language_FR] = "Précipitations accumulées à la surface";
+    LAYERS_Text[i] = "APCP-SFC";
+    LAYERS_GRIB2_VAL[i][0] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][1] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][2] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_VAL[i][3] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.relhum;
@@ -7547,16 +7552,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 1.0;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "%";
-    ParameterIDsS_Title[i][Language_EN] = "Surface Relative Humidity";
-    ParameterIDsS_Title[i][Language_FR] = "Humidité relative à la surface";
-    ParameterIDsS_Text[i] = "RELH-SFC";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "%";
+    LAYERS_Title[i][Language_EN] = "Surface Relative Humidity";
+    LAYERS_Title[i][Language_FR] = "Humidité relative à la surface";
+    LAYERS_Text[i] = "RELH-SFC";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.drybulb;
@@ -7564,16 +7569,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = (2.5 * pow(2, 0.5));
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 1;
-    ParameterIDsS_Unit[i] = "°C";
-    ParameterIDsS_Title[i][Language_EN] = "Surface Air Temperature";
-    ParameterIDsS_Title[i][Language_FR] = "Température de l'air à la surface";
-    ParameterIDsS_Text[i] = "TMP-SFC";
-    ParameterIDsS_GRIB2_VAL[i][0] = "TMP_TGL_2"; // Kelvin
-    ParameterIDsS_GRIB2_VAL[i][1] = "TMP_TGL_40"; // Kelvin
-    ParameterIDsS_GRIB2_VAL[i][2] = "TMP_TGL_80"; // Kelvin
-    ParameterIDsS_GRIB2_VAL[i][3] = "TMP_TGL_120"; // Kelvin
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = -273.15; // °K > °C
+    LAYERS_Unit[i] = "°C";
+    LAYERS_Title[i][Language_EN] = "Surface Air Temperature";
+    LAYERS_Title[i][Language_FR] = "Température de l'air à la surface";
+    LAYERS_Text[i] = "TMP-SFC";
+    LAYERS_GRIB2_VAL[i][0] = "TMP_TGL_2"; // Kelvin
+    LAYERS_GRIB2_VAL[i][1] = "TMP_TGL_40"; // Kelvin
+    LAYERS_GRIB2_VAL[i][2] = "TMP_TGL_80"; // Kelvin
+    LAYERS_GRIB2_VAL[i][3] = "TMP_TGL_120"; // Kelvin
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = -273.15; // °K > °C
   }
 
   i = ParameterIDs.dirnorrad;
@@ -7581,16 +7586,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 0.1;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "W/m²";
-    ParameterIDsS_Title[i][Language_EN] = "Direct normal radiation";
-    ParameterIDsS_Title[i][Language_FR] = "Rayonnement direct normal";
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "W/m²";
+    LAYERS_Title[i][Language_EN] = "Direct normal radiation";
+    LAYERS_Title[i][Language_FR] = "Rayonnement direct normal";
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.difhorrad;
@@ -7598,16 +7603,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 0.1;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "W/m²";
-    ParameterIDsS_Title[i][Language_EN] = "Diffuse horizontal radiation";
-    ParameterIDsS_Title[i][Language_FR] = "Diffus rayonnement horizontal";
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "W/m²";
+    LAYERS_Title[i][Language_EN] = "Diffuse horizontal radiation";
+    LAYERS_Title[i][Language_FR] = "Diffus rayonnement horizontal";
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.glohorrad;
@@ -7615,16 +7620,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 0.1;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "W/m²";
-    ParameterIDsS_Title[i][Language_EN] = "Global horizontal radiation";
-    ParameterIDsS_Title[i][Language_FR] = "Rayonnement global horizontal";
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "W/m²";
+    LAYERS_Title[i][Language_EN] = "Global horizontal radiation";
+    LAYERS_Title[i][Language_FR] = "Rayonnement global horizontal";
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.developed;
@@ -7632,16 +7637,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 1;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "";
-    ParameterIDsS_Title[i][Language_EN] = "";
-    ParameterIDsS_Title[i][Language_FR] = "";
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "";
+    LAYERS_Title[i][Language_EN] = "";
+    LAYERS_Title[i][Language_FR] = "";
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.direffect;
@@ -7649,18 +7654,18 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[ParameterIDs.direffect] = 0.0025;
     STUDY.V_offset[ParameterIDs.direffect] = 0;
     STUDY.V_belowLine[ParameterIDs.direffect] = 1;
-    ParameterIDsS_Unit[i] = "W°C/m²";
-    //ParameterIDsS_Title[i][Language_EN] = "Direct normal effect (based on 18°C)";
-    ParameterIDsS_Title[i][Language_EN] = "Direct normal effect <18°C<";
-    //ParameterIDsS_Title[i][Language_FR] = "Effet direct normal (basé sur 18°C)";
-    ParameterIDsS_Title[i][Language_FR] = "Effet direct normal <18°C<";
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "W°C/m²";
+    //LAYERS_Title[i][Language_EN] = "Direct normal effect (based on 18°C)";
+    LAYERS_Title[i][Language_EN] = "Direct normal effect <18°C<";
+    //LAYERS_Title[i][Language_FR] = "Effet direct normal (basé sur 18°C)";
+    LAYERS_Title[i][Language_FR] = "Effet direct normal <18°C<";
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.difeffect;
@@ -7668,18 +7673,18 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 0.0025;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 1;
-    ParameterIDsS_Unit[i] = "W°C/m²";
-    //ParameterIDsS_Title[i][Language_EN] = "Diffuse normal effect (based on 18°C)";
-    ParameterIDsS_Title[i][Language_EN] = "Diffuse normal effect <18°C<";
-    //ParameterIDsS_Title[i][Language_FR] = "Effet diffus normal (basé sur 18°C)";
-    ParameterIDsS_Title[i][Language_FR] = "Effet diffus normal <18°C<";
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "W°C/m²";
+    //LAYERS_Title[i][Language_EN] = "Diffuse normal effect (based on 18°C)";
+    LAYERS_Title[i][Language_EN] = "Diffuse normal effect <18°C<";
+    //LAYERS_Title[i][Language_FR] = "Effet diffus normal (basé sur 18°C)";
+    LAYERS_Title[i][Language_FR] = "Effet diffus normal <18°C<";
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.cloudcover;
@@ -7687,16 +7692,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 10.0;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "tenth";
-    ParameterIDsS_Title[i][Language_EN] = "Total Cloud Cover";
-    ParameterIDsS_Title[i][Language_FR] = "Couvert nuageux total";
-    ParameterIDsS_Text[i] = "TCDC";
-    ParameterIDsS_GRIB2_VAL[i][0] = "TCDC_SFC_0"; // percent
-    ParameterIDsS_GRIB2_VAL[i][1] = "TCDC_SFC_0"; // percent
-    ParameterIDsS_GRIB2_VAL[i][2] = "TCDC_SFC_0"; // percent
-    ParameterIDsS_GRIB2_VAL[i][3] = "TCDC_SFC_0"; // percent
-    ParameterIDsS_GRIB2_MUL[i] = 0.1; // percent >> tenth    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "tenth";
+    LAYERS_Title[i][Language_EN] = "Total Cloud Cover";
+    LAYERS_Title[i][Language_FR] = "Couvert nuageux total";
+    LAYERS_Text[i] = "TCDC";
+    LAYERS_GRIB2_VAL[i][0] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][1] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][2] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_VAL[i][3] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_MUL[i] = 0.1; // percent >> tenth    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.ceilingsky;
@@ -7704,16 +7709,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 0.01;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "m";
-    ParameterIDsS_Title[i][Language_EN] = "Ceiling height";
-    ParameterIDsS_Title[i][Language_FR] = "Hauteur sous plafond";  
-    ParameterIDsS_Text[i] = "";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "m";
+    LAYERS_Title[i][Language_EN] = "Ceiling height";
+    LAYERS_Title[i][Language_FR] = "Hauteur sous plafond";  
+    LAYERS_Text[i] = "";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.pressure;
@@ -7721,16 +7726,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 2.0;
     STUDY.V_offset[i] = -1000;
     STUDY.V_belowLine[i] = 1;
-    ParameterIDsS_Unit[i] = "hPa";
-    ParameterIDsS_Title[i][Language_EN] = "Mean Sea level Pressure";
-    ParameterIDsS_Title[i][Language_FR] = "Pression moyenne au niveau de la mer";
-    ParameterIDsS_Text[i] = "MSLP";
-    ParameterIDsS_GRIB2_VAL[i][0] = "PRMSL_MSL_0";
-    ParameterIDsS_GRIB2_VAL[i][1] = "PRMSL_MSL_0";
-    ParameterIDsS_GRIB2_VAL[i][2] = "PRMSL_MSL_0";
-    ParameterIDsS_GRIB2_VAL[i][3] = "PRMSL_MSL_0";
-    ParameterIDsS_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "hPa";
+    LAYERS_Title[i][Language_EN] = "Mean Sea level Pressure";
+    LAYERS_Title[i][Language_FR] = "Pression moyenne au niveau de la mer";
+    LAYERS_Text[i] = "MSLP";
+    LAYERS_GRIB2_VAL[i][0] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][1] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][2] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_VAL[i][3] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.heightp500hPa;
@@ -7738,16 +7743,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 1;
     STUDY.V_offset[i] = -500;
     STUDY.V_belowLine[i] = 1;
-    ParameterIDsS_Unit[i] = "dam";
-    ParameterIDsS_Title[i][Language_EN] = "Geopotential at 500 hPa";
-    ParameterIDsS_Title[i][Language_FR] = "Géopotentiel à 500 hPa";
-    ParameterIDsS_Text[i] = "HGT-500HPA";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "dam";
+    LAYERS_Title[i][Language_EN] = "Geopotential at 500 hPa";
+    LAYERS_Title[i][Language_FR] = "Géopotentiel à 500 hPa";
+    LAYERS_Text[i] = "HGT-500HPA";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.thicknesses_1000_500;
@@ -7755,18 +7760,18 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 1;
     STUDY.V_offset[i] = -500;
     STUDY.V_belowLine[i] = 1;
-    ParameterIDsS_Unit[i] = "dam";
-    //ParameterIDsS_Title[i][Language_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
-    ParameterIDsS_Title[i][Language_EN] = "Geopotentiel Difference";
-    //ParameterIDsS_Title[i][Language_FR] = "Épaisseurs (différence de géopotentiel) entre 1000 et 500 hPa";
-    ParameterIDsS_Title[i][Language_FR] = "Différence de géopotentiel";
-    ParameterIDsS_Text[i] = "ParameterIDs-1000-500HPA";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "dam";
+    //LAYERS_Title[i][Language_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
+    LAYERS_Title[i][Language_EN] = "Geopotentiel Difference";
+    //LAYERS_Title[i][Language_FR] = "Épaisseurs (différence de géopotentiel) entre 1000 et 500 hPa";
+    LAYERS_Title[i][Language_FR] = "Différence de géopotentiel";
+    LAYERS_Text[i] = "PARAMETERS-1000-500HPA";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = ParameterIDs.windspd200hPa;
@@ -7774,16 +7779,16 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY.V_scale[i] = 0.5;
     STUDY.V_offset[i] = 0;
     STUDY.V_belowLine[i] = 0;
-    ParameterIDsS_Unit[i] = "knots";
-    ParameterIDsS_Title[i][Language_EN] = "Wind Speed at 200 hPa";
-    ParameterIDsS_Title[i][Language_FR] = "Vitesse du vent à 200 hPa";  
-    ParameterIDsS_Text[i] = "WIND-200HPA";
-    ParameterIDsS_GRIB2_VAL[i][0] = "";
-    ParameterIDsS_GRIB2_VAL[i][1] = "";
-    ParameterIDsS_GRIB2_VAL[i][2] = "";
-    ParameterIDsS_GRIB2_VAL[i][3] = "";
-    ParameterIDsS_GRIB2_MUL[i] = 1;    
-    ParameterIDsS_GRIB2_ADD[i] = 0;
+    LAYERS_Unit[i] = "knots";
+    LAYERS_Title[i][Language_EN] = "Wind Speed at 200 hPa";
+    LAYERS_Title[i][Language_FR] = "Vitesse du vent à 200 hPa";  
+    LAYERS_Text[i] = "WIND-200HPA";
+    LAYERS_GRIB2_VAL[i][0] = "";
+    LAYERS_GRIB2_VAL[i][1] = "";
+    LAYERS_GRIB2_VAL[i][2] = "";
+    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 }
 
@@ -37923,7 +37928,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
   
       int h = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
   
-      if ((ParameterIDsS_GRIB2_VAL[ParameterIDs.winddir][h].substring(0, 4)).equals("UGRD") && (ParameterIDsS_GRIB2_VAL[ParameterIDs.windspd][h].substring(0, 4)).equals("VGRD")) {
+      if ((LAYERS_GRIB2_VAL[ParameterIDs.winddir][h].substring(0, 4)).equals("UGRD") && (LAYERS_GRIB2_VAL[ParameterIDs.windspd][h].substring(0, 4)).equals("VGRD")) {
   
         for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
           GRIB2_Hour = k;    
@@ -38045,15 +38050,15 @@ String getGrib2Folder (int s) {
 String getGrib2Filename (int k, int l, int h) {
   String return_txt = "";
 
-  String F_L = ParameterIDsS_GRIB2_VAL[l][h];
+  String F_L = LAYERS_GRIB2_VAL[l][h];
 
   if (l == ParameterIDs.winddir) {
     if ((GRIB2_Domains[GRIB2_DomainSelection][h].equals("GEPS")) || (GRIB2_Domains[GRIB2_DomainSelection][h].equals("REPS"))) {
       F_L = F_L.replace("WDIR", "UGRD");
-      ParameterIDsS_GRIB2_VAL[l][h] = F_L;
+      LAYERS_GRIB2_VAL[l][h] = F_L;
     } else {
       F_L = F_L.replace("UGRD", "WDIR");
-      ParameterIDsS_GRIB2_VAL[l][h] = F_L;
+      LAYERS_GRIB2_VAL[l][h] = F_L;
     }
   }
 
@@ -38061,12 +38066,12 @@ String getGrib2Filename (int k, int l, int h) {
     if ((GRIB2_Domains[GRIB2_DomainSelection][h].equals("GEPS")) || (GRIB2_Domains[GRIB2_DomainSelection][h].equals("REPS"))) {
 
       F_L = F_L.replace("WIND", "VGRD");
-      ParameterIDsS_GRIB2_VAL[l][h] = F_L;
-      ParameterIDsS_GRIB2_MUL[l] = 1; // that is for no unit conversion!
+      LAYERS_GRIB2_VAL[l][h] = F_L;
+      LAYERS_GRIB2_MUL[l] = 1; // that is for no unit conversion!
     } else {
       F_L = F_L.replace("VGRD", "WIND");
-      ParameterIDsS_GRIB2_VAL[l][h] = F_L;  
-      ParameterIDsS_GRIB2_MUL[l] = 3.6; // m/s > Km/h
+      LAYERS_GRIB2_VAL[l][h] = F_L;  
+      LAYERS_GRIB2_MUL[l] = 3.6; // m/s > Km/h
     }
   }
 
@@ -38084,7 +38089,7 @@ String getGrib2Filename (int k, int l, int h) {
 
 
 String getWgrib2Filename_MultiplePoints (int k, int l, int h, int part) {
-  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + ParameterIDsS_GRIB2_VAL[l][h] + "_" + nf(STATION.getLongitude(), 0, 4) + "X" + nf(STATION.getLatitude(), 0, 4) + "_part" + nf(part, 3) + ".txt");
+  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(STATION.getLongitude(), 0, 4) + "X" + nf(STATION.getLatitude(), 0, 4) + "_part" + nf(part, 3) + ".txt");
 }
 
 
@@ -38163,10 +38168,10 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
     }
 
     newChild1 = my_xml.addChild("forecast_element");
-    newChild1.setString("code", ParameterIDsS_GRIB2_VAL[l][h]); 
-    newChild1.setString("unit", ParameterIDsS_Unit[l]); 
-    newChild1.setString("title_english", ParameterIDsS_Title[l][Language_EN]);
-    newChild1.setString("titre_francais", ParameterIDsS_Title[l][Language_FR]);
+    newChild1.setString("code", LAYERS_GRIB2_VAL[l][h]); 
+    newChild1.setString("unit", LAYERS_Unit[l]); 
+    newChild1.setString("title_english", LAYERS_Title[l][Language_EN]);
+    newChild1.setString("titre_francais", LAYERS_Title[l][Language_FR]);
 
     newChild1 = my_xml.addChild("point_description");
 
@@ -38306,8 +38311,8 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 
 
-                v *= ParameterIDsS_GRIB2_MUL[l];
-                v += ParameterIDsS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
+                v *= LAYERS_GRIB2_MUL[l];
+                v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
 
                 if (build_xml == 1) {
                   newChild3 = newChild2.addChild("point");
@@ -38330,7 +38335,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
     THE_XML_filename += "/" + nf(GRIB2_Year, 4) + "_" + nf(GRIB2_Month, 2) + "_" + nf(GRIB2_Day, 2) + "_run" + nf(GRIB2_ModelRun, 2);
     THE_XML_filename += "/" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
     THE_XML_filename += "/fhr" + nf(k, 3);
-    THE_XML_filename += "_" + ParameterIDsS_GRIB2_VAL[l][h];
+    THE_XML_filename += "_" + LAYERS_GRIB2_VAL[l][h];
     THE_XML_filename += ".xml";
     saveXML(my_xml, THE_XML_filename);
   }
@@ -46782,7 +46787,7 @@ int LayersID_in_Bar_a = 8;
 
   for (int i = 1; i < ParameterIDs.length; i++) {
 
-    UI_BAR_a_Items[LayersID_in_Bar_a][i] = ParameterIDsS_Title[i - 1][Language_EN];
+    UI_BAR_a_Items[LayersID_in_Bar_a][i] = LAYERS_Title[i - 1][Language_EN];
   }
 
   UI_BAR_a_Items[LayersID_in_Bar_a][ParameterIDs.length + 0] = "12h accumulated Precipitation";
@@ -50298,12 +50303,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("ParameterIDsS_Unit");
-    int ni = ParameterIDsS_Unit.length;
+    newChild1 = my_xml.addChild("LAYERS_Unit");
+    int ni = LAYERS_Unit.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += ParameterIDsS_Unit[i];
+      lineSTR += LAYERS_Unit[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -50311,12 +50316,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("ParameterIDsS_Text");
-    int ni = ParameterIDsS_Text.length;
+    newChild1 = my_xml.addChild("LAYERS_Text");
+    int ni = LAYERS_Text.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += ParameterIDsS_Text[i];
+      lineSTR += LAYERS_Text[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -50324,12 +50329,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("ParameterIDsS_GRIB2_MUL");
-    int ni = ParameterIDsS_GRIB2_MUL.length;
+    newChild1 = my_xml.addChild("LAYERS_GRIB2_MUL");
+    int ni = LAYERS_GRIB2_MUL.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(ParameterIDsS_GRIB2_MUL[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(LAYERS_GRIB2_MUL[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -50337,12 +50342,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("ParameterIDsS_GRIB2_ADD");
-    int ni = ParameterIDsS_GRIB2_ADD.length;
+    newChild1 = my_xml.addChild("LAYERS_GRIB2_ADD");
+    int ni = LAYERS_GRIB2_ADD.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(ParameterIDsS_GRIB2_ADD[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(LAYERS_GRIB2_ADD[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -51488,47 +51493,47 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
 
-    children0 = FileAll.getChildren("ParameterIDsS_Unit");
+    children0 = FileAll.getChildren("LAYERS_Unit");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      ParameterIDsS_Unit = new String [ni];
+      LAYERS_Unit = new String [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        ParameterIDsS_Unit[i] = parts[i];
+        LAYERS_Unit[i] = parts[i];
       }
     }
 
-    children0 = FileAll.getChildren("ParameterIDsS_Text");
+    children0 = FileAll.getChildren("LAYERS_Text");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      ParameterIDsS_Text = new String [ni];
+      LAYERS_Text = new String [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        ParameterIDsS_Text[i] = parts[i];
+        LAYERS_Text[i] = parts[i];
       }
     }
 
-    children0 = FileAll.getChildren("ParameterIDsS_GRIB2_MUL");
+    children0 = FileAll.getChildren("LAYERS_GRIB2_MUL");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      ParameterIDsS_GRIB2_MUL = new float [ni];
+      LAYERS_GRIB2_MUL = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        ParameterIDsS_GRIB2_MUL[i] = float(parts[i]);
+        LAYERS_GRIB2_MUL[i] = float(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("ParameterIDsS_GRIB2_ADD");
+    children0 = FileAll.getChildren("LAYERS_GRIB2_ADD");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      ParameterIDsS_GRIB2_ADD = new float [ni];
+      LAYERS_GRIB2_ADD = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        ParameterIDsS_GRIB2_ADD[i] = float(parts[i]);
+        LAYERS_GRIB2_ADD[i] = float(parts[i]);
       }
     }
 
@@ -54987,7 +54992,7 @@ String getReference_CurrentDataSource () {
     return_value = STATION.getFilename_TMYEPW() + ".epw";
   }    
   else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    return_value = nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + ParameterIDsS_Text[STUDY.CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
+    return_value = nf(TIME_Year, 4) + nf(TIME_Month, 2) + nf(TIME_Day, 2) + nf(TIME_Hour, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + LAYERS_Text[STUDY.CurrentLayer] + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
   }
   else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
     return_value = "Environment and Climate Change Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/";
@@ -55417,9 +55422,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 0.5;
               STUDY.V_offset[ParameterIDs.developed] = 0;
               STUDY.V_belowLine[ParameterIDs.developed] = 1;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "KW";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Direct radiation on surfaces with material #" + String.valueOf(Materials_Selection);
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "KW";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Direct radiation on surfaces with material #" + String.valueOf(Materials_Selection);
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             }         
   
   
@@ -55439,9 +55444,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 0.1;
               STUDY.V_offset[ParameterIDs.developed] = 0;
               STUDY.V_belowLine[ParameterIDs.developed] = 0;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "W/m²";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "W/m²";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             } 
   
             if (Develop_Option == DEV_OP_02) {
@@ -55459,9 +55464,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 2.5;
               STUDY.V_offset[ParameterIDs.developed] = -40;
               STUDY.V_belowLine[ParameterIDs.developed] = 1;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "kWh/m²";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Accumulated radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "kWh/m²";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Accumulated radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             } 
   
             if (Develop_Option == DEV_OP_03) {
@@ -55478,9 +55483,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 0.1;
               STUDY.V_offset[ParameterIDs.developed] = 0;
               STUDY.V_belowLine[ParameterIDs.developed] = 0;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "W/m²";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Radiation on solar tracker";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "W/m²";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Radiation on solar tracker";
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             }         
   
             if (Develop_Option == DEV_OP_04) {
@@ -55497,9 +55502,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 2.5;
               STUDY.V_offset[ParameterIDs.developed] = -40;
               STUDY.V_belowLine[ParameterIDs.developed] = 1;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "kWh/m²";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Accumulated radiation on solar tracker";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "kWh/m²";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Accumulated radiation on solar tracker";
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             } 
   
   
@@ -55514,9 +55519,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 1.0;
               STUDY.V_offset[ParameterIDs.developed] = 0;
               STUDY.V_belowLine[ParameterIDs.developed] = -1;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "°C";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Accumulated degree day (based on 18°C)";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "°C";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Accumulated degree day (based on 18°C)";
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             } 
   
             if (Develop_Option == DEV_OP_06) {
@@ -55573,9 +55578,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = STUDY.V_scale[STUDY.DevelopLayer];
               STUDY.V_offset[ParameterIDs.developed] = STUDY.V_offset[STUDY.DevelopLayer];
               STUDY.V_belowLine[ParameterIDs.developed] = STUDY.V_belowLine[STUDY.DevelopLayer];
-              ParameterIDsS_Unit[ParameterIDs.developed] = ParameterIDsS_Unit[STUDY.DevelopLayer];
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour PASSIVE trend of " + ParameterIDsS_Title[STUDY.DevelopLayer][Language_EN];
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour PASSIVE trend of " + ParameterIDsS_Title[STUDY.DevelopLayer][Language_FR]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = LAYERS_Unit[STUDY.DevelopLayer];
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour PASSIVE trend of " + LAYERS_Title[STUDY.DevelopLayer][Language_EN];
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour PASSIVE trend of " + LAYERS_Title[STUDY.DevelopLayer][Language_FR]; // ??
             }     
   
   
@@ -55635,9 +55640,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = STUDY.V_scale[STUDY.DevelopLayer];
               STUDY.V_offset[ParameterIDs.developed] = STUDY.V_offset[STUDY.DevelopLayer];
               STUDY.V_belowLine[ParameterIDs.developed] = STUDY.V_belowLine[STUDY.DevelopLayer];
-              ParameterIDsS_Unit[ParameterIDs.developed] = ParameterIDsS_Unit[STUDY.DevelopLayer];
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour NORMAL trend of " + ParameterIDsS_Title[STUDY.DevelopLayer][Language_EN];
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour NORMAL trend of " + ParameterIDsS_Title[STUDY.DevelopLayer][Language_FR]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = LAYERS_Unit[STUDY.DevelopLayer];
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour NORMAL trend of " + LAYERS_Title[STUDY.DevelopLayer][Language_EN];
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour NORMAL trend of " + LAYERS_Title[STUDY.DevelopLayer][Language_FR]; // ??
             }           
   
             if (Develop_Option == DEV_OP_08) {
@@ -55694,9 +55699,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = STUDY.V_scale[STUDY.DevelopLayer];
               STUDY.V_offset[ParameterIDs.developed] = STUDY.V_offset[STUDY.DevelopLayer];
               STUDY.V_belowLine[ParameterIDs.developed] = STUDY.V_belowLine[STUDY.DevelopLayer];
-              ParameterIDsS_Unit[ParameterIDs.developed] = ParameterIDsS_Unit[STUDY.DevelopLayer];
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour ACTIVE trend of " + ParameterIDsS_Title[STUDY.DevelopLayer][Language_EN];
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour ACTIVE trend of " + ParameterIDsS_Title[STUDY.DevelopLayer][Language_FR]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = LAYERS_Unit[STUDY.DevelopLayer];
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour ACTIVE trend of " + LAYERS_Title[STUDY.DevelopLayer][Language_EN];
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour ACTIVE trend of " + LAYERS_Title[STUDY.DevelopLayer][Language_FR]; // ??
             } 
   
   
@@ -55711,9 +55716,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 2.5;
               STUDY.V_offset[ParameterIDs.developed] = 0; //-20.0 / (1.0 * STUDY.LevelPix); // so that we can have two views on probabilites above and below zero.
               STUDY.V_belowLine[ParameterIDs.developed] = 0; //1;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "mm/12hours";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "12-hour Surface Accumulated Precipitation";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "mm/12hours";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "12-hour Surface Accumulated Precipitation";
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             } 
   
             if (Develop_Option == DEV_OP_10) {
@@ -55727,9 +55732,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 2.0; //4.0;
               STUDY.V_offset[ParameterIDs.developed] = 0; 
               STUDY.V_belowLine[ParameterIDs.developed] = 0; //1;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "mm/h";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Hourly Surface Precipitation (interpolated)";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "mm/h";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Hourly Surface Precipitation (interpolated)";
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             } 
   
   
@@ -55745,9 +55750,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               STUDY.V_scale[ParameterIDs.developed] = 0.05;
               STUDY.V_offset[ParameterIDs.developed] = 0;
               STUDY.V_belowLine[ParameterIDs.developed] = 0;
-              ParameterIDsS_Unit[ParameterIDs.developed] = "W/m²";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_EN] = "Wind power";
-              ParameterIDsS_Title[ParameterIDs.developed][Language_FR] = ParameterIDsS_Title[ParameterIDs.developed][Language_EN]; // ??
+              LAYERS_Unit[ParameterIDs.developed] = "W/m²";
+              LAYERS_Title[ParameterIDs.developed][Language_EN] = "Wind power";
+              LAYERS_Title[ParameterIDs.developed][Language_FR] = LAYERS_Title[ParameterIDs.developed][Language_EN]; // ??
             }    
   
   
@@ -55765,7 +55770,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 STUDY.V_scale[ParameterIDs.developed] = 10;
                 STUDY.V_offset[ParameterIDs.developed] = 0;
                 STUDY.V_belowLine[ParameterIDs.developed] = 0;
-                ParameterIDsS_Unit[ParameterIDs.developed] += "/day";
+                LAYERS_Unit[ParameterIDs.developed] += "/day";
   
                 _valuesSUM[now_k] = 0;
               }
@@ -55778,7 +55783,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 STUDY.V_scale[ParameterIDs.developed] = 10;
                 STUDY.V_offset[ParameterIDs.developed] = 0;
                 STUDY.V_belowLine[ParameterIDs.developed] = 0;
-                ParameterIDsS_Unit[ParameterIDs.developed] += "/12hours";
+                LAYERS_Unit[ParameterIDs.developed] += "/12hours";
   
                 _valuesSUM[now_k] = 0;
               }   
@@ -55791,7 +55796,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 STUDY.V_scale[ParameterIDs.developed] = 10;
                 STUDY.V_offset[ParameterIDs.developed] = 0;
                 STUDY.V_belowLine[ParameterIDs.developed] = 0;
-                ParameterIDsS_Unit[ParameterIDs.developed] += "/6hours";
+                LAYERS_Unit[ParameterIDs.developed] += "/6hours";
   
                 _valuesSUM[now_k] = 0;
               }
