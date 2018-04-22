@@ -2913,8 +2913,6 @@ class solarchvision_WIN3D {
       }
     }
   }
-
-
 }
 
 class solarchvision_WORLD {
@@ -3757,7 +3755,7 @@ class solarchvision_STUDY {
   float rect_scale = 0.005;
   float rect_offset_x = 0.5;
   
-  int impact_summary = 0;
+  boolean impact_summary = false;
   
   int ImpactLayer = 1; // 4 = Median
   int PlotImpacts = 4; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
@@ -3934,7 +3932,7 @@ class solarchvision_STUDY {
           break;
   
         case ';': 
-          this.impact_summary = (this.impact_summary + 1) % 2;
+          this.impact_summary = !(this.impact_summary);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
@@ -10581,7 +10579,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     WindRose_Image[0] = total_WIND_graphics;          
 
     for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
-      if ((j != -1) || (STUDY.impact_summary == 1)) {
+      if ((j != -1) || (STUDY.impact_summary)) {
         STUDY.graphics.strokeWeight(STUDY.T_scale * 0);
         STUDY.graphics.stroke(223);
         STUDY.graphics.fill(223); 
@@ -10599,7 +10597,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     STUDY.drawPositionGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
-    if (STUDY.impact_summary == 1) {
+    if (STUDY.impact_summary) {
       int j = -1; // << to put the summary graph before the daily graphs
 
       int keep_STUDY_j_Start = STUDY.j_Start;
@@ -10765,12 +10763,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
           STUDY.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY.U_scale);
         }
-
-        //----------------------
-        if (Camera_Variation == 0) STUDY.impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        //----------------------
-
-        if (STUDY.impact_summary == 1) { 
+        
+        ////////////////////////////
+        STUDY.impact_summary = true; 
+        ////////////////////////////
+        
+        if (STUDY.impact_summary) { 
           int j = -1; // << to put the summary graph before the daily graphs
 
           STUDY.graphics.strokeWeight(STUDY.T_scale * 0);
@@ -11142,7 +11140,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-      if (STUDY.impact_summary == 1) { 
+      if (STUDY.impact_summary) { 
 
         int j = -1; // << to put the summary graph before the daily graphs
 
@@ -49556,7 +49554,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("STUDY.rect_scale", STUDY.rect_scale);
   newChild1.setFloat("STUDY.rect_offset_x", STUDY.rect_offset_x);
   newChild1.setInt("CurrentDataSource", CurrentDataSource);
-  newChild1.setInt("STUDY.impact_summary", STUDY.impact_summary);
+  //newChild1.setBoolean("STUDY.impact_summary", STUDY.impact_summary);
   newChild1.setInt("STUDY.ImpactLayer", STUDY.ImpactLayer);
   newChild1.setInt("STUDY.PlotImpacts", STUDY.PlotImpacts);
   //newChild1.setBoolean("STUDY.Impacts_update", STUDY.Impacts_update);
@@ -50790,7 +50788,7 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.rect_scale = children0[L].getFloat("STUDY.rect_scale");
       STUDY.rect_offset_x = children0[L].getFloat("STUDY.rect_offset_x");
       CurrentDataSource = children0[L].getInt("CurrentDataSource");
-      STUDY.impact_summary = children0[L].getInt("STUDY.impact_summary");
+      //STUDY.impact_summary = children0[L].getBoolean("STUDY.impact_summary");
       STUDY.ImpactLayer = children0[L].getInt("STUDY.ImpactLayer");
       STUDY.PlotImpacts = children0[L].getInt("STUDY.PlotImpacts");
       //STUDY.Impacts_update = children0[L].getBoolean("STUDY.Impacts_update");
