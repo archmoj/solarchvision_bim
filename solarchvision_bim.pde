@@ -264,7 +264,7 @@ float CurrentLayer_GRIB2_ADD = 0.0;
 
  
 
-void changeLayerTo (int new_id) {
+void changeCurrentLayerTo (int new_id) {
  
   int pre_id = CurrentLayer_id;
 
@@ -5477,7 +5477,7 @@ class solarchvision_STUDY {
     if (this.plotSetup == 1) {
   
       DevelopLayer_id = CurrentLayer_id;
-      changeLayerTo(LAYER_developed.id); 
+      changeCurrentLayerTo(LAYER_developed.id); 
   
       Develop_Option = DEV_OP_01;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
@@ -5496,7 +5496,7 @@ class solarchvision_STUDY {
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
       Develop_Option = pre_Develop_Option;
-      changeLayerTo(pre_STUDY_CurrentLayer_id);
+      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
     }  
   
   
@@ -5507,7 +5507,7 @@ class solarchvision_STUDY {
         this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
         DevelopLayer_id = CurrentLayer_id;
-        changeLayerTo(LAYER_developed.id);
+        changeCurrentLayerTo(LAYER_developed.id);
   
         Develop_Option = DEV_OP_06; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
@@ -5521,66 +5521,66 @@ class solarchvision_STUDY {
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
         this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-        changeLayerTo(pre_STUDY_CurrentLayer_id);
+        changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
       }
     }  
   
   
     if (this.plotSetup == 3) {
   
-      changeLayerTo(LAYER_windspd200hPa.id);
+      changeCurrentLayerTo(LAYER_windspd200hPa.id);
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_pressure.id);
+      changeCurrentLayerTo(LAYER_pressure.id);
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_heightp500hPa.id);
+      changeCurrentLayerTo(LAYER_heightp500hPa.id);
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_thicknesses_1000_500.id);
+      changeCurrentLayerTo(LAYER_thicknesses_1000_500.id);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(pre_STUDY_CurrentLayer_id);
+      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
     }
   
   
     if (this.plotSetup == 4) {
   
-      changeLayerTo(LAYER_windspd.id);
+      changeCurrentLayerTo(LAYER_windspd.id);
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_precipitation.id);
+      changeCurrentLayerTo(LAYER_precipitation.id);
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_relhum.id);
+      changeCurrentLayerTo(LAYER_relhum.id);
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_drybulb.id);
+      changeCurrentLayerTo(LAYER_drybulb.id);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(pre_STUDY_CurrentLayer_id);
+      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
     }  
   
   
     if (this.plotSetup == 5) {
   
-      changeLayerTo(LAYER_dirnorrad.id);
+      changeCurrentLayerTo(LAYER_dirnorrad.id);
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_difhorrad.id);
+      changeCurrentLayerTo(LAYER_difhorrad.id);
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_developed.id);
+      changeCurrentLayerTo(LAYER_developed.id);
       Develop_Option = DEV_OP_01; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_developed.id);
+      changeCurrentLayerTo(LAYER_developed.id);
       Develop_Option = DEV_OP_03; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(pre_STUDY_CurrentLayer_id);
+      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
       Develop_Option = pre_Develop_Option;
     }
   
@@ -5721,17 +5721,17 @@ class solarchvision_STUDY {
         this.DisplayProbs = true;
       }
   
-      changeLayerTo(LAYER_windspd.id); 
+      changeCurrentLayerTo(LAYER_windspd.id); 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      //changeLayerTo(LAYER_precipitation.id); 
+      //changeCurrentLayerTo(LAYER_precipitation.id); 
       //DevelopLayer_id = CurrentLayer_id);
-      //changeLayerTo(LAYER_developed.id); 
+      //changeCurrentLayerTo(LAYER_developed.id); 
       //Develop_Option = DEV_OP_09;
       //SOLARCHVISION_postProcess_developDATA(CurrentDataSource); 
       //this.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_drybulb.id); 
+      changeCurrentLayerTo(LAYER_drybulb.id); 
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 1;
@@ -5750,13 +5750,13 @@ class solarchvision_STUDY {
         this.DisplayProbs = false;
       }
   
-      changeLayerTo(LAYER_dirnorrad.id); 
+      changeCurrentLayerTo(LAYER_dirnorrad.id); 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      //changeLayerTo(LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
+      //changeCurrentLayerTo(LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
       //this.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      changeLayerTo(LAYER_cloudcover.id);
+      changeCurrentLayerTo(LAYER_cloudcover.id);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 0;
@@ -6525,7 +6525,7 @@ class solarchvision_ROLLOUT {
   
         //STUDY.update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
   
-        changeLayerTo(int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
+        changeCurrentLayerTo(int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
         
         STUDY.V_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
   
@@ -7946,6 +7946,8 @@ void setup () {
   SKY2D_graphics = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
 
   SOLARCHVISION_loadDefaultFontStyle();  
+
+  changeCurrentLayerTo(8); // pointing to air temperature variable i.e. on the list of allLayers 
 
   frameRate(24);
 
@@ -34649,7 +34651,7 @@ void mouseClicked () {
 
                   if (UI_BAR_a_selected_child < numberOfLayers) {
 
-                    changeLayerTo(UI_BAR_a_selected_child - 1);
+                    changeCurrentLayerTo(UI_BAR_a_selected_child - 1);
 
                     DevelopLayer_id = CurrentLayer_id;
 
@@ -34660,7 +34662,7 @@ void mouseClicked () {
 
                       if (CurrentLayer_id == DevelopLayer_id) {
 
-                        changeLayerTo(LAYER_developed.id);
+                        changeCurrentLayerTo(LAYER_developed.id);
                       }
 
                       Develop_Option = UI_BAR_a_selected_child - numberOfLayers;
@@ -34672,7 +34674,7 @@ void mouseClicked () {
 
                       DevelopLayer_id = CurrentLayer_id;
 
-                      changeLayerTo(LAYER_developed.id); 
+                      changeCurrentLayerTo(LAYER_developed.id); 
 
                       Develop_Option = UI_BAR_a_selected_child - numberOfLayers;
 
@@ -50236,7 +50238,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Develop_AngleInclination = children0[L].getFloat("Develop_AngleInclination");
       Develop_AngleOrientation = children0[L].getFloat("Develop_AngleOrientation");
       
-      changeLayerTo(children0[L].getInt("CurrentLayer_id"));
+      changeCurrentLayerTo(children0[L].getInt("CurrentLayer_id"));
       
       DevelopLayer_id = children0[L].getInt("DevelopLayer_id");
       STUDY.T_scale = children0[L].getFloat("STUDY.T_scale");
