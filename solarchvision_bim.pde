@@ -3800,7 +3800,7 @@ class solarchvision_STUDY {
   
   color color_data_raws = color(0, 0, 0);
   
-  int Setup = 14; //4; //12; //13;
+  int plotSetup = 14; //4; //12; //13;
   
   float ImageScale = 1.0;
   
@@ -5146,7 +5146,7 @@ class solarchvision_STUDY {
   
   void plotSetup () {
   
-    if (this.Setup == 14) {
+    if (this.plotSetup == 14) {
   
       if (FrameVariation == 2) {
   
@@ -5188,7 +5188,7 @@ class solarchvision_STUDY {
   
     // -----------------------------------------------
   
-    if (this.Setup == -2) {
+    if (this.plotSetup == -2) {
       if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
         pre_TIME_Date = TIME_Date;
         int keep_TIME_BeginDay = TIME_BeginDay;
@@ -5226,7 +5226,7 @@ class solarchvision_STUDY {
     }
   
   
-    if (this.Setup == -1) {
+    if (this.plotSetup == -1) {
       pre_CurrentDataSource = CurrentDataSource;
   
       CurrentDataSource = dataID_ENSEMBLE_FORECAST; 
@@ -5262,14 +5262,14 @@ class solarchvision_STUDY {
     }
   
   
-    if (this.Setup == 0) {
+    if (this.plotSetup == 0) {
   
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
     }
   
   
-    if (this.Setup == 1) {
+    if (this.plotSetup == 1) {
   
       DevelopLayer_id = CurrentLayer_id;
       CurrentLayer_id = LAYER_developed.id; 
@@ -5295,7 +5295,7 @@ class solarchvision_STUDY {
     }  
   
   
-    if (this.Setup == 2) {
+    if (this.plotSetup == 2) {
       if (CurrentLayer_id != LAYER_developed.id) {
   
   
@@ -5321,7 +5321,7 @@ class solarchvision_STUDY {
     }  
   
   
-    if (this.Setup == 3) {
+    if (this.plotSetup == 3) {
   
       CurrentLayer_id = LAYER_windspd200hPa.id;
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
@@ -5339,7 +5339,7 @@ class solarchvision_STUDY {
     }
   
   
-    if (this.Setup == 4) {
+    if (this.plotSetup == 4) {
   
       CurrentLayer_id = LAYER_windspd.id;
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
@@ -5357,7 +5357,7 @@ class solarchvision_STUDY {
     }  
   
   
-    if (this.Setup == 5) {
+    if (this.plotSetup == 5) {
   
       CurrentLayer_id = LAYER_dirnorrad.id;
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
@@ -5380,7 +5380,7 @@ class solarchvision_STUDY {
     }
   
   
-    if (this.Setup == 6) {
+    if (this.plotSetup == 6) {
   
       this.skyScenario = 4;
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
@@ -5398,7 +5398,7 @@ class solarchvision_STUDY {
     }  
   
   
-    if (this.Setup == 7) {
+    if (this.plotSetup == 7) {
   
       this.DisplaySorted = false;
       this.DisplayNormals = false;
@@ -5422,7 +5422,7 @@ class solarchvision_STUDY {
     }
   
   
-    if (this.Setup == 8) {    
+    if (this.plotSetup == 8) {    
   
       this.DisplaySorted = false;
       this.DisplayNormals = false;
@@ -5444,7 +5444,7 @@ class solarchvision_STUDY {
     }
   
   
-    if (this.Setup == 9) {
+    if (this.plotSetup == 9) {
   
       this.DisplaySorted = false;
       this.DisplayNormals = false;
@@ -5465,7 +5465,7 @@ class solarchvision_STUDY {
       this.ImpactLayer = pre_STUDY_ImpactLayer;
     }
   
-    if (this.Setup == 10) {
+    if (this.plotSetup == 10) {
   
       this.DisplaySorted = false;
       this.DisplayNormals = false;
@@ -5486,7 +5486,7 @@ class solarchvision_STUDY {
       this.ImpactLayer = pre_STUDY_ImpactLayer;
     }
   
-    if (this.Setup == 11) {
+    if (this.plotSetup == 11) {
   
       this.DisplaySorted = false;
       this.DisplayNormals = false;
@@ -5507,7 +5507,7 @@ class solarchvision_STUDY {
       this.ImpactLayer = pre_STUDY_ImpactLayer;
     }  
   
-    if (this.Setup == 12) {
+    if (this.plotSetup == 12) {
   
       if (SOLARCHVISION_automated != 0) {
         this.DisplaySorted = false;
@@ -5536,7 +5536,7 @@ class solarchvision_STUDY {
       SOLARCHVISION_PlotIMPACT(0, -200 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
     }
   
-    if (this.Setup == 13) {
+    if (this.plotSetup == 13) {
   
       if (SOLARCHVISION_automated != 0) {
         this.DisplaySorted = true;
@@ -5545,7 +5545,7 @@ class solarchvision_STUDY {
         this.DisplayProbs = false;
       }
   
-      CurrentLayer_id = CurrentLayer_id = LAYER_dirnorrad.id; 
+      CurrentLayer_id = LAYER_dirnorrad.id; 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
       //CurrentLayer_id = LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
@@ -6310,7 +6310,7 @@ class solarchvision_ROLLOUT {
   
         FrameVariation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
   
-        STUDY.Setup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.Setup, -2, 14, 1), 1));
+        STUDY.plotSetup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 14, 1), 1));
   
         //STUDY.update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
   
@@ -8271,7 +8271,7 @@ void draw () {
         pre_STUDY_i_End = STUDY.i_End;        
         pre_STUDY_j_End = STUDY.j_End;
         pre_IMPACTS_DisplayDay = IMPACTS_DisplayDay;
-        pre_STUDY_Setup = STUDY.Setup;
+        pre_STUDY_Setup = STUDY.plotSetup;
         pre_CurrentDataSource = CurrentDataSource;
         pre_TIME_Year = TIME_Year;
         pre_TIME_Month = TIME_Month;
@@ -8776,7 +8776,7 @@ void draw () {
         if (pre_Display_WindFlow != Display_WindFlow) WIN3D.update = true;
 
 
-        if (STUDY.Setup != pre_STUDY_Setup) {
+        if (STUDY.plotSetup != pre_STUDY_Setup) {
           STUDY.Impacts_update = true;
           UI_BAR_d_update = false;
         }
@@ -34215,84 +34215,84 @@ void mouseClicked () {
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Wind pattern (active)")) {
               STUDY.PlotImpacts = -2;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = true;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Wind pattern (passive)")) {
               STUDY.PlotImpacts = -1;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = true;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Urban solar potential (active)")) {
               STUDY.PlotImpacts = 0;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Urban solar potential (passive)")) {
               STUDY.PlotImpacts = 1;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Orientation potential (active)")) {
               STUDY.PlotImpacts = 2;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Orientation potential (passive)")) {
               STUDY.PlotImpacts = 3;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hourly sun position (active)")) {
               STUDY.PlotImpacts = 4;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hourly sun position (passive)")) {
               STUDY.PlotImpacts = 5;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("View from sun & sky (active)")) {
               STUDY.PlotImpacts = 6;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("View from sun & sky (passive)")) {
               STUDY.PlotImpacts = 7;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
               STUDY.PlotImpacts = 8;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
             }  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
               STUDY.PlotImpacts = 9;
-              STUDY.Setup = 14; // <<<<<<<<
+              STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
               Display_WindRoseImage = false;
               ROLLOUT.update = true;
@@ -34328,10 +34328,10 @@ void mouseClicked () {
             for (int n = -2; n <= 14; n++) { 
               if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Layout " + nf(n, 0))) {
 
-                STUDY.Setup = n;
+                STUDY.plotSetup = n;
                 STUDY.update = true;
 
-                if (STUDY.Setup == 14) {
+                if (STUDY.plotSetup == 14) {
                 } else {  
 
                   if (FrameVariation != 2) {
@@ -49178,7 +49178,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("STUDY.SumInterval", STUDY.SumInterval);
   newChild1.setFloat("STUDY.LevelPix", STUDY.LevelPix);
   newChild1.setFloat("STUDY.Pix", STUDY.Pix);
-  newChild1.setInt("STUDY.Setup", STUDY.Setup);
+  newChild1.setInt("STUDY.plotSetup", STUDY.plotSetup);
   newChild1.setInt("Materials_Selection", Materials_Selection);
   newChild1.setInt("Shade_Surface_Wire", Shade_Surface_Wire);
   newChild1.setInt("Shade_Surface_Base", Shade_Surface_Base);
@@ -50309,7 +50309,7 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.SumInterval = children0[L].getInt("STUDY.SumInterval");
       STUDY.LevelPix = children0[L].getFloat("STUDY.LevelPix");
       STUDY.Pix = children0[L].getFloat("STUDY.Pix");
-      STUDY.Setup = children0[L].getInt("STUDY.Setup");
+      STUDY.plotSetup = children0[L].getInt("STUDY.plotSetup");
       Materials_Selection = children0[L].getInt("Materials_Selection");
       Shade_Surface_Wire = children0[L].getInt("Shade_Surface_Wire");
       Shade_Surface_Base = children0[L].getInt("Shade_Surface_Base");
