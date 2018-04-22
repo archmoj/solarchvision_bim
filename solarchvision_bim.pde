@@ -250,21 +250,222 @@ solarchvision_LAYER[] allLayers = {
 };
 
 
+int DevelopLayer_id = 0;
+int CurrentLayer_id = 0;
+String CurrentLayer_unit = allLayers[0].unit;
+String CurrentLayer_name = allLayers[0].name;
+String[] CurrentLayer_descriptions = {allLayers[0].descriptions[Language_EN], 
+                                      allLayers[0].descriptions[Language_FR]};
 
-int CurrentLayer_id = LAYER_dirnorrad.id; //LAYER_developed.id; //LAYER_drybulb.id; ; //LAYER_cloudcover.id; 
-String CurrentLayer_unit = "";
-String CurrentLayer_name = "";
-String[] CurrentLayer_descriptions = {"", ""};
+                                      
+String[] CurrentLayer_GRIB2_HGT = {"", "", "", "", ""};
+float CurrentLayer_GRIB2_MUL = 1.0;
+float CurrentLayer_GRIB2_ADD = 0.0;  
 
-int DevelopLayer_id = CurrentLayer_id;
+ 
+
+void changeLayerTo (int new_id) {
+ 
+  int pre_id = CurrentLayer_id;
+
+  allLayers[pre_id].V_scale = STUDY.V_scale;
+  allLayers[pre_id].V_offset = STUDY.V_offset;
+  allLayers[pre_id].V_belowLine = STUDY.V_belowLine;
+  
+  STUDY.V_scale = allLayers[new_id].V_scale;
+  STUDY.V_offset = allLayers[new_id].V_offset;
+  STUDY.V_belowLine = allLayers[new_id].V_belowLine;
+
+  DevelopLayer_id = new_id;
+  CurrentLayer_id = new_id;
+  
+  CurrentLayer_unit = allLayers[new_id].unit; 
+  CurrentLayer_name = allLayers[new_id].name;
+  CurrentLayer_descriptions[Language_EN] = allLayers[new_id].descriptions[Language_EN];
+  CurrentLayer_descriptions[Language_FR] = allLayers[new_id].descriptions[Language_FR];
+  
+/*  
+  // other parameters to set...
+  
+  if (CurrentLayer_id == LAYER_winddir.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "WDIR_TGL_10";
+    CurrentLayer_GRIB2_HGT[1] = "WDIR_TGL_40";
+    CurrentLayer_GRIB2_HGT[2] = "WDIR_TGL_80";
+    CurrentLayer_GRIB2_HGT[3] = "WDIR_TGL_120";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_windspd.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "WIND_TGL_10"; // m/sec
+    CurrentLayer_GRIB2_HGT[1] = "WIND_TGL_40"; // m/sec
+    CurrentLayer_GRIB2_HGT[2] = "WIND_TGL_80"; // m/sec
+    CurrentLayer_GRIB2_HGT[3] = "WIND_TGL_120"; // m/sec
+    CurrentLayer_GRIB2_MUL = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_precipitation.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "APCP_SFC_0"; // kg/m²
+    CurrentLayer_GRIB2_HGT[1] = "APCP_SFC_0"; // kg/m²
+    CurrentLayer_GRIB2_HGT[2] = "APCP_SFC_0"; // kg/m²
+    CurrentLayer_GRIB2_HGT[3] = "APCP_SFC_0"; // kg/m²
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_relhum.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_drybulb.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "TMP_TGL_2"; // Kelvin
+    CurrentLayer_GRIB2_HGT[1] = "TMP_TGL_40"; // Kelvin
+    CurrentLayer_GRIB2_HGT[2] = "TMP_TGL_80"; // Kelvin
+    CurrentLayer_GRIB2_HGT[3] = "TMP_TGL_120"; // Kelvin
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = -273.15; // °K > °C
+  }
+
+  if (CurrentLayer_id == LAYER_dirnorrad.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_difhorrad.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_glohorrad.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_developed.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_direffect.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_difeffect.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_cloudcover.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "TCDC_SFC_0"; // percent
+    CurrentLayer_GRIB2_HGT[1] = "TCDC_SFC_0"; // percent
+    CurrentLayer_GRIB2_HGT[2] = "TCDC_SFC_0"; // percent
+    CurrentLayer_GRIB2_HGT[3] = "TCDC_SFC_0"; // percent
+    CurrentLayer_GRIB2_MUL = 0.1; // percent >> tenth    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_ceilingsky.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_pressure.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "PRMSL_MSL_0";
+    CurrentLayer_GRIB2_HGT[1] = "PRMSL_MSL_0";
+    CurrentLayer_GRIB2_HGT[2] = "PRMSL_MSL_0";
+    CurrentLayer_GRIB2_HGT[3] = "PRMSL_MSL_0";
+    CurrentLayer_GRIB2_MUL = 0.01; // Pa >> hPa 
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_heightp500hPa.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_thicknesses_1000_500.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }
+
+  if (CurrentLayer_id == LAYER_windspd200hPa.id)  {
+
+    CurrentLayer_GRIB2_HGT[0] = "";
+    CurrentLayer_GRIB2_HGT[1] = "";
+    CurrentLayer_GRIB2_HGT[2] = "";
+    CurrentLayer_GRIB2_HGT[3] = "";
+    CurrentLayer_GRIB2_MUL = 1;    
+    CurrentLayer_GRIB2_ADD = 0;
+  }  
+*/
+  
+}
 
 
 
 
 
-String[] CurrentLayer_GRIB2_HGT;
-float CurrentLayer_GRIB2_MUL;
-float CurrentLayer_GRIB2_ADD;  
+
+
 
 
 
@@ -3806,6 +4007,10 @@ class solarchvision_STUDY {
   
   PGraphics graphics;
   
+  
+  
+  
+  
   int isInHourlyRange (float i) {
     int q = -1;
     if (i_Start <= i_End) {
@@ -5272,7 +5477,7 @@ class solarchvision_STUDY {
     if (this.plotSetup == 1) {
   
       DevelopLayer_id = CurrentLayer_id;
-      CurrentLayer_id = LAYER_developed.id; 
+      changeLayerTo(LAYER_developed.id); 
   
       Develop_Option = DEV_OP_01;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
@@ -5291,7 +5496,7 @@ class solarchvision_STUDY {
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
       Develop_Option = pre_Develop_Option;
-      CurrentLayer_id = pre_STUDY_CurrentLayer_id;
+      changeLayerTo(pre_STUDY_CurrentLayer_id);
     }  
   
   
@@ -5302,7 +5507,7 @@ class solarchvision_STUDY {
         this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
         DevelopLayer_id = CurrentLayer_id;
-        CurrentLayer_id = LAYER_developed.id;
+        changeLayerTo(LAYER_developed.id);
   
         Develop_Option = DEV_OP_06; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
@@ -5316,66 +5521,66 @@ class solarchvision_STUDY {
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
         this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-        CurrentLayer_id = pre_STUDY_CurrentLayer_id;
+        changeLayerTo(pre_STUDY_CurrentLayer_id);
       }
     }  
   
   
     if (this.plotSetup == 3) {
   
-      CurrentLayer_id = LAYER_windspd200hPa.id;
+      changeLayerTo(LAYER_windspd200hPa.id);
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_pressure.id;
+      changeLayerTo(LAYER_pressure.id);
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_heightp500hPa.id;
+      changeLayerTo(LAYER_heightp500hPa.id);
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_thicknesses_1000_500.id;
+      changeLayerTo(LAYER_thicknesses_1000_500.id);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = pre_STUDY_CurrentLayer_id;
+      changeLayerTo(pre_STUDY_CurrentLayer_id);
     }
   
   
     if (this.plotSetup == 4) {
   
-      CurrentLayer_id = LAYER_windspd.id;
+      changeLayerTo(LAYER_windspd.id);
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_precipitation.id;
+      changeLayerTo(LAYER_precipitation.id);
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_relhum.id;
+      changeLayerTo(LAYER_relhum.id);
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_drybulb.id;
+      changeLayerTo(LAYER_drybulb.id);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = pre_STUDY_CurrentLayer_id;
+      changeLayerTo(pre_STUDY_CurrentLayer_id);
     }  
   
   
     if (this.plotSetup == 5) {
   
-      CurrentLayer_id = LAYER_dirnorrad.id;
+      changeLayerTo(LAYER_dirnorrad.id);
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_difhorrad.id;
+      changeLayerTo(LAYER_difhorrad.id);
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_developed.id;
+      changeLayerTo(LAYER_developed.id);
       Develop_Option = DEV_OP_01; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_developed.id;
+      changeLayerTo(LAYER_developed.id);
       Develop_Option = DEV_OP_03; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = pre_STUDY_CurrentLayer_id;
+      changeLayerTo(pre_STUDY_CurrentLayer_id);
       Develop_Option = pre_Develop_Option;
     }
   
@@ -5516,17 +5721,17 @@ class solarchvision_STUDY {
         this.DisplayProbs = true;
       }
   
-      CurrentLayer_id = LAYER_windspd.id; 
+      changeLayerTo(LAYER_windspd.id); 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      //CurrentLayer_id = LAYER_precipitation.id ; 
-      //DevelopLayer_id = CurrentLayer_id;
-      //CurrentLayer_id = LAYER_developed.id; 
+      //changeLayerTo(LAYER_precipitation.id); 
+      //DevelopLayer_id = CurrentLayer_id);
+      //changeLayerTo(LAYER_developed.id); 
       //Develop_Option = DEV_OP_09;
       //SOLARCHVISION_postProcess_developDATA(CurrentDataSource); 
       //this.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_drybulb.id; 
+      changeLayerTo(LAYER_drybulb.id); 
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 1;
@@ -5545,13 +5750,13 @@ class solarchvision_STUDY {
         this.DisplayProbs = false;
       }
   
-      CurrentLayer_id = LAYER_dirnorrad.id; 
+      changeLayerTo(LAYER_dirnorrad.id); 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      //CurrentLayer_id = LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
+      //changeLayerTo(LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
       //this.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      CurrentLayer_id = LAYER_cloudcover.id;
+      changeLayerTo(LAYER_cloudcover.id);
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 0;
@@ -5696,8 +5901,14 @@ class solarchvision_STUDY {
   
     cursor(ARROW);
   }
+  
+  
+
  
 }
+
+
+
 
 
 
@@ -6314,7 +6525,8 @@ class solarchvision_ROLLOUT {
   
         //STUDY.update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
   
-        CurrentLayer_id = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1));
+        changeLayerTo(int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
+        
         STUDY.V_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
   
         //STUDY.DisplayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.DisplayRaws, 0, 1, 1), 1));
@@ -7678,185 +7890,7 @@ int[] GRIB2_TGL_Selected = {
 }; // for levels above ground level 
 int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
 
-/*
-{
-  CurrentLayer_GRIB2_HGT = new String [numberOfLayers][GRIB2_TGL_number]; 
-  CurrentLayer_GRIB2_MUL = new float [numberOfLayers];
-  CurrentLayer_GRIB2_ADD = new float [numberOfLayers];
 
-  int i = -1;
-
-  i = LAYER_winddir.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "WDIR_TGL_10";
-    CurrentLayer_GRIB2_HGT[i][1] = "WDIR_TGL_40";
-    CurrentLayer_GRIB2_HGT[i][2] = "WDIR_TGL_80";
-    CurrentLayer_GRIB2_HGT[i][3] = "WDIR_TGL_120";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_windspd.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "WIND_TGL_10"; // m/sec
-    CurrentLayer_GRIB2_HGT[i][1] = "WIND_TGL_40"; // m/sec
-    CurrentLayer_GRIB2_HGT[i][2] = "WIND_TGL_80"; // m/sec
-    CurrentLayer_GRIB2_HGT[i][3] = "WIND_TGL_120"; // m/sec
-    CurrentLayer_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_precipitation.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "APCP_SFC_0"; // kg/m²
-    CurrentLayer_GRIB2_HGT[i][1] = "APCP_SFC_0"; // kg/m²
-    CurrentLayer_GRIB2_HGT[i][2] = "APCP_SFC_0"; // kg/m²
-    CurrentLayer_GRIB2_HGT[i][3] = "APCP_SFC_0"; // kg/m²
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_relhum.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_drybulb.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "TMP_TGL_2"; // Kelvin
-    CurrentLayer_GRIB2_HGT[i][1] = "TMP_TGL_40"; // Kelvin
-    CurrentLayer_GRIB2_HGT[i][2] = "TMP_TGL_80"; // Kelvin
-    CurrentLayer_GRIB2_HGT[i][3] = "TMP_TGL_120"; // Kelvin
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = -273.15; // °K > °C
-  }
-
-  i = LAYER_dirnorrad.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_difhorrad.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_glohorrad.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_developed.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_direffect.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_difeffect.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_cloudcover.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "TCDC_SFC_0"; // percent
-    CurrentLayer_GRIB2_HGT[i][1] = "TCDC_SFC_0"; // percent
-    CurrentLayer_GRIB2_HGT[i][2] = "TCDC_SFC_0"; // percent
-    CurrentLayer_GRIB2_HGT[i][3] = "TCDC_SFC_0"; // percent
-    CurrentLayer_GRIB2_MUL[i] = 0.1; // percent >> tenth    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_ceilingsky.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_pressure.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "PRMSL_MSL_0";
-    CurrentLayer_GRIB2_HGT[i][1] = "PRMSL_MSL_0";
-    CurrentLayer_GRIB2_HGT[i][2] = "PRMSL_MSL_0";
-    CurrentLayer_GRIB2_HGT[i][3] = "PRMSL_MSL_0";
-    CurrentLayer_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_heightp500hPa.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_thicknesses_1000_500.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-
-  i = LAYER_windspd200hPa.id;
-  if (i > -1) {
-    CurrentLayer_GRIB2_HGT[i][0] = "";
-    CurrentLayer_GRIB2_HGT[i][1] = "";
-    CurrentLayer_GRIB2_HGT[i][2] = "";
-    CurrentLayer_GRIB2_HGT[i][3] = "";
-    CurrentLayer_GRIB2_MUL[i] = 1;    
-    CurrentLayer_GRIB2_ADD[i] = 0;
-  }
-}
-*/
 
 
 
@@ -34615,7 +34649,7 @@ void mouseClicked () {
 
                   if (UI_BAR_a_selected_child < numberOfLayers) {
 
-                    CurrentLayer_id = UI_BAR_a_selected_child - 1;
+                    changeLayerTo(UI_BAR_a_selected_child - 1);
 
                     DevelopLayer_id = CurrentLayer_id;
 
@@ -34626,7 +34660,7 @@ void mouseClicked () {
 
                       if (CurrentLayer_id == DevelopLayer_id) {
 
-                        CurrentLayer_id = LAYER_developed.id;
+                        changeLayerTo(LAYER_developed.id);
                       }
 
                       Develop_Option = UI_BAR_a_selected_child - numberOfLayers;
@@ -34638,7 +34672,7 @@ void mouseClicked () {
 
                       DevelopLayer_id = CurrentLayer_id;
 
-                      CurrentLayer_id = LAYER_developed.id; 
+                      changeLayerTo(LAYER_developed.id); 
 
                       Develop_Option = UI_BAR_a_selected_child - numberOfLayers;
 
@@ -50201,7 +50235,9 @@ void SOLARCHVISION_load_project (String myFile) {
       LAYER_developed.id = children0[L].getInt("LAYER_developed.id");
       Develop_AngleInclination = children0[L].getFloat("Develop_AngleInclination");
       Develop_AngleOrientation = children0[L].getFloat("Develop_AngleOrientation");
-      CurrentLayer_id = children0[L].getInt("CurrentLayer_id");
+      
+      changeLayerTo(children0[L].getInt("CurrentLayer_id"));
+      
       DevelopLayer_id = children0[L].getInt("DevelopLayer_id");
       STUDY.T_scale = children0[L].getFloat("STUDY.T_scale");
       STUDY.U_scale = children0[L].getFloat("STUDY.U_scale");
