@@ -48770,15 +48770,15 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   newChild1 = my_xml.addChild("SOLARCHVISION_variables");
 
-  //newChild1.setBoolean("Display_Output_in_Explorer", Display_Output_in_Explorer);
-  //newChild1.setBoolean("Display_Model3Ds", Display_Model3Ds);
-  //newChild1.setBoolean("Display_Model2Ds", Display_Model2Ds);
-  //newChild1.setBoolean("Display_Fractals", Display_Fractals);
-  //newChild1.setBoolean("Display_Leaves", Display_Leaves);
+  newChild1.setString("Display_Output_in_Explorer", Boolean.toString(Display_Output_in_Explorer));
+  newChild1.setString("Display_Model3Ds", Boolean.toString(Display_Model3Ds));
+  newChild1.setString("Display_Model2Ds", Boolean.toString(Display_Model2Ds));
+  newChild1.setString("Display_Fractals", Boolean.toString(Display_Fractals));
+  newChild1.setString("Display_Leaves", Boolean.toString(Display_Leaves));
 
-  //newChild1.setBoolean("Display_Solids", Display_Solids);
-  //newChild1.setBoolean("Display_Sections", Display_Sections);
-  //newChild1.setBoolean("Display_Cameras", Display_Cameras);
+  newChild1.setString("Display_Solids", Boolean.toString(Display_Solids));
+  newChild1.setString("Display_Sections", Boolean.toString(Display_Sections));
+  newChild1.setString("Display_Cameras", Boolean.toString(Display_Cameras));
 
   newChild1.setInt("DEFAULT_CreateMaterial", DEFAULT_CreateMaterial);  
   newChild1.setInt("DEFAULT_CreateTessellation", DEFAULT_CreateTessellation);
@@ -48828,16 +48828,16 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("WIN3D.UI_OptionXorY", WIN3D.UI_OptionXorY);
   newChild1.setInt("WIN3D.UI_TaskModifyParameter", WIN3D.UI_TaskModifyParameter);  
 
-  //newChild1.setBoolean("Display_SWOB_Points", Display_SWOB_Points);
-  //newChild1.setBoolean("Display_SWOB_Nearest", Display_SWOB_Nearest);
-  //newChild1.setBoolean("Display_NAEFS_Points", Display_NAEFS_Points);
-  //newChild1.setBoolean("Display_NAEFS_Nearest", Display_NAEFS_Nearest);
-  //newChild1.setBoolean("Display_CWEEDS_Points", Display_CWEEDS_Points);
-  //newChild1.setBoolean("Display_CWEEDS_Nearest", Display_CWEEDS_Nearest);
-  //newChild1.setBoolean("Display_CLMREC_Points", Display_CLMREC_Points);
-  //newChild1.setBoolean("Display_CLMREC_Nearest", Display_CLMREC_Nearest);
-  //newChild1.setBoolean("Display_TMYEPW_Points", Display_TMYEPW_Points);
-  //newChild1.setBoolean("Display_TMYEPW_Nearest", Display_TMYEPW_Nearest);
+  newChild1.setInt("Display_SWOB_Points", Display_SWOB_Points);
+  newChild1.setString("Display_SWOB_Nearest", Boolean.toString(Display_SWOB_Nearest));
+  newChild1.setInt("Display_NAEFS_Points", Display_NAEFS_Points);
+  newChild1.setString("Display_NAEFS_Nearest", Boolean.toString(Display_NAEFS_Nearest));
+  newChild1.setInt("Display_CWEEDS_Points", Display_CWEEDS_Points);
+  newChild1.setString("Display_CWEEDS_Nearest", Boolean.toString(Display_CWEEDS_Nearest));
+  newChild1.setInt("Display_CLMREC_Points", Display_CLMREC_Points);
+  newChild1.setString("Display_CLMREC_Nearest", Boolean.toString(Display_CLMREC_Nearest));
+  newChild1.setInt("Display_TMYEPW_Points", Display_TMYEPW_Points);
+  newChild1.setString("Display_TMYEPW_Nearest", Boolean.toString(Display_TMYEPW_Nearest));
 
   newChild1.setFloat("SolidImpact_WindSpeed", SolidImpact_WindSpeed); 
   newChild1.setFloat("SolidImpact_WindDirection", SolidImpact_WindDirection);
@@ -48880,11 +48880,11 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("SampleMember_End", SampleMember_End);
   newChild1.setInt("SampleStation_Start", SampleStation_Start);
   newChild1.setInt("SampleStation_End", SampleStation_End);
-  //newChild1.setBoolean("CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load);
-  //newChild1.setBoolean("CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load);
-  //newChild1.setBoolean("CLIMATE_CLMREC_load", CLIMATE_CLMREC_load);  
-  //newChild1.setBoolean("ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load);
-  //newChild1.setBoolean("ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load);
+  newChild1.setString("CLIMATE_TMYEPW_load", Boolean.toString(CLIMATE_TMYEPW_load));
+  newChild1.setString("CLIMATE_CWEEDS_load", Boolean.toString(CLIMATE_CWEEDS_load));
+  newChild1.setString("CLIMATE_CLMREC_load", Boolean.toString(CLIMATE_CLMREC_load));  
+  newChild1.setString("ENSEMBLE_FORECAST_load", Boolean.toString(ENSEMBLE_FORECAST_load));
+  newChild1.setString("ENSEMBLE_OBSERVED_load", Boolean.toString(ENSEMBLE_OBSERVED_load));
   newChild1.setInt("GRIB2_Month", GRIB2_Month);
   newChild1.setInt("GRIB2_Day", GRIB2_Day);
   newChild1.setInt("GRIB2_ModelRun", GRIB2_ModelRun);
@@ -48904,7 +48904,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("AERIAL_graphOption", AERIAL_graphOption);
   newChild1.setInt("Develop_Option", Develop_Option);
   newChild1.setInt("Develop_DayHour", Develop_DayHour);
-  //newChild1.setBoolean("DevelopData_update", DevelopData_update);
+  newChild1.setString("DevelopData_update", Boolean.toString(DevelopData_update));
   newChild1.setInt("numberOfLayers", numberOfLayers);
   newChild1.setInt("LAYER_windspd200hPa.id", LAYER_windspd200hPa.id);
   newChild1.setInt("LAYER_thicknesses_1000_500.id", LAYER_thicknesses_1000_500.id);
@@ -48936,9 +48936,9 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("STUDY.TrendJoinHours", STUDY.TrendJoinHours);
   newChild1.setInt("STUDY.TrendJoinType", STUDY.TrendJoinType);
   newChild1.setInt("TIME_Interval", TIME_Interval);
-  //newChild1.setBoolean("STUDY.Export_info_node", STUDY.Export_info_node);
-  //newChild1.setBoolean("STUDY.Export_info_norm", STUDY.Export_info_norm);
-  //newChild1.setBoolean("STUDY.Export_info_prob", STUDY.Export_info_prob);
+  newChild1.setString("STUDY.Export_info_node", Boolean.toString(STUDY.Export_info_node));
+  newChild1.setString("STUDY.Export_info_norm", Boolean.toString(STUDY.Export_info_norm));
+  newChild1.setString("STUDY.Export_info_prob", Boolean.toString(STUDY.Export_info_prob));
   newChild1.setInt("STUDY.Pallet_SORT_CLR", STUDY.Pallet_SORT_CLR);
   newChild1.setInt("STUDY.Pallet_SORT_DIR", STUDY.Pallet_SORT_DIR);
   newChild1.setFloat("STUDY.Pallet_SORT_MLT", STUDY.Pallet_SORT_MLT);
@@ -48986,10 +48986,10 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("STUDY.rect_scale", STUDY.rect_scale);
   newChild1.setFloat("STUDY.rect_offset_x", STUDY.rect_offset_x);
   newChild1.setInt("CurrentDataSource", CurrentDataSource);
-  //newChild1.setBoolean("STUDY.impact_summary", STUDY.impact_summary);
+  newChild1.setString("STUDY.impact_summary", Boolean.toString(STUDY.impact_summary));
   newChild1.setInt("STUDY.ImpactLayer", STUDY.ImpactLayer);
   newChild1.setInt("STUDY.PlotImpacts", STUDY.PlotImpacts);
-  //newChild1.setBoolean("STUDY.Impacts_update", STUDY.Impacts_update);
+  newChild1.setString("STUDY.Impacts_update", Boolean.toString(STUDY.Impacts_update));
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
   newChild1.setInt("LAND_Tessellation", LAND_Tessellation);
@@ -48999,37 +48999,37 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("WindRose_scale", WindRose_scale);
 
   newChild1.setFloat("Planetary_Magnification", Planetary_Magnification);
-  //newChild1.setBoolean("Display_SolarRotation", Display_SolarRotation);
-  //newChild1.setBoolean("Display_SUN_Path", Display_SUN_Path);
-  //newChild1.setBoolean("Display_SUN_Pattern", Display_SUN_Pattern);
-  //newChild1.setBoolean("Display_SKY_Surface", Display_SKY_Surface);
-  //newChild1.setBoolean("Display_STAR_Surface", Display_STAR_Surface);
-  //newChild1.setBoolean("Display_STAR_Texture", Display_STAR_Texture);
-  //newChild1.setBoolean("Display_MOON_Surface", Display_MOON_Surface);
-  //newChild1.setBoolean("Display_MOON_Texture", Display_MOON_Texture);
-  //newChild1.setBoolean("Display_TROPO_Surface", Display_TROPO_Surface);
-  //newChild1.setBoolean("Display_TROPO_Texture", Display_TROPO_Texture);
-  //newChild1.setBoolean("Display_EARTH_Surface", Display_EARTH_Surface);
-  //newChild1.setBoolean("Display_EARTH_Texture", Display_EARTH_Texture);
-  //newChild1.setBoolean("Load_LAND_Textures", Load_LAND_Textures);  
-  //newChild1.setBoolean("Load_LAND_Mesh", Load_LAND_Mesh);
-  //newChild1.setBoolean("Display_LAND_Surface", Display_LAND_Surface);
-  //newChild1.setBoolean("Display_LAND_Points", Display_LAND_Points);
-  //newChild1.setBoolean("Display_LAND_Textures", Display_LAND_Textures);
-  //newChild1.setBoolean("Display_LAND_Depth", Display_LAND_Depth);
+  newChild1.setString("Display_SolarRotation", Boolean.toString(Display_SolarRotation));
+  newChild1.setString("Display_SUN_Path", Boolean.toString(Display_SUN_Path));
+  newChild1.setString("Display_SUN_Pattern", Boolean.toString(Display_SUN_Pattern));
+  newChild1.setString("Display_SKY_Surface", Boolean.toString(Display_SKY_Surface));
+  newChild1.setString("Display_STAR_Surface", Boolean.toString(Display_STAR_Surface));
+  newChild1.setString("Display_STAR_Texture", Boolean.toString(Display_STAR_Texture));
+  newChild1.setString("Display_MOON_Surface", Boolean.toString(Display_MOON_Surface));
+  newChild1.setString("Display_MOON_Texture", Boolean.toString(Display_MOON_Texture));
+  newChild1.setString("Display_TROPO_Surface", Boolean.toString(Display_TROPO_Surface));
+  newChild1.setString("Display_TROPO_Texture", Boolean.toString(Display_TROPO_Texture));
+  newChild1.setString("Display_EARTH_Surface", Boolean.toString(Display_EARTH_Surface));
+  newChild1.setString("Display_EARTH_Texture", Boolean.toString(Display_EARTH_Texture));
+  newChild1.setString("Load_LAND_Textures", Boolean.toString(Load_LAND_Textures));  
+  newChild1.setString("Load_LAND_Mesh", Boolean.toString(Load_LAND_Mesh));
+  newChild1.setString("Display_LAND_Surface", Boolean.toString(Display_LAND_Surface));
+  newChild1.setString("Display_LAND_Points", Boolean.toString(Display_LAND_Points));
+  newChild1.setString("Display_LAND_Textures", Boolean.toString(Display_LAND_Textures));
+  newChild1.setString("Display_LAND_Depth", Boolean.toString(Display_LAND_Depth));
   newChild1.setInt("LAND_Surface_SkipStart", LAND_Surface_SkipStart);
   newChild1.setInt("LAND_Surface_SkipEnd", LAND_Surface_SkipEnd);
-  //newChild1.setBoolean("Display_SolidImpact_Points", Display_SolidImpact_Points);
-  //newChild1.setBoolean("Display_SolidImpact_Lines", Display_SolidImpact_Lines);
-  //newChild1.setBoolean("MODEL3D_DisplayVertices", MODEL3D_DisplayVertices);       
-  //newChild1.setBoolean("MODEL3D_DisplayEdges", MODEL3D_DisplayEdges);
-  //newChild1.setBoolean("MODEL3D_DisplayNormals", MODEL3D_DisplayNormals);
-  //newChild1.setBoolean("Display_WindFlow", Display_WindFlow);
+  newChild1.setString("Display_SolidImpact_Points", Boolean.toString(Display_SolidImpact_Points));
+  newChild1.setString("Display_SolidImpact_Lines", Boolean.toString(Display_SolidImpact_Lines));
+  newChild1.setString("MODEL3D_DisplayVertices", Boolean.toString(MODEL3D_DisplayVertices));       
+  newChild1.setString("MODEL3D_DisplayEdges", Boolean.toString(MODEL3D_DisplayEdges));
+  newChild1.setString("MODEL3D_DisplayNormals", Boolean.toString(MODEL3D_DisplayNormals));
+  newChild1.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
   //newChild1.setInt("Camera_Variation", Camera_Variation);
-  //newChild1.setBoolean("STUDY.DisplayRaws", STUDY.DisplayRaws);
-  //newChild1.setBoolean("STUDY.DisplaySorted", STUDY.DisplaySorted);
-  //newChild1.setBoolean("STUDY.DisplayNormals", STUDY.DisplayNormals);
-  //newChild1.setBoolean("STUDY.DisplayProbs", STUDY.DisplayProbs);
+  newChild1.setString("STUDY.DisplayRaws", Boolean.toString(STUDY.DisplayRaws));
+  newChild1.setString("STUDY.DisplaySorted", Boolean.toString(STUDY.DisplaySorted));
+  newChild1.setString("STUDY.DisplayNormals", Boolean.toString(STUDY.DisplayNormals));
+  newChild1.setString("STUDY.DisplayProbs", Boolean.toString(STUDY.DisplayProbs));
   newChild1.setInt("STUDY.SumInterval", STUDY.SumInterval);
   newChild1.setFloat("STUDY.LevelPix", STUDY.LevelPix);
   newChild1.setFloat("STUDY.Pix", STUDY.Pix);
@@ -49074,21 +49074,21 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("selection_alignY", selection_alignY);
   newChild1.setInt("selection_alignZ", selection_alignZ);
 
-  //newChild1.setBoolean("selectedFace_displayEdges", selectedFace_displayEdges);
-  //newChild1.setBoolean("selectedFace_displayVertexCount", selectedFace_displayVertexCount);
-  //newChild1.setBoolean("selectedCurve_displayVertexCount", selectedCurve_displayVertexCount);
-  //newChild1.setBoolean("selectedVertex_displayVertices", selectedVertex_displayVertices);
-  //newChild1.setBoolean("selectedCurve_displayVertices", selectedCurve_displayVertices);
-  //newChild1.setBoolean("selectedGroup3D_displayPivot", selectedGroup3D_displayPivot);  
-  //newChild1.setBoolean("selected_displayReferencePivot", selected_displayReferencePivot);
-  //newChild1.setBoolean("selectedGroup3D_displayEdges", selectedGroup3D_displayEdges);
-  //newChild1.setBoolean("selectedGroup3D_displayBox", selectedGroup3D_displayBox);
-  //newChild1.setBoolean("selectedObject2D_displayEdges", selectedObject2D_displayEdges);
-  //newChild1.setBoolean("selectedFractal_displayEdges", selectedFractal_displayEdges);
-  //newChild1.setBoolean("selectedSolid_displayEdges", selectedSolid_displayEdges);
-  //newChild1.setBoolean("selectedSection_displayEdges", selectedSection_displayEdges);
-  //newChild1.setBoolean("selectedCamera_displayEdges", selectedCamera_displayEdges);
-  //newChild1.setBoolean("selectedLandPoint_displayPoints", selectedLandPoint_displayPoints);
+  newChild1.setString("selectedFace_displayEdges", Boolean.toString(selectedFace_displayEdges));
+  newChild1.setString("selectedFace_displayVertexCount", Boolean.toString(selectedFace_displayVertexCount));
+  newChild1.setString("selectedCurve_displayVertexCount", Boolean.toString(selectedCurve_displayVertexCount));
+  newChild1.setString("selectedVertex_displayVertices", Boolean.toString(selectedVertex_displayVertices));
+  newChild1.setString("selectedCurve_displayVertices", Boolean.toString(selectedCurve_displayVertices));
+  newChild1.setString("selectedGroup3D_displayPivot", Boolean.toString(selectedGroup3D_displayPivot));  
+  newChild1.setString("selected_displayReferencePivot", Boolean.toString(selected_displayReferencePivot));
+  newChild1.setString("selectedGroup3D_displayEdges", Boolean.toString(selectedGroup3D_displayEdges));
+  newChild1.setString("selectedGroup3D_displayBox", Boolean.toString(selectedGroup3D_displayBox));
+  newChild1.setString("selectedObject2D_displayEdges", Boolean.toString(selectedObject2D_displayEdges));
+  newChild1.setString("selectedFractal_displayEdges", Boolean.toString(selectedFractal_displayEdges));
+  newChild1.setString("selectedSolid_displayEdges", Boolean.toString(selectedSolid_displayEdges));
+  newChild1.setString("selectedSection_displayEdges", Boolean.toString(selectedSection_displayEdges));
+  newChild1.setString("selectedCamera_displayEdges", Boolean.toString(selectedCamera_displayEdges));
+  newChild1.setString("selectedLandPoint_displayPoints", Boolean.toString(selectedLandPoint_displayPoints));
 
   newChild1.setFloat("softSelection_Power", softSelection_Power);
   newChild1.setFloat("softSelection_Radius", softSelection_Radius);
@@ -49098,10 +49098,10 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("Language_Active", Language_Active);
 
   newChild1.setInt("IMPACTS_DisplayDay", IMPACTS_DisplayDay);
-  //newChild1.setBoolean("Display_WindRoseImage", Display_WindRoseImage);
+  newChild1.setString("Display_WindRoseImage", Boolean.toString(Display_WindRoseImage));
   newChild1.setInt("WindRose_RES", WindRose_RES);
   newChild1.setInt("Rendered_WindRose_RES", Rendered_WindRose_RES);
-  //newChild1.setBoolean("Display_SolarImpactImage", Display_SolarImpactImage);
+  newChild1.setString("Display_SolarImpactImage", Boolean.toString(Display_SolarImpactImage));
   newChild1.setInt("SolarImpact_sectionType", SolarImpact_sectionType);
   newChild1.setFloat("SolarImpact_Rotation", SolarImpact_Rotation);
   newChild1.setFloat("SolarImpact_scale_U", SolarImpact_scale_U);
@@ -49114,7 +49114,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("SolidImpact_RES1", SolidImpact_RES1);
   newChild1.setInt("SolidImpact_RES2", SolidImpact_RES2);
   newChild1.setFloat("SolidImpact_Grade", SolidImpact_Grade);
-  //newChild1.setBoolean("Display_SolidImpactImage", Display_SolidImpactImage);
+  newChild1.setString("Display_SolidImpactImage", Boolean.toString(Display_SolidImpactImage));
   newChild1.setInt("SolidImpact_sectionType", SolidImpact_sectionType);
   newChild1.setFloat("SolidImpact_positionStep", SolidImpact_positionStep);
   newChild1.setInt("Process_subDivisions", Process_subDivisions);
@@ -49143,9 +49143,9 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("Export_PrecisionVertex", Export_PrecisionVertex);
   newChild1.setInt("Export_PrecisionVtexture", Export_PrecisionVtexture);
   newChild1.setInt("Export_PolyToPoly", Export_PolyToPoly);
-  //newChild1.setBoolean("Export_MaterialLibrary", Export_MaterialLibrary);
-  //newChild1.setBoolean("Export_BackSides", Export_BackSides);
-  //newChild1.setBoolean("Export_PalletResolution", Export_PalletResolution);
+  newChild1.setString("Export_MaterialLibrary", Boolean.toString(Export_MaterialLibrary));
+  newChild1.setString("Export_BackSides", Boolean.toString(Export_BackSides));
+  newChild1.setInt("Export_PalletResolution", Export_PalletResolution);
 
   newChild1.setString("Default_Font", Default_Font);
 
