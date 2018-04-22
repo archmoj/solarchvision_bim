@@ -48829,14 +48829,15 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("WIN3D.UI_TaskModifyParameter", WIN3D.UI_TaskModifyParameter);  
 
   newChild1.setInt("Display_SWOB_Points", Display_SWOB_Points);
-  newChild1.setString("Display_SWOB_Nearest", Boolean.toString(Display_SWOB_Nearest));
   newChild1.setInt("Display_NAEFS_Points", Display_NAEFS_Points);
-  newChild1.setString("Display_NAEFS_Nearest", Boolean.toString(Display_NAEFS_Nearest));
   newChild1.setInt("Display_CWEEDS_Points", Display_CWEEDS_Points);
-  newChild1.setString("Display_CWEEDS_Nearest", Boolean.toString(Display_CWEEDS_Nearest));
   newChild1.setInt("Display_CLMREC_Points", Display_CLMREC_Points);
-  newChild1.setString("Display_CLMREC_Nearest", Boolean.toString(Display_CLMREC_Nearest));
   newChild1.setInt("Display_TMYEPW_Points", Display_TMYEPW_Points);
+  
+  newChild1.setString("Display_SWOB_Nearest", Boolean.toString(Display_SWOB_Nearest));
+  newChild1.setString("Display_NAEFS_Nearest", Boolean.toString(Display_NAEFS_Nearest));
+  newChild1.setString("Display_CWEEDS_Nearest", Boolean.toString(Display_CWEEDS_Nearest));
+  newChild1.setString("Display_CLMREC_Nearest", Boolean.toString(Display_CLMREC_Nearest));
   newChild1.setString("Display_TMYEPW_Nearest", Boolean.toString(Display_TMYEPW_Nearest));
 
   newChild1.setFloat("SolidImpact_WindSpeed", SolidImpact_WindSpeed); 
@@ -49899,15 +49900,15 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("SOLARCHVISION_variables");
     for (int L = 0; L < children0.length; L++) {
 
-      //Display_Output_in_Explorer = children0[L].getBoolean("Display_Output_in_Explorer");
-      //Display_Model3Ds = children0[L].getBoolean("Display_Model3Ds");
-      //Display_Model2Ds = children0[L].getBoolean("Display_Model2Ds");
-      //Display_Fractals = children0[L].getBoolean("Display_Fractals");
-      //Display_Leaves = children0[L].getBoolean("Display_Leaves");
+      Display_Output_in_Explorer = Boolean.parseBoolean(children0[L].getString("Display_Output_in_Explorer"));
+      Display_Model3Ds = Boolean.parseBoolean(children0[L].getString("Display_Model3Ds"));
+      Display_Model2Ds = Boolean.parseBoolean(children0[L].getString("Display_Model2Ds"));
+      Display_Fractals = Boolean.parseBoolean(children0[L].getString("Display_Fractals"));
+      Display_Leaves = Boolean.parseBoolean(children0[L].getString("Display_Leaves"));
 
-      //Display_Solids = children0[L].getBoolean("Display_Solids");
-      //Display_Sections = children0[L].getBoolean("Display_Sections");
-      //Display_Cameras = children0[L].getBoolean("Display_Cameras");
+      Display_Solids = Boolean.parseBoolean(children0[L].getString("Display_Solids"));
+      Display_Sections = Boolean.parseBoolean(children0[L].getString("Display_Sections"));
+      Display_Cameras = Boolean.parseBoolean(children0[L].getString("Display_Cameras"));
 
       DEFAULT_CreateMaterial = children0[L].getInt("DEFAULT_CreateMaterial");
       DEFAULT_CreateTessellation = children0[L].getInt("DEFAULT_CreateTessellation");
@@ -49957,16 +49958,17 @@ void SOLARCHVISION_load_project (String myFile) {
       WIN3D.UI_OptionXorY = children0[L].getInt("WIN3D.UI_OptionXorY");
       WIN3D.UI_TaskModifyParameter = children0[L].getInt("WIN3D.UI_TaskModifyParameter");      
 
-      //Display_SWOB_Points = children0[L].getBoolean("Display_SWOB_Points");
-      //Display_SWOB_Nearest = children0[L].getBoolean("Display_SWOB_Nearest");
-      //Display_NAEFS_Points = children0[L].getBoolean("Display_NAEFS_Points");
-      //Display_NAEFS_Nearest = children0[L].getBoolean("Display_NAEFS_Nearest");
-      //Display_CWEEDS_Points = children0[L].getBoolean("Display_CWEEDS_Points");
-      //Display_CWEEDS_Nearest = children0[L].getBoolean("Display_CWEEDS_Nearest");
-      //Display_CLMREC_Points = children0[L].getBoolean("Display_CLMREC_Points");
-      //Display_CLMREC_Nearest = children0[L].getBoolean("Display_CLMREC_Nearest");      
-      //Display_TMYEPW_Points = children0[L].getBoolean("Display_TMYEPW_Points");
-      //Display_TMYEPW_Nearest = children0[L].getBoolean("Display_TMYEPW_Nearest");
+      Display_SWOB_Points = children0[L].getInt("Display_SWOB_Points");
+      Display_NAEFS_Points = children0[L].getInt("Display_NAEFS_Points");
+      Display_CWEEDS_Points = children0[L].getInt("Display_CWEEDS_Points");
+      Display_CLMREC_Points = children0[L].getInt("Display_CLMREC_Points");
+      Display_TMYEPW_Points = children0[L].getInt("Display_TMYEPW_Points");
+
+      Display_SWOB_Nearest = Boolean.parseBoolean(children0[L].getString("Display_SWOB_Nearest"));
+      Display_NAEFS_Nearest = Boolean.parseBoolean(children0[L].getString("Display_NAEFS_Nearest"));
+      Display_CWEEDS_Nearest = Boolean.parseBoolean(children0[L].getString("Display_CWEEDS_Nearest"));
+      Display_CLMREC_Nearest = Boolean.parseBoolean(children0[L].getString("Display_CLMREC_Nearest"));      
+      Display_TMYEPW_Nearest = Boolean.parseBoolean(children0[L].getString("Display_TMYEPW_Nearest"));
 
       SolidImpact_WindSpeed = children0[L].getFloat("SolidImpact_WindSpeed"); 
       SolidImpact_WindDirection = children0[L].getFloat("SolidImpact_WindDirection");
@@ -50011,11 +50013,11 @@ void SOLARCHVISION_load_project (String myFile) {
       SampleMember_End = children0[L].getInt("SampleMember_End");
       SampleStation_Start = children0[L].getInt("SampleStation_Start");
       SampleStation_End = children0[L].getInt("SampleStation_End");
-      //CLIMATE_TMYEPW_load = children0[L].getBoolean("CLIMATE_TMYEPW_load");
-      //CLIMATE_CWEEDS_load = children0[L].getBoolean("CLIMATE_CWEEDS_load");
-      //CLIMATE_CLMREC_load = children0[L].getBoolean("CLIMATE_CLMREC_load");
-      //ENSEMBLE_FORECAST_load = children0[L].getBoolean("ENSEMBLE_FORECAST_load");
-      //ENSEMBLE_OBSERVED_load = children0[L].getBoolean("ENSEMBLE_OBSERVED_load");
+      CLIMATE_TMYEPW_load = Boolean.parseBoolean(children0[L].getString("CLIMATE_TMYEPW_load"));
+      CLIMATE_CWEEDS_load = Boolean.parseBoolean(children0[L].getString("CLIMATE_CWEEDS_load"));
+      CLIMATE_CLMREC_load = Boolean.parseBoolean(children0[L].getString("CLIMATE_CLMREC_load"));
+      ENSEMBLE_FORECAST_load = Boolean.parseBoolean(children0[L].getString("ENSEMBLE_FORECAST_load"));
+      ENSEMBLE_OBSERVED_load = Boolean.parseBoolean(children0[L].getString("ENSEMBLE_OBSERVED_load"));
       GRIB2_Month = children0[L].getInt("GRIB2_Month");
       GRIB2_Day = children0[L].getInt("GRIB2_Day");
       GRIB2_ModelRun = children0[L].getInt("GRIB2_ModelRun");
@@ -50035,7 +50037,7 @@ void SOLARCHVISION_load_project (String myFile) {
       AERIAL_graphOption = children0[L].getInt("AERIAL_graphOption");
       Develop_Option = children0[L].getInt("Develop_Option");
       Develop_DayHour = children0[L].getInt("Develop_DayHour");
-      //DevelopData_update = children0[L].getBoolean("DevelopData_update");
+      //DevelopData_update = Boolean.parseBoolean(children0[L].getString("DevelopData_update"));
       numberOfLayers = children0[L].getInt("numberOfLayers");
       LAYER_windspd200hPa.id = children0[L].getInt("LAYER_windspd200hPa.id");
       LAYER_thicknesses_1000_500.id = children0[L].getInt("LAYER_thicknesses_1000_500.id");
@@ -50069,9 +50071,9 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.TrendJoinHours = children0[L].getInt("STUDY.TrendJoinHours");
       STUDY.TrendJoinType = children0[L].getInt("STUDY.TrendJoinType");
       TIME_Interval = children0[L].getInt("TIME_Interval");
-      //STUDY.Export_info_node = children0[L].getBoolean("STUDY.Export_info_node");
-      //STUDY.Export_info_norm = children0[L].getBoolean("STUDY.Export_info_norm");
-      //STUDY.Export_info_prob = children0[L].getBoolean("STUDY.Export_info_prob");
+      STUDY.Export_info_node = Boolean.parseBoolean(children0[L].getString("STUDY.Export_info_node"));
+      STUDY.Export_info_norm = Boolean.parseBoolean(children0[L].getString("STUDY.Export_info_norm"));
+      STUDY.Export_info_prob = Boolean.parseBoolean(children0[L].getString("STUDY.Export_info_prob"));
       STUDY.Pallet_SORT_CLR = children0[L].getInt("STUDY.Pallet_SORT_CLR");
       STUDY.Pallet_SORT_DIR = children0[L].getInt("STUDY.Pallet_SORT_DIR");
       STUDY.Pallet_SORT_MLT = children0[L].getFloat("STUDY.Pallet_SORT_MLT");
@@ -50119,10 +50121,10 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.rect_scale = children0[L].getFloat("STUDY.rect_scale");
       STUDY.rect_offset_x = children0[L].getFloat("STUDY.rect_offset_x");
       CurrentDataSource = children0[L].getInt("CurrentDataSource");
-      //STUDY.impact_summary = children0[L].getBoolean("STUDY.impact_summary");
+      STUDY.impact_summary = Boolean.parseBoolean(children0[L].getString("STUDY.impact_summary"));
       STUDY.ImpactLayer = children0[L].getInt("STUDY.ImpactLayer");
       STUDY.PlotImpacts = children0[L].getInt("STUDY.PlotImpacts");
-      //STUDY.Impacts_update = children0[L].getBoolean("STUDY.Impacts_update");
+      STUDY.Impacts_update = Boolean.parseBoolean(children0[L].getString("STUDY.Impacts_update"));
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
       LAND_Tessellation = children0[L].getInt("LAND_Tessellation");
@@ -50132,37 +50134,37 @@ void SOLARCHVISION_load_project (String myFile) {
       WindRose_scale = children0[L].getFloat("WindRose_scale");
 
       Planetary_Magnification = children0[L].getFloat("Planetary_Magnification");
-      //Display_SolarRotation = children0[L].getBoolean("Display_SolarRotation");      
-      //Display_SUN_Path = children0[L].getBoolean("Display_SUN_Path");
-      //Display_SUN_Pattern = children0[L].getBoolean("Display_SUN_Pattern");
-      //Display_SKY_Surface = children0[L].getBoolean("Display_SKY_Surface");
-      //Display_STAR_Surface = children0[L].getBoolean("Display_STAR_Surface");
-      //Display_STAR_Texture = children0[L].getBoolean("Display_STAR_Texture");            
-      //Display_MOON_Surface = children0[L].getBoolean("Display_MOON_Surface");
-      //Display_MOON_Texture = children0[L].getBoolean("Display_MOON_Texture");
-      //Display_TROPO_Surface = children0[L].getBoolean("Display_TROPO_Surface");
-      //Display_TROPO_Texture = children0[L].getBoolean("Display_TROPO_Texture");
-      //Display_EARTH_Surface = children0[L].getBoolean("Display_EARTH_Surface");
-      //Display_EARTH_Texture = children0[L].getBoolean("Display_EARTH_Texture");
-      //Load_LAND_Textures = children0[L].getBoolean("Load_LAND_Textures");      
-      //Load_LAND_Mesh = children0[L].getBoolean("Load_LAND_Mesh");
-      //Display_LAND_Surface = children0[L].getBoolean("Display_LAND_Surface");
-      //Display_LAND_Points = children0[L].getBoolean("Display_LAND_Points");
-      //Display_LAND_Textures = children0[L].getBoolean("Display_LAND_Textures");
-      //Display_LAND_Depth = children0[L].getBoolean("Display_LAND_Depth");
-      //LAND_Surface_SkipStart = children0[L].getBoolean("LAND_Surface_SkipStart");
-      //LAND_Surface_SkipEnd = children0[L].getBoolean("LAND_Surface_SkipEnd");
-      //Display_SolidImpact_Points = children0[L].getBoolean("Display_SolidImpact_Points");
-      //Display_SolidImpact_Lines = children0[L].getBoolean("Display_SolidImpact_Lines");
-      //MODEL3D_DisplayVertices = children0[L].getBoolean("MODEL3D_DisplayVertices");  
-      //MODEL3D_DisplayEdges = children0[L].getBoolean("MODEL3D_DisplayEdges");
-      //MODEL3D_DisplayNormals = children0[L].getBoolean("MODEL3D_DisplayNormals");
-      //Display_WindFlow = children0[L].getBoolean("Display_WindFlow");
+      Display_SolarRotation = Boolean.parseBoolean(children0[L].getString("Display_SolarRotation"));      
+      Display_SUN_Path = Boolean.parseBoolean(children0[L].getString("Display_SUN_Path"));
+      Display_SUN_Pattern = Boolean.parseBoolean(children0[L].getString("Display_SUN_Pattern"));
+      Display_SKY_Surface = Boolean.parseBoolean(children0[L].getString("Display_SKY_Surface"));
+      Display_STAR_Surface = Boolean.parseBoolean(children0[L].getString("Display_STAR_Surface"));
+      Display_STAR_Texture = Boolean.parseBoolean(children0[L].getString("Display_STAR_Texture"));            
+      Display_MOON_Surface = Boolean.parseBoolean(children0[L].getString("Display_MOON_Surface"));
+      Display_MOON_Texture = Boolean.parseBoolean(children0[L].getString("Display_MOON_Texture"));
+      Display_TROPO_Surface = Boolean.parseBoolean(children0[L].getString("Display_TROPO_Surface"));
+      Display_TROPO_Texture = Boolean.parseBoolean(children0[L].getString("Display_TROPO_Texture"));
+      Display_EARTH_Surface = Boolean.parseBoolean(children0[L].getString("Display_EARTH_Surface"));
+      Display_EARTH_Texture = Boolean.parseBoolean(children0[L].getString("Display_EARTH_Texture"));
+      Load_LAND_Textures = Boolean.parseBoolean(children0[L].getString("Load_LAND_Textures"));      
+      Load_LAND_Mesh = Boolean.parseBoolean(children0[L].getString("Load_LAND_Mesh"));
+      Display_LAND_Surface = Boolean.parseBoolean(children0[L].getString("Display_LAND_Surface"));
+      Display_LAND_Points = Boolean.parseBoolean(children0[L].getString("Display_LAND_Points"));
+      Display_LAND_Textures = Boolean.parseBoolean(children0[L].getString("Display_LAND_Textures"));
+      Display_LAND_Depth = Boolean.parseBoolean(children0[L].getString("Display_LAND_Depth"));
+      LAND_Surface_SkipStart = children0[L].getInt("LAND_Surface_SkipStart");
+      LAND_Surface_SkipEnd = children0[L].getInt("LAND_Surface_SkipEnd");
+      Display_SolidImpact_Points = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Points"));
+      Display_SolidImpact_Lines = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Lines"));
+      MODEL3D_DisplayVertices = Boolean.parseBoolean(children0[L].getString("MODEL3D_DisplayVertices"));  
+      MODEL3D_DisplayEdges = Boolean.parseBoolean(children0[L].getString("MODEL3D_DisplayEdges"));
+      MODEL3D_DisplayNormals = Boolean.parseBoolean(children0[L].getString("MODEL3D_DisplayNormals"));
+      Display_WindFlow = Boolean.parseBoolean(children0[L].getString("Display_WindFlow"));
       Camera_Variation = children0[L].getInt("Camera_Variation");
-      //STUDY.DisplayRaws = children0[L].getBoolean("STUDY.DisplayRaws");
-      //STUDY.DisplaySorted = children0[L].getBoolean("STUDY.DisplaySorted");
-      //STUDY.DisplayNormals = children0[L].getBoolean("STUDY.DisplayNormals");
-      //STUDY.DisplayProbs = children0[L].getBoolean("STUDY.DisplayProbs");
+      STUDY.DisplayRaws = Boolean.parseBoolean(children0[L].getString("STUDY.DisplayRaws"));
+      STUDY.DisplaySorted = Boolean.parseBoolean(children0[L].getString("STUDY.DisplaySorted"));
+      STUDY.DisplayNormals = Boolean.parseBoolean(children0[L].getString("STUDY.DisplayNormals"));
+      STUDY.DisplayProbs = Boolean.parseBoolean(children0[L].getString("STUDY.DisplayProbs"));
       STUDY.SumInterval = children0[L].getInt("STUDY.SumInterval");
       STUDY.LevelPix = children0[L].getFloat("STUDY.LevelPix");
       STUDY.Pix = children0[L].getFloat("STUDY.Pix");
@@ -50208,21 +50210,21 @@ void SOLARCHVISION_load_project (String myFile) {
       selection_alignY = children0[L].getInt("selection_alignY");
       selection_alignZ = children0[L].getInt("selection_alignZ");
 
-      //selected_displayReferencePivot = children0[L].getBoolean("selected_displayReferencePivot");
-      //selectedGroup3D_displayPivot = children0[L].getBoolean("selectedGroup3D_displayPivot");
-      //selectedGroup3D_displayEdges = children0[L].getBoolean("selectedGroup3D_displayEdges");
-      //selectedGroup3D_displayBox = children0[L].getBoolean("selectedGroup3D_displayBox");
-      //selectedFace_displayEdges = children0[L].getBoolean("selectedFace_displayEdges");
-      //selectedFace_displayVertexCount = children0[L].getBoolean("selectedFace_displayVertexCount");
-      //selectedCurve_displayVertexCount = children0[L].getBoolean("selectedCurve_displayVertexCount");
-      //selectedVertex_displayVertices = children0[L].getBoolean("selectedVertex_displayVertices");      
-      //selectedCurve_displayVertices = children0[L].getBoolean("selectedCurve_displayVertices");
-      //selectedObject2D_displayEdges = children0[L].getBoolean("selectedObject2D_displayEdges");
-      //selectedFractal_displayEdges = children0[L].getBoolean("selectedFractal_displayEdges");
-      //selectedSolid_displayEdges = children0[L].getBoolean("selectedSolid_displayEdges");
-      //selectedSection_displayEdges = children0[L].getBoolean("selectedSection_displayEdges");
-      //selectedCamera_displayEdges = children0[L].getBoolean("selectedCamera_displayEdges");
-      //selectedLandPoint_displayPoints = children0[L].getBoolean("selectedLandPoint_displayPoints");
+      selected_displayReferencePivot = Boolean.parseBoolean(children0[L].getString("selected_displayReferencePivot"));
+      selectedGroup3D_displayPivot = Boolean.parseBoolean(children0[L].getString("selectedGroup3D_displayPivot"));
+      selectedGroup3D_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedGroup3D_displayEdges"));
+      selectedGroup3D_displayBox = Boolean.parseBoolean(children0[L].getString("selectedGroup3D_displayBox"));
+      selectedFace_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedFace_displayEdges"));
+      selectedFace_displayVertexCount = Boolean.parseBoolean(children0[L].getString("selectedFace_displayVertexCount"));
+      selectedCurve_displayVertexCount = Boolean.parseBoolean(children0[L].getString("selectedCurve_displayVertexCount"));
+      selectedVertex_displayVertices = Boolean.parseBoolean(children0[L].getString("selectedVertex_displayVertices"));      
+      selectedCurve_displayVertices = Boolean.parseBoolean(children0[L].getString("selectedCurve_displayVertices"));
+      selectedObject2D_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedObject2D_displayEdges"));
+      selectedFractal_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedFractal_displayEdges"));
+      selectedSolid_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedSolid_displayEdges"));
+      selectedSection_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedSection_displayEdges"));
+      selectedCamera_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedCamera_displayEdges"));
+      selectedLandPoint_displayPoints = Boolean.parseBoolean(children0[L].getString("selectedLandPoint_displayPoints"));
 
       softSelection_Power = children0[L].getFloat("softSelection_Power");
       softSelection_Radius = children0[L].getFloat("softSelection_Radius");
@@ -50232,10 +50234,10 @@ void SOLARCHVISION_load_project (String myFile) {
       Language_Active = children0[L].getInt("Language_Active");
 
       IMPACTS_DisplayDay = children0[L].getInt("IMPACTS_DisplayDay");
-      //Display_WindRoseImage = children0[L].getBoolean("Display_WindRoseImage");
+      Display_WindRoseImage = Boolean.parseBoolean(children0[L].getString("Display_WindRoseImage"));
       WindRose_RES = children0[L].getInt("WindRose_RES");
       Rendered_WindRose_RES = children0[L].getInt("Rendered_WindRose_RES");
-      //Display_SolarImpactImage = children0[L].getBoolean("Display_SolarImpactImage");
+      Display_SolarImpactImage = Boolean.parseBoolean(children0[L].getString("Display_SolarImpactImage"));
       SolarImpact_sectionType = children0[L].getInt("SolarImpact_sectionType");
       SolarImpact_Rotation = children0[L].getFloat("SolarImpact_Rotation");
       SolarImpact_scale_U = children0[L].getFloat("SolarImpact_scale_U");
@@ -50248,7 +50250,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SolidImpact_RES1 = children0[L].getInt("SolidImpact_RES1");
       SolidImpact_RES2 = children0[L].getInt("SolidImpact_RES2");
       SolidImpact_Grade = children0[L].getFloat("SolidImpact_Grade");
-      //Display_SolidImpactImage = children0[L].getBoolean("Display_SolidImpactImage");
+      Display_SolidImpactImage = Boolean.parseBoolean(children0[L].getString("Display_SolidImpactImage"));
       SolidImpact_sectionType = children0[L].getInt("SolidImpact_sectionType");
       SolidImpact_positionStep = children0[L].getFloat("SolidImpact_positionStep");
       Process_subDivisions = children0[L].getInt("Process_subDivisions");
@@ -50276,8 +50278,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Export_PrecisionVertex = children0[L].getInt("Export_PrecisionVertex");
       Export_PrecisionVtexture = children0[L].getInt("Export_PrecisionVtexture");
       Export_PolyToPoly = children0[L].getInt("Export_PolyToPoly");
-      //Export_MaterialLibrary  = children0[L].getBoolean("Export_MaterialLibrary");
-      //Export_BackSides = children0[L].getBoolean("Export_BackSides");
+      Export_MaterialLibrary  = Boolean.parseBoolean(children0[L].getString("Export_MaterialLibrary"));
+      Export_BackSides = Boolean.parseBoolean(children0[L].getString("Export_BackSides"));
      
       Export_PalletResolution = children0[L].getInt("Export_PalletResolution");
 
