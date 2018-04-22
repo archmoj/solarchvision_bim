@@ -7,13 +7,11 @@ final int Language_EN = 0;
 final int Language_FR = 1;
 int Language_Active = Language_EN;
 
-
-float FLOAT_huge = 1000000000;
 float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
-
-String STRING_undefined = "N/A";
+float FLOAT_huge = 1000000000;
 float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
 float FLOAT_max_defined = 0.95 * FLOAT_undefined;
+String STRING_undefined = "N/A";
 
 boolean is_undefined_FLOAT (float a) {
   boolean b = false;
@@ -38335,11 +38333,11 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
       newChild3.setString("member_type", "ensemble");
     }
 
-    newChild1 = my_xml.addChild("forecast_element");
-    newChild1.setString("code", LAYERS_GRIB2_HGT[l][h]); 
-    newChild1.setString("unit", LAYERS_Unit[l]); 
-    newChild1.setString("title_english", LAYERS_Title[l][Language_EN]);
-    newChild1.setString("titre_francais", LAYERS_Title[l][Language_FR]);
+    //newChild1 = my_xml.addChild("forecast_element");
+    //newChild1.setString("code", LAYERS_GRIB2_HGT[l][h]); 
+    //newChild1.setString("unit", LAYERS_Unit[l]); 
+    //newChild1.setString("title_english", LAYERS_Title[l][Language_EN]);
+    //newChild1.setString("titre_francais", LAYERS_Title[l][Language_FR]);
 
     newChild1 = my_xml.addChild("point_description");
 
@@ -50432,109 +50430,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     newChild1.setContent(lineSTR);
   }    
 
-
-  {
-    newChild1 = my_xml.addChild("STUDY.V_scale");
-    int ni = STUDY.V_scale.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(STUDY.V_scale[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }  
-
-  {
-    newChild1 = my_xml.addChild("STUDY.V_offset");
-    int ni = STUDY.V_offset.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(STUDY.V_offset[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }  
-
-  {
-    newChild1 = my_xml.addChild("STUDY.V_belowLine");
-    int ni = STUDY.V_belowLine.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(STUDY.V_belowLine[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }  
-
-
-  {
-    newChild1 = my_xml.addChild("LAYERS_Unit");
-    int ni = LAYERS_Unit.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += LAYERS_Unit[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("LAYERS_Text");
-    int ni = LAYERS_Text.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += LAYERS_Text[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("LAYERS_GRIB2_MUL");
-    int ni = LAYERS_GRIB2_MUL.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAYERS_GRIB2_MUL[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("LAYERS_GRIB2_ADD");
-    int ni = LAYERS_GRIB2_ADD.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAYERS_GRIB2_ADD[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("GRIB2_TGL_Selected");
-    int ni = GRIB2_TGL_Selected.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += GRIB2_TGL_Selected[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
   saveXML(my_xml, myFile);    
 
   println("End of saving project.");
@@ -51627,95 +51522,6 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }         
 
-    children0 = FileAll.getChildren("STUDY.V_scale");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      STUDY.V_scale = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        STUDY.V_scale[i] = float(parts[i]);
-      }
-    } 
-
-    children0 = FileAll.getChildren("STUDY.V_offset");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      STUDY.V_offset = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        STUDY.V_offset[i] = float(parts[i]);
-      }
-    }     
-
-    children0 = FileAll.getChildren("STUDY.V_belowLine");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      STUDY.V_belowLine = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        STUDY.V_belowLine[i] = float(parts[i]);
-      }
-    } 
-
-
-    children0 = FileAll.getChildren("LAYERS_Unit");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      LAYERS_Unit = new String [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        LAYERS_Unit[i] = parts[i];
-      }
-    }
-
-    children0 = FileAll.getChildren("LAYERS_Text");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      LAYERS_Text = new String [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        LAYERS_Text[i] = parts[i];
-      }
-    }
-
-    children0 = FileAll.getChildren("LAYERS_GRIB2_MUL");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      LAYERS_GRIB2_MUL = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        LAYERS_GRIB2_MUL[i] = float(parts[i]);
-      }
-    }
-
-    children0 = FileAll.getChildren("LAYERS_GRIB2_ADD");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      LAYERS_GRIB2_ADD = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        LAYERS_GRIB2_ADD[i] = float(parts[i]);
-      }
-    }
-
-    children0 = FileAll.getChildren("GRIB2_TGL_Selected");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      GRIB2_TGL_Selected = new int [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        GRIB2_TGL_Selected[i] = int(parts[i]);
-      }
-    }
-    
   }
   println("End of loading project.");
 
