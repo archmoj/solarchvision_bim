@@ -2141,7 +2141,7 @@ class solarchvision_WIN3D {
       this.graphics.popMatrix();
   
   
-      WIN3D.drawPallet();  
+      this.drawPallet();  
   
       this.graphics.endDraw();
   
@@ -4286,7 +4286,7 @@ class solarchvision_STUDY {
       }
     }
   
-    STUDY.drawInfo(sx_Plot, this.V_belowLine[CurrentLayerID]);
+    this.drawInfo(sx_Plot, this.V_belowLine[CurrentLayerID]);
   }  
   
   
@@ -4402,7 +4402,7 @@ class solarchvision_STUDY {
       }
     }
   
-    STUDY.drawInfo(sx_Plot, 1);
+    this.drawInfo(sx_Plot, 1);
   }
   
   
@@ -4851,7 +4851,7 @@ class solarchvision_STUDY {
   
     this.color_data_raws = color(0, 0, 63, SOLARCHVISION_getOpacity(this.O_scale));
   
-    STUDY.drawTimeGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+    this.drawTimeGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   
     int[] startK_endK = get_startK_endK();
     int start_k = startK_endK[0]; 
@@ -5074,7 +5074,7 @@ class solarchvision_STUDY {
             }
           }        
           if (this.DisplayProbs) {
-            STUDY.drawProbs(i, j, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+            this.drawProbs(i, j, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
           }
           for (int k = 0; k < count_k; k++) {
             for (int j_ADD = 0; j_ADD < this.JoinDays; j_ADD++) {
@@ -5085,11 +5085,11 @@ class solarchvision_STUDY {
         }      
   
         if (this.DisplaySorted) {
-          STUDY.drawSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          this.drawSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
   
         if (this.DisplayNormals) {
-          STUDY.drawNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          this.drawNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
       }
       
@@ -5112,7 +5112,7 @@ class solarchvision_STUDY {
     }
   
     if (this.DisplayRaws) {
-      STUDY.drawData(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+      this.drawData(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
     }    
   
     this.graphics.popMatrix();
@@ -5132,7 +5132,7 @@ class solarchvision_STUDY {
         }
         this.ImpactLayer = pre_STUDY_ImpactLayer;
   
-        STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
       } else {
   
         if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
@@ -5156,7 +5156,7 @@ class solarchvision_STUDY {
         } else {
           SOLARCHVISION_PlotIMPACT(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
-          STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+          this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
         }
       }
     }  
@@ -5169,28 +5169,28 @@ class solarchvision_STUDY {
         int keep_TIME_BeginDay = TIME_BeginDay;
         int delta = 4;
   
-        STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         TIME_Date -= delta;
         SOLARCHVISION_update_date();
         TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
         update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
         TIME_BeginDay = (TIME_BeginDay + delta) % 365;
-        STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         TIME_Date -= delta;
         SOLARCHVISION_update_date();
         TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
         update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
         TIME_BeginDay = (TIME_BeginDay + 2 * delta) % 365;
-        STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         TIME_Date -= delta;
         SOLARCHVISION_update_date();
         TIME_BeginDay = SOLARCHVISION_Convert2Date(TIME_Month, TIME_Day);
         update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
         TIME_BeginDay = (TIME_BeginDay + 3 * delta) % 365;
-        STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         TIME_Date = pre_TIME_Date;
         SOLARCHVISION_update_date();
@@ -5210,13 +5210,13 @@ class solarchvision_STUDY {
       this.DisplayNormals = false;
       this.DisplayRaws = true;
       this.DisplayProbs = true;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false; 
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentDataSource = dataID_CLIMATE_CWEEDS;
   
@@ -5225,13 +5225,13 @@ class solarchvision_STUDY {
       this.DisplayRaws = true;
       this.DisplayProbs = true;
   
-      STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false; 
-      STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentDataSource = pre_CurrentDataSource;
     }
@@ -5239,7 +5239,7 @@ class solarchvision_STUDY {
   
     if (this.Setup == 0) {
   
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
     }
   
@@ -5251,19 +5251,19 @@ class solarchvision_STUDY {
   
       Develop_Option = DEV_OP_01;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       Develop_Option = DEV_OP_02;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       Develop_Option = DEV_OP_03;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       Develop_Option = DEV_OP_04;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       Develop_Option = pre_Develop_Option;
       CurrentLayerID = pre_STUDY_CurrentLayerID;
@@ -5274,22 +5274,22 @@ class solarchvision_STUDY {
       if (CurrentLayerID != LAYER_developed.id) {
   
   
-        STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         DevelopLayerID = CurrentLayerID;
         CurrentLayerID = LAYER_developed.id;
   
         Develop_Option = DEV_OP_06; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         Develop_Option = DEV_OP_07; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         Develop_Option = DEV_OP_08; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+        this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
         CurrentLayerID = pre_STUDY_CurrentLayerID;
       }
@@ -5299,16 +5299,16 @@ class solarchvision_STUDY {
     if (this.Setup == 3) {
   
       CurrentLayerID = LAYER_windspd200hPa.id;
-      STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_pressure.id;
-      STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_heightp500hPa.id;
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_thicknesses_1000_500.id;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = pre_STUDY_CurrentLayerID;
     }
@@ -5317,16 +5317,16 @@ class solarchvision_STUDY {
     if (this.Setup == 4) {
   
       CurrentLayerID = LAYER_windspd.id;
-      STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_precipitation.id;
-      STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_relhum.id;
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_drybulb.id;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = pre_STUDY_CurrentLayerID;
     }  
@@ -5335,20 +5335,20 @@ class solarchvision_STUDY {
     if (this.Setup == 5) {
   
       CurrentLayerID = LAYER_dirnorrad.id;
-      STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_difhorrad.id;
-      STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_developed.id;
       Develop_Option = DEV_OP_01; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_developed.id;
       Develop_Option = DEV_OP_03; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = pre_STUDY_CurrentLayerID;
       Develop_Option = pre_Develop_Option;
@@ -5358,16 +5358,16 @@ class solarchvision_STUDY {
     if (this.Setup == 6) {
   
       this.skyScenario = 4;
-      STUDY.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.skyScenario = 3;
-      STUDY.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.skyScenario = 2;
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.skyScenario = 1;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.skyScenario = pre_STUDY_SkyScenario;
     }  
@@ -5379,13 +5379,13 @@ class solarchvision_STUDY {
       this.DisplayNormals = false;
       this.DisplayRaws = true;
       this.DisplayProbs = true; 
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false;
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = -2;
       SOLARCHVISION_PlotIMPACT(0, -200 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5403,13 +5403,13 @@ class solarchvision_STUDY {
       this.DisplayNormals = false;
       this.DisplayRaws = true;
       this.DisplayProbs = true;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false; 
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 3;
       SOLARCHVISION_PlotIMPACT(0, -200 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5425,13 +5425,13 @@ class solarchvision_STUDY {
       this.DisplayNormals = false;
       this.DisplayRaws = true;
       this.DisplayProbs = true;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false; 
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 2;
       SOLARCHVISION_PlotIMPACT(0, -200 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5446,13 +5446,13 @@ class solarchvision_STUDY {
       this.DisplayNormals = false;
       this.DisplayRaws = true;
       this.DisplayProbs = true;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false;
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 4;
       SOLARCHVISION_PlotIMPACT(0, -200 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5467,13 +5467,13 @@ class solarchvision_STUDY {
       this.DisplayNormals = false;
       this.DisplayRaws = true;
       this.DisplayProbs = true;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.DisplaySorted = true;
       this.DisplayNormals = true;
       this.DisplayRaws = false;
       this.DisplayProbs = false;
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 5;
       SOLARCHVISION_PlotIMPACT(0, -200 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5492,17 +5492,17 @@ class solarchvision_STUDY {
       }
   
       CurrentLayerID = LAYER_windspd.id; 
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       //CurrentLayerID = LAYER_precipitation.id ; 
       //DevelopLayerID = CurrentLayerID;
       //CurrentLayerID = LAYER_developed.id; 
       //Develop_Option = DEV_OP_09;
       //SOLARCHVISION_postProcess_developDATA(CurrentDataSource); 
-      //STUDY.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      //this.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_drybulb.id; 
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 1;
       SOLARCHVISION_PlotIMPACT(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5521,13 +5521,13 @@ class solarchvision_STUDY {
       }
   
       CurrentLayerID = CurrentLayerID = LAYER_dirnorrad.id; 
-      STUDY.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
+      this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View); 
   
       //CurrentLayerID = LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
-      //STUDY.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      //this.plotHourly(0, 325 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       CurrentLayerID = LAYER_cloudcover.id;
-      STUDY.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
+      this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 0;
       SOLARCHVISION_PlotIMPACT(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale[CurrentLayerID] * this.S_View), 1.0 * this.S_View);
@@ -5604,7 +5604,7 @@ class solarchvision_STUDY {
       //this.graphics.translate(this.X_Coordinate * -0.25, this.Y_Coordinate * 0.5); 
       this.graphics.translate(this.X_Coordinate * -0.425, this.Y_Coordinate * 0.5);
   
-      STUDY.plotSetup();
+      this.plotSetup();
   
       //this.graphics.translate(this.X_Coordinate * 0.25, this.Y_Coordinate * 0.5);
       this.graphics.translate(this.X_Coordinate * 0.425, this.Y_Coordinate * 0.5);
