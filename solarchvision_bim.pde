@@ -237,7 +237,7 @@ int DevelopLayerID = CurrentLayerID;
 String[] LAYERS_Unit;
 String[][] LAYERS_Title;
 String[] LAYERS_Text; 
-String[][] LAYERS_GRIB2_VAL;
+String[][] LAYERS_GRIB2_HGT;
 float[] LAYERS_GRIB2_MUL;
 float[] LAYERS_GRIB2_ADD;  
 
@@ -7658,7 +7658,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
   LAYERS_Unit = new String [numberOfLayers];  
   LAYERS_Title = new String [numberOfLayers][2];
   LAYERS_Text = new String [numberOfLayers];
-  LAYERS_GRIB2_VAL = new String [numberOfLayers][GRIB2_TGL_number]; 
+  LAYERS_GRIB2_HGT = new String [numberOfLayers][GRIB2_TGL_number]; 
   LAYERS_GRIB2_MUL = new float [numberOfLayers];
   LAYERS_GRIB2_ADD = new float [numberOfLayers];
 
@@ -7673,10 +7673,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Wind Direction";
     LAYERS_Title[i][Language_FR] = "Direction du vent à la surface";
     LAYERS_Text[i] = "WDIR-SFC";
-    LAYERS_GRIB2_VAL[i][0] = "WDIR_TGL_10";
-    LAYERS_GRIB2_VAL[i][1] = "WDIR_TGL_40";
-    LAYERS_GRIB2_VAL[i][2] = "WDIR_TGL_80";
-    LAYERS_GRIB2_VAL[i][3] = "WDIR_TGL_120";
+    LAYERS_GRIB2_HGT[i][0] = "WDIR_TGL_10";
+    LAYERS_GRIB2_HGT[i][1] = "WDIR_TGL_40";
+    LAYERS_GRIB2_HGT[i][2] = "WDIR_TGL_80";
+    LAYERS_GRIB2_HGT[i][3] = "WDIR_TGL_120";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7690,10 +7690,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Wind Speed";
     LAYERS_Title[i][Language_FR] = "Vitesse du vent à la surface";
     LAYERS_Text[i] = "WIND-SFC";
-    LAYERS_GRIB2_VAL[i][0] = "WIND_TGL_10"; // m/sec
-    LAYERS_GRIB2_VAL[i][1] = "WIND_TGL_40"; // m/sec
-    LAYERS_GRIB2_VAL[i][2] = "WIND_TGL_80"; // m/sec
-    LAYERS_GRIB2_VAL[i][3] = "WIND_TGL_120"; // m/sec
+    LAYERS_GRIB2_HGT[i][0] = "WIND_TGL_10"; // m/sec
+    LAYERS_GRIB2_HGT[i][1] = "WIND_TGL_40"; // m/sec
+    LAYERS_GRIB2_HGT[i][2] = "WIND_TGL_80"; // m/sec
+    LAYERS_GRIB2_HGT[i][3] = "WIND_TGL_120"; // m/sec
     LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7707,10 +7707,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Accumulated Precipitation";
     LAYERS_Title[i][Language_FR] = "Précipitations accumulées à la surface";
     LAYERS_Text[i] = "APCP-SFC";
-    LAYERS_GRIB2_VAL[i][0] = "APCP_SFC_0"; // kg/m²
-    LAYERS_GRIB2_VAL[i][1] = "APCP_SFC_0"; // kg/m²
-    LAYERS_GRIB2_VAL[i][2] = "APCP_SFC_0"; // kg/m²
-    LAYERS_GRIB2_VAL[i][3] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_HGT[i][0] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_HGT[i][1] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_HGT[i][2] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_HGT[i][3] = "APCP_SFC_0"; // kg/m²
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7724,10 +7724,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Relative Humidity";
     LAYERS_Title[i][Language_FR] = "Humidité relative à la surface";
     LAYERS_Text[i] = "RELH-SFC";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7741,10 +7741,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Surface Air Temperature";
     LAYERS_Title[i][Language_FR] = "Température de l'air à la surface";
     LAYERS_Text[i] = "TMP-SFC";
-    LAYERS_GRIB2_VAL[i][0] = "TMP_TGL_2"; // Kelvin
-    LAYERS_GRIB2_VAL[i][1] = "TMP_TGL_40"; // Kelvin
-    LAYERS_GRIB2_VAL[i][2] = "TMP_TGL_80"; // Kelvin
-    LAYERS_GRIB2_VAL[i][3] = "TMP_TGL_120"; // Kelvin
+    LAYERS_GRIB2_HGT[i][0] = "TMP_TGL_2"; // Kelvin
+    LAYERS_GRIB2_HGT[i][1] = "TMP_TGL_40"; // Kelvin
+    LAYERS_GRIB2_HGT[i][2] = "TMP_TGL_80"; // Kelvin
+    LAYERS_GRIB2_HGT[i][3] = "TMP_TGL_120"; // Kelvin
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = -273.15; // °K > °C
   }
@@ -7758,10 +7758,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Direct normal radiation";
     LAYERS_Title[i][Language_FR] = "Rayonnement direct normal";
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7775,10 +7775,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Diffuse horizontal radiation";
     LAYERS_Title[i][Language_FR] = "Diffus rayonnement horizontal";
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7792,10 +7792,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Global horizontal radiation";
     LAYERS_Title[i][Language_FR] = "Rayonnement global horizontal";
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7809,10 +7809,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "";
     LAYERS_Title[i][Language_FR] = "";
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7828,10 +7828,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     //LAYERS_Title[i][Language_FR] = "Effet direct normal (basé sur 18°C)";
     LAYERS_Title[i][Language_FR] = "Effet direct normal <18°C<";
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7847,10 +7847,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     //LAYERS_Title[i][Language_FR] = "Effet diffus normal (basé sur 18°C)";
     LAYERS_Title[i][Language_FR] = "Effet diffus normal <18°C<";
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7864,10 +7864,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Total Cloud Cover";
     LAYERS_Title[i][Language_FR] = "Couvert nuageux total";
     LAYERS_Text[i] = "TCDC";
-    LAYERS_GRIB2_VAL[i][0] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2_VAL[i][1] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2_VAL[i][2] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2_VAL[i][3] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_HGT[i][0] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_HGT[i][1] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_HGT[i][2] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_HGT[i][3] = "TCDC_SFC_0"; // percent
     LAYERS_GRIB2_MUL[i] = 0.1; // percent >> tenth    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7881,10 +7881,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Ceiling height";
     LAYERS_Title[i][Language_FR] = "Hauteur sous plafond";  
     LAYERS_Text[i] = "";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7898,10 +7898,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Mean Sea level Pressure";
     LAYERS_Title[i][Language_FR] = "Pression moyenne au niveau de la mer";
     LAYERS_Text[i] = "MSLP";
-    LAYERS_GRIB2_VAL[i][0] = "PRMSL_MSL_0";
-    LAYERS_GRIB2_VAL[i][1] = "PRMSL_MSL_0";
-    LAYERS_GRIB2_VAL[i][2] = "PRMSL_MSL_0";
-    LAYERS_GRIB2_VAL[i][3] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_HGT[i][0] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_HGT[i][1] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_HGT[i][2] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_HGT[i][3] = "PRMSL_MSL_0";
     LAYERS_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7915,10 +7915,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Geopotential at 500 hPa";
     LAYERS_Title[i][Language_FR] = "Géopotentiel à 500 hPa";
     LAYERS_Text[i] = "HGT-500HPA";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7934,10 +7934,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     //LAYERS_Title[i][Language_FR] = "Épaisseurs (différence de géopotentiel) entre 1000 et 500 hPa";
     LAYERS_Title[i][Language_FR] = "Différence de géopotentiel";
     LAYERS_Text[i] = "PARAMETERS-1000-500HPA";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -7951,10 +7951,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_Title[i][Language_EN] = "Wind Speed at 200 hPa";
     LAYERS_Title[i][Language_FR] = "Vitesse du vent à 200 hPa";  
     LAYERS_Text[i] = "WIND-200HPA";
-    LAYERS_GRIB2_VAL[i][0] = "";
-    LAYERS_GRIB2_VAL[i][1] = "";
-    LAYERS_GRIB2_VAL[i][2] = "";
-    LAYERS_GRIB2_VAL[i][3] = "";
+    LAYERS_GRIB2_HGT[i][0] = "";
+    LAYERS_GRIB2_HGT[i][1] = "";
+    LAYERS_GRIB2_HGT[i][2] = "";
+    LAYERS_GRIB2_HGT[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -38096,7 +38096,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
   
       int h = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
   
-      if ((LAYERS_GRIB2_VAL[LAYER_winddir.id][h].substring(0, 4)).equals("UGRD") && (LAYERS_GRIB2_VAL[LAYER_windspd.id][h].substring(0, 4)).equals("VGRD")) {
+      if ((LAYERS_GRIB2_HGT[LAYER_winddir.id][h].substring(0, 4)).equals("UGRD") && (LAYERS_GRIB2_HGT[LAYER_windspd.id][h].substring(0, 4)).equals("VGRD")) {
   
         for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
           GRIB2_Hour = k;    
@@ -38218,15 +38218,15 @@ String getGrib2Folder (int s) {
 String getGrib2Filename (int k, int l, int h) {
   String return_txt = "";
 
-  String F_L = LAYERS_GRIB2_VAL[l][h];
+  String F_L = LAYERS_GRIB2_HGT[l][h];
 
   if (l == LAYER_winddir.id) {
     if ((GRIB2_Domains[GRIB2_DomainSelection][h].equals("GEPS")) || (GRIB2_Domains[GRIB2_DomainSelection][h].equals("REPS"))) {
       F_L = F_L.replace("WDIR", "UGRD");
-      LAYERS_GRIB2_VAL[l][h] = F_L;
+      LAYERS_GRIB2_HGT[l][h] = F_L;
     } else {
       F_L = F_L.replace("UGRD", "WDIR");
-      LAYERS_GRIB2_VAL[l][h] = F_L;
+      LAYERS_GRIB2_HGT[l][h] = F_L;
     }
   }
 
@@ -38234,11 +38234,11 @@ String getGrib2Filename (int k, int l, int h) {
     if ((GRIB2_Domains[GRIB2_DomainSelection][h].equals("GEPS")) || (GRIB2_Domains[GRIB2_DomainSelection][h].equals("REPS"))) {
 
       F_L = F_L.replace("WIND", "VGRD");
-      LAYERS_GRIB2_VAL[l][h] = F_L;
+      LAYERS_GRIB2_HGT[l][h] = F_L;
       LAYERS_GRIB2_MUL[l] = 1; // that is for no unit conversion!
     } else {
       F_L = F_L.replace("VGRD", "WIND");
-      LAYERS_GRIB2_VAL[l][h] = F_L;  
+      LAYERS_GRIB2_HGT[l][h] = F_L;  
       LAYERS_GRIB2_MUL[l] = 3.6; // m/s > Km/h
     }
   }
@@ -38257,7 +38257,7 @@ String getGrib2Filename (int k, int l, int h) {
 
 
 String getWgrib2Filename_MultiplePoints (int k, int l, int h, int part) {
-  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_VAL[l][h] + "_" + nf(STATION.getLongitude(), 0, 4) + "X" + nf(STATION.getLatitude(), 0, 4) + "_part" + nf(part, 3) + ".txt");
+  return(GRIB2_Domains[GRIB2_DomainSelection][2] + "_" + nf(GRIB2_Year, 4) + nf(GRIB2_Month, 2) + nf(GRIB2_Day, 2) + "R" + nf(GRIB2_ModelRun, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2_HGT[l][h] + "_" + nf(STATION.getLongitude(), 0, 4) + "X" + nf(STATION.getLatitude(), 0, 4) + "_part" + nf(part, 3) + ".txt");
 }
 
 
@@ -38336,7 +38336,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
     }
 
     newChild1 = my_xml.addChild("forecast_element");
-    newChild1.setString("code", LAYERS_GRIB2_VAL[l][h]); 
+    newChild1.setString("code", LAYERS_GRIB2_HGT[l][h]); 
     newChild1.setString("unit", LAYERS_Unit[l]); 
     newChild1.setString("title_english", LAYERS_Title[l][Language_EN]);
     newChild1.setString("titre_francais", LAYERS_Title[l][Language_FR]);
@@ -38503,7 +38503,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
     THE_XML_filename += "/" + nf(GRIB2_Year, 4) + "_" + nf(GRIB2_Month, 2) + "_" + nf(GRIB2_Day, 2) + "_run" + nf(GRIB2_ModelRun, 2);
     THE_XML_filename += "/" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
     THE_XML_filename += "/fhr" + nf(k, 3);
-    THE_XML_filename += "_" + LAYERS_GRIB2_VAL[l][h];
+    THE_XML_filename += "_" + LAYERS_GRIB2_HGT[l][h];
     THE_XML_filename += ".xml";
     saveXML(my_xml, THE_XML_filename);
   }
