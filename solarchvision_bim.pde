@@ -2044,7 +2044,7 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_draw_LAND(TypeWindow.WIN3D);
       
-      SOLARCHVISION_draw_TROPO(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
+      TROPO3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
   
       SOLARCHVISION_draw_Faces();
   
@@ -3167,7 +3167,7 @@ class solarchvision_WORLD {
   
   
   
-      SOLARCHVISION_draw_TROPO(TypeWindow.WORLD, STUDY.i_Start, STUDY.i_End);
+      TROPO3D.draw(TypeWindow.WORLD, STUDY.i_Start, STUDY.i_End);
   
   
       float R_station = 2 * this.ImageScale;
@@ -6093,8 +6093,8 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 3) { // Space
   
-        //Display_TROPO_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Surface", Display_TROPO_Surface, 0, 1, 1), 1));
-        //Display_TROPO_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Texture", Display_TROPO_Texture, 0, 1, 1), 1));      
+        //TROPO3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "TROPO3D.Display_Surface", TROPO3D.Display_Surface, 0, 1, 1), 1));
+        //TROPO3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "TROPO3D.Display_Texture", TROPO3D.Display_Texture, 0, 1, 1), 1));      
   
         //EARTH3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "EARTH3D.Display_Surface", EARTH3D.Display_Surface, 0, 1, 1), 1));
         //EARTH3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "EARTH3D.Display_Texture", EARTH3D.Display_Texture, 0, 1, 1), 1));
@@ -6566,7 +6566,7 @@ final int TROPO_timeSteps = 24;
 
 
 
-// SOLARCHVISION_draw_TROPO --- we only use the first image!
+// TROPO3D.draw --- we only use the first image!
 
 // should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
 
@@ -6971,8 +6971,6 @@ int Export_PalletResolution = 256;
 
 
 
-boolean Display_TROPO_Surface = false;
-boolean Display_TROPO_Texture = true;
 
 
 
@@ -7753,7 +7751,7 @@ void setup () {
   SOLARCHVISION_resize_VertexSolar_array(); 
   SOLARCHVISION_resize_GlobalSolar_array();
   
-  SOLARCHVISION_resize_TROPO_IMAGES();
+  TROPO3D.resize_images();
   
   EARTH3D.resize_images();
 
@@ -8084,9 +8082,9 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
     
-    stroke(255); fill(255); text("SOLARCHVISION_load_TROPO_IMAGES", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("TROPO3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 25) {
-    SOLARCHVISION_load_TROPO_IMAGES();
+    TROPO3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
  
@@ -20376,7 +20374,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
   SOLARCHVISION_draw_LAND(TypeWindow.HTML);
 
-  SOLARCHVISION_draw_TROPO(TypeWindow.HTML, STUDY.i_Start, STUDY.i_End);
+  TROPO3D.draw(TypeWindow.HTML, STUDY.i_Start, STUDY.i_End);
   
   SOLARCHVISION_draw_Sections(TypeWindow.HTML);
   
@@ -20740,7 +20738,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   SOLARCHVISION_draw_LAND(TypeWindow.OBJ);
 
-  SOLARCHVISION_draw_TROPO(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
+  TROPO3D.draw(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
   
   SOLARCHVISION_draw_Sections(TypeWindow.OBJ);
   
@@ -22951,98 +22949,6 @@ void SOLARCHVISION_draw_WindFlow () {
 
 
 
-String[] TROPO_IMAGES_Filenames;
-PImage[] TROPO_IMAGES_Map;
-
-float[][] TROPO_IMAGES_BoundariesX;
-float[][] TROPO_IMAGES_BoundariesY;
-
-
-void SOLARCHVISION_resize_TROPO_IMAGES () {
-  
-  TROPO_IMAGES_Filenames = new String [TROPO_timeSteps];
-  TROPO_IMAGES_Map = new PImage [TROPO_timeSteps];
-  
-  TROPO_IMAGES_BoundariesX = new float[TROPO_timeSteps][2];
-  TROPO_IMAGES_BoundariesY = new float[TROPO_timeSteps][2];
-  
-  for (int i = 0; i < TROPO_timeSteps; i++) {
-
-    TROPO_IMAGES_Filenames[i] = "";
-    TROPO_IMAGES_Map[i] = createImage(2, 2, RGB); // empty and small
-    
-    TROPO_IMAGES_BoundariesX[i][0] = 0;
-    TROPO_IMAGES_BoundariesX[i][1] = 0;
-    TROPO_IMAGES_BoundariesY[i][0] = 0;
-    TROPO_IMAGES_BoundariesY[i][1] = 0;
-    
-  }
-}
-
-
-void SOLARCHVISION_load_TROPO_IMAGES () {
-  
-  String[] allFilenames = sort(SOLARCHVISION_getfiles(GEOMET_directory));
-  
-
-  
-  int LoactationTimeZone = getLoactationTimeZone();
-  
-  int[] rightNow = getNow_inUTC();
-  
-  int CurrentYear = rightNow[0];
-  int CurrentMonth = rightNow[1];
-  int CurrentDay = rightNow[2];
-  int CurrentHour = rightNow[3];
- 
-  for (int i = 0; i < TROPO_timeSteps; i++) {
-    
-    CurrentHour += 1;
-    
-    if (CurrentHour > 23) {
-      CurrentHour -= 24;
-      CurrentDay += 1;
-
-      if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
-        CurrentDay = 1;
-        CurrentMonth += 1;
-        
-        if (CurrentMonth > 12) {
-          CurrentMonth = 1;
-          CurrentYear += 1;
-        }
-      }
-    }
-    
-    
-    
-    for (int q = 0; q < allFilenames.length; q++) {
-      
-      String[] Parts = split(allFilenames[q], '_');
-      
-      //if (Parts[0].equals(nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2))) {
-      if (Parts[0].equals(nf((CurrentHour + LoactationTimeZone) % 24, 2))) {
-        
-        TROPO_IMAGES_Filenames[i] = allFilenames[q];
-        
-        TROPO_IMAGES_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
-        TROPO_IMAGES_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
-        TROPO_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
-        TROPO_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
-        
-        println("Loading:", GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
-
-        TROPO_IMAGES_Map[i] = loadImage(GEOMET_directory + "/" + TROPO_IMAGES_Filenames[i]);
-
-        break;        
-      }
-    }
-
-  }
-  
-  WIN3D.update = true;
-}
-
 
 int getLoactationTimeZone () {
   return int(roundTo(STATION.getLongitude() / 15, 15)); 
@@ -23108,43 +23014,58 @@ int[] getNow_inUTC () {
 
 
 
-void SOLARCHVISION_download_TROPO_IMAGES () {
 
-  int LoactationTimeZone = getLoactationTimeZone();
+class solarchvision_TROPO3D {
   
-  int[] rightNow = getNow_inUTC();
+  boolean Display_Surface = false;
+  boolean Display_Texture = true;  
   
-  int CurrentYear = rightNow[0];
-  int CurrentMonth = rightNow[1];
-  int CurrentDay = rightNow[2];
-  int CurrentHour = rightNow[3];
- 
-  for (int i = 0; i < TROPO_timeSteps; i++) {
+  String[] Filenames;
+  PImage[] Map;
+  
+  float[][] BoundariesX;
+  float[][] BoundariesY;
+  
+  
+  void resize_images () {
     
-    if (WMS_type == DataType.SATELLITE_GOES) {
-      
-      CurrentHour -= 1;
-      
-      if (CurrentHour < 0) {
-        CurrentHour += 24;
-        CurrentDay -= 1;
+    this.Filenames = new String [TROPO_timeSteps];
+    this.Map = new PImage [TROPO_timeSteps];
+    
+    this.BoundariesX = new float[TROPO_timeSteps][2];
+    this.BoundariesY = new float[TROPO_timeSteps][2];
+    
+    for (int i = 0; i < TROPO_timeSteps; i++) {
   
-        if (CurrentDay < 0) { 
-          
-          CurrentMonth -= 1;
-
-          if (CurrentMonth < 0) {
-            CurrentMonth = 12;
-            CurrentYear -= 1;
-          }
-          
-          CurrentDay = CalendarLength[CurrentMonth - 1];
-        }
-      }
-          
+      this.Filenames[i] = "";
+      this.Map[i] = createImage(2, 2, RGB); // empty and small
+      
+      this.BoundariesX[i][0] = 0;
+      this.BoundariesX[i][1] = 0;
+      this.BoundariesY[i][0] = 0;
+      this.BoundariesY[i][1] = 0;
+      
     }
-    else {
+  }
+  
+  
+  void load_images () {
     
+    String[] allFilenames = sort(SOLARCHVISION_getfiles(GEOMET_directory));
+    
+  
+    
+    int LoactationTimeZone = getLoactationTimeZone();
+    
+    int[] rightNow = getNow_inUTC();
+    
+    int CurrentYear = rightNow[0];
+    int CurrentMonth = rightNow[1];
+    int CurrentDay = rightNow[2];
+    int CurrentHour = rightNow[3];
+   
+    for (int i = 0; i < TROPO_timeSteps; i++) {
+      
       CurrentHour += 1;
       
       if (CurrentHour > 23) {
@@ -23161,570 +23082,655 @@ void SOLARCHVISION_download_TROPO_IMAGES () {
           }
         }
       }
-    
-    }
-    String the_service = "";
-    
-    if (WMS_type == DataType.SATELLITE_GOES) {
-      the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
-    }
-    else {
-      the_service = "http://geo.weather.gc.ca/geomet/";
-    } 
-
-
-    String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
-    
-    
-    String ParameterStamp = ""; 
-
-    if (WMS_type == DataType.SATELLITE_GOES) {
-      ParameterStamp = ""; 
-    }
-    else {
-      ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
-      //ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
-      //ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
-      //ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
-      //ParameterStamp = "_UU&STYLES=WINDARROWKMH"; // Wind arrows in km/h
-      //ParameterStamp = "_UU&STYLES=WINDARROW"; // Wind arrows in knots
-      //ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
-      //ParameterStamp = "_TT&STYLES=TEMPSUMMER"; // Air temperaturesummer range
-      //ParameterStamp = "_TT&STYLES=TEMPWINTER"; // Air temperaturewinter range
-      //ParameterStamp = "_ES&STYLES=DEWPOINTDEP"; // Dew point depression
-      //ParameterStamp = "_P0&STYLES=PRESSURE"; // Surface pressure
-      //ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
-      //ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
-      //ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
-      //ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
-      //ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
-      //ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
-      //ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
-      //ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
-      //ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
-      //ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
-      //ParameterStamp = "_I0&STYLES=TEMPSOIL"; // Soil Temperature
-      //ParameterStamp = "_I1&STYLES=WATERCONTENT"; // Water content
-      //ParameterStamp = "_I2&STYLES=ICECONTENT"; // Soil volumetric ice content
-      //ParameterStamp = "_I3&STYLES=WATERRETAINED"; // Water retained on the vegetation 
-      //ParameterStamp = "_I4&STYLES=WATERRETAINED"; // Water retained in the snow pack
-      //ParameterStamp = "_I5&STYLES=SNOWMASS"; // Snow mass
-      //ParameterStamp = "_I8&STYLES=ICETHICK"; // Sea ice thickness
       
-      //ParameterStamp = "_WGE&STYLES=MS2KTSGUST"; // Windgust estimate intervals in knots
-      //ParameterStamp = "_WGE&STYLES=MS2KTS"; // Windspeed estimate in knots
-      //ParameterStamp = "_WGE&STYLES=MS2KMH"; // Windspeed estimate in km/h
       
-      //ParameterStamp = "_WGN&STYLES=MS2KTSGUST"; // Windgust minimum intervals in knots
-      //ParameterStamp = "_WGN&STYLES=MS2KTS"; // Windspeed minimum in knots
-      //ParameterStamp = "_WGN&STYLES=MS2KMH"; // Windspeed minimum in km/h
       
-      //ParameterStamp = "_WGX&STYLES=MS2KTSGUST"; // Windgust maximum intervals in knots
-      //ParameterStamp = "_WGX&STYLES=MS2KTS"; // Windspeed maximum in knots
-      //ParameterStamp = "_WGX&STYLES=MS2KMH"; // Windspeed maximum in km/h
+      for (int q = 0; q < allFilenames.length; q++) {
+        
+        String[] Parts = split(allFilenames[q], '_');
+        
+        //if (Parts[0].equals(nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2))) {
+        if (Parts[0].equals(nf((CurrentHour + LoactationTimeZone) % 24, 2))) {
+          
+          this.Filenames[i] = allFilenames[q];
+          
+          this.BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+          this.BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+          this.BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+          this.BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+          
+          println("Loading:", GEOMET_directory + "/" + this.Filenames[i]);
+  
+          this.Map[i] = loadImage(GEOMET_directory + "/" + this.Filenames[i]);
+  
+          break;        
+        }
+      }
+  
     }
     
+    WIN3D.update = true;
+  }
+  
+  
+  void download_images () {
+  
+    int LoactationTimeZone = getLoactationTimeZone();
+    
+    int[] rightNow = getNow_inUTC();
+    
+    int CurrentYear = rightNow[0];
+    int CurrentMonth = rightNow[1];
+    int CurrentDay = rightNow[2];
+    int CurrentHour = rightNow[3];
    
-    
-    String DomainStamp = "";
-    if (WMS_type == DataType.SATELLITE_GOES) {
-      DomainStamp = "east_vis_1km";
-    }
-    else if (WMS_type == DataType.FORECAST_HRDPS) {
-      DomainStamp = "HRDPS.CONTINENTAL";
-    }
-    else if (WMS_type == DataType.FORECAST_RDPS) {
-      DomainStamp = "RDPS.ETA";
-    } 
-    else if (WMS_type == DataType.FORECAST_GDPS) {
-      DomainStamp = "GDPS.ETA";
-    }
-    
-    TROPO_IMAGES_BoundariesX[i][0] = STATION.getLongitude() - 15;
-    TROPO_IMAGES_BoundariesX[i][1] = STATION.getLongitude() + 15;
-    TROPO_IMAGES_BoundariesY[i][0] = STATION.getLatitude() - 15 * cos_ang(STATION.getLatitude());
-    TROPO_IMAGES_BoundariesY[i][1] = STATION.getLatitude() + 15 * cos_ang(STATION.getLatitude());
-
-    
-    
-    int RES1 = 1200; // 1800;
-    int RES2 = 600; // 900;
- 
-
-    the_link += "&LAYERS=" + DomainStamp + ParameterStamp + "&WIDTH=" + nf(RES1, 0) + "&HEIGHT=" + nf(RES2, 0);
-    the_link += "&SRS=EPSG%3A4326&BBOX=";
-    the_link += nf(TROPO_IMAGES_BoundariesX[i][0], 0, 3) + ",";
-    the_link += nf(TROPO_IMAGES_BoundariesY[i][0], 0, 3) + ",";
-    the_link += nf(TROPO_IMAGES_BoundariesX[i][1], 0, 3) + ",";
-    the_link += nf(TROPO_IMAGES_BoundariesY[i][1], 0, 3);
-    
-    int the_hour = i * TROPO_deltaTime; 
-
-    String timeStamp = "";
-    if (WMS_type == DataType.SATELLITE_GOES) {
-      timeStamp = "&date=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2) + ":00";
-    }
-    else {
-      timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
-    }
-    
-    //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
-    the_link += "%26time%3D" + timeStamp +"%3A00Z";
-    
-    TROPO_IMAGES_Map[i] = createImage(2, 2, RGB); // empty and small
-    
-    //String FN = nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2) + "_";
-    String FN = nf((CurrentHour + LoactationTimeZone) % 24, 2) + "_";
-    FN += nf(int(roundTo(-1000 * TROPO_IMAGES_BoundariesX[i][0], 1)), 6) + "_";
-    FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][0], 1)), 6) + "_";
-    FN += nf(int(roundTo(-1000 * TROPO_IMAGES_BoundariesX[i][1], 1)), 6) + "_";
-    FN += nf(int(roundTo( 1000 * TROPO_IMAGES_BoundariesY[i][1], 1)), 6) + "_";
-    FN += ".png";
-
-    String the_target = GEOMET_directory + "/" + FN;
-
-    File dir = new File(the_target);
-    if (!dir.isFile()) {
+    for (int i = 0; i < TROPO_timeSteps; i++) {
       
-      boolean new_file_downloaded = false;
-
-      println("Try downloading: " + the_link);
-
-      try {
-        saveBytes(the_target, loadBytes(the_link));
+      if (WMS_type == DataType.SATELLITE_GOES) {
         
-        new_file_downloaded = true;
+        CurrentHour -= 1;
+        
+        if (CurrentHour < 0) {
+          CurrentHour += 24;
+          CurrentDay -= 1;
+    
+          if (CurrentDay < 0) { 
+            
+            CurrentMonth -= 1;
+  
+            if (CurrentMonth < 0) {
+              CurrentMonth = 12;
+              CurrentYear -= 1;
+            }
+            
+            CurrentDay = CalendarLength[CurrentMonth - 1];
+          }
+        }
+            
+      }
+      else {
+      
+        CurrentHour += 1;
+        
+        if (CurrentHour > 23) {
+          CurrentHour -= 24;
+          CurrentDay += 1;
+    
+          if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+            CurrentDay = 1;
+            CurrentMonth += 1;
+            
+            if (CurrentMonth > 12) {
+              CurrentMonth = 1;
+              CurrentYear += 1;
+            }
+          }
+        }
+      
+      }
+      String the_service = "";
+      
+      if (WMS_type == DataType.SATELLITE_GOES) {
+        the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
+      }
+      else {
+        the_service = "http://geo.weather.gc.ca/geomet/";
+      } 
+  
+  
+      String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
+      
+      
+      String ParameterStamp = ""; 
+  
+      if (WMS_type == DataType.SATELLITE_GOES) {
+        ParameterStamp = ""; 
+      }
+      else {
+        ParameterStamp = "_NT&STYLES=CLOUD"; // Cloud cover
+        //ParameterStamp = "_GZ&STYLES=DEFAULT"; // Geopotential height (Value range mapping)
+        //ParameterStamp = "_UU&STYLES=WINDSPEED"; // Windspeed in knots
+        //ParameterStamp = "_UU&STYLES=WINDSPEEDKMH"; // Windspeed in km/h
+        //ParameterStamp = "_UU&STYLES=WINDARROWKMH"; // Wind arrows in km/h
+        //ParameterStamp = "_UU&STYLES=WINDARROW"; // Wind arrows in knots
+        //ParameterStamp = "_TT&STYLES=TEMPERATURE"; // Air temperature
+        //ParameterStamp = "_TT&STYLES=TEMPSUMMER"; // Air temperaturesummer range
+        //ParameterStamp = "_TT&STYLES=TEMPWINTER"; // Air temperaturewinter range
+        //ParameterStamp = "_ES&STYLES=DEWPOINTDEP"; // Dew point depression
+        //ParameterStamp = "_P0&STYLES=PRESSURE"; // Surface pressure
+        //ParameterStamp = "_PN&STYLES=PRESSURE4_LINE"; // Sea level pressure contour 4mb
+        //ParameterStamp = "_PN&STYLES=PRESSURE4"; // Sea level pressure 4mb
+        //ParameterStamp = "_PN&STYLES=PRESSURESEAHIGH"; // Sea level pressure high range
+        //ParameterStamp = "_PN&STYLES=PRESSURESEALOW"; // Sea level pressure low range
+        //ParameterStamp = "_PR&STYLES=PRECIPMM"; // Precipitations in millimeters
+        //ParameterStamp = "_PR&STYLES=CAPA24"; // Precipitations in millimeters (CaPA24)
+        //ParameterStamp = "_RT&STYLES=PRECIPRTMMH"; // Rate of precipitations in millimeters per hour
+        //ParameterStamp = "_RN&STYLES=PRECIPMM"; // Precipitations in millimeters
+        //ParameterStamp = "_FR&STYLES=PRECIPMM"; // Precipitations in millimeters
+        //ParameterStamp = "_SN&STYLES=PRECIPSNOW"; // Precipitations in centimeters
+        //ParameterStamp = "_I0&STYLES=TEMPSOIL"; // Soil Temperature
+        //ParameterStamp = "_I1&STYLES=WATERCONTENT"; // Water content
+        //ParameterStamp = "_I2&STYLES=ICECONTENT"; // Soil volumetric ice content
+        //ParameterStamp = "_I3&STYLES=WATERRETAINED"; // Water retained on the vegetation 
+        //ParameterStamp = "_I4&STYLES=WATERRETAINED"; // Water retained in the snow pack
+        //ParameterStamp = "_I5&STYLES=SNOWMASS"; // Snow mass
+        //ParameterStamp = "_I8&STYLES=ICETHICK"; // Sea ice thickness
+        
+        //ParameterStamp = "_WGE&STYLES=MS2KTSGUST"; // Windgust estimate intervals in knots
+        //ParameterStamp = "_WGE&STYLES=MS2KTS"; // Windspeed estimate in knots
+        //ParameterStamp = "_WGE&STYLES=MS2KMH"; // Windspeed estimate in km/h
+        
+        //ParameterStamp = "_WGN&STYLES=MS2KTSGUST"; // Windgust minimum intervals in knots
+        //ParameterStamp = "_WGN&STYLES=MS2KTS"; // Windspeed minimum in knots
+        //ParameterStamp = "_WGN&STYLES=MS2KMH"; // Windspeed minimum in km/h
+        
+        //ParameterStamp = "_WGX&STYLES=MS2KTSGUST"; // Windgust maximum intervals in knots
+        //ParameterStamp = "_WGX&STYLES=MS2KTS"; // Windspeed maximum in knots
+        //ParameterStamp = "_WGX&STYLES=MS2KMH"; // Windspeed maximum in km/h
       }
       
-      catch (Exception e) {
-        println("LINK NOT AVAILABLE:", the_link);
+     
+      
+      String DomainStamp = "";
+      if (WMS_type == DataType.SATELLITE_GOES) {
+        DomainStamp = "east_vis_1km";
       }
-     
-      if (new_file_downloaded) {
-        
-        if (ParameterStamp.equals("_NT&STYLES=CLOUD")) {
-          println("image processing cloud layer");
-          
-          PImage img = loadImage(the_target);
-          img.loadPixels();        
-              
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
-          
-            color COL = img.get(Image_X, Image_Y);
-            //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-            
-            float COL_A = (COL >> 24 & 0xFF);
-            
-            if (COL_A == 0) {
-              img.pixels[np] = color(0,0);
-            }
-            else {
-              float COL_V = (COL >> 16 & 0xFF);
-              img.pixels[np] = color(255 - 0.125 * COL_V, COL_V);
-            }        
-          }
-          img.updatePixels();
-          img.save(the_target);
-        }
-
-
-
-
-        if (WMS_type == DataType.SATELLITE_GOES) {
-          println("image processing cloud layer");
-
-          PImage img = loadImage(the_target);
-          
-          img.loadPixels();        
-              
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
-          
-            color COL = img.get(Image_X, Image_Y);
-            //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-            
-            float COL_V = (COL >> 16 & 0xFF);
-            
-            float N = 3; //3.5; //4; 
-            
-            if (COL_V < 255 / N) {
-              img.pixels[np] = color(191,191,255,255); //color(0,0);
-            }
-            else {
-              img.pixels[np] = color((255 - COL_V) * N / (N - 1), 255);
-            }
-          }
-          img.updatePixels();
-          img.save(the_target);
-        }
-        
-      }      
-
-    }
-  }
-
-  SOLARCHVISION_load_TROPO_IMAGES();
-}  
-  
-
-
-
-
-
-void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) {
-  
-  ///////////////////////////////// for now we only use the first image
-  end_hour = start_hour;
-  /////////////////////////////////
-
-
-  boolean proceed = true;
-
-  if ((Display_TROPO_Surface == false) || (Display_TROPO_Texture == false)) {
-    proceed = false;
-  }
-
-  if (target_window == TypeWindow.STUDY) {  
-    proceed = false;
-  }
-
-  if (proceed) {    
-
-    for (int n_Map = start_hour; n_Map <= end_hour; n_Map++) {
-        
-      if (TROPO_IMAGES_Filenames[n_Map].equals("")) { // not to display empty images 
-        } else {
-        
-        if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
-          
-          if (Export_MaterialLibrary) {
-    
-            if (target_window == TypeWindow.HTML) {
-              htmlOutput.println("\t\t\t\t<Appearance DEF='TropoSphere" + nf(n_Map, 0) + "'>");
-            }            
-            
-            if (target_window == TypeWindow.OBJ) {
-            
-              mtlOutput.println("newmtl TropoSphere" + nf(n_Map, 0));
-              mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-              mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-              mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-              mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-              mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-              mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      else if (WMS_type == DataType.FORECAST_HRDPS) {
+        DomainStamp = "HRDPS.CONTINENTAL";
+      }
+      else if (WMS_type == DataType.FORECAST_RDPS) {
+        DomainStamp = "RDPS.ETA";
+      } 
+      else if (WMS_type == DataType.FORECAST_GDPS) {
+        DomainStamp = "GDPS.ETA";
+      }
       
-              mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-              mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-              mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-            }
-
-            if (Display_TROPO_Texture) {
-    
-              String old_Texture_path = GEOMET_directory + "/" + TROPO_IMAGES_Filenames[n_Map];
-    
-              String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
-    
-              String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
-    
-              println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-              saveBytes(new_Texture_path, loadBytes(old_Texture_path));
-    
-              if (target_window == TypeWindow.OBJ) {
-    
-                //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-                mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
-              }
-              
-              if (target_window == TypeWindow.HTML) {
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
-              }                    
-                  
-            }
-          }
-
-          if (target_window == TypeWindow.HTML) {
-            htmlOutput.println("\t\t\t\t</Appearance>");
-          } 
-        
-          if (target_window == TypeWindow.OBJ) {
-        
-            if (Export_PolyToPoly == 1) {
-              obj_lastGroupNumber += 1;  
-              objOutput.println("g TropoSphere" + nf(n_Map, 0));
-            }
+      this.BoundariesX[i][0] = STATION.getLongitude() - 15;
+      this.BoundariesX[i][1] = STATION.getLongitude() + 15;
+      this.BoundariesY[i][0] = STATION.getLatitude() - 15 * cos_ang(STATION.getLatitude());
+      this.BoundariesY[i][1] = STATION.getLatitude() + 15 * cos_ang(STATION.getLatitude());
+  
       
-            if (Export_MaterialLibrary) {
-              objOutput.println("usemtl TropoSphere" + nf(n_Map, 0));
-            }     
-          }
-     
-        }     
+      
+      int RES1 = 1200; // 1800;
+      int RES2 = 600; // 900;
+   
+  
+      the_link += "&LAYERS=" + DomainStamp + ParameterStamp + "&WIDTH=" + nf(RES1, 0) + "&HEIGHT=" + nf(RES2, 0);
+      the_link += "&SRS=EPSG%3A4326&BBOX=";
+      the_link += nf(this.BoundariesX[i][0], 0, 3) + ",";
+      the_link += nf(this.BoundariesY[i][0], 0, 3) + ",";
+      the_link += nf(this.BoundariesX[i][1], 0, 3) + ",";
+      the_link += nf(this.BoundariesY[i][1], 0, 3);
+      
+      int the_hour = i * TROPO_deltaTime; 
+  
+      String timeStamp = "";
+      if (WMS_type == DataType.SATELLITE_GOES) {
+        timeStamp = "&date=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2) + ":00";
+      }
+      else {
+        timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
+      }
+      
+      //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
+      the_link += "%26time%3D" + timeStamp +"%3A00Z";
+      
+      this.Map[i] = createImage(2, 2, RGB); // empty and small
+      
+      //String FN = nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2) + "_";
+      String FN = nf((CurrentHour + LoactationTimeZone) % 24, 2) + "_";
+      FN += nf(int(roundTo(-1000 * this.BoundariesX[i][0], 1)), 6) + "_";
+      FN += nf(int(roundTo( 1000 * this.BoundariesY[i][0], 1)), 6) + "_";
+      FN += nf(int(roundTo(-1000 * this.BoundariesX[i][1], 1)), 6) + "_";
+      FN += nf(int(roundTo( 1000 * this.BoundariesY[i][1], 1)), 6) + "_";
+      FN += ".png";
+  
+      String the_target = GEOMET_directory + "/" + FN;
+  
+      File dir = new File(the_target);
+      if (!dir.isFile()) {
+        
+        boolean new_file_downloaded = false;
+  
+        println("Try downloading: " + the_link);
+  
+        try {
+          saveBytes(the_target, loadBytes(the_link));
           
-  
-        float TROPO_IMAGES_OffsetX = TROPO_IMAGES_BoundariesX[n_Map][0] + 180;
-        float TROPO_IMAGES_OffsetY = TROPO_IMAGES_BoundariesY[n_Map][1] - 90;
-  
-        float TROPO_IMAGES_ScaleX = (TROPO_IMAGES_BoundariesX[n_Map][1] - TROPO_IMAGES_BoundariesX[n_Map][0]) / 360.0;
-        float TROPO_IMAGES_ScaleY = (TROPO_IMAGES_BoundariesY[n_Map][1] - TROPO_IMAGES_BoundariesY[n_Map][0]) / 180.0;
-  
-        float CEN_lon = 0.5 * (TROPO_IMAGES_BoundariesX[n_Map][0] + TROPO_IMAGES_BoundariesX[n_Map][1]);
-        float CEN_lat = 0.5 * (TROPO_IMAGES_BoundariesY[n_Map][0] + TROPO_IMAGES_BoundariesY[n_Map][1]);
-  
-        float delta_Alpha = -BIOSPHERE_drawResolution;
-        float delta_Beta = -BIOSPHERE_drawResolution;
-  
-        float r = FLOAT_r_Earth + 10000;
+          new_file_downloaded = true;
+        }
         
-        
-        num_vertices_added = 0;
-        
-        int end_turn = 1;
-        if (target_window == TypeWindow.OBJ) end_turn = 3;
-        for (int _turn = 1; _turn <= end_turn; _turn++) {
-
-          int f = 0;
-          for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-            for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-              f += 1;
-    
-              float[][] subFace = new float [4][7];
-    
-              for (int s = 0; s < 4; s++) {
-    
-                float a = Alpha;
-                float b = Beta;
-    
-                if ((s == 2) || (s == 3)) {
-                  a += delta_Alpha;
-                }
-    
-                if ((s == 1) || (s == 2)) {
-                  b += delta_Beta;
-                }
-    
-                float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-                float y0 = r * sin_ang(b - 90) * cos_ang(a);
-                float z0 = r * sin_ang(a);
-    
-                float _lon = b - CEN_lon;
-                float _lat = a - CEN_lat;
-    
-                if (Display_TROPO_Texture) {
-                  // calculating u and v
-                  subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
-                  subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
-                }         
-    
-                // rotating to location coordinates 
-                float tb = -STATION.getLongitude();
-                float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-                float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-                float z1 = z0;
-    
-                float ta = 90 - STATION.getLatitude();
-                float x2 = x1;
-                float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-                float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-    
-                // move it down!
-                z2 -= FLOAT_r_Earth;
-    
-                subFace[s][0] = x2;
-                subFace[s][1] = y2;
-                subFace[s][2] = z2;
+        catch (Exception e) {
+          println("LINK NOT AVAILABLE:", the_link);
+        }
+       
+        if (new_file_downloaded) {
+          
+          if (ParameterStamp.equals("_NT&STYLES=CLOUD")) {
+            println("image processing cloud layer");
+            
+            PImage img = loadImage(the_target);
+            img.loadPixels();        
                 
-                subFace[s][5] = a;
-                subFace[s][6] = b;
-              }
-              
-              boolean UVs_OK = true;
-              
-              for (int s = 0; s < subFace.length; s++) {
-                if (subFace[s][3] < 0) UVs_OK = false;
-                if (subFace[s][3] > 1) UVs_OK = false;
-                if (subFace[s][4] < 0) UVs_OK = false;
-                if (subFace[s][4] > 1) UVs_OK = false;
-              }
-              
-              if (UVs_OK) {
-              
-                if (target_window == TypeWindow.WORLD) {
-                  WORLD.graphics.beginShape();
-                  WORLD.graphics.noStroke();
-                  if (Display_TROPO_Texture) {
-                    WORLD.graphics.texture(TROPO_IMAGES_Map[n_Map]);
-                  }
-        
-                  for (int s = 0; s < subFace.length; s++) {
-                    
-                    float _lat = subFace[s][5];
-                    float _lon = subFace[s][6];
-                    if (_lon > 180) _lon -= 360; // << important!
+            for (int np = 0; np < (RES1 * RES2); np++) {
+              int Image_X = np % RES1;
+              int Image_Y = np / RES1;
             
-                    float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
-                    float y_point = WORLD.dY * ((-1 * (_lat - WORLD.oY) / 180.0) + 0.5) / WORLD.sY; 
-  
-                    WORLD.graphics.vertex(x_point, y_point, subFace[s][3] * TROPO_IMAGES_Map[n_Map].width, subFace[s][4] * TROPO_IMAGES_Map[n_Map].height);
-                  }
-        
-                  WORLD.graphics.endShape(CLOSE);
-                  
-                }
-
-
-                if (target_window == TypeWindow.HTML) {
-      
-                  htmlOutput.println("\t\t\t\t<shape>");
-      
-                  if (n_Map != -1) {   
-                    htmlOutput.println("\t\t\t\t\t<Appearance USE='TropoSphere" + nf(n_Map, 0) + "'></Appearance>");
-                  }      
-                  
-                  htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
-                  
-                  htmlOutput.print  (" coordIndex='");
-                  for (int s = 0; s < subFace.length; s++) {
-                    if (s > 0) {
-                      htmlOutput.print(" ");
-                    }         
-                    htmlOutput.print(nf(s, 0));          
-                  }
-                  htmlOutput.println(" -1'>");
-                  
-                  htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                  for (int s = 0; s < subFace.length; s++) {
-                    if (s > 0) {
-                      htmlOutput.print(",");
-                    }                  
-                    
-                    htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
-                  }                
-                  htmlOutput.println("'></Coordinate>");
-                  
-                }
+              color COL = img.get(Image_X, Image_Y);
+              //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
               
-                if (target_window == TypeWindow.WIN3D) {
-                  
-                  WIN3D.graphics.strokeWeight(1);
-                  
-                  WIN3D.graphics.beginShape();
-                  WIN3D.graphics.noStroke();
-                  if (Display_TROPO_Texture) {
-                    WIN3D.graphics.texture(TROPO_IMAGES_Map[n_Map]);
+              float COL_A = (COL >> 24 & 0xFF);
+              
+              if (COL_A == 0) {
+                img.pixels[np] = color(0,0);
+              }
+              else {
+                float COL_V = (COL >> 16 & 0xFF);
+                img.pixels[np] = color(255 - 0.125 * COL_V, COL_V);
+              }        
+            }
+            img.updatePixels();
+            img.save(the_target);
+          }
+  
+  
+  
+  
+          if (WMS_type == DataType.SATELLITE_GOES) {
+            println("image processing cloud layer");
+  
+            PImage img = loadImage(the_target);
+            
+            img.loadPixels();        
+                
+            for (int np = 0; np < (RES1 * RES2); np++) {
+              int Image_X = np % RES1;
+              int Image_Y = np / RES1;
+            
+              color COL = img.get(Image_X, Image_Y);
+              //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+              
+              float COL_V = (COL >> 16 & 0xFF);
+              
+              float N = 3; //3.5; //4; 
+              
+              if (COL_V < 255 / N) {
+                img.pixels[np] = color(191,191,255,255); //color(0,0);
+              }
+              else {
+                img.pixels[np] = color((255 - COL_V) * N / (N - 1), 255);
+              }
+            }
+            img.updatePixels();
+            img.save(the_target);
+          }
+          
+        }      
+  
+      }
+    }
+  
+    TROPO3D.load_images();
+  }  
+    
+  
+  
+  
+  
+  
+  void draw (int target_window, int start_hour, int end_hour) {
+    
+    ///////////////////////////////// for now we only use the first image
+    end_hour = start_hour;
+    /////////////////////////////////
+  
+  
+    boolean proceed = true;
+  
+    if ((Display_Surface == false) || (Display_Texture == false)) {
+      proceed = false;
+    }
+  
+    if (target_window == TypeWindow.STUDY) {  
+      proceed = false;
+    }
+  
+    if (proceed) {    
+  
+      for (int n_Map = start_hour; n_Map <= end_hour; n_Map++) {
+          
+        if (this.Filenames[n_Map].equals("")) { // not to display empty images 
+          } else {
+          
+          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+            
+            if (Export_MaterialLibrary) {
+      
+              if (target_window == TypeWindow.HTML) {
+                htmlOutput.println("\t\t\t\t<Appearance DEF='TropoSphere" + nf(n_Map, 0) + "'>");
+              }            
+              
+              if (target_window == TypeWindow.OBJ) {
+              
+                mtlOutput.println("newmtl TropoSphere" + nf(n_Map, 0));
+                mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+        
+                mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+              }
+  
+              if (TROPO3D.Display_Texture) {
+      
+                String old_Texture_path = GEOMET_directory + "/" + this.Filenames[n_Map];
+      
+                String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+      
+                String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+      
+                println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+                saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+      
+                if (target_window == TypeWindow.OBJ) {
+      
+                  //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+                }
+                
+                if (target_window == TypeWindow.HTML) {
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                }                    
+                    
+              }
+            }
+  
+            if (target_window == TypeWindow.HTML) {
+              htmlOutput.println("\t\t\t\t</Appearance>");
+            } 
+          
+            if (target_window == TypeWindow.OBJ) {
+          
+              if (Export_PolyToPoly == 1) {
+                obj_lastGroupNumber += 1;  
+                objOutput.println("g TropoSphere" + nf(n_Map, 0));
+              }
+        
+              if (Export_MaterialLibrary) {
+                objOutput.println("usemtl TropoSphere" + nf(n_Map, 0));
+              }     
+            }
+       
+          }     
+            
+    
+          float OffsetX = this.BoundariesX[n_Map][0] + 180;
+          float OffsetY = this.BoundariesY[n_Map][1] - 90;
+    
+          float ScaleX = (this.BoundariesX[n_Map][1] - this.BoundariesX[n_Map][0]) / 360.0;
+          float ScaleY = (this.BoundariesY[n_Map][1] - this.BoundariesY[n_Map][0]) / 180.0;
+    
+          float CEN_lon = 0.5 * (this.BoundariesX[n_Map][0] + this.BoundariesX[n_Map][1]);
+          float CEN_lat = 0.5 * (this.BoundariesY[n_Map][0] + this.BoundariesY[n_Map][1]);
+    
+          float delta_Alpha = -BIOSPHERE_drawResolution;
+          float delta_Beta = -BIOSPHERE_drawResolution;
+    
+          float r = FLOAT_r_Earth + 10000;
+          
+          
+          num_vertices_added = 0;
+          
+          int end_turn = 1;
+          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          for (int _turn = 1; _turn <= end_turn; _turn++) {
+  
+            int f = 0;
+            for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+              for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+                f += 1;
+      
+                float[][] subFace = new float [4][7];
+      
+                for (int s = 0; s < 4; s++) {
+      
+                  float a = Alpha;
+                  float b = Beta;
+      
+                  if ((s == 2) || (s == 3)) {
+                    a += delta_Alpha;
                   }
-                }    
-               
+      
+                  if ((s == 1) || (s == 2)) {
+                    b += delta_Beta;
+                  }
+      
+                  float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+                  float y0 = r * sin_ang(b - 90) * cos_ang(a);
+                  float z0 = r * sin_ang(a);
+      
+                  float _lon = b - CEN_lon;
+                  float _lat = a - CEN_lat;
+      
+                  if (TROPO3D.Display_Texture) {
+                    // calculating u and v
+                    subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
+                    subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
+                  }         
+      
+                  // rotating to location coordinates 
+                  float tb = -STATION.getLongitude();
+                  float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+                  float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+                  float z1 = z0;
+      
+                  float ta = 90 - STATION.getLatitude();
+                  float x2 = x1;
+                  float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+                  float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+      
+                  // move it down!
+                  z2 -= FLOAT_r_Earth;
+      
+                  subFace[s][0] = x2;
+                  subFace[s][1] = y2;
+                  subFace[s][2] = z2;
+                  
+                  subFace[s][5] = a;
+                  subFace[s][6] = b;
+                }
+                
+                boolean UVs_OK = true;
                 
                 for (int s = 0; s < subFace.length; s++) {
-                  
-                  float x = subFace[s][0];
-                  float y = subFace[s][1];
-                  float z = subFace[s][2];
-                  float u = subFace[s][3];
-                  float v = subFace[s][4];
-
-                  if (u > 1) u = 1;
-                  if (u < 0) u = 0;
-                  if (v > 1) v = 1;
-                  if (v < 0) v = 0;                     
-
-
+                  if (subFace[s][3] < 0) UVs_OK = false;
+                  if (subFace[s][3] > 1) UVs_OK = false;
+                  if (subFace[s][4] < 0) UVs_OK = false;
+                  if (subFace[s][4] > 1) UVs_OK = false;
+                }
                 
-                  if (target_window == TypeWindow.WIN3D) {
-
-                    WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * TROPO_IMAGES_Map[n_Map].width, v * TROPO_IMAGES_Map[n_Map].height);
-                  }                    
+                if (UVs_OK) {
                 
-                  if (target_window == TypeWindow.OBJ) {
-      
-                    if (_turn == 1) {
-                      SOLARCHVISION_OBJprintVertex(x, y, z);
+                  if (target_window == TypeWindow.WORLD) {
+                    WORLD.graphics.beginShape();
+                    WORLD.graphics.noStroke();
+                    if (TROPO3D.Display_Texture) {
+                      WORLD.graphics.texture(this.Map[n_Map]);
                     }
-      
-                    if (_turn == 2) {
-
-                      v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-      
-                      SOLARCHVISION_OBJprintVtexture(u, v, 0);
+          
+                    for (int s = 0; s < subFace.length; s++) {
+                      
+                      float _lat = subFace[s][5];
+                      float _lon = subFace[s][6];
+                      if (_lon > 180) _lon -= 360; // << important!
+              
+                      float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
+                      float y_point = WORLD.dY * ((-1 * (_lat - WORLD.oY) / 180.0) + 0.5) / WORLD.sY; 
+    
+                      WORLD.graphics.vertex(x_point, y_point, subFace[s][3] * this.Map[n_Map].width, subFace[s][4] * this.Map[n_Map].height);
                     }
-      
-                    if (_turn == 3) {
-                      obj_lastVertexNumber += 1;
-                      obj_lastVtextureNumber += 1;
-                    }
+          
+                    WORLD.graphics.endShape(CLOSE);
+                    
                   }
-                  
+  
+  
                   if (target_window == TypeWindow.HTML) {
-                    
+        
+                    htmlOutput.println("\t\t\t\t<shape>");
+        
                     if (n_Map != -1) {   
+                      htmlOutput.println("\t\t\t\t\t<Appearance USE='TropoSphere" + nf(n_Map, 0) + "'></Appearance>");
+                    }      
                     
-                      if (s == 0) {
-                        htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
-                      }
+                    htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
+                    
+                    htmlOutput.print  (" coordIndex='");
+                    for (int s = 0; s < subFace.length; s++) {
+                      if (s > 0) {
+                        htmlOutput.print(" ");
+                      }         
+                      htmlOutput.print(nf(s, 0));          
+                    }
+                    htmlOutput.println(" -1'>");
+                    
+                    htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+                    for (int s = 0; s < subFace.length; s++) {
                       if (s > 0) {
                         htmlOutput.print(",");
                       }                  
-      
-                      v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-                      SOLARCHVISION_HTMLprintVtexture(u, v);
                       
-                      if (s == subFace.length - 1) {
-                        htmlOutput.println("'></TextureCoordinate>");
-                      }       
-                    }              
-       
-                  }                  
+                      htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                    }                
+                    htmlOutput.println("'></Coordinate>");
+                    
+                  }
+                
+                  if (target_window == TypeWindow.WIN3D) {
+                    
+                    WIN3D.graphics.strokeWeight(1);
+                    
+                    WIN3D.graphics.beginShape();
+                    WIN3D.graphics.noStroke();
+                    if (TROPO3D.Display_Texture) {
+                      WIN3D.graphics.texture(this.Map[n_Map]);
+                    }
+                  }    
+                 
                   
+                  for (int s = 0; s < subFace.length; s++) {
+                    
+                    float x = subFace[s][0];
+                    float y = subFace[s][1];
+                    float z = subFace[s][2];
+                    float u = subFace[s][3];
+                    float v = subFace[s][4];
+  
+                    if (u > 1) u = 1;
+                    if (u < 0) u = 0;
+                    if (v > 1) v = 1;
+                    if (v < 0) v = 0;                     
+  
+  
+                  
+                    if (target_window == TypeWindow.WIN3D) {
+  
+                      WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * this.Map[n_Map].width, v * this.Map[n_Map].height);
+                    }                    
+                  
+                    if (target_window == TypeWindow.OBJ) {
+        
+                      if (_turn == 1) {
+                        SOLARCHVISION_OBJprintVertex(x, y, z);
+                      }
+        
+                      if (_turn == 2) {
+  
+                        v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+        
+                        SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                      }
+        
+                      if (_turn == 3) {
+                        obj_lastVertexNumber += 1;
+                        obj_lastVtextureNumber += 1;
+                      }
+                    }
+                    
+                    if (target_window == TypeWindow.HTML) {
+                      
+                      if (n_Map != -1) {   
+                      
+                        if (s == 0) {
+                          htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
+                        }
+                        if (s > 0) {
+                          htmlOutput.print(",");
+                        }                  
+        
+                        v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+                        SOLARCHVISION_HTMLprintVtexture(u, v);
+                        
+                        if (s == subFace.length - 1) {
+                          htmlOutput.println("'></TextureCoordinate>");
+                        }       
+                      }              
+         
+                    }                  
+                    
+                  }
+                  
+                  
+                  if (target_window == TypeWindow.HTML) {
+        
+                    htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+                    
+                    htmlOutput.println("\t\t\t\t</shape>");
+        
+                  }                 
+                  
+                  if (target_window == TypeWindow.WIN3D) {
+  
+                    WIN3D.graphics.endShape(CLOSE);
+                  }    
+   
+                  if (target_window == TypeWindow.OBJ) {
+      
+                    String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+                    String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+                    String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+                    String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+        
+                    String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+                    String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+                    String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+                    String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+        
+                    if (Export_PolyToPoly == 0) {
+                      if (_turn == 3) {
+                        obj_lastGroupNumber += 1;
+                        objOutput.println("g TropoSphere" + nf(n_Map, 0) + "_" + nf(f, 0));
+                      }
+                    } 
+        
+                    if (_turn == 3) {
+                      obj_lastFaceNumber += 1;            
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                      if (Export_BackSides) {
+                        obj_lastFaceNumber += 1;
+                        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                      }
+                    }
+                  }               
                 }
                 
-                
-                if (target_window == TypeWindow.HTML) {
-      
-                  htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-                  
-                  htmlOutput.println("\t\t\t\t</shape>");
-      
-                }                 
-                
-                if (target_window == TypeWindow.WIN3D) {
-
-                  WIN3D.graphics.endShape(CLOSE);
-                }    
- 
-                if (target_window == TypeWindow.OBJ) {
-    
-                  String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-                  String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-                  String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-                  String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-      
-                  String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-                  String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-                  String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-                  String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-      
-                  if (Export_PolyToPoly == 0) {
-                    if (_turn == 3) {
-                      obj_lastGroupNumber += 1;
-                      objOutput.println("g TropoSphere" + nf(n_Map, 0) + "_" + nf(f, 0));
-                    }
-                  } 
-      
-                  if (_turn == 3) {
-                    obj_lastFaceNumber += 1;            
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    if (Export_BackSides) {
-                      obj_lastFaceNumber += 1;
-                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                    }
-                  }
-                }               
               }
-              
             }
           }
         }
@@ -23733,7 +23739,7 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
   }
 }
 
-
+solarchvision_TROPO3D TROPO3D = new solarchvision_TROPO3D();
 
 
 
@@ -34380,7 +34386,7 @@ void mouseClicked () {
             }   
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Toroposphere")) {
-              SOLARCHVISION_download_TROPO_IMAGES();
+              TROPO3D.download_images();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Aerial")) {
@@ -34706,7 +34712,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Troposphere")) {
-              Display_TROPO_Surface = !Display_TROPO_Surface;
+              TROPO3D.Display_Surface = !TROPO3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -46650,7 +46656,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Troposphere")) {
-                if (Display_TROPO_Surface == false) {
+                if (TROPO3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49045,8 +49051,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("STAR3D.Display_Texture", Boolean.toString(STAR3D.Display_Texture));
   newChild1.setString("MOON3D.Display_Surface", Boolean.toString(MOON3D.Display_Surface));
   newChild1.setString("MOON3D.Display_Texture", Boolean.toString(MOON3D.Display_Texture));
-  newChild1.setString("Display_TROPO_Surface", Boolean.toString(Display_TROPO_Surface));
-  newChild1.setString("Display_TROPO_Texture", Boolean.toString(Display_TROPO_Texture));
+  newChild1.setString("TROPO3D.Display_Surface", Boolean.toString(TROPO3D.Display_Surface));
+  newChild1.setString("TROPO3D.Display_Texture", Boolean.toString(TROPO3D.Display_Texture));
   newChild1.setString("EARTH3D.Display_Surface", Boolean.toString(EARTH3D.Display_Surface));
   newChild1.setString("EARTH3D.Display_Texture", Boolean.toString(EARTH3D.Display_Texture));
   newChild1.setString("Load_LAND_Textures", Boolean.toString(Load_LAND_Textures));  
@@ -50179,8 +50185,8 @@ void SOLARCHVISION_load_project (String myFile) {
       STAR3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Texture"));            
       MOON3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Surface"));
       MOON3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Texture"));
-      Display_TROPO_Surface = Boolean.parseBoolean(children0[L].getString("Display_TROPO_Surface"));
-      Display_TROPO_Texture = Boolean.parseBoolean(children0[L].getString("Display_TROPO_Texture"));
+      TROPO3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("TROPO3D.Display_Surface"));
+      TROPO3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("TROPO3D.Display_Texture"));
       EARTH3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Surface"));
       EARTH3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Texture"));
       Load_LAND_Textures = Boolean.parseBoolean(children0[L].getString("Load_LAND_Textures"));      
