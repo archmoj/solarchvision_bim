@@ -2066,7 +2066,7 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_draw_SolidImpact_points();
   
-      SOLARCHVISION_draw_Object2Ds(TypeWindow.WIN3D);  
+      OBJECTS2D.draw(TypeWindow.WIN3D);  
   
       SOLARCHVISION_draw_WindFlow();
   
@@ -6200,8 +6200,8 @@ class solarchvision_ROLLOUT {
         CreateInput_PolyDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_PolyDegree", CreateInput_PolyDegree, 3, 36, 1), 1));
   
         CreateParametric_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateParametric_Type", CreateParametric_Type, 0, 7, 1), 1));
-        CreatePerson_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePerson_Type", CreatePerson_Type, 0, Object2D_PEOPLE_Files_Num, 1), 1));
-        CreatePlant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePlant_Type", CreatePlant_Type, 0, Object2D_TREES_Files_Num, 1), 1));
+        CreatePerson_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePerson_Type", CreatePerson_Type, 0, OBJECTS2D.PEOPLE_Files_Num, 1), 1));
+        CreatePlant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePlant_Type", CreatePlant_Type, 0, OBJECTS2D.TREES_Files_Num, 1), 1));
       }
   
       if (this.child == 6) { // Living
@@ -6450,7 +6450,7 @@ class solarchvision_ROLLOUT {
         //selectedVertex_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedVertex_displayVertices", selectedVertex_displayVertices, 0, 1, 1), 1));
         //selectedCurve_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedCurve_displayVertices", selectedCurve_displayVertices, 0, 1, 1), 1));
   
-        //selectedObject2D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedObject2D_displayEdges", selectedObject2D_displayEdges, 0, 1, 1), 1));
+        //selectedOBJECTS2D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedOBJECTS2D_displayEdges", selectedOBJECTS2D_displayEdges, 0, 1, 1), 1));
         //selectedFractal_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedFractal_displayEdges", selectedFractal_displayEdges, 0, 1, 1), 1));
   
         //selectedSolid_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "selectedSolid_displayEdges", selectedSolid_displayEdges, 0, 1, 1), 1));
@@ -6577,7 +6577,7 @@ final int TROPO_timeSteps = 24;
 
 // snap for Curve objects is not developed yet.
 
-// don't know if multiple Object2D_Images[n].get(Image_X, Image_Y) in Object2D selection can produce performance problems? 
+// don't know if multiple OBJECTS2D.Images[n].get(Image_X, Image_Y) in Object2D selection can produce performance problems? 
 
 
 // note: code for SOLARCHVISION_intersect_Solids might run a bit slow. But it is OK for now.
@@ -6806,7 +6806,7 @@ float pre_LocationLON;
 int pre_WORLD_AutoView;
 
 boolean pre_selectedFractal_displayEdges;
-boolean pre_selectedObject2D_displayEdges;
+boolean pre_selectedOBJECTS2D_displayEdges;
 
 boolean pre_selectedSolid_displayEdges;
 boolean pre_selectedSection_displayEdges;
@@ -7554,9 +7554,7 @@ void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
 
 
-String[] Object2D_ImagePath;
-int Object2D_PEOPLE_Files_Num = 0;
-int Object2D_TREES_Files_Num = 0;
+
 
 
 
@@ -7580,10 +7578,7 @@ int[][] allCurves_MTLVGC = new int[0][6]; // 0:material, 1:teselation, 2:layer, 
 
 float[][] allSolids_DEF = new float[0][13];
 
-float[][] allObject2Ds_XYZS = new float[0][4];
 
-int[] allObject2Ds_MAP = new int[0];
-int allObject2Ds_num = 0; 
 
 int[][] allGroup3Ds_Curves = new int[0][2]; // start curve - end curve
 int[][] allGroup3Ds_Faces = new int[0][2]; // start face - end face
@@ -7654,7 +7649,7 @@ boolean selectedVertex_displayVertices = true;
 boolean selectedCurve_displayVertices = true;
 
 
-boolean selectedObject2D_displayEdges = true;
+boolean selectedOBJECTS2D_displayEdges = true;
 boolean selectedFractal_displayEdges = true;
 boolean selectedSolid_displayEdges = true;
 boolean selectedSection_displayEdges = true;
@@ -7666,7 +7661,7 @@ int[] selectedCamera_ids = new int[0];
 int[] selectedSection_ids = new int[0];
 int[] selectedSolid_ids = new int[0];
 int[] selectedFractal_ids = new int[0];
-int[] selectedObject2D_ids = new int[0];
+int[] selectedOBJECTS2D_ids = new int[0];
 int[] selectedGroup3D_ids = new int[0];
 int[] selectedFace_ids = new int[0];
 int[] selectedVertex_ids = new int[0];
@@ -7934,9 +7929,9 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_loadObject2DImages", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("OBJECTS2D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 4) {
-    SOLARCHVISION_loadObject2DImages();
+    OBJECTS2D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
@@ -8169,7 +8164,7 @@ void draw () {
         pre_selectedLandPoint_displayPoints = selectedLandPoint_displayPoints;
 
         pre_selectedFractal_displayEdges = selectedFractal_displayEdges;
-        pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
+        pre_selectedOBJECTS2D_displayEdges = selectedOBJECTS2D_displayEdges;
         pre_MODEL3D_DisplayVertices = MODEL3D_DisplayVertices;
         pre_MODEL3D_DisplayEdges = MODEL3D_DisplayEdges;
         pre_MODEL3D_DisplayNormals = MODEL3D_DisplayNormals;
@@ -8350,7 +8345,7 @@ void draw () {
           WIN3D.update = true;
         }     
 
-        if (pre_selectedObject2D_displayEdges != selectedObject2D_displayEdges) {
+        if (pre_selectedOBJECTS2D_displayEdges != selectedOBJECTS2D_displayEdges) {
           WIN3D.update = true;
         }     
 
@@ -13174,100 +13169,10 @@ void SOLARCHVISION_ResetFontStyle () {
   STUDY.graphics.textFont(SOLARCHVISION_font);
 }
 
-void SOLARCHVISION_add_Object2D_single (String t, int m, float x, float y, float z, float s) {
-
-  {
-
-    int n1 = Object2D_PEOPLE_Files_Num;    
-    int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
-
-    int n = m;
-
-    if (n == 0) {
-      if (t.equals("PEOPLE")) n = int(random(1, 1 + n1));
-      else if (t.equals("TREES")) n = int(random(1 + n1, 1 + n2));
-    }
-
-    int d = 1; 
-    int r = int(random(2));
-    if (r == 0) d = -1; 
-
-    int[] TempObject2D_MAP = {
-      d * n
-    }; 
-    allObject2Ds_MAP = concat(allObject2Ds_MAP, TempObject2D_MAP);
-
-    float[][] TempObject2D_XYZS = {
-      {
-        x, y, z, s
-      }
-    };
-    allObject2Ds_XYZS = (float[][]) concat(allObject2Ds_XYZS, TempObject2D_XYZS);
-
-    allObject2Ds_num += 1;
-
-    if (abs(n) > n1) {
-
-      if (CreateInput_MeshOrSolid != 0) {
-
-        float x0 = x;
-        float y0 = y;
-        float z0 = 0.5 * s + z;
-        float r0 = 0.4 * s; // <<<<<<< approximate
-
-        SOLARCHVISION_add_Solid(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, CreateInput_MeshOrSolid);
-      }
-    }
-  }
-
-  if (allGroup3Ds_num > 0) allGroup3Ds_Object2Ds[allGroup3Ds_num - 1][1] = allObject2Ds_num - 1;
-}
 
 
 
-PImage[] Object2D_Images;
-float[] Object2D_ImageRatios;
 
-void SOLARCHVISION_loadObject2DImages () {
-
-  Object2D_ImagePath = new String [1];
-  Object2D_ImagePath[0] = "";
-
-  String[] Object2D_Filenames_PEOPLE = sort(SOLARCHVISION_getfiles(Object2DFolder_PEOPLE));
-  String[] Object2D_Filenames_TREES = sort(SOLARCHVISION_getfiles(Object2DFolder_TREES));  
-
-  Object2D_ImagePath = concat(Object2D_ImagePath, Object2D_Filenames_PEOPLE);
-  Object2D_ImagePath = concat(Object2D_ImagePath, Object2D_Filenames_TREES);
-
-  Object2D_PEOPLE_Files_Num = Object2D_Filenames_PEOPLE.length;
-  Object2D_TREES_Files_Num = Object2D_Filenames_TREES.length;
-
-
-  int n = Object2D_ImagePath.length;
-
-  Object2D_Images = new PImage [n + 1];
-  Object2D_ImageRatios = new float [n + 1];
-
-  for (int i = 1; i < n; i++) { // leaving [0] null  
-
-    if (i <= Object2D_PEOPLE_Files_Num) {
-      Object2D_ImagePath[i] = Object2DFolder_PEOPLE + "/" + Object2D_ImagePath[i];
-    } else {
-      Object2D_ImagePath[i] = Object2DFolder_TREES + "/" + Object2D_ImagePath[i];
-    }
-  }
-
-  for (int i = 1; i < n; i++) {
-    //println(Object2D_ImagePath[i]);
-    Object2D_Images[i] = loadImage(Object2D_ImagePath[i]);
-
-    if (Object2D_Images[i].height != 0) {
-      Object2D_ImageRatios[i] = float(Object2D_Images[i].width) / float(Object2D_Images[i].height);
-    } else {
-      Object2D_ImageRatios[i] = 1;
-    }
-  }
-}
 
 
 
@@ -13443,7 +13348,7 @@ int SOLARCHVISION_beginNewGroup3D (float x, float y, float z, float sx, float sy
 
   int[][] newObject_Object2Ds = {
     {
-      allObject2Ds_num, -1
+      OBJECTS2D.num, -1
     }
   }; // i.e. null because start > end 
 
@@ -13526,38 +13431,38 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
-    int n1 = Object2D_PEOPLE_Files_Num;
+    int n1 = OBJECTS2D.PEOPLE_Files_Num;
 
-    int number_of_Object2D_before = allObject2Ds_num; 
+    int number_of_OBJECTS2D_before = OBJECTS2D.num; 
 
-    for (int o = 0; o < selectedObject2D_ids.length; o++) {
+    for (int o = 0; o < selectedOBJECTS2D_ids.length; o++) {
 
-      int OBJ_NUM = selectedObject2D_ids[o];
+      int OBJ_NUM = selectedOBJECTS2D_ids[o];
 
-      float x = allObject2Ds_XYZS[OBJ_NUM][0];
-      float y = allObject2Ds_XYZS[OBJ_NUM][1];
-      float z = allObject2Ds_XYZS[OBJ_NUM][2];
-      float s = allObject2Ds_XYZS[OBJ_NUM][3];
+      float x = OBJECTS2D.XYZS[OBJ_NUM][0];
+      float y = OBJECTS2D.XYZS[OBJ_NUM][1];
+      float z = OBJECTS2D.XYZS[OBJ_NUM][2];
+      float s = OBJECTS2D.XYZS[OBJ_NUM][3];
 
-      int n = allObject2Ds_MAP[OBJ_NUM];
+      int n = OBJECTS2D.MAP[OBJ_NUM];
       if (abs(n) > n1) {
         if (produce_another_variation == 1) n = 0; // this makes it random
-        SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
+        OBJECTS2D.add_single("TREES", n, x, y, z, s);
       } else {
         if (produce_another_variation == 1) n = 0; // this makes it random
-        SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
+        OBJECTS2D.add_single("PEOPLE", n, x, y, z, s);
       }
     }
 
     // selecting new objetcs
 
-    selectedObject2D_ids = new int [0];
+    selectedOBJECTS2D_ids = new int [0];
 
-    for (int o = number_of_Object2D_before; o < allObject2Ds_num; o++) {
+    for (int o = number_of_OBJECTS2D_before; o < OBJECTS2D.num; o++) {
 
       int[] newlyAddedObject2D = {o};
 
-      selectedObject2D_ids = concat(selectedObject2D_ids, newlyAddedObject2D);
+      selectedOBJECTS2D_ids = concat(selectedOBJECTS2D_ids, newlyAddedObject2D);
     }
   }
 
@@ -13832,7 +13737,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
   if (Current_ObjectCategory == ObjectCategory.Group3Ds) {
 
-    int n1 = Object2D_PEOPLE_Files_Num;
+    int n1 = OBJECTS2D.PEOPLE_Files_Num;
 
     int SOLID_added = 0;
 
@@ -13891,19 +13796,19 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
         if ((0 <= allGroup3Ds_Object2Ds[OBJ_NUM][1]) && (allGroup3Ds_Object2Ds[OBJ_NUM][0] <= allGroup3Ds_Object2Ds[OBJ_NUM][1])) { 
           for (int q = allGroup3Ds_Object2Ds[OBJ_NUM][0]; q <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; q++) {
   
-            float x = allObject2Ds_XYZS[q][0];
-            float y = allObject2Ds_XYZS[q][1];
-            float z = allObject2Ds_XYZS[q][2];
-            float s = allObject2Ds_XYZS[q][3];
+            float x = OBJECTS2D.XYZS[q][0];
+            float y = OBJECTS2D.XYZS[q][1];
+            float z = OBJECTS2D.XYZS[q][2];
+            float s = OBJECTS2D.XYZS[q][3];
   
-            int n = allObject2Ds_MAP[q];
+            int n = OBJECTS2D.MAP[q];
   
             if (abs(n) > n1) {
               if (produce_another_variation == 1) n = 0; // this makes it random
-              SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
+              OBJECTS2D.add_single("TREES", n, x, y, z, s);
             } else {
               if (produce_another_variation == 1) n = 0; // this makes it random
-              SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
+              OBJECTS2D.add_single("PEOPLE", n, x, y, z, s);
             }
           }
         }
@@ -14043,19 +13948,19 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
         if ((0 <= allGroup3Ds_Object2Ds[OBJ_NUM][1]) && (allGroup3Ds_Object2Ds[OBJ_NUM][0] <= allGroup3Ds_Object2Ds[OBJ_NUM][1])) { 
           for (int q = allGroup3Ds_Object2Ds[OBJ_NUM][0]; q <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; q++) {
 
-            float x = allObject2Ds_XYZS[q][0];
-            float y = allObject2Ds_XYZS[q][1];
-            float z = allObject2Ds_XYZS[q][2];
-            float s = allObject2Ds_XYZS[q][3];
+            float x = OBJECTS2D.XYZS[q][0];
+            float y = OBJECTS2D.XYZS[q][1];
+            float z = OBJECTS2D.XYZS[q][2];
+            float s = OBJECTS2D.XYZS[q][3];
 
-            int n = allObject2Ds_MAP[q];
+            int n = OBJECTS2D.MAP[q];
 
             if (abs(n) > n1) {
               if (produce_another_variation == 1) n = 0; // this makes it random
-              SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
+              OBJECTS2D.add_single("TREES", n, x, y, z, s);
             } else {
               if (produce_another_variation == 1) n = 0; // this makes it random
-              SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
+              OBJECTS2D.add_single("PEOPLE", n, x, y, z, s);
             }
           }
         }
@@ -14220,22 +14125,22 @@ void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0
 
     if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
-      int n1 = Object2D_PEOPLE_Files_Num;
+      int n1 = OBJECTS2D.PEOPLE_Files_Num;
 
-      for (int o = 0; o < selectedObject2D_ids.length; o++) {
+      for (int o = 0; o < selectedOBJECTS2D_ids.length; o++) {
 
-        int OBJ_NUM = selectedObject2D_ids[o];
+        int OBJ_NUM = selectedOBJECTS2D_ids[o];
 
-        float x = allObject2Ds_XYZS[OBJ_NUM][0];
-        float y = allObject2Ds_XYZS[OBJ_NUM][1];
-        float z = allObject2Ds_XYZS[OBJ_NUM][2];
-        float s = allObject2Ds_XYZS[OBJ_NUM][3];
+        float x = OBJECTS2D.XYZS[OBJ_NUM][0];
+        float y = OBJECTS2D.XYZS[OBJ_NUM][1];
+        float z = OBJECTS2D.XYZS[OBJ_NUM][2];
+        float s = OBJECTS2D.XYZS[OBJ_NUM][3];
 
-        int n = allObject2Ds_MAP[OBJ_NUM];
+        int n = OBJECTS2D.MAP[OBJ_NUM];
         if (abs(n) > n1) {
-          SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, s);
+          OBJECTS2D.add_single("TREES", n, x, y, z, s);
         } else {
-          SOLARCHVISION_add_Object2D_single("PEOPLE", n, x, y, z, s);
+          OBJECTS2D.add_single("PEOPLE", n, x, y, z, s);
         }
       }
     }
@@ -14673,11 +14578,11 @@ void SOLARCHVISION_delete_Selection () {
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
-    selectedObject2D_ids = sort(selectedObject2D_ids);
+    selectedOBJECTS2D_ids = sort(selectedOBJECTS2D_ids);
 
-    for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
+    for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_NUM = selectedObject2D_ids[o];
+      int OBJ_NUM = selectedOBJECTS2D_ids[o];
 
       for (int q = 0; q < allGroup3Ds_num; q++) {
 
@@ -14691,20 +14596,20 @@ void SOLARCHVISION_delete_Selection () {
 
 
       {
-        float[][] startList = (float[][]) subset(allObject2Ds_XYZS, 0, OBJ_NUM);
-        float[][] endList = (float[][]) subset(allObject2Ds_XYZS, OBJ_NUM + 1);
+        float[][] startList = (float[][]) subset(OBJECTS2D.XYZS, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(OBJECTS2D.XYZS, OBJ_NUM + 1);
 
-        allObject2Ds_XYZS = (float[][]) concat(startList, endList);
+        OBJECTS2D.XYZS = (float[][]) concat(startList, endList);
       }
 
       {
-        int[] startList = (int[]) subset(allObject2Ds_MAP, 0, OBJ_NUM);
-        int[] endList = (int[]) subset(allObject2Ds_MAP, OBJ_NUM + 1);
+        int[] startList = (int[]) subset(OBJECTS2D.MAP, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(OBJECTS2D.MAP, OBJ_NUM + 1);
 
-        allObject2Ds_MAP = (int[]) concat(startList, endList);
+        OBJECTS2D.MAP = (int[]) concat(startList, endList);
       }   
 
-      allObject2Ds_num -= 1;
+      OBJECTS2D.num -= 1;
     }
 
   }
@@ -15017,20 +14922,20 @@ void SOLARCHVISION_delete_Selection () {
       if ((0 <= startObject2D) && (startObject2D <= endObject2D)) {
 
         {
-          float[][] startList = (float[][]) subset(allObject2Ds_XYZS, 0, startObject2D);
-          float[][] endList = (float[][]) subset(allObject2Ds_XYZS, endObject2D + 1);
+          float[][] startList = (float[][]) subset(OBJECTS2D.XYZS, 0, startObject2D);
+          float[][] endList = (float[][]) subset(OBJECTS2D.XYZS, endObject2D + 1);
 
-          allObject2Ds_XYZS = (float[][]) concat(startList, endList);
+          OBJECTS2D.XYZS = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allObject2Ds_MAP, 0, startObject2D);
-          int[] endList = (int[]) subset(allObject2Ds_MAP, endObject2D + 1);
+          int[] startList = (int[]) subset(OBJECTS2D.MAP, 0, startObject2D);
+          int[] endList = (int[]) subset(OBJECTS2D.MAP, endObject2D + 1);
 
-          allObject2Ds_MAP = (int[]) concat(startList, endList);
+          OBJECTS2D.MAP = (int[]) concat(startList, endList);
         }
 
-        allObject2Ds_num = allObject2Ds_XYZS.length;
+        OBJECTS2D.num = OBJECTS2D.XYZS.length;
       }
 
       int startSolid = allGroup3Ds_Solids[OBJ_NUM][0];
@@ -17704,11 +17609,11 @@ void SOLARCHVISION_select_Last () {
   } 
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
-    selectedObject2D_ids = new int [0];
+    selectedOBJECTS2D_ids = new int [0];
     
-    if (allObject2Ds_num > 0) {
-      int[] new_Item = {allObject2Ds_num - 1};
-      selectedObject2D_ids = concat(selectedObject2D_ids, new_Item);
+    if (OBJECTS2D.num > 0) {
+      int[] new_Item = {OBJECTS2D.num - 1};
+      selectedOBJECTS2D_ids = concat(selectedOBJECTS2D_ids, new_Item);
     }
   } 
 
@@ -17777,7 +17682,7 @@ void SOLARCHVISION_deselect_All () {
 
     selectedGroup3D_ids = new int [0];
 
-    selectedObject2D_ids = new int [0];
+    selectedOBJECTS2D_ids = new int [0];
 
     selectedFace_ids = new int [0];
 
@@ -17809,9 +17714,9 @@ void SOLARCHVISION_select_All () {
   }
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
-    selectedObject2D_ids = new int [allObject2Ds_num];
-    for (int i = 0; i < selectedObject2D_ids.length; i++) { 
-      selectedObject2D_ids[i] = i;
+    selectedOBJECTS2D_ids = new int [OBJECTS2D.num];
+    for (int i = 0; i < selectedOBJECTS2D_ids.length; i++) { 
+      selectedOBJECTS2D_ids[i] = i;
     }
   }
 
@@ -17928,19 +17833,19 @@ void SOLARCHVISION_reverse_Selection () {
   }    
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
-    int[] pre_selectedObject2D_ids = sort(selectedObject2D_ids);
+    int[] pre_selectedOBJECTS2D_ids = sort(selectedOBJECTS2D_ids);
 
-    selectedObject2D_ids = new int [0];
+    selectedOBJECTS2D_ids = new int [0];
 
-    for (int i = 0; i < allObject2Ds_num; i++) {
+    for (int i = 0; i < OBJECTS2D.num; i++) {
       int found = -1; 
 
-      for (int j = 0; j < pre_selectedObject2D_ids.length; j++) {
+      for (int j = 0; j < pre_selectedOBJECTS2D_ids.length; j++) {
 
-        if (pre_selectedObject2D_ids[j] == i) {
+        if (pre_selectedOBJECTS2D_ids[j] == i) {
           found = 1;
           break;
-        } else if (pre_selectedObject2D_ids[j] > i) {
+        } else if (pre_selectedOBJECTS2D_ids[j] > i) {
           break;
         }
       }
@@ -17950,7 +17855,7 @@ void SOLARCHVISION_reverse_Selection () {
           i
         };
 
-        selectedObject2D_ids = concat(selectedObject2D_ids, new_Item);
+        selectedOBJECTS2D_ids = concat(selectedOBJECTS2D_ids, new_Item);
       }
     }
   }  
@@ -18188,13 +18093,13 @@ void SOLARCHVISION_convert_Fractal_to_Group3D () {
 }
 
 
-void SOLARCHVISION_convert_Object2D_to_Group3D () {
+void SOLARCHVISION_convert_OBJECTS2D_to_Group3D () {
 
   selectedGroup3D_ids = new int [0];
 
-  for (int i = 0; i < selectedObject2D_ids.length; i++) {
+  for (int i = 0; i < selectedOBJECTS2D_ids.length; i++) {
 
-    int f = selectedObject2D_ids[i];
+    int f = selectedOBJECTS2D_ids[i];
 
     for (int OBJ_NUM = 0; OBJ_NUM < allGroup3Ds_num; OBJ_NUM++) {
 
@@ -18487,7 +18392,7 @@ void SOLARCHVISION_convert_Group3D_to_Fractal () {
 
 void SOLARCHVISION_convert_Group3D_to_Object2D () {
 
-  selectedObject2D_ids = new int [0];
+  selectedOBJECTS2D_ids = new int [0];
 
   for (int i = 0; i < selectedGroup3D_ids.length; i++) {
 
@@ -18496,8 +18401,8 @@ void SOLARCHVISION_convert_Group3D_to_Object2D () {
     for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) { 
 
       int previously_added = 0;
-      for (int q = 0; q < selectedObject2D_ids.length; q++) {
-        if (selectedObject2D_ids[q] == f) {
+      for (int q = 0; q < selectedOBJECTS2D_ids.length; q++) {
+        if (selectedOBJECTS2D_ids[q] == f) {
           previously_added = 1;
           break;
         }
@@ -18506,7 +18411,7 @@ void SOLARCHVISION_convert_Group3D_to_Object2D () {
         int[] new_Item = {
           f
         };
-        selectedObject2D_ids = concat(selectedObject2D_ids, new_Item);
+        selectedOBJECTS2D_ids = concat(selectedOBJECTS2D_ids, new_Item);
       }
     }
   }
@@ -20357,7 +20262,7 @@ void SOLARCHVISION_export_objects_HTML () {
   
   SOLARCHVISION_draw_Sections(TypeWindow.HTML);
   
-  SOLARCHVISION_draw_Object2Ds(TypeWindow.HTML);
+  OBJECTS2D.draw(TypeWindow.HTML);
 
   if (Display_Model3Ds) {
 
@@ -20721,7 +20626,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   
   SOLARCHVISION_draw_Sections(TypeWindow.OBJ);
   
-  SOLARCHVISION_draw_Object2Ds(TypeWindow.OBJ);
+  OBJECTS2D.draw(TypeWindow.OBJ);
 
 
 
@@ -21985,7 +21890,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
                   if (foundNearTree == 0) {
 
                     if (people_or_trees == 2) {
-                      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, s);
+                      OBJECTS2D.add_single("TREES", 0, x, y, z, s);
                     } else {
                       SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, s, random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
                     }                  
@@ -22053,9 +21958,9 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
 
                 if (people_or_trees == 1) {
-                  SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
+                  OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
                 } else if (people_or_trees == 2) {
-                  SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
+                  OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
                 } else {
                   SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
                 }
@@ -22080,9 +21985,9 @@ void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, fl
     float z = z0;
 
     if (people_or_trees == 1) {
-      SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
+      OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
     } else if (people_or_trees == 2) {
-      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
+      OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
     } else {
       SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
     }
@@ -22109,9 +22014,9 @@ void SOLARCHVISION_add_Object2Ds_plane (int people_or_trees, int n, float x0, fl
     z += z0;
 
     if (people_or_trees == 1) {
-      SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
+      OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
     } else if (people_or_trees == 2) {
-      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
+      OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
     } else {
       SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
     }
@@ -22141,9 +22046,9 @@ void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, fl
     float z = z0;
 
     if (people_or_trees == 1) {
-      SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
+      OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
     } else if (people_or_trees == 2) {
-      SOLARCHVISION_add_Object2D_single("TREES", 0, x, y, z, 5 + random(10));
+      OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
     } else {
       SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
     }
@@ -22282,11 +22187,11 @@ void SOLARCHVISION_delete_Fractals () {
 
 void SOLARCHVISION_delete_Object2Ds () {
 
-  allObject2Ds_XYZS = new float [0][4]; 
+  OBJECTS2D.XYZS = new float [0][4]; 
 
-  allObject2Ds_MAP = new int [0];
+  OBJECTS2D.MAP = new int [0];
 
-  allObject2Ds_num = 0;
+  OBJECTS2D.num = 0;
 
   for (int q = 0; q < allGroup3Ds_num; q++) {
     allGroup3Ds_Object2Ds[q][0] = 0;
@@ -25296,6 +25201,633 @@ solarchvision_LAND3D LAND3D = new solarchvision_LAND3D();
 
 
 
+class solarchvision_OBJECTS2D {
+
+  float[][] Vertices;
+  int[][] Faces;
+ 
+  float[][] XYZS = new float[0][4];
+  
+  int[] MAP = new int[0];
+  int num = 0; 
+  
+  String[] ImagePath;
+  int PEOPLE_Files_Num = 0;
+  int TREES_Files_Num = 0; 
+
+  int numDisplayFaces = 3; // internal - number of faces: Vertical, Horizontal Front, Horizontal Back
+ 
+  String[] Filenames_PEOPLE;
+  String[] Filenames_TREES; 
+ 
+  PImage[] Images;
+  float[] ImageRatios;
+    
+  void load_images () {
+  
+    this.ImagePath = new String [1];
+    this.ImagePath[0] = "";
+  
+    this.Filenames_PEOPLE = sort(SOLARCHVISION_getfiles(Object2DFolder_PEOPLE));
+    this.Filenames_TREES = sort(SOLARCHVISION_getfiles(Object2DFolder_TREES));  
+  
+    this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
+    this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
+  
+    this.PEOPLE_Files_Num = this.Filenames_PEOPLE.length;
+    this.TREES_Files_Num = this.Filenames_TREES.length;
+  
+  
+    int n = this.ImagePath.length;
+  
+    this.Images = new PImage [n + 1];
+    this.ImageRatios = new float [n + 1];
+  
+    for (int i = 1; i < n; i++) { // leaving [0] null  
+  
+      if (i <= this.PEOPLE_Files_Num) {
+        this.ImagePath[i] = Object2DFolder_PEOPLE + "/" + this.ImagePath[i];
+      } else {
+        this.ImagePath[i] = Object2DFolder_TREES + "/" + this.ImagePath[i];
+      }
+    }
+  
+    for (int i = 1; i < n; i++) {
+      //println(this.ImagePath[i]);
+      this.Images[i] = loadImage(this.ImagePath[i]);
+  
+      if (this.Images[i].height != 0) {
+        this.ImageRatios[i] = float(this.Images[i].width) / float(this.Images[i].height);
+      } else {
+        this.ImageRatios[i] = 1;
+      }
+    }
+  } 
+  
+  
+  void draw (int target_window) {
+  
+    this.Faces = new int [this.num * this.numDisplayFaces][4];
+  
+    this.Vertices = new float [4 * this.num * this.numDisplayFaces][5]; // note we are keeping u & v at 3rd and 4th members
+    
+    
+    boolean proceed = true;
+  
+    if (Display_Model2Ds == false) {
+      proceed = false;
+    }
+  
+    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+      proceed = false;
+    }
+    
+    if (proceed) {  
+  
+      if (Export_MaterialLibrary) {
+      
+        if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {  
+    
+          int[] ImageUsed = new int [this.ImagePath.length];
+    
+          for (int i = 0; i < ImageUsed.length; i++) {
+            ImageUsed[i] = 0;
+          }
+    
+          for (int f = 0; f < this.num; f++) {
+    
+            int n = abs(this.MAP[f]);
+    
+            ImageUsed[n] += 1;
+          }
+    
+          for (int i = 1; i < this.ImagePath.length; i++) {
+    
+            if (ImageUsed[i] != 0) {
+    
+              String old_Texture_path = this.ImagePath[i];
+    
+              String new_Texture_path = "";
+    
+              String opacity_Texture_path = "";
+    
+              String the_filename = "";
+    
+              if (this.ImagePath[i].equals("")) {
+              } else {
+    
+                the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+    
+                new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+                opacity_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + "opacity_" + the_filename;
+    
+                println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+                saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+    
+                println("Making opacity texture:", new_Texture_path);
+    
+                int RES1 = this.Images[i].width;
+                int RES2 = this.Images[i].height;
+    
+                PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
+    
+                Opacity_Texture.loadPixels();
+    
+                for (int np = 0; np < (RES1 * RES2); np++) {
+                  int Image_X = np % RES1;
+                  int Image_Y = np / RES1;
+    
+                  color COL = this.Images[i].get(Image_X, Image_Y);
+                  //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+    
+                  float COL_V = (COL >> 24 & 0xFF);
+    
+                  Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);
+                }
+    
+                Opacity_Texture.updatePixels();
+    
+                Opacity_Texture.save(opacity_Texture_path);
+                
+                if (target_window == TypeWindow.HTML) {
+                  htmlOutput.println("\t\t\t\t<Appearance DEF='this." + the_filename + "'>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t</Appearance>");
+                }
+    
+                if (target_window == TypeWindow.OBJ) { 
+      
+                  mtlOutput.println("newmtl " + "this." + the_filename);
+                  mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                  mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                  mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                  mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                  mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                  mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+                  mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                  mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                  mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+      
+                  //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + Export_MapsSubfolder + "opacity_" + the_filename); // diffuse map
+                }
+              }
+            }
+          }
+        }    
+      }
+      
+      
+      
+      
+  
+      float[] DistZ = new float [this.num];
+  
+      for (int f = 0; f < this.num; f++) {
+        float x = this.XYZS[f][0] * OBJECTS_scale;
+        float y = this.XYZS[f][1] * OBJECTS_scale;
+        float z = this.XYZS[f][2] * OBJECTS_scale;
+  
+        DistZ[f] = dist(x, y, z, WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z);
+      }
+  
+      for (int g = 0; g < this.num; g++) {
+  
+        int f = -1;
+        float max_dist = -1;
+  
+        for (int q = 0; q < this.num; q++) {
+          if (max_dist < DistZ[q]) {
+            max_dist = DistZ[q];
+            f = q;
+          }
+        }
+  
+        DistZ[f] = -1;
+  
+  
+  
+        if (f != -1) {
+          
+          int n = abs(this.MAP[f]);
+  
+          int w = this.Images[n].width; 
+          int h = this.Images[n].height;
+  
+          float x = this.XYZS[f][0] * OBJECTS_scale;
+          float y = this.XYZS[f][1] * OBJECTS_scale;
+          float z = this.XYZS[f][2] * OBJECTS_scale;
+  
+          float rh = this.XYZS[f][3] * 0.5 * OBJECTS_scale;
+          float rw = rh * this.ImageRatios[n];
+  
+          float t = PI + WIN3D.RZ_Coordinate * PI / 180.0;
+          if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
+         
+          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+            t = 0;
+          }     
+  
+          if (this.MAP[f] < 0) t += PI;     
+      
+  
+          float dx = rw * cos(t);
+          float dy = rw * sin(t);
+          
+          float x1 = x - dx;
+          float y1 = y - dy;
+  
+          float x2 = x + dx;
+          float y2 = y + dy;
+  
+          if (target_window == TypeWindow.OBJ) { 
+  
+            if (Export_PolyToPoly == 1) {
+              obj_lastGroupNumber += 1;  
+              objOutput.println("g this." + nf(f, 0) + "_type" + nf(n, 0));
+            }
+      
+            if (Export_MaterialLibrary) {
+              objOutput.println("usemtl this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+            }
+          }
+    
+          num_vertices_added = 0;
+    
+          int end_turn = 1;
+          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          for (int _turn = 1; _turn <= end_turn; _turn++) {
+            
+            for (int back_front = -1; back_front <= 1; back_front++) {
+              
+              if (back_front == 0) {
+                
+                if (target_window == TypeWindow.WIN3D) { 
+    
+                  WIN3D.graphics.beginShape();
+          
+                  WIN3D.graphics.texture(this.Images[n]);    
+                  WIN3D.graphics.stroke(255, 255, 255, 0);
+                  WIN3D.graphics.fill(255, 255, 255, 0);        
+          
+                  WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, z * WIN3D.scale, 0, h);
+                  WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, z * WIN3D.scale, w, h);
+                  WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh) * WIN3D.scale, w, 0);
+                  WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh) * WIN3D.scale, 0, 0);
+          
+                  WIN3D.graphics.endShape(CLOSE);        
+                }
+                
+                if (target_window == TypeWindow.OBJ) { 
+                  if (_turn == 1) {
+    
+                    SOLARCHVISION_OBJprintVertex(x1, y1, z);
+                    SOLARCHVISION_OBJprintVertex(x2, y2, z);
+                    SOLARCHVISION_OBJprintVertex(x2, y2, (z + 2 * rh));
+                    SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh));
+        
+                    num_vertices_added += 4;
+                  }              
+                  
+                  if (_turn == 2) {
+                    htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
+                  }     
+                  
+                  if (_turn == 3) {
+                    obj_lastVertexNumber += num_vertices_added;
+                    obj_lastVtextureNumber += num_vertices_added;
+        
+                    String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 1, 0); 
+                    String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 2, 0);
+                    String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 3, 0);
+                    String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4, 0);
+        
+                    String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 1, 0); 
+                    String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 2, 0);
+                    String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
+                    String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);      
+        
+                    if (Export_PolyToPoly == 0) {
+                      obj_lastGroupNumber += 1;
+                      objOutput.println("g this." + nf(f, 0) + "_ver");
+                    } 
+        
+                    obj_lastFaceNumber += 1;            
+                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                    if (Export_BackSides) {
+                      obj_lastFaceNumber += 1;
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                    }
+                  }         
+                }   
+            
+            
+                if (target_window == TypeWindow.HTML) {
+                  
+                  htmlOutput.println("\t\t\t\t<shape>");
+        
+                  htmlOutput.println("\t\t\t\t\t<Appearance USE='this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
+        
+                  htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
+                  
+                  htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+                  htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
+                  htmlOutput.println("'></Coordinate>");          
+                  
+                  htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
+          
+                  htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+                 
+                  htmlOutput.println("\t\t\t\t</shape>");          
+                }              
+    
+                int nv = f * this.numDisplayFaces * 4;
+                int nf = f * this.numDisplayFaces;
+                
+                this.Vertices[nv + 0][0] = x1 / OBJECTS_scale;
+                this.Vertices[nv + 0][1] = y1 / OBJECTS_scale;
+                this.Vertices[nv + 0][2] = (z) / OBJECTS_scale;
+                this.Vertices[nv + 0][3] = 0;
+                this.Vertices[nv + 0][4] = 1;
+      
+                this.Vertices[nv + 1][0] = x2 / OBJECTS_scale;
+                this.Vertices[nv + 1][1] = y2 / OBJECTS_scale;
+                this.Vertices[nv + 1][2] = (z) / OBJECTS_scale;
+                this.Vertices[nv + 1][3] = 1;
+                this.Vertices[nv + 1][4] = 1;
+      
+                this.Vertices[nv + 2][0] = x2 / OBJECTS_scale;
+                this.Vertices[nv + 2][1] = y2 / OBJECTS_scale;
+                this.Vertices[nv + 2][2] = (z + 2 * rh) / OBJECTS_scale;
+                this.Vertices[nv + 2][3] = 1;
+                this.Vertices[nv + 2][4] = 0;
+      
+                this.Vertices[nv + 3][0] = x1 / OBJECTS_scale;
+                this.Vertices[nv + 3][1] = y1 / OBJECTS_scale;
+                this.Vertices[nv + 3][2] = (z + 2 * rh) / OBJECTS_scale;
+                this.Vertices[nv + 3][3] = 0;
+                this.Vertices[nv + 3][4] = 0;
+      
+                this.Faces[nf][0] = nv + 0;
+                this.Faces[nf][1] = nv + 1;
+                this.Faces[nf][2] = nv + 2;
+                this.Faces[nf][3] = nv + 3;
+              }     
+              else {
+                
+                int nv = f * this.numDisplayFaces * 4;
+                int nf = f * this.numDisplayFaces;  
+                
+                if (back_front == -1) {
+                  nv += 4;
+                  nf += 1;
+                }
+                else {
+                  nv += 8;
+                  nf += 2;
+                }            
+                
+                if (n > this.PEOPLE_Files_Num) { // case: trees   
+    
+                  float ratio = 0.5;
+                  
+                  float rot = back_front * PI / 2 + t;
+      
+                  dx = rw * cos(rot);
+                  dy = rw * sin(rot);
+                  
+                  float x3 = x2 + dx;
+                  float y3 = y2 + dy;
+      
+                  float x4 = x1 + dx;
+                  float y4 = y1 + dy;
+                  
+                  if (target_window == TypeWindow.WIN3D) {
+      
+                    WIN3D.graphics.beginShape();
+        
+                    WIN3D.graphics.texture(this.Images[n]);    
+                    WIN3D.graphics.stroke(255, 255, 255, 0);
+                    WIN3D.graphics.fill(255, 255, 255, 0);
+        
+                    WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, h * ratio);
+                    WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, h * ratio);
+                    WIN3D.graphics.vertex(x3 * WIN3D.scale, -y3 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, 0);
+                    WIN3D.graphics.vertex(x4 * WIN3D.scale, -y4 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, 0);
+        
+                    WIN3D.graphics.endShape(CLOSE);
+                  }
+                  
+                  if (target_window == TypeWindow.OBJ) {
+                    if (_turn == 1) {
+        
+                      SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh * ratio));
+                      SOLARCHVISION_OBJprintVertex(x2, y2, (z + 2 * rh * ratio));
+                      SOLARCHVISION_OBJprintVertex(x3, y3, (z + 2 * rh * ratio));
+                      SOLARCHVISION_OBJprintVertex(x4, y4, (z + 2 * rh * ratio));
+        
+                      num_vertices_added += 4;
+                    }
+        
+                    if (_turn == 2) {
+        
+                      SOLARCHVISION_OBJprintVtexture(1, 1 - ratio, 0);
+                      SOLARCHVISION_OBJprintVtexture(0, 1 - ratio, 0);
+                      SOLARCHVISION_OBJprintVtexture(0, 1, 0);
+                      SOLARCHVISION_OBJprintVtexture(1, 1, 0);
+                    }
+        
+                    if (_turn == 3) {
+        
+                      int q = (back_front + 1) / 2;
+        
+                      String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 1, 0); 
+                      String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 2, 0);
+                      String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
+                      String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 4, 0);
+        
+                      String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 1, 0); 
+                      String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 2, 0);
+                      String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
+                      String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);      
+        
+                      if (Export_PolyToPoly == 0) {
+                        obj_lastGroupNumber += 1;
+                        objOutput.println("g this." + nf(f, 0) + "_hor" + nf(q, 0));
+                      } 
+        
+                      obj_lastFaceNumber += 1;            
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                      if (Export_BackSides) {
+                        obj_lastFaceNumber += 1;
+                        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                      }
+                    }                    
+                  }
+                  
+                  if (target_window == TypeWindow.HTML) {
+                    
+                    htmlOutput.println("\t\t\t\t<shape>");
+          
+                    htmlOutput.println("\t\t\t\t\t<Appearance USE='this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
+          
+                    htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
+                    
+                    htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+                    htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                    htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                    htmlOutput.print  ("," + nf(x3, 0, Export_PrecisionVertex) + " " + nf(y3, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                    htmlOutput.print  ("," + nf(x4, 0, Export_PrecisionVertex) + " " + nf(y4, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                    htmlOutput.println("'></Coordinate>");          
+                    
+                    htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
+                    
+                    SOLARCHVISION_HTMLprintVtexture(1, 1 - ratio);
+                    htmlOutput.print (",");
+                    SOLARCHVISION_HTMLprintVtexture(0, 1 - ratio);
+                    htmlOutput.print (",");
+                    SOLARCHVISION_HTMLprintVtexture(0, 1);
+                    htmlOutput.print (",");
+                    SOLARCHVISION_HTMLprintVtexture(1, 1);                  
+                    htmlOutput.println("'></TextureCoordinate>");
+            
+                    htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+                   
+                    htmlOutput.println("\t\t\t\t</shape>");          
+                  }                              
+    
+                  this.Vertices[nv + 0][0] = x1 / OBJECTS_scale;
+                  this.Vertices[nv + 0][1] = y1 / OBJECTS_scale;
+                  this.Vertices[nv + 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 0][3] = 0;
+                  this.Vertices[nv + 0][4] = ratio;
+              
+                  this.Vertices[nv + 1][0] = x2 / OBJECTS_scale;
+                  this.Vertices[nv + 1][1] = y2 / OBJECTS_scale;
+                  this.Vertices[nv + 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 1][3] = 1;
+                  this.Vertices[nv + 1][4] = ratio;
+              
+                  this.Vertices[nv + 2][0] = x3 / OBJECTS_scale;
+                  this.Vertices[nv + 2][1] = y3 / OBJECTS_scale;
+                  this.Vertices[nv + 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 2][3] = 1;
+                  this.Vertices[nv + 2][4] = 0;
+                  
+                  this.Vertices[nv + 3][0] = x4 / OBJECTS_scale;
+                  this.Vertices[nv + 3][1] = y4 / OBJECTS_scale;
+                  this.Vertices[nv + 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 3][3] = 0;
+                  this.Vertices[nv + 3][4] = 0;      
+              
+                  this.Faces[nf][0] = nv + 0;
+                  this.Faces[nf][1] = nv + 1;
+                  this.Faces[nf][2] = nv + 2;
+                  this.Faces[nf][3] = nv + 3;
+                }
+                else { // case: people
+                  this.Vertices[nv + 0][0] = x1 / OBJECTS_scale;
+                  this.Vertices[nv + 0][1] = y1 / OBJECTS_scale;
+                  this.Vertices[nv + 0][2] = (z) / OBJECTS_scale;
+                  this.Vertices[nv + 0][3] = 0;
+                  this.Vertices[nv + 0][4] = 1;
+        
+                  this.Vertices[nv + 1][0] = x2 / OBJECTS_scale;
+                  this.Vertices[nv + 1][1] = y2 / OBJECTS_scale;
+                  this.Vertices[nv + 1][2] = (z) / OBJECTS_scale;
+                  this.Vertices[nv + 1][3] = 1;
+                  this.Vertices[nv + 1][4] = 1;
+        
+                  this.Vertices[nv + 2][0] = x2 / OBJECTS_scale;
+                  this.Vertices[nv + 2][1] = y2 / OBJECTS_scale;
+                  this.Vertices[nv + 2][2] = (z + 2 * rh) / OBJECTS_scale;
+                  this.Vertices[nv + 2][3] = 1;
+                  this.Vertices[nv + 2][4] = 0;
+        
+                  this.Vertices[nv + 3][0] = x1 / OBJECTS_scale;
+                  this.Vertices[nv + 3][1] = y1 / OBJECTS_scale;
+                  this.Vertices[nv + 3][2] = (z + 2 * rh) / OBJECTS_scale;
+                  this.Vertices[nv + 3][3] = 0;
+                  this.Vertices[nv + 3][4] = 0;
+        
+                  this.Faces[nf][0] = nv + 0;
+                  this.Faces[nf][1] = nv + 1;
+                  this.Faces[nf][2] = nv + 2;
+                  this.Faces[nf][3] = nv + 3;              
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  
+  void add_single (String t, int m, float x, float y, float z, float s) {
+  
+    int n1 = this.PEOPLE_Files_Num;    
+    int n2 = this.PEOPLE_Files_Num + this.TREES_Files_Num;
+  
+    int n = m;
+  
+    if (n == 0) {
+      if (t.equals("PEOPLE")) n = int(random(1, 1 + n1));
+      else if (t.equals("TREES")) n = int(random(1 + n1, 1 + n2));
+    }
+  
+    int d = 1; 
+    int r = int(random(2));
+    if (r == 0) d = -1; 
+  
+    int[] Temp_MAP = {
+      d * n
+    }; 
+    this.MAP = concat(this.MAP, Temp_MAP);
+  
+    float[][] Temp_XYZS = {
+      {
+        x, y, z, s
+      }
+    };
+    this.XYZS = (float[][]) concat(this.XYZS, Temp_XYZS);
+  
+    this.num += 1;
+  
+    if (abs(n) > n1) {
+  
+      if (CreateInput_MeshOrSolid != 0) {
+  
+        float x0 = x;
+        float y0 = y;
+        float z0 = 0.5 * s + z;
+        float r0 = 0.4 * s; // <<<<<<< approximate
+  
+        SOLARCHVISION_add_Solid(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, CreateInput_MeshOrSolid);
+      }
+    }
+  
+    if (allGroup3Ds_num > 0) allGroup3Ds_Object2Ds[allGroup3Ds_num - 1][1] = this.num - 1;
+  }
+    
+  
+}
+
+
+solarchvision_OBJECTS2D OBJECTS2D = new solarchvision_OBJECTS2D();
+
+
+
+
+
+
+
+
 
 
 float[] SOLARCHVISION_vertexRender_Shade_Surface_White (int c) {  
@@ -26605,512 +27137,6 @@ void SOLARCHVISION_put_3DViewport () {
 
 
 
-float[][] allObject2Ds_Vertices;
-int[][] allObject2Ds_Faces;
-
-void SOLARCHVISION_draw_Object2Ds (int target_window) {
-
-  allObject2Ds_Faces = new int [allObject2Ds_num * Object2Ds_numDisplayFaces][4];
-
-  allObject2Ds_Vertices = new float [4 * allObject2Ds_num * Object2Ds_numDisplayFaces][5]; // note we are keeping u & v at 3rd and 4th members
-  
-  
-  boolean proceed = true;
-
-  if (Display_Model2Ds == false) {
-    proceed = false;
-  }
-
-  if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
-    proceed = false;
-  }
-  
-  if (proceed) {  
-
-    if (Export_MaterialLibrary) {
-    
-      if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {  
-  
-        int[] Object2D_ImageUsed = new int [Object2D_ImagePath.length];
-  
-        for (int i = 0; i < Object2D_ImageUsed.length; i++) {
-          Object2D_ImageUsed[i] = 0;
-        }
-  
-        for (int f = 0; f < allObject2Ds_num; f++) {
-  
-          int n = abs(allObject2Ds_MAP[f]);
-  
-          Object2D_ImageUsed[n] += 1;
-        }
-  
-        for (int i = 1; i < Object2D_ImagePath.length; i++) {
-  
-          if (Object2D_ImageUsed[i] != 0) {
-  
-            String old_Texture_path = Object2D_ImagePath[i];
-  
-            String new_Texture_path = "";
-  
-            String opacity_Texture_path = "";
-  
-            String the_filename = "";
-  
-            if (Object2D_ImagePath[i].equals("")) {
-            } else {
-  
-              the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
-  
-              new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
-              opacity_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + "opacity_" + the_filename;
-  
-              println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-              saveBytes(new_Texture_path, loadBytes(old_Texture_path));
-  
-              println("Making opacity texture:", new_Texture_path);
-  
-              int RES1 = Object2D_Images[i].width;
-              int RES2 = Object2D_Images[i].height;
-  
-              PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
-  
-              Opacity_Texture.loadPixels();
-  
-              for (int np = 0; np < (RES1 * RES2); np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
-  
-                color COL = Object2D_Images[i].get(Image_X, Image_Y);
-                //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-  
-                float COL_V = (COL >> 24 & 0xFF);
-  
-                Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);
-              }
-  
-              Opacity_Texture.updatePixels();
-  
-              Opacity_Texture.save(opacity_Texture_path);
-              
-              if (target_window == TypeWindow.HTML) {
-                htmlOutput.println("\t\t\t\t<Appearance DEF='Object2D_" + the_filename + "'>");
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
-                htmlOutput.println("\t\t\t\t</Appearance>");
-              }
-  
-              if (target_window == TypeWindow.OBJ) { 
-    
-                mtlOutput.println("newmtl " + "Object2D_" + the_filename);
-                mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-                mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-                mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-                mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-                mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-                mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-                mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-                mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-                mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-    
-                //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-                mtlOutput.println("\tmap_d " + Export_MapsSubfolder + "opacity_" + the_filename); // diffuse map
-              }
-            }
-          }
-        }
-      }    
-    }
-    
-    
-    
-    
-
-    float[] DistZ = new float [allObject2Ds_num];
-
-    for (int f = 0; f < allObject2Ds_num; f++) {
-      float x = allObject2Ds_XYZS[f][0] * OBJECTS_scale;
-      float y = allObject2Ds_XYZS[f][1] * OBJECTS_scale;
-      float z = allObject2Ds_XYZS[f][2] * OBJECTS_scale;
-
-      DistZ[f] = dist(x, y, z, WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z);
-    }
-
-    for (int g = 0; g < allObject2Ds_num; g++) {
-
-      int f = -1;
-      float max_dist = -1;
-
-      for (int q = 0; q < allObject2Ds_num; q++) {
-        if (max_dist < DistZ[q]) {
-          max_dist = DistZ[q];
-          f = q;
-        }
-      }
-
-      DistZ[f] = -1;
-
-
-
-      if (f != -1) {
-        
-        int n = abs(allObject2Ds_MAP[f]);
-
-        int w = Object2D_Images[n].width; 
-        int h = Object2D_Images[n].height;
-
-        float x = allObject2Ds_XYZS[f][0] * OBJECTS_scale;
-        float y = allObject2Ds_XYZS[f][1] * OBJECTS_scale;
-        float z = allObject2Ds_XYZS[f][2] * OBJECTS_scale;
-
-        float rh = allObject2Ds_XYZS[f][3] * 0.5 * OBJECTS_scale;
-        float rw = rh * Object2D_ImageRatios[n];
-
-        float t = PI + WIN3D.RZ_Coordinate * PI / 180.0;
-        if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
-       
-        if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
-          t = 0;
-        }     
-
-        if (allObject2Ds_MAP[f] < 0) t += PI;     
-    
-
-        float dx = rw * cos(t);
-        float dy = rw * sin(t);
-        
-        float x1 = x - dx;
-        float y1 = y - dy;
-
-        float x2 = x + dx;
-        float y2 = y + dy;
-
-        if (target_window == TypeWindow.OBJ) { 
-
-          if (Export_PolyToPoly == 1) {
-            obj_lastGroupNumber += 1;  
-            objOutput.println("g Object2D_" + nf(f, 0) + "_type" + nf(n, 0));
-          }
-    
-          if (Export_MaterialLibrary) {
-            objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
-          }
-        }
-  
-        num_vertices_added = 0;
-  
-        int end_turn = 1;
-        if (target_window == TypeWindow.OBJ) end_turn = 3;
-        for (int _turn = 1; _turn <= end_turn; _turn++) {
-          
-          for (int back_front = -1; back_front <= 1; back_front++) {
-            
-            if (back_front == 0) {
-              
-              if (target_window == TypeWindow.WIN3D) { 
-  
-                WIN3D.graphics.beginShape();
-        
-                WIN3D.graphics.texture(Object2D_Images[n]);    
-                WIN3D.graphics.stroke(255, 255, 255, 0);
-                WIN3D.graphics.fill(255, 255, 255, 0);        
-        
-                WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, z * WIN3D.scale, 0, h);
-                WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, z * WIN3D.scale, w, h);
-                WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh) * WIN3D.scale, w, 0);
-                WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh) * WIN3D.scale, 0, 0);
-        
-                WIN3D.graphics.endShape(CLOSE);        
-              }
-              
-              if (target_window == TypeWindow.OBJ) { 
-                if (_turn == 1) {
-  
-                  SOLARCHVISION_OBJprintVertex(x1, y1, z);
-                  SOLARCHVISION_OBJprintVertex(x2, y2, z);
-                  SOLARCHVISION_OBJprintVertex(x2, y2, (z + 2 * rh));
-                  SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh));
-      
-                  num_vertices_added += 4;
-                }              
-                
-                if (_turn == 2) {
-                  htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
-                }     
-                
-                if (_turn == 3) {
-                  obj_lastVertexNumber += num_vertices_added;
-                  obj_lastVtextureNumber += num_vertices_added;
-      
-                  String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 1, 0); 
-                  String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 2, 0);
-                  String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 3, 0);
-                  String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4, 0);
-      
-                  String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 1, 0); 
-                  String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 2, 0);
-                  String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
-                  String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);      
-      
-                  if (Export_PolyToPoly == 0) {
-                    obj_lastGroupNumber += 1;
-                    objOutput.println("g Object2D_" + nf(f, 0) + "_ver");
-                  } 
-      
-                  obj_lastFaceNumber += 1;            
-                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                  if (Export_BackSides) {
-                    obj_lastFaceNumber += 1;
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                  }
-                }         
-              }   
-          
-          
-              if (target_window == TypeWindow.HTML) {
-                
-                htmlOutput.println("\t\t\t\t<shape>");
-      
-                htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
-      
-                htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
-                
-                htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
-                htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
-                htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
-                htmlOutput.print  ("," + nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
-                htmlOutput.println("'></Coordinate>");          
-                
-                htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
-        
-                htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-               
-                htmlOutput.println("\t\t\t\t</shape>");          
-              }              
-  
-              int nv = f * Object2Ds_numDisplayFaces * 4;
-              int nf = f * Object2Ds_numDisplayFaces;
-              
-              allObject2Ds_Vertices[nv + 0][0] = x1 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 0][1] = y1 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 0][2] = (z) / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 0][3] = 0;
-              allObject2Ds_Vertices[nv + 0][4] = 1;
-    
-              allObject2Ds_Vertices[nv + 1][0] = x2 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 1][1] = y2 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 1][2] = (z) / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 1][3] = 1;
-              allObject2Ds_Vertices[nv + 1][4] = 1;
-    
-              allObject2Ds_Vertices[nv + 2][0] = x2 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 2][1] = y2 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 2][2] = (z + 2 * rh) / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 2][3] = 1;
-              allObject2Ds_Vertices[nv + 2][4] = 0;
-    
-              allObject2Ds_Vertices[nv + 3][0] = x1 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 3][1] = y1 / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 3][2] = (z + 2 * rh) / OBJECTS_scale;
-              allObject2Ds_Vertices[nv + 3][3] = 0;
-              allObject2Ds_Vertices[nv + 3][4] = 0;
-    
-              allObject2Ds_Faces[nf][0] = nv + 0;
-              allObject2Ds_Faces[nf][1] = nv + 1;
-              allObject2Ds_Faces[nf][2] = nv + 2;
-              allObject2Ds_Faces[nf][3] = nv + 3;
-            }     
-            else {
-              
-              int nv = f * Object2Ds_numDisplayFaces * 4;
-              int nf = f * Object2Ds_numDisplayFaces;  
-              
-              if (back_front == -1) {
-                nv += 4;
-                nf += 1;
-              }
-              else {
-                nv += 8;
-                nf += 2;
-              }            
-              
-              if (n > Object2D_PEOPLE_Files_Num) { // case: trees   
-  
-                float ratio = 0.5;
-                
-                float rot = back_front * PI / 2 + t;
-    
-                dx = rw * cos(rot);
-                dy = rw * sin(rot);
-                
-                float x3 = x2 + dx;
-                float y3 = y2 + dy;
-    
-                float x4 = x1 + dx;
-                float y4 = y1 + dy;
-                
-                if (target_window == TypeWindow.WIN3D) {
-    
-                  WIN3D.graphics.beginShape();
-      
-                  WIN3D.graphics.texture(Object2D_Images[n]);    
-                  WIN3D.graphics.stroke(255, 255, 255, 0);
-                  WIN3D.graphics.fill(255, 255, 255, 0);
-      
-                  WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, h * ratio);
-                  WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, h * ratio);
-                  WIN3D.graphics.vertex(x3 * WIN3D.scale, -y3 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, 0);
-                  WIN3D.graphics.vertex(x4 * WIN3D.scale, -y4 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, 0);
-      
-                  WIN3D.graphics.endShape(CLOSE);
-                }
-                
-                if (target_window == TypeWindow.OBJ) {
-                  if (_turn == 1) {
-      
-                    SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh * ratio));
-                    SOLARCHVISION_OBJprintVertex(x2, y2, (z + 2 * rh * ratio));
-                    SOLARCHVISION_OBJprintVertex(x3, y3, (z + 2 * rh * ratio));
-                    SOLARCHVISION_OBJprintVertex(x4, y4, (z + 2 * rh * ratio));
-      
-                    num_vertices_added += 4;
-                  }
-      
-                  if (_turn == 2) {
-      
-                    SOLARCHVISION_OBJprintVtexture(1, 1 - ratio, 0);
-                    SOLARCHVISION_OBJprintVtexture(0, 1 - ratio, 0);
-                    SOLARCHVISION_OBJprintVtexture(0, 1, 0);
-                    SOLARCHVISION_OBJprintVtexture(1, 1, 0);
-                  }
-      
-                  if (_turn == 3) {
-      
-                    int q = (back_front + 1) / 2;
-      
-                    String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 1, 0); 
-                    String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 2, 0);
-                    String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
-                    String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4 * (q + 1) + 4, 0);
-      
-                    String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 1, 0); 
-                    String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 2, 0);
-                    String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
-                    String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);      
-      
-                    if (Export_PolyToPoly == 0) {
-                      obj_lastGroupNumber += 1;
-                      objOutput.println("g Object2D_" + nf(f, 0) + "_hor" + nf(q, 0));
-                    } 
-      
-                    obj_lastFaceNumber += 1;            
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    if (Export_BackSides) {
-                      obj_lastFaceNumber += 1;
-                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                    }
-                  }                    
-                }
-                
-                if (target_window == TypeWindow.HTML) {
-                  
-                  htmlOutput.println("\t\t\t\t<shape>");
-        
-                  htmlOutput.println("\t\t\t\t\t<Appearance USE='Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
-        
-                  htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
-                  
-                  htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                  htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x3, 0, Export_PrecisionVertex) + " " + nf(y3, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x4, 0, Export_PrecisionVertex) + " " + nf(y4, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                  htmlOutput.println("'></Coordinate>");          
-                  
-                  htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
-                  
-                  SOLARCHVISION_HTMLprintVtexture(1, 1 - ratio);
-                  htmlOutput.print (",");
-                  SOLARCHVISION_HTMLprintVtexture(0, 1 - ratio);
-                  htmlOutput.print (",");
-                  SOLARCHVISION_HTMLprintVtexture(0, 1);
-                  htmlOutput.print (",");
-                  SOLARCHVISION_HTMLprintVtexture(1, 1);                  
-                  htmlOutput.println("'></TextureCoordinate>");
-          
-                  htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-                 
-                  htmlOutput.println("\t\t\t\t</shape>");          
-                }                              
-  
-                allObject2Ds_Vertices[nv + 0][0] = x1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 0][1] = y1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 0][3] = 0;
-                allObject2Ds_Vertices[nv + 0][4] = ratio;
-            
-                allObject2Ds_Vertices[nv + 1][0] = x2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 1][1] = y2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 1][3] = 1;
-                allObject2Ds_Vertices[nv + 1][4] = ratio;
-            
-                allObject2Ds_Vertices[nv + 2][0] = x3 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 2][1] = y3 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 2][3] = 1;
-                allObject2Ds_Vertices[nv + 2][4] = 0;
-                
-                allObject2Ds_Vertices[nv + 3][0] = x4 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 3][1] = y4 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 3][3] = 0;
-                allObject2Ds_Vertices[nv + 3][4] = 0;      
-            
-                allObject2Ds_Faces[nf][0] = nv + 0;
-                allObject2Ds_Faces[nf][1] = nv + 1;
-                allObject2Ds_Faces[nf][2] = nv + 2;
-                allObject2Ds_Faces[nf][3] = nv + 3;
-              }
-              else { // case: people
-                allObject2Ds_Vertices[nv + 0][0] = x1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 0][1] = y1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 0][2] = (z) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 0][3] = 0;
-                allObject2Ds_Vertices[nv + 0][4] = 1;
-      
-                allObject2Ds_Vertices[nv + 1][0] = x2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 1][1] = y2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 1][2] = (z) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 1][3] = 1;
-                allObject2Ds_Vertices[nv + 1][4] = 1;
-      
-                allObject2Ds_Vertices[nv + 2][0] = x2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 2][1] = y2 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 2][2] = (z + 2 * rh) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 2][3] = 1;
-                allObject2Ds_Vertices[nv + 2][4] = 0;
-      
-                allObject2Ds_Vertices[nv + 3][0] = x1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 3][1] = y1 / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 3][2] = (z + 2 * rh) / OBJECTS_scale;
-                allObject2Ds_Vertices[nv + 3][3] = 0;
-                allObject2Ds_Vertices[nv + 3][4] = 0;
-      
-                allObject2Ds_Faces[nf][0] = nv + 0;
-                allObject2Ds_Faces[nf][1] = nv + 1;
-                allObject2Ds_Faces[nf][2] = nv + 2;
-                allObject2Ds_Faces[nf][3] = nv + 3;              
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-}
 
 
 int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
@@ -27857,9 +27883,9 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allObject2Ds_Faces.length][6];
+  float[][] hitPoint = new float [OBJECTS2D.Faces.length][6];
 
-  for (int f = 0; f < allObject2Ds_Faces.length; f++) {
+  for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
@@ -27868,9 +27894,9 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
     hitPoint[f][5] = FLOAT_undefined;    
   }
   
-  for (int f = 0; f < allObject2Ds_Faces.length; f++) {
+  for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
     
-    int n = allObject2Ds_Faces[f].length;
+    int n = OBJECTS2D.Faces[f].length;
     
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -27880,10 +27906,10 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
     //boolean InPoly = false;
     float[] UV = {FLOAT_undefined, FLOAT_undefined};
 
-    float[] A = allObject2Ds_Vertices[allObject2Ds_Faces[f][0]];
-    float[] B = allObject2Ds_Vertices[allObject2Ds_Faces[f][1]];
-    float[] C = allObject2Ds_Vertices[allObject2Ds_Faces[f][n - 2]];
-    float[] D = allObject2Ds_Vertices[allObject2Ds_Faces[f][n - 1]];
+    float[] A = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][0]];
+    float[] B = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][1]];
+    float[] C = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][n - 2]];
+    float[] D = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -27934,21 +27960,21 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < allObject2Ds_Faces.length; f++) {
+  for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
     
-    int OBJ_NUM = f / Object2Ds_numDisplayFaces;
+    int OBJ_NUM = f / OBJECTS2D.numDisplayFaces;
 
     if (pre_dist > hitPoint[f][3]) {
       
       float u = hitPoint[f][4];
       float v = hitPoint[f][5];
 
-      int n = abs(allObject2Ds_MAP[OBJ_NUM]);
+      int n = abs(OBJECTS2D.MAP[OBJ_NUM]);
      
-      int RES1 = Object2D_Images[n].width; 
-      int RES2 = Object2D_Images[n].height;    
+      int RES1 = OBJECTS2D.Images[n].width; 
+      int RES2 = OBJECTS2D.Images[n].height;    
    
-      Object2D_Images[n].loadPixels();
+      OBJECTS2D.Images[n].loadPixels();
       
       if (n < 0) u = 1 - u;
       
@@ -27957,7 +27983,7 @@ float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
       int Image_X = int(u * RES1); 
       int Image_Y = int(v * RES2);
   
-      color COL = Object2D_Images[n].get(Image_X, Image_Y);
+      color COL = OBJECTS2D.Images[n].get(Image_X, Image_Y);
       //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
   
       float COL_V = (COL >> 24 & 0xFF);
@@ -28659,7 +28685,7 @@ void SOLARCHVISION_add_Model_2DsFromFile () {
     float y = float(parts[1]);
     float z = float(parts[2]);
 
-    SOLARCHVISION_add_Object2D_single("PEOPLE", 0, x, y, z, 2.5);
+    OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
   }
 }
 
@@ -31539,8 +31565,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     if (addNewSelectionToPreviousSelection != 0) {
 
-      for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
-        if (selectedObject2D_ids[o] == OBJ_NUM) {
+      for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
+        if (selectedOBJECTS2D_ids[o] == OBJ_NUM) {
           found_at = o;
           if (addNewSelectionToPreviousSelection == 1) {
             use_it = 0;
@@ -31554,10 +31580,10 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     }
 
     if (use_it == -1) {
-      int[] startList = (int[]) subset(selectedObject2D_ids, 0, found_at);
-      int[] endList = (int[]) subset(selectedObject2D_ids, found_at + 1);
+      int[] startList = (int[]) subset(selectedOBJECTS2D_ids, 0, found_at);
+      int[] endList = (int[]) subset(selectedOBJECTS2D_ids, found_at + 1);
 
-      selectedObject2D_ids = (int[]) concat(startList, endList);
+      selectedOBJECTS2D_ids = (int[]) concat(startList, endList);
     }
 
     if (use_it == 1) {
@@ -31565,7 +31591,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
         OBJ_NUM
       };
 
-      selectedObject2D_ids = (int[]) concat(selectedObject2D_ids, newObject_id);
+      selectedOBJECTS2D_ids = (int[]) concat(selectedOBJECTS2D_ids, newObject_id);
     }
 
     WIN3D.update = true;
@@ -32538,7 +32564,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
-    for (int f = 0; f < allObject2Ds_Faces.length; f++) {
+    for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
 
       int break_loops = 0;
 
@@ -32547,17 +32573,17 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      int OBJ_NUM = f / Object2Ds_numDisplayFaces;
+      int OBJ_NUM = f / OBJECTS2D.numDisplayFaces;
 
       //println(f, OBJ_NUM);
 
-      for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
+      for (int j = 0; j < OBJECTS2D.Faces[f].length; j++) {
 
-        int vNo = allObject2Ds_Faces[f][j];
+        int vNo = OBJECTS2D.Faces[f][j];
 
-        float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
+        float x = OBJECTS2D.Vertices[vNo][0] * OBJECTS_scale;
+        float y = OBJECTS2D.Vertices[vNo][1] * OBJECTS_scale;
+        float z = -OBJECTS2D.Vertices[vNo][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -32598,8 +32624,8 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
         if (addNewSelectionToPreviousSelection != 0) {
 
-          for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
-            if (selectedObject2D_ids[o] == OBJ_NUM) {
+          for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
+            if (selectedOBJECTS2D_ids[o] == OBJ_NUM) {
               found_at = o;
               if (addNewSelectionToPreviousSelection == 1) {
                 use_it = 0;
@@ -32614,10 +32640,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
 
         if (use_it == -1) {
-          int[] startList = (int[]) subset(selectedObject2D_ids, 0, found_at);
-          int[] endList = (int[]) subset(selectedObject2D_ids, found_at + 1);
+          int[] startList = (int[]) subset(selectedOBJECTS2D_ids, 0, found_at);
+          int[] endList = (int[]) subset(selectedOBJECTS2D_ids, found_at + 1);
 
-          selectedObject2D_ids = (int[]) concat(startList, endList);
+          selectedOBJECTS2D_ids = (int[]) concat(startList, endList);
         }
 
 
@@ -32628,10 +32654,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
             OBJ_NUM
           };
 
-          selectedObject2D_ids = (int[]) concat(selectedObject2D_ids, newObject_id);
+          selectedOBJECTS2D_ids = (int[]) concat(selectedOBJECTS2D_ids, newObject_id);
           
           // skip the same object's drawn faces
-          f += Object2Ds_numDisplayFaces - (f % Object2Ds_numDisplayFaces) - 1;
+          f += OBJECTS2D.numDisplayFaces - (f % OBJECTS2D.numDisplayFaces) - 1;
         }
       }
     }
@@ -34852,7 +34878,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
-              selectedObject2D_displayEdges = !selectedObject2D_displayEdges;
+              selectedOBJECTS2D_displayEdges = !selectedOBJECTS2D_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -35725,7 +35751,7 @@ void mouseClicked () {
               UI_BAR_b_update = true;
             }                
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Object2D >> Group3D")) {
-              SOLARCHVISION_convert_Object2D_to_Group3D();
+              SOLARCHVISION_convert_OBJECTS2D_to_Group3D();
               Current_ObjectCategory = ObjectCategory.Group3Ds;
               WIN3D.update = true;
               UI_BAR_b_update = true;
@@ -36638,9 +36664,9 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
   
-                    x1 = allObject2Ds_XYZS[selectedObject2D_ids[selectedObject2D_ids.length - 1]][0]; 
-                    y1 = allObject2Ds_XYZS[selectedObject2D_ids[selectedObject2D_ids.length - 1]][1]; 
-                    z1 = allObject2Ds_XYZS[selectedObject2D_ids[selectedObject2D_ids.length - 1]][2];
+                    x1 = OBJECTS2D.XYZS[selectedOBJECTS2D_ids[selectedOBJECTS2D_ids.length - 1]][0]; 
+                    y1 = OBJECTS2D.XYZS[selectedOBJECTS2D_ids[selectedOBJECTS2D_ids.length - 1]][1]; 
+                    z1 = OBJECTS2D.XYZS[selectedOBJECTS2D_ids[selectedOBJECTS2D_ids.length - 1]][2];
                   }
   
                   if (Current_ObjectCategory == ObjectCategory.Fractals) {
@@ -36980,12 +37006,12 @@ void mouseClicked () {
   
                       int OBJ_NUM = int(RxP[0]);
   
-                      int n = allObject2Ds_MAP[OBJ_NUM];
+                      int n = OBJECTS2D.MAP[OBJ_NUM];
                       int sign_n = 1;
                       if (n < 0) sign_n = -1;
                       n = abs(n);
-                      int n1 = Object2D_PEOPLE_Files_Num;
-                      int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
+                      int n1 = OBJECTS2D.PEOPLE_Files_Num;
+                      int n2 = OBJECTS2D.PEOPLE_Files_Num + OBJECTS2D.TREES_Files_Num;
   
                       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
   
@@ -36998,9 +37024,9 @@ void mouseClicked () {
                         } 
                         if ((WIN3D.UI_TaskModifyParameter == 2) || (WIN3D.UI_TaskModifyParameter == 3)) { // Assign
                           if (n <= n1) { // case: people 
-                            allObject2Ds_MAP[OBJ_NUM] = sign_n * CreatePerson_Type;
+                            OBJECTS2D.MAP[OBJ_NUM] = sign_n * CreatePerson_Type;
                           } else { // case: trees
-                            allObject2Ds_MAP[OBJ_NUM] = sign_n * (CreatePlant_Type + n1);
+                            OBJECTS2D.MAP[OBJ_NUM] = sign_n * (CreatePlant_Type + n1);
                           }
                         }
                       }
@@ -37056,7 +37082,7 @@ void mouseClicked () {
                 if (WIN3D.UI_CurrentTask == UITASK.Create) { // create
                   
                   int keep_number_of_Group3Ds = allGroup3Ds_num;
-                  int keep_number_of_Object2Ds = allObject2Ds_num;
+                  int keep_number_of_Object2Ds = OBJECTS2D.num;
                   int keep_number_of_Fractals = allFractals_num;
                   int keep_number_of_Solids = allSolids_DEF.length;
                   int keep_number_of_Sections = allSections_num;
@@ -37223,15 +37249,15 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Person) {
     
                       randomSeed(millis());
-                      SOLARCHVISION_add_Object2D_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
+                      OBJECTS2D.add_single("PEOPLE", CreatePerson_Type, x, y, z, 2.5);
                     }
     
                     if (CreateObject == CREATE.Plant) {
                       int n = 0;
-                      if (CreatePlant_Type > 0) n = CreatePlant_Type + Object2D_PEOPLE_Files_Num;
+                      if (CreatePlant_Type > 0) n = CreatePlant_Type + OBJECTS2D.PEOPLE_Files_Num;
     
                       randomSeed(millis());
-                      SOLARCHVISION_add_Object2D_single("TREES", n, x, y, z, 2 * rz);
+                      OBJECTS2D.add_single("TREES", n, x, y, z, 2 * rz);
                     }
                   }    
                   
@@ -37627,15 +37653,15 @@ void mouseClicked () {
                     SOLARCHVISION_calculate_selection_BoundingBox();
                   }   
   
-                  if (keep_number_of_Object2Ds != allObject2Ds_num) { // if any Object2D created during the process
+                  if (keep_number_of_Object2Ds != OBJECTS2D.num) { // if any Object2D created during the process
   
-                    selectedObject2D_ids = new int [0];
+                    selectedOBJECTS2D_ids = new int [0];
   
-                    for (int o = keep_number_of_Object2Ds; o < allObject2Ds_num; o++) {
+                    for (int o = keep_number_of_Object2Ds; o < OBJECTS2D.num; o++) {
   
                       int[] newlyAddedObject2D = {o};
   
-                      selectedObject2D_ids = concat(selectedObject2D_ids, newlyAddedObject2D);
+                      selectedOBJECTS2D_ids = concat(selectedOBJECTS2D_ids, newlyAddedObject2D);
                     }  
   
                     println("SOLARCHVISION_calculate_selection_BoundingBox 9_Object2D");
@@ -38279,7 +38305,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
-    if (selectedObject2D_displayEdges) {
+    if (selectedOBJECTS2D_displayEdges) {
 
       pushMatrix();
 
@@ -38291,23 +38317,23 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
+        for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
 
-          int OBJ_NUM = selectedObject2D_ids[o];
+          int OBJ_NUM = selectedOBJECTS2D_ids[o];
 
-          for (int plane_type = 0; plane_type < Object2Ds_numDisplayFaces; plane_type++) {          
+          for (int plane_type = 0; plane_type < OBJECTS2D.numDisplayFaces; plane_type++) {          
 
-            int f = OBJ_NUM * Object2Ds_numDisplayFaces + plane_type; 
+            int f = OBJ_NUM * OBJECTS2D.numDisplayFaces + plane_type; 
 
             beginShape();
 
-            for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
+            for (int j = 0; j < OBJECTS2D.Faces[f].length; j++) {
 
-              int vNo = allObject2Ds_Faces[f][j];
+              int vNo = OBJECTS2D.Faces[f][j];
 
-              float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
-              float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
+              float x = OBJECTS2D.Vertices[vNo][0] * OBJECTS_scale;
+              float y = OBJECTS2D.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -OBJECTS2D.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -38723,17 +38749,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) {
 
-          if ((0 <= f) && (f < allObject2Ds_Faces.length)) { 
+          if ((0 <= f) && (f < OBJECTS2D.Faces.length)) { 
 
             beginShape();
 
-            for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
+            for (int j = 0; j < OBJECTS2D.Faces[f].length; j++) {
 
-              int vNo = allObject2Ds_Faces[f][j];
+              int vNo = OBJECTS2D.Faces[f][j];
 
-              float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
-              float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
+              float x = OBJECTS2D.Vertices[vNo][0] * OBJECTS_scale;
+              float y = OBJECTS2D.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -OBJECTS2D.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -39369,18 +39395,18 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             if (Display_Model2Ds) {
 
-              for (int f = 0; f < allObject2Ds_num; f++) {
+              for (int f = 0; f < OBJECTS2D.num; f++) {
 
-                int n = abs(allObject2Ds_MAP[f]);
+                int n = abs(OBJECTS2D.MAP[f]);
 
-                int w = Object2D_Images[n].width; 
-                int h = Object2D_Images[n].height;
+                int w = OBJECTS2D.Images[n].width; 
+                int h = OBJECTS2D.Images[n].height;
 
-                float r = allObject2Ds_XYZS[f][3] * 0.5;
+                float r = OBJECTS2D.XYZS[f][3] * 0.5;
 
                 float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
 
-                if (allObject2Ds_MAP[f] < 0) t += PI;         
+                if (OBJECTS2D.MAP[f] < 0) t += PI;         
 
                 if (r > 2.5) { // to select only trees!               
 
@@ -39389,11 +39415,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                   { // Vertical mask
                     TREES_graphics.beginShape();
 
-                    TREES_graphics.texture(Object2D_Images[n]); 
+                    TREES_graphics.texture(OBJECTS2D.Images[n]); 
 
-                    x = allObject2Ds_XYZS[f][0];
-                    y = allObject2Ds_XYZS[f][1];
-                    z = allObject2Ds_XYZS[f][2];
+                    x = OBJECTS2D.XYZS[f][0];
+                    y = OBJECTS2D.XYZS[f][1];
+                    z = OBJECTS2D.XYZS[f][2];
 
                     float[] TX = {
                       0, 0, 0, 0
@@ -39508,11 +39534,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
                       TREES_graphics.beginShape();
 
-                      TREES_graphics.texture(Object2D_Images[n]); 
+                      TREES_graphics.texture(OBJECTS2D.Images[n]); 
 
-                      x = allObject2Ds_XYZS[f][0];
-                      y = allObject2Ds_XYZS[f][1];
-                      z = allObject2Ds_XYZS[f][2];                      
+                      x = OBJECTS2D.XYZS[f][0];
+                      y = OBJECTS2D.XYZS[f][1];
+                      z = OBJECTS2D.XYZS[f][2];                      
 
                       float[] TX = {
                         0, 0, 0, 0
@@ -39986,33 +40012,33 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           if (Display_Model2Ds) {
 
-            for (int f = 0; f < allObject2Ds_num; f++) {
+            for (int f = 0; f < OBJECTS2D.num; f++) {
 
-              int n = abs(allObject2Ds_MAP[f]);
+              int n = abs(OBJECTS2D.MAP[f]);
 
-              int w = Object2D_Images[n].width; 
-              int h = Object2D_Images[n].height;
+              int w = OBJECTS2D.Images[n].width; 
+              int h = OBJECTS2D.Images[n].height;
 
-              float r = allObject2Ds_XYZS[f][3] * 0.5;
+              float r = OBJECTS2D.XYZS[f][3] * 0.5;
 
               float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
 
-              if (allObject2Ds_MAP[f] < 0) t += PI;         
+              if (OBJECTS2D.MAP[f] < 0) t += PI;         
 
               if (r > 2.5) { // to select only trees!               
 
-                float x = allObject2Ds_XYZS[f][0];
-                float y = allObject2Ds_XYZS[f][1];
-                float z = allObject2Ds_XYZS[f][2];
+                float x = OBJECTS2D.XYZS[f][0];
+                float y = OBJECTS2D.XYZS[f][1];
+                float z = OBJECTS2D.XYZS[f][2];
 
                 { // Vertical mask
                   TREES_graphics.beginShape();
 
-                  TREES_graphics.texture(Object2D_Images[n]); 
+                  TREES_graphics.texture(OBJECTS2D.Images[n]); 
 
-                  x = allObject2Ds_XYZS[f][0];
-                  y = allObject2Ds_XYZS[f][1];
-                  z = allObject2Ds_XYZS[f][2];
+                  x = OBJECTS2D.XYZS[f][0];
+                  y = OBJECTS2D.XYZS[f][1];
+                  z = OBJECTS2D.XYZS[f][2];
 
                   float[] TX = {
                     0, 0, 0, 0
@@ -40127,7 +40153,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
                     TREES_graphics.beginShape();
 
-                    TREES_graphics.texture(Object2D_Images[n]); 
+                    TREES_graphics.texture(OBJECTS2D.Images[n]); 
 
                     float[] TX = {
                       0, 0, 0, 0
@@ -41279,7 +41305,6 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 }
 
 
-int Object2Ds_numDisplayFaces = 3; // internal - number of faces: Vertical, Horizontal Front, Horizontal Back 
 
 int Solids_numDisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
 int Solids_numDisplayDegree = 16; //8; // internal - number of each face corners 
@@ -42398,7 +42423,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     theVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
   }
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
-    theVertices = selectedObject2D_ids;
+    theVertices = selectedOBJECTS2D_ids;
   }
   if (Current_ObjectCategory == ObjectCategory.Fractals) {
     theVertices = selectedFractal_ids;
@@ -42563,9 +42588,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
       int n = theVertices[q];
 
-      x = allObject2Ds_XYZS[n][0];
-      y = allObject2Ds_XYZS[n][1];
-      z = allObject2Ds_XYZS[n][2];
+      x = OBJECTS2D.XYZS[n][0];
+      y = OBJECTS2D.XYZS[n][1];
+      z = OBJECTS2D.XYZS[n][2];
     }     
     if (Current_ObjectCategory == ObjectCategory.Fractals) {
       int n = theVertices[q];
@@ -42742,11 +42767,11 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
     }
 
     for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) {
-      if ((0 <= f) && (f < allObject2Ds_num)) {
+      if ((0 <= f) && (f < OBJECTS2D.num)) {
 
-        allObject2Ds_XYZS[f][0] += dx;
-        allObject2Ds_XYZS[f][1] += dy;
-        allObject2Ds_XYZS[f][2] += dz;
+        OBJECTS2D.XYZS[f][0] += dx;
+        OBJECTS2D.XYZS[f][1] += dy;
+        OBJECTS2D.XYZS[f][2] += dz;
       }
     }
 
@@ -42943,11 +42968,11 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float r, int the_Vector) {
     }         
 
     for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) {
-      if ((0 <= f) && (f < allObject2Ds_num)) {
+      if ((0 <= f) && (f < OBJECTS2D.num)) {
 
-        float x = allObject2Ds_XYZS[f][0]; 
-        float y = allObject2Ds_XYZS[f][1]; 
-        float z = allObject2Ds_XYZS[f][2];
+        float x = OBJECTS2D.XYZS[f][0]; 
+        float y = OBJECTS2D.XYZS[f][1]; 
+        float z = OBJECTS2D.XYZS[f][2];
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -42985,9 +43010,9 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float r, int the_Vector) {
         y = B[1];
         z = B[2];
 
-        allObject2Ds_XYZS[f][0] = x;
-        allObject2Ds_XYZS[f][1] = y;
-        allObject2Ds_XYZS[f][2] = z;
+        OBJECTS2D.XYZS[f][0] = x;
+        OBJECTS2D.XYZS[f][1] = y;
+        OBJECTS2D.XYZS[f][2] = z;
       }
     }         
 
@@ -43085,7 +43110,7 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
     allVertices[n][2] = z;
   }
 
-  int n1 = Object2D_PEOPLE_Files_Num;
+  int n1 = OBJECTS2D.PEOPLE_Files_Num;
 
   int Solids_updated = 0;
 
@@ -43151,11 +43176,11 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
 
 
     for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) {
-      if ((0 <= f) && (f < allObject2Ds_num)) {
+      if ((0 <= f) && (f < OBJECTS2D.num)) {
 
-        float x = allObject2Ds_XYZS[f][0];
-        float y = allObject2Ds_XYZS[f][1]; 
-        float z = allObject2Ds_XYZS[f][2];
+        float x = OBJECTS2D.XYZS[f][0];
+        float y = OBJECTS2D.XYZS[f][1]; 
+        float z = OBJECTS2D.XYZS[f][2];
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43169,14 +43194,14 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
         y = B[1];
         z = B[2];         
 
-        allObject2Ds_XYZS[f][0] = x; 
-        allObject2Ds_XYZS[f][1] = y;
-        allObject2Ds_XYZS[f][2] = z;
+        OBJECTS2D.XYZS[f][0] = x; 
+        OBJECTS2D.XYZS[f][1] = y;
+        OBJECTS2D.XYZS[f][2] = z;
 
-        int n = allObject2Ds_MAP[f];
+        int n = OBJECTS2D.MAP[f];
 
         if (abs(n) > n1) { // does not scale poeple!    
-          allObject2Ds_XYZS[f][3] *= sz;
+          OBJECTS2D.XYZS[f][3] *= sz;
         }
       }
     }     
@@ -43508,15 +43533,15 @@ void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, flo
 
 void SOLARCHVISION_scale_selectedObject2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
 
-  int n1 = Object2D_PEOPLE_Files_Num;    
+  int n1 = OBJECTS2D.PEOPLE_Files_Num;    
 
-  for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
+  for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
 
-    int f = selectedObject2D_ids[o];
+    int f = selectedOBJECTS2D_ids[o];
 
-    float x = allObject2Ds_XYZS[f][0];
-    float y = allObject2Ds_XYZS[f][1]; 
-    float z = allObject2Ds_XYZS[f][2];
+    float x = OBJECTS2D.XYZS[f][0];
+    float y = OBJECTS2D.XYZS[f][1]; 
+    float z = OBJECTS2D.XYZS[f][2];
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43530,15 +43555,15 @@ void SOLARCHVISION_scale_selectedObject2Ds (float x0, float y0, float z0, float 
     y = B[1];
     z = B[2];         
 
-    allObject2Ds_XYZS[f][0] = x; 
-    allObject2Ds_XYZS[f][1] = y;
-    allObject2Ds_XYZS[f][2] = z;    
+    OBJECTS2D.XYZS[f][0] = x; 
+    OBJECTS2D.XYZS[f][1] = y;
+    OBJECTS2D.XYZS[f][2] = z;    
 
 
-    int n = allObject2Ds_MAP[f];
+    int n = OBJECTS2D.MAP[f];
 
     if (abs(n) > n1) { // does not scale poeple!    
-      allObject2Ds_XYZS[f][3] *= sz;
+      OBJECTS2D.XYZS[f][3] *= sz;
     }
   }
 }
@@ -43546,26 +43571,26 @@ void SOLARCHVISION_scale_selectedObject2Ds (float x0, float y0, float z0, float 
 
 void SOLARCHVISION_rotate_selectedObject2Ds (float x0, float y0, float z0, float r, int the_Vector) {
 
-  for (int q = 0; q < selectedObject2D_ids.length; q++) {
+  for (int q = 0; q < selectedOBJECTS2D_ids.length; q++) {
 
-    int f = selectedObject2D_ids[q];
+    int f = selectedOBJECTS2D_ids[q];
 
-    float x = allObject2Ds_XYZS[f][0] - x0; 
-    float y = allObject2Ds_XYZS[f][1] - y0; 
-    float z = allObject2Ds_XYZS[f][2] - z0;
+    float x = OBJECTS2D.XYZS[f][0] - x0; 
+    float y = OBJECTS2D.XYZS[f][1] - y0; 
+    float z = OBJECTS2D.XYZS[f][2] - z0;
 
     if (the_Vector == 2) {
-      allObject2Ds_XYZS[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allObject2Ds_XYZS[f][1] = y0 + (x * sin(r) + y * cos(r));
-      allObject2Ds_XYZS[f][2] = z0 + (z);
+      OBJECTS2D.XYZS[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      OBJECTS2D.XYZS[f][1] = y0 + (x * sin(r) + y * cos(r));
+      OBJECTS2D.XYZS[f][2] = z0 + (z);
     } else if (the_Vector == 1) {
-      allObject2Ds_XYZS[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allObject2Ds_XYZS[f][1] = y0 + (y);
-      allObject2Ds_XYZS[f][2] = z0 + (z * cos(r) - x * sin(r));
+      OBJECTS2D.XYZS[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      OBJECTS2D.XYZS[f][1] = y0 + (y);
+      OBJECTS2D.XYZS[f][2] = z0 + (z * cos(r) - x * sin(r));
     } else if (the_Vector == 0) {
-      allObject2Ds_XYZS[f][0] = x0 + (x); 
-      allObject2Ds_XYZS[f][1] = y0 + (y * cos(r) - z * sin(r));
-      allObject2Ds_XYZS[f][2] = z0 + (y * sin(r) + z * cos(r));
+      OBJECTS2D.XYZS[f][0] = x0 + (x); 
+      OBJECTS2D.XYZS[f][1] = y0 + (y * cos(r) - z * sin(r));
+      OBJECTS2D.XYZS[f][2] = z0 + (y * sin(r) + z * cos(r));
     }
   }
 }
@@ -43574,13 +43599,13 @@ void SOLARCHVISION_rotate_selectedObject2Ds (float x0, float y0, float z0, float
 
 void SOLARCHVISION_move_selectedObject2Ds (float dx, float dy, float dz) {
 
-  for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
+  for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
 
-    int f = selectedObject2D_ids[o];
+    int f = selectedOBJECTS2D_ids[o];
     
-    allObject2Ds_XYZS[f][0] += dx; 
-    allObject2Ds_XYZS[f][1] += dy; 
-    allObject2Ds_XYZS[f][2] += dz;
+    OBJECTS2D.XYZS[f][0] += dx; 
+    OBJECTS2D.XYZS[f][1] += dy; 
+    OBJECTS2D.XYZS[f][2] += dz;
   }
 } 
 
@@ -44214,13 +44239,13 @@ void SOLARCHVISION_drop_Selection () {
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
 
-    for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
+    for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_NUM = selectedObject2D_ids[o];
+      int OBJ_NUM = selectedOBJECTS2D_ids[o];
 
-      float x = allObject2Ds_XYZS[OBJ_NUM][0];
-      float y = allObject2Ds_XYZS[OBJ_NUM][1];
-      float z = allObject2Ds_XYZS[OBJ_NUM][2];
+      float x = OBJECTS2D.XYZS[OBJ_NUM][0];
+      float y = OBJECTS2D.XYZS[OBJ_NUM][1];
+      float z = OBJECTS2D.XYZS[OBJ_NUM][2];
 
       float[] ray_start = {
         x, y, z
@@ -44241,9 +44266,9 @@ void SOLARCHVISION_drop_Selection () {
       }
 
       if (RxP[0] >= 0) {
-        allObject2Ds_XYZS[OBJ_NUM][0] = RxP[1]; 
-        allObject2Ds_XYZS[OBJ_NUM][1] = RxP[2]; 
-        allObject2Ds_XYZS[OBJ_NUM][2] = RxP[3];
+        OBJECTS2D.XYZS[OBJ_NUM][0] = RxP[1]; 
+        OBJECTS2D.XYZS[OBJ_NUM][1] = RxP[2]; 
+        OBJECTS2D.XYZS[OBJ_NUM][2] = RxP[3];
       } else {
         ray_direction[2] = 1; // <<<< going upwards
 
@@ -44256,9 +44281,9 @@ void SOLARCHVISION_drop_Selection () {
         }
 
         if (RxP[0] >= 0) {
-          allObject2Ds_XYZS[OBJ_NUM][0] = RxP[1]; 
-          allObject2Ds_XYZS[OBJ_NUM][1] = RxP[2]; 
-          allObject2Ds_XYZS[OBJ_NUM][2] = RxP[3];
+          OBJECTS2D.XYZS[OBJ_NUM][0] = RxP[1]; 
+          OBJECTS2D.XYZS[OBJ_NUM][1] = RxP[2]; 
+          OBJECTS2D.XYZS[OBJ_NUM][2] = RxP[3];
         }
       }
     }
@@ -44637,20 +44662,20 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
   }
 
   if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
-    for (int o = selectedObject2D_ids.length - 1; o >= 0; o--) {
+    for (int o = selectedOBJECTS2D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_NUM = selectedObject2D_ids[o];
+      int OBJ_NUM = selectedOBJECTS2D_ids[o];
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
-        int n = allObject2Ds_MAP[OBJ_NUM];
+        int n = OBJECTS2D.MAP[OBJ_NUM];
         int sign_n = 1;
         if (n < 0) sign_n = -1;
 
         n = abs(n);
 
-        int n1 = Object2D_PEOPLE_Files_Num;
-        int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
+        int n1 = OBJECTS2D.PEOPLE_Files_Num;
+        int n2 = OBJECTS2D.PEOPLE_Files_Num + OBJECTS2D.TREES_Files_Num;
 
 
         if (n <= n1) { // case: people 
@@ -44681,7 +44706,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         n *= sign_n;
 
-        allObject2Ds_MAP[OBJ_NUM] = n;
+        OBJECTS2D.MAP[OBJ_NUM] = n;
       }
     }
   }
@@ -46796,7 +46821,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected 2½D Edges")) {
-                if (selectedObject2D_displayEdges == false) {
+                if (selectedOBJECTS2D_displayEdges == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49165,7 +49190,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("selected_displayReferencePivot", Boolean.toString(selected_displayReferencePivot));
   newChild1.setString("selectedGroup3D_displayEdges", Boolean.toString(selectedGroup3D_displayEdges));
   newChild1.setString("selectedGroup3D_displayBox", Boolean.toString(selectedGroup3D_displayBox));
-  newChild1.setString("selectedObject2D_displayEdges", Boolean.toString(selectedObject2D_displayEdges));
+  newChild1.setString("selectedOBJECTS2D_displayEdges", Boolean.toString(selectedOBJECTS2D_displayEdges));
   newChild1.setString("selectedFractal_displayEdges", Boolean.toString(selectedFractal_displayEdges));
   newChild1.setString("selectedSolid_displayEdges", Boolean.toString(selectedSolid_displayEdges));
   newChild1.setString("selectedSection_displayEdges", Boolean.toString(selectedSection_displayEdges));
@@ -49211,8 +49236,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("LAND3D.n_I", LAND3D.n_I);
   newChild1.setInt("LAND3D.n_J", LAND3D.n_J);
 
-  newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
-  newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num); 
+  newChild1.setInt("OBJECTS2D.PEOPLE_Files_Num", OBJECTS2D.PEOPLE_Files_Num);
+  newChild1.setInt("OBJECTS2D.TREES_Files_Num", OBJECTS2D.TREES_Files_Num); 
 
   newChild1.setFloat("softSelection_Power", softSelection_Power);
   newChild1.setFloat("softSelection_Radius", softSelection_Radius); 
@@ -49287,8 +49312,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("Object2D_ImagePath");
-    int ni = Object2D_ImagePath.length;
+    newChild1 = my_xml.addChild("OBJECTS2D.ImagePath");
+    int ni = OBJECTS2D.ImagePath.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
 
@@ -49297,24 +49322,24 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
       String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
 
       String the_filename = "";
-      if (Object2D_ImagePath[i].equals("")) {
+      if (OBJECTS2D.ImagePath[i].equals("")) {
       } else {
-        the_filename = Object2D_ImagePath[i].substring(Object2D_ImagePath[i].lastIndexOf("/") + 1); // image name
+        the_filename = OBJECTS2D.ImagePath[i].substring(OBJECTS2D.ImagePath[i].lastIndexOf("/") + 1); // image name
 
 
         String new_Texture_path = the_dir + "/Textures/" + the_filename;
 
-        //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
-        //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
+        //println("pre_OBJECTS2D.ImagePath", OBJECTS2D.ImagePath[i]);
+        //println("new_OBJECTS2D.ImagePath", new_OBJECTS2D.ImagePath[i]);
 
-        if (Object2D_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+        if (OBJECTS2D.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
           TEXTURE_copied = -1;
         } else {
-          if (Object2D_ImagePath[i].equals("")) {
+          if (OBJECTS2D.ImagePath[i].equals("")) {
           } else {
-            println("Copying texture:", Object2D_ImagePath[i], ">", new_Texture_path);
-            saveBytes(new_Texture_path, loadBytes(Object2D_ImagePath[i]));
-            Object2D_ImagePath[i] = new_Texture_path;
+            println("Copying texture:", OBJECTS2D.ImagePath[i], ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(OBJECTS2D.ImagePath[i]));
+            OBJECTS2D.ImagePath[i] = new_Texture_path;
 
             TEXTURE_copied = 1;
           }
@@ -49322,13 +49347,13 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
         //if (TEXTURE_copied == 0) {
         //  println("Saving texture from the scene.");
-        //  Object2D_Images[i].save(new_Texture_path);
+        //  OBJECTS2D.Images[i].save(new_Texture_path);
         //}
       }
 
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
-      newChild2.setContent(Object2D_ImagePath[i]);
+      newChild2.setContent(OBJECTS2D.ImagePath[i]);
     }
   }
 
@@ -49507,18 +49532,18 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   println("Saving:Object2Ds");
   {
     newChild1 = my_xml.addChild("allObject2Ds");
-    int ni = allObject2Ds_num;
+    int ni = OBJECTS2D.num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Object2D");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allObject2Ds_XYZS[i].length; j++) {
+      //for (int j = 0; j < OBJECTS2D.XYZS[i].length; j++) {
       for (int j = 0; j < 4; j++) { // x, y, z, s 
-        lineSTR += nf(allObject2Ds_XYZS[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(OBJECTS2D.XYZS[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += allObject2Ds_MAP[i];
+      lineSTR += OBJECTS2D.MAP[i];
 
       newChild2.setContent(lineSTR);
     }
@@ -49749,12 +49774,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("selectedObject2D_ids");
-    int ni = selectedObject2D_ids.length;
+    newChild1 = my_xml.addChild("selectedOBJECTS2D_ids");
+    int ni = selectedOBJECTS2D_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += selectedObject2D_ids[i];
+      lineSTR += selectedOBJECTS2D_ids[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -50300,7 +50325,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedCurve_displayVertexCount = Boolean.parseBoolean(children0[L].getString("selectedCurve_displayVertexCount"));
       selectedVertex_displayVertices = Boolean.parseBoolean(children0[L].getString("selectedVertex_displayVertices"));      
       selectedCurve_displayVertices = Boolean.parseBoolean(children0[L].getString("selectedCurve_displayVertices"));
-      selectedObject2D_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedObject2D_displayEdges"));
+      selectedOBJECTS2D_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedOBJECTS2D_displayEdges"));
       selectedFractal_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedFractal_displayEdges"));
       selectedSolid_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedSolid_displayEdges"));
       selectedSection_displayEdges = Boolean.parseBoolean(children0[L].getString("selectedSection_displayEdges"));
@@ -50345,8 +50370,8 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_n_dir = children0[L].getInt("SOLARCHVISION_GLOBE_n_dir");
       LAND3D.n_I = children0[L].getInt("LAND3D.n_I");
       LAND3D.n_J = children0[L].getInt("LAND3D.n_J");
-      Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
-      Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
+      OBJECTS2D.PEOPLE_Files_Num = children0[L].getInt("OBJECTS2D.PEOPLE_Files_Num");
+      OBJECTS2D.TREES_Files_Num = children0[L].getInt("OBJECTS2D.TREES_Files_Num");
       softSelection_Power = children0[L].getFloat("softSelection_Power");
       softSelection_Radius = children0[L].getFloat("softSelection_Radius");
 
@@ -50424,15 +50449,15 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      children0 = FileAll.getChildren("Object2D_ImagePath");
+      children0 = FileAll.getChildren("OBJECTS2D.ImagePath");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
 
         int reload_All_textures = 0;
 
-        if (Object2D_ImagePath.length != ni) {
-          Object2D_Images = new PImage [ni];
-          Object2D_ImageRatios = new float [ni];
+        if (OBJECTS2D.ImagePath.length != ni) {
+          OBJECTS2D.Images = new PImage [ni];
+          OBJECTS2D.ImageRatios = new float [ni];
 
           reload_All_textures = 1;
         }
@@ -50441,20 +50466,20 @@ void SOLARCHVISION_load_project (String myFile) {
         for (int i = 0; i < ni; i++) {      
 
           String new_Texture_path = children1[i].getContent();
-          if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
+          if ((reload_All_textures == 0) && (OBJECTS2D.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
           } else {
-            Object2D_ImagePath[i] = new_Texture_path;
-            Object2D_Images[i] = createImage(2, 2, RGB); // empty and small
-            if (Object2D_ImagePath[i].equals("")) {
+            OBJECTS2D.ImagePath[i] = new_Texture_path;
+            OBJECTS2D.Images[i] = createImage(2, 2, RGB); // empty and small
+            if (OBJECTS2D.ImagePath[i].equals("")) {
             } else {
-              println("Loading texture(" + i + "):", Object2D_ImagePath[i]);
-              Object2D_Images[i] = loadImage(Object2D_ImagePath[i]);
+              println("Loading texture(" + i + "):", OBJECTS2D.ImagePath[i]);
+              OBJECTS2D.Images[i] = loadImage(OBJECTS2D.ImagePath[i]);
               println("loaded!");
 
-              if (Object2D_Images[i].height != 0) {
-                Object2D_ImageRatios[i] = float(Object2D_Images[i].width) / float(Object2D_Images[i].height);
+              if (OBJECTS2D.Images[i].height != 0) {
+                OBJECTS2D.ImageRatios[i] = float(OBJECTS2D.Images[i].width) / float(OBJECTS2D.Images[i].height);
               } else {
-                Object2D_ImageRatios[i] = 1;
+                OBJECTS2D.ImageRatios[i] = 1;
               }
             }
           }
@@ -50629,18 +50654,18 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
-      allObject2Ds_XYZS = new float [ni][4];
-      allObject2Ds_MAP = new int [ni];
-      allObject2Ds_num = ni;
+      OBJECTS2D.XYZS = new float [ni][4];
+      OBJECTS2D.MAP = new int [ni];
+      OBJECTS2D.num = ni;
 
       XML[] children1 = children0[L].getChildren("Object2D");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 4; j++) {
-          allObject2Ds_XYZS[i][j] = float(parts[j]);
+          OBJECTS2D.XYZS[i][j] = float(parts[j]);
         }
-        allObject2Ds_MAP[i] = int(parts[4]);
+        OBJECTS2D.MAP[i] = int(parts[4]);
       }
     }      
 
@@ -50861,14 +50886,14 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     } 
 
-    children0 = FileAll.getChildren("selectedObject2D_ids");
+    children0 = FileAll.getChildren("selectedOBJECTS2D_ids");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      selectedObject2D_ids = new int [ni];
+      selectedOBJECTS2D_ids = new int [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        selectedObject2D_ids[i] = int(parts[i]);
+        selectedOBJECTS2D_ids[i] = int(parts[i]);
       }
     } 
 
@@ -52034,7 +52059,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
         }
       }
-      SOLARCHVISION_add_Object2D_single(t, m, x, y, z, 2.5);
+      OBJECTS2D.add_single(t, m, x, y, z, 2.5);
       WIN3D.update = true;  
       Current_ObjectCategory = ObjectCategory.Object2Ds; 
       UI_BAR_b_update = true;
@@ -52068,7 +52093,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        SOLARCHVISION_add_Object2D_single(t, m, x, y, z, h);
+        OBJECTS2D.add_single(t, m, x, y, z, h);
         WIN3D.update = true;  
         Current_ObjectCategory = ObjectCategory.Object2Ds; 
         UI_BAR_b_update = true;
@@ -53446,7 +53471,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     UI_BAR_b_update = true;
   }                
   else if (Command_CAPITAL.equals("OBJ2D>GROUP")) {
-    SOLARCHVISION_convert_Object2D_to_Group3D();
+    SOLARCHVISION_convert_OBJECTS2D_to_Group3D();
     Current_ObjectCategory = ObjectCategory.Group3Ds;
     WIN3D.update = true;
     UI_BAR_b_update = true;
