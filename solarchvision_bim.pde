@@ -28,6 +28,8 @@ int numberOfLayers = 0;
 
 class solarchvision_LAYER {
   
+  private final static String CLASS_STAMP = "LAYER";
+  
   public int id;  
   
   public String unit = "";
@@ -1775,6 +1777,8 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
 
 
 class solarchvision_UITASK {
+  
+  private final static String CLASS_STAMP = "UITASK";
  
   private final static int LandOrbit_Pan_TargetRollZ = -19;
   private final static int LookAtDirection = -18;
@@ -1828,6 +1832,8 @@ solarchvision_UITASK UITASK = new solarchvision_UITASK();
 
 
 class solarchvision_CREATE {
+  
+  private final static String CLASS_STAMP = "CREATE";
 
   private final static int Nothing    = 0;
   private final static int Plane      = 1;
@@ -1858,6 +1864,8 @@ solarchvision_CREATE CREATE = new solarchvision_CREATE();
 
 class solarchvision_OBJECTTYPE {
   
+  private final static String CLASS_STAMP = "OBJECTTYPE";
+  
   private final static int LandPoints = 0; 
   private final static int Fractals = 1; 
   private final static int Object2Ds = 2; 
@@ -1877,6 +1885,8 @@ solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
 
 class solarchvision_WINDOWTYPE {
   
+  private final static String CLASS_STAMP = "WINDOWTYPE";
+  
   private final static int SKY2D    = -2;
   private final static int LandGap  = -1;
   private final static int LandMesh = 0;
@@ -1893,6 +1903,8 @@ solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE();
 
 
 class solarchvision_DATATYPE {
+  
+  private final static String CLASS_STAMP = "DATATYPE";
   
   private final static int SATELLITE_GOES = 0;
   private final static int FORECAST_HRDPS = 1;
