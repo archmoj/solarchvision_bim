@@ -2028,11 +2028,11 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_put_3DViewport();
   
-      SOLARCHVISION_draw_SKY3D();
+      SKY3D.draw();
   
-      SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY_scale);
+      SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY3D.scale);
   
-      SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY_scale);
+      SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY3D.scale);
   
       SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
   
@@ -6117,8 +6117,8 @@ class solarchvision_ROLLOUT {
   
         LAND3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Tessellation", LAND3D.Tessellation, 0, 4, 1), 1));
   
-        SKY_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Tessellation", SKY_Tessellation, 0, 4, 1), 1));   
-        SKY_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_scale", SKY_scale, 0.0000001, 1000000, -2);
+        SKY3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Tessellation", SKY3D.Tessellation, 0, 4, 1), 1));   
+        SKY3D.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.scale", SKY3D.scale, 0.0000001, 1000000, -2);
   
         BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
   
@@ -6244,7 +6244,7 @@ class solarchvision_ROLLOUT {
   
   
   
-        //Display_SKY_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SKY_Surface", Display_SKY_Surface, 0, 1, 1), 1));
+        //SKY3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Display_Surface", SKY3D.Display_Surface, 0, 1, 1), 1));
   
         //Display_SUN_Path = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Path", Display_SUN_Path, 0, 1, 1), 1));
         //Display_SUN_Pattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Pattern", Display_SUN_Pattern, 0, 1, 1), 1));
@@ -6401,13 +6401,13 @@ class solarchvision_ROLLOUT {
         OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
         OBJECTS_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.125, 8, -2);
   
-        SKY_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_CLR", SKY_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        SKY_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_DIR", SKY_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-        SKY_Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_ACTIVE_MLT", SKY_Pallet_ACTIVE_MLT, 0.125, 8, -2);
+        SKY3D.Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_ACTIVE_CLR", SKY3D.Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SKY3D.Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_ACTIVE_DIR", SKY3D.Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        SKY3D.Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_ACTIVE_MLT", SKY3D.Pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        SKY_Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_CLR", SKY_Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        SKY_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_DIR", SKY_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
-        SKY_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Pallet_PASSIVE_MLT", SKY_Pallet_PASSIVE_MLT, 0.125, 8, -2);
+        SKY3D.Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_PASSIVE_CLR", SKY3D.Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        SKY3D.Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_PASSIVE_DIR", SKY3D.Pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        SKY3D.Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_PASSIVE_MLT", SKY3D.Pallet_PASSIVE_MLT, 0.125, 8, -2);
   
         SunPath_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_CLR", SunPath_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
         SunPath_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_DIR", SunPath_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -7241,13 +7241,7 @@ int SunPath_Pallet_PASSIVE_CLR = 18;
 int SunPath_Pallet_PASSIVE_DIR = -1;  
 float SunPath_Pallet_PASSIVE_MLT = 1; //1;
 
-int SKY_Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
-int SKY_Pallet_ACTIVE_DIR = 1; //-1;
-float SKY_Pallet_ACTIVE_MLT = 0.5; //1; //0.25;
 
-int SKY_Pallet_PASSIVE_CLR = 18; 
-int SKY_Pallet_PASSIVE_DIR = -1;  
-float SKY_Pallet_PASSIVE_MLT = 1; //2;
 
 int ELEVATION_Pallet_CLR = 1; 
 int ELEVATION_Pallet_DIR = -1; 
@@ -7396,16 +7390,12 @@ int SOLARCHVISION_Y_click2 = -1;
 
 int MODEL3D_Tessellation = 2;
 
-int SKY_Tessellation = 3; //3;
-float SKY_scale = 1000000;//25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 float WindRose_scale = 400;
 
 
 boolean Display_SUN_Path = true;
 boolean Display_SUN_Pattern = false;
-
-boolean Display_SKY_Surface = true;
 
 
 
@@ -21426,7 +21416,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
-  if (Display_SKY_Surface) {
+  if (SKY3D.Display_Surface) {
 
     if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
 
@@ -21435,14 +21425,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       float PAL_Multiplier = 1; 
 
       if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = SKY_Pallet_ACTIVE_CLR; 
-        PAL_DIR = SKY_Pallet_ACTIVE_DIR;  
-        PAL_Multiplier = 1.0 * SKY_Pallet_ACTIVE_MLT;
+        PAL_TYPE = SKY3D.Pallet_ACTIVE_CLR; 
+        PAL_DIR = SKY3D.Pallet_ACTIVE_DIR;  
+        PAL_Multiplier = 1.0 * SKY3D.Pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        PAL_TYPE = SKY_Pallet_PASSIVE_CLR; 
-        PAL_DIR = SKY_Pallet_PASSIVE_DIR;  
-        PAL_Multiplier = 0.05 * SKY_Pallet_PASSIVE_MLT;
+        PAL_TYPE = SKY3D.Pallet_PASSIVE_CLR; 
+        PAL_DIR = SKY3D.Pallet_PASSIVE_DIR;  
+        PAL_Multiplier = 0.05 * SKY3D.Pallet_PASSIVE_MLT;
       }             
 
 
@@ -21518,7 +21508,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           int Tessellation = 0;
 
           int TotalSubNo = 1;  
-          Tessellation = SKY_Tessellation;
+          Tessellation = SKY3D.Tessellation;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
           float[][] base_Vertices = new float [skyFaces[f].length][3];
@@ -21544,9 +21534,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               int s_next = (s + 1) % subFace.length;
               int s_prev = (s + subFace.length - 1) % subFace.length;
 
-              float x = subFace[s][0] * SKY_scale * WIN3D.scale;
-              float y = subFace[s][1] * SKY_scale * WIN3D.scale;
-              float z = subFace[s][2] * SKY_scale * WIN3D.scale;
+              float x = subFace[s][0] * SKY3D.scale * WIN3D.scale;
+              float y = subFace[s][1] * SKY3D.scale * WIN3D.scale;
+              float z = subFace[s][2] * SKY3D.scale * WIN3D.scale;
 
               float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
@@ -21612,7 +21602,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME_Date;
 
-    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY_scale, 0.975 * SKY_scale, 0.975 * SKY_scale, STUDY.ImpactLayer, 4);
+    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY3D.scale, 0.975 * SKY3D.scale, 0.975 * SKY3D.scale, STUDY.ImpactLayer, 4);
 
     STUDY.PerDays = keep_STUDY_PerDays;
     STUDY.JoinDays = keep_STUDY_JoinDays; 
@@ -22733,96 +22723,6 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 }
 
 
-void SOLARCHVISION_draw_SKY3D () {
-
-  if (Display_SKY_Surface) {
-
-    if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
-
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
-      float PAL_Multiplier = 1; 
-
-      if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = SKY_Pallet_ACTIVE_CLR; 
-        PAL_DIR = SKY_Pallet_ACTIVE_DIR;  
-        PAL_Multiplier = 1.0 * SKY_Pallet_ACTIVE_MLT;
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {
-        PAL_TYPE = SKY_Pallet_PASSIVE_CLR; 
-        PAL_DIR = SKY_Pallet_PASSIVE_DIR;  
-        PAL_Multiplier = 0.05 * SKY_Pallet_PASSIVE_MLT;
-      }             
-      
-      for (int f = 0; f < skyFaces.length; f++) {      
-  
-        int Tessellation = 0;
-  
-        int TotalSubNo = 1;  
-        Tessellation = SKY_Tessellation;
-        if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-  
-        float[][] base_Vertices = new float [skyFaces[f].length][3];
-        for (int j = 0; j < skyFaces[f].length; j++) {
-          int vNo = skyFaces[f][j];
-          base_Vertices[j][0] = skyVertices[vNo][0];
-          base_Vertices[j][1] = skyVertices[vNo][1];
-          base_Vertices[j][2] = skyVertices[vNo][2];
-        }
-  
-        for (int n = 0; n < TotalSubNo; n++) {
-  
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-  
-          for (int j = 0; j < subFace.length; j++) {
-            subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
-          }
-  
-          WIN3D.graphics.beginShape();
-  
-          for (int s = 0; s < subFace.length; s++) {
-  
-            int s_next = (s + 1) % subFace.length;
-            int s_prev = (s + subFace.length - 1) % subFace.length;
-  
-            float[] COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-  
-            WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-  
-            WIN3D.graphics.vertex(subFace[s][0] * SKY_scale * WIN3D.scale, -(subFace[s][1] * SKY_scale * WIN3D.scale), subFace[s][2] * SKY_scale * WIN3D.scale);
-          }
-  
-          WIN3D.graphics.endShape(CLOSE);
-        }
-      }
-    } else {
-
-      color c = color(191, 191, 255);
-
-      WIN3D.graphics.noStroke();
-
-      if (WIN3D.FacesShade == Shade_Surface_Materials) {
-        WIN3D.graphics.fill(c);
-        //WIN3D.graphics.noFill();
-      } else {
-        WIN3D.graphics.fill(c);
-      }    
-      
-      for (int f = 0; f < skyFaces.length; f++) {
-
-        WIN3D.graphics.beginShape();
-  
-        for (int j = 0; j < skyFaces[f].length; j++) {
-          int vNo = skyFaces[f][j];
-          WIN3D.graphics.vertex(skyVertices[vNo][0] * SKY_scale * WIN3D.scale, -(skyVertices[vNo][1] * SKY_scale * WIN3D.scale), skyVertices[vNo][2] * SKY_scale * WIN3D.scale);
-        }    
-  
-        WIN3D.graphics.endShape(CLOSE);
-      }
-    }
-
-  }
-}
 
 
 
@@ -23729,6 +23629,119 @@ class solarchvision_TROPO3D {
 }
 
 solarchvision_TROPO3D TROPO3D = new solarchvision_TROPO3D();
+
+
+
+class solarchvision_SKY3D {
+  
+  boolean Display_Surface = true;
+  int Tessellation = 3; //3;
+  float scale = 1000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+
+
+  int Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
+  int Pallet_ACTIVE_DIR = 1; //-1;
+  float Pallet_ACTIVE_MLT = 0.5; //1; //0.25;
+  
+  int Pallet_PASSIVE_CLR = 18; 
+  int Pallet_PASSIVE_DIR = -1;  
+  float Pallet_PASSIVE_MLT = 1; //2;
+
+  
+  void draw () {
+  
+    if (this.Display_Surface) {
+  
+      if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+  
+        int PAL_TYPE = 0; 
+        int PAL_DIR = 1;
+        float PAL_Multiplier = 1; 
+  
+        if (Impact_TYPE == Impact_ACTIVE) {
+          PAL_TYPE = this.Pallet_ACTIVE_CLR; 
+          PAL_DIR = this.Pallet_ACTIVE_DIR;  
+          PAL_Multiplier = 1.0 * this.Pallet_ACTIVE_MLT;
+        }
+        if (Impact_TYPE == Impact_PASSIVE) {
+          PAL_TYPE = this.Pallet_PASSIVE_CLR; 
+          PAL_DIR = this.Pallet_PASSIVE_DIR;  
+          PAL_Multiplier = 0.05 * this.Pallet_PASSIVE_MLT;
+        }             
+        
+        for (int f = 0; f < skyFaces.length; f++) {      
+    
+          int Tessellation = 0;
+    
+          int TotalSubNo = 1;  
+          Tessellation = this.Tessellation;
+          if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+          float[][] base_Vertices = new float [skyFaces[f].length][3];
+          for (int j = 0; j < skyFaces[f].length; j++) {
+            int vNo = skyFaces[f][j];
+            base_Vertices[j][0] = skyVertices[vNo][0];
+            base_Vertices[j][1] = skyVertices[vNo][1];
+            base_Vertices[j][2] = skyVertices[vNo][2];
+          }
+    
+          for (int n = 0; n < TotalSubNo; n++) {
+    
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+    
+            for (int j = 0; j < subFace.length; j++) {
+              subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
+            }
+    
+            WIN3D.graphics.beginShape();
+    
+            for (int s = 0; s < subFace.length; s++) {
+    
+              int s_next = (s + 1) % subFace.length;
+              int s_prev = (s + subFace.length - 1) % subFace.length;
+    
+              float[] COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+    
+              WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+    
+              WIN3D.graphics.vertex(subFace[s][0] * this.scale * WIN3D.scale, -(subFace[s][1] * this.scale * WIN3D.scale), subFace[s][2] * this.scale * WIN3D.scale);
+            }
+    
+            WIN3D.graphics.endShape(CLOSE);
+          }
+        }
+      } else {
+  
+        color c = color(191, 191, 255);
+  
+        WIN3D.graphics.noStroke();
+  
+        if (WIN3D.FacesShade == Shade_Surface_Materials) {
+          WIN3D.graphics.fill(c);
+          //WIN3D.graphics.noFill();
+        } else {
+          WIN3D.graphics.fill(c);
+        }    
+        
+        for (int f = 0; f < skyFaces.length; f++) {
+  
+          WIN3D.graphics.beginShape();
+    
+          for (int j = 0; j < skyFaces[f].length; j++) {
+            int vNo = skyFaces[f][j];
+            WIN3D.graphics.vertex(skyVertices[vNo][0] * this.scale * WIN3D.scale, -(skyVertices[vNo][1] * this.scale * WIN3D.scale), skyVertices[vNo][2] * this.scale * WIN3D.scale);
+          }    
+    
+          WIN3D.graphics.endShape(CLOSE);
+        }
+      }
+  
+    }
+  }
+}
+
+
+solarchvision_SKY3D SKY3D = new solarchvision_SKY3D();
 
 
 
@@ -33330,8 +33343,8 @@ void mouseWheel (MouseEvent event) {
 
                 if (WIN3D.UI_TaskModifyParameter == 0) { // SkydomeSize
 
-                  if (Wheel_Value > 0) SKY_scale *= pow(2.0, 0.25);              
-                  if (Wheel_Value < 0) SKY_scale /= pow(2.0, 0.25);
+                  if (Wheel_Value > 0) SKY3D.scale *= pow(2.0, 0.25);              
+                  if (Wheel_Value < 0) SKY3D.scale /= pow(2.0, 0.25);
 
                   WIN3D.update = true;
                 }
@@ -33343,12 +33356,12 @@ void mouseWheel (MouseEvent event) {
 
                   if (Wheel_Value > 0) {
                     OBJECTS_scale *= pow(2.0, 0.25);
-                    SKY_scale *= pow(2.0, 0.25);
+                    SKY3D.scale *= pow(2.0, 0.25);
                   }              
 
                   if (Wheel_Value < 0) {
                     OBJECTS_scale /= pow(2.0, 0.25);
-                    SKY_scale /= pow(2.0, 0.25);
+                    SKY3D.scale /= pow(2.0, 0.25);
                   }      
 
                   WIN3D.update = true;
@@ -34701,7 +34714,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sky")) {
-              Display_SKY_Surface = !Display_SKY_Surface;
+              SKY3D.Display_Surface = !SKY3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -46645,7 +46658,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }                
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sky")) {
-                if (Display_SKY_Surface == false) {
+                if (SKY3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49032,12 +49045,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("SunPath_Pallet_PASSIVE_CLR", SunPath_Pallet_PASSIVE_CLR);
   newChild1.setInt("SunPath_Pallet_PASSIVE_DIR", SunPath_Pallet_PASSIVE_DIR);
   newChild1.setFloat("SunPath_Pallet_PASSIVE_MLT", SunPath_Pallet_PASSIVE_MLT);
-  newChild1.setInt("SKY_Pallet_ACTIVE_CLR", SKY_Pallet_ACTIVE_CLR);
-  newChild1.setInt("SKY_Pallet_ACTIVE_DIR", SKY_Pallet_ACTIVE_DIR);
-  newChild1.setFloat("SKY_Pallet_ACTIVE_MLT", SKY_Pallet_ACTIVE_MLT);
-  newChild1.setInt("SKY_Pallet_PASSIVE_CLR", SKY_Pallet_PASSIVE_CLR);
-  newChild1.setInt("SKY_Pallet_PASSIVE_DIR", SKY_Pallet_PASSIVE_DIR);
-  newChild1.setFloat("SKY_Pallet_PASSIVE_MLT", SKY_Pallet_PASSIVE_MLT);
+  newChild1.setInt("SKY3D.Pallet_ACTIVE_CLR", SKY3D.Pallet_ACTIVE_CLR);
+  newChild1.setInt("SKY3D.Pallet_ACTIVE_DIR", SKY3D.Pallet_ACTIVE_DIR);
+  newChild1.setFloat("SKY3D.Pallet_ACTIVE_MLT", SKY3D.Pallet_ACTIVE_MLT);
+  newChild1.setInt("SKY3D.Pallet_PASSIVE_CLR", SKY3D.Pallet_PASSIVE_CLR);
+  newChild1.setInt("SKY3D.Pallet_PASSIVE_DIR", SKY3D.Pallet_PASSIVE_DIR);
+  newChild1.setFloat("SKY3D.Pallet_PASSIVE_MLT", SKY3D.Pallet_PASSIVE_MLT);
   newChild1.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
   newChild1.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
   newChild1.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT);
@@ -49063,15 +49076,15 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   newChild1.setInt("LAND3D.Tessellation", LAND3D.Tessellation);
   newChild1.setInt("MODEL3D_Tessellation", MODEL3D_Tessellation);
-  newChild1.setInt("SKY_Tessellation", SKY_Tessellation);
-  newChild1.setFloat("SKY_scale", SKY_scale);
+  newChild1.setInt("SKY3D.Tessellation", SKY3D.Tessellation);
+  newChild1.setFloat("SKY3D.scale", SKY3D.scale);
   newChild1.setFloat("WindRose_scale", WindRose_scale);
 
   newChild1.setFloat("Planetary_Magnification", Planetary_Magnification);
   newChild1.setString("Display_SolarRotation", Boolean.toString(Display_SolarRotation));
   newChild1.setString("Display_SUN_Path", Boolean.toString(Display_SUN_Path));
   newChild1.setString("Display_SUN_Pattern", Boolean.toString(Display_SUN_Pattern));
-  newChild1.setString("Display_SKY_Surface", Boolean.toString(Display_SKY_Surface));
+  newChild1.setString("SKY3D.Display_Surface", Boolean.toString(SKY3D.Display_Surface));
   newChild1.setString("STAR3D.Display_Surface", Boolean.toString(STAR3D.Display_Surface));
   newChild1.setString("STAR3D.Display_Texture", Boolean.toString(STAR3D.Display_Texture));
   newChild1.setString("MOON3D.Display_Surface", Boolean.toString(MOON3D.Display_Surface));
@@ -50166,12 +50179,12 @@ void SOLARCHVISION_load_project (String myFile) {
       SunPath_Pallet_PASSIVE_CLR = children0[L].getInt("SunPath_Pallet_PASSIVE_CLR");
       SunPath_Pallet_PASSIVE_DIR = children0[L].getInt("SunPath_Pallet_PASSIVE_DIR");
       SunPath_Pallet_PASSIVE_MLT = children0[L].getFloat("SunPath_Pallet_PASSIVE_MLT");
-      SKY_Pallet_ACTIVE_CLR = children0[L].getInt("SKY_Pallet_ACTIVE_CLR");
-      SKY_Pallet_ACTIVE_DIR = children0[L].getInt("SKY_Pallet_ACTIVE_DIR");
-      SKY_Pallet_ACTIVE_MLT = children0[L].getFloat("SKY_Pallet_ACTIVE_MLT");
-      SKY_Pallet_PASSIVE_CLR = children0[L].getInt("SKY_Pallet_PASSIVE_CLR");
-      SKY_Pallet_PASSIVE_DIR = children0[L].getInt("SKY_Pallet_PASSIVE_DIR");
-      SKY_Pallet_PASSIVE_MLT = children0[L].getFloat("SKY_Pallet_PASSIVE_MLT");
+      SKY3D.Pallet_ACTIVE_CLR = children0[L].getInt("SKY3D.Pallet_ACTIVE_CLR");
+      SKY3D.Pallet_ACTIVE_DIR = children0[L].getInt("SKY3D.Pallet_ACTIVE_DIR");
+      SKY3D.Pallet_ACTIVE_MLT = children0[L].getFloat("SKY3D.Pallet_ACTIVE_MLT");
+      SKY3D.Pallet_PASSIVE_CLR = children0[L].getInt("SKY3D.Pallet_PASSIVE_CLR");
+      SKY3D.Pallet_PASSIVE_DIR = children0[L].getInt("SKY3D.Pallet_PASSIVE_DIR");
+      SKY3D.Pallet_PASSIVE_MLT = children0[L].getFloat("SKY3D.Pallet_PASSIVE_MLT");
       ELEVATION_Pallet_CLR = children0[L].getInt("ELEVATION_Pallet_CLR");
       ELEVATION_Pallet_DIR = children0[L].getInt("ELEVATION_Pallet_DIR");
       ELEVATION_Pallet_MLT = children0[L].getFloat("ELEVATION_Pallet_MLT");
@@ -50197,15 +50210,15 @@ void SOLARCHVISION_load_project (String myFile) {
 
       LAND3D.Tessellation = children0[L].getInt("LAND3D.Tessellation");
       MODEL3D_Tessellation = children0[L].getInt("MODEL3D_Tessellation");
-      SKY_Tessellation = children0[L].getInt("SKY_Tessellation");
-      SKY_scale = children0[L].getFloat("SKY_scale");
+      SKY3D.Tessellation = children0[L].getInt("SKY3D.Tessellation");
+      SKY3D.scale = children0[L].getFloat("SKY3D.scale");
       WindRose_scale = children0[L].getFloat("WindRose_scale");
 
       Planetary_Magnification = children0[L].getFloat("Planetary_Magnification");
       Display_SolarRotation = Boolean.parseBoolean(children0[L].getString("Display_SolarRotation"));      
       Display_SUN_Path = Boolean.parseBoolean(children0[L].getString("Display_SUN_Path"));
       Display_SUN_Pattern = Boolean.parseBoolean(children0[L].getString("Display_SUN_Pattern"));
-      Display_SKY_Surface = Boolean.parseBoolean(children0[L].getString("Display_SKY_Surface"));
+      SKY3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("SKY3D.Display_Surface"));
       STAR3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Surface"));
       STAR3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Texture"));            
       MOON3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Surface"));
