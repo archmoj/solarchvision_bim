@@ -2040,7 +2040,7 @@ class solarchvision_WIN3D {
   
       MOON3D.draw();
       
-      EARTH.draw(TypeWindow.WIN3D);
+      EARTH3D.draw(TypeWindow.WIN3D);
   
       SOLARCHVISION_draw_LAND(TypeWindow.WIN3D);
       
@@ -3105,7 +3105,7 @@ class solarchvision_WORLD {
     if (return_VIEWPORT != this.VIEW_id) {
       this.loadImages(return_VIEWPORT);
   
-      if (Display_EARTH_Surface) WIN3D.update = true;
+      if (EARTH3D.Display_Surface) WIN3D.update = true;
     }
   
     return (return_VIEWPORT);
@@ -6096,14 +6096,14 @@ class solarchvision_ROLLOUT {
         //Display_TROPO_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Surface", Display_TROPO_Surface, 0, 1, 1), 1));
         //Display_TROPO_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_TROPO_Texture", Display_TROPO_Texture, 0, 1, 1), 1));      
   
-        //Display_EARTH_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_EARTH_Surface", Display_EARTH_Surface, 0, 1, 1), 1));
-        //Display_EARTH_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_EARTH_Texture", Display_EARTH_Texture, 0, 1, 1), 1));
+        //EARTH3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "EARTH3D.Display_Surface", EARTH3D.Display_Surface, 0, 1, 1), 1));
+        //EARTH3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "EARTH3D.Display_Texture", EARTH3D.Display_Texture, 0, 1, 1), 1));
   
-        //Display_MOON_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_MOON_Surface", Display_MOON_Surface, 0, 1, 1), 1));
-        //Display_MOON_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_MOON_Texture", Display_MOON_Texture, 0, 1, 1), 1));
+        //MOON3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MOON3D.Display_Surface", MOON3D.Display_Surface, 0, 1, 1), 1));
+        //MOON3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MOON3D.Display_Texture", MOON3D.Display_Texture, 0, 1, 1), 1));
   
-        //Display_STAR_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_STAR_Surface", Display_STAR_Surface, 0, 1, 1), 1));
-        //Display_STAR_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_STAR_Texture", Display_STAR_Texture, 0, 1, 1), 1));      
+        //STAR3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "STAR3D.Display_Surface", STAR3D.Display_Surface, 0, 1, 1), 1));
+        //STAR3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "STAR3D.Display_Texture", STAR3D.Display_Texture, 0, 1, 1), 1));      
   
         Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
@@ -6971,18 +6971,10 @@ int Export_PalletResolution = 256;
 
 
 
-
-boolean Display_EARTH_Surface = true; //false;
-boolean Display_EARTH_Texture = true; //false;
-
 boolean Display_TROPO_Surface = false;
-boolean Display_TROPO_Texture = false;
+boolean Display_TROPO_Texture = true;
 
-boolean Display_STAR_Surface = false;
-boolean Display_STAR_Texture = true;
 
-boolean Display_MOON_Surface = false;
-boolean Display_MOON_Texture = true;
 
 float Planetary_Magnification = 2.5; // <<<<<<<<<<
 
@@ -7763,7 +7755,7 @@ void setup () {
   
   SOLARCHVISION_resize_TROPO_IMAGES();
   
-  EARTH.resize_images();
+  EARTH3D.resize_images();
 
   STAR3D.load_images();
   MOON3D.load_images();
@@ -8086,9 +8078,9 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
-    stroke(255); fill(255); text("EARTH.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("EARTH3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 24) {
-    EARTH.load_images();
+    EARTH3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
     
@@ -20380,7 +20372,7 @@ void SOLARCHVISION_export_objects_HTML () {
 */
 
 
-  EARTH.draw(TypeWindow.HTML);
+  EARTH3D.draw(TypeWindow.HTML);
 
   SOLARCHVISION_draw_LAND(TypeWindow.HTML);
 
@@ -20744,7 +20736,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  EARTH.draw(TypeWindow.OBJ);
+  EARTH3D.draw(TypeWindow.OBJ);
 
   SOLARCHVISION_draw_LAND(TypeWindow.OBJ);
 
@@ -23745,8 +23737,11 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
 
 
 
-class solarchvision_EARTH {
+class solarchvision_EARTH3D {
 
+  boolean Display_Surface = false;
+  boolean Display_Texture = true;
+  
   PImage[] Map;
   
   float[][] BoundariesX;
@@ -23794,7 +23789,7 @@ class solarchvision_EARTH {
   
     boolean proceed = true;
   
-    if ((Display_EARTH_Surface == false) || (Display_EARTH_Texture == false)) {
+    if ((EARTH3D.Display_Surface == false) || (EARTH3D.Display_Texture == false)) {
       proceed = false;
     }
   
@@ -23845,7 +23840,7 @@ class solarchvision_EARTH {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
           }
     
-          if (Display_EARTH_Texture) {
+          if (EARTH3D.Display_Texture) {
     
             String old_Texture_path = this.Path + "/" + this.Filenames[n_Map];
     
@@ -23921,7 +23916,7 @@ class solarchvision_EARTH {
               float _lon = b - CEN_lon;
               float _lat = a - CEN_lat;
     
-              if (Display_EARTH_Texture) {
+              if (EARTH3D.Display_Texture) {
                 // calculating u and v
                 subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
                 subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -23986,7 +23981,7 @@ class solarchvision_EARTH {
       
               WIN3D.graphics.noStroke();
               
-              if (Display_EARTH_Texture) {
+              if (EARTH3D.Display_Texture) {
       
                 WIN3D.graphics.texture(this.Map[n_Map]);
               }            
@@ -24100,13 +24095,16 @@ class solarchvision_EARTH {
   }
 }
 
-solarchvision_EARTH EARTH = new solarchvision_EARTH(); 
+solarchvision_EARTH3D EARTH3D = new solarchvision_EARTH3D(); 
 
 
 
 
 
 class solarchvision_MOON3D {
+  
+  boolean Display_Surface = false;
+  boolean Display_Texture = true;
   
   String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
 
@@ -24117,7 +24115,7 @@ class solarchvision_MOON3D {
   }  
   
   void draw () {
-    if (Display_MOON_Surface) {
+    if (MOON3D.Display_Surface) {
   
       WIN3D.graphics.strokeWeight(1);
   
@@ -24161,7 +24159,7 @@ class solarchvision_MOON3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Display_MOON_Texture) {
+            if (MOON3D.Display_Texture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -24193,7 +24191,7 @@ class solarchvision_MOON3D {
   
           WIN3D.graphics.noStroke();
   
-          if (Display_MOON_Texture) {
+          if (MOON3D.Display_Texture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -24215,6 +24213,9 @@ solarchvision_MOON3D MOON3D = new solarchvision_MOON3D();
 
 class solarchvision_STAR3D {
   
+  boolean Display_Surface = false;
+  boolean Display_Texture = true;
+ 
   String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
   
   PImage Map;
@@ -24224,7 +24225,7 @@ class solarchvision_STAR3D {
   }
   
   void draw () {
-    if (Display_STAR_Surface) {
+    if (STAR3D.Display_Surface) {
   
       WIN3D.graphics.strokeWeight(1);
 
@@ -24268,7 +24269,7 @@ class solarchvision_STAR3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Display_STAR_Texture) {
+            if (STAR3D.Display_Texture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -24304,7 +24305,7 @@ class solarchvision_STAR3D {
   
           WIN3D.graphics.noStroke();
   
-          if (Display_STAR_Texture) {
+          if (STAR3D.Display_Texture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -34687,19 +34688,19 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Star")) {
-              Display_STAR_Surface = !Display_STAR_Surface;
+              STAR3D.Display_Surface = !STAR3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Moon")) {
-              Display_MOON_Surface = !Display_MOON_Surface;
+              MOON3D.Display_Surface = !MOON3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Earth")) {
-              Display_EARTH_Surface = !Display_EARTH_Surface;
+              EARTH3D.Display_Surface = !EARTH3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -46631,19 +46632,19 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Star")) {
-                if (Display_STAR_Surface == false) {
+                if (STAR3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Moon")) {
-                if (Display_MOON_Surface == false) {
+                if (MOON3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Earth")) {
-                if (Display_EARTH_Surface == false) {
+                if (EARTH3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49040,14 +49041,14 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("Display_SUN_Path", Boolean.toString(Display_SUN_Path));
   newChild1.setString("Display_SUN_Pattern", Boolean.toString(Display_SUN_Pattern));
   newChild1.setString("Display_SKY_Surface", Boolean.toString(Display_SKY_Surface));
-  newChild1.setString("Display_STAR_Surface", Boolean.toString(Display_STAR_Surface));
-  newChild1.setString("Display_STAR_Texture", Boolean.toString(Display_STAR_Texture));
-  newChild1.setString("Display_MOON_Surface", Boolean.toString(Display_MOON_Surface));
-  newChild1.setString("Display_MOON_Texture", Boolean.toString(Display_MOON_Texture));
+  newChild1.setString("STAR3D.Display_Surface", Boolean.toString(STAR3D.Display_Surface));
+  newChild1.setString("STAR3D.Display_Texture", Boolean.toString(STAR3D.Display_Texture));
+  newChild1.setString("MOON3D.Display_Surface", Boolean.toString(MOON3D.Display_Surface));
+  newChild1.setString("MOON3D.Display_Texture", Boolean.toString(MOON3D.Display_Texture));
   newChild1.setString("Display_TROPO_Surface", Boolean.toString(Display_TROPO_Surface));
   newChild1.setString("Display_TROPO_Texture", Boolean.toString(Display_TROPO_Texture));
-  newChild1.setString("Display_EARTH_Surface", Boolean.toString(Display_EARTH_Surface));
-  newChild1.setString("Display_EARTH_Texture", Boolean.toString(Display_EARTH_Texture));
+  newChild1.setString("EARTH3D.Display_Surface", Boolean.toString(EARTH3D.Display_Surface));
+  newChild1.setString("EARTH3D.Display_Texture", Boolean.toString(EARTH3D.Display_Texture));
   newChild1.setString("Load_LAND_Textures", Boolean.toString(Load_LAND_Textures));  
   newChild1.setString("Load_LAND_Mesh", Boolean.toString(Load_LAND_Mesh));
   newChild1.setString("Display_LAND_Surface", Boolean.toString(Display_LAND_Surface));
@@ -50174,14 +50175,14 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_SUN_Path = Boolean.parseBoolean(children0[L].getString("Display_SUN_Path"));
       Display_SUN_Pattern = Boolean.parseBoolean(children0[L].getString("Display_SUN_Pattern"));
       Display_SKY_Surface = Boolean.parseBoolean(children0[L].getString("Display_SKY_Surface"));
-      Display_STAR_Surface = Boolean.parseBoolean(children0[L].getString("Display_STAR_Surface"));
-      Display_STAR_Texture = Boolean.parseBoolean(children0[L].getString("Display_STAR_Texture"));            
-      Display_MOON_Surface = Boolean.parseBoolean(children0[L].getString("Display_MOON_Surface"));
-      Display_MOON_Texture = Boolean.parseBoolean(children0[L].getString("Display_MOON_Texture"));
+      STAR3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Surface"));
+      STAR3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Texture"));            
+      MOON3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Surface"));
+      MOON3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Texture"));
       Display_TROPO_Surface = Boolean.parseBoolean(children0[L].getString("Display_TROPO_Surface"));
       Display_TROPO_Texture = Boolean.parseBoolean(children0[L].getString("Display_TROPO_Texture"));
-      Display_EARTH_Surface = Boolean.parseBoolean(children0[L].getString("Display_EARTH_Surface"));
-      Display_EARTH_Texture = Boolean.parseBoolean(children0[L].getString("Display_EARTH_Texture"));
+      EARTH3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Surface"));
+      EARTH3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Texture"));
       Load_LAND_Textures = Boolean.parseBoolean(children0[L].getString("Load_LAND_Textures"));      
       Load_LAND_Mesh = Boolean.parseBoolean(children0[L].getString("Load_LAND_Mesh"));
       Display_LAND_Surface = Boolean.parseBoolean(children0[L].getString("Display_LAND_Surface"));
