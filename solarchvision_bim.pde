@@ -2042,7 +2042,7 @@ class solarchvision_WIN3D {
       
       EARTH3D.draw(TypeWindow.WIN3D);
   
-      SOLARCHVISION_draw_LAND(TypeWindow.WIN3D);
+      LAND3D.draw(TypeWindow.WIN3D);
       
       TROPO3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
   
@@ -2608,8 +2608,8 @@ class solarchvision_WIN3D {
           break;
   
         case '0' :
-          Display_LAND_Surface = !Display_LAND_Surface;
-          if (Display_LAND_Surface) {
+          LAND3D.Display_Surface = !LAND3D.Display_Surface;
+          if (LAND3D.Display_Surface) {
             Current_ObjectCategory = ObjectCategory.LandPoints;
             UI_BAR_b_update = true;
           }
@@ -6115,7 +6115,7 @@ class solarchvision_ROLLOUT {
   
         MODEL3D_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_Tessellation", MODEL3D_Tessellation, 0, 4, 1), 1));
   
-        LAND_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Tessellation", LAND_Tessellation, 0, 4, 1), 1));
+        LAND3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Tessellation", LAND3D.Tessellation, 0, 4, 1), 1));
   
         SKY_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_Tessellation", SKY_Tessellation, 0, 4, 1), 1));   
         SKY_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY_scale", SKY_scale, 0.0000001, 1000000, -2);
@@ -6216,14 +6216,14 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 7) { // Environment
   
-        //Load_LAND_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_LAND_Textures", Load_LAND_Textures, 0, 1, 1), 1));
-        //Load_LAND_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_LAND_Mesh", Load_LAND_Mesh, 0, 1, 1), 1));
-        //LAND_Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Surface_SkipStart", LAND_Surface_SkipStart, 0, LAND_n_I - 1, 1), 1));
-        //LAND_Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND_Surface_SkipEnd", LAND_Surface_SkipEnd, 0, LAND_n_I - 1, 1), 1));
-        //Display_LAND_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Surface", Display_LAND_Surface, 0, 1, 1), 1));
-        //Display_LAND_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Textures", Display_LAND_Textures, 0, 1, 1), 1));
-        //Display_LAND_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Points", Display_LAND_Points, 0, 1, 1), 1));     
-        //Display_LAND_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_LAND_Depth", Display_LAND_Depth, 0, 1, 1), 1));
+        //LAND3D.Load_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Load_Textures", LAND3D.Load_Textures, 0, 1, 1), 1));
+        //LAND3D.Load_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Load_Mesh", LAND3D.Load_Mesh, 0, 1, 1), 1));
+        //LAND3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Surface_SkipStart", LAND3D.Surface_SkipStart, 0, LAND3D.n_I - 1, 1), 1));
+        //LAND3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Surface_SkipEnd", LAND3D.Surface_SkipEnd, 0, LAND3D.n_I - 1, 1), 1));
+        //LAND3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Surface", LAND3D.Display_Surface, 0, 1, 1), 1));
+        //LAND3D.Display_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Textures", LAND3D.Display_Textures, 0, 1, 1), 1));
+        //LAND3D.Display_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Points", LAND3D.Display_Points, 0, 1, 1), 1));     
+        //LAND3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Depth", LAND3D.Display_Depth, 0, 1, 1), 1));
   
         //Display_Model2Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model2Ds", Display_Model2Ds, 0, 1, 1), 1));
         //Display_Fractals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Fractals", Display_Fractals, 0, 1, 1), 1));
@@ -6545,12 +6545,7 @@ int WMS_type = DataType.FORECAST_GDPS; // <<<<<<<<<<<<<
 
 String SceneName = "Complex";
 
-//Polar
-int LAND_n_I = 24;  
-int LAND_n_J = 48 + 1;  
 
-int LAND_Surface_SkipStart = 0; 
-int LAND_Surface_SkipEnd = 6; 
 
 
 
@@ -6802,8 +6797,8 @@ boolean pre_CLIMATE_CLMREC_load;
 boolean pre_ENSEMBLE_FORECAST_load;
 boolean pre_ENSEMBLE_OBSERVED_load;    
 
-boolean pre_Load_LAND_Mesh;
-boolean pre_Load_LAND_Textures;
+boolean pre_LAND3D_Load_Mesh;
+boolean pre_LAND3D_Load_Textures;
 
 float pre_LocationLAT;
 float pre_LocationLON;
@@ -7397,7 +7392,7 @@ int SOLARCHVISION_Y_click2 = -1;
 
 
 
-int LAND_Tessellation = 1; //0; //2;
+
 
 int MODEL3D_Tessellation = 2;
 
@@ -7412,13 +7407,7 @@ boolean Display_SUN_Pattern = false;
 
 boolean Display_SKY_Surface = true;
 
-boolean Load_LAND_Mesh = true; 
-boolean Load_LAND_Textures = true;
 
-boolean Display_LAND_Surface = true; 
-boolean Display_LAND_Points = false;
-boolean Display_LAND_Textures = true;
-boolean Display_LAND_Depth = false;
 
 
 
@@ -7835,7 +7824,7 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-  if ((Step == 0) || (Step == 7)) SOLARCHVISION_update_LAND_Mesh();
+  if ((Step == 0) || (Step == 7)) LAND3D.update_mesh();
 
   //if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Fractals();
 
@@ -8035,7 +8024,7 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_update_LAND_Mesh", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("LAND3D.update_mesh", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 18) {
     SOLARCHVISION_update_station(7);
 
@@ -8149,8 +8138,8 @@ void draw () {
 
         pre_WORLD_AutoView = WORLD.AutoView;
 
-        pre_Load_LAND_Mesh = Load_LAND_Mesh;
-        pre_Load_LAND_Textures = Load_LAND_Textures;
+        pre_LAND3D_Load_Mesh = LAND3D.Load_Mesh;
+        pre_LAND3D_Load_Textures = LAND3D.Load_Textures;
 
         pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
         pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
@@ -8338,13 +8327,13 @@ void draw () {
 
 
 
-        if (pre_Load_LAND_Mesh != Load_LAND_Mesh) {
-          SOLARCHVISION_update_LAND_Mesh();
+        if (pre_LAND3D_Load_Mesh != LAND3D.Load_Mesh) {
+          LAND3D.update_mesh();
           WIN3D.update = true;
         }
 
-        if (pre_Load_LAND_Textures != Load_LAND_Textures) {
-          SOLARCHVISION_update_LAND_Textures();
+        if (pre_LAND3D_Load_Textures != LAND3D.Load_Textures) {
+          LAND3D.update_textures();
           WIN3D.update = true;
         }
 
@@ -17816,7 +17805,7 @@ void SOLARCHVISION_deselect_All () {
 void SOLARCHVISION_select_All () {
 
   if (Current_ObjectCategory == ObjectCategory.LandPoints) {
-    selectedLandPoint_ids = new int [LAND_n_I * LAND_n_J];
+    selectedLandPoint_ids = new int [LAND3D.n_I * LAND3D.n_J];
     for (int i = 0; i < selectedLandPoint_ids.length; i++) { 
       selectedLandPoint_ids[i] = i;
     }
@@ -17897,7 +17886,7 @@ void SOLARCHVISION_reverse_Selection () {
 
     selectedLandPoint_ids = new int [0];
 
-    for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+    for (int i = 0; i < LAND3D.n_I * LAND3D.n_J; i++) {
       int found = -1; 
 
       for (int j = 0; j < pre_selectedLandPoint_ids.length; j++) {
@@ -20028,7 +20017,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
 
 
-  SOLARCHVISION_draw_LAND(TypeWindow.RAD);
+  LAND3D.draw(TypeWindow.RAD);
 
   if (Display_Model3Ds) {
 
@@ -20372,7 +20361,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
   EARTH3D.draw(TypeWindow.HTML);
 
-  SOLARCHVISION_draw_LAND(TypeWindow.HTML);
+  LAND3D.draw(TypeWindow.HTML);
 
   TROPO3D.draw(TypeWindow.HTML, STUDY.i_Start, STUDY.i_End);
   
@@ -20736,7 +20725,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   EARTH3D.draw(TypeWindow.OBJ);
 
-  SOLARCHVISION_draw_LAND(TypeWindow.OBJ);
+  LAND3D.draw(TypeWindow.OBJ);
 
   TROPO3D.draw(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
   
@@ -21886,7 +21875,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     }
   };
 
-  int Tessellation = LAND_Tessellation;
+  int Tessellation = LAND3D.Tessellation;
   if (WIN3D.FacesShade == Shade_Surface_Base) {
     Tessellation = 0;
   }
@@ -21896,42 +21885,42 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
 
 
-  if ((Display_LAND_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+  if ((LAND3D.Display_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
 
-    for (int i = LAND_Surface_SkipStart; i < LAND_n_I - 1 - LAND_Surface_SkipEnd; i++) {
-      for (int j = 0; j < LAND_n_J - 1; j++) {
+    for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
+      for (int j = 0; j < LAND3D.n_J - 1; j++) {
 
         float[][] base_Vertices = new float [4][3];
 
-        base_Vertices[0][0] = LAND_Mesh[i][j][0];
-        base_Vertices[0][1] = LAND_Mesh[i][j][1];
-        base_Vertices[0][2] = LAND_Mesh[i][j][2];
+        base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
+        base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
+        base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
 
-        base_Vertices[1][0] = LAND_Mesh[i+1][j][0];
-        base_Vertices[1][1] = LAND_Mesh[i+1][j][1];
-        base_Vertices[1][2] = LAND_Mesh[i+1][j][2];
+        base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
+        base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
+        base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
 
-        base_Vertices[2][0] = LAND_Mesh[i+1][j+1][0];
-        base_Vertices[2][1] = LAND_Mesh[i+1][j+1][1];
-        base_Vertices[2][2] = LAND_Mesh[i+1][j+1][2];
+        base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
+        base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
+        base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
 
-        base_Vertices[3][0] = LAND_Mesh[i][j+1][0];
-        base_Vertices[3][1] = LAND_Mesh[i][j+1][1];
-        base_Vertices[3][2] = LAND_Mesh[i][j+1][2];
+        base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
+        base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
+        base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];
 
         for (int n = 0; n < TotalSubNo; n++) {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
           int n_Map = -1; 
-          for (int q = 0; q < LAND_Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+          for (int q = 0; q < LAND3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
 
             n_Map = q; 
 
             for (int s = 0; s < subFace.length; s++) {
 
-              float u = (subFace[s][0] / LAND_Textures_scale_U[q] + 0.5);
-              float v = (-subFace[s][1] / LAND_Textures_scale_V[q] + 0.5);
+              float u = (subFace[s][0] / LAND3D.Textures_scale_U[q] + 0.5);
+              float v = (-subFace[s][1] / LAND3D.Textures_scale_V[q] + 0.5);
 
               if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
 
@@ -21946,7 +21935,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           if (n_Map != -1) {
 
-            int max_o = int(10000 / pow(2, LAND_Tessellation)); // number of tries to find green points!
+            int max_o = int(10000 / pow(2, LAND3D.Tessellation)); // number of tries to find green points!
 
             //if (max_o > 100) max_o = 100;
 
@@ -21963,13 +21952,13 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
               float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
 
-              float u = (x / LAND_Textures_scale_U[n_Map] + 0.5);
-              float v = (-y / LAND_Textures_scale_V[n_Map] + 0.5);
+              float u = (x / LAND3D.Textures_scale_U[n_Map] + 0.5);
+              float v = (-y / LAND3D.Textures_scale_V[n_Map] + 0.5);
 
-              int uPixel = int(u * LAND_Textures_Map[n_Map].width);
-              int vPixel = int(v * LAND_Textures_Map[n_Map].height);
+              int uPixel = int(u * LAND3D.Textures_Map[n_Map].width);
+              int vPixel = int(v * LAND3D.Textures_Map[n_Map].height);
 
-              color COL = LAND_Textures_Map[n_Map].get(uPixel, vPixel);
+              color COL = LAND3D.Textures_Map[n_Map].get(uPixel, vPixel);
               //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
               float r = COL >> 16 & 0xFF; 
               float g = COL >> 8 & 0xFF;
@@ -22029,32 +22018,32 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     }
   } else {
 
-    for (int i = LAND_Surface_SkipStart; i < LAND_n_I - 1 - LAND_Surface_SkipEnd; i++) {
-      for (int j = 0; j < LAND_n_J - 1; j++) {
+    for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
+      for (int j = 0; j < LAND3D.n_J - 1; j++) {
 
         float[][] base_Vertices = new float [4][3];
 
-        base_Vertices[0][0] = LAND_Mesh[i][j][0];
-        base_Vertices[0][1] = LAND_Mesh[i][j][1];
-        base_Vertices[0][2] = LAND_Mesh[i][j][2];
+        base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
+        base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
+        base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
 
-        base_Vertices[1][0] = LAND_Mesh[i+1][j][0];
-        base_Vertices[1][1] = LAND_Mesh[i+1][j][1];
-        base_Vertices[1][2] = LAND_Mesh[i+1][j][2];
+        base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
+        base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
+        base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
 
-        base_Vertices[2][0] = LAND_Mesh[i+1][j+1][0];
-        base_Vertices[2][1] = LAND_Mesh[i+1][j+1][1];
-        base_Vertices[2][2] = LAND_Mesh[i+1][j+1][2];
+        base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
+        base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
+        base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
 
-        base_Vertices[3][0] = LAND_Mesh[i][j+1][0];
-        base_Vertices[3][1] = LAND_Mesh[i][j+1][1];
-        base_Vertices[3][2] = LAND_Mesh[i][j+1][2];      
+        base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
+        base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
+        base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];      
 
         for (int n = 0; n < TotalSubNo; n++) {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
 
-          int max_o = int((16.0 / pow(2, LAND_Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+          int max_o = int((16.0 / pow(2, LAND3D.Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
 
 
           if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -22381,7 +22370,7 @@ int MAX_Default_Models_Number = 7;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
-  if (Load_LAND_Mesh) {
+  if (LAND3D.Load_Mesh) {
 
     SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
 
@@ -22692,7 +22681,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
   SKY2D_graphics.hint(ENABLE_DEPTH_TEST);
   
-  SOLARCHVISION_draw_LAND(TypeWindow.SKY2D);
+  LAND3D.draw(TypeWindow.SKY2D);
 
   for (int f = 0; f < allFaces_PNT.length; f++) {
 
@@ -23743,6 +23732,234 @@ solarchvision_TROPO3D TROPO3D = new solarchvision_TROPO3D();
 
 
 
+class solarchvision_STAR3D {
+  
+  boolean Display_Surface = false;
+  boolean Display_Texture = true;
+ 
+  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
+  
+  PImage Map;
+  
+  void load_images () {
+    Map = loadImage(Filename);
+  }
+  
+  void draw () {
+    if (STAR3D.Display_Surface) {
+  
+      WIN3D.graphics.strokeWeight(1);
+
+      float OffsetX = 0; 
+      float OffsetY = 0; 
+    
+      float ScaleX = 1; 
+      float ScaleY = 1;   
+
+      float CEN_lon = 0; 
+      float CEN_lat = 0; 
+  
+      float delta_Alpha = -5;
+      float delta_Beta = -10;
+  
+      float r = 696.0 * Planetary_Magnification; // * 1000000; // multiply this later
+      float d = 150000.0; // * 1000000; // multiply this later 
+  
+      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+  
+          float[][] subFace = new float [4][5];
+  
+          for (int s = 0; s < 4; s++) {
+  
+            float a = Alpha;
+            float b = Beta;
+  
+            if ((s == 2) || (s == 3)) {
+              a += delta_Alpha;
+            }
+  
+            if ((s == 1) || (s == 2)) {
+              b += delta_Beta;
+            }
+  
+            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+            float y0 = r * sin_ang(b - 90) * cos_ang(a);
+            float z0 = r * sin_ang(a);
+  
+            float _lon = b - CEN_lon;
+            float _lat = a - CEN_lat;
+  
+            if (STAR3D.Display_Texture) {
+              // calculating u and v
+              subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
+            }         
+  
+            // rotating to location coordinates
+  
+            float tb = 0;
+            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float z1 = z0;
+  
+            float ta = -90 - STATION.getLatitude();
+            float x2 = x1;
+            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+            // scale it here!
+            x2 *= 1000000.0;
+            y2 *= 1000000.0;
+            z2 *= 1000000.0;
+  
+            // move it to scale here!
+            y2 += 1000000.0 * d * sin_ang(-STATION.getLatitude());      
+            z2 += 1000000.0 * d * cos_ang(-STATION.getLatitude());
+  
+            subFace[s][0] = x2;
+            subFace[s][1] = y2;
+            subFace[s][2] = z2;
+          }
+  
+          WIN3D.graphics.beginShape();
+  
+          WIN3D.graphics.noStroke();
+  
+          if (STAR3D.Display_Texture) {
+  
+            WIN3D.graphics.texture(this.Map);
+          }
+  
+          for (int s = 0; s < subFace.length; s++) {
+  
+            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
+          }
+  
+          WIN3D.graphics.endShape(CLOSE);
+        }
+      }
+    }
+  }
+}
+
+solarchvision_STAR3D STAR3D = new solarchvision_STAR3D();
+
+
+class solarchvision_MOON3D {
+  
+  boolean Display_Surface = false;
+  boolean Display_Texture = true;
+  
+  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
+
+  PImage Map; 
+  
+  void load_images () {
+    Map = loadImage(Filename);
+  }  
+  
+  void draw () {
+    if (MOON3D.Display_Surface) {
+  
+      WIN3D.graphics.strokeWeight(1);
+  
+      float OffsetX = 0; 
+      float OffsetY = 0; 
+  
+      float ScaleX = 1; 
+      float ScaleY = 1; 
+  
+      float CEN_lon = 0; 
+      float CEN_lat = 0; 
+  
+      float delta_Alpha = -5;
+      float delta_Beta = -10;
+  
+      float r = 1737000.0 * Planetary_Magnification;
+      float d = 384400000.0 - FLOAT_r_Earth;
+  
+      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+  
+          float[][] subFace = new float [4][5];
+  
+          for (int s = 0; s < 4; s++) {
+  
+            float a = Alpha;
+            float b = Beta;
+  
+            if ((s == 2) || (s == 3)) {
+              a += delta_Alpha;
+            }
+  
+            if ((s == 1) || (s == 2)) {
+              b += delta_Beta;
+            }
+  
+            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+            float y0 = r * sin_ang(b - 90) * cos_ang(a);
+            float z0 = r * sin_ang(a);
+  
+            float _lon = b - CEN_lon;
+            float _lat = a - CEN_lat;
+  
+            if (MOON3D.Display_Texture) {
+              // calculating u and v
+              subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
+            }         
+  
+            // rotating to location coordinates
+  
+  
+            float tb = 0;
+            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float z1 = z0;
+  
+            float ta = -90 - STATION.getLatitude();
+            float x2 = x1;
+            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+            // move it up here!
+            y2 += d * sin_ang(-STATION.getLatitude());      
+            z2 += d * cos_ang(-STATION.getLatitude());
+  
+            subFace[s][0] = x2;
+            subFace[s][1] = y2;
+            subFace[s][2] = z2;
+          }
+  
+          WIN3D.graphics.beginShape();
+  
+          WIN3D.graphics.noStroke();
+  
+          if (MOON3D.Display_Texture) {
+  
+            WIN3D.graphics.texture(this.Map);
+          }
+  
+          for (int s = 0; s < subFace.length; s++) {
+  
+            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
+          }
+  
+          WIN3D.graphics.endShape(CLOSE);
+        }
+      }
+    }
+  }
+}
+
+solarchvision_MOON3D MOON3D = new solarchvision_MOON3D();
+
+
+
+
+
+
 class solarchvision_EARTH3D {
 
   boolean Display_Surface = false;
@@ -24105,840 +24322,966 @@ solarchvision_EARTH3D EARTH3D = new solarchvision_EARTH3D();
 
 
 
+class solarchvision_LAND3D {
+  
+  boolean Load_Mesh = true; 
+  boolean Load_Textures = true;
+  
+  boolean Display_Surface = true; 
+  boolean Display_Points = false;
+  boolean Display_Textures = true;
+  boolean Display_Depth = false;  
+  
+  float[][][] Mesh;
+  
+  float[] Textures_scale_U;
+  float[] Textures_scale_V;
+  PImage[] Textures_Map;
+  String[] Textures_ImagePath;
+  int Textures_num = 0;
+  
+  
+  //Polar
+  int n_I = 24;  
+  int n_J = 48 + 1;  
+  
+  int Surface_SkipStart = 0; 
+  int Surface_SkipEnd = 6; 
+  
+  int Tessellation = 1; //0; //2;  
 
-
-class solarchvision_MOON3D {
   
-  boolean Display_Surface = false;
-  boolean Display_Texture = true;
+  void update_textures () {
   
-  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
-
-  PImage Map; 
+    this.Textures_scale_U = new float [0];
+    this.Textures_scale_V = new float [0];
+    this.Textures_Map = new PImage [0];
+    this.Textures_ImagePath = new String [0];
+    this.Textures_num = 0;
   
-  void load_images () {
-    Map = loadImage(Filename);
-  }  
+    this.Display_Textures = false;
   
-  void draw () {
-    if (MOON3D.Display_Surface) {
+    if (this.Load_Textures) {
   
-      WIN3D.graphics.strokeWeight(1);
-  
-      float OffsetX = 0; 
-      float OffsetY = 0; 
-  
-      float ScaleX = 1; 
-      float ScaleY = 1; 
-  
-      float CEN_lon = 0; 
-      float CEN_lat = 0; 
-  
-      float delta_Alpha = -5;
-      float delta_Beta = -10;
-  
-      float r = 1737000.0 * Planetary_Magnification;
-      float d = 384400000.0 - FLOAT_r_Earth;
-  
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-  
-          float[][] subFace = new float [4][5];
-  
-          for (int s = 0; s < 4; s++) {
-  
-            float a = Alpha;
-            float b = Beta;
-  
-            if ((s == 2) || (s == 3)) {
-              a += delta_Alpha;
-            }
-  
-            if ((s == 1) || (s == 2)) {
-              b += delta_Beta;
-            }
-  
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
-  
-            float _lon = b - CEN_lon;
-            float _lat = a - CEN_lat;
-  
-            if (MOON3D.Display_Texture) {
-              // calculating u and v
-              subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
-              subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
-            }         
-  
-            // rotating to location coordinates
-  
-  
-            float tb = 0;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-            float z1 = z0;
-  
-            float ta = -90 - STATION.getLatitude();
-            float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-  
-            // move it up here!
-            y2 += d * sin_ang(-STATION.getLatitude());      
-            z2 += d * cos_ang(-STATION.getLatitude());
-  
-            subFace[s][0] = x2;
-            subFace[s][1] = y2;
-            subFace[s][2] = z2;
-          }
-  
-          WIN3D.graphics.beginShape();
-  
-          WIN3D.graphics.noStroke();
-  
-          if (MOON3D.Display_Texture) {
-  
-            WIN3D.graphics.texture(this.Map);
-          }
-  
-          for (int s = 0; s < subFace.length; s++) {
-  
-            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
-          }
-  
-          WIN3D.graphics.endShape(CLOSE);
-        }
-      }
-    }
-  }
-}
-
-solarchvision_MOON3D MOON3D = new solarchvision_MOON3D();
-
-
-class solarchvision_STAR3D {
-  
-  boolean Display_Surface = false;
-  boolean Display_Texture = true;
- 
-  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
-  
-  PImage Map;
-  
-  void load_images () {
-    Map = loadImage(Filename);
-  }
-  
-  void draw () {
-    if (STAR3D.Display_Surface) {
-  
-      WIN3D.graphics.strokeWeight(1);
-
-      float OffsetX = 0; 
-      float OffsetY = 0; 
+      try {     
     
-      float ScaleX = 1; 
-      float ScaleY = 1;   
-
-      float CEN_lon = 0; 
-      float CEN_lat = 0; 
-  
-      float delta_Alpha = -5;
-      float delta_Beta = -10;
-  
-      float r = 696.0 * Planetary_Magnification; // * 1000000; // multiply this later
-      float d = 150000.0; // * 1000000; // multiply this later 
-  
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-  
-          float[][] subFace = new float [4][5];
-  
-          for (int s = 0; s < 4; s++) {
-  
-            float a = Alpha;
-            float b = Beta;
-  
-            if ((s == 2) || (s == 3)) {
-              a += delta_Alpha;
-            }
-  
-            if ((s == 1) || (s == 2)) {
-              b += delta_Beta;
-            }
-  
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
-  
-            float _lon = b - CEN_lon;
-            float _lat = a - CEN_lat;
-  
-            if (STAR3D.Display_Texture) {
-              // calculating u and v
-              subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
-              subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
-            }         
-  
-            // rotating to location coordinates
-  
-            float tb = 0;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-            float z1 = z0;
-  
-            float ta = -90 - STATION.getLatitude();
-            float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-  
-            // scale it here!
-            x2 *= 1000000.0;
-            y2 *= 1000000.0;
-            z2 *= 1000000.0;
-  
-            // move it to scale here!
-            y2 += 1000000.0 * d * sin_ang(-STATION.getLatitude());      
-            z2 += 1000000.0 * d * cos_ang(-STATION.getLatitude());
-  
-            subFace[s][0] = x2;
-            subFace[s][1] = y2;
-            subFace[s][2] = z2;
-          }
-  
-          WIN3D.graphics.beginShape();
-  
-          WIN3D.graphics.noStroke();
-  
-          if (STAR3D.Display_Texture) {
-  
-            WIN3D.graphics.texture(this.Map);
-          }
-  
-          for (int s = 0; s < subFace.length; s++) {
-  
-            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
-          }
-  
-          WIN3D.graphics.endShape(CLOSE);
-        }
-      }
-    }
-  }
-}
-
-solarchvision_STAR3D STAR3D = new solarchvision_STAR3D();
-
-
-
-
-
-void SOLARCHVISION_draw_LAND (int target_window) {
-
-  boolean proceed = true;
-
-  if ((Display_LAND_Surface == false) || (Load_LAND_Mesh == false)) {
-    proceed = false;
-  }
-
-  if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
-    proceed = false;
-  }
-  
-  if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {  
-    proceed = true;
-  }
-  
-  if (proceed) {
-
-    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
-    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
-    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
-
-    if (Export_MaterialLibrary) {
-
-      for (int n_Map = 0; n_Map < LAND_Textures_num; n_Map++) {
-
-        if (target_window == TypeWindow.RAD) {
-
-          radOutput.println("void plastic " + "LandMap" + nf(n_Map, 0));
-          radOutput.println("0");
-          radOutput.println("0");
-          radOutput.println("5 0 0 0 0 0");
-          
-        }
-
-        if (target_window == TypeWindow.HTML) {
-          htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
-        }
-        
-        if (target_window == TypeWindow.OBJ) {
-        
-          mtlOutput.println("newmtl LandMap" + nf(n_Map, 0));
-          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-          
-        }
-
-
-        if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
-
-          if (Display_LAND_Textures) {
-            if (n_Map != -1) {
-  
-              String old_Texture_path = LAND_Textures_ImagePath[n_Map]; 
-  
-              String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
-  
-              String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
-  
-              println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-              saveBytes(new_Texture_path, loadBytes(old_Texture_path));
-  
-  
-              if (target_window == TypeWindow.OBJ) {
-                  
-                //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-                mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
-              }
-              
-              if (target_window == TypeWindow.HTML) {
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
-              }                 
-  
-            }
-          }
-        }
-        
-        
-        if (target_window == TypeWindow.HTML) {
-          htmlOutput.println("\t\t\t\t</Appearance>");
-        }        
-        
-      }
-
-    }
+        String[] filenames = sort(SOLARCHVISION_getfiles(LandFolder)); // important to sort
     
-    if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
-      
-      defaultMaterial = DEFAULT_CreateMaterial;
-      defaultTessellation = DEFAULT_CreateTessellation;
-      defaultLayer = DEFAULT_CreateLayer;
-      defaultVisibility = DEFAULT_CreateVisibility;
-      defaultWeight = DEFAULT_CreateWeight;
-      defaultClose = DEFAULT_CreateClose;            
-      
-      SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      
-    }
-
-
-    num_vertices_added = 0;
-
-    int end_turn = 1;
-    if (target_window == TypeWindow.OBJ) end_turn = 3;
-    for (int _turn = 1; _turn <= end_turn; _turn++) {
-
-
-      if (target_window == TypeWindow.OBJ) {
-
-        if (_turn == 3) {
-          
-          if (Display_LAND_Textures) {   
-
-            obj_lastGroupNumber += 1;
-            objOutput.println("g LandMap");
-          
-          }
-        }
-      }    
-
-
-
-      int Tessellation = LAND_Tessellation;
-      if (WIN3D.FacesShade == Shade_Surface_Base) {
-        Tessellation = 0;
-      }
-
-      if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
-        Tessellation = 0;
-      }
-
-      int TotalSubNo = 1;  
-      if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
-
-      int i_start = LAND_Surface_SkipStart;
-      int i_end = LAND_n_I - 1 - LAND_Surface_SkipEnd;
-
-      if (target_window == TypeWindow.LandGap) {
-        i_start = 0;
-        i_end = LAND_Surface_SkipStart;
-        
-        target_window = TypeWindow.LandMesh; // because the rest is simillar to that
-      }
-
-       
-      for (int i = i_start; i < i_end; i++) {
-        
-        for (int j = 0; j < LAND_n_J - 1; j++) {
-
-          float[][] base_Vertices = new float [4][3];
-
-          base_Vertices[0][0] = LAND_Mesh[i][j][0];
-          base_Vertices[0][1] = LAND_Mesh[i][j][1];
-          base_Vertices[0][2] = LAND_Mesh[i][j][2];
-
-          base_Vertices[1][0] = LAND_Mesh[i+1][j][0];
-          base_Vertices[1][1] = LAND_Mesh[i+1][j][1];
-          base_Vertices[1][2] = LAND_Mesh[i+1][j][2];
-
-          base_Vertices[2][0] = LAND_Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = LAND_Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = LAND_Mesh[i+1][j+1][2];
-
-          base_Vertices[3][0] = LAND_Mesh[i][j+1][0];
-          base_Vertices[3][1] = LAND_Mesh[i][j+1][1];
-          base_Vertices[3][2] = LAND_Mesh[i][j+1][2];        
-
-          for (int n = 0; n < TotalSubNo; n++) {
-
-            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-            int n_Map = -1; 
-            if (Display_LAND_Textures) { 
-
-              for (int q = 0; q < LAND_Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
-
-                n_Map = q; 
-
-                for (int s = 0; s < subFace.length; s++) {
-
-                  float u = (subFace[s][0] / LAND_Textures_scale_U[q] + 0.5);
-                  float v = (-subFace[s][1] / LAND_Textures_scale_V[q] + 0.5);
-
-                  //if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
-                  if ((0.05 > u) || (u > 0.95) || (0.05 > v) || (v > 0.95)) { // simply not to include the legends printed at the margin
-
-                    n_Map = -1;
-
-                    break;
+        if (filenames != null) {
+          for (int i = 0; i < filenames.length; i++) {
+            println(filenames[i]);
+    
+            int _L = filenames[i].length();
+            String _Extention = filenames[i].substring(_L - 4, _L);
+            //println(_Extention);
+            if (_Extention.toLowerCase().equals(".jpg")) {
+    
+              String[] Parts = split(filenames[i], '_');
+    
+              if (Parts[0].toUpperCase().equals("ELEV")) {
+    
+                if (Parts.length > 1) {
+    
+                  String dir = LandFolder + "/" + filenames[i];
+    
+                  {
+                    String[] new_item = {
+                      dir
+                    };
+    
+                    this.Textures_ImagePath = (String[]) concat(this.Textures_ImagePath, new_item);
                   }
-                }
-
-                if (n_Map == q) break;
-              }
-            }
-            
-            if (target_window == TypeWindow.SKY2D) {
-              
-              SKY2D_graphics.beginShape();
-              SKY2D_graphics.fill(255);
-              SKY2D_graphics.noStroke();
-             
-            }
-
-            if (target_window == TypeWindow.WIN3D) {
-
-              WIN3D.graphics.beginShape();
-
-              WIN3D.graphics.strokeWeight(1);
-              WIN3D.graphics.stroke(0, 0, 0);
-              if (MODEL3D_DisplayEdges == false) WIN3D.graphics.noStroke();
-              if (Display_LAND_Textures) WIN3D.graphics.noStroke();
-
-              if (Display_LAND_Textures) {
-                if (n_Map != -1) {
-                  WIN3D.graphics.texture(LAND_Textures_Map[n_Map]);
-                } else {
-                  WIN3D.graphics.noFill();   
-                  WIN3D.graphics.strokeWeight(1);
-                  WIN3D.graphics.stroke(0, 0, 0);
-                }
-              }
-            }
-
-            if (target_window == TypeWindow.OBJ) {
-
-              if (_turn == 3) {
-
-                if (Display_LAND_Textures) {
-
-                  if (Export_MaterialLibrary) {
-                    if (n_Map != -1) {    
-                      objOutput.println("usemtl LandMap" + nf(n_Map, 0));
+    
+                  float u = float(Parts[1]);
+                  float v = u;
+    
+                  {
+                    PImage[] new_item = {
+                      loadImage(dir)
+                    };
+    
+                    this.Textures_Map = (PImage[]) concat(this.Textures_Map, new_item);
+                    
+                    int w = new_item[0].width;
+                    int h = new_item[0].height;
+                    
+                    if (w < h) {
+                      if (h != 0) {
+                        u *= w / (1.0 * h);
+                      } 
                     }
+                    
+                    if (w > h) {
+                      if (w != 0) {
+                        v *= h / (1.0 * w);
+                      } 
+                    }
+                    
                   }
-                }
-              }
-            }    
-            
-            if (target_window == TypeWindow.HTML) {
-
-              htmlOutput.println("\t\t\t\t<shape>");
-  
-              if (n_Map != -1) {   
-                htmlOutput.println("\t\t\t\t\t<Appearance USE='LandMap" + nf(n_Map, 0) + "'></Appearance>");
-              }      
-              
-              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
-              
-              htmlOutput.print  (" coordIndex='");
-              for (int s = 0; s < subFace.length; s++) {
-                if (s > 0) {
-                  htmlOutput.print(" ");
-                }         
-                htmlOutput.print(nf(s, 0));          
-              }
-              htmlOutput.println(" -1'>");
-              
-              htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-              for (int s = 0; s < subFace.length; s++) {
-                if (s > 0) {
-                  htmlOutput.print(",");
-                }                  
-                
-                htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
-              }                
-              htmlOutput.println("'></Coordinate>");
-              
-            }
-            
-
-            
-            
-            
-            for (int s = 0; s < subFace.length; s++) {
-              
-              if (target_window == TypeWindow.SKY2D) {
-                SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
-              }           
-
-              if (Display_LAND_Textures == false) {
-
-                if (WIN3D.FacesShade != Shade_Surface_Wire) {
-
-                  float[] COL = {
-                    255, 255, 255, 255
-                  };
-
-                  if (WIN3D.FacesShade == Shade_Global_Solar) {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }
-
-                  if (WIN3D.FacesShade == Shade_Vertex_Solar) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+    
+    
+    
+                  {
+                    float[] new_item = {
+                      u
+                    };
+    
+                    this.Textures_scale_U = (float[]) concat(this.Textures_scale_U, new_item);
                   }  
-                  
-                  if (WIN3D.FacesShade == Shade_Vertex_Solid) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }      
+    
+                  {
+                    float[] new_item = {
+                      v
+                    };
+    
+                    this.Textures_scale_V = (float[]) concat(this.Textures_scale_V, new_item);
+                  }
+    
+                  this.Textures_num += 1;
+    
+    
+                  this.Display_Textures = true;
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e) {
+        println("ERROR loading this.Textures_Map!");
+      }
+    }
+    
+    WIN3D.update = true;
+  }
+  
+  
+  
+  
+  void update_mesh () {
+  
+    this.Mesh = new float [this.n_I][this.n_J][3];
+  
+    for (int i = 0; i < this.n_I; i++) {
+      for (int j = 0; j < this.n_J; j++) {
+        this.Mesh[i][j][0] = FLOAT_undefined;
+        this.Mesh[i][j][1] = FLOAT_undefined;
+        this.Mesh[i][j][2] = FLOAT_undefined;
+      }
+    }
+  
+    try { 
+  
+      if (this.Load_Mesh) {
+        
+        for (int i = 0; i < this.n_I; i++) {
+  
+          XML FileALL = loadXML(LandFolder + "/" + nf(i, 0) + ".xml");
+  
+          XML[] children0 = FileALL.getChildren("result");
+  
+          for (int j = 0; j < this.n_J; j++) {
+  
+            String txt_elevation = children0[j].getChild("elevation").getContent();
+  
+            XML[] children1 = children0[j].getChildren("location");
+  
+            String txt_latitude = children1[0].getChild("lat").getContent();
+            String txt_longitude = children1[0].getChild("lng").getContent();
+  
+            //println(txt_longitude, txt_latitude, txt_elevation);
+  
+            double _lon = Double.parseDouble(txt_longitude); 
+            double _lat = Double.parseDouble(txt_latitude); 
+  
+            float[] XY = convert_lonlat2XY(_lon, _lat);
+  
+            float x = XY[0];
+            float y = XY[1]; 
+            float z = float(txt_elevation);
+  
+            this.Mesh[i][j][0] = x;      
+            this.Mesh[i][j][1] = y;      
+            this.Mesh[i][j][2] = z;
+          }
+        }
+  
+        float h = this.Mesh[0][0][2];
+  
+        h += HeightAboveGround;
+  
+        for (int i = 0; i < this.n_I; i++) {
+          for (int j = 0; j < this.n_J; j++) {
+  
+            this.Mesh[i][j][2] -= h;
+          }
+        }
+        
+        /*
+        // this is to modify the surronding ponits and set them at the same elevation of the the central point 
+        for (int j = 0; j < 2; j++) {
+          if (j < this.n_J) {
+            for (int i = 0; i < this.n_I; i++) {
+              this.Mesh[i][j][2] = this.Mesh[0][0][2];
+            }
+          }
+        }
+        */
+        
+      }
+    }
+  
+    catch (Exception e) {
+      println("ERROR loading this.Mesh!");
+    }
+  
+  
+    LAND3D.update_textures();
+  }
+  
+  
+  
+  void flat_mesh () {
+  
+    this.Mesh = new float [this.n_I][this.n_J][3];
+  
+    for (int i = 0; i < this.n_I; i++) {
       
-                  if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
-
-                    COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }   
-
-                  if (WIN3D.FacesShade == Shade_Surface_White) {
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                  }                   
-
-                  if (WIN3D.FacesShade == Shade_Surface_Materials) {
-                    //COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                    COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
-                  }    
-
+     
+      for (int j = 0; j < this.n_J; j++) {
+  
+       
+        double[] LON_LAT = getLandGrid(i,j);
+        
+        double _lon = LON_LAT[0];
+        double _lat = LON_LAT[1]; 
+  
+        float[] XY = convert_lonlat2XY(_lon, _lat);
+  
+        this.Mesh[i][j][0] = XY[0];      
+        this.Mesh[i][j][1] = XY[1];      
+        this.Mesh[i][j][2] = 0; 
+  
+      }
+  
+    }
+  
+    this.Load_Mesh = true;
+    LAND3D.update_mesh();
+  
+  }
+  
+  
+  
+  void download_mesh () {
+  
+    this.Mesh = new float [this.n_I][this.n_J][3];
+  
+    for (int i = 0; i < this.n_I; i++) {
+      
+      String the_target = LandFolder + "/" + nf(i, 0) + ".xml";
+      
+      File dir = new File(the_target);
+      if (!dir.isFile()) {
+  
+        String the_link = "";
+        
+        for (int j = 0; j < this.n_J; j++) {
+    
+          if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
+          else the_link += "%7C"; //"|";
           
-                   
-
-                  if (target_window == TypeWindow.WIN3D) {
-                    WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-                  }
-                } else {
-
-                  if (target_window == TypeWindow.WIN3D) {
-                    WIN3D.graphics.noFill();
-                  }
-                }
-
-                if (target_window == TypeWindow.WIN3D) {
-                  WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
-                }
-                
-                if (target_window == TypeWindow.RAD) {
-
-                  if (Display_LAND_Textures) {   
-                  
-                    radOutput.println("LandMesh_0" + " polygon " + "LAND");
-                    radOutput.println("0");
-                    radOutput.println("0");
-                    radOutput.println("9");      
-                    
-                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-                    
-                    radOutput.println("LandMesh_0" + " polygon " + "LAND");
-                    radOutput.println("0");
-                    radOutput.println("0");
-                    radOutput.println("9");      
-                    
-                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-
-                  }
-                }
-                                
-
-                
-              } else {       
-                
-                float u = 0;
-                float v = 0;
-                if (n_Map != -1) {
-                  u = (subFace[s][0] / LAND_Textures_scale_U[n_Map] + 0.5);
-                  v = (-subFace[s][1] / LAND_Textures_scale_V[n_Map] + 0.5);
-                }
-
-                if (target_window == TypeWindow.WIN3D) {
-                  if (n_Map != -1) {
-                    WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, u * LAND_Textures_Map[n_Map].width, v * LAND_Textures_Map[n_Map].height);
-                  }
-                  else {
-                    WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);                    
-                  }
-                }
-
+          double[] LON_LAT = getLandGrid(i,j);
+  
+          String txt_latitude = nf((float) LON_LAT[1], 0, 5);
+          String txt_longitude = nf((float) LON_LAT[0], 0, 5);            
+    
+          the_link += txt_latitude + "," + txt_longitude;
+        }
+    
+        println("Try downloading: " + the_link);
+    
+        try {
+          saveBytes(the_target, loadBytes(the_link));
+        } 
+        catch (Exception e) {
+          println("LINK NOT AVAILABLE:", the_link);
+        }
+      }
+  
+    }
+    
+    this.Load_Mesh = true;
+    LAND3D.update_mesh();
+  
+  }
+  
+  
+  void download_textures () {
+    
+    float[] ratios = { 
+      1128.497220,
+      2256.994440,
+      4513.988880,
+      9027.977761,
+      18055.95552,
+      36111.91104,
+      72223.82209,
+      144447.6442,
+      288895.2884,
+      577790.5767,
+      1155581.153,
+      2311162.307,
+      4622324.614,
+      9244649.227,
+      18489298.45,
+      36978596.91,
+      73957193.82,
+      147914387.6,
+      295828775.3,
+      591657550.5
+    };
+    
+    for (int i = 0; i <= 15; i++) {
+  
+      String the_target = LandFolder + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
+      
+      File dir = new File(the_target);
+      if (!dir.isFile()) {    
+      
+        String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(STATION.getLatitude(), 0, 5) + "," + nf(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
+       
+        println("Try downloading: " + the_link);
+    
+        try {
+          saveBytes(the_target, loadBytes(the_link));
+        } 
+        catch (Exception e) {
+          println("LINK NOT AVAILABLE:", the_link);
+        }
+      }
+    }
+    
+    this.Load_Textures = true;
+    LAND3D.update_textures();
+  
+  }
+  
+  
+  
+  
+  void draw (int target_window) {
+  
+    boolean proceed = true;
+  
+    if ((this.Display_Surface == false) || (this.Load_Mesh == false)) {
+      proceed = false;
+    }
+  
+    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+      proceed = false;
+    }
+    
+    if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {  
+      proceed = true;
+    }
+    
+    if (proceed) {
+  
+      int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
+      int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
+      float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
+  
+      if (Export_MaterialLibrary) {
+  
+        for (int n_Map = 0; n_Map < this.Textures_num; n_Map++) {
+  
+          if (target_window == TypeWindow.RAD) {
+  
+            radOutput.println("void plastic " + "LandMap" + nf(n_Map, 0));
+            radOutput.println("0");
+            radOutput.println("0");
+            radOutput.println("5 0 0 0 0 0");
+            
+          }
+  
+          if (target_window == TypeWindow.HTML) {
+            htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
+          }
+          
+          if (target_window == TypeWindow.OBJ) {
+          
+            mtlOutput.println("newmtl LandMap" + nf(n_Map, 0));
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+            mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+            
+          }
+  
+  
+          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+  
+            if (this.Display_Textures) {
+              if (n_Map != -1) {
+    
+                String old_Texture_path = this.Textures_ImagePath[n_Map]; 
+    
+                String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+    
+                String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+    
+                println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+                saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+    
+    
                 if (target_window == TypeWindow.OBJ) {
-                  
-                  if (Display_LAND_Textures) {   
-                  
-                    if (_turn == 1) {
-                      SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
-                    }
-                    if (_turn == 2) { 
-  
-                      v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-  
-                      SOLARCHVISION_OBJprintVtexture(u, v, 0);
-                    }
-                    if (_turn == 3) {
-                      num_vertices_added += 1;
-                    }
-                  }
+                    
+                  //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
                 }
-                
-                if (target_window == TypeWindow.LandMesh) {
-                  if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center
-                    SOLARCHVISION_add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
-                  }
-                }
-                
                 
                 if (target_window == TypeWindow.HTML) {
-                  
-                  if (n_Map != -1) {   
-                  
-                    if (s == 0) {
-                      htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
-                    }
-                    if (s > 0) {
-                      htmlOutput.print(",");
-                    }                  
-
-                    v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-                    SOLARCHVISION_HTMLprintVtexture(u, v);
-                    
-                    if (s == subFace.length - 1) {
-                      htmlOutput.println("'></TextureCoordinate>");
-                    }       
-                  }              
-   
-                }                
-             
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                }                 
+    
               }
             }
-
-
-            if (target_window == TypeWindow.HTML) {
-
-              htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-              
-              htmlOutput.println("\t\t\t\t</shape>");
-
-            }
+          }
+          
+          
+          if (target_window == TypeWindow.HTML) {
+            htmlOutput.println("\t\t\t\t</Appearance>");
+          }        
+          
+        }
+  
+      }
+      
+      if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
+        
+        defaultMaterial = DEFAULT_CreateMaterial;
+        defaultTessellation = DEFAULT_CreateTessellation;
+        defaultLayer = DEFAULT_CreateLayer;
+        defaultVisibility = DEFAULT_CreateVisibility;
+        defaultWeight = DEFAULT_CreateWeight;
+        defaultClose = DEFAULT_CreateClose;            
+        
+        SOLARCHVISION_beginNewGroup3D(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        
+      }
+  
+  
+      num_vertices_added = 0;
+  
+      int end_turn = 1;
+      if (target_window == TypeWindow.OBJ) end_turn = 3;
+      for (int _turn = 1; _turn <= end_turn; _turn++) {
+  
+  
+        if (target_window == TypeWindow.OBJ) {
+  
+          if (_turn == 3) {
             
-
-            if (target_window == TypeWindow.SKY2D) {
-              SKY2D_graphics.endShape(CLOSE);
+            if (this.Display_Textures) {   
+  
+              obj_lastGroupNumber += 1;
+              objOutput.println("g LandMap");
+            
             }
-
-            if (target_window == TypeWindow.WIN3D) {
-              WIN3D.graphics.endShape(CLOSE);
-            }
-
-            if (target_window == TypeWindow.OBJ) {
-
-              if (_turn == 3) {
+          }
+        }    
+  
+  
+  
+        int Tessellation = this.Tessellation;
+        if (WIN3D.FacesShade == Shade_Surface_Base) {
+          Tessellation = 0;
+        }
+  
+        if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
+          Tessellation = 0;
+        }
+  
+        int TotalSubNo = 1;  
+        if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+  
+        int i_start = this.Surface_SkipStart;
+        int i_end = this.n_I - 1 - this.Surface_SkipEnd;
+  
+        if (target_window == TypeWindow.LandGap) {
+          i_start = 0;
+          i_end = this.Surface_SkipStart;
+          
+          target_window = TypeWindow.LandMesh; // because the rest is simillar to that
+        }
+  
+         
+        for (int i = i_start; i < i_end; i++) {
+          
+          for (int j = 0; j < this.n_J - 1; j++) {
+  
+            float[][] base_Vertices = new float [4][3];
+  
+            base_Vertices[0][0] = this.Mesh[i][j][0];
+            base_Vertices[0][1] = this.Mesh[i][j][1];
+            base_Vertices[0][2] = this.Mesh[i][j][2];
+  
+            base_Vertices[1][0] = this.Mesh[i+1][j][0];
+            base_Vertices[1][1] = this.Mesh[i+1][j][1];
+            base_Vertices[1][2] = this.Mesh[i+1][j][2];
+  
+            base_Vertices[2][0] = this.Mesh[i+1][j+1][0];
+            base_Vertices[2][1] = this.Mesh[i+1][j+1][1];
+            base_Vertices[2][2] = this.Mesh[i+1][j+1][2];
+  
+            base_Vertices[3][0] = this.Mesh[i][j+1][0];
+            base_Vertices[3][1] = this.Mesh[i][j+1][1];
+            base_Vertices[3][2] = this.Mesh[i][j+1][2];        
+  
+            for (int n = 0; n < TotalSubNo; n++) {
+  
+              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+  
+              int n_Map = -1; 
+              if (this.Display_Textures) { 
+  
+                for (int q = 0; q < this.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+  
+                  n_Map = q; 
+  
+                  for (int s = 0; s < subFace.length; s++) {
+  
+                    float u = (subFace[s][0] / this.Textures_scale_U[q] + 0.5);
+                    float v = (-subFace[s][1] / this.Textures_scale_V[q] + 0.5);
+  
+                    //if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+                    if ((0.05 > u) || (u > 0.95) || (0.05 > v) || (v > 0.95)) { // simply not to include the legends printed at the margin
+  
+                      n_Map = -1;
+  
+                      break;
+                    }
+                  }
+  
+                  if (n_Map == q) break;
+                }
+              }
+              
+              if (target_window == TypeWindow.SKY2D) {
                 
-                if (Display_LAND_Textures) {   
-
-                  String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
-                  String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-                  String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-                  String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+                SKY2D_graphics.beginShape();
+                SKY2D_graphics.fill(255);
+                SKY2D_graphics.noStroke();
+               
+              }
   
-                  String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
-                  String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
-                  String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
-                  String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+              if (target_window == TypeWindow.WIN3D) {
   
-                  obj_lastFaceNumber += 1;
-                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-                  if (Export_BackSides) {
-                    obj_lastFaceNumber += 1;
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                WIN3D.graphics.beginShape();
+  
+                WIN3D.graphics.strokeWeight(1);
+                WIN3D.graphics.stroke(0, 0, 0);
+                if (MODEL3D_DisplayEdges == false) WIN3D.graphics.noStroke();
+                if (this.Display_Textures) WIN3D.graphics.noStroke();
+  
+                if (this.Display_Textures) {
+                  if (n_Map != -1) {
+                    WIN3D.graphics.texture(this.Textures_Map[n_Map]);
+                  } else {
+                    WIN3D.graphics.noFill();   
+                    WIN3D.graphics.strokeWeight(1);
+                    WIN3D.graphics.stroke(0, 0, 0);
                   }
                 }
               }
-            }
-            
-            if (target_window == TypeWindow.LandMesh) {
-              if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center 
-                int[] newFace = new int[4];
-                newFace[0] = allVertices.length - 4;
-                newFace[1] = allVertices.length - 3;
-                newFace[2] = allVertices.length - 2;
-                newFace[3] = allVertices.length - 1;
-                SOLARCHVISION_add_Face(newFace);
-              }
-            }
-            
-
-
-            if (Display_LAND_Textures) {
-
-              if (Display_LAND_Depth) {
-
-
-                if (target_window == TypeWindow.WIN3D) {
-                  WIN3D.graphics.fill(223, 223, 223);
-                  WIN3D.graphics.noStroke();
+  
+              if (target_window == TypeWindow.OBJ) {
+  
+                if (_turn == 3) {
+  
+                  if (this.Display_Textures) {
+  
+                    if (Export_MaterialLibrary) {
+                      if (n_Map != -1) {    
+                        objOutput.println("usemtl LandMap" + nf(n_Map, 0));
+                      }
+                    }
+                  }
                 }
-
+              }    
+              
+              if (target_window == TypeWindow.HTML) {
+  
+                htmlOutput.println("\t\t\t\t<shape>");
+    
+                if (n_Map != -1) {   
+                  htmlOutput.println("\t\t\t\t\t<Appearance USE='LandMap" + nf(n_Map, 0) + "'></Appearance>");
+                }      
+                
+                htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
+                
+                htmlOutput.print  (" coordIndex='");
                 for (int s = 0; s < subFace.length; s++) {
-
-                  int s_next = (s + 1) % subFace.length;
+                  if (s > 0) {
+                    htmlOutput.print(" ");
+                  }         
+                  htmlOutput.print(nf(s, 0));          
+                }
+                htmlOutput.println(" -1'>");
+                
+                htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+                for (int s = 0; s < subFace.length; s++) {
+                  if (s > 0) {
+                    htmlOutput.print(",");
+                  }                  
+                  
+                  htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                }                
+                htmlOutput.println("'></Coordinate>");
+                
+              }
+              
+  
+              
+              
+              
+              for (int s = 0; s < subFace.length; s++) {
+                
+                if (target_window == TypeWindow.SKY2D) {
+                  SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
+                }           
+  
+                if (this.Display_Textures == false) {
+  
+                  if (WIN3D.FacesShade != Shade_Surface_Wire) {
+  
+                    float[] COL = {
+                      255, 255, 255, 255
+                    };
+  
+                    if (WIN3D.FacesShade == Shade_Global_Solar) {
+                      int s_next = (s + 1) % subFace.length;
+                      int s_prev = (s + subFace.length - 1) % subFace.length;
+  
+                      COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }
+  
+                    if (WIN3D.FacesShade == Shade_Vertex_Solar) {
+  
+                      COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }  
+                    
+                    if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+  
+                      COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }      
+        
+                    if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+  
+                      COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }   
+  
+                    if (WIN3D.FacesShade == Shade_Surface_White) {
+                      COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                    }                   
+  
+                    if (WIN3D.FacesShade == Shade_Surface_Materials) {
+                      //COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                      COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
+                    }    
+  
+            
+                     
+  
+                    if (target_window == TypeWindow.WIN3D) {
+                      WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+                    }
+                  } else {
+  
+                    if (target_window == TypeWindow.WIN3D) {
+                      WIN3D.graphics.noFill();
+                    }
+                  }
+  
+                  if (target_window == TypeWindow.WIN3D) {
+                    WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+                  }
+                  
+                  if (target_window == TypeWindow.RAD) {
+  
+                    if (this.Display_Textures) {   
+                    
+                      radOutput.println("LandMesh_0" + " polygon " + "LAND");
+                      radOutput.println("0");
+                      radOutput.println("0");
+                      radOutput.println("9");      
+                      
+                      radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+                      radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+                      radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+                      
+                      radOutput.println("LandMesh_0" + " polygon " + "LAND");
+                      radOutput.println("0");
+                      radOutput.println("0");
+                      radOutput.println("9");      
+                      
+                      radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                      radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                      radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+  
+                    }
+                  }
+                                  
+  
+                  
+                } else {       
                   
                   float u = 0;
                   float v = 0;
                   if (n_Map != -1) {
-                    u = (subFace[s][0] / LAND_Textures_scale_U[n_Map] + 0.5);
-                    v = (-subFace[s][1] / LAND_Textures_scale_V[n_Map] + 0.5);
+                    u = (subFace[s][0] / this.Textures_scale_U[n_Map] + 0.5);
+                    v = (-subFace[s][1] / this.Textures_scale_V[n_Map] + 0.5);
                   }
-
-                  float u_next = (subFace[s_next][0] / LAND_Textures_scale_U[n_Map] + 0.5);
-                  float v_next = (-subFace[s_next][1] / LAND_Textures_scale_V[n_Map] + 0.5);
-
-                  if (target_window == TypeWindow.WIN3D) {
-
-                    WIN3D.graphics.beginShape();
-                    
-                    if (n_Map != -1) {
-                      WIN3D.graphics.texture(LAND_Textures_Map[n_Map]);                  
   
-                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, u * LAND_Textures_Map[n_Map].width, v * LAND_Textures_Map[n_Map].height);
-                      WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, subFace[s_next][2] * OBJECTS_scale * WIN3D.scale, u_next * LAND_Textures_Map[n_Map].width, v_next * LAND_Textures_Map[n_Map].height);
-                      WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale, u_next * LAND_Textures_Map[n_Map].width, v_next * LAND_Textures_Map[n_Map].height);
-                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale, u * LAND_Textures_Map[n_Map].width, v * LAND_Textures_Map[n_Map].height);
+                  if (target_window == TypeWindow.WIN3D) {
+                    if (n_Map != -1) {
+                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, u * this.Textures_Map[n_Map].width, v * this.Textures_Map[n_Map].height);
                     }
                     else {
-                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
-                      WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, subFace[s_next][2] * OBJECTS_scale * WIN3D.scale);
-                      WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale);
-                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale);
+                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);                    
                     }
-
-                    WIN3D.graphics.endShape(CLOSE);
+                  }
+  
+                  if (target_window == TypeWindow.OBJ) {
+                    
+                    if (this.Display_Textures) {   
+                    
+                      if (_turn == 1) {
+                        SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                      }
+                      if (_turn == 2) { 
+    
+                        v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+    
+                        SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                      }
+                      if (_turn == 3) {
+                        num_vertices_added += 1;
+                      }
+                    }
+                  }
+                  
+                  if (target_window == TypeWindow.LandMesh) {
+                    if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center
+                      SOLARCHVISION_add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                    }
+                  }
+                  
+                  
+                  if (target_window == TypeWindow.HTML) {
+                    
+                    if (n_Map != -1) {   
+                    
+                      if (s == 0) {
+                        htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
+                      }
+                      if (s > 0) {
+                        htmlOutput.print(",");
+                      }                  
+  
+                      v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+                      SOLARCHVISION_HTMLprintVtexture(u, v);
+                      
+                      if (s == subFace.length - 1) {
+                        htmlOutput.println("'></TextureCoordinate>");
+                      }       
+                    }              
+     
+                  }                
+               
+                }
+              }
+  
+  
+              if (target_window == TypeWindow.HTML) {
+  
+                htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+                
+                htmlOutput.println("\t\t\t\t</shape>");
+  
+              }
+              
+  
+              if (target_window == TypeWindow.SKY2D) {
+                SKY2D_graphics.endShape(CLOSE);
+              }
+  
+              if (target_window == TypeWindow.WIN3D) {
+                WIN3D.graphics.endShape(CLOSE);
+              }
+  
+              if (target_window == TypeWindow.OBJ) {
+  
+                if (_turn == 3) {
+                  
+                  if (this.Display_Textures) {   
+  
+                    String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
+                    String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+                    String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+                    String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+    
+                    String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
+                    String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
+                    String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
+                    String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+    
+                    obj_lastFaceNumber += 1;
+                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
+                    if (Export_BackSides) {
+                      obj_lastFaceNumber += 1;
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                    }
+                  }
+                }
+              }
+              
+              if (target_window == TypeWindow.LandMesh) {
+                if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center 
+                  int[] newFace = new int[4];
+                  newFace[0] = allVertices.length - 4;
+                  newFace[1] = allVertices.length - 3;
+                  newFace[2] = allVertices.length - 2;
+                  newFace[3] = allVertices.length - 1;
+                  SOLARCHVISION_add_Face(newFace);
+                }
+              }
+              
+  
+  
+              if (this.Display_Textures) {
+  
+                if (this.Display_Depth) {
+  
+  
+                  if (target_window == TypeWindow.WIN3D) {
+                    WIN3D.graphics.fill(223, 223, 223);
+                    WIN3D.graphics.noStroke();
+                  }
+  
+                  for (int s = 0; s < subFace.length; s++) {
+  
+                    int s_next = (s + 1) % subFace.length;
+                    
+                    float u = 0;
+                    float v = 0;
+                    if (n_Map != -1) {
+                      u = (subFace[s][0] / this.Textures_scale_U[n_Map] + 0.5);
+                      v = (-subFace[s][1] / this.Textures_scale_V[n_Map] + 0.5);
+                    }
+  
+                    float u_next = (subFace[s_next][0] / this.Textures_scale_U[n_Map] + 0.5);
+                    float v_next = (-subFace[s_next][1] / this.Textures_scale_V[n_Map] + 0.5);
+  
+                    if (target_window == TypeWindow.WIN3D) {
+  
+                      WIN3D.graphics.beginShape();
+                      
+                      if (n_Map != -1) {
+                        WIN3D.graphics.texture(this.Textures_Map[n_Map]);                  
+    
+                        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, u * this.Textures_Map[n_Map].width, v * this.Textures_Map[n_Map].height);
+                        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, subFace[s_next][2] * OBJECTS_scale * WIN3D.scale, u_next * this.Textures_Map[n_Map].width, v_next * this.Textures_Map[n_Map].height);
+                        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale, u_next * this.Textures_Map[n_Map].width, v_next * this.Textures_Map[n_Map].height);
+                        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale, u * this.Textures_Map[n_Map].width, v * this.Textures_Map[n_Map].height);
+                      }
+                      else {
+                        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+                        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, subFace[s_next][2] * OBJECTS_scale * WIN3D.scale);
+                        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale);
+                        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale);
+                      }
+  
+                      WIN3D.graphics.endShape(CLOSE);
+                    }
                   }
                 }
               }
             }
           }
-        }
-        
-        
-        
-        if (target_window == TypeWindow.LandMesh) {
-          // This is to create a polygon around the center
-          if (i == 0) {
-            
-            int[] newFace = new int[LAND_n_J - 1];
-            for (int j = 0; j < newFace.length; j++) {
-              newFace[j] = SOLARCHVISION_add_Vertex(LAND_Mesh[i + 1][j][0], LAND_Mesh[i + 1][j][1], LAND_Mesh[i + 1][j][2]);
+          
+          
+          
+          if (target_window == TypeWindow.LandMesh) {
+            // This is to create a polygon around the center
+            if (i == 0) {
+              
+              int[] newFace = new int[this.n_J - 1];
+              for (int j = 0; j < newFace.length; j++) {
+                newFace[j] = SOLARCHVISION_add_Vertex(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
+              }
+              SOLARCHVISION_add_Face(newFace);
             }
-            SOLARCHVISION_add_Face(newFace);
           }
         }
       }
-    }
-
-    if (target_window == TypeWindow.OBJ) {
-      obj_lastVertexNumber += num_vertices_added;
-      obj_lastVtextureNumber += num_vertices_added;
-    }    
-
-    if (target_window == TypeWindow.WIN3D) {
-      if (Display_LAND_Points) {
-
-        WIN3D.graphics.fill(191, 191, 0); 
-        WIN3D.graphics.noStroke();
-
-        WIN3D.graphics.sphereDetail(6, 4);
-
-        for (int i = 0; i < LAND_n_I; i++) {
-          for (int j = 0; j < LAND_n_J; j++) {
-
-            float x = LAND_Mesh[i][j][0];
-            float y = LAND_Mesh[i][j][1];
-            float z = LAND_Mesh[i][j][2];
-
-            float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
-
-            WIN3D.graphics.pushMatrix();
-            WIN3D.graphics.translate(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-            WIN3D.graphics.sphere(R);
-            WIN3D.graphics.popMatrix();
+  
+      if (target_window == TypeWindow.OBJ) {
+        obj_lastVertexNumber += num_vertices_added;
+        obj_lastVtextureNumber += num_vertices_added;
+      }    
+  
+      if (target_window == TypeWindow.WIN3D) {
+        if (this.Display_Points) {
+  
+          WIN3D.graphics.fill(191, 191, 0); 
+          WIN3D.graphics.noStroke();
+  
+          WIN3D.graphics.sphereDetail(6, 4);
+  
+          for (int i = 0; i < this.n_I; i++) {
+            for (int j = 0; j < this.n_J; j++) {
+  
+              float x = this.Mesh[i][j][0];
+              float y = this.Mesh[i][j][1];
+              float z = this.Mesh[i][j][2];
+  
+              float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
+  
+              WIN3D.graphics.pushMatrix();
+              WIN3D.graphics.translate(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+              WIN3D.graphics.sphere(R);
+              WIN3D.graphics.popMatrix();
+            }
           }
         }
       }
+      
+      if (target_window == TypeWindow.LandMesh) {
+        selectedGroup3D_ids = new int [1];
+        selectedGroup3D_ids[0] = allGroup3Ds_num - 1;
+        
+        SOLARCHVISION_weldObjectsVertices_Selection(0);
+        
+      }    
+      
     }
-    
-    if (target_window == TypeWindow.LandMesh) {
-      selectedGroup3D_ids = new int [1];
-      selectedGroup3D_ids[0] = allGroup3Ds_num - 1;
-      
-      SOLARCHVISION_weldObjectsVertices_Selection(0);
-      
-    }    
-    
   }
 }
+
+solarchvision_LAND3D LAND3D = new solarchvision_LAND3D();
+
+
+
+
 
 
 
@@ -28002,16 +28345,16 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [(LAND_n_I - 1) * (LAND_n_J - 1)][4];
+  float[][] hitPoint = new float [(LAND3D.n_I - 1) * (LAND3D.n_J - 1)][4];
 
-  for (int f = 0; f < (LAND_n_I - 1) * (LAND_n_J - 1); f++) {
+  for (int f = 0; f < (LAND3D.n_I - 1) * (LAND3D.n_J - 1); f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
 
-  for (int f = 0; f < (LAND_n_I - 1) * (LAND_n_J - 1); f++) {
+  for (int f = 0; f < (LAND3D.n_I - 1) * (LAND3D.n_J - 1); f++) {
 
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -28020,13 +28363,13 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
     
     boolean InPoly = false;
 
-    int LAND_i = f / (LAND_n_J - 1);
-    int LAND_j = f % (LAND_n_J - 1);
+    int LAND_i = f / (LAND3D.n_J - 1);
+    int LAND_j = f % (LAND3D.n_J - 1);
     
-    float[] A = LAND_Mesh[LAND_i][LAND_j];
-    float[] B = LAND_Mesh[LAND_i][LAND_j + 1];
-    float[] C = LAND_Mesh[LAND_i + 1][LAND_j + 1];
-    float[] D = LAND_Mesh[LAND_i + 1][LAND_j];
+    float[] A = LAND3D.Mesh[LAND_i][LAND_j];
+    float[] B = LAND3D.Mesh[LAND_i][LAND_j + 1];
+    float[] C = LAND3D.Mesh[LAND_i + 1][LAND_j + 1];
+    float[] D = LAND3D.Mesh[LAND_i + 1][LAND_j];
     float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])}; 
     
     for (int i = 0; i < 4; i++) {
@@ -28093,7 +28436,7 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < (LAND_n_I - 1) * (LAND_n_J - 1); f++) {
+  for (int f = 0; f < (LAND3D.n_I - 1) * (LAND3D.n_J - 1); f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -28246,7 +28589,7 @@ double[] getLandGrid (int i, int j) {
   //float q = 1.25;
   //float q = 1.125;  
   
-  float t = j * 360.0 / (LAND_n_J - 1);
+  float t = j * 360.0 / (LAND3D.n_J - 1);
   
   float r = 0;
   if (i > 0) r = pow(q, i - 1);
@@ -28273,329 +28616,11 @@ float[] convert_lonlat2XY (double _lon, double _lat) {
   return XY;
 }
 
-float[][][] LAND_Mesh;
-
-void SOLARCHVISION_update_LAND_Mesh () {
-
-  LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
-
-  for (int i = 0; i < LAND_n_I; i++) {
-    for (int j = 0; j < LAND_n_J; j++) {
-      LAND_Mesh[i][j][0] = FLOAT_undefined;
-      LAND_Mesh[i][j][1] = FLOAT_undefined;
-      LAND_Mesh[i][j][2] = FLOAT_undefined;
-    }
-  }
-
-  try { 
-
-    if (Load_LAND_Mesh) {
-      
-      for (int i = 0; i < LAND_n_I; i++) {
-
-        XML FileALL = loadXML(LandFolder + "/" + nf(i, 0) + ".xml");
-
-        XML[] children0 = FileALL.getChildren("result");
-
-        for (int j = 0; j < LAND_n_J; j++) {
-
-          String txt_elevation = children0[j].getChild("elevation").getContent();
-
-          XML[] children1 = children0[j].getChildren("location");
-
-          String txt_latitude = children1[0].getChild("lat").getContent();
-          String txt_longitude = children1[0].getChild("lng").getContent();
-
-          //println(txt_longitude, txt_latitude, txt_elevation);
-
-          double _lon = Double.parseDouble(txt_longitude); 
-          double _lat = Double.parseDouble(txt_latitude); 
-
-          float[] XY = convert_lonlat2XY(_lon, _lat);
-
-          float x = XY[0];
-          float y = XY[1]; 
-          float z = float(txt_elevation);
-
-          LAND_Mesh[i][j][0] = x;      
-          LAND_Mesh[i][j][1] = y;      
-          LAND_Mesh[i][j][2] = z;
-        }
-      }
-
-      float h = LAND_Mesh[0][0][2];
-
-      h += HeightAboveGround;
-
-      for (int i = 0; i < LAND_n_I; i++) {
-        for (int j = 0; j < LAND_n_J; j++) {
-
-          LAND_Mesh[i][j][2] -= h;
-        }
-      }
-      
-      /*
-      // this is to modify the surronding ponits and set them at the same elevation of the the central point 
-      for (int j = 0; j < 2; j++) {
-        if (j < LAND_n_J) {
-          for (int i = 0; i < LAND_n_I; i++) {
-            LAND_Mesh[i][j][2] = LAND_Mesh[0][0][2];
-          }
-        }
-      }
-      */
-      
-    }
-  }
-
-  catch (Exception e) {
-    println("ERROR loading LAND_Mesh!");
-  }
-
-
-  SOLARCHVISION_update_LAND_Textures();
-}
-
-
-
-void SOLARCHVISION_flat_LAND_Mesh () {
-
-  LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
-
-  for (int i = 0; i < LAND_n_I; i++) {
-    
-   
-    for (int j = 0; j < LAND_n_J; j++) {
-
-     
-      double[] LON_LAT = getLandGrid(i,j);
-      
-      double _lon = LON_LAT[0];
-      double _lat = LON_LAT[1]; 
-
-      float[] XY = convert_lonlat2XY(_lon, _lat);
-
-      LAND_Mesh[i][j][0] = XY[0];      
-      LAND_Mesh[i][j][1] = XY[1];      
-      LAND_Mesh[i][j][2] = 0; 
-
-    }
-
-  }
-
-  Load_LAND_Mesh = true;
-  SOLARCHVISION_update_LAND_Mesh();
-
-}
-
-
-
-void SOLARCHVISION_download_LAND_Mesh () {
-
-  LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
-
-  for (int i = 0; i < LAND_n_I; i++) {
-    
-    String the_target = LandFolder + "/" + nf(i, 0) + ".xml";
-    
-    File dir = new File(the_target);
-    if (!dir.isFile()) {
-
-      String the_link = "";
-      
-      for (int j = 0; j < LAND_n_J; j++) {
-  
-        if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
-        else the_link += "%7C"; //"|";
-        
-        double[] LON_LAT = getLandGrid(i,j);
-
-        String txt_latitude = nf((float) LON_LAT[1], 0, 5);
-        String txt_longitude = nf((float) LON_LAT[0], 0, 5);            
-  
-        the_link += txt_latitude + "," + txt_longitude;
-      }
-  
-      println("Try downloading: " + the_link);
-  
-      try {
-        saveBytes(the_target, loadBytes(the_link));
-      } 
-      catch (Exception e) {
-        println("LINK NOT AVAILABLE:", the_link);
-      }
-    }
-
-  }
-  
-  Load_LAND_Mesh = true;
-  SOLARCHVISION_update_LAND_Mesh();
-
-}
-
-
-void SOLARCHVISION_download_LAND_Textures () {
-  
-  float[] ratios = { 
-    1128.497220,
-    2256.994440,
-    4513.988880,
-    9027.977761,
-    18055.95552,
-    36111.91104,
-    72223.82209,
-    144447.6442,
-    288895.2884,
-    577790.5767,
-    1155581.153,
-    2311162.307,
-    4622324.614,
-    9244649.227,
-    18489298.45,
-    36978596.91,
-    73957193.82,
-    147914387.6,
-    295828775.3,
-    591657550.5
-  };
-  
-  for (int i = 0; i <= 15; i++) {
-
-    String the_target = LandFolder + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
-    
-    File dir = new File(the_target);
-    if (!dir.isFile()) {    
-    
-      String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(STATION.getLatitude(), 0, 5) + "," + nf(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
-     
-      println("Try downloading: " + the_link);
-  
-      try {
-        saveBytes(the_target, loadBytes(the_link));
-      } 
-      catch (Exception e) {
-        println("LINK NOT AVAILABLE:", the_link);
-      }
-    }
-  }
-  
-  Load_LAND_Textures = true;
-  SOLARCHVISION_update_LAND_Textures();
-
-}
 
 
 
 
-float[] LAND_Textures_scale_U;
-float[] LAND_Textures_scale_V;
-PImage[] LAND_Textures_Map;
-String[] LAND_Textures_ImagePath;
-int LAND_Textures_num = 0;   
 
-void SOLARCHVISION_update_LAND_Textures () {
-
-  LAND_Textures_scale_U = new float [0];
-  LAND_Textures_scale_V = new float [0];
-  LAND_Textures_Map = new PImage [0];
-  LAND_Textures_ImagePath = new String [0];
-  LAND_Textures_num = 0;
-
-  Display_LAND_Textures = false;
-
-  if (Load_LAND_Textures) {
-
-    try {     
-  
-      String[] filenames = sort(SOLARCHVISION_getfiles(LandFolder)); // important to sort
-  
-      if (filenames != null) {
-        for (int i = 0; i < filenames.length; i++) {
-          println(filenames[i]);
-  
-          int _L = filenames[i].length();
-          String _Extention = filenames[i].substring(_L - 4, _L);
-          //println(_Extention);
-          if (_Extention.toLowerCase().equals(".jpg")) {
-  
-            String[] Parts = split(filenames[i], '_');
-  
-            if (Parts[0].toUpperCase().equals("ELEV")) {
-  
-              if (Parts.length > 1) {
-  
-                String dir = LandFolder + "/" + filenames[i];
-  
-                {
-                  String[] new_item = {
-                    dir
-                  };
-  
-                  LAND_Textures_ImagePath = (String[]) concat(LAND_Textures_ImagePath, new_item);
-                }
-  
-                float u = float(Parts[1]);
-                float v = u;
-  
-                {
-                  PImage[] new_item = {
-                    loadImage(dir)
-                  };
-  
-                  LAND_Textures_Map = (PImage[]) concat(LAND_Textures_Map, new_item);
-                  
-                  int w = new_item[0].width;
-                  int h = new_item[0].height;
-                  
-                  if (w < h) {
-                    if (h != 0) {
-                      u *= w / (1.0 * h);
-                    } 
-                  }
-                  
-                  if (w > h) {
-                    if (w != 0) {
-                      v *= h / (1.0 * w);
-                    } 
-                  }
-                  
-                }
-  
-  
-  
-                {
-                  float[] new_item = {
-                    u
-                  };
-  
-                  LAND_Textures_scale_U = (float[]) concat(LAND_Textures_scale_U, new_item);
-                }  
-  
-                {
-                  float[] new_item = {
-                    v
-                  };
-  
-                  LAND_Textures_scale_V = (float[]) concat(LAND_Textures_scale_V, new_item);
-                }
-  
-                LAND_Textures_num += 1;
-  
-  
-                Display_LAND_Textures = true;
-              }
-            }
-          }
-        }
-      }
-    }
-    catch (Exception e) {
-      println("ERROR loading LAND_Textures_Map!");
-    }
-  }
-  
-  WIN3D.update = true;
-}
 
 
 
@@ -31921,10 +31946,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < LAND_n_I * LAND_n_J; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < LAND3D.n_I * LAND3D.n_J; OBJ_NUM++) {
 
-      int i = OBJ_NUM / LAND_n_J;
-      int j = OBJ_NUM % LAND_n_J;      
+      int i = OBJ_NUM / LAND3D.n_J;
+      int j = OBJ_NUM % LAND3D.n_J;      
 
       int break_loops = 0;
 
@@ -31935,9 +31960,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!  
 
-        float x = LAND_Mesh[i][j][0] * OBJECTS_scale;
-        float y = LAND_Mesh[i][j][1] * OBJECTS_scale;
-        float z = -LAND_Mesh[i][j][2] * OBJECTS_scale;
+        float x = LAND3D.Mesh[i][j][0] * OBJECTS_scale;
+        float y = LAND3D.Mesh[i][j][1] * OBJECTS_scale;
+        float z = -LAND3D.Mesh[i][j][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -34370,19 +34395,19 @@ void mouseClicked () {
             }
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Load Land Mesh")) { 
-              SOLARCHVISION_update_LAND_Textures();
+              LAND3D.update_textures();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Load Land Texture")) { 
-              SOLARCHVISION_update_LAND_Textures();
+              LAND3D.update_textures();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Land Mesh")) { 
-              SOLARCHVISION_download_LAND_Mesh();
+              LAND3D.download_mesh();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Land Texture")) { 
-              SOLARCHVISION_download_LAND_Textures();
+              LAND3D.download_textures();
             }   
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Toroposphere")) {
@@ -34596,25 +34621,25 @@ void mouseClicked () {
             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
-              Display_LAND_Surface = !Display_LAND_Surface;
+              LAND3D.Display_Surface = !LAND3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-              Display_LAND_Textures = !Display_LAND_Textures;
+              LAND3D.Display_Textures = !LAND3D.Display_Textures;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Points")) {
-              Display_LAND_Points = !Display_LAND_Points;
+              LAND3D.Display_Points = !LAND3D.Display_Points;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Depth")) {
-              Display_LAND_Depth = !Display_LAND_Depth;
+              LAND3D.Display_Depth = !LAND3D.Display_Depth;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -35302,13 +35327,13 @@ void mouseClicked () {
             }
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandMesh >> Group3D")) {
-              SOLARCHVISION_draw_LAND(TypeWindow.LandMesh);
+              LAND3D.draw(TypeWindow.LandMesh);
               
               WIN3D.update = true;   
             }          
           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandGap >> Group3D")) {
-              SOLARCHVISION_draw_LAND(TypeWindow.LandGap);
+              LAND3D.draw(TypeWindow.LandGap);
 
               WIN3D.update = true;   
             }                
@@ -38076,12 +38101,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         int OBJ_NUM = selectedLandPoint_ids[o];
 
 
-        int i = OBJ_NUM / LAND_n_J;
-        int j = OBJ_NUM % LAND_n_J;
+        int i = OBJ_NUM / LAND3D.n_J;
+        int j = OBJ_NUM % LAND3D.n_J;
 
-        float x = LAND_Mesh[i][j][0] * OBJECTS_scale;
-        float y = LAND_Mesh[i][j][1] * OBJECTS_scale;
-        float z = -LAND_Mesh[i][j][2] * OBJECTS_scale;
+        float x = LAND3D.Mesh[i][j][0] * OBJECTS_scale;
+        float y = LAND3D.Mesh[i][j][1] * OBJECTS_scale;
+        float z = -LAND3D.Mesh[i][j][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -39696,9 +39721,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             }
             
 
-            if (Display_LAND_Surface) {
+            if (LAND3D.Display_Surface) {
               
-              int Tessellation = LAND_Tessellation;
+              int Tessellation = LAND3D.Tessellation;
               if (WIN3D.FacesShade == Shade_Surface_Base) {
                 Tessellation = 0;
               }
@@ -39707,26 +39732,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
         
         
-              for (int Li = LAND_Surface_SkipStart; Li < LAND_n_I - 1 - LAND_Surface_SkipEnd; Li++) {
-                for (int Lj = 0; Lj < LAND_n_J - 1; Lj++) {
+              for (int Li = LAND3D.Surface_SkipStart; Li < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; Li++) {
+                for (int Lj = 0; Lj < LAND3D.n_J - 1; Lj++) {
         
                   float[][] base_Vertices = new float [4][3];
         
-                  base_Vertices[0][0] = LAND_Mesh[Li][Lj][0];
-                  base_Vertices[0][1] = LAND_Mesh[Li][Lj][1];
-                  base_Vertices[0][2] = LAND_Mesh[Li][Lj][2];
+                  base_Vertices[0][0] = LAND3D.Mesh[Li][Lj][0];
+                  base_Vertices[0][1] = LAND3D.Mesh[Li][Lj][1];
+                  base_Vertices[0][2] = LAND3D.Mesh[Li][Lj][2];
         
-                  base_Vertices[1][0] = LAND_Mesh[Li+1][Lj][0];
-                  base_Vertices[1][1] = LAND_Mesh[Li+1][Lj][1];
-                  base_Vertices[1][2] = LAND_Mesh[Li+1][Lj][2];
+                  base_Vertices[1][0] = LAND3D.Mesh[Li+1][Lj][0];
+                  base_Vertices[1][1] = LAND3D.Mesh[Li+1][Lj][1];
+                  base_Vertices[1][2] = LAND3D.Mesh[Li+1][Lj][2];
         
-                  base_Vertices[2][0] = LAND_Mesh[Li+1][Lj+1][0];
-                  base_Vertices[2][1] = LAND_Mesh[Li+1][Lj+1][1];
-                  base_Vertices[2][2] = LAND_Mesh[Li+1][Lj+1][2];
+                  base_Vertices[2][0] = LAND3D.Mesh[Li+1][Lj+1][0];
+                  base_Vertices[2][1] = LAND3D.Mesh[Li+1][Lj+1][1];
+                  base_Vertices[2][2] = LAND3D.Mesh[Li+1][Lj+1][2];
         
-                  base_Vertices[3][0] = LAND_Mesh[Li][Lj+1][0];
-                  base_Vertices[3][1] = LAND_Mesh[Li][Lj+1][1];
-                  base_Vertices[3][2] = LAND_Mesh[Li][Lj+1][2];        
+                  base_Vertices[3][0] = LAND3D.Mesh[Li][Lj+1][0];
+                  base_Vertices[3][1] = LAND3D.Mesh[Li][Lj+1][1];
+                  base_Vertices[3][2] = LAND3D.Mesh[Li][Lj+1][2];        
         
                   for (int n = 0; n < TotalSubNo; n++) {
 
@@ -40309,9 +40334,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }
           
           
-          if (Display_LAND_Surface) {
+          if (LAND3D.Display_Surface) {
             
-            int Tessellation = LAND_Tessellation;
+            int Tessellation = LAND3D.Tessellation;
             if (WIN3D.FacesShade == Shade_Surface_Base) {
               Tessellation = 0;
             }
@@ -40320,26 +40345,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
       
       
-            for (int Li = LAND_Surface_SkipStart; Li < LAND_n_I - 1 - LAND_Surface_SkipEnd; Li++) {
-              for (int Lj = 0; Lj < LAND_n_J - 1; Lj++) {
+            for (int Li = LAND3D.Surface_SkipStart; Li < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; Li++) {
+              for (int Lj = 0; Lj < LAND3D.n_J - 1; Lj++) {
       
                 float[][] base_Vertices = new float [4][3];
       
-                base_Vertices[0][0] = LAND_Mesh[Li][Lj][0];
-                base_Vertices[0][1] = LAND_Mesh[Li][Lj][1];
-                base_Vertices[0][2] = LAND_Mesh[Li][Lj][2];
+                base_Vertices[0][0] = LAND3D.Mesh[Li][Lj][0];
+                base_Vertices[0][1] = LAND3D.Mesh[Li][Lj][1];
+                base_Vertices[0][2] = LAND3D.Mesh[Li][Lj][2];
       
-                base_Vertices[1][0] = LAND_Mesh[Li+1][Lj][0];
-                base_Vertices[1][1] = LAND_Mesh[Li+1][Lj][1];
-                base_Vertices[1][2] = LAND_Mesh[Li+1][Lj][2];
+                base_Vertices[1][0] = LAND3D.Mesh[Li+1][Lj][0];
+                base_Vertices[1][1] = LAND3D.Mesh[Li+1][Lj][1];
+                base_Vertices[1][2] = LAND3D.Mesh[Li+1][Lj][2];
       
-                base_Vertices[2][0] = LAND_Mesh[Li+1][Lj+1][0];
-                base_Vertices[2][1] = LAND_Mesh[Li+1][Lj+1][1];
-                base_Vertices[2][2] = LAND_Mesh[Li+1][Lj+1][2];
+                base_Vertices[2][0] = LAND3D.Mesh[Li+1][Lj+1][0];
+                base_Vertices[2][1] = LAND3D.Mesh[Li+1][Lj+1][1];
+                base_Vertices[2][2] = LAND3D.Mesh[Li+1][Lj+1][2];
       
-                base_Vertices[3][0] = LAND_Mesh[Li][Lj+1][0];
-                base_Vertices[3][1] = LAND_Mesh[Li][Lj+1][1];
-                base_Vertices[3][2] = LAND_Mesh[Li][Lj+1][2];        
+                base_Vertices[3][0] = LAND3D.Mesh[Li][Lj+1][0];
+                base_Vertices[3][1] = LAND3D.Mesh[Li][Lj+1][1];
+                base_Vertices[3][2] = LAND3D.Mesh[Li][Lj+1][2];        
       
                 for (int n = 0; n < TotalSubNo; n++) {
 
@@ -42541,12 +42566,12 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
       int OBJ_NUM = n;
 
-      int the_i = OBJ_NUM / LAND_n_J;
-      int the_j = OBJ_NUM % LAND_n_J;
+      int the_i = OBJ_NUM / LAND3D.n_J;
+      int the_j = OBJ_NUM % LAND3D.n_J;
 
-      x = LAND_Mesh[the_i][the_j][0];
-      y = LAND_Mesh[the_i][the_j][1];
-      z = LAND_Mesh[the_i][the_j][2];
+      x = LAND3D.Mesh[the_i][the_j][0];
+      y = LAND3D.Mesh[the_i][the_j][1];
+      z = LAND3D.Mesh[the_i][the_j][2];
 
     }             
 
@@ -43847,10 +43872,10 @@ void SOLARCHVISION_flatten_selectedLandPoints () {
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND_n_J;
-    int j = f % LAND_n_J;
+    int i = f / LAND3D.n_J;
+    int j = f % LAND3D.n_J;
 
-    LAND_Mesh[i][j][2] = 0;
+    LAND3D.Mesh[i][j][2] = 0;
 
   }
 }
@@ -43863,12 +43888,12 @@ void SOLARCHVISION_move_selectedLandPoints (float dx, float dy, float dz) {
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND_n_J;
-    int j = f % LAND_n_J;
+    int i = f / LAND3D.n_J;
+    int j = f % LAND3D.n_J;
 
-    LAND_Mesh[i][j][0] += dx; 
-    LAND_Mesh[i][j][1] += dy;
-    LAND_Mesh[i][j][2] += dz;
+    LAND3D.Mesh[i][j][0] += dx; 
+    LAND3D.Mesh[i][j][1] += dy;
+    LAND3D.Mesh[i][j][2] += dz;
   }
 }
 
@@ -43879,25 +43904,25 @@ void SOLARCHVISION_rotate_selectedLandPoints (float x0, float y0, float z0, floa
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND_n_J;
-    int j = f % LAND_n_J;
+    int i = f / LAND3D.n_J;
+    int j = f % LAND3D.n_J;
 
-    float x = LAND_Mesh[i][j][0] - x0; 
-    float y = LAND_Mesh[i][j][1] - y0; 
-    float z = LAND_Mesh[i][j][2] - z0;
+    float x = LAND3D.Mesh[i][j][0] - x0; 
+    float y = LAND3D.Mesh[i][j][1] - y0; 
+    float z = LAND3D.Mesh[i][j][2] - z0;
 
     if (the_Vector == 2) {
-      LAND_Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
-      LAND_Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
-      LAND_Mesh[i][j][2] = z0 + (z);
+      LAND3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
+      LAND3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
+      LAND3D.Mesh[i][j][2] = z0 + (z);
     } else if (the_Vector == 1) {
-      LAND_Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
-      LAND_Mesh[i][j][1] = y0 + (y);
-      LAND_Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
+      LAND3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
+      LAND3D.Mesh[i][j][1] = y0 + (y);
+      LAND3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
     } else if (the_Vector == 0) {
-      LAND_Mesh[i][j][0] = x0 + (x); 
-      LAND_Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
-      LAND_Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
+      LAND3D.Mesh[i][j][0] = x0 + (x); 
+      LAND3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
+      LAND3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
     }
   }
 }
@@ -43909,12 +43934,12 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND_n_J;
-    int j = f % LAND_n_J;
+    int i = f / LAND3D.n_J;
+    int j = f % LAND3D.n_J;
 
-    float x = LAND_Mesh[i][j][0];
-    float y = LAND_Mesh[i][j][1]; 
-    float z = LAND_Mesh[i][j][2];
+    float x = LAND3D.Mesh[i][j][0];
+    float y = LAND3D.Mesh[i][j][1]; 
+    float z = LAND3D.Mesh[i][j][2];
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43928,9 +43953,9 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
     y = B[1];
     z = B[2];
 
-    LAND_Mesh[i][j][0] = x; 
-    LAND_Mesh[i][j][1] = y;
-    LAND_Mesh[i][j][2] = z;
+    LAND3D.Mesh[i][j][0] = x; 
+    LAND3D.Mesh[i][j][1] = y;
+    LAND3D.Mesh[i][j][2] = z;
 
   }
 }
@@ -46540,25 +46565,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
             if (UI_BAR_a_Items[i][0].equals("Display")) {
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Mesh")) {
-                if (Display_LAND_Surface == false) {
+                if (LAND3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }       
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (Display_LAND_Textures == false) {
+                if (LAND3D.Display_Textures == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
-                if (Display_LAND_Points == false) {
+                if (LAND3D.Display_Points == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
-                if (Display_LAND_Depth == false) {
+                if (LAND3D.Display_Depth == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49036,7 +49061,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("STUDY.Impacts_update", Boolean.toString(STUDY.Impacts_update));
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
-  newChild1.setInt("LAND_Tessellation", LAND_Tessellation);
+  newChild1.setInt("LAND3D.Tessellation", LAND3D.Tessellation);
   newChild1.setInt("MODEL3D_Tessellation", MODEL3D_Tessellation);
   newChild1.setInt("SKY_Tessellation", SKY_Tessellation);
   newChild1.setFloat("SKY_scale", SKY_scale);
@@ -49055,14 +49080,14 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("TROPO3D.Display_Texture", Boolean.toString(TROPO3D.Display_Texture));
   newChild1.setString("EARTH3D.Display_Surface", Boolean.toString(EARTH3D.Display_Surface));
   newChild1.setString("EARTH3D.Display_Texture", Boolean.toString(EARTH3D.Display_Texture));
-  newChild1.setString("Load_LAND_Textures", Boolean.toString(Load_LAND_Textures));  
-  newChild1.setString("Load_LAND_Mesh", Boolean.toString(Load_LAND_Mesh));
-  newChild1.setString("Display_LAND_Surface", Boolean.toString(Display_LAND_Surface));
-  newChild1.setString("Display_LAND_Points", Boolean.toString(Display_LAND_Points));
-  newChild1.setString("Display_LAND_Textures", Boolean.toString(Display_LAND_Textures));
-  newChild1.setString("Display_LAND_Depth", Boolean.toString(Display_LAND_Depth));
-  newChild1.setInt("LAND_Surface_SkipStart", LAND_Surface_SkipStart);
-  newChild1.setInt("LAND_Surface_SkipEnd", LAND_Surface_SkipEnd);
+  newChild1.setString("LAND3D.Load_Textures", Boolean.toString(LAND3D.Load_Textures));  
+  newChild1.setString("LAND3D.Load_Mesh", Boolean.toString(LAND3D.Load_Mesh));
+  newChild1.setString("LAND3D.Display_Surface", Boolean.toString(LAND3D.Display_Surface));
+  newChild1.setString("LAND3D.Display_Points", Boolean.toString(LAND3D.Display_Points));
+  newChild1.setString("LAND3D.Display_Textures", Boolean.toString(LAND3D.Display_Textures));
+  newChild1.setString("LAND3D.Display_Depth", Boolean.toString(LAND3D.Display_Depth));
+  newChild1.setInt("LAND3D.Surface_SkipStart", LAND3D.Surface_SkipStart);
+  newChild1.setInt("LAND3D.Surface_SkipEnd", LAND3D.Surface_SkipEnd);
   newChild1.setString("Display_SolidImpact_Points", Boolean.toString(Display_SolidImpact_Points));
   newChild1.setString("Display_SolidImpact_Lines", Boolean.toString(Display_SolidImpact_Lines));
   newChild1.setString("MODEL3D_DisplayVertices", Boolean.toString(MODEL3D_DisplayVertices));       
@@ -49170,8 +49195,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("SOLARCHVISION_GLOBE_stp_dir", SOLARCHVISION_GLOBE_stp_dir);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_slp", SOLARCHVISION_GLOBE_n_slp);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_dir", SOLARCHVISION_GLOBE_n_dir);
-  newChild1.setInt("LAND_n_I", LAND_n_I);
-  newChild1.setInt("LAND_n_J", LAND_n_J);
+  newChild1.setInt("LAND3D.n_I", LAND3D.n_I);
+  newChild1.setInt("LAND3D.n_J", LAND3D.n_J);
 
   newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
   newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num); 
@@ -49193,10 +49218,10 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   newChild1.setString("Default_Font", Default_Font);
 
-  newChild1.setInt("LAND_n_I", LAND_n_I);
-  newChild1.setInt("LAND_n_J", LAND_n_J);
+  newChild1.setInt("LAND3D.n_I", LAND3D.n_I);
+  newChild1.setInt("LAND3D.n_J", LAND3D.n_J);
 
-  newChild1.setInt("LAND_Textures_num", LAND_Textures_num);
+  newChild1.setInt("LAND3D.Textures_num", LAND3D.Textures_num);
 
 
 
@@ -49205,45 +49230,45 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
     String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
 
-    for (int q = 0; q < LAND_Textures_num; q++) {
+    for (int q = 0; q < LAND3D.Textures_num; q++) {
 
       int n_Map = q; 
 
-      String the_filename = LAND_Textures_ImagePath[n_Map].substring(LAND_Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
+      String the_filename = LAND3D.Textures_ImagePath[n_Map].substring(LAND3D.Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
 
       String new_Texture_path = the_dir + "/Textures/" +  the_filename;
 
-      //println("pre_LAND_Textures_ImagePath", LAND_Textures_ImagePath[n_Map]);
+      //println("pre_LAND3D.Textures_ImagePath", LAND3D.Textures_ImagePath[n_Map]);
       //println("new_Texture_path", new_Texture_path);
 
-      if (LAND_Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+      if (LAND3D.Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         TEXTURE_copied = -1;
       } else {
 
-        println("Copying texture:", LAND_Textures_ImagePath[n_Map], ">", new_Texture_path);
-        saveBytes(new_Texture_path, loadBytes(LAND_Textures_ImagePath[n_Map]));
-        LAND_Textures_ImagePath[n_Map] = new_Texture_path;
+        println("Copying texture:", LAND3D.Textures_ImagePath[n_Map], ">", new_Texture_path);
+        saveBytes(new_Texture_path, loadBytes(LAND3D.Textures_ImagePath[n_Map]));
+        LAND3D.Textures_ImagePath[n_Map] = new_Texture_path;
 
         TEXTURE_copied = 1;
       }
 
       //if (TEXTURE_copied == 0) {
       //  println("Saving texture from the scene.");
-      //  LAND_Textures_Map[n_Map].save(new_Texture_path);
+      //  LAND3D.Textures_Map[n_Map].save(new_Texture_path);
       //}
     }
   }
 
   {
-    newChild1 = my_xml.addChild("LAND_Textures_ImagePath");
-    int ni = LAND_Textures_ImagePath.length;
+    newChild1 = my_xml.addChild("LAND3D.Textures_ImagePath");
+    int ni = LAND3D.Textures_ImagePath.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i);
-      newChild2.setFloat("scale_U", LAND_Textures_scale_U[i]);
-      newChild2.setFloat("scale_V", LAND_Textures_scale_U[i]);
-      newChild2.setContent(LAND_Textures_ImagePath[i]);          
+      newChild2.setFloat("scale_U", LAND3D.Textures_scale_U[i]);
+      newChild2.setFloat("scale_V", LAND3D.Textures_scale_U[i]);
+      newChild2.setContent(LAND3D.Textures_ImagePath[i]);          
     }
   }
 
@@ -49352,19 +49377,19 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
 
-  println("Saving:LAND_Mesh");
+  println("Saving:LAND3D.Mesh");
   {
-    newChild1 = my_xml.addChild("LAND_Mesh");
+    newChild1 = my_xml.addChild("LAND3D.Mesh");
     int vNo = 0;
-    for (int i = 0; i < LAND_Mesh.length; i++) {
-      for (int j = 0; j < LAND_Mesh[i].length; j++) {
+    for (int i = 0; i < LAND3D.Mesh.length; i++) {
+      for (int j = 0; j < LAND3D.Mesh[i].length; j++) {
         newChild2 = newChild1.addChild("Vertice");
         newChild2.setInt("id", vNo);
         String lineSTR = "";
-        //for (int k = 0; k < LAND_Mesh[i][j].length; k++) {
+        //for (int k = 0; k < LAND3D.Mesh[i][j].length; k++) {
         for (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(LAND_Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
-          if (k < LAND_Mesh[i][j].length - 1) lineSTR += ",";
+          lineSTR += nf(LAND3D.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+          if (k < LAND3D.Mesh[i][j].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
         vNo += 1;
@@ -50170,7 +50195,7 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.Impacts_update = Boolean.parseBoolean(children0[L].getString("STUDY.Impacts_update"));
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
-      LAND_Tessellation = children0[L].getInt("LAND_Tessellation");
+      LAND3D.Tessellation = children0[L].getInt("LAND3D.Tessellation");
       MODEL3D_Tessellation = children0[L].getInt("MODEL3D_Tessellation");
       SKY_Tessellation = children0[L].getInt("SKY_Tessellation");
       SKY_scale = children0[L].getFloat("SKY_scale");
@@ -50189,14 +50214,14 @@ void SOLARCHVISION_load_project (String myFile) {
       TROPO3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("TROPO3D.Display_Texture"));
       EARTH3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Surface"));
       EARTH3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Texture"));
-      Load_LAND_Textures = Boolean.parseBoolean(children0[L].getString("Load_LAND_Textures"));      
-      Load_LAND_Mesh = Boolean.parseBoolean(children0[L].getString("Load_LAND_Mesh"));
-      Display_LAND_Surface = Boolean.parseBoolean(children0[L].getString("Display_LAND_Surface"));
-      Display_LAND_Points = Boolean.parseBoolean(children0[L].getString("Display_LAND_Points"));
-      Display_LAND_Textures = Boolean.parseBoolean(children0[L].getString("Display_LAND_Textures"));
-      Display_LAND_Depth = Boolean.parseBoolean(children0[L].getString("Display_LAND_Depth"));
-      LAND_Surface_SkipStart = children0[L].getInt("LAND_Surface_SkipStart");
-      LAND_Surface_SkipEnd = children0[L].getInt("LAND_Surface_SkipEnd");
+      LAND3D.Load_Textures = Boolean.parseBoolean(children0[L].getString("LAND3D.Load_Textures"));      
+      LAND3D.Load_Mesh = Boolean.parseBoolean(children0[L].getString("LAND3D.Load_Mesh"));
+      LAND3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Surface"));
+      LAND3D.Display_Points = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Points"));
+      LAND3D.Display_Textures = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Textures"));
+      LAND3D.Display_Depth = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Depth"));
+      LAND3D.Surface_SkipStart = children0[L].getInt("LAND3D.Surface_SkipStart");
+      LAND3D.Surface_SkipEnd = children0[L].getInt("LAND3D.Surface_SkipEnd");
       Display_SolidImpact_Points = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Points"));
       Display_SolidImpact_Lines = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Lines"));
       MODEL3D_DisplayVertices = Boolean.parseBoolean(children0[L].getString("MODEL3D_DisplayVertices"));  
@@ -50305,8 +50330,8 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_stp_dir = children0[L].getFloat("SOLARCHVISION_GLOBE_stp_dir");
       SOLARCHVISION_GLOBE_n_slp = children0[L].getInt("SOLARCHVISION_GLOBE_n_slp");
       SOLARCHVISION_GLOBE_n_dir = children0[L].getInt("SOLARCHVISION_GLOBE_n_dir");
-      LAND_n_I = children0[L].getInt("LAND_n_I");
-      LAND_n_J = children0[L].getInt("LAND_n_J");
+      LAND3D.n_I = children0[L].getInt("LAND3D.n_I");
+      LAND3D.n_J = children0[L].getInt("LAND3D.n_J");
       Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
       Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
       softSelection_Power = children0[L].getFloat("softSelection_Power");
@@ -50336,49 +50361,49 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       } 
 
-      LAND_n_I = children0[L].getInt("LAND_n_I");
-      LAND_n_J = children0[L].getInt("LAND_n_J");
+      LAND3D.n_I = children0[L].getInt("LAND3D.n_I");
+      LAND3D.n_J = children0[L].getInt("LAND3D.n_J");
 
 
-      int pre_LAND_Textures_num = LAND_Textures_num;
-      LAND_Textures_num = children0[L].getInt("LAND_Textures_num");
+      int pre_LAND3D_Textures_num = LAND3D.Textures_num;
+      LAND3D.Textures_num = children0[L].getInt("LAND3D.Textures_num");
 
-      if (pre_LAND_Textures_num != LAND_Textures_num) {
+      if (pre_LAND3D_Textures_num != LAND3D.Textures_num) {
 
-        int ni = LAND_Textures_num;
+        int ni = LAND3D.Textures_num;
 
-        LAND_Textures_ImagePath = new String [ni];
-        LAND_Textures_Map = new PImage [ni];
+        LAND3D.Textures_ImagePath = new String [ni];
+        LAND3D.Textures_Map = new PImage [ni];
 
         for (int i = 0; i < ni; i++) {
 
-          LAND_Textures_ImagePath[i] = "";
-          LAND_Textures_Map[i] = createImage(2, 2, RGB); // empty and small
+          LAND3D.Textures_ImagePath[i] = "";
+          LAND3D.Textures_Map[i] = createImage(2, 2, RGB); // empty and small
         }
       }
     }
 
-    children0 = FileAll.getChildren("LAND_Textures_ImagePath");
+    children0 = FileAll.getChildren("LAND3D.Textures_ImagePath");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
       XML[] children1 = children0[L].getChildren("Path");       
       for (int i = 0; i < ni; i++) {
         
-        LAND_Textures_scale_U[i] = children1[i].getFloat("scale_U");
-        LAND_Textures_scale_V[i] = children1[i].getFloat("scale_V");
+        LAND3D.Textures_scale_U[i] = children1[i].getFloat("scale_U");
+        LAND3D.Textures_scale_V[i] = children1[i].getFloat("scale_V");
 
         String new_Texture_path = children1[i].getContent();
 
-        if (LAND_Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+        if (LAND3D.Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         } else {
 
-          LAND_Textures_ImagePath[i] = new_Texture_path;
+          LAND3D.Textures_ImagePath[i] = new_Texture_path;
 
-          if (LAND_Textures_ImagePath[i].equals("")) {
+          if (LAND3D.Textures_ImagePath[i].equals("")) {
           } else {
-            println("Loading texture:", LAND_Textures_ImagePath[i]);
-            LAND_Textures_Map[i] = loadImage(LAND_Textures_ImagePath[i]);
+            println("Loading texture:", LAND3D.Textures_ImagePath[i]);
+            LAND3D.Textures_Map[i] = loadImage(LAND3D.Textures_ImagePath[i]);
           }
         }
       }
@@ -50473,16 +50498,16 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    println("Loading:LAND_Mesh");
-    LAND_Mesh = new float [LAND_n_I][LAND_n_J][3];
-    children0 = FileAll.getChildren("LAND_Mesh");
+    println("Loading:LAND3D.Mesh");
+    LAND3D.Mesh = new float [LAND3D.n_I][LAND3D.n_J][3];
+    children0 = FileAll.getChildren("LAND3D.Mesh");
     for (int L = 0; L < children0.length; L++) {
       XML[] children1 = children0[L].getChildren("Vertice");         
-      for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+      for (int i = 0; i < LAND3D.n_I * LAND3D.n_J; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          LAND_Mesh[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]);
+          LAND3D.Mesh[(i / LAND3D.n_J)][(i % LAND3D.n_J)][j] = float(parts[j]);
         }
       }
     }
