@@ -7813,13 +7813,13 @@ void SOLARCHVISION_update_station (int Step) {
 
   //if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Fractals();
 
-  if ((Step == 0) || (Step == 9)) SOLARCHVISION_delete_Object2Ds();
+  if ((Step == 0) || (Step == 9)) OBJECTS2D.deleteAll();
 
   if ((Step == 0) || (Step == 10)) {
 
-    SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
+    OBJECTS2D.add_onLand(1); // 1 = people
 
-    SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
+    OBJECTS2D.add_onLand(2); // 2 = 2D trees
   }
 }
 
@@ -8023,7 +8023,7 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("SOLARCHVISION_delete_Object2Ds", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("OBJECTS2D.deleteAll", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 20) {
     SOLARCHVISION_update_station(9);
 
@@ -8031,7 +8031,7 @@ void draw () {
     rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
     stroke(255); fill(255);
-    text("SOLARCHVISION_add_Object2Ds_onLand", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    text("OBJECTS2D.add_onLand", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 21) {
     SOLARCHVISION_update_station(10);
 
@@ -21757,303 +21757,7 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 
 
-void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
-
-  println("SOLARCHVISION_add_Object2Ds_onLand");
-
-  randomSeed(0);
-
-  float[][] treesXYZS = {
-    {
-      0, 0, 0, 0
-    }
-  };
-
-  int Tessellation = LAND3D.Tessellation;
-  if (WIN3D.FacesShade == Shade_Surface_Base) {
-    Tessellation = 0;
-  }
-
-  int TotalSubNo = 1;  
-  if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
-
-
-
-  if ((LAND3D.Display_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
-
-    for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
-      for (int j = 0; j < LAND3D.n_J - 1; j++) {
-
-        float[][] base_Vertices = new float [4][3];
-
-        base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
-        base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
-        base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
-
-        base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
-        base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
-        base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
-
-        base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
-        base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
-        base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
-
-        base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
-        base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
-        base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];
-
-        for (int n = 0; n < TotalSubNo; n++) {
-
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-          int n_Map = -1; 
-          for (int q = 0; q < LAND3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
-
-            n_Map = q; 
-
-            for (int s = 0; s < subFace.length; s++) {
-
-              float u = (subFace[s][0] / LAND3D.Textures_scale_U[q] + 0.5);
-              float v = (-subFace[s][1] / LAND3D.Textures_scale_V[q] + 0.5);
-
-              if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
-
-                n_Map = -1;
-
-                break;
-              }
-            }            
-
-            if (n_Map == q) break;
-          }
-
-          if (n_Map != -1) {
-
-            int max_o = int(10000 / pow(2, LAND3D.Tessellation)); // number of tries to find green points!
-
-            //if (max_o > 100) max_o = 100;
-
-            if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-            //if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-            //if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
-
-            for (int o = 0; o < max_o; o++) {
-
-              float di = random(1);
-              float dj = random(1);
-
-              float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-              float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-              float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
-
-              float u = (x / LAND3D.Textures_scale_U[n_Map] + 0.5);
-              float v = (-y / LAND3D.Textures_scale_V[n_Map] + 0.5);
-
-              int uPixel = int(u * LAND3D.Textures_Map[n_Map].width);
-              int vPixel = int(v * LAND3D.Textures_Map[n_Map].height);
-
-              color COL = LAND3D.Textures_Map[n_Map].get(uPixel, vPixel);
-              //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-              float r = COL >> 16 & 0xFF; 
-              float g = COL >> 8 & 0xFF;
-              float b = COL & 0xFF;
-
-              //if ((g > r + 8) && (g > b + 16)) { // looks more green
-              if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
-
-                if (g < 56) { // not on grass (light green) 
-
-                  //if (z + STATION.getElevation() > 5) { // not in water (below see level)
-
-                  //float s = 5 + random(10); 
-                  float s = 5 + random(12.5);
-                  //float s = 10 + random(20); // bigger trees        
-
-                  int foundNearTree = 0;
-
-                  for (int f = 1; f < treesXYZS.length; f++) {
-
-                    float x0 = treesXYZS[f][0];
-                    float y0 = treesXYZS[f][1];
-                    float z0 = treesXYZS[f][2];
-                    float s0 = treesXYZS[f][3];
-
-                    //if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
-                    if (dist(x0, y0, z0, x, y, z) < 0.5 * (s0 + s)) { //avoids creating trees close to each other
-                      foundNearTree = 1;
-
-                      break;
-                    }
-                  }
-
-                  if (foundNearTree == 0) {
-
-                    if (people_or_trees == 2) {
-                      OBJECTS2D.add_single("TREES", 0, x, y, z, s);
-                    } else {
-                      SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, s, random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
-                    }                  
-
-
-                    float[][] newTree = {
-                      {
-                        x, y, z, s
-                      }
-                    };
-                    treesXYZS = (float [][]) concat(treesXYZS, newTree);
-                  }
-                  //}
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  } else {
-
-    for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
-      for (int j = 0; j < LAND3D.n_J - 1; j++) {
-
-        float[][] base_Vertices = new float [4][3];
-
-        base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
-        base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
-        base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
-
-        base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
-        base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
-        base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
-
-        base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
-        base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
-        base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
-
-        base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
-        base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
-        base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];      
-
-        for (int n = 0; n < TotalSubNo; n++) {
-
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-          int max_o = int((16.0 / pow(2, LAND3D.Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
-
-
-          if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-          //if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-
-          for (int o = 0; o < max_o; o++) {
-
-            float di = random(1);
-            float dj = random(1);
-
-            float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-            float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-            float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
-
-            if (z + STATION.getElevation() > 0) { // i.e. above sea level 
-
-              if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
-
-                if (people_or_trees == 1) {
-                  OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
-                } else if (people_or_trees == 2) {
-                  OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
-                } else {
-                  SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
-
-  for (int i = 0; i < n; i++) {
-
-    float a = random(360);
-    float b = pow(random(pow(r1, 2), pow(r2, 2)), 0.5); // to make it uniform on the surface
-
-    float x = x0 + b * cos_ang(a);
-    float y = y0 + b * sin_ang(a);
-    float z = z0;
-
-    if (people_or_trees == 1) {
-      OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
-    } else if (people_or_trees == 2) {
-      OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
-    } else {
-      SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
-    }
-  }
-}
-
-void SOLARCHVISION_add_Object2Ds_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
-
-  for (int i = 0; i < n; i++) {
-
-    //float a = random(-rx, rx); 
-    //float b = random(-ry, ry);
-
-    // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
-    float a = random(1-rx, rx-1);  
-    float b = random(1-ry, ry-1);
-
-    float x = a * cos_ang(rot) - b * sin_ang(rot);
-    float y = a * sin_ang(rot) + b * cos_ang(rot);
-    float z = 0;
-
-    x += x0;
-    y += y0;
-    z += z0;
-
-    if (people_or_trees == 1) {
-      OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
-    } else if (people_or_trees == 2) {
-      OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
-    } else {
-      SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
-    }
-  }
-}
-
-void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
-
-  float x0 = 0.5 * (x1 + x2);
-  float y0 = 0.5 * (y1 + y2);
-  float z0 = 0.5 * (z1 + z2);
-
-  float rx = 0.5 * abs(x2 - x1);
-  float ry = 0.5 * abs(y2 - y1);
-
-  for (int i = 0; i < n; i++) {
-
-    //float a = random(-rx, rx); 
-    //float b = random(-ry, ry);
-
-    // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
-    float a = random(1-rx, rx-1);  
-    float b = random(1-ry, ry-1);
-
-    float x = x0 + a;
-    float y = y0 + b;
-    float z = z0;
-
-    if (people_or_trees == 1) {
-      OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
-    } else if (people_or_trees == 2) {
-      OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
-    } else {
-      SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
-    }
-  }
-}
 
 
 
@@ -22065,7 +21769,7 @@ void SOLARCHVISION_delete_All () {
   
   SOLARCHVISION_delete_Fractals();
 
-  SOLARCHVISION_delete_Object2Ds();
+  OBJECTS2D.deleteAll();
   SOLARCHVISION_delete_Solids();
   SOLARCHVISION_delete_Faces();
   SOLARCHVISION_delete_Curves();
@@ -22185,21 +21889,7 @@ void SOLARCHVISION_delete_Fractals () {
   SOLARCHVISION_deselect_All();
 }
 
-void SOLARCHVISION_delete_Object2Ds () {
 
-  OBJECTS2D.XYZS = new float [0][4]; 
-
-  OBJECTS2D.MAP = new int [0];
-
-  OBJECTS2D.num = 0;
-
-  for (int q = 0; q < allGroup3Ds_num; q++) {
-    allGroup3Ds_Object2Ds[q][0] = 0;
-    allGroup3Ds_Object2Ds[q][1] = -1;
-  }  
-
-  SOLARCHVISION_deselect_All();
-}
 
 void SOLARCHVISION_delete_Faces () {
 
@@ -22267,12 +21957,12 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (LAND3D.Load_Mesh) {
 
-    SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
+    OBJECTS2D.add_onLand(1); // 1 = people
 
-    SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
+    OBJECTS2D.add_onLand(2); // 2 = 2D trees
   } else {
-    //SOLARCHVISION_add_Object2Ds_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
-    //SOLARCHVISION_add_Object2Ds_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
+    //OBJECTS2D.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
+    //OBJECTS2D.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
   }  
 
 
@@ -25222,7 +24912,7 @@ class solarchvision_OBJECTS2D {
  
   PImage[] Images;
   float[] ImageRatios;
-    
+  
   void load_images () {
   
     this.ImagePath = new String [1];
@@ -25769,6 +25459,429 @@ class solarchvision_OBJECTS2D {
   }
   
   
+  float[] intersect (float[] ray_pnt, float[] ray_dir) {
+  
+    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+  
+    float[][] hitPoint = new float [this.Faces.length][6];
+  
+    for (int f = 0; f < this.Faces.length; f++) {
+      hitPoint[f][0] = FLOAT_undefined;
+      hitPoint[f][1] = FLOAT_undefined;
+      hitPoint[f][2] = FLOAT_undefined;
+      hitPoint[f][3] = FLOAT_undefined;
+      hitPoint[f][4] = FLOAT_undefined;
+      hitPoint[f][5] = FLOAT_undefined;    
+    }
+    
+    for (int f = 0; f < this.Faces.length; f++) {
+      
+      int n = this.Faces[f].length;
+      
+      float X_intersect = FLOAT_undefined;         
+      float Y_intersect = FLOAT_undefined;
+      float Z_intersect = FLOAT_undefined;
+      float dist2intersect = FLOAT_undefined;
+  
+      //boolean InPoly = false;
+      float[] UV = {FLOAT_undefined, FLOAT_undefined};
+  
+      float[] A = this.Vertices[this.Faces[f][0]];
+      float[] B = this.Vertices[this.Faces[f][1]];
+      float[] C = this.Vertices[this.Faces[f][n - 2]];
+      float[] D = this.Vertices[this.Faces[f][n - 1]];
+      
+      float[] AC = SOLARCHVISION_3xSub(A, C);
+      float[] BD = SOLARCHVISION_3xSub(B, D);
+      
+      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+      
+      float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+  
+      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+        dist2intersect = FLOAT_huge;
+      }
+      else {
+        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+  
+        //if (dist2intersect > 0) {
+        if (dist2intersect > FLOAT_tiny) {
+  
+          X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+          Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+          Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+          
+          float[] P = {X_intersect, Y_intersect, Z_intersect};
+          
+          UV = SOLARCHVISION_uvInside_Rectangle(P, A, B, C);
+        }
+      }
+      
+      float u = UV[0];
+      float v = UV[1];
+      
+      if ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1)) {
+    
+        hitPoint[f][0] = X_intersect;
+        hitPoint[f][1] = Y_intersect;
+        hitPoint[f][2] = Z_intersect;
+        hitPoint[f][3] = dist2intersect;
+        // converting rom face UV to image UV
+        hitPoint[f][4] = (1 - u) * B[3] + u * A[3];
+        hitPoint[f][5] = (1 - v) * B[4] + v * C[4];
+  
+      }
+    }
+  
+  
+    float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  
+    float pre_dist = FLOAT_undefined;
+  
+    for (int f = 0; f < this.Faces.length; f++) {
+      
+      int OBJ_NUM = f / this.numDisplayFaces;
+  
+      if (pre_dist > hitPoint[f][3]) {
+        
+        float u = hitPoint[f][4];
+        float v = hitPoint[f][5];
+  
+        int n = abs(this.MAP[OBJ_NUM]);
+       
+        int RES1 = this.Images[n].width; 
+        int RES2 = this.Images[n].height;    
+     
+        this.Images[n].loadPixels();
+        
+        if (n < 0) u = 1 - u;
+        
+        println("uv,n", u, v, n);
+        
+        int Image_X = int(u * RES1); 
+        int Image_Y = int(v * RES2);
+    
+        color COL = this.Images[n].get(Image_X, Image_Y);
+        //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+    
+        float COL_V = (COL >> 24 & 0xFF);
+        
+        if (COL_V > 0) {
+  
+          pre_dist = hitPoint[f][3];
+    
+          return_point[0] = OBJ_NUM;
+          return_point[1] = hitPoint[f][0];
+          return_point[2] = hitPoint[f][1];
+          return_point[3] = hitPoint[f][2];
+          return_point[4] = hitPoint[f][3];
+        }
+      }
+  
+    }
+  
+    return return_point;
+  }
+
+  void add_onLand (int people_or_trees) {
+
+    println("OBJECTS2D.add_onLand");
+  
+    randomSeed(0);
+  
+    float[][] treesXYZS = {
+      {
+        0, 0, 0, 0
+      }
+    };
+  
+    int Tessellation = LAND3D.Tessellation;
+    if (WIN3D.FacesShade == Shade_Surface_Base) {
+      Tessellation = 0;
+    }
+  
+    int TotalSubNo = 1;  
+    if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+  
+  
+  
+    if ((LAND3D.Display_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+  
+      for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
+        for (int j = 0; j < LAND3D.n_J - 1; j++) {
+  
+          float[][] base_Vertices = new float [4][3];
+  
+          base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
+          base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
+          base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
+  
+          base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
+          base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
+          base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
+  
+          base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
+  
+          base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
+          base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
+          base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];
+  
+          for (int n = 0; n < TotalSubNo; n++) {
+  
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+  
+            int n_Map = -1; 
+            for (int q = 0; q < LAND3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+  
+              n_Map = q; 
+  
+              for (int s = 0; s < subFace.length; s++) {
+  
+                float u = (subFace[s][0] / LAND3D.Textures_scale_U[q] + 0.5);
+                float v = (-subFace[s][1] / LAND3D.Textures_scale_V[q] + 0.5);
+  
+                if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+  
+                  n_Map = -1;
+  
+                  break;
+                }
+              }            
+  
+              if (n_Map == q) break;
+            }
+  
+            if (n_Map != -1) {
+  
+              int max_o = int(10000 / pow(2, LAND3D.Tessellation)); // number of tries to find green points!
+  
+              //if (max_o > 100) max_o = 100;
+  
+              if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+              //if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+              //if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
+  
+              for (int o = 0; o < max_o; o++) {
+  
+                float di = random(1);
+                float dj = random(1);
+  
+                float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+                float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+                float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+  
+                float u = (x / LAND3D.Textures_scale_U[n_Map] + 0.5);
+                float v = (-y / LAND3D.Textures_scale_V[n_Map] + 0.5);
+  
+                int uPixel = int(u * LAND3D.Textures_Map[n_Map].width);
+                int vPixel = int(v * LAND3D.Textures_Map[n_Map].height);
+  
+                color COL = LAND3D.Textures_Map[n_Map].get(uPixel, vPixel);
+                //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                float r = COL >> 16 & 0xFF; 
+                float g = COL >> 8 & 0xFF;
+                float b = COL & 0xFF;
+  
+                //if ((g > r + 8) && (g > b + 16)) { // looks more green
+                if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
+  
+                  if (g < 56) { // not on grass (light green) 
+  
+                    //if (z + STATION.getElevation() > 5) { // not in water (below see level)
+  
+                    //float s = 5 + random(10); 
+                    float s = 5 + random(12.5);
+                    //float s = 10 + random(20); // bigger trees        
+  
+                    int foundNearTree = 0;
+  
+                    for (int f = 1; f < treesXYZS.length; f++) {
+  
+                      float x0 = treesXYZS[f][0];
+                      float y0 = treesXYZS[f][1];
+                      float z0 = treesXYZS[f][2];
+                      float s0 = treesXYZS[f][3];
+  
+                      //if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
+                      if (dist(x0, y0, z0, x, y, z) < 0.5 * (s0 + s)) { //avoids creating trees close to each other
+                        foundNearTree = 1;
+  
+                        break;
+                      }
+                    }
+  
+                    if (foundNearTree == 0) {
+  
+                      if (people_or_trees == 2) {
+                        OBJECTS2D.add_single("TREES", 0, x, y, z, s);
+                      } else {
+                        SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, s, random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
+                      }                  
+  
+  
+                      float[][] newTree = {
+                        {
+                          x, y, z, s
+                        }
+                      };
+                      treesXYZS = (float [][]) concat(treesXYZS, newTree);
+                    }
+                    //}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } else {
+  
+      for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
+        for (int j = 0; j < LAND3D.n_J - 1; j++) {
+  
+          float[][] base_Vertices = new float [4][3];
+  
+          base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
+          base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
+          base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
+  
+          base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
+          base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
+          base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
+  
+          base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
+  
+          base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
+          base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
+          base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];      
+  
+          for (int n = 0; n < TotalSubNo; n++) {
+  
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+  
+            int max_o = int((16.0 / pow(2, LAND3D.Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+  
+  
+            if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            //if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+  
+            for (int o = 0; o < max_o; o++) {
+  
+              float di = random(1);
+              float dj = random(1);
+  
+              float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+              float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+              float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+  
+              if (z + STATION.getElevation() > 0) { // i.e. above sea level 
+  
+                if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
+  
+                  if (people_or_trees == 1) {
+                    OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
+                  } else if (people_or_trees == 2) {
+                    OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
+                  } else {
+                    SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  void add_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
+  
+    for (int i = 0; i < n; i++) {
+  
+      float a = random(360);
+      float b = pow(random(pow(r1, 2), pow(r2, 2)), 0.5); // to make it uniform on the surface
+  
+      float x = x0 + b * cos_ang(a);
+      float y = y0 + b * sin_ang(a);
+      float z = z0;
+  
+      if (people_or_trees == 1) {
+        OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
+      } else if (people_or_trees == 2) {
+        OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
+      } else {
+        SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
+      }
+    }
+  }
+  
+  void add_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
+  
+    for (int i = 0; i < n; i++) {
+  
+      //float a = random(-rx, rx); 
+      //float b = random(-ry, ry);
+  
+      // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
+      float a = random(1-rx, rx-1);  
+      float b = random(1-ry, ry-1);
+  
+      float x = a * cos_ang(rot) - b * sin_ang(rot);
+      float y = a * sin_ang(rot) + b * cos_ang(rot);
+      float z = 0;
+  
+      x += x0;
+      y += y0;
+      z += z0;
+  
+      if (people_or_trees == 1) {
+        OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
+      } else if (people_or_trees == 2) {
+        OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
+      } else {
+        SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
+      }
+    }
+  }
+  
+  void add_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
+  
+    float x0 = 0.5 * (x1 + x2);
+    float y0 = 0.5 * (y1 + y2);
+    float z0 = 0.5 * (z1 + z2);
+  
+    float rx = 0.5 * abs(x2 - x1);
+    float ry = 0.5 * abs(y2 - y1);
+  
+    for (int i = 0; i < n; i++) {
+  
+      //float a = random(-rx, rx); 
+      //float b = random(-ry, ry);
+  
+      // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
+      float a = random(1-rx, rx-1);  
+      float b = random(1-ry, ry-1);
+  
+      float x = x0 + a;
+      float y = y0 + b;
+      float z = z0;
+  
+      if (people_or_trees == 1) {
+        OBJECTS2D.add_single("PEOPLE", 0, x, y, z, 2.5);
+      } else if (people_or_trees == 2) {
+        OBJECTS2D.add_single("TREES", 0, x, y, z, 5 + random(10));
+      } else {
+        SOLARCHVISION_add_Fractal(CreateFractal_Type, x, y, z, 5 + random(10), random(360), CreateFractal_DegreeMin, CreateFractal_DegreeMax, CreateFractal_Seed, CreateFractal_TrunkSize, CreateFractal_LeafSize);
+      }
+    }
+  }  
+  
   void add_single (String t, int m, float x, float y, float z, float s) {
   
     int n1 = this.PEOPLE_Files_Num;    
@@ -25813,9 +25926,24 @@ class solarchvision_OBJECTS2D {
     }
   
     if (allGroup3Ds_num > 0) allGroup3Ds_Object2Ds[allGroup3Ds_num - 1][1] = this.num - 1;
-  }
-    
+  }  
   
+  void deleteAll () {
+  
+    this.XYZS = new float [0][4]; 
+  
+    this.MAP = new int [0];
+  
+    this.num = 0;
+  
+    for (int q = 0; q < allGroup3Ds_num; q++) {
+      allGroup3Ds_Object2Ds[q][0] = 0;
+      allGroup3Ds_Object2Ds[q][1] = -1;
+    }  
+  
+    SOLARCHVISION_deselect_All();
+  }  
+    
 }
 
 
@@ -27879,131 +28007,6 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
 
 
-float[] SOLARCHVISION_intersect_Object2Ds (float[] ray_pnt, float[] ray_dir) {
-
-  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
-
-  float[][] hitPoint = new float [OBJECTS2D.Faces.length][6];
-
-  for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
-    hitPoint[f][0] = FLOAT_undefined;
-    hitPoint[f][1] = FLOAT_undefined;
-    hitPoint[f][2] = FLOAT_undefined;
-    hitPoint[f][3] = FLOAT_undefined;
-    hitPoint[f][4] = FLOAT_undefined;
-    hitPoint[f][5] = FLOAT_undefined;    
-  }
-  
-  for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
-    
-    int n = OBJECTS2D.Faces[f].length;
-    
-    float X_intersect = FLOAT_undefined;         
-    float Y_intersect = FLOAT_undefined;
-    float Z_intersect = FLOAT_undefined;
-    float dist2intersect = FLOAT_undefined;
-
-    //boolean InPoly = false;
-    float[] UV = {FLOAT_undefined, FLOAT_undefined};
-
-    float[] A = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][0]];
-    float[] B = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][1]];
-    float[] C = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][n - 2]];
-    float[] D = OBJECTS2D.Vertices[OBJECTS2D.Faces[f][n - 1]];
-    
-    float[] AC = SOLARCHVISION_3xSub(A, C);
-    float[] BD = SOLARCHVISION_3xSub(B, D);
-    
-    float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
-    
-    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-  
-    float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
-
-    if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-      dist2intersect = FLOAT_huge;
-    }
-    else {
-      dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
-
-      //if (dist2intersect > 0) {
-      if (dist2intersect > FLOAT_tiny) {
-
-        X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-        Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-        Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-        
-        float[] P = {X_intersect, Y_intersect, Z_intersect};
-        
-        UV = SOLARCHVISION_uvInside_Rectangle(P, A, B, C);
-      }
-    }
-    
-    float u = UV[0];
-    float v = UV[1];
-    
-    if ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1)) {
-  
-      hitPoint[f][0] = X_intersect;
-      hitPoint[f][1] = Y_intersect;
-      hitPoint[f][2] = Z_intersect;
-      hitPoint[f][3] = dist2intersect;
-      // converting rom face UV to image UV
-      hitPoint[f][4] = (1 - u) * B[3] + u * A[3];
-      hitPoint[f][5] = (1 - v) * B[4] + v * C[4];
-
-    }
-  }
-
-
-  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
-
-  float pre_dist = FLOAT_undefined;
-
-  for (int f = 0; f < OBJECTS2D.Faces.length; f++) {
-    
-    int OBJ_NUM = f / OBJECTS2D.numDisplayFaces;
-
-    if (pre_dist > hitPoint[f][3]) {
-      
-      float u = hitPoint[f][4];
-      float v = hitPoint[f][5];
-
-      int n = abs(OBJECTS2D.MAP[OBJ_NUM]);
-     
-      int RES1 = OBJECTS2D.Images[n].width; 
-      int RES2 = OBJECTS2D.Images[n].height;    
-   
-      OBJECTS2D.Images[n].loadPixels();
-      
-      if (n < 0) u = 1 - u;
-      
-      println("uv,n", u, v, n);
-      
-      int Image_X = int(u * RES1); 
-      int Image_Y = int(v * RES2);
-  
-      color COL = OBJECTS2D.Images[n].get(Image_X, Image_Y);
-      //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-  
-      float COL_V = (COL >> 24 & 0xFF);
-      
-      if (COL_V > 0) {
-
-        pre_dist = hitPoint[f][3];
-  
-        return_point[0] = OBJ_NUM;
-        return_point[1] = hitPoint[f][0];
-        return_point[2] = hitPoint[f][1];
-        return_point[3] = hitPoint[f][2];
-        return_point[4] = hitPoint[f][3];
-      }
-    }
-
-  }
-
-  return return_point;
-}
 
 
 
@@ -35974,7 +35977,7 @@ void mouseClicked () {
             }      
     
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("ERASE_Object2Ds")) {
-              SOLARCHVISION_delete_Object2Ds();
+              OBJECTS2D.deleteAll();
               WIN3D.update = true;
             }        
     
@@ -36632,7 +36635,7 @@ void mouseClicked () {
                   } else if (Current_ObjectCategory == ObjectCategory.Fractals) {
                     RxP = SOLARCHVISION_intersect_Fractals(ray_start, ray_direction);
                   } else if (Current_ObjectCategory == ObjectCategory.Object2Ds) {
-                    RxP = SOLARCHVISION_intersect_Object2Ds(ray_start, ray_direction);
+                    RxP = OBJECTS2D.intersect(ray_start, ray_direction);
                   } else {
                     RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
                   }
@@ -51960,7 +51963,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
              if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("selection")) {SOLARCHVISION_delete_Selection(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("group3ds")) {SOLARCHVISION_delete_Group3Ds(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {SOLARCHVISION_delete_Object2Ds(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {OBJECTS2D.deleteAll(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("fractals")) {SOLARCHVISION_delete_Fractals(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("vertices")) {SOLARCHVISION_deleteIsolatedVertices_Selection(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("faces")) {SOLARCHVISION_delete_Faces(); WIN3D.update = true;}
