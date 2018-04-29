@@ -1856,7 +1856,7 @@ solarchvision_CREATE CREATE = new solarchvision_CREATE();
 
 
 
-class solarchvision_ObjectCategory {
+class solarchvision_OBJECTTYPE {
   
   private final static int LandPoints = 0; 
   private final static int Fractals = 1; 
@@ -1872,10 +1872,10 @@ class solarchvision_ObjectCategory {
   
 }
 
-solarchvision_ObjectCategory ObjectCategory = new solarchvision_ObjectCategory(); 
+solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE(); 
 
 
-class solarchvision_TypeWindow {
+class solarchvision_WINDOWTYPE {
   
   private final static int SKY2D    = -2;
   private final static int LandGap  = -1;
@@ -1889,10 +1889,10 @@ class solarchvision_TypeWindow {
   
 }
 
-solarchvision_TypeWindow TypeWindow = new solarchvision_TypeWindow(); 
+solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE(); 
 
 
-class solarchvision_DataType {
+class solarchvision_DATATYPE {
   
   private final static int SATELLITE_GOES = 0;
   private final static int FORECAST_HRDPS = 1;
@@ -1901,7 +1901,7 @@ class solarchvision_DataType {
   
 }
 
-solarchvision_DataType DataType = new solarchvision_DataType();
+solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
 
 
 
