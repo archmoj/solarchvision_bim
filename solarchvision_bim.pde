@@ -2036,11 +2036,11 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
   
-      SOLARCHVISION_draw_STAR3D();
+      STAR3D.draw();
   
-      SOLARCHVISION_draw_MOON3D();
+      MOON3D.draw();
       
-      SOLARCHVISION_draw_EARTH(TypeWindow.WIN3D);
+      EARTH.draw(TypeWindow.WIN3D);
   
       SOLARCHVISION_draw_LAND(TypeWindow.WIN3D);
       
@@ -6972,8 +6972,8 @@ int Export_PalletResolution = 256;
 
 
 
-boolean Display_EARTH_Surface = false;
-boolean Display_EARTH_Texture = false;
+boolean Display_EARTH_Surface = true; //false;
+boolean Display_EARTH_Texture = true; //false;
 
 boolean Display_TROPO_Surface = false;
 boolean Display_TROPO_Texture = false;
@@ -7763,10 +7763,10 @@ void setup () {
   
   SOLARCHVISION_resize_TROPO_IMAGES();
   
-  SOLARCHVISION_resize_EARTH_IMAGES();
+  EARTH.resize_images();
 
-  MOON_IMAGE_Map = loadImage(MOON_IMAGE_Filename);
-  STAR_IMAGE_Map = loadImage(STAR_IMAGE_Filename);
+  STAR3D.load_images();
+  MOON3D.load_images();
 
   WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
 
@@ -8086,9 +8086,9 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
-    stroke(255); fill(255); text("SOLARCHVISION_load_EARTH_IMAGES", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("EARTH.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 24) {
-    SOLARCHVISION_load_EARTH_IMAGES();
+    EARTH.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
     
@@ -20380,7 +20380,7 @@ void SOLARCHVISION_export_objects_HTML () {
 */
 
 
-  SOLARCHVISION_draw_EARTH(TypeWindow.HTML);
+  EARTH.draw(TypeWindow.HTML);
 
   SOLARCHVISION_draw_LAND(TypeWindow.HTML);
 
@@ -20744,7 +20744,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  SOLARCHVISION_draw_EARTH(TypeWindow.OBJ);
+  EARTH.draw(TypeWindow.OBJ);
 
   SOLARCHVISION_draw_LAND(TypeWindow.OBJ);
 
@@ -23744,157 +23744,400 @@ void SOLARCHVISION_draw_TROPO (int target_window, int start_hour, int end_hour) 
 
 
 
-PImage[] EARTH_IMAGES_Map;
 
-float[][] EARTH_IMAGES_BoundariesX;
-float[][] EARTH_IMAGES_BoundariesY;
+class solarchvision_EARTH {
 
-String EARTH_IMAGES_Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/EarthSurface";
-
-String[] EARTH_IMAGES_Filenames = sort(SOLARCHVISION_getfiles(EARTH_IMAGES_Path));
-
-
-void SOLARCHVISION_resize_EARTH_IMAGES () {
-
-  int n = EARTH_IMAGES_Filenames.length;
-
-  EARTH_IMAGES_Map = new PImage [n];
-
-  EARTH_IMAGES_BoundariesX = new float [n][2];
-  EARTH_IMAGES_BoundariesY = new float [n][2];
+  PImage[] Map;
   
-}
-
-
-void SOLARCHVISION_load_EARTH_IMAGES () {
-
-  for (int i = 0; i < EARTH_IMAGES_Filenames.length; i++) {
-
-    String MapFilename = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[i];
-
-    String[] Parts = split(EARTH_IMAGES_Filenames[i], '_');
-
-    EARTH_IMAGES_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
-    EARTH_IMAGES_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
-    EARTH_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
-    EARTH_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
-
-    println("Loading:", MapFilename);
-
-    EARTH_IMAGES_Map[i] = loadImage(MapFilename);
-  }
-}
-
-
-
-void SOLARCHVISION_draw_EARTH (int target_window) {
-
-  boolean proceed = true;
-
-  if ((Display_EARTH_Surface == false) || (Display_EARTH_Texture == false)) {
-    proceed = false;
-  }
-
-  if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
-    proceed = false;
-  }
-
-  if (proceed) {
-
-    int n_Map = 0;
-    if (IMPACTS_DisplayDay < EARTH_IMAGES_Map.length) n_Map = IMPACTS_DisplayDay;
-
-    float EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n_Map][0] + 180;
-    float EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n_Map][1] - 90;
-
-    float EARTH_IMAGES_ScaleX = (EARTH_IMAGES_BoundariesX[n_Map][1] - EARTH_IMAGES_BoundariesX[n_Map][0]) / 360.0;
-    float EARTH_IMAGES_ScaleY = (EARTH_IMAGES_BoundariesY[n_Map][1] - EARTH_IMAGES_BoundariesY[n_Map][0]) / 180.0;
-
-    float CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n_Map][0] + EARTH_IMAGES_BoundariesX[n_Map][1]);
-    float CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n_Map][0] + EARTH_IMAGES_BoundariesY[n_Map][1]);
-
-    float delta_Alpha = -BIOSPHERE_drawResolution;
-    float delta_Beta = -BIOSPHERE_drawResolution;
-
-    float r = FLOAT_r_Earth;
+  float[][] BoundariesX;
+  float[][] BoundariesY;
+  
+  String Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/EarthSurface";
+  
+  String[] Filenames = sort(SOLARCHVISION_getfiles(this.Path));
+  
+  
+  void resize_images () {
+  
+    int n = this.Filenames.length;
+  
+    this.Map = new PImage [n];
+  
+    this.BoundariesX = new float [n][2];
+    this.BoundariesY = new float [n][2];
     
-
-    if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
-    
-      if (Export_MaterialLibrary) {
-
-        if (target_window == TypeWindow.HTML) {
-          htmlOutput.println("\t\t\t\t<Appearance DEF='EarthSphere" + nf(n_Map, 0) + "'>");
-        }
-        
-        if (target_window == TypeWindow.OBJ) {
+  }
   
-          mtlOutput.println("newmtl EarthSphere");
-          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-        }
   
-        if (Display_EARTH_Texture) {
+  void load_images () {
   
-          String old_Texture_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n_Map];
+    for (int i = 0; i < this.Filenames.length; i++) {
   
-          String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+      String MapFilename = this.Path + "/" + this.Filenames[i];
   
-          String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+      String[] Parts = split(this.Filenames[i], '_');
   
-          println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-          saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+      this.BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+      this.BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+      this.BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+      this.BoundariesY[i][1] =  float(Parts[4]) * 0.001;
   
-          if (target_window == TypeWindow.OBJ) {
+      println("Loading:", MapFilename);
   
-            //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-            mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+      this.Map[i] = loadImage(MapFilename);
+    }
+  }
+  
+  
+  
+  void draw (int target_window) {
+  
+    boolean proceed = true;
+  
+    if ((Display_EARTH_Surface == false) || (Display_EARTH_Texture == false)) {
+      proceed = false;
+    }
+  
+    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+      proceed = false;
+    }
+  
+    if (proceed) {
+  
+      int n_Map = 0;
+      if (IMPACTS_DisplayDay < this.Map.length) n_Map = IMPACTS_DisplayDay;
+  
+      float OffsetX = this.BoundariesX[n_Map][0] + 180;
+      float OffsetY = this.BoundariesY[n_Map][1] - 90;
+  
+      float ScaleX = (this.BoundariesX[n_Map][1] - this.BoundariesX[n_Map][0]) / 360.0;
+      float ScaleY = (this.BoundariesY[n_Map][1] - this.BoundariesY[n_Map][0]) / 180.0;
+  
+      float CEN_lon = 0.5 * (this.BoundariesX[n_Map][0] + this.BoundariesX[n_Map][1]);
+      float CEN_lat = 0.5 * (this.BoundariesY[n_Map][0] + this.BoundariesY[n_Map][1]);
+  
+      float delta_Alpha = -BIOSPHERE_drawResolution;
+      float delta_Beta = -BIOSPHERE_drawResolution;
+  
+      float r = FLOAT_r_Earth;
+      
+  
+      if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+      
+        if (Export_MaterialLibrary) {
+  
+          if (target_window == TypeWindow.HTML) {
+            htmlOutput.println("\t\t\t\t<Appearance DEF='EarthSphere" + nf(n_Map, 0) + "'>");
           }
           
-          if (target_window == TypeWindow.HTML) {
-            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
-          }                
-
-        }
-      }
+          if (target_window == TypeWindow.OBJ) {
+    
+            mtlOutput.println("newmtl EarthSphere");
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+            mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
       
-      if (target_window == TypeWindow.HTML) {
-        htmlOutput.println("\t\t\t\t</Appearance>");
-      }              
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+          }
+    
+          if (Display_EARTH_Texture) {
+    
+            String old_Texture_path = this.Path + "/" + this.Filenames[n_Map];
+    
+            String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+    
+            String new_Texture_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+    
+            println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+    
+            if (target_window == TypeWindow.OBJ) {
+    
+              //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+              mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
+              mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+            }
+            
+            if (target_window == TypeWindow.HTML) {
+              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+            }                
   
-      if (target_window == TypeWindow.OBJ) {
-        if (Export_PolyToPoly == 1) {
-          obj_lastGroupNumber += 1;  
-          objOutput.println("g EarthSphere");
+          }
         }
+        
+        if (target_window == TypeWindow.HTML) {
+          htmlOutput.println("\t\t\t\t</Appearance>");
+        }              
     
-        if (Export_MaterialLibrary) {
-          objOutput.println("usemtl EarthSphere");
+        if (target_window == TypeWindow.OBJ) {
+          if (Export_PolyToPoly == 1) {
+            obj_lastGroupNumber += 1;  
+            objOutput.println("g EarthSphere");
+          }
+      
+          if (Export_MaterialLibrary) {
+            objOutput.println("usemtl EarthSphere");
+          }
+        }
+        
+      }
+  
+      
+      num_vertices_added = 0;
+  
+      int end_turn = 1;
+      if (target_window == TypeWindow.OBJ) end_turn = 3;
+      for (int _turn = 1; _turn <= end_turn; _turn++) {
+  
+        int f = 0;
+        for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+          for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+            f += 1;
+    
+            float[][] subFace = new float [4][5];
+    
+            for (int s = 0; s < 4; s++) {
+    
+              float a = Alpha;
+              float b = Beta;
+    
+              if ((s == 2) || (s == 3)) {
+                a += delta_Alpha;
+              }
+    
+              if ((s == 1) || (s == 2)) {
+                b += delta_Beta;
+              }
+    
+              float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+              float y0 = r * sin_ang(b - 90) * cos_ang(a);
+              float z0 = r * sin_ang(a);
+    
+              float _lon = b - CEN_lon;
+              float _lat = a - CEN_lat;
+    
+              if (Display_EARTH_Texture) {
+                // calculating u and v
+                subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
+                subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
+              }         
+    
+              // rotating to location coordinates 
+              float tb = -STATION.getLongitude();
+              float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+              float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+              float z1 = z0;
+    
+              float ta = 90 - STATION.getLatitude();
+              float x2 = x1;
+              float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+              float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+    
+              // move it down!
+              z2 -= FLOAT_r_Earth;
+    
+              subFace[s][0] = x2;
+              subFace[s][1] = y2;
+              subFace[s][2] = z2;
+            }
+    
+  
+            if (target_window == TypeWindow.HTML) {
+  
+              htmlOutput.println("\t\t\t\t<shape>");
+  
+              if (n_Map != -1) {   
+                htmlOutput.println("\t\t\t\t\t<Appearance USE='EarthSphere" + nf(n_Map, 0) + "'></Appearance>");
+              }      
+              
+              htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
+              
+              htmlOutput.print  (" coordIndex='");
+              for (int s = 0; s < subFace.length; s++) {
+                if (s > 0) {
+                  htmlOutput.print(" ");
+                }         
+                htmlOutput.print(nf(s, 0));          
+              }
+              htmlOutput.println(" -1'>");
+              
+              htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+              for (int s = 0; s < subFace.length; s++) {
+                if (s > 0) {
+                  htmlOutput.print(",");
+                }                  
+                
+                htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+              }                
+              htmlOutput.println("'></Coordinate>");
+              
+            }
+  
+            if (target_window == TypeWindow.WIN3D) {
+              
+              WIN3D.graphics.strokeWeight(1);
+              
+              WIN3D.graphics.beginShape();
+      
+              WIN3D.graphics.noStroke();
+              
+              if (Display_EARTH_Texture) {
+      
+                WIN3D.graphics.texture(this.Map[n_Map]);
+              }            
+            }
+            
+            
+    
+            for (int s = 0; s < subFace.length; s++) {
+  
+              float x = subFace[s][0];
+              float y = subFace[s][1];
+              float z = subFace[s][2];
+              float u = subFace[s][3];
+              float v = subFace[s][4];
+              
+              if (u > 1) u = 1;
+              if (u < 0) u = 0;
+              if (v > 1) v = 1;
+              if (v < 0) v = 0;            
+    
+              if (target_window == TypeWindow.WIN3D) {
+        
+                WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * this.Map[n_Map].width, v * this.Map[n_Map].height);
+              }
+  
+              
+              if (target_window == TypeWindow.OBJ) {
+                if (_turn == 1) {
+                  SOLARCHVISION_OBJprintVertex(x, y, z);
+                }
+    
+                if (_turn == 2) {
+  
+                  v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+  
+                  SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                }
+    
+                if (_turn == 3) {
+                  obj_lastVertexNumber += 1;
+                  obj_lastVtextureNumber += 1;
+                }    
+              }
+             
+              if (target_window == TypeWindow.HTML) {
+                
+                if (n_Map != -1) {   
+                
+                  if (s == 0) {
+                    htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
+                  }
+                  if (s > 0) {
+                    htmlOutput.print(",");
+                  }                  
+  
+                  v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+                  SOLARCHVISION_HTMLprintVtexture(u, v);
+                  
+                  if (s == subFace.length - 1) {
+                    htmlOutput.println("'></TextureCoordinate>");
+                  }       
+                }              
+   
+              }
+              
+            }
+            
+            if (target_window == TypeWindow.HTML) {
+  
+              htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+              
+              htmlOutput.println("\t\t\t\t</shape>");
+  
+            }          
+            
+            if (target_window == TypeWindow.WIN3D) {
+              WIN3D.graphics.endShape(CLOSE);
+            }
+            
+            if (target_window == TypeWindow.OBJ) {
+              String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+              String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+              String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+              String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+    
+              String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+              String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+              String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+              String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+    
+              if (Export_PolyToPoly == 0) {
+                if (_turn == 3) {
+                  obj_lastGroupNumber += 1;
+                  objOutput.println("g EarthSphere_" + nf(f, 0));
+                }
+              } 
+    
+              if (_turn == 3) {
+                obj_lastFaceNumber += 1;            
+                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                if (Export_BackSides) {
+                  obj_lastFaceNumber += 1;
+                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                }
+              }          
+            }
+          }
         }
       }
-      
     }
+  }
+}
 
-    
-    num_vertices_added = 0;
+solarchvision_EARTH EARTH = new solarchvision_EARTH(); 
 
-    int end_turn = 1;
-    if (target_window == TypeWindow.OBJ) end_turn = 3;
-    for (int _turn = 1; _turn <= end_turn; _turn++) {
 
-      int f = 0;
+
+
+
+class solarchvision_MOON3D {
+  
+  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
+
+  PImage Map; 
+  
+  void load_images () {
+    Map = loadImage(Filename);
+  }  
+  
+  void draw () {
+    if (Display_MOON_Surface) {
+  
+      WIN3D.graphics.strokeWeight(1);
+  
+      float OffsetX = 0; 
+      float OffsetY = 0; 
+  
+      float ScaleX = 1; 
+      float ScaleY = 1; 
+  
+      float CEN_lon = 0; 
+      float CEN_lat = 0; 
+  
+      float delta_Alpha = -5;
+      float delta_Beta = -10;
+  
+      float r = 1737000.0 * Planetary_Magnification;
+      float d = 384400000.0 - FLOAT_r_Earth;
+  
       for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
         for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-          f += 1;
   
           float[][] subFace = new float [4][5];
   
@@ -23918,386 +24161,167 @@ void SOLARCHVISION_draw_EARTH (int target_window) {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Display_EARTH_Texture) {
+            if (Display_MOON_Texture) {
               // calculating u and v
-              subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
-              subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
+              subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
             }         
   
-            // rotating to location coordinates 
-            float tb = -STATION.getLongitude();
+            // rotating to location coordinates
+  
+  
+            float tb = 0;
             float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
             float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
             float z1 = z0;
   
-            float ta = 90 - STATION.getLatitude();
+            float ta = -90 - STATION.getLatitude();
             float x2 = x1;
             float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
             float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
   
-            // move it down!
-            z2 -= FLOAT_r_Earth;
+            // move it up here!
+            y2 += d * sin_ang(-STATION.getLatitude());      
+            z2 += d * cos_ang(-STATION.getLatitude());
   
             subFace[s][0] = x2;
             subFace[s][1] = y2;
             subFace[s][2] = z2;
           }
   
-
-          if (target_window == TypeWindow.HTML) {
-
-            htmlOutput.println("\t\t\t\t<shape>");
-
-            if (n_Map != -1) {   
-              htmlOutput.println("\t\t\t\t\t<Appearance USE='EarthSphere" + nf(n_Map, 0) + "'></Appearance>");
-            }      
-            
-            htmlOutput.print  ("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
-            
-            htmlOutput.print  (" coordIndex='");
-            for (int s = 0; s < subFace.length; s++) {
-              if (s > 0) {
-                htmlOutput.print(" ");
-              }         
-              htmlOutput.print(nf(s, 0));          
-            }
-            htmlOutput.println(" -1'>");
-            
-            htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-            for (int s = 0; s < subFace.length; s++) {
-              if (s > 0) {
-                htmlOutput.print(",");
-              }                  
-              
-              htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
-            }                
-            htmlOutput.println("'></Coordinate>");
-            
+          WIN3D.graphics.beginShape();
+  
+          WIN3D.graphics.noStroke();
+  
+          if (Display_MOON_Texture) {
+  
+            WIN3D.graphics.texture(this.Map);
           }
-
-          if (target_window == TypeWindow.WIN3D) {
-            
-            WIN3D.graphics.strokeWeight(1);
-            
-            WIN3D.graphics.beginShape();
-    
-            WIN3D.graphics.noStroke();
-            
-            if (Display_EARTH_Texture) {
-    
-              WIN3D.graphics.texture(EARTH_IMAGES_Map[n_Map]);
-            }            
-          }
-          
-          
   
           for (int s = 0; s < subFace.length; s++) {
-
-            float x = subFace[s][0];
-            float y = subFace[s][1];
-            float z = subFace[s][2];
-            float u = subFace[s][3];
-            float v = subFace[s][4];
-            
-            if (u > 1) u = 1;
-            if (u < 0) u = 0;
-            if (v > 1) v = 1;
-            if (v < 0) v = 0;            
   
-            if (target_window == TypeWindow.WIN3D) {
-      
-              WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * EARTH_IMAGES_Map[n_Map].width, v * EARTH_IMAGES_Map[n_Map].height);
-            }
-
-            
-            if (target_window == TypeWindow.OBJ) {
-              if (_turn == 1) {
-                SOLARCHVISION_OBJprintVertex(x, y, z);
-              }
-  
-              if (_turn == 2) {
-
-                v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-
-                SOLARCHVISION_OBJprintVtexture(u, v, 0);
-              }
-  
-              if (_turn == 3) {
-                obj_lastVertexNumber += 1;
-                obj_lastVtextureNumber += 1;
-              }    
-            }
-           
-            if (target_window == TypeWindow.HTML) {
-              
-              if (n_Map != -1) {   
-              
-                if (s == 0) {
-                  htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
-                }
-                if (s > 0) {
-                  htmlOutput.print(",");
-                }                  
-
-                v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-                SOLARCHVISION_HTMLprintVtexture(u, v);
-                
-                if (s == subFace.length - 1) {
-                  htmlOutput.println("'></TextureCoordinate>");
-                }       
-              }              
- 
-            }
-            
+            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
           }
-          
-          if (target_window == TypeWindow.HTML) {
-
-            htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-            
-            htmlOutput.println("\t\t\t\t</shape>");
-
-          }          
-          
-          if (target_window == TypeWindow.WIN3D) {
-            WIN3D.graphics.endShape(CLOSE);
-          }
-          
-          if (target_window == TypeWindow.OBJ) {
-            String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-            String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-            String n4_txt = nf(obj_lastVertexNumber - 0, 0);
   
-            String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-            String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-  
-            if (Export_PolyToPoly == 0) {
-              if (_turn == 3) {
-                obj_lastGroupNumber += 1;
-                objOutput.println("g EarthSphere_" + nf(f, 0));
-              }
-            } 
-  
-            if (_turn == 3) {
-              obj_lastFaceNumber += 1;            
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              if (Export_BackSides) {
-                obj_lastFaceNumber += 1;
-                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-              }
-            }          
-          }
+          WIN3D.graphics.endShape(CLOSE);
         }
       }
     }
   }
 }
 
+solarchvision_MOON3D MOON3D = new solarchvision_MOON3D();
 
 
-String MOON_IMAGE_Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
-
-PImage MOON_IMAGE_Map; 
-
-void SOLARCHVISION_draw_MOON3D () {
-  if (Display_MOON_Surface) {
-
-    WIN3D.graphics.strokeWeight(1);
-
-    float MOON_IMAGE_OffsetX = 0; 
-    float MOON_IMAGE_OffsetY = 0; 
-
-    float MOON_IMAGE_ScaleX = 1; 
-    float MOON_IMAGE_ScaleY = 1; 
-
-    float CEN_lon = 0; 
-    float CEN_lat = 0; 
-
-    float delta_Alpha = -5;
-    float delta_Beta = -10;
-
-    float r = 1737000.0 * Planetary_Magnification;
-    float d = 384400000.0 - FLOAT_r_Earth;
-
-    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-
-        float[][] subFace = new float [4][5];
-
-        for (int s = 0; s < 4; s++) {
-
-          float a = Alpha;
-          float b = Beta;
-
-          if ((s == 2) || (s == 3)) {
-            a += delta_Alpha;
-          }
-
-          if ((s == 1) || (s == 2)) {
-            b += delta_Beta;
-          }
-
-          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-          float y0 = r * sin_ang(b - 90) * cos_ang(a);
-          float z0 = r * sin_ang(a);
-
-          float _lon = b - CEN_lon;
-          float _lat = a - CEN_lat;
-
-          if (Display_MOON_Texture) {
-            // calculating u and v
-            subFace[s][3] = (_lon / MOON_IMAGE_ScaleX / 360.0 + 0.5); 
-            subFace[s][4] = (-_lat / MOON_IMAGE_ScaleY / 180.0 + 0.5);
-          }         
-
-          // rotating to location coordinates
-
-
-          float tb = 0;
-          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-          float z1 = z0;
-
-          float ta = -90 - STATION.getLatitude();
-          float x2 = x1;
-          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
-          // move it up here!
-          y2 += d * sin_ang(-STATION.getLatitude());      
-          z2 += d * cos_ang(-STATION.getLatitude());
-
-          subFace[s][0] = x2;
-          subFace[s][1] = y2;
-          subFace[s][2] = z2;
-        }
-
-        WIN3D.graphics.beginShape();
-
-        WIN3D.graphics.noStroke();
-
-        if (Display_MOON_Texture) {
-
-          WIN3D.graphics.texture(MOON_IMAGE_Map);
-        }
-
-        for (int s = 0; s < subFace.length; s++) {
-
-          WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * MOON_IMAGE_Map.width, subFace[s][4] * MOON_IMAGE_Map.height);
-        }
-
-        WIN3D.graphics.endShape(CLOSE);
-      }
-    }
+class solarchvision_STAR3D {
+  
+  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
+  
+  PImage Map;
+  
+  void load_images () {
+    Map = loadImage(Filename);
   }
-}
+  
+  void draw () {
+    if (Display_STAR_Surface) {
+  
+      WIN3D.graphics.strokeWeight(1);
 
+      float OffsetX = 0; 
+      float OffsetY = 0; 
+    
+      float ScaleX = 1; 
+      float ScaleY = 1;   
 
-String STAR_IMAGE_Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
-
-PImage STAR_IMAGE_Map;
-
-void SOLARCHVISION_draw_STAR3D () {
-  if (Display_STAR_Surface) {
-
-    WIN3D.graphics.strokeWeight(1);
-
-    float STAR_IMAGE_OffsetX = 0; 
-    float STAR_IMAGE_OffsetY = 0; 
-
-    float STAR_IMAGE_ScaleX = 1; 
-    float STAR_IMAGE_ScaleY = 1; 
-
-    float CEN_lon = 0; 
-    float CEN_lat = 0; 
-
-    float delta_Alpha = -5;
-    float delta_Beta = -10;
-
-    float r = 696.0 * Planetary_Magnification; // * 1000000; // multiply this later
-    float d = 150000.0; // * 1000000; // multiply this later 
-
-    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-
-        float[][] subFace = new float [4][5];
-
-        for (int s = 0; s < 4; s++) {
-
-          float a = Alpha;
-          float b = Beta;
-
-          if ((s == 2) || (s == 3)) {
-            a += delta_Alpha;
+      float CEN_lon = 0; 
+      float CEN_lat = 0; 
+  
+      float delta_Alpha = -5;
+      float delta_Beta = -10;
+  
+      float r = 696.0 * Planetary_Magnification; // * 1000000; // multiply this later
+      float d = 150000.0; // * 1000000; // multiply this later 
+  
+      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+  
+          float[][] subFace = new float [4][5];
+  
+          for (int s = 0; s < 4; s++) {
+  
+            float a = Alpha;
+            float b = Beta;
+  
+            if ((s == 2) || (s == 3)) {
+              a += delta_Alpha;
+            }
+  
+            if ((s == 1) || (s == 2)) {
+              b += delta_Beta;
+            }
+  
+            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+            float y0 = r * sin_ang(b - 90) * cos_ang(a);
+            float z0 = r * sin_ang(a);
+  
+            float _lon = b - CEN_lon;
+            float _lat = a - CEN_lat;
+  
+            if (Display_STAR_Texture) {
+              // calculating u and v
+              subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
+            }         
+  
+            // rotating to location coordinates
+  
+            float tb = 0;
+            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float z1 = z0;
+  
+            float ta = -90 - STATION.getLatitude();
+            float x2 = x1;
+            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+            // scale it here!
+            x2 *= 1000000.0;
+            y2 *= 1000000.0;
+            z2 *= 1000000.0;
+  
+            // move it to scale here!
+            y2 += 1000000.0 * d * sin_ang(-STATION.getLatitude());      
+            z2 += 1000000.0 * d * cos_ang(-STATION.getLatitude());
+  
+            subFace[s][0] = x2;
+            subFace[s][1] = y2;
+            subFace[s][2] = z2;
           }
-
-          if ((s == 1) || (s == 2)) {
-            b += delta_Beta;
-          }
-
-          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-          float y0 = r * sin_ang(b - 90) * cos_ang(a);
-          float z0 = r * sin_ang(a);
-
-          float _lon = b - CEN_lon;
-          float _lat = a - CEN_lat;
-
+  
+          WIN3D.graphics.beginShape();
+  
+          WIN3D.graphics.noStroke();
+  
           if (Display_STAR_Texture) {
-            // calculating u and v
-            subFace[s][3] = (_lon / STAR_IMAGE_ScaleX / 360.0 + 0.5); 
-            subFace[s][4] = (-_lat / STAR_IMAGE_ScaleY / 180.0 + 0.5);
-          }         
-
-          // rotating to location coordinates
-
-          float tb = 0;
-          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-          float z1 = z0;
-
-          float ta = -90 - STATION.getLatitude();
-          float x2 = x1;
-          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
-          // scale it here!
-          x2 *= 1000000.0;
-          y2 *= 1000000.0;
-          z2 *= 1000000.0;
-
-          // move it to scale here!
-          y2 += 1000000.0 * d * sin_ang(-STATION.getLatitude());      
-          z2 += 1000000.0 * d * cos_ang(-STATION.getLatitude());
-
-          subFace[s][0] = x2;
-          subFace[s][1] = y2;
-          subFace[s][2] = z2;
+  
+            WIN3D.graphics.texture(this.Map);
+          }
+  
+          for (int s = 0; s < subFace.length; s++) {
+  
+            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
+          }
+  
+          WIN3D.graphics.endShape(CLOSE);
         }
-
-        WIN3D.graphics.beginShape();
-
-        WIN3D.graphics.noStroke();
-
-        if (Display_STAR_Texture) {
-
-          WIN3D.graphics.texture(STAR_IMAGE_Map);
-        }
-
-        for (int s = 0; s < subFace.length; s++) {
-
-          WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * STAR_IMAGE_Map.width, subFace[s][4] * STAR_IMAGE_Map.height);
-        }
-
-        WIN3D.graphics.endShape(CLOSE);
       }
     }
   }
 }
 
-
+solarchvision_STAR3D STAR3D = new solarchvision_STAR3D();
 
 
 
