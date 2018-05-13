@@ -8,12 +8,12 @@ final int Language_FR = 1;
 int Language_Active = Language_EN;
 
 
-float FLOAT_huge = 1000000000;
-float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
+final float FLOAT_huge = 1000000000;
+final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
 
-String STRING_undefined = "N/A";
-float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
-float FLOAT_max_defined = 0.95 * FLOAT_undefined;
+final String STRING_undefined = "N/A";
+final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
+final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
 
 boolean is_undefined_FLOAT (float a) {
   boolean b = false;
@@ -1916,17 +1916,25 @@ class solarchvision_DATATYPE {
 solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
 
 
+class solarchvision_SHADETYPE {
+  
+  private final static String CLASS_STAMP = "SHADETYPE";
 
-int Shade_Surface_Wire = -1;
-int Shade_Surface_Base = 0;
-int Shade_Surface_White = 1;
-int Shade_Surface_Materials = 2;
-int Shade_Global_Solar = 3;
-int Shade_Vertex_Solar = 4;
-int Shade_Vertex_Solid = 5;
-int Shade_Vertex_Elevation = 6;
+  private final static int Surface_Wire = -1;
+  private final static int Surface_Base = 0;
+  private final static int Surface_White = 1;
+  private final static int Surface_Materials = 2;
+  private final static int Global_Solar = 3;
+  private final static int Vertex_Solar = 4;
+  private final static int Vertex_Solid = 5;
+  private final static int Vertex_Elevation = 6;
+  
+  private final static int Options_num = 7;
+}  
 
-int Shade_Options_num = 7;
+solarchvision_SHADETYPE ShadeType = new solarchvision_SHADETYPE();
+
+
 
 
 
@@ -1985,7 +1993,7 @@ class solarchvision_WIN3D {
   int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. Fractals  
 
 
-  int FacesShade = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
+  int FacesShade = ShadeType.Surface_Materials; //Shade_Surface_White; // <<<<<
   
 
   PGraphics graphics;
@@ -2243,7 +2251,7 @@ class solarchvision_WIN3D {
     int PAL_DIR = 1;
     float PAL_Multiplier = 1; 
   
-    if ((this.FacesShade == Shade_Global_Solar) || (this.FacesShade == Shade_Vertex_Solar)) {
+    if ((this.FacesShade == ShadeType.Global_Solar) || (this.FacesShade == ShadeType.Vertex_Solar)) {
   
       if (Impact_TYPE == Impact_ACTIVE) {
         PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
@@ -2259,7 +2267,7 @@ class solarchvision_WIN3D {
       draw_pal = 1;
     }
   
-    if (this.FacesShade == Shade_Vertex_Elevation) {
+    if (this.FacesShade == ShadeType.Vertex_Elevation) {
   
       PAL_TYPE = ELEVATION_Pallet_CLR; 
       PAL_DIR = ELEVATION_Pallet_DIR; 
@@ -2268,7 +2276,7 @@ class solarchvision_WIN3D {
       draw_pal = 1;
     }
   
-    if (this.FacesShade == Shade_Vertex_Solid) {
+    if (this.FacesShade == ShadeType.Vertex_Solid) {
   
       PAL_TYPE = SOLID_Pallet_CLR; 
       PAL_DIR = SOLID_Pallet_DIR;
@@ -2334,7 +2342,7 @@ class solarchvision_WIN3D {
   
         float _u = 0.2 * q - 0.5;
   
-        if ((this.FacesShade == Shade_Global_Solar) || (this.FacesShade == Shade_Vertex_Solar)) {
+        if ((this.FacesShade == ShadeType.Global_Solar) || (this.FacesShade == ShadeType.Vertex_Solar)) {
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
           if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
         }
@@ -2370,16 +2378,16 @@ class solarchvision_WIN3D {
         this.graphics.textSize(txtSize);
         this.graphics.textAlign(CENTER, CENTER);
   
-        if ((this.FacesShade == Shade_Global_Solar) || (this.FacesShade == Shade_Vertex_Solar)) {
+        if ((this.FacesShade == ShadeType.Global_Solar) || (this.FacesShade == ShadeType.Vertex_Solar)) {
           if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
           if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
   
-        if (this.FacesShade == Shade_Vertex_Elevation) {
+        if (this.FacesShade == ShadeType.Vertex_Elevation) {
           this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
   
-        if (this.FacesShade == Shade_Vertex_Solid) {
+        if (this.FacesShade == ShadeType.Vertex_Solid) {
           this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
       }
@@ -2956,8 +2964,8 @@ class solarchvision_WIN3D {
   
   
         case ENTER: 
-          if (this.FacesShade == Shade_Global_Solar) rebuild_GlobalSolar_array = 1;   
-          if (this.FacesShade == Shade_Vertex_Solar) rebuild_VertexSolar_array = 1;
+          if (this.FacesShade == ShadeType.Global_Solar) rebuild_GlobalSolar_array = 1;   
+          if (this.FacesShade == ShadeType.Vertex_Solar) rebuild_VertexSolar_array = 1;
           this.update = true;
           ROLLOUT.update = true;  
           break;                  
@@ -6258,7 +6266,7 @@ class solarchvision_ROLLOUT {
         WIN3D.CAM_clipNear = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
         WIN3D.CAM_clipFar = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
   
-        //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, Shade_Options_num - 1, 1), 1));
+        //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, ShadeType.Options_num - 1, 1), 1));
   
         //MODEL3D_DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayVertices", MODEL3D_DisplayVertices, 0, 1, 1), 1));
         //MODEL3D_DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MODEL3D_DisplayEdges", MODEL3D_DisplayEdges, 0, 1, 1), 1));
@@ -8728,10 +8736,10 @@ void draw () {
 
 void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
-  if (WIN3D.FacesShade == Shade_Global_Solar) {
+  if (WIN3D.FacesShade == ShadeType.Global_Solar) {
     rebuild_GlobalSolar_array = 1;
   }
-  if (WIN3D.FacesShade == Shade_Vertex_Solar) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Solar) {
     rebuild_VertexSolar_array = 1;
   }  
   if (Display_SolarImpactImage) {
@@ -12085,7 +12093,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                       if (_turn == 2) { 
                         float u1 = 0.5 * (_u + 0.5);
 
-                        if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+                        if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
                           if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
                         }
 
@@ -20260,7 +20268,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
     int Create_Face_Texture = 0;
 
-    if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solid) || (WIN3D.FacesShade == Shade_Vertex_Elevation)) {
+    if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solid) || (WIN3D.FacesShade == ShadeType.Vertex_Elevation)) {
       Create_Face_Texture = 1;
     }    
     
@@ -20329,7 +20337,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
           float _u = 0.5 + _val;
 
-          if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+          if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
             if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
           }            
 
@@ -20436,7 +20444,7 @@ void SOLARCHVISION_export_objects_HTML () {
                     float _u = 0;
       
         
-                    if (WIN3D.FacesShade == Shade_Global_Solar) {
+                    if (WIN3D.FacesShade == ShadeType.Global_Solar) {
                       int s_next = (s + 1) % subFace.length;
                       int s_prev = (s + subFace.length - 1) % subFace.length;
         
@@ -20449,17 +20457,17 @@ void SOLARCHVISION_export_objects_HTML () {
                       _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }
         
-                    if (WIN3D.FacesShade == Shade_Vertex_Solar) {
+                    if (WIN3D.FacesShade == ShadeType.Vertex_Solar) {
                       
                       _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }                            
         
-                    if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+                    if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
         
                       _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }                  
         
-                    if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+                    if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
         
                       _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }
@@ -20467,7 +20475,7 @@ void SOLARCHVISION_export_objects_HTML () {
         
                     float u0 = 0.5 * (_u + 0.5);
         
-                    if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+                    if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
                       if (Impact_TYPE == Impact_ACTIVE) {
                         u0 = _u;
                       }
@@ -20629,7 +20637,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     int Create_Face_Texture = 0;
 
-    if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solid) || (WIN3D.FacesShade == Shade_Vertex_Elevation)) {
+    if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solid) || (WIN3D.FacesShade == ShadeType.Vertex_Elevation)) {
       Create_Face_Texture = 1;
     }
 
@@ -20820,7 +20828,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
           float _u = 0.5 + _val;
 
-          if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+          if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
             if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
           }            
 
@@ -20966,7 +20974,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                       float _u = 0;
 
-                      if (WIN3D.FacesShade == Shade_Global_Solar) {
+                      if (WIN3D.FacesShade == ShadeType.Global_Solar) {
                         int s_next = (s + 1) % subFace.length;
                         int s_prev = (s + subFace.length - 1) % subFace.length;
 
@@ -20979,17 +20987,17 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                         _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                       }
         
-                      if (WIN3D.FacesShade == Shade_Vertex_Solar) {
+                      if (WIN3D.FacesShade == ShadeType.Vertex_Solar) {
                         
                         _u = SOLARCHVISION_vertexU_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                       }                            
 
-                      if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+                      if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
 
                         _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                       }                  
 
-                      if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+                      if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
 
                         _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                       }
@@ -20997,7 +21005,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                       float u0 = 0.5 * (_u + 0.5);
 
-                      if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+                      if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
                         if (Impact_TYPE == Impact_ACTIVE) {
                           u0 = _u;
                         }
@@ -21315,7 +21323,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   if (SKY3D.Display_Surface) {
 
-    if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+    if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
 
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
@@ -21446,7 +21454,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               if (_turn == 2) { 
                 float u1 = 0.5 * (_u + 0.5);
 
-                if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) { 
+                if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) { 
                   if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
                 }
 
@@ -23215,7 +23223,7 @@ class solarchvision_SKY3D {
   
     if (this.Display_Surface) {
   
-      if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+      if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
   
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
@@ -23279,7 +23287,7 @@ class solarchvision_SKY3D {
   
         WIN3D.graphics.noStroke();
   
-        if (WIN3D.FacesShade == Shade_Surface_Materials) {
+        if (WIN3D.FacesShade == ShadeType.Surface_Materials) {
           WIN3D.graphics.fill(c);
           //WIN3D.graphics.noFill();
         } else {
@@ -24378,7 +24386,7 @@ class solarchvision_LAND3D {
   
   
         int Tessellation = this.Tessellation;
-        if (WIN3D.FacesShade == Shade_Surface_Base) {
+        if (WIN3D.FacesShade == ShadeType.Surface_Base) {
           Tessellation = 0;
         }
   
@@ -24537,39 +24545,39 @@ class solarchvision_LAND3D {
   
                 if (this.Display_Textures == false) {
   
-                  if (WIN3D.FacesShade != Shade_Surface_Wire) {
+                  if (WIN3D.FacesShade != ShadeType.Surface_Wire) {
   
                     float[] COL = {
                       255, 255, 255, 255
                     };
   
-                    if (WIN3D.FacesShade == Shade_Global_Solar) {
+                    if (WIN3D.FacesShade == ShadeType.Global_Solar) {
                       int s_next = (s + 1) % subFace.length;
                       int s_prev = (s + subFace.length - 1) % subFace.length;
   
                       COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }
   
-                    if (WIN3D.FacesShade == Shade_Vertex_Solar) {
+                    if (WIN3D.FacesShade == ShadeType.Vertex_Solar) {
   
                       COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }  
                     
-                    if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+                    if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
   
                       COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }      
         
-                    if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+                    if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
   
                       COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }   
   
-                    if (WIN3D.FacesShade == Shade_Surface_White) {
+                    if (WIN3D.FacesShade == ShadeType.Surface_White) {
                       COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
                     }                   
   
-                    if (WIN3D.FacesShade == Shade_Surface_Materials) {
+                    if (WIN3D.FacesShade == ShadeType.Surface_Materials) {
                       //COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
                       COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
                     }    
@@ -25566,7 +25574,7 @@ class solarchvision_OBJECTS2D {
     };
   
     int Tessellation = LAND3D.Tessellation;
-    if (WIN3D.FacesShade == Shade_Surface_Base) {
+    if (WIN3D.FacesShade == ShadeType.Surface_Base) {
       Tessellation = 0;
     }
   
@@ -26987,16 +26995,16 @@ int SOLARCHVISION_getShader_PAL_TYPE () {
 
   int PAL_TYPE = 0; 
 
-  if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+  if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
     if (Impact_TYPE == Impact_ACTIVE) PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR;
     if (Impact_TYPE == Impact_PASSIVE) PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR;
   }          
 
-  if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
     PAL_TYPE = SOLID_Pallet_CLR;
   }                  
 
-  if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
     PAL_TYPE = ELEVATION_Pallet_CLR;
   }  
 
@@ -27008,16 +27016,16 @@ int SOLARCHVISION_getShader_PAL_DIR () {
 
   int PAL_DIR = 1;
 
-  if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+  if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
     if (Impact_TYPE == Impact_ACTIVE) PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
     if (Impact_TYPE == Impact_PASSIVE) PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
   }              
 
-  if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
     PAL_DIR = SOLID_Pallet_DIR;
   }                  
 
-  if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
     PAL_DIR = ELEVATION_Pallet_DIR;
   }  
 
@@ -27029,16 +27037,16 @@ float SOLARCHVISION_getShader_PAL_Multiplier () {
 
   float PAL_Multiplier = 1; 
 
-  if ((WIN3D.FacesShade == Shade_Global_Solar) || (WIN3D.FacesShade == Shade_Vertex_Solar)) {
+  if ((WIN3D.FacesShade == ShadeType.Global_Solar) || (WIN3D.FacesShade == ShadeType.Vertex_Solar)) {
     if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
     if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
   }              
 
-  if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
     PAL_Multiplier = SOLID_Pallet_MLT;
   }                  
 
-  if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+  if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
     PAL_Multiplier = ELEVATION_Pallet_MLT;
   }
 
@@ -27144,7 +27152,7 @@ void SOLARCHVISION_draw_Faces () {
 
       if (vsb > 0) {        
 
-        if (WIN3D.FacesShade == Shade_Surface_Base) {
+        if (WIN3D.FacesShade == ShadeType.Surface_Base) {
 
           WIN3D.graphics.fill(255, 255, 255);
 
@@ -27185,39 +27193,39 @@ void SOLARCHVISION_draw_Faces () {
 
             for (int s = 0; s < subFace.length; s++) {
 
-              if (WIN3D.FacesShade != Shade_Surface_Wire) {
+              if (WIN3D.FacesShade != ShadeType.Surface_Wire) {
 
                 float[] COL = {
                   255, 255, 255, 255
                 };
 
-                if (WIN3D.FacesShade == Shade_Global_Solar) {
+                if (WIN3D.FacesShade == ShadeType.Global_Solar) {
                   int s_next = (s + 1) % subFace.length;
                   int s_prev = (s + subFace.length - 1) % subFace.length;
                   
                   COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }        
           
-                if (WIN3D.FacesShade == Shade_Vertex_Solar) {
+                if (WIN3D.FacesShade == ShadeType.Vertex_Solar) {
 
                   COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }                   
 
-                if (WIN3D.FacesShade == Shade_Vertex_Solid) {
+                if (WIN3D.FacesShade == ShadeType.Vertex_Solid) {
 
                   COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }
 
-                if (WIN3D.FacesShade == Shade_Vertex_Elevation) {
+                if (WIN3D.FacesShade == ShadeType.Vertex_Elevation) {
 
                   COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }
 
-                if (WIN3D.FacesShade == Shade_Surface_Materials) {
+                if (WIN3D.FacesShade == ShadeType.Surface_Materials) {
                   COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
                 }              
 
-                if (WIN3D.FacesShade == Shade_Surface_White) {
+                if (WIN3D.FacesShade == ShadeType.Surface_White) {
                   COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
                 }
            
@@ -35369,37 +35377,37 @@ void mouseClicked () {
 
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Wire")) {
-              WIN3D.FacesShade = Shade_Surface_Wire;
+              WIN3D.FacesShade = ShadeType.Surface_Wire;
               MODEL3D_DisplayEdges = true; //<<<<<<<<<<<<<<<
 
               WIN3D.update = true;  
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Base")) {
-              WIN3D.FacesShade = Shade_Surface_Base;
+              WIN3D.FacesShade = ShadeType.Surface_Base;
               WIN3D.update = true;  
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface White")) {
-              WIN3D.FacesShade = Shade_Surface_White;
+              WIN3D.FacesShade = ShadeType.Surface_White;
               WIN3D.update = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Materials")) {
-              WIN3D.FacesShade = Shade_Surface_Materials;
+              WIN3D.FacesShade = ShadeType.Surface_Materials;
               WIN3D.update = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Global Solar")) {
-              WIN3D.FacesShade = Shade_Global_Solar;
+              WIN3D.FacesShade = ShadeType.Global_Solar;
               WIN3D.update = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Solar")) {
-              WIN3D.FacesShade = Shade_Vertex_Solar;
+              WIN3D.FacesShade = ShadeType.Vertex_Solar;
               WIN3D.update = true;  
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Solid")) {
-              WIN3D.FacesShade = Shade_Vertex_Solid;
+              WIN3D.FacesShade = ShadeType.Vertex_Solid;
               WIN3D.update = true;  
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Vertex Elevation")) {
-              WIN3D.FacesShade = Shade_Vertex_Elevation;
+              WIN3D.FacesShade = ShadeType.Vertex_Elevation;
               WIN3D.update = true;  
             }      
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Render Viewport")) {
@@ -40516,7 +40524,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             if (LAND3D.Display_Surface) {
               
               int Tessellation = LAND3D.Tessellation;
-              if (WIN3D.FacesShade == Shade_Surface_Base) {
+              if (WIN3D.FacesShade == ShadeType.Surface_Base) {
                 Tessellation = 0;
               }
         
@@ -41129,7 +41137,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           if (LAND3D.Display_Surface) {
             
             int Tessellation = LAND3D.Tessellation;
-            if (WIN3D.FacesShade == Shade_Surface_Base) {
+            if (WIN3D.FacesShade == ShadeType.Surface_Base) {
               Tessellation = 0;
             }
       
@@ -49157,14 +49165,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("STUDY.Pix", STUDY.Pix);
   newChild1.setInt("STUDY.plotSetup", STUDY.plotSetup);
   newChild1.setInt("Materials_Selection", Materials_Selection);
-  newChild1.setInt("Shade_Surface_Wire", Shade_Surface_Wire);
-  newChild1.setInt("Shade_Surface_Base", Shade_Surface_Base);
-  newChild1.setInt("Shade_Surface_White", Shade_Surface_White);
-  newChild1.setInt("Shade_Surface_Materials", Shade_Surface_Materials);
-  newChild1.setInt("Shade_Global_Solar", Shade_Global_Solar);
-  newChild1.setInt("Shade_Vertex_Solar", Shade_Vertex_Solar);
-  newChild1.setInt("Shade_Vertex_Solid", Shade_Vertex_Solid);
-  newChild1.setInt("Shade_Vertex_Elevation", Shade_Vertex_Elevation);
   newChild1.setFloat("WIN3D.CAM_x", WIN3D.CAM_x);
   newChild1.setFloat("WIN3D.CAM_y", WIN3D.CAM_y);
   newChild1.setFloat("WIN3D.CAM_z", WIN3D.CAM_z);
@@ -50291,14 +50291,6 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.Pix = children0[L].getFloat("STUDY.Pix");
       STUDY.plotSetup = children0[L].getInt("STUDY.plotSetup");
       Materials_Selection = children0[L].getInt("Materials_Selection");
-      Shade_Surface_Wire = children0[L].getInt("Shade_Surface_Wire");
-      Shade_Surface_Base = children0[L].getInt("Shade_Surface_Base");
-      Shade_Surface_White = children0[L].getInt("Shade_Surface_White");
-      Shade_Surface_Materials = children0[L].getInt("Shade_Surface_Materials");
-      Shade_Global_Solar = children0[L].getInt("Shade_Global_Solar");
-      Shade_Vertex_Solar = children0[L].getInt("Shade_Vertex_Solar");
-      Shade_Vertex_Solid = children0[L].getInt("Shade_Vertex_Solid");
-      Shade_Vertex_Elevation = children0[L].getInt("Shade_Vertex_Elevation");
       WIN3D.CAM_x = children0[L].getFloat("WIN3D.CAM_x");
       WIN3D.CAM_y = children0[L].getFloat("WIN3D.CAM_y");
       WIN3D.CAM_z = children0[L].getFloat("WIN3D.CAM_z");
@@ -53730,36 +53722,36 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   
 
   else if (Command_CAPITAL.equals("SHADE.WIRE")) {
-    WIN3D.FacesShade = Shade_Surface_Wire;
+    WIN3D.FacesShade = ShadeType.Surface_Wire;
     MODEL3D_DisplayEdges = true; //<<<<<<<<<<<<<<<
     WIN3D.update = true;  
   }       
   else if (Command_CAPITAL.equals("SHADE.BASE")) {
-    WIN3D.FacesShade = Shade_Surface_Base;
+    WIN3D.FacesShade = ShadeType.Surface_Base;
     WIN3D.update = true;  
   }           
   else if (Command_CAPITAL.equals("SHADE.WHITE")) {
-    WIN3D.FacesShade = Shade_Surface_White;
+    WIN3D.FacesShade = ShadeType.Surface_White;
     WIN3D.update = true;  
   } 
   else if (Command_CAPITAL.equals("SHADE.MATERIALS")) {
-    WIN3D.FacesShade = Shade_Surface_Materials;
+    WIN3D.FacesShade = ShadeType.Surface_Materials;
     WIN3D.update = true;  
   } 
   else if (Command_CAPITAL.equals("SHADE.GLOBAL")) {
-    WIN3D.FacesShade = Shade_Global_Solar;
+    WIN3D.FacesShade = ShadeType.Global_Solar;
     WIN3D.update = true;  
   } 
   else if (Command_CAPITAL.equals("SHADE.REAL")) {
-    WIN3D.FacesShade = Shade_Vertex_Solar;
+    WIN3D.FacesShade = ShadeType.Vertex_Solar;
     WIN3D.update = true;  
   }           
   else if (Command_CAPITAL.equals("SHADE.SOLID")) {
-    WIN3D.FacesShade = Shade_Vertex_Solid;
+    WIN3D.FacesShade = ShadeType.Vertex_Solid;
     WIN3D.update = true;  
   }           
   else if (Command_CAPITAL.equals("SHADE.ELEVATION")) {
-    WIN3D.FacesShade = Shade_Vertex_Elevation;
+    WIN3D.FacesShade = ShadeType.Vertex_Elevation;
     WIN3D.update = true;  
   }      
   else if (Command_CAPITAL.equals("RENDER.VIEWPORT")) {
