@@ -2243,7 +2243,7 @@ class solarchvision_WIN3D {
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
   
-                float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
+                float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
   
                 this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
                 this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
@@ -2309,7 +2309,7 @@ class solarchvision_WIN3D {
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
   
-                float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
+                float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
   
                 this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
                 //this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
@@ -2479,7 +2479,7 @@ class solarchvision_WIN3D {
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
   
-        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u); 
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u); 
   
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -3346,7 +3346,7 @@ class solarchvision_WORLD {
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
   
-                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
+                  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
   
                   if (_turn == 1) {
                     this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -3421,7 +3421,7 @@ class solarchvision_WORLD {
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
   
-                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);             
+                  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
   
                   if (_turn == 1) {
                     this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -4710,7 +4710,7 @@ class solarchvision_STUDY {
             if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
             if (PAL_DIR == 2) _u =  0.5 * _u;
   
-            float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+            float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
@@ -4750,7 +4750,7 @@ class solarchvision_STUDY {
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
   
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);     
   
@@ -4812,7 +4812,7 @@ class solarchvision_STUDY {
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
   
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
   
@@ -4851,7 +4851,7 @@ class solarchvision_STUDY {
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
   
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);     
   
@@ -5162,7 +5162,7 @@ class solarchvision_STUDY {
             _valuesSUM[(k * this.JoinDays + j_ADD)] = 0;
             _valuesNUM[(k * this.JoinDays + j_ADD)] = 1;
   
-            float[] COL = SOLARCHVISION_GET_COLOR_STYLE(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
+            float[] COL = PAINT.getColorStyle(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
@@ -9623,145 +9623,147 @@ class solarchvision_PAINT {
     return COL;
   }
     
+    
+  float[] getColorStyle (int COLOR_STYLE_Current, float j) {
+    float[] c = {
+      255, 0, 0, 0
+    };
+  
+    if (COLOR_STYLE_Current == 0) {
+      c[0] = SOLARCHVISION_getOpacity(STUDY.O_scale);
+      c[1] = 0;
+      c[2] = 0;
+      c[3] = 0;
+    } else if (COLOR_STYLE_Current == 19) {
+      float[] COL = this.DWYR(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 18) {
+      float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
+      c[0] = 255;
+      c[1] = COL[3];
+      c[2] = COL[2];
+      c[3] = COL[1];
+    } else if (COLOR_STYLE_Current == 17) {
+      float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
+      c[0] = 255;
+      c[1] = 255 - COL[3];
+      c[2] = 255 - COL[2];
+      c[3] = 255 - COL[1];
+    } else if (COLOR_STYLE_Current == 16) {
+      float[] COL = this.DBCW(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 15) {
+      float[] COL = this.DRYW(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 14) {
+      float[] COL = this.DBGR(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 13) {
+      float[] COL = this.DWBGR(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 12) {
+      float[] COL = this.BGR(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 11) {
+      float[] COL = this.BGR(j);
+      c[0] = 127;
+      c[1] = 255 - 0.5 * COL[1];
+      c[2] = 255 - 0.5 * COL[2];
+      c[3] = 255 - 0.5 * COL[3];
+    } else if (COLOR_STYLE_Current == 10) {
+      float[] COL = this.BGR(j);
+      c[0] = 255;
+      c[1] = 255 - COL[1];
+      c[2] = 255 - COL[2];
+      c[3] = 255 - COL[3];
+    } else if (COLOR_STYLE_Current == 9) {
+      float[] COL = this.WBGRW(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 8) {
+      float[] COL = this.BGR(j);
+      c[0] = 255;
+      c[1] = 255 - COL[1];
+      c[2] = 255 - COL[2];
+      c[3] = 255 - COL[3];
+    } else if (COLOR_STYLE_Current == 7) {
+      float[] COL = this.WBGRW(j);
+      c[0] = 255;
+      c[1] = 255 - COL[1];
+      c[2] = 255 - COL[2];
+      c[3] = 255 - COL[3];
+    } else if (COLOR_STYLE_Current == 6) {
+      float[] COL = this.BGR(j);
+      c[0] = 255;
+      c[1] = COL[3];
+      c[2] = COL[2];
+      c[3] = COL[1];
+    } else if (COLOR_STYLE_Current == 4) {
+      float[] COL = this.VDWBGR(j);
+      c[0] = STUDY.O_scale;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 3) {
+      float[] COL = this.VDWBGR(j);
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 2) {
+      float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
+      c[0] = STUDY.O_scale;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 1) {
+      float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
+      c[0] = 255;
+      c[1] = COL[1];
+      c[2] = COL[2];
+      c[3] = COL[3];
+    } else if (COLOR_STYLE_Current == 5) {
+      c[0] = 255;
+      c[1] = 0;
+      c[2] = 0;
+      c[3] = 0;
+    } else if (COLOR_STYLE_Current == -1) {
+      float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
+      c[0] = 255;
+      c[1] = 255 - COL[3];
+      c[2] = 255 - COL[2];
+      c[3] = 255 - COL[1];
+    } 
+  
+  
+    return c;
+  }    
 }
 
 solarchvision_PAINT PAINT = new solarchvision_PAINT();
 
 
-float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Current, float j) {
-  float[] c = {
-    255, 0, 0, 0
-  };
 
-  if (COLOR_STYLE_Current == 0) {
-    c[0] = SOLARCHVISION_getOpacity(STUDY.O_scale);
-    c[1] = 0;
-    c[2] = 0;
-    c[3] = 0;
-  } else if (COLOR_STYLE_Current == 19) {
-    float[] COL = PAINT.DWYR(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 18) {
-    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
-    c[0] = 255;
-    c[1] = COL[3];
-    c[2] = COL[2];
-    c[3] = COL[1];
-  } else if (COLOR_STYLE_Current == 17) {
-    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
-    c[0] = 255;
-    c[1] = 255 - COL[3];
-    c[2] = 255 - COL[2];
-    c[3] = 255 - COL[1];
-  } else if (COLOR_STYLE_Current == 16) {
-    float[] COL = PAINT.DBCW(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 15) {
-    float[] COL = PAINT.DRYW(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 14) {
-    float[] COL = PAINT.DBGR(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 13) {
-    float[] COL = PAINT.DWBGR(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 12) {
-    float[] COL = PAINT.BGR(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 11) {
-    float[] COL = PAINT.BGR(j);
-    c[0] = 127;
-    c[1] = 255 - 0.5 * COL[1];
-    c[2] = 255 - 0.5 * COL[2];
-    c[3] = 255 - 0.5 * COL[3];
-  } else if (COLOR_STYLE_Current == 10) {
-    float[] COL = PAINT.BGR(j);
-    c[0] = 255;
-    c[1] = 255 - COL[1];
-    c[2] = 255 - COL[2];
-    c[3] = 255 - COL[3];
-  } else if (COLOR_STYLE_Current == 9) {
-    float[] COL = PAINT.WBGRW(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 8) {
-    float[] COL = PAINT.BGR(j);
-    c[0] = 255;
-    c[1] = 255 - COL[1];
-    c[2] = 255 - COL[2];
-    c[3] = 255 - COL[3];
-  } else if (COLOR_STYLE_Current == 7) {
-    float[] COL = PAINT.WBGRW(j);
-    c[0] = 255;
-    c[1] = 255 - COL[1];
-    c[2] = 255 - COL[2];
-    c[3] = 255 - COL[3];
-  } else if (COLOR_STYLE_Current == 6) {
-    float[] COL = PAINT.BGR(j);
-    c[0] = 255;
-    c[1] = COL[3];
-    c[2] = COL[2];
-    c[3] = COL[1];
-  } else if (COLOR_STYLE_Current == 4) {
-    float[] COL = PAINT.VDWBGR(j);
-    c[0] = STUDY.O_scale;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 3) {
-    float[] COL = PAINT.VDWBGR(j);
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 2) {
-    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
-    c[0] = STUDY.O_scale;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 1) {
-    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
-    c[0] = 255;
-    c[1] = COL[1];
-    c[2] = COL[2];
-    c[3] = COL[3];
-  } else if (COLOR_STYLE_Current == 5) {
-    c[0] = 255;
-    c[1] = 0;
-    c[2] = 0;
-    c[3] = 0;
-  } else if (COLOR_STYLE_Current == -1) {
-    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
-    c[0] = 255;
-    c[1] = 255 - COL[3];
-    c[2] = 255 - COL[2];
-    c[3] = 255 - COL[1];
-  } 
-
-
-  return c;
-}
 
 
 void SOLARCHVISION_Calendar () {
@@ -10264,7 +10266,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
 
-                      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
 
                       WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
@@ -10377,7 +10379,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
 
-                      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
                       total_WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
                       total_WIND_graphics.strokeWeight(STUDY.T_scale * 2);
@@ -10444,7 +10446,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
 
-        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
         STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
         STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);         
 
@@ -10646,7 +10648,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
 
-        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
         STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
         STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);         
 
@@ -10919,8 +10921,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
 
-                  //float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+                  //float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+                  float[] COL = PAINT.getColorStyle(PAL_TYPE, roundTo(_u, 0.1));
                   STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                   STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -11003,8 +11005,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
 
-              //float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
-              float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+              //float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+              float[] COL = PAINT.getColorStyle(PAL_TYPE, roundTo(_u, 0.1));
               STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
               STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);               
 
@@ -11083,7 +11085,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
 
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
       STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
 
@@ -11283,7 +11285,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                     if (PAL_DIR == 2) _u =  0.5 * _u;
 
-                    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+                    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
                     STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                     STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);                     
 
@@ -11357,7 +11359,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
 
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
       STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
 
@@ -11724,7 +11726,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
 
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
       STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
 
@@ -11900,7 +11902,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
 
-        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
 
         Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
       }
@@ -12166,7 +12168,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                     if (PAL_DIR == 2) _u =  0.5 * _u;
 
-                    float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+                    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
 
                     float r = sx_Plot;
 
@@ -12699,7 +12701,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
 
-                  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);    
+                  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);    
 
                   WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
                   WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -20361,7 +20363,7 @@ void SOLARCHVISION_export_objects_HTML () {
             if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
           }            
 
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
 
           Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
         }
@@ -20852,7 +20854,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
             if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
           }            
 
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
 
           Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
         }
@@ -21194,7 +21196,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         float _u = 0.5 + 0.5 * _val;
 
-        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
 
         Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
       }
@@ -21391,7 +21393,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
 
-          float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
 
           Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
         }
@@ -22359,7 +22361,7 @@ void SOLARCHVISION_draw_WindFlow () {
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
 
-      float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);      
+      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);      
 
       /*    
        WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -26848,7 +26850,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solar (float[] VERTEX_now, int P
   float[] COL = {0,0,0,0}; // default color for undefined values 
 
   if (is_undefined_FLOAT(_u) == false) {   
-    COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+    COL = PAINT.getColorStyle(PAL_TYPE, _u);
   }
 
   return COL;
@@ -26916,7 +26918,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solid (float[] VERTEX_now, int P
 
   float _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);     
+  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);     
 
   return COL;
 }
@@ -26941,7 +26943,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, i
 
   float _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
-  float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);  
+  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
 
   return COL;
 }
@@ -26965,7 +26967,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
   float[] COL = {63,63,63,127}; // default color for undefined values 
 
   if (is_undefined_FLOAT(_u) == false) { 
-    COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+    COL = PAINT.getColorStyle(PAL_TYPE, _u);
   }
 
   return COL;
@@ -29862,7 +29864,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
   
-                _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+                _c = PAINT.getColorStyle(PAL_TYPE, _u);
   
                 if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
                 else Image_RGBA[q].pixels[np] = color(223, 223, 223);
@@ -29951,7 +29953,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
             if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
             if (PAL_DIR == 2) _u =  0.5 * _u;
   
-            _c = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+            _c = PAINT.getColorStyle(PAL_TYPE, _u);
   
             if (Image_A != 0) total_Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
             else total_Image_RGBA[q].pixels[np] = color(223, 223, 223);
@@ -30728,7 +30730,7 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
 
-        float[] COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);     
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);     
 
         if ((Process_subDivisions == 1) || (Process_subDivisions == 2)) {
           //if ((g == g_line) && (g != 0)) {
@@ -39399,7 +39401,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) {
 
-            float[] COL = SOLARCHVISION_GET_COLOR_STYLE(14, _u); // <<<<<<<<<<<<<<<<<
+            float[] COL = PAINT.getColorStyle(14, _u); // <<<<<<<<<<<<<<<<<
             fill(COL[1], COL[2], COL[3], COL[0]);
             stroke(COL[1], COL[2], COL[3], COL[0]); 
 
@@ -54352,7 +54354,7 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         if (PAL_DIR == 2) _u =  0.5 * _u;
       }
     
-      COL = SOLARCHVISION_GET_COLOR_STYLE(PAL_TYPE, _u);
+      COL = PAINT.getColorStyle(PAL_TYPE, _u);
 
       
       Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
