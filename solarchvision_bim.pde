@@ -1,6 +1,134 @@
 
 // please define station elevation data for CWEEDS points!
 
+String SOLARCHVISION_version = "2017"; 
+String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
+
+String SceneName = "Complex";
+
+
+String CLIMATE_TMYEPW_directory;
+String CLIMATE_CWEEDS_directory;
+String CLIMATE_CLMREC_directory;
+String ENSEMBLE_OBSERVED_directory;
+String ENSEMBLE_FORECAST_directory;
+String GRIB2_directory;
+String GEOMET_directory;
+
+String[] CLIMATE_TMYEPW_Files;
+String[] CLIMATE_CWEEDS_Files;
+String[] CLIMATE_CLMREC_Files;
+String[] ENSEMBLE_OBSERVED_Files;
+String[] ENSEMBLE_FORECAST_Files;
+
+
+
+
+
+String Wgrib2TempFolder;
+
+String BackgroundFolder;
+String CoordinateFolder;
+
+
+String LandFolder;
+String Object2DFolder_PEOPLE;
+String Object2DFolder_TREES;
+String ExportFolder;
+String ProjectFolder;
+String graphicsFolder;
+String Model3DFolder;
+String ViewsFromSkyFolder;
+String ScreenShotFolder;
+String ShadingFolder;
+
+
+
+String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+String ProjectName = "Revision_" + RunStamp;
+String HoldStamp = ""; 
+
+void SOLARCHVISION_update_folders () {
+  
+  ProjectFolder = BaseFolder + "/Projects/Roodbar";    
+  
+  Wgrib2TempFolder = ProjectFolder + "/Temp";
+
+  GEOMET_directory = ProjectFolder + "/Data/GEOMET" + "/" + RunStamp;
+  GRIB2_directory = ProjectFolder + "/Data/GRIB2";
+  
+  ENSEMBLE_FORECAST_directory = ProjectFolder + "/Data/FORECAST_NAEFS";
+  ENSEMBLE_OBSERVED_directory = ProjectFolder + "/Data/OBSERVATION_SWOB";
+
+  CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
+  CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
+  CLIMATE_CWEEDS_directory = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
+  
+  CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
+  CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
+  CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
+  
+  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
+  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
+
+  BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
+  CoordinateFolder      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  
+  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  
+  ShadingFolder = ProjectFolder + "/ShadingAnalysis";
+  
+  LandFolder            = ProjectFolder + "/Land/USE";
+  
+  ExportFolder          = ProjectFolder + "/Export";
+  graphicsFolder        = ExportFolder + "/graphics" + "/" + RunStamp;
+  Model3DFolder         = ExportFolder + "/Model3D" + "/" + RunStamp;
+  ViewsFromSkyFolder    = ExportFolder + "/ViewsFromSky" + "/" + RunStamp;
+  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + RunStamp;
+
+  String[] filenames = SOLARCHVISION_getfiles(ScreenShotFolder);
+  if (filenames != null) SavedScreenShots = filenames.length;
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int SOLARCHVISION_H_Pixel = 275; //300; 
+int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.75); 
+
+float MessageSize = (2 * SOLARCHVISION_W_Pixel + SOLARCHVISION_H_Pixel) / 120.0; // screen width 
+
+int SOLARCHVISION_A_Pixel = int(1.5 * MessageSize); // menu bar
+int SOLARCHVISION_B_Pixel = int(2.75 * MessageSize); // 3D tool bar
+int SOLARCHVISION_C_Pixel = int(3.0 * MessageSize); // command bar
+int SOLARCHVISION_D_Pixel = int(4.5 * MessageSize); // time bar
+
+
+
+
+String[] skyScenario_Title = {
+  "", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"
+};
+String[] skyScenario_FileTXT = {
+  "", "", "Overcast sky", "Scattered sky", "Clear sky"
+};
+
+int FILTER_Hourly = 0;
+int FILTER_Daily = 1;
 
 final int numberOfLanguages = 2;
 final int Language_EN = 0;
@@ -3735,15 +3863,6 @@ class solarchvision_WORLD {
 }
 
 
-String[] skyScenario_Title = {
-  "", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"
-};
-String[] skyScenario_FileTXT = {
-  "", "", "Overcast sky", "Scattered sky", "Clear sky"
-};
-
-int FILTER_Hourly = 0;
-int FILTER_Daily = 1;
 
 
 class solarchvision_STUDY {
@@ -6547,21 +6666,22 @@ class solarchvision_MESSAGE {
   int dY = int(1.5 * MessageSize);
 }
 
+solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
+solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
+solarchvision_WORLD WORLD = new solarchvision_WORLD();
+solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
+solarchvision_STUDY STUDY = new solarchvision_STUDY();
+
+
+
+
 
 int WMS_type = DataType.FORECAST_GDPS; // <<<<<<<<<<<<<
-
-
-String SceneName = "Complex";
-
-
-
-
 
 // note we used .... float r = FLOAT_r_Earth + 10000; for clouds
 
 final int TROPO_deltaTime = 1; 
 final int TROPO_timeSteps = 24;
-
 
 
 
@@ -6632,120 +6752,13 @@ void launch (String[] s) {
 }
 
 
-int SOLARCHVISION_H_Pixel = 275; //300; 
-int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.75); 
-
-float MessageSize = (2 * SOLARCHVISION_W_Pixel + SOLARCHVISION_H_Pixel) / 120.0; // screen width 
-
-
-int SOLARCHVISION_A_Pixel = int(1.5 * MessageSize); // menu bar
-int SOLARCHVISION_B_Pixel = int(2.75 * MessageSize); // 3D tool bar
-int SOLARCHVISION_C_Pixel = int(3.0 * MessageSize); // command bar
-int SOLARCHVISION_D_Pixel = int(4.5 * MessageSize); // time bar
-
-
-solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
-
-solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
-
-solarchvision_WORLD WORLD = new solarchvision_WORLD();
-
-solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
-
-solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 
 
 
 
-String CLIMATE_TMYEPW_directory;
-String CLIMATE_CWEEDS_directory;
-String CLIMATE_CLMREC_directory;
-String ENSEMBLE_OBSERVED_directory;
-String ENSEMBLE_FORECAST_directory;
-String GRIB2_directory;
-String GEOMET_directory;
-
-String[] CLIMATE_TMYEPW_Files;
-String[] CLIMATE_CWEEDS_Files;
-String[] CLIMATE_CLMREC_Files;
-String[] ENSEMBLE_OBSERVED_Files;
-String[] ENSEMBLE_FORECAST_Files;
 
 
-String SOLARCHVISION_version = "2017"; 
-String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
-
-
-
-
-String Wgrib2TempFolder;
-
-String BackgroundFolder;
-String CoordinateFolder;
-
-
-String LandFolder;
-String Object2DFolder_PEOPLE;
-String Object2DFolder_TREES;
-String ExportFolder;
-String ProjectFolder;
-String graphicsFolder;
-String Model3DFolder;
-String ViewsFromSkyFolder;
-String ScreenShotFolder;
-String ShadingFolder;
-
-
-
-String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-String ProjectName = "Revision_" + RunStamp;
-String HoldStamp = ""; 
-
-void SOLARCHVISION_update_folders () {
-  
-  ProjectFolder = BaseFolder + "/Projects/Roodbar";    
-  
-  Wgrib2TempFolder = ProjectFolder + "/Temp";
-
-  GEOMET_directory = ProjectFolder + "/Data/GEOMET" + "/" + RunStamp;
-  GRIB2_directory = ProjectFolder + "/Data/GRIB2";
-  
-  ENSEMBLE_FORECAST_directory = ProjectFolder + "/Data/FORECAST_NAEFS";
-  ENSEMBLE_OBSERVED_directory = ProjectFolder + "/Data/OBSERVATION_SWOB";
-
-  CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
-  CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
-  CLIMATE_CWEEDS_directory = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
-  
-  CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
-  CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
-  CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
-  
-  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
-  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
-
-  BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  CoordinateFolder      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
-  
-  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
-  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
-  
-  ShadingFolder = ProjectFolder + "/ShadingAnalysis";
-  
-  LandFolder            = ProjectFolder + "/Land/USE";
-  
-  ExportFolder          = ProjectFolder + "/Export";
-  graphicsFolder        = ExportFolder + "/graphics" + "/" + RunStamp;
-  Model3DFolder         = ExportFolder + "/Model3D" + "/" + RunStamp;
-  ViewsFromSkyFolder    = ExportFolder + "/ViewsFromSky" + "/" + RunStamp;
-  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + RunStamp;
-
-  String[] filenames = SOLARCHVISION_getfiles(ScreenShotFolder);
-  if (filenames != null) SavedScreenShots = filenames.length;
-  
-}
 
 
 
@@ -6928,9 +6941,9 @@ float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = squar
 
 
 
-int Impact_ACTIVE = 0; // internal
-int Impact_PASSIVE = 1; // internal
-int numberOfImpactVariations = 2; // internal
+final int Impact_ACTIVE = 0; // internal
+final int Impact_PASSIVE = 1; // internal
+final int numberOfImpactVariations = 2; // internal
 
 int Impact_TYPE;
 
@@ -6943,8 +6956,8 @@ float CubePower = 16; //8;
 float StarPower = 0.25; 
 
 
-double DOUBLE_r_Earth = 6367470.0; //6373000.0;
-float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
+final double DOUBLE_r_Earth = 6367470.0; //6373000.0;
+final float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
 
 
 float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
@@ -7229,7 +7242,7 @@ int save_frame_number = 0;
 
 
 
-int TIME_Interval = 1; //dT
+final int TIME_Interval = 1; //dT
 
 
 
@@ -9158,384 +9171,461 @@ float[] SOLARCHVISION_uvInside_Rectangle (float[] P, float[] A, float[] O, float
 
 
 
-float[] SOLARCHVISION_WBGRW (float _variable) {
-  _variable *= 600.0;
+class solarchvision_PAINT {
 
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-
-  if (_variable < 0) {
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255;
-  } else if (_variable < 100) {
-    v = ((_variable) * 2.55);
-    COL[1] = (255 - v);
-    COL[2] = (255 - v);
-    COL[3] = 255;
-  } else if (_variable < 200) {
-    v = ((_variable - 100) * 2.55);
-    COL[1] = 0;
-    COL[2] = v;
-    COL[3] = 255;
-  } else if (_variable < 300) {
-    v = ((_variable - 200) * 2.55);
-    COL[1] = 0;
-    COL[2] = 255;
-    COL[3] = (255 - v);
-  } else if (_variable < 400) {
-    v = ((_variable - 300) * 2.55);
-    COL[1] = v;
-    COL[2] = 255;
-    COL[3] = 0;
-  } else if (_variable < 500) {
-    v = ((_variable - 400) * 2.55);
-    COL[1] = 255;
-    COL[2] = (255 - v);
-    COL[3] = 0;
-  } else if (_variable < 600) {
-    v = ((_variable - 500) * 2.55);
-    COL[1] = 255;
-    COL[2] = v;
-    COL[3] = v;
-  } else {
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255;
+  float[] WBGRW (float _variable) {
+    _variable *= 600.0;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+  
+    if (_variable < 0) {
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255;
+    } else if (_variable < 100) {
+      v = ((_variable) * 2.55);
+      COL[1] = (255 - v);
+      COL[2] = (255 - v);
+      COL[3] = 255;
+    } else if (_variable < 200) {
+      v = ((_variable - 100) * 2.55);
+      COL[1] = 0;
+      COL[2] = v;
+      COL[3] = 255;
+    } else if (_variable < 300) {
+      v = ((_variable - 200) * 2.55);
+      COL[1] = 0;
+      COL[2] = 255;
+      COL[3] = (255 - v);
+    } else if (_variable < 400) {
+      v = ((_variable - 300) * 2.55);
+      COL[1] = v;
+      COL[2] = 255;
+      COL[3] = 0;
+    } else if (_variable < 500) {
+      v = ((_variable - 400) * 2.55);
+      COL[1] = 255;
+      COL[2] = (255 - v);
+      COL[3] = 0;
+    } else if (_variable < 600) {
+      v = ((_variable - 500) * 2.55);
+      COL[1] = 255;
+      COL[2] = v;
+      COL[3] = v;
+    } else {
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255;
+    }
+  
+    return COL;
   }
-
-  return COL;
+  
+  float[] BGR (float _variable) {
+    _variable *= 400.0;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+  
+    if (_variable < 0) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 255;
+    } else if (_variable < 100) {
+      v = ((_variable) * 2.55);
+      COL[1] = 0;
+      COL[2] = v;
+      COL[3] = 255;
+    } else if (_variable < 200) {
+      v = ((_variable - 100) * 2.55);
+      COL[1] = 0;
+      COL[2] = 255;
+      COL[3] = (255 - v);
+    } else if (_variable < 300) {
+      v = ((_variable - 200) * 2.55);
+      COL[1] = v;
+      COL[2] = 255;
+      COL[3] = 0;
+    } else if (_variable < 400) {
+      v = ((_variable - 300) * 2.55);
+      COL[1] = 255;
+      COL[2] = (255 - v);
+      COL[3] = 0;
+    } else {
+      COL[1] = 255;
+      COL[2] = 0;
+      COL[3] = 0;
+    }
+  
+    return COL;
+  }
+  
+  float[] DBGR (float _variable) {
+    _variable *= 500.0;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < 0) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < 100) {
+      v = ((_variable) * 2.55);
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = v;
+    } else if (_variable < 200) {
+      v = ((_variable - 100) * 2.55);
+      COL[1] = 0;
+      COL[2] = v;
+      COL[3] = 255;
+    } else if (_variable < 300) {
+      v = ((_variable - 200) * 2.55);
+      COL[1] = 0;
+      COL[2] = 255;
+      COL[3] = (255 - v);
+    } else if (_variable < 400) {
+      v = ((_variable - 300) * 2.55);
+      COL[1] = v;
+      COL[2] = 255;
+      COL[3] = 0;
+    } else if (_variable < 500) {
+      v = ((_variable - 400) * 2.55);
+      COL[1] = 255;
+      COL[2] = (255 - v);
+      COL[3] = 0;
+    } else {
+      COL[1] = 255;
+      COL[2] = 0;
+      COL[3] = 0;
+    }
+  
+    return COL;
+  }
+  
+  float[] DWBGR (float _variable) {
+    _variable *= 600.0;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < 0) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < 100) {
+      v = ((_variable) * 2.55);
+      COL[1] = v;
+      COL[2] = v;
+      COL[3] = v;
+    } else if (_variable < 200) {
+      v = ((_variable - 100) * 2.55);
+      COL[1] = (255 - v);
+      COL[2] = (255 - v);
+      COL[3] = 255;
+    } else if (_variable < 300) {
+      v = ((_variable - 200) * 2.55);
+      COL[1] = 0;
+      COL[2] = v;
+      COL[3] = 255;
+    } else if (_variable < 400) {
+      v = ((_variable - 300) * 2.55);
+      COL[1] = 0;
+      COL[2] = 255;
+      COL[3] = (255 - v);
+    } else if (_variable < 500) {
+      v = ((_variable - 400) * 2.55);
+      COL[1] = v;
+      COL[2] = 255;
+      COL[3] = 0;
+    } else if (_variable < 600) {
+      v = ((_variable - 500) * 2.55);
+      COL[1] = 255;
+      COL[2] = (255 - v);
+      COL[3] = 0;
+    } else {
+      COL[1] = 255;
+      COL[2] = 0;
+      COL[3] = 0;
+    }
+  
+    return COL;
+  }
+  
+  float[] DWYR (float _variable) {
+    _variable *= 400.0;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < 0) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < 100) {
+      v = ((_variable) * 2.55);
+      COL[1] = v;
+      COL[2] = v;
+      COL[3] = v;
+    } else if (_variable < 200) {
+      v = ((_variable - 100) * 2.55);
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = (255 - v);
+    } else if (_variable < 300) {
+      v = ((_variable - 200) * 2.55);
+      COL[1] = 255;
+      COL[2] = (255 - v);
+      COL[3] = 0;
+    } else if (_variable < 400) {
+      v = ((_variable - 300) * 2.55);
+      COL[1] = 255 - 0.5 * v;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else {
+      COL[1] = 127;
+      COL[2] = 0;
+      COL[3] = 0;
+    }
+  
+    return COL;
+  }
+  
+  
+  float[] VDWBGR (float _variable) {
+    _variable *= 700.0;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < 0) {
+      COL[1] = 255;
+      COL[2] = 0;
+      COL[3] = 255;
+    } else if (_variable < 100) {
+      v = ((_variable - 0) * 2.55);
+      COL[1] = (255 - v);
+      COL[2] = 0;
+      COL[3] = (255 - v);
+    } else if (_variable < 200) {
+      v = ((_variable - 100) * 2.55);
+      COL[1] = v;
+      COL[2] = v;
+      COL[3] = v;
+    } else if (_variable < 300) {
+      v = ((_variable - 200) * 2.55);
+      COL[1] = (255 - v);
+      COL[2] = (255 - v);
+      COL[3] = 255;
+    } else if (_variable < 400) {
+      v = ((_variable - 300) * 2.55);
+      COL[1] = 0;
+      COL[2] = v;
+      COL[3] = 255;
+    } else if (_variable < 500) {
+      v = ((_variable - 400) * 2.55);
+      COL[1] = 0;
+      COL[2] = 255;
+      COL[3] = (255 - v);
+    } else if (_variable < 600) {
+      v = ((_variable - 500) * 2.55);
+      COL[1] = v;
+      COL[2] = 255;
+      COL[3] = 0;
+    } else if (_variable < 700) {
+      v = ((_variable - 600) * 2.55);
+      COL[1] = 255;
+      COL[2] = (255 - v);
+      COL[3] = 0;
+    } else {
+      COL[1] = 255;
+      COL[2] = 0;
+      COL[3] = 0;
+    }
+  
+    return COL;
+  }
+  
+  float[] DRYWCBD (float _variable) {
+  
+    _variable *= 1.5;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable <= -2.75) {
+      COL[1] = 63;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -2) {
+      v = (-(_variable + 2) * 255);
+      COL[1] = 255 - v;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -1) {
+      v = (-(_variable + 1) * 255);
+      COL[1] = 255;
+      COL[2] = 255 - v;
+      COL[3] = 0;
+    } else if (_variable < 0) {
+      v = (-_variable * 255);
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255 - v;
+    } else if (_variable < 1) {
+      v = (_variable * 255);
+      COL[1] = 255 - v;
+      COL[2] = 255;
+      COL[3] = 255;
+    } else if (_variable < 2) {
+      v = ((_variable - 1) * 255);
+      COL[1] = 0;
+      COL[2] = 255 - v;
+      COL[3] = 255;
+    } else if (_variable < 2.75) {
+      v = ((_variable - 2) * 255);
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 255 - v;
+    } else {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 63;
+    }
+  
+    return COL;
+  }
+  
+  
+  float[] DBCW (float _variable) {
+    _variable = 1 - _variable;
+    _variable *= -3;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < -3) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -2) {
+      v = (-(_variable + 2) * 255);
+      COL[1] = 255 - v;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -1) {
+      v = (-(_variable + 1) * 255);
+      COL[1] = 255;
+      COL[2] = 255 - v;
+      COL[3] = 0;
+    } else if (_variable < 0) {
+      v = (-_variable * 255);
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255 - v;
+    } else {
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255;
+    }
+  
+    float r, g, b;
+    r = COL[3]; 
+    g = COL[2];
+    b = COL[1];
+    COL[1] = r;
+    COL[2] = g;
+    COL[3] = b;
+  
+    return COL;
+  }
+  
+  float[] DRYW (float _variable) {
+    _variable = 1 - _variable;
+    _variable *= -3;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < -3) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -2) {
+      v = (-(_variable + 2) * 255);
+      COL[1] = 255 - v;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -1) {
+      v = (-(_variable + 1) * 255);
+      COL[1] = 255;
+      COL[2] = 255 - v;
+      COL[3] = 0;
+    } else if (_variable < 0) {
+      v = (-_variable * 255);
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255 - v;
+    } else {
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255;
+    }
+  
+    return COL;
+  }
+  
+  float[] WYRD (float _variable) {
+    _variable *= -3;
+  
+    float v;
+    float[] COL = {
+      255, 0, 0, 0
+    };
+    if (_variable < -3) {
+      COL[1] = 0;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -2) {
+      v = (-(_variable + 2) * 255);
+      COL[1] = 255 - v;
+      COL[2] = 0;
+      COL[3] = 0;
+    } else if (_variable < -1) {
+      v = (-(_variable + 1) * 255);
+      COL[1] = 255;
+      COL[2] = 255 - v;
+      COL[3] = 0;
+    } else if (_variable < 0) {
+      v = (-_variable * 255);
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255 - v;
+    } else {
+      COL[1] = 255;
+      COL[2] = 255;
+      COL[3] = 255;
+    }
+  
+    return COL;
+  }
+    
 }
 
-float[] SOLARCHVISION_BGR (float _variable) {
-  _variable *= 400.0;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-
-  if (_variable < 0) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 255;
-  } else if (_variable < 100) {
-    v = ((_variable) * 2.55);
-    COL[1] = 0;
-    COL[2] = v;
-    COL[3] = 255;
-  } else if (_variable < 200) {
-    v = ((_variable - 100) * 2.55);
-    COL[1] = 0;
-    COL[2] = 255;
-    COL[3] = (255 - v);
-  } else if (_variable < 300) {
-    v = ((_variable - 200) * 2.55);
-    COL[1] = v;
-    COL[2] = 255;
-    COL[3] = 0;
-  } else if (_variable < 400) {
-    v = ((_variable - 300) * 2.55);
-    COL[1] = 255;
-    COL[2] = (255 - v);
-    COL[3] = 0;
-  } else {
-    COL[1] = 255;
-    COL[2] = 0;
-    COL[3] = 0;
-  }
-
-  return COL;
-}
-
-float[] SOLARCHVISION_DBGR (float _variable) {
-  _variable *= 500.0;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < 0) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < 100) {
-    v = ((_variable) * 2.55);
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = v;
-  } else if (_variable < 200) {
-    v = ((_variable - 100) * 2.55);
-    COL[1] = 0;
-    COL[2] = v;
-    COL[3] = 255;
-  } else if (_variable < 300) {
-    v = ((_variable - 200) * 2.55);
-    COL[1] = 0;
-    COL[2] = 255;
-    COL[3] = (255 - v);
-  } else if (_variable < 400) {
-    v = ((_variable - 300) * 2.55);
-    COL[1] = v;
-    COL[2] = 255;
-    COL[3] = 0;
-  } else if (_variable < 500) {
-    v = ((_variable - 400) * 2.55);
-    COL[1] = 255;
-    COL[2] = (255 - v);
-    COL[3] = 0;
-  } else {
-    COL[1] = 255;
-    COL[2] = 0;
-    COL[3] = 0;
-  }
-
-  return COL;
-}
-
-float[] SOLARCHVISION_DWBGR (float _variable) {
-  _variable *= 600.0;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < 0) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < 100) {
-    v = ((_variable) * 2.55);
-    COL[1] = v;
-    COL[2] = v;
-    COL[3] = v;
-  } else if (_variable < 200) {
-    v = ((_variable - 100) * 2.55);
-    COL[1] = (255 - v);
-    COL[2] = (255 - v);
-    COL[3] = 255;
-  } else if (_variable < 300) {
-    v = ((_variable - 200) * 2.55);
-    COL[1] = 0;
-    COL[2] = v;
-    COL[3] = 255;
-  } else if (_variable < 400) {
-    v = ((_variable - 300) * 2.55);
-    COL[1] = 0;
-    COL[2] = 255;
-    COL[3] = (255 - v);
-  } else if (_variable < 500) {
-    v = ((_variable - 400) * 2.55);
-    COL[1] = v;
-    COL[2] = 255;
-    COL[3] = 0;
-  } else if (_variable < 600) {
-    v = ((_variable - 500) * 2.55);
-    COL[1] = 255;
-    COL[2] = (255 - v);
-    COL[3] = 0;
-  } else {
-    COL[1] = 255;
-    COL[2] = 0;
-    COL[3] = 0;
-  }
-
-  return COL;
-}
-
-float[] SOLARCHVISION_DWYR (float _variable) {
-  _variable *= 400.0;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < 0) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < 100) {
-    v = ((_variable) * 2.55);
-    COL[1] = v;
-    COL[2] = v;
-    COL[3] = v;
-  } else if (_variable < 200) {
-    v = ((_variable - 100) * 2.55);
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = (255 - v);
-  } else if (_variable < 300) {
-    v = ((_variable - 200) * 2.55);
-    COL[1] = 255;
-    COL[2] = (255 - v);
-    COL[3] = 0;
-  } else if (_variable < 400) {
-    v = ((_variable - 300) * 2.55);
-    COL[1] = 255 - 0.5 * v;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else {
-    COL[1] = 127;
-    COL[2] = 0;
-    COL[3] = 0;
-  }
-
-  return COL;
-}
-
-
-float[] SOLARCHVISION_VDWBGR (float _variable) {
-  _variable *= 700.0;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < 0) {
-    COL[1] = 255;
-    COL[2] = 0;
-    COL[3] = 255;
-  } else if (_variable < 100) {
-    v = ((_variable - 0) * 2.55);
-    COL[1] = (255 - v);
-    COL[2] = 0;
-    COL[3] = (255 - v);
-  } else if (_variable < 200) {
-    v = ((_variable - 100) * 2.55);
-    COL[1] = v;
-    COL[2] = v;
-    COL[3] = v;
-  } else if (_variable < 300) {
-    v = ((_variable - 200) * 2.55);
-    COL[1] = (255 - v);
-    COL[2] = (255 - v);
-    COL[3] = 255;
-  } else if (_variable < 400) {
-    v = ((_variable - 300) * 2.55);
-    COL[1] = 0;
-    COL[2] = v;
-    COL[3] = 255;
-  } else if (_variable < 500) {
-    v = ((_variable - 400) * 2.55);
-    COL[1] = 0;
-    COL[2] = 255;
-    COL[3] = (255 - v);
-  } else if (_variable < 600) {
-    v = ((_variable - 500) * 2.55);
-    COL[1] = v;
-    COL[2] = 255;
-    COL[3] = 0;
-  } else if (_variable < 700) {
-    v = ((_variable - 600) * 2.55);
-    COL[1] = 255;
-    COL[2] = (255 - v);
-    COL[3] = 0;
-  } else {
-    COL[1] = 255;
-    COL[2] = 0;
-    COL[3] = 0;
-  }
-
-  return COL;
-}
-
-float[] SOLARCHVISION_DRYWCBD (float _variable) {
-
-  _variable *= 1.5;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable <= -2.75) {
-    COL[1] = 63;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -2) {
-    v = (-(_variable + 2) * 255);
-    COL[1] = 255 - v;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
-    COL[1] = 255;
-    COL[2] = 255 - v;
-    COL[3] = 0;
-  } else if (_variable < 0) {
-    v = (-_variable * 255);
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255 - v;
-  } else if (_variable < 1) {
-    v = (_variable * 255);
-    COL[1] = 255 - v;
-    COL[2] = 255;
-    COL[3] = 255;
-  } else if (_variable < 2) {
-    v = ((_variable - 1) * 255);
-    COL[1] = 0;
-    COL[2] = 255 - v;
-    COL[3] = 255;
-  } else if (_variable < 2.75) {
-    v = ((_variable - 2) * 255);
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 255 - v;
-  } else {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 63;
-  }
-
-  return COL;
-}
-
-
-float[] SOLARCHVISION_DBCW (float _variable) {
-  _variable = 1 - _variable;
-  _variable *= -3;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < -3) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -2) {
-    v = (-(_variable + 2) * 255);
-    COL[1] = 255 - v;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
-    COL[1] = 255;
-    COL[2] = 255 - v;
-    COL[3] = 0;
-  } else if (_variable < 0) {
-    v = (-_variable * 255);
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255 - v;
-  } else {
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255;
-  }
-
-  float r, g, b;
-  r = COL[3]; 
-  g = COL[2];
-  b = COL[1];
-  COL[1] = r;
-  COL[2] = g;
-  COL[3] = b;
-
-  return COL;
-}
+solarchvision_PAINT PAINT = new solarchvision_PAINT();
 
 
 float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Current, float j) {
@@ -9549,109 +9639,109 @@ float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Current, float j) {
     c[2] = 0;
     c[3] = 0;
   } else if (COLOR_STYLE_Current == 19) {
-    float[] COL = SOLARCHVISION_DWYR(j);
+    float[] COL = PAINT.DWYR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 18) {
-    float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
+    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = COL[3];
     c[2] = COL[2];
     c[3] = COL[1];
   } else if (COLOR_STYLE_Current == 17) {
-    float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
+    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = 255 - COL[3];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[1];
   } else if (COLOR_STYLE_Current == 16) {
-    float[] COL = SOLARCHVISION_DBCW(j);
+    float[] COL = PAINT.DBCW(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 15) {
-    float[] COL = SOLARCHVISION_DRYW(j);
+    float[] COL = PAINT.DRYW(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 14) {
-    float[] COL = SOLARCHVISION_DBGR(j);
+    float[] COL = PAINT.DBGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 13) {
-    float[] COL = SOLARCHVISION_DWBGR(j);
+    float[] COL = PAINT.DWBGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 12) {
-    float[] COL = SOLARCHVISION_BGR(j);
+    float[] COL = PAINT.BGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 11) {
-    float[] COL = SOLARCHVISION_BGR(j);
+    float[] COL = PAINT.BGR(j);
     c[0] = 127;
     c[1] = 255 - 0.5 * COL[1];
     c[2] = 255 - 0.5 * COL[2];
     c[3] = 255 - 0.5 * COL[3];
   } else if (COLOR_STYLE_Current == 10) {
-    float[] COL = SOLARCHVISION_BGR(j);
+    float[] COL = PAINT.BGR(j);
     c[0] = 255;
     c[1] = 255 - COL[1];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[3];
   } else if (COLOR_STYLE_Current == 9) {
-    float[] COL = SOLARCHVISION_WBGRW(j);
+    float[] COL = PAINT.WBGRW(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 8) {
-    float[] COL = SOLARCHVISION_BGR(j);
+    float[] COL = PAINT.BGR(j);
     c[0] = 255;
     c[1] = 255 - COL[1];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[3];
   } else if (COLOR_STYLE_Current == 7) {
-    float[] COL = SOLARCHVISION_WBGRW(j);
+    float[] COL = PAINT.WBGRW(j);
     c[0] = 255;
     c[1] = 255 - COL[1];
     c[2] = 255 - COL[2];
     c[3] = 255 - COL[3];
   } else if (COLOR_STYLE_Current == 6) {
-    float[] COL = SOLARCHVISION_BGR(j);
+    float[] COL = PAINT.BGR(j);
     c[0] = 255;
     c[1] = COL[3];
     c[2] = COL[2];
     c[3] = COL[1];
   } else if (COLOR_STYLE_Current == 4) {
-    float[] COL = SOLARCHVISION_VDWBGR(j);
+    float[] COL = PAINT.VDWBGR(j);
     c[0] = STUDY.O_scale;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 3) {
-    float[] COL = SOLARCHVISION_VDWBGR(j);
+    float[] COL = PAINT.VDWBGR(j);
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 2) {
-    float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
+    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
     c[0] = STUDY.O_scale;
     c[1] = COL[1];
     c[2] = COL[2];
     c[3] = COL[3];
   } else if (COLOR_STYLE_Current == 1) {
-    float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
+    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = COL[1];
     c[2] = COL[2];
@@ -9662,7 +9752,7 @@ float[] SOLARCHVISION_GET_COLOR_STYLE (int COLOR_STYLE_Current, float j) {
     c[2] = 0;
     c[3] = 0;
   } else if (COLOR_STYLE_Current == -1) {
-    float[] COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
+    float[] COL = PAINT.DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = 255 - COL[3];
     c[2] = 255 - COL[2];
@@ -12429,76 +12519,6 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
 
 
-float[] SOLARCHVISION_DRYW (float _variable) {
-  _variable = 1 - _variable;
-  _variable *= -3;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < -3) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -2) {
-    v = (-(_variable + 2) * 255);
-    COL[1] = 255 - v;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
-    COL[1] = 255;
-    COL[2] = 255 - v;
-    COL[3] = 0;
-  } else if (_variable < 0) {
-    v = (-_variable * 255);
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255 - v;
-  } else {
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255;
-  }
-
-  return COL;
-}
-
-float[] SOLARCHVISION_WYRD (float _variable) {
-  _variable *= -3;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < -3) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -2) {
-    v = (-(_variable + 2) * 255);
-    COL[1] = 255 - v;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
-    COL[1] = 255;
-    COL[2] = 255 - v;
-    COL[3] = 0;
-  } else if (_variable < 0) {
-    v = (-_variable * 255);
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255 - v;
-  } else {
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255;
-  }
-
-  return COL;
-}
 
 
 
@@ -49065,7 +49085,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("STUDY.filter", STUDY.filter);
   newChild1.setInt("STUDY.TrendJoinHours", STUDY.TrendJoinHours);
   newChild1.setInt("STUDY.TrendJoinType", STUDY.TrendJoinType);
-  newChild1.setInt("TIME_Interval", TIME_Interval);
   newChild1.setString("STUDY.Export_info_node", Boolean.toString(STUDY.Export_info_node));
   newChild1.setString("STUDY.Export_info_norm", Boolean.toString(STUDY.Export_info_norm));
   newChild1.setString("STUDY.Export_info_prob", Boolean.toString(STUDY.Export_info_prob));
@@ -50191,7 +50210,6 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.filter = children0[L].getInt("STUDY.filter");
       STUDY.TrendJoinHours = children0[L].getInt("STUDY.TrendJoinHours");
       STUDY.TrendJoinType = children0[L].getInt("STUDY.TrendJoinType");
-      TIME_Interval = children0[L].getInt("TIME_Interval");
       STUDY.Export_info_node = Boolean.parseBoolean(children0[L].getString("STUDY.Export_info_node"));
       STUDY.Export_info_norm = Boolean.parseBoolean(children0[L].getString("STUDY.Export_info_norm"));
       STUDY.Export_info_prob = Boolean.parseBoolean(children0[L].getString("STUDY.Export_info_prob"));
