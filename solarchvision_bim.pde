@@ -2463,7 +2463,7 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_draw_WindRoseImage();
   
-      SOLARCHVISION_draw_Sections(TypeWindow.WIN3D);
+      SECTIONS.draw(TypeWindow.WIN3D);
   
       CAMERAS.draw();
   
@@ -4424,7 +4424,7 @@ class solarchvision_STUDY {
           rebuild_GlobalSolar_array = 1;
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;
-          MODEL3D.resize_allSections_SolarImpact_array();
+          SECTIONS.resize_SolarImpact_array();
   
           UI_BAR_d_update = true;
           this.update = true; 
@@ -4449,7 +4449,7 @@ class solarchvision_STUDY {
           rebuild_GlobalSolar_array = 1;
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;   
-          MODEL3D.resize_allSections_SolarImpact_array();
+          SECTIONS.resize_SolarImpact_array();
   
           UI_BAR_d_update = true; 
           this.update = true; 
@@ -7884,14 +7884,7 @@ int[][] allGroup3Ds_PivotType = new int[0][1]; // 0: no solar rotation, 1: allow
 
 
 
-float[][] allSections_UVERAB = new float[0][6];
-int[] allSections_Type = new int[0];
 
-int[] allSections_RES1 = new int[0];
-int[] allSections_RES2 = new int[0];
-int allSections_num = 0;
-PImage[] allSections_SolidImpact = new PImage[0];
-PImage[][][] allSections_SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
 
 
 
@@ -8539,7 +8532,7 @@ void draw () {
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;      
 
-          MODEL3D.resize_allSections_SolarImpact_array();
+          SECTIONS.resize_SolarImpact_array();
         }
 
         if (pre_IMPACTS_DisplayDay != IMPACTS_DisplayDay) {
@@ -13907,7 +13900,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
   TROPO3D.draw(TypeWindow.HTML, STUDY.i_Start, STUDY.i_End);
   
-  SOLARCHVISION_draw_Sections(TypeWindow.HTML);
+  SECTIONS.draw(TypeWindow.HTML);
   
   OBJECTS2D.draw(TypeWindow.HTML);
 
@@ -14271,7 +14264,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   TROPO3D.draw(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
   
-  SOLARCHVISION_draw_Sections(TypeWindow.OBJ);
+  SECTIONS.draw(TypeWindow.OBJ);
   
   OBJECTS2D.draw(TypeWindow.OBJ);
 
@@ -20448,22 +20441,22 @@ class solarchvision_MODEL3D {
     int[] TempSection_Type = {
       n
     }; 
-    allSections_Type = concat(allSections_Type, TempSection_Type);
+    SECTIONS.Type = concat(SECTIONS.Type, TempSection_Type);
   
     int[] TempSection_RES1 = {
       RES1
     }; 
-    allSections_RES1 = concat(allSections_RES1, TempSection_RES1);
+    SECTIONS.RES1 = concat(SECTIONS.RES1, TempSection_RES1);
   
     int[] TempSection_RES2 = {
       RES2
     }; 
-    allSections_RES2 = concat(allSections_RES2, TempSection_RES2);
+    SECTIONS.RES2 = concat(SECTIONS.RES2, TempSection_RES2);
   
     PImage[] TempSection_SolidImpact = {
       createImage(RES1, RES2, RGB)
     }; 
-    allSections_SolidImpact = (PImage[]) concat(allSections_SolidImpact, TempSection_SolidImpact);
+    SECTIONS.SolidImpact = (PImage[]) concat(SECTIONS.SolidImpact, TempSection_SolidImpact);
   
     PImage[][][] TempSection_SolarImpact = new PImage [1][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
     {
@@ -20474,16 +20467,16 @@ class solarchvision_MODEL3D {
         }
       }
     }
-    allSections_SolarImpact = (PImage[][][]) concat(allSections_SolarImpact, TempSection_SolarImpact);    
+    SECTIONS.SolarImpact = (PImage[][][]) concat(SECTIONS.SolarImpact, TempSection_SolarImpact);    
   
     float[][] TempSection_UVERAB = {
       {
         u, v, elev, rot, dU, dV
       }
     };
-    allSections_UVERAB = (float[][]) concat(allSections_UVERAB, TempSection_UVERAB);
+    SECTIONS.UVERAB = (float[][]) concat(SECTIONS.UVERAB, TempSection_UVERAB);
   
-    allSections_num += 1;
+    SECTIONS.num += 1;
   }  
   
   
@@ -20837,22 +20830,22 @@ class solarchvision_MODEL3D {
   
     if (Current_ObjectCategory == ObjectCategory.Sections) {
   
-      int number_of_Section_before = allSections_num; 
+      int number_of_Section_before = SECTIONS.num; 
   
       for (int o = 0; o < selectedSection_ids.length; o++) {
   
         int OBJ_NUM = selectedSection_ids[o];
   
-        float Section_offset_U = allSections_UVERAB[OBJ_NUM][0];
-        float Section_offset_V = allSections_UVERAB[OBJ_NUM][1];
-        float Section_Elevation = allSections_UVERAB[OBJ_NUM][2];
-        float Section_Rotation = allSections_UVERAB[OBJ_NUM][3];
-        float Section_scale_U = allSections_UVERAB[OBJ_NUM][4];
-        float Section_scale_V = allSections_UVERAB[OBJ_NUM][5];
+        float Section_offset_U = SECTIONS.UVERAB[OBJ_NUM][0];
+        float Section_offset_V = SECTIONS.UVERAB[OBJ_NUM][1];
+        float Section_Elevation = SECTIONS.UVERAB[OBJ_NUM][2];
+        float Section_Rotation = SECTIONS.UVERAB[OBJ_NUM][3];
+        float Section_scale_U = SECTIONS.UVERAB[OBJ_NUM][4];
+        float Section_scale_V = SECTIONS.UVERAB[OBJ_NUM][5];
   
-        int Section_Type = allSections_Type[OBJ_NUM];
-        int Section_RES1 = allSections_RES1[OBJ_NUM];
-        int Section_RES2 = allSections_RES2[OBJ_NUM];
+        int Section_Type = SECTIONS.Type[OBJ_NUM];
+        int Section_RES1 = SECTIONS.RES1[OBJ_NUM];
+        int Section_RES2 = SECTIONS.RES2[OBJ_NUM];
   
         this.add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
       }
@@ -20861,7 +20854,7 @@ class solarchvision_MODEL3D {
   
       selectedSection_ids = new int [0];
   
-      for (int o = number_of_Section_before; o < allSections_num; o++) {
+      for (int o = number_of_Section_before; o < SECTIONS.num; o++) {
   
         int[] newlyAddedSection = {o};
   
@@ -21621,48 +21614,48 @@ class solarchvision_MODEL3D {
         int OBJ_NUM = selectedSection_ids[o];
   
         {
-          float[][] startList = (float[][]) subset(allSections_UVERAB, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSections_UVERAB, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(SECTIONS.UVERAB, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(SECTIONS.UVERAB, OBJ_NUM + 1);
   
-          allSections_UVERAB = (float[][]) concat(startList, endList);
+          SECTIONS.UVERAB = (float[][]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(allSections_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSections_Type, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(SECTIONS.Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(SECTIONS.Type, OBJ_NUM + 1);
   
-          allSections_Type = (int[]) concat(startList, endList);
+          SECTIONS.Type = (int[]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(allSections_RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSections_RES1, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(SECTIONS.RES1, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(SECTIONS.RES1, OBJ_NUM + 1);
   
-          allSections_RES1 = (int[]) concat(startList, endList);
+          SECTIONS.RES1 = (int[]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(allSections_RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSections_RES2, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(SECTIONS.RES2, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(SECTIONS.RES2, OBJ_NUM + 1);
   
-          allSections_RES2 = (int[]) concat(startList, endList);
+          SECTIONS.RES2 = (int[]) concat(startList, endList);
         }
   
         {
-          PImage[] startList = (PImage[]) subset(allSections_SolidImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(allSections_SolidImpact, OBJ_NUM + 1);
+          PImage[] startList = (PImage[]) subset(SECTIONS.SolidImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(SECTIONS.SolidImpact, OBJ_NUM + 1);
   
-          allSections_SolidImpact = (PImage[]) concat(startList, endList);
+          SECTIONS.SolidImpact = (PImage[]) concat(startList, endList);
         }
   
         {
-          PImage[][][] startList = (PImage[][][]) subset(allSections_SolarImpact, 0, OBJ_NUM);
-          PImage[][][] endList = (PImage[][][]) subset(allSections_SolarImpact, OBJ_NUM + 1);
+          PImage[][][] startList = (PImage[][][]) subset(SECTIONS.SolarImpact, 0, OBJ_NUM);
+          PImage[][][] endList = (PImage[][][]) subset(SECTIONS.SolarImpact, OBJ_NUM + 1);
   
-          allSections_SolarImpact = (PImage[][][]) concat(startList, endList);
+          SECTIONS.SolarImpact = (PImage[][][]) concat(startList, endList);
         }        
   
-        allSections_num -= 1;
+        SECTIONS.num -= 1;
       }
     }
   
@@ -24744,8 +24737,8 @@ class solarchvision_MODEL3D {
     if (Current_ObjectCategory == ObjectCategory.Sections) {
       selectedSection_ids = new int [0];
       
-      if (allSections_num > 0) {
-        int[] new_Item = {allSections_num - 1};
+      if (SECTIONS.num > 0) {
+        int[] new_Item = {SECTIONS.num - 1};
         selectedSection_ids = concat(selectedSection_ids, new_Item);
       }
     }   
@@ -24925,7 +24918,7 @@ class solarchvision_MODEL3D {
     }  
   
     if (Current_ObjectCategory == ObjectCategory.Sections) {
-      selectedSection_ids = new int [allSections_num];
+      selectedSection_ids = new int [SECTIONS.num];
       for (int i = 0; i < selectedSection_ids.length; i++) { 
         selectedSection_ids[i] = i;
       }
@@ -25175,7 +25168,7 @@ class solarchvision_MODEL3D {
   
       selectedSection_ids = new int [0];
   
-      for (int i = 0; i < allSections_num; i++) {
+      for (int i = 0; i < SECTIONS.num; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedSection_ids.length; j++) {
@@ -27882,38 +27875,25 @@ class solarchvision_MODEL3D {
 
   
   void delete_Sections () {
-    allSections_UVERAB = new float [0][6]; 
+    SECTIONS.UVERAB = new float [0][6]; 
   
-    allSections_Type = new int [0];
+    SECTIONS.Type = new int [0];
   
-    allSections_RES1 = new int [0];
+    SECTIONS.RES1 = new int [0];
   
-    allSections_RES2 = new int [0];
+    SECTIONS.RES2 = new int [0];
   
-    allSections_SolidImpact = new PImage [0];
+    SECTIONS.SolidImpact = new PImage [0];
   
-    allSections_SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    SECTIONS.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
   
-    allSections_num = 0;
+    SECTIONS.num = 0;
   
     this.deselect_All();
   }
 
   
-  void resize_allSections_SolarImpact_array () { // called when STUDY.j_End changes
-  
-    allSections_SolarImpact = new PImage [allSections_num][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
-    {
-      for (int i = 0; i < allSections_num; i++) {
-        for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) { 
-          for (int q = 0; q < numberOfImpactVariations; q++) {
-            allSections_SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
-          }
-        }
-      }
-    }
-  
-  }
+
   
   
   void draw_Faces () {
@@ -28462,6 +28442,8 @@ solarchvision_MODEL3D MODEL3D = new solarchvision_MODEL3D();
 
 class solarchvision_CAMERAS {
 
+  private final static String CLASS_STAMP = "CAMERAS";
+  
   float[][] PPPSRRRF = {
     {
       WIN3D.X_Coordinate, WIN3D.Y_Coordinate, WIN3D.Z_Coordinate, WIN3D.S_Coordinate, WIN3D.RX_Coordinate, WIN3D.RY_Coordinate, WIN3D.RZ_Coordinate, WIN3D.Zoom
@@ -28676,10 +28658,352 @@ solarchvision_CAMERAS CAMERAS = new solarchvision_CAMERAS();
 
 
 
+class solarchvision_SECTIONS {
+
+  private final static String CLASS_STAMP = "SECTIONS";
+
+  float[][] UVERAB = new float[0][6];
+  int[] Type = new int[0];
+  
+  int[] RES1 = new int[0];
+  int[] RES2 = new int[0];
+  int num = 0;
 
 
+  private float[][] Vertices;
+  private int[][] Faces;
+  
+  PImage[] SolidImpact = new PImage[0];
+  PImage[][][] SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
 
+  void resize_SolarImpact_array () { // called when STUDY.j_End changes
+  
+    SECTIONS.SolarImpact = new PImage [SECTIONS.num][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    {
+      for (int i = 0; i < SECTIONS.num; i++) {
+        for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) { 
+          for (int q = 0; q < numberOfImpactVariations; q++) {
+            SECTIONS.SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
+          }
+        }
+      }
+    }
+  
+  }  
+  
+  
+  void draw (int target_window) {
+    
+    this.Faces = new int [this.num][4];
+  
+    this.Vertices = new float [4 * this.num][3];
+  
+  
+    boolean proceed = true;
+  
+    if (Display_Sections) {
+      proceed = false;
+    }
+  
+    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+      proceed = false;
+    }
+    
+    if (proceed) {
+  
+      for (int f = 0; f < this.num; f++) {
+  
+        float Section_offset_U = this.UVERAB[f][0];
+        float Section_offset_V = this.UVERAB[f][1];
+        float Section_Elevation = this.UVERAB[f][2];
+        float Section_Rotation = this.UVERAB[f][3];
+        float Section_scale_U = this.UVERAB[f][4];
+        float Section_scale_V = this.UVERAB[f][5];
+  
+        int Section_Type = this.Type[f];
+        int Section_RES1 = this.RES1[f];
+        int Section_RES2 = this.RES2[f];
+  
+        if (Section_Type != 0) {
+          
+          String the_filename = "Impact_" + nf(f, 0) + ".bmp";
+          
+          if (Export_MaterialLibrary) {
+  
+            String TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
+  
+            if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+  
+              if (Display_SolarImpactImage) {
+                println("Saving texture:", TEXTURE_path);
+                this.SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE].save(TEXTURE_path);
+              } else if (Display_SolidImpactImage) {
+                println("Saving texture:", TEXTURE_path);
+                this.SolidImpact[f].save(TEXTURE_path);
+              }
+  
+              if (target_window == TypeWindow.HTML) {
+                htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t</Appearance>");
+              }
+    
+              if (target_window == TypeWindow.OBJ) {
+    
+                mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+                mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+                mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+      
+                //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+              }
+            }
+          }
+  
+  
+          if (target_window == TypeWindow.OBJ) {
+  
+            if (Export_PolyToPoly == 1) {
+              obj_lastGroupNumber += 1;  
+              objOutput.println("g Impact_" + nf(f, 0));
+            }
+    
+            if (Export_MaterialLibrary) {
+              objOutput.println("usemtl " + the_filename.replace('.', '_'));
+            }
+          }
+  
+  
+          float[][] subFace = getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+    
+  
+          num_vertices_added = 0;
+        
+          int end_turn = 1;
+          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          for (int _turn = 1; _turn <= end_turn; _turn++) {
+  
+            boolean display_image = false;
+            
+            if (target_window == TypeWindow.WIN3D) {
+      
+              WIN3D.graphics.beginShape();
+  
+              WIN3D.graphics.noStroke();
+              WIN3D.graphics.noFill();
+    
+              if (Display_SolarImpactImage) { 
+                
+                WIN3D.graphics.texture(this.SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE]);
+  
+              } else if (Display_SolidImpactImage) {
+                
+                WIN3D.graphics.texture(this.SolidImpact[f]);
+              }  
+              
+            }
+    
+  
+            for (int q = 1; q <= 4; q++) {
+    
+              float x = subFace[q][0];
+              float y = subFace[q][1];
+              float z = subFace[q][2];
+              float u = subFace[q][3];
+              float v = subFace[q][4];
+    
+              if (target_window == TypeWindow.WIN3D) {
+    
+                WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * Section_RES1, v * Section_RES2);
+              }
+              
+              
+              if (target_window == TypeWindow.OBJ) {
+                
+                v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+  
+                if (_turn == 1) {
+                  SOLARCHVISION_OBJprintVertex(x, y, z);
+                }
+  
+                if (_turn == 2) {
+                  SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                }
+  
+                if (_turn == 3) {
+                  obj_lastVertexNumber += 1;
+                  obj_lastVtextureNumber += 1;
+                }           
+              } 
+    
+              this.Vertices[f * 4 + q - 1][0] = x;
+              this.Vertices[f * 4 + q - 1][1] = y;
+              this.Vertices[f * 4 + q - 1][2] = z;
+            }       
+           
+            if (target_window == TypeWindow.WIN3D) {
+              WIN3D.graphics.endShape(CLOSE);
+            }
+    
+            this.Faces[f][0] = f * 4 + 0;
+            this.Faces[f][1] = f * 4 + 1;
+            this.Faces[f][2] = f * 4 + 2;
+            this.Faces[f][3] = f * 4 + 3;  
+          }
+          
+          if (target_window == TypeWindow.OBJ) {
+  
+            String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+            String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+            String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+            String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+  
+            String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+            String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+            String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+            String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+  
+            obj_lastFaceNumber += 1;            
+            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+            if (Export_BackSides) {
+              obj_lastFaceNumber += 1;
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+            }
+  
+          }
+          
+          
+          if (target_window == TypeWindow.HTML) {
+            
+            htmlOutput.println("\t\t\t\t<shape>");
+  
+            htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
+  
+            
+            htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
+           
+            htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
+            for (int s = 1; s < subFace.length; s++) {
+              if (s > 1) {
+                htmlOutput.print(",");
+              }                  
+              
+              htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+            }                
+            htmlOutput.println("'></Coordinate>");          
+            
+            
+            for (int s = 1; s < subFace.length; s++) {
+              
+              float u = subFace[s][3];
+              float v = subFace[s][4];
+              
+              if (s == 1) {
+                htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
+              }
+              if (s > 1) {
+                htmlOutput.print(",");
+              }                  
+    
+              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+              SOLARCHVISION_HTMLprintVtexture(u, v);
+              
+              if (s == subFace.length - 1) {
+                htmlOutput.println("'></TextureCoordinate>");
+              }     
+            }  
+  
+          
+    
+            htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
+           
+            htmlOutput.println("\t\t\t\t</shape>");          
+          }
+      
+        }
+      }
+  
+    }
+  
+  }
+  
+  
+  float[][] getCorners (int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
+  
+    float[][] ImageVertex = new float [5][5];
+  
+    for (int q = 0; q < 5; q++) {
+  
+      float qx = 0, qy = 0, u = 0, v = 0;
+  
+      if (q == 0) {
+        qx = 0; 
+        qy = 0; 
+        u = 0.5; 
+        v = 0.5;
+      } // center    
+      else if (q == 1) {
+        qx = -1; 
+        qy = -1; 
+        u = 0; 
+        v = 1;
+      } else if (q == 2) {
+        qx = 1; 
+        qy = -1; 
+        u = 1; 
+        v = 1;
+      } else if (q == 3) {
+        qx = 1; 
+        qy = 1; 
+        u = 1; 
+        v = 0;
+      } else if (q == 4) {
+        qx = -1; 
+        qy = 1; 
+        u = 0; 
+        v = 0;
+      }    
+  
+      float a = qx * 0.5 * Section_scale_U + Section_offset_U;
+      float b = qy * 0.5 * Section_scale_V + Section_offset_V;
+      float c = Section_Elevation;  
+  
+      float x = 0, y = 0, z = 0;
+  
+      if (Section_Type == 1) {
+        x = a * cos_ang(Section_Rotation) - b * sin_ang(Section_Rotation);
+        y = a * sin_ang(Section_Rotation) + b * cos_ang(Section_Rotation);
+        z = c;
+      } else if (Section_Type == 2) {
+        x = a * cos_ang(Section_Rotation) - c * sin_ang(Section_Rotation);
+        y = -(a * sin_ang(Section_Rotation) + c * cos_ang(Section_Rotation));
+        z = b;
+      } else if (Section_Type == 3) {
+        x = a * cos_ang(90 - Section_Rotation) - c * sin_ang(90 - Section_Rotation); // ????????????
+        y = -(a * sin_ang(90 - Section_Rotation) + c * cos_ang(90 - Section_Rotation)); // ????????????
+        z = b;
+      }      
+  
+      ImageVertex[q][0] = x;
+      ImageVertex[q][1] = y;
+      ImageVertex[q][2] = z;
+      ImageVertex[q][3] = u;
+      ImageVertex[q][4] = v;
+    }
+  
+    return ImageVertex;
+  }
+}  
 
+solarchvision_SECTIONS SECTIONS = new solarchvision_SECTIONS();
 
 
 
@@ -30400,18 +30724,18 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allSections_Faces.length][4];
+  float[][] hitPoint = new float [SECTIONS.Faces.length][4];
 
-  for (int f = 0; f < allSections_Faces.length; f++) {
+  for (int f = 0; f < SECTIONS.Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  for (int f = 0; f < allSections_Faces.length; f++) {
+  for (int f = 0; f < SECTIONS.Faces.length; f++) {
 
-    int n = allSections_Faces[f].length;
+    int n = SECTIONS.Faces[f].length;
     
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -30420,10 +30744,10 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
     boolean InPoly = false;
 
-    float[] A = allSections_Vertices[allSections_Faces[f][0]];
-    float[] B = allSections_Vertices[allSections_Faces[f][1]];
-    float[] C = allSections_Vertices[allSections_Faces[f][n - 2]];
-    float[] D = allSections_Vertices[allSections_Faces[f][n - 1]];
+    float[] A = SECTIONS.Vertices[SECTIONS.Faces[f][0]];
+    float[] B = SECTIONS.Vertices[SECTIONS.Faces[f][1]];
+    float[] C = SECTIONS.Vertices[SECTIONS.Faces[f][n - 2]];
+    float[] D = SECTIONS.Vertices[SECTIONS.Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30466,7 +30790,7 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < allSections_Faces.length; f++) {
+  for (int f = 0; f < SECTIONS.Faces.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -31377,16 +31701,16 @@ void SOLARCHVISION_render_Shadows_selectedSections () {
 
     int f = selectedSection_ids[o];
 
-    SolarImpact_sectionType = allSections_Type[f];
-    SolarImpact_RES1 = allSections_RES1[f];
-    SolarImpact_RES2 = allSections_RES2[f];     
+    SolarImpact_sectionType = SECTIONS.Type[f];
+    SolarImpact_RES1 = SECTIONS.RES1[f];
+    SolarImpact_RES2 = SECTIONS.RES2[f];     
 
-    SolarImpact_offset_U = allSections_UVERAB[f][0];
-    SolarImpact_offset_V = allSections_UVERAB[f][1];
-    SolarImpact_Elevation = 0.1 + allSections_UVERAB[f][2];
-    SolarImpact_Rotation = allSections_UVERAB[f][3];
-    SolarImpact_scale_U = allSections_UVERAB[f][4];
-    SolarImpact_scale_V = allSections_UVERAB[f][5];
+    SolarImpact_offset_U = SECTIONS.UVERAB[f][0];
+    SolarImpact_offset_V = SECTIONS.UVERAB[f][1];
+    SolarImpact_Elevation = 0.1 + SECTIONS.UVERAB[f][2];
+    SolarImpact_Rotation = SECTIONS.UVERAB[f][3];
+    SolarImpact_scale_U = SECTIONS.UVERAB[f][4];
+    SolarImpact_scale_V = SECTIONS.UVERAB[f][5];
 
     SceneName = "Section_" + Section_Stamp();
 
@@ -31407,16 +31731,16 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
 
     int f = selectedSection_ids[o];
 
-    SolarImpact_sectionType = allSections_Type[f];
-    SolarImpact_RES1 = allSections_RES1[f];
-    SolarImpact_RES2 = allSections_RES2[f];     
+    SolarImpact_sectionType = SECTIONS.Type[f];
+    SolarImpact_RES1 = SECTIONS.RES1[f];
+    SolarImpact_RES2 = SECTIONS.RES2[f];     
 
-    SolarImpact_offset_U = allSections_UVERAB[f][0];
-    SolarImpact_offset_V = allSections_UVERAB[f][1];
-    SolarImpact_Elevation = 0.1 + allSections_UVERAB[f][2];
-    SolarImpact_Rotation = allSections_UVERAB[f][3];
-    SolarImpact_scale_U = allSections_UVERAB[f][4];
-    SolarImpact_scale_V = allSections_UVERAB[f][5];
+    SolarImpact_offset_U = SECTIONS.UVERAB[f][0];
+    SolarImpact_offset_V = SECTIONS.UVERAB[f][1];
+    SolarImpact_Elevation = 0.1 + SECTIONS.UVERAB[f][2];
+    SolarImpact_Rotation = SECTIONS.UVERAB[f][3];
+    SolarImpact_scale_U = SECTIONS.UVERAB[f][4];
+    SolarImpact_scale_V = SECTIONS.UVERAB[f][5];
 
     SceneName = "Section_" + Section_Stamp();
 
@@ -31425,9 +31749,9 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
     
     for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
       for (int q = 0; q < numberOfImpactVariations; q++) {
-        allSections_SolarImpact[f][j + 1][q] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
+        SECTIONS.SolarImpact[f][j + 1][q] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
 
-        allSections_SolarImpact[f][j + 1][q].copy(SolarImpact_Image[q][j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
+        SECTIONS.SolarImpact[f][j + 1][q].copy(SolarImpact_Image[q][j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
       }
     }
   }
@@ -31444,27 +31768,27 @@ void SOLARCHVISION_calculate_SolidImpact_selectedSections () {
 
     int f = selectedSection_ids[o];
 
-    SolidImpact_sectionType = allSections_Type[f];
-    SolidImpact_RES1 = allSections_RES1[f];
-    SolidImpact_RES2 = allSections_RES2[f];     
+    SolidImpact_sectionType = SECTIONS.Type[f];
+    SolidImpact_RES1 = SECTIONS.RES1[f];
+    SolidImpact_RES2 = SECTIONS.RES2[f];     
 
-    SolidImpact_offset_U[SolidImpact_sectionType] = allSections_UVERAB[f][0];
-    SolidImpact_offset_V[SolidImpact_sectionType] = allSections_UVERAB[f][1];
-    SolidImpact_Elevation[SolidImpact_sectionType] = allSections_UVERAB[f][2];
-    SolidImpact_Rotation[SolidImpact_sectionType] = allSections_UVERAB[f][3];
-    SolidImpact_scale_U[SolidImpact_sectionType] = allSections_UVERAB[f][4];
-    SolidImpact_scale_V[SolidImpact_sectionType] = allSections_UVERAB[f][5];
+    SolidImpact_offset_U[SolidImpact_sectionType] = SECTIONS.UVERAB[f][0];
+    SolidImpact_offset_V[SolidImpact_sectionType] = SECTIONS.UVERAB[f][1];
+    SolidImpact_Elevation[SolidImpact_sectionType] = SECTIONS.UVERAB[f][2];
+    SolidImpact_Rotation[SolidImpact_sectionType] = SECTIONS.UVERAB[f][3];
+    SolidImpact_scale_U[SolidImpact_sectionType] = SECTIONS.UVERAB[f][4];
+    SolidImpact_scale_V[SolidImpact_sectionType] = SECTIONS.UVERAB[f][5];
 
     {
       if ((SolidImpact_Image.width != SolidImpact_RES1) || (SolidImpact_Image.height != SolidImpact_RES2)) {
         SolidImpact_Image = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
 
-        allSections_SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
+        SECTIONS.SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
       }
 
       SOLARCHVISION_calculate_SolidImpact_CurrentSection();
 
-      allSections_SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2);
+      SECTIONS.SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2);
     }
   }
 
@@ -31632,7 +31956,7 @@ void SOLARCHVISION_calculate_WindFlow () {
    int Section_RES1 = SolidImpact_RES1;
    int Section_RES2 = SolidImpact_RES2; 
    
-   float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
+   float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
    
    float[] SectionCorner_A = ImageVertex[1];
    float[] SectionCorner_B = ImageVertex[2];
@@ -32092,7 +32416,7 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
     int Section_RES1 = SolidImpact_RES1;
     int Section_RES2 = SolidImpact_RES2; 
 
-    float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+    float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
     float[] SectionCorner_A = ImageVertex[1];
     float[] SectionCorner_B = ImageVertex[2];
@@ -34426,7 +34750,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.Sections) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < allSections_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < SECTIONS.Faces.length; OBJ_NUM++) {
 
       int break_loops = 0;
 
@@ -34437,13 +34761,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       int f = OBJ_NUM;
 
-      for (int j = 0; j < allSections_Faces[f].length; j++) {
+      for (int j = 0; j < SECTIONS.Faces[f].length; j++) {
 
-        int vNo = allSections_Faces[f][j];
+        int vNo = SECTIONS.Faces[f][j];
 
-        float x = allSections_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allSections_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allSections_Vertices[vNo][2] * OBJECTS_scale;
+        float x = SECTIONS.Vertices[vNo][0] * OBJECTS_scale;
+        float y = SECTIONS.Vertices[vNo][1] * OBJECTS_scale;
+        float z = -SECTIONS.Vertices[vNo][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -38746,7 +39070,7 @@ void mouseClicked () {
                   int keep_number_of_Object2Ds = OBJECTS2D.num;
                   int keep_number_of_Fractals = FRACTALS1D.num;
                   int keep_number_of_Solids = SOLIDS.DEF.length;
-                  int keep_number_of_Sections = allSections_num;
+                  int keep_number_of_Sections = SECTIONS.num;
                   int keep_number_of_Cameras = CAMERAS.num;
   
                   float x = RxP[1]; 
@@ -39169,7 +39493,7 @@ void mouseClicked () {
       
                           PVector GAxGB = AG.cross(BG);
       
-                          float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                          float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
       
                           float[] SectionCorner_A = ImageVertex[1];
                           float[] SectionCorner_B = ImageVertex[2];
@@ -39226,11 +39550,11 @@ void mouseClicked () {
       
                         MODEL3D.add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
     
-                        if (keep_number_of_Sections != allSections_num) { // if any Section created during the process
+                        if (keep_number_of_Sections != SECTIONS.num) { // if any Section created during the process
     
                           selectedSection_ids = new int [0];
     
-                          for (int o = keep_number_of_Sections; o < allSections_num; o++) {
+                          for (int o = keep_number_of_Sections; o < SECTIONS.num; o++) {
     
                             int[] newlyAddedSection = {o};
     
@@ -39887,13 +40211,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           beginShape();
 
-          for (int j = 0; j < allSections_Faces[f].length; j++) {
+          for (int j = 0; j < SECTIONS.Faces[f].length; j++) {
 
-            int vNo = allSections_Faces[f][j];
+            int vNo = SECTIONS.Faces[f][j];
 
-            float x = allSections_Vertices[vNo][0] * OBJECTS_scale;
-            float y = allSections_Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allSections_Vertices[vNo][2] * OBJECTS_scale;
+            float x = SECTIONS.Vertices[vNo][0] * OBJECTS_scale;
+            float y = SECTIONS.Vertices[vNo][1] * OBJECTS_scale;
+            float z = -SECTIONS.Vertices[vNo][2] * OBJECTS_scale;
 
             float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -42397,320 +42721,6 @@ void SOLARCHVISION_draw_referencePivot () {
 
 
 
-float[][] allSections_Vertices;
-int[][] allSections_Faces;
-
-
-void SOLARCHVISION_draw_Sections (int target_window) {
-  
-  allSections_Faces = new int [allSections_num][4];
-
-  allSections_Vertices = new float [4 * allSections_num][3];
-
-
-  boolean proceed = true;
-
-  if (Display_Sections) {
-    proceed = false;
-  }
-
-  if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
-    proceed = false;
-  }
-  
-  if (proceed) {
-
-    for (int f = 0; f < allSections_num; f++) {
-
-      float Section_offset_U = allSections_UVERAB[f][0];
-      float Section_offset_V = allSections_UVERAB[f][1];
-      float Section_Elevation = allSections_UVERAB[f][2];
-      float Section_Rotation = allSections_UVERAB[f][3];
-      float Section_scale_U = allSections_UVERAB[f][4];
-      float Section_scale_V = allSections_UVERAB[f][5];
-
-      int Section_Type = allSections_Type[f];
-      int Section_RES1 = allSections_RES1[f];
-      int Section_RES2 = allSections_RES2[f];
-
-      if (Section_Type != 0) {
-        
-        String the_filename = "Impact_" + nf(f, 0) + ".bmp";
-        
-        if (Export_MaterialLibrary) {
-
-          String TEXTURE_path = Model3DFolder + "/" + Export_MapsSubfolder + the_filename;
-
-          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
-
-            if (Display_SolarImpactImage) {
-              println("Saving texture:", TEXTURE_path);
-              allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE].save(TEXTURE_path);
-            } else if (Display_SolidImpactImage) {
-              println("Saving texture:", TEXTURE_path);
-              allSections_SolidImpact[f].save(TEXTURE_path);
-            }
-
-            if (target_window == TypeWindow.HTML) {
-              htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
-              htmlOutput.println("\t\t\t\t</Appearance>");
-            }
-  
-            if (target_window == TypeWindow.OBJ) {
-  
-              mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-              mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-              mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-              mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-              mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-              mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-              mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-              mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-              mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-              mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-    
-              //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-              mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
-            }
-          }
-        }
-
-
-        if (target_window == TypeWindow.OBJ) {
-
-          if (Export_PolyToPoly == 1) {
-            obj_lastGroupNumber += 1;  
-            objOutput.println("g Impact_" + nf(f, 0));
-          }
-  
-          if (Export_MaterialLibrary) {
-            objOutput.println("usemtl " + the_filename.replace('.', '_'));
-          }
-        }
-
-
-        float[][] subFace = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-  
-
-        num_vertices_added = 0;
-      
-        int end_turn = 1;
-        if (target_window == TypeWindow.OBJ) end_turn = 3;
-        for (int _turn = 1; _turn <= end_turn; _turn++) {
-
-          boolean display_image = false;
-          
-          if (target_window == TypeWindow.WIN3D) {
-    
-            WIN3D.graphics.beginShape();
-
-            WIN3D.graphics.noStroke();
-            WIN3D.graphics.noFill();
-  
-            if (Display_SolarImpactImage) { 
-              
-              WIN3D.graphics.texture(allSections_SolarImpact[f][IMPACTS_DisplayDay][Impact_TYPE]);
-
-            } else if (Display_SolidImpactImage) {
-              
-              WIN3D.graphics.texture(allSections_SolidImpact[f]);
-            }  
-            
-          }
-  
-
-          for (int q = 1; q <= 4; q++) {
-  
-            float x = subFace[q][0];
-            float y = subFace[q][1];
-            float z = subFace[q][2];
-            float u = subFace[q][3];
-            float v = subFace[q][4];
-  
-            if (target_window == TypeWindow.WIN3D) {
-  
-              WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * Section_RES1, v * Section_RES2);
-            }
-            
-            
-            if (target_window == TypeWindow.OBJ) {
-              
-              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-
-              if (_turn == 1) {
-                SOLARCHVISION_OBJprintVertex(x, y, z);
-              }
-
-              if (_turn == 2) {
-                SOLARCHVISION_OBJprintVtexture(u, v, 0);
-              }
-
-              if (_turn == 3) {
-                obj_lastVertexNumber += 1;
-                obj_lastVtextureNumber += 1;
-              }           
-            } 
-  
-            allSections_Vertices[f * 4 + q - 1][0] = x;
-            allSections_Vertices[f * 4 + q - 1][1] = y;
-            allSections_Vertices[f * 4 + q - 1][2] = z;
-          }       
-         
-          if (target_window == TypeWindow.WIN3D) {
-            WIN3D.graphics.endShape(CLOSE);
-          }
-  
-          allSections_Faces[f][0] = f * 4 + 0;
-          allSections_Faces[f][1] = f * 4 + 1;
-          allSections_Faces[f][2] = f * 4 + 2;
-          allSections_Faces[f][3] = f * 4 + 3;  
-        }
-        
-        if (target_window == TypeWindow.OBJ) {
-
-          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-
-          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-
-          obj_lastFaceNumber += 1;            
-          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-          if (Export_BackSides) {
-            obj_lastFaceNumber += 1;
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-          }
-
-        }
-        
-        
-        if (target_window == TypeWindow.HTML) {
-          
-          htmlOutput.println("\t\t\t\t<shape>");
-
-          htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
-
-          
-          htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
-         
-          htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-          for (int s = 1; s < subFace.length; s++) {
-            if (s > 1) {
-              htmlOutput.print(",");
-            }                  
-            
-            htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
-          }                
-          htmlOutput.println("'></Coordinate>");          
-          
-          
-          for (int s = 1; s < subFace.length; s++) {
-            
-            float u = subFace[s][3];
-            float v = subFace[s][4];
-            
-            if (s == 1) {
-              htmlOutput.print  ("\t\t\t\t\t\t<TextureCoordinate point='");
-            }
-            if (s > 1) {
-              htmlOutput.print(",");
-            }                  
-  
-            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-            SOLARCHVISION_HTMLprintVtexture(u, v);
-            
-            if (s == subFace.length - 1) {
-              htmlOutput.println("'></TextureCoordinate>");
-            }     
-          }  
-
-        
-  
-          htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
-         
-          htmlOutput.println("\t\t\t\t</shape>");          
-        }
-    
-      }
-    }
-
-  }
-
-}
-
-
-float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
-
-  float[][] ImageVertex = new float [5][5];
-
-  for (int q = 0; q < 5; q++) {
-
-    float qx = 0, qy = 0, u = 0, v = 0;
-
-    if (q == 0) {
-      qx = 0; 
-      qy = 0; 
-      u = 0.5; 
-      v = 0.5;
-    } // center    
-    else if (q == 1) {
-      qx = -1; 
-      qy = -1; 
-      u = 0; 
-      v = 1;
-    } else if (q == 2) {
-      qx = 1; 
-      qy = -1; 
-      u = 1; 
-      v = 1;
-    } else if (q == 3) {
-      qx = 1; 
-      qy = 1; 
-      u = 1; 
-      v = 0;
-    } else if (q == 4) {
-      qx = -1; 
-      qy = 1; 
-      u = 0; 
-      v = 0;
-    }    
-
-    float a = qx * 0.5 * Section_scale_U + Section_offset_U;
-    float b = qy * 0.5 * Section_scale_V + Section_offset_V;
-    float c = Section_Elevation;  
-
-    float x = 0, y = 0, z = 0;
-
-    if (Section_Type == 1) {
-      x = a * cos_ang(Section_Rotation) - b * sin_ang(Section_Rotation);
-      y = a * sin_ang(Section_Rotation) + b * cos_ang(Section_Rotation);
-      z = c;
-    } else if (Section_Type == 2) {
-      x = a * cos_ang(Section_Rotation) - c * sin_ang(Section_Rotation);
-      y = -(a * sin_ang(Section_Rotation) + c * cos_ang(Section_Rotation));
-      z = b;
-    } else if (Section_Type == 3) {
-      x = a * cos_ang(90 - Section_Rotation) - c * sin_ang(90 - Section_Rotation); // ????????????
-      y = -(a * sin_ang(90 - Section_Rotation) + c * cos_ang(90 - Section_Rotation)); // ????????????
-      z = b;
-    }      
-
-    ImageVertex[q][0] = x;
-    ImageVertex[q][1] = y;
-    ImageVertex[q][2] = z;
-    ImageVertex[q][3] = u;
-    ImageVertex[q][4] = v;
-  }
-
-  return ImageVertex;
-}
-
 
 
 
@@ -42895,20 +42905,20 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.Sections) {
       int n = theVertices[q];
 
-      if (n < allSections_num) {
+      if (n < SECTIONS.num) {
 
-        float Section_offset_U = allSections_UVERAB[n][0];
-        float Section_offset_V = allSections_UVERAB[n][1];
-        float Section_Elevation = allSections_UVERAB[n][2];
-        float Section_Rotation = allSections_UVERAB[n][3];
-        float Section_scale_U = allSections_UVERAB[n][4];
-        float Section_scale_V = allSections_UVERAB[n][5];
+        float Section_offset_U = SECTIONS.UVERAB[n][0];
+        float Section_offset_V = SECTIONS.UVERAB[n][1];
+        float Section_Elevation = SECTIONS.UVERAB[n][2];
+        float Section_Rotation = SECTIONS.UVERAB[n][3];
+        float Section_scale_U = SECTIONS.UVERAB[n][4];
+        float Section_scale_V = SECTIONS.UVERAB[n][5];
 
-        int Section_Type = allSections_Type[n];
-        int Section_RES1 = allSections_RES1[n];
-        int Section_RES2 = allSections_RES2[n];
+        int Section_Type = SECTIONS.Type[n];
+        int Section_RES1 = SECTIONS.RES1[n];
+        int Section_RES2 = SECTIONS.RES2[n];
 
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+        float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
         // the first vertex is the center of Section plane
         x = ImageVertex[0][0]; 
@@ -44151,9 +44161,9 @@ void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
 
     int f = selectedSection_ids[q];
 
-    allSections_UVERAB[f][0] += dx;
-    allSections_UVERAB[f][1] += dy;
-    allSections_UVERAB[f][2] += dz;
+    SECTIONS.UVERAB[f][0] += dx;
+    SECTIONS.UVERAB[f][1] += dy;
+    SECTIONS.UVERAB[f][2] += dz;
   }
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections();
@@ -44169,7 +44179,7 @@ void SOLARCHVISION_rotate_selectedSections (float r) {
 
     int f = selectedSection_ids[q];
 
-    allSections_UVERAB[f][3] += r * 180.0 / PI;
+    SECTIONS.UVERAB[f][3] += r * 180.0 / PI;
   }
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
@@ -44184,8 +44194,8 @@ void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
 
     int f = selectedSection_ids[q];
 
-    allSections_UVERAB[f][4] *= sx;
-    allSections_UVERAB[f][5] *= sy;
+    SECTIONS.UVERAB[f][4] *= sx;
+    SECTIONS.UVERAB[f][5] *= sy;
   }
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
@@ -44748,25 +44758,25 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int f = OBJ_NUM;
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = allSections_Type[f];
+        int n = SECTIONS.Type[f];
         n += p;
         if (n > 3) n = 0;
         if (n < 0) n = 3;
-        allSections_Type[f] = n;         
+        SECTIONS.Type[f] = n;         
 
         Solids_updated = 1;
       }        
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-        int n = allSections_RES1[f];
+        int n = SECTIONS.RES1[f];
         if (p > 0) n *= 2;
         if (p < 0) n /= 2;
 
         if (n > 1600) n = 100;
         if (n < 100) n = 1600;
-        allSections_RES1[f] = n;
+        SECTIONS.RES1[f] = n;
 
-        allSections_RES2[f] = n; // also modifying the other one
+        SECTIONS.RES2[f] = n; // also modifying the other one
 
         println("RES:", n);
 
@@ -49719,8 +49729,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("allSections_SolidImpact");
-    int ni = allSections_SolidImpact.length;
+    newChild1 = my_xml.addChild("SECTIONS.SolidImpact");
+    int ni = SECTIONS.SolidImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
 
@@ -49729,7 +49739,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
       String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
 
       println("Saving texture:", TEXTURE_path);
-      allSections_SolidImpact[i].save(TEXTURE_path);
+      SECTIONS.SolidImpact[i].save(TEXTURE_path);
 
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
@@ -49738,12 +49748,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("allSections_SolarImpact");
-    int ni = allSections_SolarImpact.length;
+    newChild1 = my_xml.addChild("SECTIONS.SolarImpact");
+    int ni = SECTIONS.SolarImpact.length;
     if (ni > 0) {
-      int nj = allSections_SolarImpact[0].length;
+      int nj = SECTIONS.SolarImpact[0].length;
       if (nj > 0) {
-        int nk = allSections_SolarImpact[0][0].length;
+        int nk = SECTIONS.SolarImpact[0][0].length;
         newChild1.setInt("ni", ni);
         newChild1.setInt("nj", nj);
         newChild1.setInt("nk", nk);
@@ -49761,7 +49771,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
               String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
       
               println("Saving texture:", TEXTURE_path);
-              allSections_SolarImpact[i][j][k].save(TEXTURE_path);
+              SECTIONS.SolarImpact[i][j][k].save(TEXTURE_path);
       
               newChild2 = newChild1.addChild("Path");
               newChild2.setInt("id", (i * nj + j) * nk + k); 
@@ -49818,22 +49828,22 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   println("Saving:Sections");
   {
     newChild1 = my_xml.addChild("allSections");
-    int ni = allSections_num;
+    int ni = SECTIONS.num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Section");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allSections_UVERAB[i].length; j++) {
+      //for (int j = 0; j < SECTIONS.UVERAB[i].length; j++) {
       for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-        lineSTR += nf(allSections_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(SECTIONS.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(allSections_Type[i], 0);
+      lineSTR += nf(SECTIONS.Type[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allSections_RES1[i], 0);
+      lineSTR += nf(SECTIONS.RES1[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allSections_RES2[i], 0);
+      lineSTR += nf(SECTIONS.RES2[i], 0);
 
       newChild2.setContent(lineSTR);
     }
@@ -50839,34 +50849,34 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      children0 = FileAll.getChildren("allSections_SolidImpact");
+      children0 = FileAll.getChildren("SECTIONS.SolidImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
 
-        allSections_SolidImpact = new PImage [ni];
+        SECTIONS.SolidImpact = new PImage [ni];
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
 
           String TEXTURE_path = children1[i].getContent();
 
-          allSections_SolidImpact[i] = createImage(2, 2, RGB); // empty and small
+          SECTIONS.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
 
           println("Loading texture(" + i + "):", TEXTURE_path);
-          allSections_SolidImpact[i] = loadImage(TEXTURE_path);
+          SECTIONS.SolidImpact[i] = loadImage(TEXTURE_path);
           println("loaded!");
         }
       }
     }
 
     {
-      children0 = FileAll.getChildren("allSections_SolarImpact");
+      children0 = FileAll.getChildren("SECTIONS.SolarImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         int nj = children0[L].getInt("nj");
         int nk = children0[L].getInt("nk");
 
-        allSections_SolarImpact = new PImage [ni][nj][nk]; 
+        SECTIONS.SolarImpact = new PImage [ni][nj][nk]; 
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
@@ -50875,10 +50885,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
               String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
   
-              allSections_SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
+              SECTIONS.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
   
               println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
-              allSections_SolarImpact[i][j][k] = loadImage(TEXTURE_path);
+              SECTIONS.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
               println("loaded!");
             }
           }
@@ -50928,11 +50938,11 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
-      allSections_UVERAB = new float [ni][6];
-      allSections_Type = new int [ni];
-      allSections_RES1 = new int [ni];
-      allSections_RES2 = new int [ni];
-      allSections_num = ni;
+      SECTIONS.UVERAB = new float [ni][6];
+      SECTIONS.Type = new int [ni];
+      SECTIONS.RES1 = new int [ni];
+      SECTIONS.RES2 = new int [ni];
+      SECTIONS.num = ni;
 
       XML[] children1 = children0[L].getChildren("Section");         
       for (int i = 0; i < ni; i++) {
@@ -50940,12 +50950,12 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 6; j++) {
-          allSections_UVERAB[i][j] = float(parts[j]);
+          SECTIONS.UVERAB[i][j] = float(parts[j]);
         }
 
-        allSections_Type[i] = int(parts[6]);
-        allSections_RES1[i] = int(parts[7]);
-        allSections_RES2[i] = int(parts[8]);
+        SECTIONS.Type[i] = int(parts[6]);
+        SECTIONS.RES1[i] = int(parts[7]);
+        SECTIONS.RES2[i] = int(parts[8]);
       }
     } 
 
