@@ -2453,11 +2453,11 @@ class solarchvision_WIN3D {
       
       TROPO3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
   
-      SOLARCHVISION_draw_Faces();
+      MODEL3D.draw_Faces();
   
-      SOLARCHVISION_draw_Curves();
+      MODEL3D.draw_Curves();
       
-      SOLARCHVISION_draw_Vertices();
+      MODEL3D.draw_Vertices();
   
       FRACTALS1D.draw();
   
@@ -27926,6 +27926,349 @@ class solarchvision_MODEL3D {
   }
   
   
+  void draw_Faces () {
+  
+    if (Display_Model3Ds) {
+  
+      if (this.DisplayNormals) {
+  
+        for (int f = 0; f < allFaces_PNT.length; f++) {
+  
+          int vsb = allFaces_MTLVGC[f][3];
+  
+          if (vsb > 0) {
+  
+            float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+            for (int j = 0; j < allFaces_PNT[f].length; j++) {
+              int vNo = allFaces_PNT[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+  
+            float G_x0 = 0;
+            float G_y0 = 0;
+            float G_z0 = 0;
+  
+            float G_x1 = 0;
+            float G_y1 = 0;
+            float G_z1 = 0;
+  
+            float n = float(base_Vertices.length);
+  
+            for (int s = 0; s < base_Vertices.length; s++) {
+  
+              int s_next = (s + 1) % base_Vertices.length;
+              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+  
+              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
+              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
+              PVector UV = U.cross(V);
+              float[] W = {
+                UV.x, UV.y, UV.z
+              };
+              W = SOLARCHVISION_fn_normalize(W);
+  
+              float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
+              float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
+              float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
+  
+              float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D.scale;
+              float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D.scale;
+              float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D.scale;
+  
+              G_x0 += x0 / n;
+              G_y0 += y0 / n;
+              G_z0 += z0 / n;
+  
+              G_x1 += x1 / n;
+              G_y1 += y1 / n;
+              G_z1 += z1 / n;
+            }
+  
+            WIN3D.graphics.strokeWeight(3);
+            WIN3D.graphics.stroke(127, 255, 127);
+            WIN3D.graphics.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
+  
+            WIN3D.graphics.strokeWeight(1);
+            WIN3D.graphics.stroke(0, 127, 0);
+  
+            for (int s = 0; s < base_Vertices.length; s++) {
+  
+              float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
+              float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
+              float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
+  
+              WIN3D.graphics.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
+            }
+          }
+        }
+      }
+  
+      WIN3D.graphics.strokeWeight(1);
+      WIN3D.graphics.stroke(0, 0, 0);
+      if (this.DisplayEdges == false) WIN3D.graphics.noStroke();
+  
+      int PAL_TYPE = SHADE.get_PAL_TYPE(); 
+      int PAL_DIR = SHADE.get_PAL_DIR();
+      float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+  
+      for (int f = 0; f < allFaces_PNT.length; f++) {
+  
+        int vsb = allFaces_MTLVGC[f][3];
+  
+        if (vsb > 0) {        
+  
+          if (WIN3D.FacesShade == SHADE.Surface_Base) {
+  
+            WIN3D.graphics.fill(255, 255, 255);
+  
+            WIN3D.graphics.beginShape();
+  
+            for (int j = 0; j < allFaces_PNT[f].length; j++) {
+              int vNo = allFaces_PNT[f][j];
+  
+              WIN3D.graphics.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D.scale, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D.scale), allVertices[vNo][2] * OBJECTS_scale * WIN3D.scale);
+            }    
+  
+            WIN3D.graphics.endShape(CLOSE);
+          } else {
+  
+            int mt = allFaces_MTLVGC[f][0];
+  
+            int Tessellation = allFaces_MTLVGC[f][1];
+  
+            int TotalSubNo = 1;  
+            if (allFaces_MTLVGC[f][0] == 0) {
+              Tessellation += this.Tessellation;
+            }
+            if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+  
+            float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
+            for (int j = 0; j < allFaces_PNT[f].length; j++) {
+              int vNo = allFaces_PNT[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+  
+            for (int n = 0; n < TotalSubNo; n++) {
+  
+              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+  
+              WIN3D.graphics.beginShape();
+  
+              for (int s = 0; s < subFace.length; s++) {
+  
+                if (WIN3D.FacesShade != SHADE.Surface_Wire) {
+  
+                  float[] COL = {
+                    255, 255, 255, 255
+                  };
+  
+                  if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                    int s_next = (s + 1) % subFace.length;
+                    int s_prev = (s + subFace.length - 1) % subFace.length;
+                    
+                    COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                  }        
+            
+                  if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+  
+                    COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                  }                   
+  
+                  if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+  
+                    COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                  }
+  
+                  if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+  
+                    COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                  }
+  
+                  if (WIN3D.FacesShade == SHADE.Surface_Materials) {
+                    COL = SHADE.vertexRender_Surface_Materials(mt);
+                  }              
+  
+                  if (WIN3D.FacesShade == SHADE.Surface_White) {
+                    COL = SHADE.vertexRender_Surface_White(255);
+                  }
+             
+                  WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+                } else {
+                  WIN3D.graphics.noFill();
+                }
+  
+                WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -(subFace[s][1] * OBJECTS_scale * WIN3D.scale), subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+              }
+  
+              WIN3D.graphics.endShape(CLOSE);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  
+  
+  void draw_Curves () {
+  
+    WIN3D.graphics.strokeWeight(3);
+    
+    WIN3D.graphics.noFill();
+  
+    if (Display_Model3Ds) {
+      
+      for (int f = 0; f < allCurves_PNT.length; f++) {    
+        
+        int vsb = allCurves_MTLVGC[f][3];
+  
+        if (vsb > 0) {      
+      
+          int mt = allCurves_MTLVGC[f][0];  
+      
+          float[] COL = {
+            Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+          };      
+          
+          float weight = 0.1 * allCurves_MTLVGC[f][4];
+        
+          WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
+      
+          int Tessellation = int(pow(2, allCurves_MTLVGC[f][1]));
+  
+          float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
+          for (int j = 0; j < allCurves_PNT[f].length; j++) {
+            int vNo = allCurves_PNT[f][j];
+            base_Vertices[j][0] = allVertices[vNo][0];
+            base_Vertices[j][1] = allVertices[vNo][1];
+            base_Vertices[j][2] = allVertices[vNo][2];
+          }
+          
+          
+          WIN3D.graphics.beginShape();
+          
+          int div = base_Vertices.length;
+          
+          for (int j = 0; j < base_Vertices.length; j++) {
+            
+            int drawSegment = 1;
+            
+            int nA = j % div;
+            int nB = (j + 1)  % div;
+            int nB_after = (j + 2) % div;
+            int nA_before = (j - 1 + div) % div;        
+            
+            if (allCurves_MTLVGC[f][5] == 0) { // if not closed
+  
+              if (nB_after < nB) nB_after = nB;
+              if (nA_before > nA) nA_before = nA; 
+              
+              if (j == base_Vertices.length - 1) drawSegment = 0; 
+            }
+            
+            if (drawSegment == 1) {
+  
+              for (int q = 0; q <= Tessellation; q++) {
+    
+                float[] P = {0, 0, 0};
+                
+                for (int i = 0; i < 3; i++) {
+                  P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
+                }
+                
+                
+                float[] ANG_start = {0, 0, 0};
+                float[] ANG_end = {0, 0, 0};
+                
+                for (int i = 0; i < 3; i++) {
+                  ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+    
+                  ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
+                }
+                
+                if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
+                  ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
+                }
+                if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
+                  ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
+                }
+              
+              
+                float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+                float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+                
+                for (int i = 0; i < 3; i++) {
+                  ANG_start[i] *= dist_start;
+                  ANG_end[i] *= dist_end;
+                }
+                
+                for (int i = 0; i < 3; i++) {
+                  P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
+                }        
+     
+                
+                
+                WIN3D.graphics.vertex(P[0] * OBJECTS_scale * WIN3D.scale, -(P[1] * OBJECTS_scale * WIN3D.scale), P[2] * OBJECTS_scale * WIN3D.scale);
+                
+              }
+            }
+            
+          }
+          
+          if (allCurves_MTLVGC[f][5] == 0) { // if not closed
+            WIN3D.graphics.endShape();
+          }
+          else {
+            WIN3D.graphics.endShape(CLOSE);
+          }
+            
+            
+        }
+      }
+    }
+    
+    WIN3D.graphics.strokeWeight(0);
+  }
+  
+  
+  
+  
+  
+  void draw_Vertices () {
+  
+    WIN3D.graphics.strokeWeight(3);
+  
+    WIN3D.graphics.stroke(0); 
+    
+    WIN3D.graphics.noFill();
+     
+  
+    if (this.DisplayVertices) {
+      
+      float d = 0.5; // <<<<<<<<<<<<<< distance 
+  
+      for (int f = 0; f < allVertices.length; f++) {    
+                
+        float x = allVertices[f][0];
+        float y = allVertices[f][1];
+        float z = allVertices[f][2];
+        
+        WIN3D.graphics.line((x - d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, (x + d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
+  
+        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -((y - d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -((y + d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
+  
+        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z - d) * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z + d) * OBJECTS_scale * WIN3D.scale);
+  
+              
+      }
+    }
+    
+    WIN3D.graphics.strokeWeight(0);
+  }
   
   
   
@@ -28144,191 +28487,7 @@ solarchvision_MODEL3D MODEL3D = new solarchvision_MODEL3D();
 
 
 
-void SOLARCHVISION_draw_Faces () {
 
-  if (Display_Model3Ds) {
-
-    if (MODEL3D.DisplayNormals) {
-
-      for (int f = 0; f < allFaces_PNT.length; f++) {
-
-        int vsb = allFaces_MTLVGC[f][3];
-
-        if (vsb > 0) {
-
-          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-          for (int j = 0; j < allFaces_PNT[f].length; j++) {
-            int vNo = allFaces_PNT[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
-
-          float G_x0 = 0;
-          float G_y0 = 0;
-          float G_z0 = 0;
-
-          float G_x1 = 0;
-          float G_y1 = 0;
-          float G_z1 = 0;
-
-          float n = float(base_Vertices.length);
-
-          for (int s = 0; s < base_Vertices.length; s++) {
-
-            int s_next = (s + 1) % base_Vertices.length;
-            int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
-
-            PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
-            PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
-            PVector UV = U.cross(V);
-            float[] W = {
-              UV.x, UV.y, UV.z
-            };
-            W = SOLARCHVISION_fn_normalize(W);
-
-            float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
-            float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
-            float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
-
-            float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D.scale;
-            float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D.scale;
-            float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D.scale;
-
-            G_x0 += x0 / n;
-            G_y0 += y0 / n;
-            G_z0 += z0 / n;
-
-            G_x1 += x1 / n;
-            G_y1 += y1 / n;
-            G_z1 += z1 / n;
-          }
-
-          WIN3D.graphics.strokeWeight(3);
-          WIN3D.graphics.stroke(127, 255, 127);
-          WIN3D.graphics.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
-
-          WIN3D.graphics.strokeWeight(1);
-          WIN3D.graphics.stroke(0, 127, 0);
-
-          for (int s = 0; s < base_Vertices.length; s++) {
-
-            float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
-            float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
-            float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
-
-            WIN3D.graphics.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
-          }
-        }
-      }
-    }
-
-    WIN3D.graphics.strokeWeight(1);
-    WIN3D.graphics.stroke(0, 0, 0);
-    if (MODEL3D.DisplayEdges == false) WIN3D.graphics.noStroke();
-
-    int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-    int PAL_DIR = SHADE.get_PAL_DIR();
-    float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
-
-    for (int f = 0; f < allFaces_PNT.length; f++) {
-
-      int vsb = allFaces_MTLVGC[f][3];
-
-      if (vsb > 0) {        
-
-        if (WIN3D.FacesShade == SHADE.Surface_Base) {
-
-          WIN3D.graphics.fill(255, 255, 255);
-
-          WIN3D.graphics.beginShape();
-
-          for (int j = 0; j < allFaces_PNT[f].length; j++) {
-            int vNo = allFaces_PNT[f][j];
-
-            WIN3D.graphics.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D.scale, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D.scale), allVertices[vNo][2] * OBJECTS_scale * WIN3D.scale);
-          }    
-
-          WIN3D.graphics.endShape(CLOSE);
-        } else {
-
-          int mt = allFaces_MTLVGC[f][0];
-
-          int Tessellation = allFaces_MTLVGC[f][1];
-
-          int TotalSubNo = 1;  
-          if (allFaces_MTLVGC[f][0] == 0) {
-            Tessellation += MODEL3D.Tessellation;
-          }
-          if (Tessellation > 0) TotalSubNo = allFaces_PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-          float[][] base_Vertices = new float [allFaces_PNT[f].length][3];
-          for (int j = 0; j < allFaces_PNT[f].length; j++) {
-            int vNo = allFaces_PNT[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
-
-          for (int n = 0; n < TotalSubNo; n++) {
-
-            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-            WIN3D.graphics.beginShape();
-
-            for (int s = 0; s < subFace.length; s++) {
-
-              if (WIN3D.FacesShade != SHADE.Surface_Wire) {
-
-                float[] COL = {
-                  255, 255, 255, 255
-                };
-
-                if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                  int s_next = (s + 1) % subFace.length;
-                  int s_prev = (s + subFace.length - 1) % subFace.length;
-                  
-                  COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }        
-          
-                if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-
-                  COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }                   
-
-                if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-
-                  COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }
-
-                if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-
-                  COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                }
-
-                if (WIN3D.FacesShade == SHADE.Surface_Materials) {
-                  COL = SHADE.vertexRender_Surface_Materials(mt);
-                }              
-
-                if (WIN3D.FacesShade == SHADE.Surface_White) {
-                  COL = SHADE.vertexRender_Surface_White(255);
-                }
-           
-                WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-              } else {
-                WIN3D.graphics.noFill();
-              }
-
-              WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -(subFace[s][1] * OBJECTS_scale * WIN3D.scale), subFace[s][2] * OBJECTS_scale * WIN3D.scale);
-            }
-
-            WIN3D.graphics.endShape(CLOSE);
-          }
-        }
-      }
-    }
-  }
-}
 
 
 void SOLARCHVISION_resize_VertexSolar_array () { // called when STUDY.j_End changes
@@ -51621,161 +51780,6 @@ float[] SOLARCHVISION_getPivot () {
 
 
 
-void SOLARCHVISION_draw_Curves () {
-
-  WIN3D.graphics.strokeWeight(3);
-  
-  WIN3D.graphics.noFill();
-
-  if (Display_Model3Ds) {
-    
-    for (int f = 0; f < allCurves_PNT.length; f++) {    
-      
-      int vsb = allCurves_MTLVGC[f][3];
-
-      if (vsb > 0) {      
-    
-        int mt = allCurves_MTLVGC[f][0];  
-    
-        float[] COL = {
-          Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
-        };      
-        
-        float weight = 0.1 * allCurves_MTLVGC[f][4];
-      
-        WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
-    
-        int Tessellation = int(pow(2, allCurves_MTLVGC[f][1]));
-
-        float[][] base_Vertices = new float [allCurves_PNT[f].length][3];
-        for (int j = 0; j < allCurves_PNT[f].length; j++) {
-          int vNo = allCurves_PNT[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-        
-        
-        WIN3D.graphics.beginShape();
-        
-        int div = base_Vertices.length;
-        
-        for (int j = 0; j < base_Vertices.length; j++) {
-          
-          int drawSegment = 1;
-          
-          int nA = j % div;
-          int nB = (j + 1)  % div;
-          int nB_after = (j + 2) % div;
-          int nA_before = (j - 1 + div) % div;        
-          
-          if (allCurves_MTLVGC[f][5] == 0) { // if not closed
-
-            if (nB_after < nB) nB_after = nB;
-            if (nA_before > nA) nA_before = nA; 
-            
-            if (j == base_Vertices.length - 1) drawSegment = 0; 
-          }
-          
-          if (drawSegment == 1) {
-
-            for (int q = 0; q <= Tessellation; q++) {
-  
-              float[] P = {0, 0, 0};
-              
-              for (int i = 0; i < 3; i++) {
-                P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
-              }
-              
-              
-              float[] ANG_start = {0, 0, 0};
-              float[] ANG_end = {0, 0, 0};
-              
-              for (int i = 0; i < 3; i++) {
-                ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
-  
-                ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
-              }
-              
-              if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-                ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
-              }
-              if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-                ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
-              }
-            
-            
-              float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-              float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
-              
-              for (int i = 0; i < 3; i++) {
-                ANG_start[i] *= dist_start;
-                ANG_end[i] *= dist_end;
-              }
-              
-              for (int i = 0; i < 3; i++) {
-                P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
-              }        
-   
-              
-              
-              WIN3D.graphics.vertex(P[0] * OBJECTS_scale * WIN3D.scale, -(P[1] * OBJECTS_scale * WIN3D.scale), P[2] * OBJECTS_scale * WIN3D.scale);
-              
-            }
-          }
-          
-        }
-        
-        if (allCurves_MTLVGC[f][5] == 0) { // if not closed
-          WIN3D.graphics.endShape();
-        }
-        else {
-          WIN3D.graphics.endShape(CLOSE);
-        }
-          
-          
-      }
-    }
-  }
-  
-  WIN3D.graphics.strokeWeight(0);
-}
-
-
-
-
-
-void SOLARCHVISION_draw_Vertices () {
-
-  WIN3D.graphics.strokeWeight(3);
-
-  WIN3D.graphics.stroke(0); 
-  
-  WIN3D.graphics.noFill();
-   
-
-  if (MODEL3D.DisplayVertices) {
-    
-    float d = 0.5; // <<<<<<<<<<<<<< distance 
-
-    for (int f = 0; f < allVertices.length; f++) {    
-              
-      float x = allVertices[f][0];
-      float y = allVertices[f][1];
-      float z = allVertices[f][2];
-      
-      WIN3D.graphics.line((x - d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, (x + d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
-
-      WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -((y - d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -((y + d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
-
-      WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z - d) * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z + d) * OBJECTS_scale * WIN3D.scale);
-
-            
-    }
-  }
-  
-  WIN3D.graphics.strokeWeight(0);
-}
 
 
 
