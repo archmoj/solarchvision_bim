@@ -22055,7 +22055,7 @@ class solarchvision_Model3Ds {
   
       selectedGroup_ids = sort(selectedGroup_ids);
   
-      int Solids_updated = 0;  
+      boolean Solids_updated = false;  
   
       for (int o = selectedGroup_ids.length - 1; o >= 0; o--) {
   
@@ -22289,7 +22289,7 @@ class solarchvision_Model3Ds {
   
           Solids.DEF = (float[][]) concat(startList, endList);
   
-          Solids_updated = 1;
+          Solids_updated = true;
         }
   
   
@@ -22310,7 +22310,7 @@ class solarchvision_Model3Ds {
         allGroups_num -= 1;
       }
       
-      if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+      if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
   
     }
   
@@ -43284,7 +43284,7 @@ void SOLARCHVISION_move_selectedGroups (float dx, float dy, float dz) {
     allVertices[n][2] += dz;
   }
 
-  int Solids_updated = 0;
+  boolean Solids_updated = false;
 
   for (int o = selectedGroup_ids.length - 1; o >= 0; o--) {
 
@@ -43323,12 +43323,12 @@ void SOLARCHVISION_move_selectedGroups (float dx, float dy, float dz) {
 
         Solids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
 
-        Solids_updated = 1;
+        Solids_updated = true;
       }
     }
   }
 
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+  if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 }
 
 void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
@@ -43389,7 +43389,7 @@ void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
 
 
 
-  int Solids_updated = 0;
+  boolean Solids_updated = false;
 
   for (int o = selectedGroup_ids.length - 1; o >= 0; o--) {
 
@@ -43610,12 +43610,12 @@ void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
           Solids.RotateX(f, r * 180 / PI);
         }
 
-        Solids_updated = 1;
+        Solids_updated = true;
       }
     }
   }
 
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+  if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 }
 
 
@@ -43651,7 +43651,7 @@ void SOLARCHVISION_scale_selectedGroups (float x0, float y0, float z0, float sx,
 
   int n1 = Model2Ds.PEOPLE_Files_Num;
 
-  int Solids_updated = 0;
+  boolean Solids_updated = false;
 
   for (int o = selectedGroup_ids.length - 1; o >= 0; o--) {
 
@@ -43768,12 +43768,12 @@ void SOLARCHVISION_scale_selectedGroups (float x0, float y0, float z0, float sx,
 
         Solids.Scale(f, sx, sy, sz);
 
-        Solids_updated = 1;
+        Solids_updated = true;
       }
     }
   }
 
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+  if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 }
 
 
@@ -44224,7 +44224,7 @@ void SOLARCHVISION_move_selectedModel1Ds (float dx, float dy, float dz) {
 
 void SOLARCHVISION_move_selectedSolids (float dx, float dy, float dz) {
 
-  int Solids_updated = 0; 
+  boolean Solids_updated = false; 
 
   for (int q = 0; q < selectedSolid_ids.length; q++) {
 
@@ -44236,16 +44236,16 @@ void SOLARCHVISION_move_selectedSolids (float dx, float dy, float dz) {
 
     Solids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
 
-    Solids_updated = 1;
+    Solids_updated = true;
   }
 
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+  if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 }
 
 
 void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r, int the_Vector) {
 
-  int Solids_updated = 0; 
+  boolean Solids_updated = false; 
 
   for (int q = 0; q < selectedSolid_ids.length; q++) {
 
@@ -44274,16 +44274,16 @@ void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r,
       Solids.RotateX(f, r * 180 / PI);
     }
 
-    Solids_updated = 1;
+    Solids_updated = true;
   }
 
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+  if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 }
 
 
 void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-  int Solids_updated = 0; 
+  boolean Solids_updated = false; 
 
   for (int q = 0; q < selectedSolid_ids.length; q++) {
 
@@ -44309,10 +44309,10 @@ void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx,
 
     Solids.Scale(f, sx, sy, sz);    
 
-    Solids_updated = 1;
+    Solids_updated = true;
   }
 
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+  if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 }
 
 
@@ -44910,7 +44910,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
   if (Current_ObjectCategory == ObjectCategory.Sections) {
 
-    int Solids_updated = 0;  
+    boolean Solids_updated = false;  
 
     for (int o = selectedSection_ids.length - 1; o >= 0; o--) {
 
@@ -44925,7 +44925,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if (n < 0) n = 3;
         Sections.Type[f] = n;         
 
-        Solids_updated = 1;
+        Solids_updated = true;
       }        
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
@@ -44941,18 +44941,18 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         println("RES:", n);
 
-        Solids_updated = 1;
+        Solids_updated = true;
       }
 
     } 
 
-    if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+    if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
   }  
 
 
   if (Current_ObjectCategory == ObjectCategory.Solids) {
 
-    int Solids_updated = 0;  
+    boolean Solids_updated = false;  
 
     for (int o = selectedSolid_ids.length - 1; o >= 0; o--) {
 
@@ -44994,11 +44994,11 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         Solids.updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
 
-        Solids_updated = 1;
+        Solids_updated = true;
       }
     }
 
-    if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+    if (Solids_updated) SOLARCHVISION_calculate_SolidImpact_selectedSections();
   }    
 
 
