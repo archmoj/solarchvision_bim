@@ -8396,6 +8396,54 @@ class solarchvision_Curves {
   int[][] PNT = new int[0][3];
   
   int[][] MTLVGC = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
+  
+  int getMaterial (int n) {
+    return this.MTLVGC[n][0];
+  }
+
+  int getTessellation (int n) {
+    return this.MTLVGC[n][1];
+  }
+
+  int getLayer (int n) {
+    return this.MTLVGC[n][2];
+  }  
+  
+  int getVisibility (int n) {
+    return this.MTLVGC[n][3];
+  }   
+  
+  int getWeight (int n) {
+    return this.MTLVGC[n][4];
+  }    
+  
+  int getClose (int n) {
+    return this.MTLVGC[n][5];
+  }   
+  
+  void setMaterial (int n, int material) {
+    this.MTLVGC[n][0] = material;
+  }
+
+  void setTessellation (int n, int tessellation) {
+    this.MTLVGC[n][1] = tessellation;
+  }
+
+  void setLayer (int n, int layer) {
+    this.MTLVGC[n][2] = layer;
+  }  
+  
+  void setVisibility (int n, int visibility) {
+    this.MTLVGC[n][3] = visibility;
+  }   
+  
+  void setWeight (int n, int weight) {
+    this.MTLVGC[n][4] = weight;
+  }    
+  
+  void setClose (int n, int close) {
+    this.MTLVGC[n][5] = close;
+  }       
 }
 
 solarchvision_Curves allCurves = new solarchvision_Curves(); 
@@ -14048,7 +14096,7 @@ void SOLARCHVISION_export_objects_SCR () {
       scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
     }
     
-    if (allCurves.MTLVGC[f][0] == 1) {
+    if (allCurves.getMaterial(f) == 1) {
       scrOutput.println("c");
     }
     else {
@@ -21549,12 +21597,12 @@ class solarchvision_Model3Ds {
             newCurve = concat(newCurve, new_vertexItem);
           }
   
-          defaultMaterial = allCurves.MTLVGC[f][0];
-          defaultTessellation = allCurves.MTLVGC[f][1];
-          defaultLayer = allCurves.MTLVGC[f][2];
-          defaultVisibility = allCurves.MTLVGC[f][3];        
-          defaultWeight = allCurves.MTLVGC[f][4];
-          defaultClose = allCurves.MTLVGC[f][5];
+          defaultMaterial = allCurves.getMaterial(f);
+          defaultTessellation = allCurves.getTessellation(f);
+          defaultLayer = allCurves.getLayer(f);
+          defaultVisibility = allCurves.getVisibility(f);        
+          defaultWeight = allCurves.getWeight(f);
+          defaultClose = allCurves.getClose(f);
   
           this.add_Curve(newCurve);
         }
@@ -21982,12 +22030,12 @@ class solarchvision_Model3Ds {
                 newCurve = concat(newCurve, new_vertexItem);
               }
   
-              defaultMaterial = allCurves.MTLVGC[f][0];
-              defaultTessellation = allCurves.MTLVGC[f][1];
-              defaultLayer = allCurves.MTLVGC[f][2];
-              defaultVisibility = allCurves.MTLVGC[f][3];
-              defaultWeight = allCurves.MTLVGC[f][4];
-              defaultClose = allCurves.MTLVGC[f][5];
+              defaultMaterial = allCurves.getMaterial(f);
+              defaultTessellation = allCurves.getTessellation(f);
+              defaultLayer = allCurves.getLayer(f);
+              defaultVisibility = allCurves.getVisibility(f);
+              defaultWeight = allCurves.getWeight(f);
+              defaultClose = allCurves.getClose(f);
   
               this.add_Curve(newCurve);
             }
@@ -22236,12 +22284,12 @@ class solarchvision_Model3Ds {
               newCurve = concat(newCurve, new_vertexItem);
             }
   
-            defaultMaterial = allCurves.MTLVGC[f][0];
-            defaultTessellation = allCurves.MTLVGC[f][1];
-            defaultLayer = allCurves.MTLVGC[f][2];
-            defaultVisibility = allCurves.MTLVGC[f][3];      
-            defaultWeight = allCurves.MTLVGC[f][4];
-            defaultClose = allCurves.MTLVGC[f][5];          
+            defaultMaterial = allCurves.getMaterial(f);
+            defaultTessellation = allCurves.getTessellation(f);
+            defaultLayer = allCurves.getLayer(f);
+            defaultVisibility = allCurves.getVisibility(f);      
+            defaultWeight = allCurves.getWeight(f);
+            defaultClose = allCurves.getClose(f);          
   
             this.add_Curve(newCurve);
           }
@@ -25216,7 +25264,7 @@ class solarchvision_Model3Ds {
   
               int[][] newFace_MTLVGC = { // copying target face properties from curve source
                 {
-                  allCurves.MTLVGC[f][0], allCurves.MTLVGC[f][1], allCurves.MTLVGC[f][2], allCurves.MTLVGC[f][3], allCurves.MTLVGC[f][4], allCurves.MTLVGC[f][5]
+                  allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
                 }
               }; 
               allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
@@ -25230,7 +25278,7 @@ class solarchvision_Model3Ds {
   
               int[][] newFace_MTLVGC = { // copying target face properties from curve source
                 {
-                  allCurves.MTLVGC[f][0], allCurves.MTLVGC[f][1], allCurves.MTLVGC[f][2], allCurves.MTLVGC[f][3], allCurves.MTLVGC[f][4], allCurves.MTLVGC[f][5]
+                  allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
                 }
               }; 
               allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);  
@@ -25472,7 +25520,7 @@ class solarchvision_Model3Ds {
   
         int f = selectedCurve_ids[o];
   
-        allCurves.MTLVGC[f][3] = new_vsb;
+        allCurves.setVisibility(f, new_vsb);
   
       }
     }
@@ -25482,7 +25530,7 @@ class solarchvision_Model3Ds {
   void changeVisibilityCurves_Scene (int new_vsb) {
   
     for (int f = allCurves.PNT.length - 1; f >= 0; f--) { 
-      allCurves.MTLVGC[f][3] = new_vsb;
+      allCurves.setVisibility(f, new_vsb);
     }
   }
   
@@ -25491,13 +25539,13 @@ class solarchvision_Model3Ds {
   
     for (int f = allCurves.PNT.length - 1; f >= 0; f--) { 
   
-      int vsb = allCurves.MTLVGC[f][3];
+      int vsb = allCurves.getVisibility(f);
       int new_vsb = vsb;
   
       if (vsb == 0) new_vsb = 1;
       else if (vsb == 1) new_vsb = 0;
   
-      allCurves.MTLVGC[f][3] = new_vsb;
+      allCurves.setVisibility(f, new_vsb);
     }
   }
   
@@ -28878,21 +28926,21 @@ class solarchvision_Model3Ds {
       
       for (int f = 0; f < allCurves.PNT.length; f++) {    
         
-        int vsb = allCurves.MTLVGC[f][3];
+        int vsb = allCurves.getVisibility(f);
   
         if (vsb > 0) {      
       
-          int mt = allCurves.MTLVGC[f][0];  
+          int mt = allCurves.getMaterial(f);  
       
           float[] COL = {
             Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
           };      
           
-          float weight = 0.1 * allCurves.MTLVGC[f][4];
+          float weight = 0.1 * allCurves.getWeight(f);
         
           WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
       
-          int Tessellation = int(pow(2, allCurves.MTLVGC[f][1]));
+          int Tessellation = int(pow(2, allCurves.getTessellation(f)));
   
           float[][] base_Vertices = new float [allCurves.PNT[f].length][3];
           for (int j = 0; j < allCurves.PNT[f].length; j++) {
@@ -28916,7 +28964,7 @@ class solarchvision_Model3Ds {
             int nB_after = (j + 2) % div;
             int nA_before = (j - 1 + div) % div;        
             
-            if (allCurves.MTLVGC[f][5] == 0) { // if not closed
+            if (allCurves.getClose(f) == 0) { // if not closed
   
               if (nB_after < nB) nB_after = nB;
               if (nA_before > nA) nA_before = nA; 
@@ -28973,7 +29021,7 @@ class solarchvision_Model3Ds {
             
           }
           
-          if (allCurves.MTLVGC[f][5] == 0) { // if not closed
+          if (allCurves.getClose(f) == 0) { // if not closed
             WIN3D.graphics.endShape();
           }
           else {
@@ -30956,7 +31004,7 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
     
     if (n > 2) {
   
-      int vsb = allCurves.MTLVGC[f][3];
+      int vsb = allCurves.getVisibility(f);
   
       if (vsb > 0) {    
 
@@ -45129,43 +45177,43 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int f = OBJ_NUM;
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = allCurves.MTLVGC[f][0];
+        int n = allCurves.getMaterial(f);
         n += p;
         if (n > 8) n = 0;
         if (n < 0) n = 8;
-        allCurves.MTLVGC[f][0] = n;
+        allCurves.setMaterial(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-        int n = allCurves.MTLVGC[f][1];
+        int n = allCurves.getTessellation(f);
         n += p;
         if (n > 4) n = 0;
         if (n < 0) n = 4;
-        allCurves.MTLVGC[f][1] = n;
+        allCurves.setTessellation(f, n);
       }   
 
       if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-        int n = allCurves.MTLVGC[f][2];
+        int n = allCurves.getLayer(f);
         n += p;
         if (n > 16) n = 0;
         if (n < 0) n = 16;
-        allCurves.MTLVGC[f][2] = n;
+        allCurves.setLayer(f, n);
       }  
 
       if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-        int n = allCurves.MTLVGC[f][3];
+        int n = allCurves.getVisibility(f);
         n += p;
         if (n > 2) n = 0;
         if (n < 0) n = 2;
-        allCurves.MTLVGC[f][3] = n;
+        allCurves.setVisibility(f, n);
       }
       
       if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-        int n = allCurves.MTLVGC[f][4];
+        int n = allCurves.getWeight(f);
         n += p;
         if (n > 20) n = -20;
         if (n < -20) n = 20;
-        allCurves.MTLVGC[f][4] = n;
+        allCurves.setWeight(f, n);
       }        
     }
   }
@@ -45225,43 +45273,43 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if ((0 <= f) && (f < allCurves.PNT.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-            int n = allCurves.MTLVGC[f][0];
+            int n = allCurves.getMaterial(f);
             n += p;
             if (n > 8) n = 0;
             if (n < 0) n = 8;
-            allCurves.MTLVGC[f][0] = n;
+            allCurves.setMaterial(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-            int n = allCurves.MTLVGC[f][1];
+            int n = allCurves.getTessellation(f);
             n += p;
             if (n > 4) n = 0;
             if (n < 0) n = 4;
-            allCurves.MTLVGC[f][1] = n;
+            allCurves.setTessellation(f, n);
           }      
 
           if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-            int n = allCurves.MTLVGC[f][2];
+            int n = allCurves.getLayer(f);
             n += p;
             if (n > 16) n = 0;
             if (n < 0) n = 16;
-            allCurves.MTLVGC[f][2] = n;
+            allCurves.setLayer(f, n);
           }  
 
           if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-            int n = allCurves.MTLVGC[f][3];
+            int n = allCurves.getVisibility(f);
             n += p;
             if (n > 2) n = 0;
             if (n < 0) n = 2;
-            allCurves.MTLVGC[f][3] = n;
+            allCurves.setVisibility(f, n);
           }
           
           if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-            int n = allCurves.MTLVGC[f][4];
+            int n = allCurves.getWeight(f);
             n += p;
             if (n > 20) n = -20;
             if (n < -20) n = 20;
-            allCurves.MTLVGC[f][4] = n;
+            allCurves.setWeight(f, n);
           }            
         }
       }        
