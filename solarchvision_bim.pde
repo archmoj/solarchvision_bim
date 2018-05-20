@@ -8338,8 +8338,55 @@ class solarchvision_Faces {
   
   int[][] PNT = new int[0][3];
   
-  int[][] MTLVGC = new int[0][6]; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight 5:close
+  int[][] MTLVGC = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
   
+  int getMaterial (int n) {
+    return this.MTLVGC[n][0];
+  }
+
+  int getTessellation (int n) {
+    return this.MTLVGC[n][1];
+  }
+
+  int getLayer (int n) {
+    return this.MTLVGC[n][2];
+  }  
+  
+  int getVisibility (int n) {
+    return this.MTLVGC[n][3];
+  }   
+  
+  int getWeight (int n) {
+    return this.MTLVGC[n][4];
+  }    
+  
+  int getClose (int n) {
+    return this.MTLVGC[n][5];
+  }   
+  
+  void setMaterial (int n, int material) {
+    this.MTLVGC[n][0] = material;
+  }
+
+  void setTessellation (int n, int tessellation) {
+    this.MTLVGC[n][1] = tessellation;
+  }
+
+  void setLayer (int n, int layer) {
+    this.MTLVGC[n][2] = layer;
+  }  
+  
+  void setVisibility (int n, int visibility) {
+    this.MTLVGC[n][3] = visibility;
+  }   
+  
+  void setWeight (int n, int weight) {
+    this.MTLVGC[n][4] = weight;
+  }    
+  
+  void setClose (int n, int close) {
+    this.MTLVGC[n][5] = close;
+  }     
 }
 
 solarchvision_Faces allFaces = new solarchvision_Faces(); 
@@ -8348,7 +8395,7 @@ class solarchvision_Curves {
 
   int[][] PNT = new int[0][3];
   
-  int[][] MTLVGC = new int[0][6]; // 0:material, 1:teselation, 2:layer, 3:visibility 4:weight 5:close
+  int[][] MTLVGC = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
 }
 
 solarchvision_Curves allCurves = new solarchvision_Curves(); 
@@ -14048,7 +14095,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
     for (int f = 0; f < allFaces.PNT.length; f++) {
 
-      int mt = allFaces.MTLVGC[f][0];
+      int mt = allFaces.getMaterial(f);
 
       Materials_Used[mt] += 1;
     }    
@@ -14074,12 +14121,12 @@ void SOLARCHVISION_export_objects_RAD () {
   
       if (allFaces.PNT[f].length > 2) {
 
-        int mt = allFaces.MTLVGC[f][0];
+        int mt = allFaces.getMaterial(f);
 
-        int Tessellation = allFaces.MTLVGC[f][1];
+        int Tessellation = allFaces.getTessellation(f);
 
         int TotalSubNo = 1;  
-        if (allFaces.MTLVGC[f][0] == 0) {
+        if (allFaces.getMaterial(f) == 0) {
           Tessellation += allModel3Ds.Tessellation;
         }
 
@@ -14415,7 +14462,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
         for (int f = 0; f < allFaces.PNT.length; f++) {
 
-          int mt = allFaces.MTLVGC[f][0];
+          int mt = allFaces.getMaterial(f);
 
           Materials_Used[mt] += 1;
         }    
@@ -14488,12 +14535,12 @@ void SOLARCHVISION_export_objects_HTML () {
       
           if (allFaces.PNT[f].length > 2) {
             
-            int mt = allFaces.MTLVGC[f][0];
+            int mt = allFaces.getMaterial(f);
     
-            int Tessellation = allFaces.MTLVGC[f][1];
+            int Tessellation = allFaces.getTessellation(f);
     
             int TotalSubNo = 1;  
-            if (allFaces.MTLVGC[f][0] == 0) {
+            if (allFaces.getMaterial(f) == 0) {
               Tessellation += allModel3Ds.Tessellation;
             }
     
@@ -14777,7 +14824,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         for (int f = 0; f < allFaces.PNT.length; f++) {
 
-          int mt = allFaces.MTLVGC[f][0];
+          int mt = allFaces.getMaterial(f);
 
           Materials_Used[mt] += 1;
         }    
@@ -14830,7 +14877,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
                 if (_turn == 3) {
                   if (Export_MaterialLibrary) {
-                    int mt = allFaces.MTLVGC[f][0];
+                    int mt = allFaces.getMaterial(f);
                     if (prev_mt != mt) {
                       objOutput.println("usemtl SurfaceMaterial" + nf(mt, 0));
                       prev_mt = mt;
@@ -14838,10 +14885,10 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                   }
                 }                  
 
-                int Tessellation = allFaces.MTLVGC[f][1];
+                int Tessellation = allFaces.getTessellation(f);
 
                 int TotalSubNo = 1;  
-                if (allFaces.MTLVGC[f][0] == 0) {
+                if (allFaces.getMaterial(f) == 0) {
                   Tessellation += allModel3Ds.Tessellation;
                 }
 
@@ -15013,10 +15060,10 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
               for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
 
-                int Tessellation = allFaces.MTLVGC[f][1];
+                int Tessellation = allFaces.getTessellation(f);
 
                 int TotalSubNo = 1;  
-                if (allFaces.MTLVGC[f][0] == 0) {
+                if (allFaces.getMaterial(f) == 0) {
                   Tessellation += allModel3Ds.Tessellation;
                 }
 
@@ -15968,22 +16015,22 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
   for (int f = 0; f < allFaces.PNT.length; f++) {
 
-    int vsb = allFaces.MTLVGC[f][3];
+    int vsb = allFaces.getVisibility(f);
 
     if (vsb > 0) {
 
       color c = color(0, 0, 0);
 
-      int mt = allFaces.MTLVGC[f][0];
+      int mt = allFaces.getMaterial(f);
       c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
 
       SKY2D_graphics.stroke(c);
       SKY2D_graphics.fill(c);
 
-      int Tessellation = allFaces.MTLVGC[f][1];
+      int Tessellation = allFaces.getTessellation(f);
 
       int TotalSubNo = 1;  
-      if (allFaces.MTLVGC[f][0] == 0) {
+      if (allFaces.getMaterial(f) == 0) {
         Tessellation += allModel3Ds.Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -21423,10 +21470,10 @@ class solarchvision_Model3Ds {
             newFace = concat(newFace, new_vertexItem);
           }
   
-          defaultMaterial = allFaces.MTLVGC[f][0];
-          defaultTessellation = allFaces.MTLVGC[f][1];
-          defaultLayer = allFaces.MTLVGC[f][2];
-          defaultVisibility = allFaces.MTLVGC[f][3];        
+          defaultMaterial = allFaces.getMaterial(f);
+          defaultTessellation = allFaces.getTessellation(f);
+          defaultLayer = allFaces.getLayer(f);
+          defaultVisibility = allFaces.getVisibility(f);        
   
           this.add_Face(newFace);
         }
@@ -21785,10 +21832,10 @@ class solarchvision_Model3Ds {
                 newFace = concat(newFace, new_vertexItem);
               }
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);
   
               this.add_Face(newFace);
               
@@ -22125,10 +22172,10 @@ class solarchvision_Model3Ds {
               newFace = concat(newFace, new_vertexItem);
             }
   
-            defaultMaterial = allFaces.MTLVGC[f][0];
-            defaultTessellation = allFaces.MTLVGC[f][1];
-            defaultLayer = allFaces.MTLVGC[f][2];
-            defaultVisibility = allFaces.MTLVGC[f][3];        
+            defaultMaterial = allFaces.getMaterial(f);
+            defaultTessellation = allFaces.getTessellation(f);
+            defaultLayer = allFaces.getLayer(f);
+            defaultVisibility = allFaces.getVisibility(f);        
   
             this.add_Face(newFace);
           }
@@ -23560,10 +23607,10 @@ class solarchvision_Model3Ds {
                 new_Vertex_ids[s] = this.add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
               } 
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];              
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);              
   
               for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -23741,10 +23788,10 @@ class solarchvision_Model3Ds {
   
   
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);
   
               for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -23933,10 +23980,10 @@ class solarchvision_Model3Ds {
   
   
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);
   
               for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -24104,10 +24151,10 @@ class solarchvision_Model3Ds {
   
   
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);
   
               for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -24290,10 +24337,10 @@ class solarchvision_Model3Ds {
                 }
   
   
-                defaultMaterial = allFaces.MTLVGC[f][0];
-                defaultTessellation = allFaces.MTLVGC[f][1];
-                defaultLayer = allFaces.MTLVGC[f][2];
-                defaultVisibility = allFaces.MTLVGC[f][3];
+                defaultMaterial = allFaces.getMaterial(f);
+                defaultTessellation = allFaces.getTessellation(f);
+                defaultLayer = allFaces.getLayer(f);
+                defaultVisibility = allFaces.getVisibility(f);
   
                 for (int i = 0; i < ModifyInput_TessellateColumns; i++) {
   
@@ -24471,10 +24518,10 @@ class solarchvision_Model3Ds {
               new_CenterVertex_number = this.add_Vertex(G_face[0], G_face[1], G_face[2]); 
   
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];              
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);              
   
               for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -24625,10 +24672,10 @@ class solarchvision_Model3Ds {
               new_CenterVertex_number = this.add_Vertex(G_face[0], G_face[1], G_face[2]); 
   
   
-              defaultMaterial = allFaces.MTLVGC[f][0];
-              defaultTessellation = allFaces.MTLVGC[f][1];
-              defaultLayer = allFaces.MTLVGC[f][2];
-              defaultVisibility = allFaces.MTLVGC[f][3];                
+              defaultMaterial = allFaces.getMaterial(f);
+              defaultTessellation = allFaces.getTessellation(f);
+              defaultLayer = allFaces.getLayer(f);
+              defaultVisibility = allFaces.getVisibility(f);                
   
               for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -24782,10 +24829,10 @@ class solarchvision_Model3Ds {
                 new_CenterVertex_number = this.add_Vertex(G_face[0], G_face[1], G_face[2]); 
   
   
-                defaultMaterial = allFaces.MTLVGC[f][0];
-                defaultTessellation = allFaces.MTLVGC[f][1];
-                defaultLayer = allFaces.MTLVGC[f][2];
-                defaultVisibility = allFaces.MTLVGC[f][3];                
+                defaultMaterial = allFaces.getMaterial(f);
+                defaultTessellation = allFaces.getTessellation(f);
+                defaultLayer = allFaces.getLayer(f);
+                defaultVisibility = allFaces.getVisibility(f);                
   
                 for (int s = 0; s < allFaces.PNT[f].length; s++) { 
   
@@ -25026,7 +25073,7 @@ class solarchvision_Model3Ds {
   
               int[][] newFace_MTLVGC = {
                 {
-                  allFaces.MTLVGC[f][0], allFaces.MTLVGC[f][1], allFaces.MTLVGC[f][2], allFaces.MTLVGC[f][3], allFaces.MTLVGC[f][4], allFaces.MTLVGC[f][5]
+                  allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
                 }
               }; 
               allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
@@ -25040,7 +25087,7 @@ class solarchvision_Model3Ds {
   
               int[][] newFace_MTLVGC = {
                 {
-                  allFaces.MTLVGC[f][0], allFaces.MTLVGC[f][1], allFaces.MTLVGC[f][2], allFaces.MTLVGC[f][3], allFaces.MTLVGC[f][4], allFaces.MTLVGC[f][5]
+                  allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
                 }
               }; 
               allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);  
@@ -25377,7 +25424,7 @@ class solarchvision_Model3Ds {
   
         int f = selectedFace_ids[o];
   
-        allFaces.MTLVGC[f][3] = new_vsb;
+        allFaces.setVisibility(f, new_vsb);
   
       }
     }
@@ -25387,7 +25434,7 @@ class solarchvision_Model3Ds {
   void changeVisibilityFaces_Scene (int new_vsb) {
   
     for (int f = allFaces.PNT.length - 1; f >= 0; f--) { 
-      allFaces.MTLVGC[f][3] = new_vsb;
+      allFaces.setVisibility(f, new_vsb);
     }
   }
   
@@ -25396,13 +25443,13 @@ class solarchvision_Model3Ds {
   
     for (int f = allFaces.PNT.length - 1; f >= 0; f--) { 
   
-      int vsb = allFaces.MTLVGC[f][3];
+      int vsb = allFaces.getVisibility(f);
       int new_vsb = vsb;
   
       if (vsb == 0) new_vsb = 1;
       else if (vsb == 1) new_vsb = 0;
   
-      allFaces.MTLVGC[f][3] = new_vsb;
+      allFaces.setVisibility(f, new_vsb);
     }
   }
   
@@ -28641,7 +28688,7 @@ class solarchvision_Model3Ds {
   
         for (int f = 0; f < allFaces.PNT.length; f++) {
   
-          int vsb = allFaces.MTLVGC[f][3];
+          int vsb = allFaces.getVisibility(f);
   
           if (vsb > 0) {
   
@@ -28722,7 +28769,7 @@ class solarchvision_Model3Ds {
   
       for (int f = 0; f < allFaces.PNT.length; f++) {
   
-        int vsb = allFaces.MTLVGC[f][3];
+        int vsb = allFaces.getVisibility(f);
   
         if (vsb > 0) {        
   
@@ -28741,12 +28788,12 @@ class solarchvision_Model3Ds {
             WIN3D.graphics.endShape(CLOSE);
           } else {
   
-            int mt = allFaces.MTLVGC[f][0];
+            int mt = allFaces.getMaterial(f);
   
-            int Tessellation = allFaces.MTLVGC[f][1];
+            int Tessellation = allFaces.getTessellation(f);
   
             int TotalSubNo = 1;  
-            if (allFaces.MTLVGC[f][0] == 0) {
+            if (allFaces.getMaterial(f) == 0) {
               Tessellation += this.Tessellation;
             }
             if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -29985,14 +30032,14 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
       println("Progress:", int(Progress), "%");
     }
 
-    int vsb = allFaces.MTLVGC[f][3];
+    int vsb = allFaces.getVisibility(f);
 
     if (vsb > 0) {
 
-      int Tessellation = allFaces.MTLVGC[f][1];
+      int Tessellation = allFaces.getTessellation(f);
 
       int TotalSubNo = 1;  
-      if (allFaces.MTLVGC[f][0] == 0) {
+      if (allFaces.getMaterial(f) == 0) {
         Tessellation += allModel3Ds.Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -30336,12 +30383,12 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
       float nearest_Y = FLOAT_undefined;
       float nearest_Z = FLOAT_undefined;
 
-      int mt = allFaces.MTLVGC[f][0];
+      int mt = allFaces.getMaterial(f);
 
-      int Tessellation = allFaces.MTLVGC[f][1];
+      int Tessellation = allFaces.getTessellation(f);
 
       int TotalSubNo = 1;  
-      if (allFaces.MTLVGC[f][0] == 0) {
+      if (allFaces.getMaterial(f) == 0) {
         Tessellation += allModel3Ds.Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -30401,7 +30448,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
       
       if (n > 2) {      
   
-        int vsb = allFaces.MTLVGC[f][3];
+        int vsb = allFaces.getVisibility(f);
     
           if (vsb > 0) {    
   
@@ -30552,7 +30599,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
     
     if (n > 2) {
   
-      int vsb = allFaces.MTLVGC[f][3];
+      int vsb = allFaces.getVisibility(f);
   
       if (vsb > 0) {    
 
@@ -30731,7 +30778,7 @@ float[] SOLARCHVISION_intersect_selectedFaces (float[] ray_pnt, float[] ray_dir)
       
       if (n > 2) {
         
-        int vsb = allFaces.MTLVGC[f][3];
+        int vsb = allFaces.getVisibility(f);
     
         if (vsb > 0) {    
   
@@ -38906,18 +38953,18 @@ void mouseClicked () {
                       if ((WIN3D.UI_CurrentTask == UITASK.Seed_Material) || (WIN3D.UI_CurrentTask == UITASK.Tessellation) || (WIN3D.UI_CurrentTask == UITASK.Layer) || (WIN3D.UI_CurrentTask == UITASK.Visibility) || (WIN3D.UI_CurrentTask == UITASK.Weight)) {
   
                         if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
-                          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) DEFAULT_CreateMaterial = allFaces.MTLVGC[f][0];
-                          if (WIN3D.UI_CurrentTask == UITASK.Tessellation) DEFAULT_CreateTessellation = allFaces.MTLVGC[f][1];
-                          if (WIN3D.UI_CurrentTask == UITASK.Layer) DEFAULT_CreateLayer = allFaces.MTLVGC[f][2];
-                          if (WIN3D.UI_CurrentTask == UITASK.Visibility) DEFAULT_CreateVisibility = allFaces.MTLVGC[f][3];
-                          if (WIN3D.UI_CurrentTask == UITASK.Weight) DEFAULT_CreateWeight = allFaces.MTLVGC[f][4];
+                          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) DEFAULT_CreateMaterial     = allFaces.getMaterial(f);
+                          if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  DEFAULT_CreateTessellation = allFaces.getTessellation(f);
+                          if (WIN3D.UI_CurrentTask == UITASK.Layer)         DEFAULT_CreateLayer        = allFaces.getLayer(f);
+                          if (WIN3D.UI_CurrentTask == UITASK.Visibility)    DEFAULT_CreateVisibility   = allFaces.getVisibility(f);
+                          if (WIN3D.UI_CurrentTask == UITASK.Weight)        DEFAULT_CreateWeight       = allFaces.getWeight(f);
                         } 
                         if (WIN3D.UI_TaskModifyParameter == 2) { // Assign(sub) 
-                          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.MTLVGC[f][0] = DEFAULT_CreateMaterial;
-                          if (WIN3D.UI_CurrentTask == UITASK.Tessellation) allFaces.MTLVGC[f][1] = DEFAULT_CreateTessellation;
-                          if (WIN3D.UI_CurrentTask == UITASK.Layer) allFaces.MTLVGC[f][2] = DEFAULT_CreateLayer;
-                          if (WIN3D.UI_CurrentTask == UITASK.Visibility) allFaces.MTLVGC[f][3] = DEFAULT_CreateVisibility;
-                          if (WIN3D.UI_CurrentTask == UITASK.Weight) allFaces.MTLVGC[f][4] = DEFAULT_CreateWeight;
+                          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (f, DEFAULT_CreateMaterial);
+                          if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(f, DEFAULT_CreateTessellation);
+                          if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (f, DEFAULT_CreateLayer);
+                          if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (f, DEFAULT_CreateVisibility);
+                          if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setWeight      (f, DEFAULT_CreateWeight);
                         }
                         if (WIN3D.UI_TaskModifyParameter == 3) { // Assign(all) 
                           int OBJ_NUM = 0;
@@ -38929,11 +38976,11 @@ void mouseClicked () {
                           }
 
                           for (int q = allGroups_Faces[OBJ_NUM][0]; q <= allGroups_Faces[OBJ_NUM][1]; q++) {                    
-                            if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.MTLVGC[q][0] = DEFAULT_CreateMaterial;
-                            if (WIN3D.UI_CurrentTask == UITASK.Tessellation) allFaces.MTLVGC[q][1] = DEFAULT_CreateTessellation;
-                            if (WIN3D.UI_CurrentTask == UITASK.Layer) allFaces.MTLVGC[q][2] = DEFAULT_CreateLayer;
-                            if (WIN3D.UI_CurrentTask == UITASK.Visibility) allFaces.MTLVGC[q][3] = DEFAULT_CreateVisibility;
-                            if (WIN3D.UI_CurrentTask == UITASK.Weight) allFaces.MTLVGC[q][4] = DEFAULT_CreateWeight;
+                            if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (q, DEFAULT_CreateMaterial);
+                            if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(q, DEFAULT_CreateTessellation);
+                            if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (q, DEFAULT_CreateLayer);
+                            if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (q, DEFAULT_CreateVisibility);
+                            if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setClose       (q, DEFAULT_CreateWeight);
                           }
                         }
                       }
@@ -40583,10 +40630,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int f = selectedFace_ids[o];
 
-        int Tessellation = allFaces.MTLVGC[f][1];
+        int Tessellation = allFaces.getTessellation(f);
 
         int TotalSubNo = 1;  
-        if (allFaces.MTLVGC[f][0] == 0) {
+        if (allFaces.getMaterial(f) == 0) {
           Tessellation += allModel3Ds.Tessellation;
         }
         if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -40824,10 +40871,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
           if ((0 <= f) && (f < allFaces.PNT.length)) { 
 
-            int Tessellation = allFaces.MTLVGC[f][1];
+            int Tessellation = allFaces.getTessellation(f);
 
             int TotalSubNo = 1;  
-            if (allFaces.MTLVGC[f][0] == 0) {
+            if (allFaces.getMaterial(f) == 0) {
               Tessellation += allModel3Ds.Tessellation;
             }
             if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -41809,17 +41856,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
               for (int f = 0; f < allFaces.PNT.length; f++) {
   
-                int vsb = allFaces.MTLVGC[f][3];
+                int vsb = allFaces.getVisibility(f);
   
                 if (vsb > 0) {
   
-                  int  mt = allFaces.MTLVGC[f][0];
+                  int  mt = allFaces.getMaterial(f);
                   if (Materials_Color[mt][0] > 127) {
   
-                    int Tessellation = allFaces.MTLVGC[f][1];
+                    int Tessellation = allFaces.getTessellation(f);
   
                     int TotalSubNo = 1;  
-                    if (allFaces.MTLVGC[f][0] == 0) {
+                    if (allFaces.getMaterial(f) == 0) {
                       Tessellation += allModel3Ds.Tessellation;
                     }
                     if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -42424,17 +42471,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             for (int f = 0; f < allFaces.PNT.length; f++) {
   
-              int vsb = allFaces.MTLVGC[f][3];
+              int vsb = allFaces.getVisibility(f);
   
               if (vsb > 0) {
   
-                int  mt = allFaces.MTLVGC[f][0];            
+                int  mt = allFaces.getMaterial(f);            
                 if (Materials_Color[mt][0] > 127) {
   
-                  int Tessellation = allFaces.MTLVGC[f][1];
+                  int Tessellation = allFaces.getTessellation(f);
   
                   int TotalSubNo = 1;  
-                  if (allFaces.MTLVGC[f][0] == 0) {
+                  if (allFaces.getMaterial(f) == 0) {
                     Tessellation += allModel3Ds.Tessellation;
                   }
                   if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -45032,43 +45079,43 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int f = OBJ_NUM;
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = allFaces.MTLVGC[f][0];
+        int n = allFaces.getMaterial(f);
         n += p;
         if (n > 8) n = 0;
         if (n < 0) n = 8;
-        allFaces.MTLVGC[f][0] = n;
+        allFaces.setMaterial(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-        int n = allFaces.MTLVGC[f][1];
+        int n = allFaces.getTessellation(f);
         n += p;
         if (n > 4) n = 0;
         if (n < 0) n = 4;
-        allFaces.MTLVGC[f][1] = n;
+        allFaces.setTessellation(f, n);
       }   
 
       if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-        int n = allFaces.MTLVGC[f][2];
+        int n = allFaces.getLayer(f);
         n += p;
         if (n > 16) n = 0;
         if (n < 0) n = 16;
-        allFaces.MTLVGC[f][2] = n;
+        allFaces.setLayer(f, n);
       }  
 
       if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-        int n = allFaces.MTLVGC[f][3];
+        int n = allFaces.getVisibility(f);
         n += p;
         if (n > 2) n = 0;
         if (n < 0) n = 2;
-        allFaces.MTLVGC[f][3] = n;
+        allFaces.setVisibility(f, n);
       }
       
       if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-        int n = allFaces.MTLVGC[f][4];
+        int n = allFaces.getWeight(f);
         n += p;
         if (n > 20) n = -20;
         if (n < -20) n = 20;
-        allFaces.MTLVGC[f][4] = n;
+        allFaces.setWeight(f, n);
       }        
     }
   }  
@@ -45133,43 +45180,43 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if ((0 <= f) && (f < allFaces.PNT.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-            int n = allFaces.MTLVGC[f][0];
+            int n = allFaces.getMaterial(f);
             n += p;
             if (n > 8) n = 0;
             if (n < 0) n = 8;
-            allFaces.MTLVGC[f][0] = n;
+            allFaces.setMaterial(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-            int n = allFaces.MTLVGC[f][1];
+            int n = allFaces.getTessellation(f);
             n += p;
             if (n > 4) n = 0;
             if (n < 0) n = 4;
-            allFaces.MTLVGC[f][1] = n;
+            allFaces.setTessellation(f, n);
           }      
 
           if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-            int n = allFaces.MTLVGC[f][2];
+            int n = allFaces.getLayer(f);
             n += p;
             if (n > 16) n = 0;
             if (n < 0) n = 16;
-            allFaces.MTLVGC[f][2] = n;
+            allFaces.setLayer(f, n);
           }  
 
           if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-            int n = allFaces.MTLVGC[f][3];
+            int n = allFaces.getVisibility(f);
             n += p;
             if (n > 2) n = 0;
             if (n < 0) n = 2;
-            allFaces.MTLVGC[f][3] = n;
+            allFaces.setVisibility(f, n);
           }
           
           if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-            int n = allFaces.MTLVGC[f][4];
+            int n = allFaces.getWeight(f);
             n += p;
             if (n > 20) n = -20;
             if (n < -20) n = 20;
-            allFaces.MTLVGC[f][4] = n;
+            allFaces.setWeight(f, n);
           }            
         }
       }
