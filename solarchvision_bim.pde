@@ -2642,162 +2642,7 @@ class solarchvision_WIN3D {
   }
   
   
-  void drawPallet () {
-  
-    int draw_pal = 0;
-  
-    int PAL_TYPE = 0; 
-    int PAL_DIR = 1;
-    float PAL_Multiplier = 1; 
-  
-    if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
-  
-      if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
-        PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
-        PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
-        PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-        PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
-      }   
-  
-      draw_pal = 1;
-    }
-  
-    if (this.FacesShade == SHADE.Vertex_Elevation) {
-  
-      PAL_TYPE = ELEVATION_Pallet_CLR; 
-      PAL_DIR = ELEVATION_Pallet_DIR; 
-      PAL_Multiplier = ELEVATION_Pallet_MLT; 
-  
-      draw_pal = 1;
-    }
-  
-    if (this.FacesShade == SHADE.Vertex_Solid) {
-  
-      PAL_TYPE = SOLID_Pallet_CLR; 
-      PAL_DIR = SOLID_Pallet_DIR;
-      PAL_Multiplier = SOLID_Pallet_MLT;
-  
-      draw_pal = 1;
-    }          
-  
-  
-  
-  
-    if (draw_pal != 0) {
-  
-      float the_scale = 1;
-  
-      if (this.ViewType == 1) {
-        the_scale *= (0.5 / tan(0.5 * this.CAM_fov));
-      } else {
-        float ZOOM = WIN3D.Orthographic_ZOOM();
-        the_scale *= (0.5 / ZOOM);
-      }  
-  
-      this.graphics.pushMatrix();
-  
-      this.CAM_fov = this.Zoom * PI / 180;
-  
-      this.CAM_dist = (0.5 * this.refScale) / tan(0.5 * this.CAM_fov);
-  
-      if (this.ViewType == 1) {
-  
-        float aspect = 1.0 / this.R_View;
-  
-        float zFar = this.CAM_dist * 1000;
-        float zNear = this.CAM_dist * 0.001;
-  
-        this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
-      } else {
-  
-        float ZOOM = WIN3D.Orthographic_ZOOM();
-  
-        this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
-      }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-      float pal_length = 1 * SOLARCHVISION_H_Pixel * this.ImageScale / the_scale;
-  
-      float y1 = -0.2 * (pal_length / 11.0) + (0.4 * this.dY / the_scale);
-      float y2 = y1 + 0.4 * (pal_length / 11.0);
-  
-      float txtSize = y2 - y1;
-  
-      for (int q = 0; q < 11; q++) {
-        
-        float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
-        float x2 = x1 + (pal_length / 11.0);      
-  
-        float _u = 0.2 * q - 0.5;
-  
-        if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
-          if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
-        }
-  
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u); 
-  
-        this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-        this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-  
-        this.graphics.strokeWeight(0);
-  
-        this.graphics.beginShape();
-        this.graphics.vertex(x1, y1, 0);
-        this.graphics.vertex(x1, y2, 0);
-        this.graphics.vertex(x2, y2, 0);
-        this.graphics.vertex(x2, y1, 0);
-        this.graphics.endShape(CLOSE);    
-  
-        if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-          this.graphics.stroke(127);
-          this.graphics.fill(127);
-          this.graphics.strokeWeight(0);
-        } else {
-          this.graphics.stroke(255);
-          this.graphics.fill(255);
-          this.graphics.strokeWeight(2);
-        }  
-  
-        this.graphics.textSize(txtSize);
-        this.graphics.textAlign(CENTER, CENTER);
-  
-        if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
-          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-        }
-  
-        if (this.FacesShade == SHADE.Vertex_Elevation) {
-          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-        }
-  
-        if (this.FacesShade == SHADE.Vertex_Solid) {
-          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-        }
-      }
-  
-      this.graphics.textAlign(LEFT, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) this.graphics.text("kW/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-      if (Impact_TYPE == Impact_PASSIVE) this.graphics.text("%kW°C/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-  
-      this.graphics.popMatrix();
-    }
-  }  
+
   
   void keyPressed (KeyEvent e) {
   
@@ -3849,7 +3694,167 @@ class solarchvision_WIN3D {
     this.graphics.rotateZ(this.RZ_Coordinate * PI / 180);
   }
   
+  
+  
+  void drawPallet () {
+  
+    int draw_pal = 0;
+  
+    int PAL_TYPE = 0; 
+    int PAL_DIR = 1;
+    float PAL_Multiplier = 1; 
+  
+    if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
+  
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+        PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
+        PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+        PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+        PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
+      }   
+  
+      draw_pal = 1;
+    }
+  
+    if (this.FacesShade == SHADE.Vertex_Elevation) {
+  
+      PAL_TYPE = ELEVATION_Pallet_CLR; 
+      PAL_DIR = ELEVATION_Pallet_DIR; 
+      PAL_Multiplier = ELEVATION_Pallet_MLT; 
+  
+      draw_pal = 1;
+    }
+  
+    if (this.FacesShade == SHADE.Vertex_Solid) {
+  
+      PAL_TYPE = SOLID_Pallet_CLR; 
+      PAL_DIR = SOLID_Pallet_DIR;
+      PAL_Multiplier = SOLID_Pallet_MLT;
+  
+      draw_pal = 1;
+    }          
+  
+  
+  
+  
+    if (draw_pal != 0) {
+  
+      float the_scale = 1;
+  
+      if (this.ViewType == 1) {
+        the_scale *= (0.5 / tan(0.5 * this.CAM_fov));
+      } else {
+        float ZOOM = WIN3D.Orthographic_ZOOM();
+        the_scale *= (0.5 / ZOOM);
+      }  
+  
+      this.graphics.pushMatrix();
+  
+      this.CAM_fov = this.Zoom * PI / 180;
+  
+      this.CAM_dist = (0.5 * this.refScale) / tan(0.5 * this.CAM_fov);
+  
+      if (this.ViewType == 1) {
+  
+        float aspect = 1.0 / this.R_View;
+  
+        float zFar = this.CAM_dist * 1000;
+        float zNear = this.CAM_dist * 0.001;
+  
+        this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
+      } else {
+  
+        float ZOOM = WIN3D.Orthographic_ZOOM();
+  
+        this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
+      }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      float pal_length = 1 * SOLARCHVISION_H_Pixel * this.ImageScale / the_scale;
+  
+      float y1 = -0.2 * (pal_length / 11.0) + (0.4 * this.dY / the_scale);
+      float y2 = y1 + 0.4 * (pal_length / 11.0);
+  
+      float txtSize = y2 - y1;
+  
+      for (int q = 0; q < 11; q++) {
+        
+        float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
+        float x2 = x1 + (pal_length / 11.0);      
+  
+        float _u = 0.2 * q - 0.5;
+  
+        if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
+          if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+        }
+  
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u); 
+  
+        this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+        this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+  
+        this.graphics.strokeWeight(0);
+  
+        this.graphics.beginShape();
+        this.graphics.vertex(x1, y1, 0);
+        this.graphics.vertex(x1, y2, 0);
+        this.graphics.vertex(x2, y2, 0);
+        this.graphics.vertex(x2, y1, 0);
+        this.graphics.endShape(CLOSE);    
+  
+        if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
+          this.graphics.stroke(127);
+          this.graphics.fill(127);
+          this.graphics.strokeWeight(0);
+        } else {
+          this.graphics.stroke(255);
+          this.graphics.fill(255);
+          this.graphics.strokeWeight(2);
+        }  
+  
+        this.graphics.textSize(txtSize);
+        this.graphics.textAlign(CENTER, CENTER);
+  
+        if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
+          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        }
+  
+        if (this.FacesShade == SHADE.Vertex_Elevation) {
+          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        }
+  
+        if (this.FacesShade == SHADE.Vertex_Solid) {
+          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        }
+      }
+  
+      this.graphics.textAlign(LEFT, CENTER);
+      if (Impact_TYPE == Impact_ACTIVE) this.graphics.text("kW/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+      if (Impact_TYPE == Impact_PASSIVE) this.graphics.text("%kW°C/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+  
+      this.graphics.popMatrix();
+    }
+  }  
 }
+
+
 
 class solarchvision_WORLD {
 
