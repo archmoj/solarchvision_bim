@@ -8336,56 +8336,56 @@ float[][] allVertices = new float[0][3];
 
 class solarchvision_Faces {
   
-  int[][] PNT = new int[0][3];
+  int[][] nodes = new int[0][0];
   
-  int[][] MTLVGC = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
+  int[][] options = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
   
   int getMaterial (int n) {
-    return this.MTLVGC[n][0];
+    return this.options[n][0];
   }
 
   int getTessellation (int n) {
-    return this.MTLVGC[n][1];
+    return this.options[n][1];
   }
 
   int getLayer (int n) {
-    return this.MTLVGC[n][2];
+    return this.options[n][2];
   }  
   
   int getVisibility (int n) {
-    return this.MTLVGC[n][3];
+    return this.options[n][3];
   }   
   
   int getWeight (int n) {
-    return this.MTLVGC[n][4];
+    return this.options[n][4];
   }    
   
   int getClose (int n) {
-    return this.MTLVGC[n][5];
+    return this.options[n][5];
   }   
   
   void setMaterial (int n, int material) {
-    this.MTLVGC[n][0] = material;
+    this.options[n][0] = material;
   }
 
   void setTessellation (int n, int tessellation) {
-    this.MTLVGC[n][1] = tessellation;
+    this.options[n][1] = tessellation;
   }
 
   void setLayer (int n, int layer) {
-    this.MTLVGC[n][2] = layer;
+    this.options[n][2] = layer;
   }  
   
   void setVisibility (int n, int visibility) {
-    this.MTLVGC[n][3] = visibility;
+    this.options[n][3] = visibility;
   }   
   
   void setWeight (int n, int weight) {
-    this.MTLVGC[n][4] = weight;
+    this.options[n][4] = weight;
   }    
   
   void setClose (int n, int close) {
-    this.MTLVGC[n][5] = close;
+    this.options[n][5] = close;
   }     
 }
 
@@ -8393,56 +8393,56 @@ solarchvision_Faces allFaces = new solarchvision_Faces();
 
 class solarchvision_Curves {
 
-  int[][] PNT = new int[0][3];
+  int[][] nodes = new int[0][0];
   
-  int[][] MTLVGC = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
+  int[][] options = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
   
   int getMaterial (int n) {
-    return this.MTLVGC[n][0];
+    return this.options[n][0];
   }
 
   int getTessellation (int n) {
-    return this.MTLVGC[n][1];
+    return this.options[n][1];
   }
 
   int getLayer (int n) {
-    return this.MTLVGC[n][2];
+    return this.options[n][2];
   }  
   
   int getVisibility (int n) {
-    return this.MTLVGC[n][3];
+    return this.options[n][3];
   }   
   
   int getWeight (int n) {
-    return this.MTLVGC[n][4];
+    return this.options[n][4];
   }    
   
   int getClose (int n) {
-    return this.MTLVGC[n][5];
+    return this.options[n][5];
   }   
   
   void setMaterial (int n, int material) {
-    this.MTLVGC[n][0] = material;
+    this.options[n][0] = material;
   }
 
   void setTessellation (int n, int tessellation) {
-    this.MTLVGC[n][1] = tessellation;
+    this.options[n][1] = tessellation;
   }
 
   void setLayer (int n, int layer) {
-    this.MTLVGC[n][2] = layer;
+    this.options[n][2] = layer;
   }  
   
   void setVisibility (int n, int visibility) {
-    this.MTLVGC[n][3] = visibility;
+    this.options[n][3] = visibility;
   }   
   
   void setWeight (int n, int weight) {
-    this.MTLVGC[n][4] = weight;
+    this.options[n][4] = weight;
   }    
   
   void setClose (int n, int close) {
-    this.MTLVGC[n][5] = close;
+    this.options[n][5] = close;
   }       
 }
 
@@ -14064,17 +14064,17 @@ void SOLARCHVISION_export_objects_SCR () {
 
   scrOutput.println("-osnap off");
 
-  for (int f = 0; f < allFaces.PNT.length; f++) {
+  for (int f = 0; f < allFaces.nodes.length; f++) {
 
-    if ((allFaces.PNT[f].length == 3) || (allFaces.PNT[f].length == 4)) {
+    if ((allFaces.nodes[f].length == 3) || (allFaces.nodes[f].length == 4)) {
 
       scrOutput.println("3dface");
 
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
 
-        float x = allVertices[allFaces.PNT[f][j]][0];
-        float y = allVertices[allFaces.PNT[f][j]][1];
-        float z = allVertices[allFaces.PNT[f][j]][2];
+        float x = allVertices[allFaces.nodes[f][j]][0];
+        float y = allVertices[allFaces.nodes[f][j]][1];
+        float z = allVertices[allFaces.nodes[f][j]][2];
 
         scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
       }
@@ -14083,15 +14083,15 @@ void SOLARCHVISION_export_objects_SCR () {
     }
   }
   
-  for (int f = 0; f < allCurves.PNT.length; f++) {
+  for (int f = 0; f < allCurves.nodes.length; f++) {
 
     scrOutput.println("line");
 
-    for (int j = 0; j < allCurves.PNT[f].length; j++) {
+    for (int j = 0; j < allCurves.nodes[f].length; j++) {
 
-      float x = allVertices[allCurves.PNT[f][j]][0];
-      float y = allVertices[allCurves.PNT[f][j]][1];
-      float z = allVertices[allCurves.PNT[f][j]][2];
+      float x = allVertices[allCurves.nodes[f][j]][0];
+      float y = allVertices[allCurves.nodes[f][j]][1];
+      float z = allVertices[allCurves.nodes[f][j]][2];
 
       scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
     }
@@ -14141,7 +14141,7 @@ void SOLARCHVISION_export_objects_RAD () {
       Materials_Used[i] = 0;
     }
 
-    for (int f = 0; f < allFaces.PNT.length; f++) {
+    for (int f = 0; f < allFaces.nodes.length; f++) {
 
       int mt = allFaces.getMaterial(f);
 
@@ -14165,9 +14165,9 @@ void SOLARCHVISION_export_objects_RAD () {
       }
     }
   
-    for (int f = 0; f < allFaces.PNT.length; f++) {
+    for (int f = 0; f < allFaces.nodes.length; f++) {
   
-      if (allFaces.PNT[f].length > 2) {
+      if (allFaces.nodes[f].length > 2) {
 
         int mt = allFaces.getMaterial(f);
 
@@ -14178,15 +14178,15 @@ void SOLARCHVISION_export_objects_RAD () {
           Tessellation += allModel3Ds.Tessellation;
         }
 
-        if ((allFaces.PNT[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
+        if ((allFaces.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
           Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
         }
 
-        if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+        if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-        float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-        for (int j = 0; j < allFaces.PNT[f].length; j++) {
-          int vNo = allFaces.PNT[f][j];
+        float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
           base_Vertices[j][0] = allVertices[vNo][0];
           base_Vertices[j][1] = allVertices[vNo][1];
           base_Vertices[j][2] = allVertices[vNo][2];
@@ -14508,7 +14508,7 @@ void SOLARCHVISION_export_objects_HTML () {
           Materials_Used[i] = 0;
         }
 
-        for (int f = 0; f < allFaces.PNT.length; f++) {
+        for (int f = 0; f < allFaces.nodes.length; f++) {
 
           int mt = allFaces.getMaterial(f);
 
@@ -14581,7 +14581,7 @@ void SOLARCHVISION_export_objects_HTML () {
         
         for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
       
-          if (allFaces.PNT[f].length > 2) {
+          if (allFaces.nodes[f].length > 2) {
             
             int mt = allFaces.getMaterial(f);
     
@@ -14592,11 +14592,11 @@ void SOLARCHVISION_export_objects_HTML () {
               Tessellation += allModel3Ds.Tessellation;
             }
     
-            if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
     
-            float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
               base_Vertices[j][0] = allVertices[vNo][0];
               base_Vertices[j][1] = allVertices[vNo][1];
               base_Vertices[j][2] = allVertices[vNo][2];
@@ -14870,7 +14870,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           Materials_Used[i] = 0;
         }
 
-        for (int f = 0; f < allFaces.PNT.length; f++) {
+        for (int f = 0; f < allFaces.nodes.length; f++) {
 
           int mt = allFaces.getMaterial(f);
 
@@ -14940,11 +14940,11 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                   Tessellation += allModel3Ds.Tessellation;
                 }
 
-                if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-                float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-                for (int j = 0; j < allFaces.PNT[f].length; j++) {
-                  int vNo = allFaces.PNT[f][j];
+                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+                for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                  int vNo = allFaces.nodes[f][j];
                   base_Vertices[j][0] = allVertices[vNo][0];
                   base_Vertices[j][1] = allVertices[vNo][1];
                   base_Vertices[j][2] = allVertices[vNo][2];
@@ -15115,7 +15115,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                   Tessellation += allModel3Ds.Tessellation;
                 }
 
-                if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
                 float x1 = 0;
                 float y1 = 0;
@@ -15133,9 +15133,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
                 float y4 = 0;
                 float z4 = 0;
 
-                float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-                for (int j = 0; j < allFaces.PNT[f].length; j++) {
-                  int vNo = allFaces.PNT[f][j];
+                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+                for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                  int vNo = allFaces.nodes[f][j];
                   base_Vertices[j][0] = allVertices[vNo][0];
                   base_Vertices[j][1] = allVertices[vNo][1];
                   base_Vertices[j][2] = allVertices[vNo][2];
@@ -16061,7 +16061,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
   
   Land3D.draw(TypeWindow.SKY2D);
 
-  for (int f = 0; f < allFaces.PNT.length; f++) {
+  for (int f = 0; f < allFaces.nodes.length; f++) {
 
     int vsb = allFaces.getVisibility(f);
 
@@ -16081,11 +16081,11 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
       if (allFaces.getMaterial(f) == 0) {
         Tessellation += allModel3Ds.Tessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-      float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
-        int vNo = allFaces.PNT[f][j];
+      float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
+        int vNo = allFaces.nodes[f][j];
         base_Vertices[j][0] = allVertices[vNo][0];
         base_Vertices[j][1] = allVertices[vNo][1];
         base_Vertices[j][2] = allVertices[vNo][2];
@@ -21087,25 +21087,25 @@ class solarchvision_Model3Ds {
   
   void add_VertexToLastFace (float x, float y, float z) {
     
-    int n = allFaces.PNT.length - 1;
+    int n = allFaces.nodes.length - 1;
     
     int[] newVertex = {
       this.add_Vertex(x, y, z)
     }; 
       
-    allFaces.PNT[n] = (int[]) concat(allFaces.PNT[n], newVertex);
+    allFaces.nodes[n] = (int[]) concat(allFaces.nodes[n], newVertex);
   
   }
   
   void add_VertexToLastCurve (float x, float y, float z) {
   
-    int n = allCurves.PNT.length - 1;
+    int n = allCurves.nodes.length - 1;
     
     int[] newVertex = {
       this.add_Vertex(x, y, z)
     }; 
       
-    allCurves.PNT[n] = (int[]) concat(allCurves.PNT[n], newVertex);
+    allCurves.nodes[n] = (int[]) concat(allCurves.nodes[n], newVertex);
   
   }
   
@@ -21137,18 +21137,18 @@ class solarchvision_Model3Ds {
         }
       }; 
   
-      allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
+      allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);
   
       int[][] newFace = {
         f
       }; 
   
-      allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+      allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
     }
   
-    if (allGroups_num > 0) allGroups_Faces[allGroups_num - 1][1] = allFaces.PNT.length - 1;
+    if (allGroups_num > 0) allGroups_Faces[allGroups_num - 1][1] = allFaces.nodes.length - 1;
   
-    return(allFaces.PNT.length - 1);
+    return(allFaces.nodes.length - 1);
   }
   
   int add_Curve (int[] f) {
@@ -21161,18 +21161,18 @@ class solarchvision_Model3Ds {
         }
       }; 
   
-      allCurves.MTLVGC =  (int[][]) concat(allCurves.MTLVGC, newCurve_MTLVGC);
+      allCurves.options =  (int[][]) concat(allCurves.options, newCurve_MTLVGC);
   
       int[][] newCurve = {
         f
       }; 
   
-      allCurves.PNT = (int[][]) concat(allCurves.PNT, newCurve);
+      allCurves.nodes = (int[][]) concat(allCurves.nodes, newCurve);
     }
   
-    if (allGroups_num > 0) allGroups_Curves[allGroups_num - 1][1] = allCurves.PNT.length - 1;
+    if (allGroups_num > 0) allGroups_Curves[allGroups_num - 1][1] = allCurves.nodes.length - 1;
   
-    return(allCurves.PNT.length - 1);
+    return(allCurves.nodes.length - 1);
   }
 
 
@@ -21358,7 +21358,7 @@ class solarchvision_Model3Ds {
   
     int[][] newObject_Faces = {
       {
-        allFaces.PNT.length, -1
+        allFaces.nodes.length, -1
       }
     }; // i.e. null because start > end   
   
@@ -21366,7 +21366,7 @@ class solarchvision_Model3Ds {
   
     int[][] newObject_Curves = {
       {
-        allCurves.PNT.length, -1
+        allCurves.nodes.length, -1
       }
     }; // i.e. null because start > end   
   
@@ -21463,7 +21463,7 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.FACE) {
   
-      int number_of_Faces_before = allFaces.PNT.length;
+      int number_of_Faces_before = allFaces.nodes.length;
   
       for (int o = 0; o < selectedFace_ids.length; o++) {
   
@@ -21474,13 +21474,13 @@ class solarchvision_Model3Ds {
         int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
   
-        if ((0 <= f) && (f < allFaces.PNT.length)) {
+        if ((0 <= f) && (f < allFaces.nodes.length)) {
   
           int[] newFace = {
           };
   
-          for (int j = 0; j < allFaces.PNT[f].length; j++) {
-            int vNo = allFaces.PNT[f][j];
+          for (int j = 0; j < allFaces.nodes[f].length; j++) {
+            int vNo = allFaces.nodes[f][j];
   
             int vertex_listed = -1;
   
@@ -21532,7 +21532,7 @@ class solarchvision_Model3Ds {
   
       selectedFace_ids = new int [0];
   
-      for (int o = number_of_Faces_before; o < allFaces.PNT.length; o++) {
+      for (int o = number_of_Faces_before; o < allFaces.nodes.length; o++) {
   
         int[] newlyAddedFace = {o};
   
@@ -21542,7 +21542,7 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.CURVE) {
   
-      int number_of_Curves_before = allCurves.PNT.length;
+      int number_of_Curves_before = allCurves.nodes.length;
   
       for (int o = 0; o < selectedCurve_ids.length; o++) {
   
@@ -21553,13 +21553,13 @@ class solarchvision_Model3Ds {
         int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
   
-        if ((0 <= f) && (f < allCurves.PNT.length)) {
+        if ((0 <= f) && (f < allCurves.nodes.length)) {
   
           int[] newCurve = {
           };
   
-          for (int j = 0; j < allCurves.PNT[f].length; j++) {
-            int vNo = allCurves.PNT[f][j];
+          for (int j = 0; j < allCurves.nodes[f].length; j++) {
+            int vNo = allCurves.nodes[f][j];
   
             int vertex_listed = -1;
   
@@ -21613,7 +21613,7 @@ class solarchvision_Model3Ds {
   
       selectedCurve_ids = new int [0];
   
-      for (int o = number_of_Curves_before; o < allCurves.PNT.length; o++) {
+      for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
   
         int[] newlyAddedCurve = {o};
   
@@ -21838,13 +21838,13 @@ class solarchvision_Model3Ds {
   
           for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
   
-            if ((0 <= f) && (f < allFaces.PNT.length)) {
+            if ((0 <= f) && (f < allFaces.nodes.length)) {
   
               int[] newFace = {
               };
   
-              for (int j = 0; j < allFaces.PNT[f].length; j++) {
-                int vNo = allFaces.PNT[f][j];
+              for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                int vNo = allFaces.nodes[f][j];
   
                 int vertex_listed = -1;
   
@@ -21988,13 +21988,13 @@ class solarchvision_Model3Ds {
   
           for (int f = allGroups_Curves[OBJ_NUM][0]; f <= allGroups_Curves[OBJ_NUM][1]; f++) {
   
-            if ((0 <= f) && (f < allCurves.PNT.length)) {
+            if ((0 <= f) && (f < allCurves.nodes.length)) {
   
               int[] newCurve = {
               };
   
-              for (int j = 0; j < allCurves.PNT[f].length; j++) {
-                int vNo = allCurves.PNT[f][j];
+              for (int j = 0; j < allCurves.nodes[f].length; j++) {
+                int vNo = allCurves.nodes[f][j];
   
                 int vertex_listed = -1;
   
@@ -22178,13 +22178,13 @@ class solarchvision_Model3Ds {
           int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
           int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
   
-          if ((0 <= f) && (f < allFaces.PNT.length)) {
+          if ((0 <= f) && (f < allFaces.nodes.length)) {
   
             int[] newFace = {
             };
   
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
   
               int vertex_listed = -1;
   
@@ -22242,13 +22242,13 @@ class solarchvision_Model3Ds {
           int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
           int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
   
-          if ((0 <= f) && (f < allCurves.PNT.length)) {
+          if ((0 <= f) && (f < allCurves.nodes.length)) {
   
             int[] newCurve = {
             };
   
-            for (int j = 0; j < allCurves.PNT[f].length; j++) {
-              int vNo = allCurves.PNT[f][j];
+            for (int j = 0; j < allCurves.nodes[f].length; j++) {
+              int vNo = allCurves.nodes[f][j];
   
               int vertex_listed = -1;
   
@@ -22663,17 +22663,17 @@ class solarchvision_Model3Ds {
   
   
         {
-          int[][] startList = (int[][]) subset(allFaces.PNT, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allFaces.PNT, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allFaces.nodes, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allFaces.nodes, OBJ_NUM + 1);
   
-          allFaces.PNT = (int[][]) concat(startList, endList);
+          allFaces.nodes = (int[][]) concat(startList, endList);
         }
   
         {
-          int[][] startList = (int[][]) subset(allFaces.MTLVGC, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allFaces.MTLVGC, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allFaces.options, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allFaces.options, OBJ_NUM + 1);
   
-          allFaces.MTLVGC = (int[][]) concat(startList, endList);
+          allFaces.options = (int[][]) concat(startList, endList);
         }
       }
     }
@@ -22699,17 +22699,17 @@ class solarchvision_Model3Ds {
   
   
         {
-          int[][] startList = (int[][]) subset(allCurves.PNT, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allCurves.PNT, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allCurves.nodes, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allCurves.nodes, OBJ_NUM + 1);
   
-          allCurves.PNT = (int[][]) concat(startList, endList);
+          allCurves.nodes = (int[][]) concat(startList, endList);
         }
   
         {
-          int[][] startList = (int[][]) subset(allCurves.MTLVGC, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allCurves.MTLVGC, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allCurves.options, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allCurves.options, OBJ_NUM + 1);
   
-          allCurves.MTLVGC = (int[][]) concat(startList, endList);
+          allCurves.options = (int[][]) concat(startList, endList);
         }
       }
     }
@@ -22756,17 +22756,17 @@ class solarchvision_Model3Ds {
   
         if ((0 <= startFace) && (startFace <= endFace)) {
           {
-            int[][] startList = (int[][]) subset(allFaces.PNT, 0, startFace);
-            int[][] endList = (int[][]) subset(allFaces.PNT, endFace + 1);
+            int[][] startList = (int[][]) subset(allFaces.nodes, 0, startFace);
+            int[][] endList = (int[][]) subset(allFaces.nodes, endFace + 1);
   
-            allFaces.PNT = (int[][]) concat(startList, endList);
+            allFaces.nodes = (int[][]) concat(startList, endList);
           }
   
           {
-            int[][] startList = (int[][]) subset(allFaces.MTLVGC, 0, startFace);
-            int[][] endList = (int[][]) subset(allFaces.MTLVGC, endFace + 1);
+            int[][] startList = (int[][]) subset(allFaces.options, 0, startFace);
+            int[][] endList = (int[][]) subset(allFaces.options, endFace + 1);
   
-            allFaces.MTLVGC = (int[][]) concat(startList, endList);
+            allFaces.options = (int[][]) concat(startList, endList);
           }
         }
   
@@ -22795,17 +22795,17 @@ class solarchvision_Model3Ds {
   
         if ((0 <= startCurve) && (startCurve <= endCurve)) {
           {
-            int[][] startList = (int[][]) subset(allCurves.PNT, 0, startCurve);
-            int[][] endList = (int[][]) subset(allCurves.PNT, endCurve + 1);
+            int[][] startList = (int[][]) subset(allCurves.nodes, 0, startCurve);
+            int[][] endList = (int[][]) subset(allCurves.nodes, endCurve + 1);
   
-            allCurves.PNT = (int[][]) concat(startList, endList);
+            allCurves.nodes = (int[][]) concat(startList, endList);
           }
   
           {
-            int[][] startList = (int[][]) subset(allCurves.MTLVGC, 0, startCurve);
-            int[][] endList = (int[][]) subset(allCurves.MTLVGC, endCurve + 1);
+            int[][] startList = (int[][]) subset(allCurves.options, 0, startCurve);
+            int[][] endList = (int[][]) subset(allCurves.options, endCurve + 1);
   
-            allCurves.MTLVGC = (int[][]) concat(startList, endList);
+            allCurves.options = (int[][]) concat(startList, endList);
           }
         }
   
@@ -23018,9 +23018,9 @@ class solarchvision_Model3Ds {
       int found = -1;
       
       if (found == -1) {
-        for (int i = 0; i < allFaces.PNT.length; i++) { 
-          for (int j = 0; j < allFaces.PNT[i].length; j++) {
-            if (allFaces.PNT[i][j] == vNo) {
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] == vNo) {
   
               found = 1;
             }
@@ -23033,9 +23033,9 @@ class solarchvision_Model3Ds {
       }
       
       if (found == -1) {
-        for (int i = 0; i < allCurves.PNT.length; i++) { 
-          for (int j = 0; j < allCurves.PNT[i].length; j++) {
-            if (allCurves.PNT[i][j] == vNo) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] == vNo) {
   
               found = 1;
             }
@@ -23050,20 +23050,20 @@ class solarchvision_Model3Ds {
   
       if (found == -1) {
   
-        for (int i = 0; i < allFaces.PNT.length; i++) {
-          for (int j = 0; j < allFaces.PNT[i].length; j++) {
-            if (allFaces.PNT[i][j] > vNo) {
+        for (int i = 0; i < allFaces.nodes.length; i++) {
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] > vNo) {
   
-              allFaces.PNT[i][j] -= 1;
+              allFaces.nodes[i][j] -= 1;
             }
           }
         }             
   
-        for (int i = 0; i < allCurves.PNT.length; i++) { 
-          for (int j = 0; j < allCurves.PNT[i].length; j++) {
-            if (allCurves.PNT[i][j] > vNo) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] > vNo) {
   
-              allCurves.PNT[i][j] -= 1;
+              allCurves.nodes[i][j] -= 1;
             }
           }
         }  
@@ -23086,9 +23086,9 @@ class solarchvision_Model3Ds {
       int found = -1;
   
       if (found == -1) {
-        for (int i = 0; i < allFaces.PNT.length; i++) {
-          for (int j = 0; j < allFaces.PNT[i].length; j++) {
-            if (allFaces.PNT[i][j] == vNo) {
+        for (int i = 0; i < allFaces.nodes.length; i++) {
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] == vNo) {
               found = 1;
             }
           }
@@ -23096,9 +23096,9 @@ class solarchvision_Model3Ds {
       }
   
       if (found == -1) {
-        for (int i = 0; i < allCurves.PNT.length; i++) { 
-          for (int j = 0; j < allCurves.PNT[i].length; j++) {
-            if (allCurves.PNT[i][j] == vNo) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] == vNo) {
               found = 1;
             }
           }
@@ -23113,20 +23113,20 @@ class solarchvision_Model3Ds {
           allVertices = (float[][]) concat(startList, endList);
         }
   
-        for (int i = 0; i < allFaces.PNT.length; i++) { 
-          for (int j = 0; j < allFaces.PNT[i].length; j++) {
-            if (allFaces.PNT[i][j] > vNo) {
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] > vNo) {
   
-              allFaces.PNT[i][j] -= 1;
+              allFaces.nodes[i][j] -= 1;
             }
           }
         }
         
-        for (int i = 0; i < allCurves.PNT.length; i++) {
-          for (int j = 0; j < allCurves.PNT[i].length; j++) {
-            if (allCurves.PNT[i][j] > vNo) {
+        for (int i = 0; i < allCurves.nodes.length; i++) {
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] > vNo) {
   
-              allCurves.PNT[i][j] -= 1;
+              allCurves.nodes[i][j] -= 1;
             }
           }
         }      
@@ -23148,9 +23148,9 @@ class solarchvision_Model3Ds {
       int found = -1;
   
       if (found == -1) {
-        for (int i = 0; i < allFaces.PNT.length; i++) { 
-          for (int j = 0; j < allFaces.PNT[i].length; j++) {
-            if (allFaces.PNT[i][j] == vNo) {
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] == vNo) {
               found = 1;
             }
           }
@@ -23158,9 +23158,9 @@ class solarchvision_Model3Ds {
       }
   
       if (found == -1) {
-        for (int i = 0; i < allCurves.PNT.length; i++) { 
-          for (int j = 0; j < allCurves.PNT[i].length; j++) {
-            if (allCurves.PNT[i][j] == vNo) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] == vNo) {
               found = 1;
             }
           }
@@ -23290,10 +23290,10 @@ class solarchvision_Model3Ds {
         int found = -1;
         
         if (found != -1) {
-          for (int i = 0; i < allFaces.PNT.length; i++) { 
-            for (int j = 0; j < allFaces.PNT[i].length; j++) {
+          for (int i = 0; i < allFaces.nodes.length; i++) { 
+            for (int j = 0; j < allFaces.nodes[i].length; j++) {
   
-              int q = allFaces.PNT[i][j];
+              int q = allFaces.nodes[i][j];
   
               if (q > vNo) { // it is faster than (q != vNo)
   
@@ -23301,7 +23301,7 @@ class solarchvision_Model3Ds {
   
                 if (d <= max_distance) { 
   
-                  allFaces.PNT[i][j] = vNo;
+                  allFaces.nodes[i][j] = vNo;
   
                   found = q;
                 }
@@ -23311,10 +23311,10 @@ class solarchvision_Model3Ds {
         }
   
         if (found != -1) {
-          for (int i = 0; i < allCurves.PNT.length; i++) { 
-            for (int j = 0; j < allCurves.PNT[i].length; j++) {
+          for (int i = 0; i < allCurves.nodes.length; i++) { 
+            for (int j = 0; j < allCurves.nodes[i].length; j++) {
   
-              int q = allCurves.PNT[i][j];
+              int q = allCurves.nodes[i][j];
   
               if (q > vNo) { // it is faster than (q != vNo)
   
@@ -23322,7 +23322,7 @@ class solarchvision_Model3Ds {
   
                 if (d <= max_distance) { 
   
-                  allCurves.PNT[i][j] = vNo;
+                  allCurves.nodes[i][j] = vNo;
   
                   found = q;
                 }
@@ -23342,20 +23342,20 @@ class solarchvision_Model3Ds {
             allVertices = (float[][]) concat(startList, endList);
           }
   
-          for (int i = 0; i < allFaces.PNT.length; i++) { 
-            for (int j = 0; j < allFaces.PNT[i].length; j++) {
-              if (allFaces.PNT[i][j] > q) {
+          for (int i = 0; i < allFaces.nodes.length; i++) { 
+            for (int j = 0; j < allFaces.nodes[i].length; j++) {
+              if (allFaces.nodes[i][j] > q) {
   
-                allFaces.PNT[i][j] -= 1;
+                allFaces.nodes[i][j] -= 1;
               }
             }
           }
           
-          for (int i = 0; i < allCurves.PNT.length; i++) {
-            for (int j = 0; j < allCurves.PNT[i].length; j++) {
-              if (allCurves.PNT[i][j] > q) {
+          for (int i = 0; i < allCurves.nodes.length; i++) {
+            for (int j = 0; j < allCurves.nodes[i].length; j++) {
+              if (allCurves.nodes[i][j] > q) {
   
-                allCurves.PNT[i][j] -= 1;
+                allCurves.nodes[i][j] -= 1;
               }
             }
           }          
@@ -23412,10 +23412,10 @@ class solarchvision_Model3Ds {
             for (int i = 0; i < selectedFace_ids.length; i++) {
               int f = selectedFace_ids[i];
   
-              for (int j = 0; j < allFaces.PNT[f].length; j++) {
-                if (allFaces.PNT[f][j] == q) {
+              for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                if (allFaces.nodes[f][j] == q) {
   
-                  allFaces.PNT[f][j] = vNo;
+                  allFaces.nodes[f][j] = vNo;
   
                   found = q;
                 }
@@ -23425,10 +23425,10 @@ class solarchvision_Model3Ds {
             for (int i = 0; i < selectedCurve_ids.length; i++) {
               int f = selectedCurve_ids[i];
   
-              for (int j = 0; j < allCurves.PNT[f].length; j++) {
-                if (allCurves.PNT[f][j] == q) {
+              for (int j = 0; j < allCurves.nodes[f].length; j++) {
+                if (allCurves.nodes[f][j] == q) {
   
-                  allCurves.PNT[f][j] = vNo;
+                  allCurves.nodes[f][j] = vNo;
   
                   found = q;
                 }
@@ -23448,20 +23448,20 @@ class solarchvision_Model3Ds {
             allVertices = (float[][]) concat(startList, endList);
           }
   
-          for (int i = 0; i < allFaces.PNT.length; i++) { 
-            for (int j = 0; j < allFaces.PNT[i].length; j++) {
-              if (allFaces.PNT[i][j] > q) {
+          for (int i = 0; i < allFaces.nodes.length; i++) { 
+            for (int j = 0; j < allFaces.nodes[i].length; j++) {
+              if (allFaces.nodes[i][j] > q) {
   
-                allFaces.PNT[i][j] -= 1;
+                allFaces.nodes[i][j] -= 1;
               }
             }
           }
           
-          for (int i = 0; i < allCurves.PNT.length; i++) { 
-            for (int j = 0; j < allCurves.PNT[i].length; j++) {
-              if (allCurves.PNT[i][j] > q) {
+          for (int i = 0; i < allCurves.nodes.length; i++) { 
+            for (int j = 0; j < allCurves.nodes[i].length; j++) {
+              if (allCurves.nodes[i][j] > q) {
   
-                allCurves.PNT[i][j] -= 1;
+                allCurves.nodes[i][j] -= 1;
               }
             }
           }          
@@ -23524,22 +23524,22 @@ class solarchvision_Model3Ds {
   
         int vNo = selectedVertex_ids[o];
   
-        for (int i = 0; i < allFaces.PNT.length; i++) { 
-          for (int j = 0; j < allFaces.PNT[i].length; j++) {
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
   
-            if (allFaces.PNT[i][j] == vNo) { 
+            if (allFaces.nodes[i][j] == vNo) { 
   
-              allFaces.PNT[i][j] = this.add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+              allFaces.nodes[i][j] = this.add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
             }
           }
         }
         
-        for (int i = 0; i < allCurves.PNT.length; i++) { 
-          for (int j = 0; j < allCurves.PNT[i].length; j++) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
   
-            if (allCurves.PNT[i][j] == vNo) { 
+            if (allCurves.nodes[i][j] == vNo) { 
   
-              allCurves.PNT[i][j] = this.add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+              allCurves.nodes[i][j] = this.add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
             }
           }
         }        
@@ -23595,37 +23595,37 @@ class solarchvision_Model3Ds {
   
             for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
               for (int j = 0; j < 2; j++) {
-                allGroups_Faces[i][j] += allFaces.PNT[f].length;
+                allGroups_Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups_Faces[OBJ_NUM][1] += allFaces.PNT[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups_Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
               if (new_selectedFace_ids[p] != 0) {
   
                 if (new_selectedFace_ids[p] > f) {  
-                  new_selectedFace_ids[p] += allFaces.PNT[f].length;
+                  new_selectedFace_ids[p] += allFaces.nodes[f].length;
                 }
               }
             }              
   
   
-            int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces.PNT, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+            int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
+            int[][] midList_Faces = (int[][]) subset(allFaces.nodes, f, 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
             { 
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                 }
               }
   
@@ -23633,24 +23633,24 @@ class solarchvision_Model3Ds {
                 0, 0, 0
               };  
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                  G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                 }
               }
   
-              float[][] new_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] new_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
   
                   new_Vertices[i][j] = pow(ModifyInput_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(ModifyInput_OpenningArea, 0.5)) * G_face[j];
                 }
               }
   
-              int[] new_Vertex_ids = new int [allFaces.PNT[f].length];
+              int[] new_Vertex_ids = new int [allFaces.nodes[f].length];
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
                 new_Vertex_ids[s] = this.add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
               } 
@@ -23660,13 +23660,13 @@ class solarchvision_Model3Ds {
               defaultLayer = allFaces.getLayer(f);
               defaultVisibility = allFaces.getVisibility(f);              
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+              for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 int[][] newFace = {
                   {
-                    new_Vertex_ids[s], allFaces.PNT[f][s], allFaces.PNT[f][s_next], new_Vertex_ids[s_next]
+                    new_Vertex_ids[s], allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_Vertex_ids[s_next]
                   }
                 };
                 int[][] newFace_MTLVGC = {
@@ -23681,8 +23681,8 @@ class solarchvision_Model3Ds {
   
   
               { // modifying the base face to shape the openning  
-                for (int s = 0; s < allFaces.PNT[f].length; s++) {
-                  allFaces.PNT[f][s] = new_Vertex_ids[s];
+                for (int s = 0; s < allFaces.nodes[f].length; s++) {
+                  allFaces.nodes[f][s] = new_Vertex_ids[s];
                 }
               }
             }
@@ -23690,8 +23690,8 @@ class solarchvision_Model3Ds {
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
             startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-            allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -23760,37 +23760,37 @@ class solarchvision_Model3Ds {
   
             for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
               for (int j = 0; j < 2; j++) {
-                allGroups_Faces[i][j] += 2 * allFaces.PNT[f].length;
+                allGroups_Faces[i][j] += 2 * allFaces.nodes[f].length;
               }
             }  
-            allGroups_Faces[OBJ_NUM][1] += 2 * allFaces.PNT[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups_Faces[OBJ_NUM][1] += 2 * allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
               if (new_selectedFace_ids[p] != 0) { 
   
                 if (new_selectedFace_ids[p] > f) {  
-                  new_selectedFace_ids[p] += 2 * allFaces.PNT[f].length;
+                  new_selectedFace_ids[p] += 2 * allFaces.nodes[f].length;
                 }
               }
             }              
   
   
-            int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces.PNT, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+            int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
+            int[][] midList_Faces = (int[][]) subset(allFaces.nodes, f, 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
             { 
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                 }
               }
   
@@ -23798,21 +23798,21 @@ class solarchvision_Model3Ds {
                 0, 0, 0
               };  
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                  G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                 }
               }
   
   
-              float[][] new_A_EdgeVertices = new float [allFaces.PNT[f].length][3];
-              float[][] new_B_EdgeVertices = new float [allFaces.PNT[f].length][3];
-              float[][] new_CenterVertices = new float [allFaces.PNT[f].length][3];
+              float[][] new_A_EdgeVertices = new float [allFaces.nodes[f].length][3];
+              float[][] new_B_EdgeVertices = new float [allFaces.nodes[f].length][3];
+              float[][] new_CenterVertices = new float [allFaces.nodes[f].length][3];
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                int s_prev = (s + allFaces.PNT[f].length - 1) % allFaces.PNT[f].length;
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 for (int j = 0; j < 3; j++) {
   
@@ -23823,11 +23823,11 @@ class solarchvision_Model3Ds {
                 }
               }
   
-              int[] new_A_EdgeVertex_ids = new int [allFaces.PNT[f].length]; // on the edge (1/3)
-              int[] new_B_EdgeVertex_ids = new int [allFaces.PNT[f].length]; // on the other edge (2/3)
-              int[] new_CenterVertex_ids = new int [allFaces.PNT[f].length]; // in the center
+              int[] new_A_EdgeVertex_ids = new int [allFaces.nodes[f].length]; // on the edge (1/3)
+              int[] new_B_EdgeVertex_ids = new int [allFaces.nodes[f].length]; // on the other edge (2/3)
+              int[] new_CenterVertex_ids = new int [allFaces.nodes[f].length]; // in the center
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
                 new_A_EdgeVertex_ids[s] = this.add_Vertex(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
                 new_B_EdgeVertex_ids[s] = this.add_Vertex(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
@@ -23841,14 +23841,14 @@ class solarchvision_Model3Ds {
               defaultLayer = allFaces.getLayer(f);
               defaultVisibility = allFaces.getVisibility(f);
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+              for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 {
                   int[][] newFace = {
                     {
-                      allFaces.PNT[f][s], new_B_EdgeVertex_ids[s], new_CenterVertex_ids[s], new_A_EdgeVertex_ids[s]
+                      allFaces.nodes[f][s], new_B_EdgeVertex_ids[s], new_CenterVertex_ids[s], new_A_EdgeVertex_ids[s]
                     }
                   };
                   int[][] newFace_MTLVGC = {
@@ -23880,8 +23880,8 @@ class solarchvision_Model3Ds {
   
   
               { // modifying the base face to shape the openning  
-                for (int s = 0; s < allFaces.PNT[f].length; s++) {
-                  allFaces.PNT[f][s] = new_CenterVertex_ids[s];
+                for (int s = 0; s < allFaces.nodes[f].length; s++) {
+                  allFaces.nodes[f][s] = new_CenterVertex_ids[s];
                 }
               }
             }
@@ -23889,8 +23889,8 @@ class solarchvision_Model3Ds {
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
             startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-            allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -23958,37 +23958,37 @@ class solarchvision_Model3Ds {
   
             for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
               for (int j = 0; j < 2; j++) {
-                allGroups_Faces[i][j] += allFaces.PNT[f].length;
+                allGroups_Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups_Faces[OBJ_NUM][1] += allFaces.PNT[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups_Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
               if (new_selectedFace_ids[p] != 0) {
   
                 if (new_selectedFace_ids[p] > f) {  
-                  new_selectedFace_ids[p] += allFaces.PNT[f].length;
+                  new_selectedFace_ids[p] += allFaces.nodes[f].length;
                 }
               }
             }              
   
   
-            int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces.PNT, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+            int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
+            int[][] midList_Faces = (int[][]) subset(allFaces.nodes, f, 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
             { 
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                 }
               }
   
@@ -23996,18 +23996,18 @@ class solarchvision_Model3Ds {
                 0, 0, 0
               };  
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                  G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                 }
               }
   
-              float[][] new_EdgeVertices = new float [allFaces.PNT[f].length][3];
-              float[][] new_CenterVertices = new float [allFaces.PNT[f].length][3];
+              float[][] new_EdgeVertices = new float [allFaces.nodes[f].length][3];
+              float[][] new_CenterVertices = new float [allFaces.nodes[f].length][3];
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                int s_prev = (s + allFaces.PNT[f].length - 1) % allFaces.PNT[f].length;
+                int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
   
                 for (int j = 0; j < 3; j++) {
   
@@ -24017,10 +24017,10 @@ class solarchvision_Model3Ds {
                 }
               }
   
-              int[] new_EdgeVertex_ids = new int [allFaces.PNT[f].length]; // on the edge
-              int[] new_CenterVertex_ids = new int [allFaces.PNT[f].length]; // in the center
+              int[] new_EdgeVertex_ids = new int [allFaces.nodes[f].length]; // on the edge
+              int[] new_CenterVertex_ids = new int [allFaces.nodes[f].length]; // in the center
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
                 new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
                 new_CenterVertex_ids[s] = this.add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
@@ -24033,13 +24033,13 @@ class solarchvision_Model3Ds {
               defaultLayer = allFaces.getLayer(f);
               defaultVisibility = allFaces.getVisibility(f);
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+              for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 int[][] newFace = {
                   {
-                    new_EdgeVertex_ids[s], allFaces.PNT[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
+                    new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
                   }
                 };
                 int[][] newFace_MTLVGC = {
@@ -24054,8 +24054,8 @@ class solarchvision_Model3Ds {
   
   
               { // modifying the base face to match new center face
-                for (int s = 0; s < allFaces.PNT[f].length; s++) {
-                  allFaces.PNT[f][s] = new_CenterVertex_ids[s];
+                for (int s = 0; s < allFaces.nodes[f].length; s++) {
+                  allFaces.nodes[f][s] = new_CenterVertex_ids[s];
                 }
               }
             }
@@ -24063,8 +24063,8 @@ class solarchvision_Model3Ds {
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
             startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-            allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -24134,37 +24134,37 @@ class solarchvision_Model3Ds {
   
             for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
               for (int j = 0; j < 2; j++) {
-                allGroups_Faces[i][j] += allFaces.PNT[f].length;
+                allGroups_Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups_Faces[OBJ_NUM][1] += allFaces.PNT[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups_Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
               if (new_selectedFace_ids[p] != 0) {
   
                 if (new_selectedFace_ids[p] > f) {  
-                  new_selectedFace_ids[p] += allFaces.PNT[f].length;
+                  new_selectedFace_ids[p] += allFaces.nodes[f].length;
                 }
               }
             }              
   
   
-            int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces.PNT, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+            int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
+            int[][] midList_Faces = (int[][]) subset(allFaces.nodes, f, 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
             { 
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                 }
               }
   
@@ -24172,17 +24172,17 @@ class solarchvision_Model3Ds {
                 0, 0, 0
               };  
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                  G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                 }
               }
   
-              float[][] new_EdgeVertices = new float [allFaces.PNT[f].length][3];
+              float[][] new_EdgeVertices = new float [allFaces.nodes[f].length][3];
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                int s_prev = (s + allFaces.PNT[f].length - 1) % allFaces.PNT[f].length;
+                int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
   
                 for (int j = 0; j < 3; j++) {
   
@@ -24190,9 +24190,9 @@ class solarchvision_Model3Ds {
                 }
               }
   
-              int[] new_EdgeVertex_ids = new int [allFaces.PNT[f].length]; // on the edge
+              int[] new_EdgeVertex_ids = new int [allFaces.nodes[f].length]; // on the edge
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
                 new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
               } 
@@ -24204,13 +24204,13 @@ class solarchvision_Model3Ds {
               defaultLayer = allFaces.getLayer(f);
               defaultVisibility = allFaces.getVisibility(f);
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+              for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 int[][] newFace = {
                   {
-                    new_EdgeVertex_ids[s], allFaces.PNT[f][s], new_EdgeVertex_ids[s_next]
+                    new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next]
                   }
                 };
                 int[][] newFace_MTLVGC = {
@@ -24225,8 +24225,8 @@ class solarchvision_Model3Ds {
   
   
               { // modifying the base face to match new center face
-                for (int s = 0; s < allFaces.PNT[f].length; s++) {
-                  allFaces.PNT[f][s] = new_EdgeVertex_ids[s];
+                for (int s = 0; s < allFaces.nodes[f].length; s++) {
+                  allFaces.nodes[f][s] = new_EdgeVertex_ids[s];
                 }
               }
             }
@@ -24234,8 +24234,8 @@ class solarchvision_Model3Ds {
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
             startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-            allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -24304,7 +24304,7 @@ class solarchvision_Model3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            if (allFaces.PNT[f].length == 4) {
+            if (allFaces.nodes[f].length == 4) {
   
               for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
                 for (int j = 0; j < 2; j++) {
@@ -24324,21 +24324,21 @@ class solarchvision_Model3Ds {
               }             
   
   
-              int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
+              int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
               int[][] midList_Faces = new int [0][0];
-              int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-              int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
+              int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
               int[][] midList_Faces_MTLVGC = new int [0][0];
-              int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+              int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-                for (int i = 0; i < allFaces.PNT[f].length; i++) {
+                for (int i = 0; i < allFaces.nodes[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                   }
                 }
   
@@ -24371,13 +24371,13 @@ class solarchvision_Model3Ds {
                     int s = i * (ModifyInput_TessellateRows + 1) + j;
   
                     if ((i == 0) && (j == 0)) {
-                      new_EdgeVertex_ids[s] = allFaces.PNT[f][0];
+                      new_EdgeVertex_ids[s] = allFaces.nodes[f][0];
                     } else if ((i == ModifyInput_TessellateColumns) && (j == 0)) {
-                      new_EdgeVertex_ids[s] = allFaces.PNT[f][1];
+                      new_EdgeVertex_ids[s] = allFaces.nodes[f][1];
                     } else if ((i == ModifyInput_TessellateColumns) && (j == ModifyInput_TessellateRows)) {
-                      new_EdgeVertex_ids[s] = allFaces.PNT[f][2];
+                      new_EdgeVertex_ids[s] = allFaces.nodes[f][2];
                     } else if ((i == 0) && (j == ModifyInput_TessellateRows)) {
-                      new_EdgeVertex_ids[s] = allFaces.PNT[f][3];
+                      new_EdgeVertex_ids[s] = allFaces.nodes[f][3];
                     } else {
                       new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
                     }
@@ -24429,8 +24429,8 @@ class solarchvision_Model3Ds {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-              allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+              allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -24500,37 +24500,37 @@ class solarchvision_Model3Ds {
   
             for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
               for (int j = 0; j < 2; j++) {
-                allGroups_Faces[i][j] += allFaces.PNT[f].length - 1;
+                allGroups_Faces[i][j] += allFaces.nodes[f].length - 1;
               }
             }  
-            allGroups_Faces[OBJ_NUM][1] += allFaces.PNT[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+            allGroups_Faces[OBJ_NUM][1] += allFaces.nodes[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
               if (new_selectedFace_ids[p] != 0) {
   
                 if (new_selectedFace_ids[p] > f) {  
-                  new_selectedFace_ids[p] += allFaces.PNT[f].length - 1;
+                  new_selectedFace_ids[p] += allFaces.nodes[f].length - 1;
                 }
               }
             }             
   
   
-            int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
+            int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces = new int [0][0];
-            int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
+            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
             int[][] midList_Faces_MTLVGC = new int [0][0];
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
             { 
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                 }
               }
   
@@ -24538,26 +24538,26 @@ class solarchvision_Model3Ds {
                 0, 0, 0
               };  
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                  G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                 }
               }
   
-              float[][] new_EdgeVertices = new float [allFaces.PNT[f].length][3];
+              float[][] new_EdgeVertices = new float [allFaces.nodes[f].length][3];
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                int s_prev = (s + allFaces.PNT[f].length - 1) % allFaces.PNT[f].length;
+                int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
   
                 for (int j = 0; j < 3; j++) {
                   new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
                 }
               }
   
-              int[] new_EdgeVertex_ids = new int [allFaces.PNT[f].length]; // on the edge
+              int[] new_EdgeVertex_ids = new int [allFaces.nodes[f].length]; // on the edge
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
                 new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
               } 
@@ -24571,13 +24571,13 @@ class solarchvision_Model3Ds {
               defaultLayer = allFaces.getLayer(f);
               defaultVisibility = allFaces.getVisibility(f);              
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+              for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 int[][] newFace = {
                   {
-                    new_EdgeVertex_ids[s], allFaces.PNT[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number
+                    new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number
                   }
                 };
                 int[][] newFace_MTLVGC = {
@@ -24601,8 +24601,8 @@ class solarchvision_Model3Ds {
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
             startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-            allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -24671,37 +24671,37 @@ class solarchvision_Model3Ds {
   
             for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
               for (int j = 0; j < 2; j++) {
-                allGroups_Faces[i][j] += allFaces.PNT[f].length - 1;
+                allGroups_Faces[i][j] += allFaces.nodes[f].length - 1;
               }
             }  
-            allGroups_Faces[OBJ_NUM][1] += allFaces.PNT[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+            allGroups_Faces[OBJ_NUM][1] += allFaces.nodes[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
               if (new_selectedFace_ids[p] != 0) {
   
                 if (new_selectedFace_ids[p] > f) {  
-                  new_selectedFace_ids[p] += allFaces.PNT[f].length - 1;
+                  new_selectedFace_ids[p] += allFaces.nodes[f].length - 1;
                 }
               }
             }             
   
   
-            int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
+            int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces = new int [0][0];
-            int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
+            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
             int[][] midList_Faces_MTLVGC = new int [0][0];
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
             { 
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                 }
               }
   
@@ -24709,9 +24709,9 @@ class solarchvision_Model3Ds {
                 0, 0, 0
               };  
   
-              for (int i = 0; i < allFaces.PNT[f].length; i++) {
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                  G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                 }
               }
   
@@ -24725,13 +24725,13 @@ class solarchvision_Model3Ds {
               defaultLayer = allFaces.getLayer(f);
               defaultVisibility = allFaces.getVisibility(f);                
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+              for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                int s_next = (s + 1) % allFaces.PNT[f].length;
+                int s_next = (s + 1) % allFaces.nodes[f].length;
   
                 int[][] newFace = {
                   {
-                    allFaces.PNT[f][s], allFaces.PNT[f][s_next], new_CenterVertex_number
+                    allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
                   }
                 };
                 int[][] newFace_MTLVGC = {
@@ -24755,8 +24755,8 @@ class solarchvision_Model3Ds {
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
             startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-            allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_ids.length; i++) {
@@ -24820,7 +24820,7 @@ class solarchvision_Model3Ds {
   
           int f = selectedFace_ids[q];
   
-          if (allFaces.PNT[f].length > 3) { // <<<<<<<<<<< the condition to perform the process 
+          if (allFaces.nodes[f].length > 3) { // <<<<<<<<<<< the condition to perform the process 
   
             int startFace = allGroups_Faces[OBJ_NUM][0];
             int endFace = allGroups_Faces[OBJ_NUM][1];          
@@ -24829,36 +24829,36 @@ class solarchvision_Model3Ds {
   
               for (int i = OBJ_NUM + 1; i < allGroups_num; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allGroups_Faces[i][j] += allFaces.PNT[f].length - 1;
+                  allGroups_Faces[i][j] += allFaces.nodes[f].length - 1;
                 }
               }  
-              allGroups_Faces[OBJ_NUM][1] += allFaces.PNT[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+              allGroups_Faces[OBJ_NUM][1] += allFaces.nodes[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_ids.length - 1; p >= 0; p--) {
   
                 if (new_selectedFace_ids[p] != 0) {
   
                   if (new_selectedFace_ids[p] > f) {  
-                    new_selectedFace_ids[p] += allFaces.PNT[f].length - 1;
+                    new_selectedFace_ids[p] += allFaces.nodes[f].length - 1;
                   }
                 }
               }             
   
-              int[][] startList_Faces = (int[][]) subset(allFaces.PNT, 0, f);
+              int[][] startList_Faces = (int[][]) subset(allFaces.nodes, 0, f);
               int[][] midList_Faces = new int [0][0];
-              int[][] endList_Faces = (int[][]) subset(allFaces.PNT, f + 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-              int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, 0, f);
+              int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
               int[][] midList_Faces_MTLVGC = new int [0][0];
-              int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.MTLVGC, f + 1);
+              int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
   
               { 
-                float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-                for (int i = 0; i < allFaces.PNT[f].length; i++) {
+                for (int i = 0; i < allFaces.nodes[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces.PNT[f][i])][j];
+                    base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
                   }
                 }
   
@@ -24866,9 +24866,9 @@ class solarchvision_Model3Ds {
                   0, 0, 0
                 };  
   
-                for (int i = 0; i < allFaces.PNT[f].length; i++) {
+                for (int i = 0; i < allFaces.nodes[f].length; i++) {
                   for (int j = 0; j < 3; j++) {
-                    G_face[j] += base_Vertices[i][j] / float(allFaces.PNT[f].length);
+                    G_face[j] += base_Vertices[i][j] / float(allFaces.nodes[f].length);
                   }
                 }
   
@@ -24882,13 +24882,13 @@ class solarchvision_Model3Ds {
                 defaultLayer = allFaces.getLayer(f);
                 defaultVisibility = allFaces.getVisibility(f);                
   
-                for (int s = 0; s < allFaces.PNT[f].length; s++) { 
+                for (int s = 0; s < allFaces.nodes[f].length; s++) { 
   
-                  int s_next = (s + 1) % allFaces.PNT[f].length;
+                  int s_next = (s + 1) % allFaces.nodes[f].length;
   
                   int[][] newFace = {
                     {
-                      allFaces.PNT[f][s], allFaces.PNT[f][s_next], new_CenterVertex_number
+                      allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
                     }
                   };
                   int[][] newFace_MTLVGC = {
@@ -24912,8 +24912,8 @@ class solarchvision_Model3Ds {
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
               startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
   
-              allFaces.PNT = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces.MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);           
+              allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);           
             }           
   
             { // to avoid processing the faces twice they should be deleted from the list.
@@ -24974,7 +24974,7 @@ class solarchvision_Model3Ds {
     
           int f = selectedFace_ids[o];     
         
-          int n = allFaces.PNT[f].length;
+          int n = allFaces.nodes[f].length;
     
           if (n > 2) {
             int[] tmpFace = new int[n];
@@ -24982,7 +24982,7 @@ class solarchvision_Model3Ds {
               0, 0, 0
             }; 
             for (int j = 0; j < n; j++) {
-              tmpFace[j] = allFaces.PNT[f][j];
+              tmpFace[j] = allFaces.nodes[f][j];
               G[0] += allVertices[tmpFace[j]][0] / float(n); 
               G[1] += allVertices[tmpFace[j]][1] / float(n);
               G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -25001,7 +25001,7 @@ class solarchvision_Model3Ds {
             if (RxP[0] >= 0) {
   
               for (int j = 0; j < n; j++) {
-                allFaces.PNT[f][j] = tmpFace[n - j - 1];
+                allFaces.nodes[f][j] = tmpFace[n - j - 1];
               }
             }
           }
@@ -25057,11 +25057,11 @@ class solarchvision_Model3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-            float[][] top_Vertices = new float [allFaces.PNT[f].length][3];
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            float[][] top_Vertices = new float [allFaces.nodes[f].length][3];
   
-            for (int s = 0; s < allFaces.PNT[f].length; s++) {
-              int vNo = allFaces.PNT[f][s];
+            for (int s = 0; s < allFaces.nodes[f].length; s++) {
+              int vNo = allFaces.nodes[f][s];
   
               base_Vertices[s][0] = allVertices[vNo][0];
               base_Vertices[s][1] = allVertices[vNo][1];
@@ -25072,10 +25072,10 @@ class solarchvision_Model3Ds {
               top_Vertices[s][2] = allVertices[vNo][2];
             }
   
-            for (int s = 0; s < allFaces.PNT[f].length; s++) {
+            for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-              int s_next = (s + 1) % allFaces.PNT[f].length;
-              int s_prev = (s + allFaces.PNT[f].length - 1) % allFaces.PNT[f].length;
+              int s_next = (s + 1) % allFaces.nodes[f].length;
+              int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
   
               PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
               PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
@@ -25090,18 +25090,18 @@ class solarchvision_Model3Ds {
               top_Vertices[s][2] += W[2] * ModifyInput_OpenningDepth;
             }  
   
-            int[] base_Vertex_ids = new int [allFaces.PNT[f].length];
-            int[] top_Vertex_ids = new int [allFaces.PNT[f].length];
+            int[] base_Vertex_ids = new int [allFaces.nodes[f].length];
+            int[] top_Vertex_ids = new int [allFaces.nodes[f].length];
   
-            for (int s = 0; s < allFaces.PNT[f].length; s++) {
+            for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
               base_Vertex_ids[s] = this.add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
               top_Vertex_ids[s] = this.add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
             }        
   
-            for (int s = 0; s < allFaces.PNT[f].length; s++) {
+            for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-              int s_next = (s + 1) % allFaces.PNT[f].length;
+              int s_next = (s + 1) % allFaces.nodes[f].length;
   
               if (ModifyInput_OpenningDepth < 0) { // reverse direction for negative extrude heights
                 int[][] newFace = {
@@ -25109,14 +25109,14 @@ class solarchvision_Model3Ds {
                     base_Vertex_ids[s], top_Vertex_ids[s], top_Vertex_ids[s_next], base_Vertex_ids[s_next]
                   }
                 };  
-                allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+                allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
               } else {
                 int[][] newFace = {
                   {
                     base_Vertex_ids[s], base_Vertex_ids[s_next], top_Vertex_ids[s_next], top_Vertex_ids[s]
                   }
                 };  
-                allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+                allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
               }       
   
               int[][] newFace_MTLVGC = {
@@ -25124,30 +25124,30 @@ class solarchvision_Model3Ds {
                   allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
                 }
               }; 
-              allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);
             }  
   
             { // adding the cap
               int[][] newFace = {
                 top_Vertex_ids
               };  
-              allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);         
+              allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);         
   
               int[][] newFace_MTLVGC = {
                 {
                   allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
                 }
               }; 
-              allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);  
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);  
   
               int[] lastFace = {
-                allFaces.PNT.length - 1
+                allFaces.nodes.length - 1
               };
   
               new_selectedFace_ids = (int[]) concat(new_selectedFace_ids, lastFace);
             }
   
-            allGroups_Faces[allGroups_num - 1][1] = allFaces.PNT.length - 1;
+            allGroups_Faces[allGroups_num - 1][1] = allFaces.nodes.length - 1;
           }
         }
       }
@@ -25200,11 +25200,11 @@ class solarchvision_Model3Ds {
   
           if ((startCurve <= f) && (f <= endCurve)) {
   
-            float[][] base_Vertices = new float [allCurves.PNT[f].length][3];
-            float[][] top_Vertices = new float [allCurves.PNT[f].length][3];
+            float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
+            float[][] top_Vertices = new float [allCurves.nodes[f].length][3];
   
-            for (int s = 0; s < allCurves.PNT[f].length; s++) {
-              int vNo = allCurves.PNT[f][s];
+            for (int s = 0; s < allCurves.nodes[f].length; s++) {
+              int vNo = allCurves.nodes[f][s];
   
               base_Vertices[s][0] = allVertices[vNo][0];
               base_Vertices[s][1] = allVertices[vNo][1];
@@ -25215,10 +25215,10 @@ class solarchvision_Model3Ds {
               top_Vertices[s][2] = allVertices[vNo][2];
             }
   
-            for (int s = 0; s < allCurves.PNT[f].length; s++) {
+            for (int s = 0; s < allCurves.nodes[f].length; s++) {
   
-              int s_next = (s + 1) % allCurves.PNT[f].length;
-              int s_prev = (s + allCurves.PNT[f].length - 1) % allCurves.PNT[f].length;
+              int s_next = (s + 1) % allCurves.nodes[f].length;
+              int s_prev = (s + allCurves.nodes[f].length - 1) % allCurves.nodes[f].length;
   
               PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
               PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
@@ -25233,18 +25233,18 @@ class solarchvision_Model3Ds {
               top_Vertices[s][2] += W[2] * ModifyInput_OpenningDepth;
             }  
   
-            int[] base_Vertex_ids = new int [allCurves.PNT[f].length];
-            int[] top_Vertex_ids = new int [allCurves.PNT[f].length];
+            int[] base_Vertex_ids = new int [allCurves.nodes[f].length];
+            int[] top_Vertex_ids = new int [allCurves.nodes[f].length];
   
-            for (int s = 0; s < allCurves.PNT[f].length; s++) {
+            for (int s = 0; s < allCurves.nodes[f].length; s++) {
   
               base_Vertex_ids[s] = this.add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
               top_Vertex_ids[s] = this.add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
             }        
   
-            for (int s = 0; s < allCurves.PNT[f].length; s++) {
+            for (int s = 0; s < allCurves.nodes[f].length; s++) {
   
-              int s_next = (s + 1) % allCurves.PNT[f].length;
+              int s_next = (s + 1) % allCurves.nodes[f].length;
   
               if (ModifyInput_OpenningDepth < 0) { // reverse direction for negative extrude heights
                 int[][] newFace = {
@@ -25252,14 +25252,14 @@ class solarchvision_Model3Ds {
                     base_Vertex_ids[s], top_Vertex_ids[s], top_Vertex_ids[s_next], base_Vertex_ids[s_next]
                   }
                 };  
-                allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+                allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
               } else {
                 int[][] newFace = {
                   {
                     base_Vertex_ids[s], base_Vertex_ids[s_next], top_Vertex_ids[s_next], top_Vertex_ids[s]
                   }
                 };  
-                allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+                allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
               }       
   
               int[][] newFace_MTLVGC = { // copying target face properties from curve source
@@ -25267,30 +25267,30 @@ class solarchvision_Model3Ds {
                   allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
                 }
               }; 
-              allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);
             }  
   
             { // adding the cap
               int[][] newFace = {
                 top_Vertex_ids
               };  
-              allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);         
+              allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);         
   
               int[][] newFace_MTLVGC = { // copying target face properties from curve source
                 {
                   allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
                 }
               }; 
-              allFaces.MTLVGC =  (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);  
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);  
   
               int[] lastFace = {
-                allFaces.PNT.length - 1
+                allFaces.nodes.length - 1
               };
   
               new_selectedFace_ids = (int[]) concat(new_selectedFace_ids, lastFace);
             }
   
-            allGroups_Faces[allGroups_num - 1][1] = allFaces.PNT.length - 1;
+            allGroups_Faces[allGroups_num - 1][1] = allFaces.nodes.length - 1;
           }
         }
       }
@@ -25344,18 +25344,18 @@ class solarchvision_Model3Ds {
   
         int vNo = selectedVertex_ids[o];
   
-        for (int f = 0; f < allFaces.PNT.length; f++) {
-          for (int j = 0; j < allFaces.PNT[f].length; j++) {
+        for (int f = 0; f < allFaces.nodes.length; f++) {
+          for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
-            if (allFaces.PNT[f][j] == vNo) { 
+            if (allFaces.nodes[f][j] == vNo) { 
   
-              float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
-              for (int s = 0; s < allFaces.PNT[f].length; s++) {
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                base_Vertices[s][0] = allVertices[allFaces.PNT[f][s]][0];
-                base_Vertices[s][1] = allVertices[allFaces.PNT[f][s]][1];
-                base_Vertices[s][2] = allVertices[allFaces.PNT[f][s]][2];
+                base_Vertices[s][0] = allVertices[allFaces.nodes[f][s]][0];
+                base_Vertices[s][1] = allVertices[allFaces.nodes[f][s]][1];
+                base_Vertices[s][2] = allVertices[allFaces.nodes[f][s]][2];
               }
   
               for (int s = 0; s < base_Vertices.length; s++) {
@@ -25385,18 +25385,18 @@ class solarchvision_Model3Ds {
           }
         }
         
-        for (int f = 0; f < allCurves.PNT.length; f++) {
-          for (int j = 0; j < allCurves.PNT[f].length; j++) {
+        for (int f = 0; f < allCurves.nodes.length; f++) {
+          for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
-            if (allCurves.PNT[f][j] == vNo) { 
+            if (allCurves.nodes[f][j] == vNo) { 
   
-              float[][] base_Vertices = new float [allCurves.PNT[f].length][3];
+              float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
   
-              for (int s = 0; s < allCurves.PNT[f].length; s++) {
+              for (int s = 0; s < allCurves.nodes[f].length; s++) {
   
-                base_Vertices[s][0] = allVertices[allCurves.PNT[f][s]][0];
-                base_Vertices[s][1] = allVertices[allCurves.PNT[f][s]][1];
-                base_Vertices[s][2] = allVertices[allCurves.PNT[f][s]][2];
+                base_Vertices[s][0] = allVertices[allCurves.nodes[f][s]][0];
+                base_Vertices[s][1] = allVertices[allCurves.nodes[f][s]][1];
+                base_Vertices[s][2] = allVertices[allCurves.nodes[f][s]][2];
               }
   
               for (int s = 0; s < base_Vertices.length; s++) {
@@ -25481,7 +25481,7 @@ class solarchvision_Model3Ds {
   
   void changeVisibilityFaces_Scene (int new_vsb) {
   
-    for (int f = allFaces.PNT.length - 1; f >= 0; f--) { 
+    for (int f = allFaces.nodes.length - 1; f >= 0; f--) { 
       allFaces.setVisibility(f, new_vsb);
     }
   }
@@ -25489,7 +25489,7 @@ class solarchvision_Model3Ds {
   
   void reverseVisibilityFaces_Scene () {
   
-    for (int f = allFaces.PNT.length - 1; f >= 0; f--) { 
+    for (int f = allFaces.nodes.length - 1; f >= 0; f--) { 
   
       int vsb = allFaces.getVisibility(f);
       int new_vsb = vsb;
@@ -25529,7 +25529,7 @@ class solarchvision_Model3Ds {
   
   void changeVisibilityCurves_Scene (int new_vsb) {
   
-    for (int f = allCurves.PNT.length - 1; f >= 0; f--) { 
+    for (int f = allCurves.nodes.length - 1; f >= 0; f--) { 
       allCurves.setVisibility(f, new_vsb);
     }
   }
@@ -25537,7 +25537,7 @@ class solarchvision_Model3Ds {
   
   void reverseVisibilityCurves_Scene () {
   
-    for (int f = allCurves.PNT.length - 1; f >= 0; f--) { 
+    for (int f = allCurves.nodes.length - 1; f >= 0; f--) { 
   
       int vsb = allCurves.getVisibility(f);
       int new_vsb = vsb;
@@ -25623,8 +25623,8 @@ class solarchvision_Model3Ds {
     if (Current_ObjectCategory == ObjectCategory.FACE) {
       selectedFace_ids = new int [0];
       
-      if (allFaces.PNT.length > 0) {
-        int[] new_Item = {allFaces.PNT.length - 1};
+      if (allFaces.nodes.length > 0) {
+        int[] new_Item = {allFaces.nodes.length - 1};
         selectedFace_ids = concat(selectedFace_ids, new_Item);
       }
     } 
@@ -25642,8 +25642,8 @@ class solarchvision_Model3Ds {
     if (Current_ObjectCategory == ObjectCategory.CURVE) {
       selectedCurve_ids = new int [0];
       
-      if (allCurves.PNT.length > 0) {
-        int[] new_Item = {allCurves.PNT.length - 1};
+      if (allCurves.nodes.length > 0) {
+        int[] new_Item = {allCurves.nodes.length - 1};
         selectedCurve_ids = concat(selectedCurve_ids, new_Item);
       }
     } 
@@ -25722,7 +25722,7 @@ class solarchvision_Model3Ds {
     }
   
     if (Current_ObjectCategory == ObjectCategory.FACE) {
-      selectedFace_ids = new int [allFaces.PNT.length];
+      selectedFace_ids = new int [allFaces.nodes.length];
       for (int i = 0; i < selectedFace_ids.length; i++) { 
         selectedFace_ids[i] = i;
       }
@@ -25736,7 +25736,7 @@ class solarchvision_Model3Ds {
     }
   
     if (Current_ObjectCategory == ObjectCategory.CURVE) {
-      selectedCurve_ids = new int [allCurves.PNT.length];
+      selectedCurve_ids = new int [allCurves.nodes.length];
       for (int i = 0; i < selectedCurve_ids.length; i++) { 
         selectedCurve_ids[i] = i;
       }
@@ -25887,7 +25887,7 @@ class solarchvision_Model3Ds {
   
       selectedFace_ids = new int [0];
   
-      for (int i = 0; i < allFaces.PNT.length; i++) {
+      for (int i = 0; i < allFaces.nodes.length; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedFace_ids.length; j++) {
@@ -25915,7 +25915,7 @@ class solarchvision_Model3Ds {
   
       selectedCurve_ids = new int [0];
   
-      for (int i = 0; i < allCurves.PNT.length; i++) {
+      for (int i = 0; i < allCurves.nodes.length; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedCurve_ids.length; j++) {
@@ -26158,7 +26158,7 @@ class solarchvision_Model3Ds {
   
       int f = selectedFace_ids[i];
   
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
         for (int OBJ_NUM = 0; OBJ_NUM < allGroups_num; OBJ_NUM++) {
   
@@ -26191,7 +26191,7 @@ class solarchvision_Model3Ds {
   
       int f = selectedCurve_ids[i];
   
-      for (int j = 0; j < allCurves.PNT[f].length; j++) {
+      for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
         for (int OBJ_NUM = 0; OBJ_NUM < allGroups_num; OBJ_NUM++) {
   
@@ -26226,11 +26226,11 @@ class solarchvision_Model3Ds {
   
       int vNo = selectedVertex_ids[i];
   
-      for (int f = 0; f < allFaces.PNT.length; f++) {
+      for (int f = 0; f < allFaces.nodes.length; f++) {
   
-        for (int j = 0; j < allFaces.PNT[f].length; j++) {
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
-          if (allFaces.PNT[f][j] == vNo) { 
+          if (allFaces.nodes[f][j] == vNo) { 
   
             for (int OBJ_NUM = 0; OBJ_NUM < allGroups_num; OBJ_NUM++) {
   
@@ -26255,11 +26255,11 @@ class solarchvision_Model3Ds {
         }
       }
       
-      for (int f = 0; f < allCurves.PNT.length; f++) {
+      for (int f = 0; f < allCurves.nodes.length; f++) {
   
-        for (int j = 0; j < allCurves.PNT[f].length; j++) {
+        for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
-          if (allCurves.PNT[f][j] == vNo) { 
+          if (allCurves.nodes[f][j] == vNo) { 
   
             for (int OBJ_NUM = 0; OBJ_NUM < allGroups_num; OBJ_NUM++) {
   
@@ -26295,11 +26295,11 @@ class solarchvision_Model3Ds {
   
       int vNo = selectedVertex_ids[i];
   
-      for (int f = 0; f < allFaces.PNT.length; f++) {
+      for (int f = 0; f < allFaces.nodes.length; f++) {
   
-        for (int j = 0; j < allFaces.PNT[f].length; j++) {
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
-          if (allFaces.PNT[f][j] == vNo) { 
+          if (allFaces.nodes[f][j] == vNo) { 
   
             int previously_added = 0;
             for (int q = 0; q < selectedFace_ids.length; q++) {
@@ -26329,11 +26329,11 @@ class solarchvision_Model3Ds {
   
       int vNo = selectedVertex_ids[i];
   
-      for (int f = 0; f < allCurves.PNT.length; f++) {
+      for (int f = 0; f < allCurves.nodes.length; f++) {
   
-        for (int j = 0; j < allCurves.PNT[f].length; j++) {
+        for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
-          if (allCurves.PNT[f][j] == vNo) { 
+          if (allCurves.nodes[f][j] == vNo) { 
   
             int previously_added = 0;
             for (int q = 0; q < selectedCurve_ids.length; q++) {
@@ -26509,9 +26509,9 @@ class solarchvision_Model3Ds {
   
       for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) { 
   
-        for (int j = 0; j < allFaces.PNT[f].length; j++) {
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
-          int vNo = allFaces.PNT[f][j];
+          int vNo = allFaces.nodes[f][j];
   
           int previously_added = 0;
           for (int q = 0; q < selectedVertex_ids.length; q++) {
@@ -26531,9 +26531,9 @@ class solarchvision_Model3Ds {
       
       for (int f = allGroups_Curves[OBJ_NUM][0]; f <= allGroups_Curves[OBJ_NUM][1]; f++) { 
   
-        for (int j = 0; j < allCurves.PNT[f].length; j++) {
+        for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
-          int vNo = allCurves.PNT[f][j];
+          int vNo = allCurves.nodes[f][j];
   
           int previously_added = 0;
           for (int q = 0; q < selectedVertex_ids.length; q++) {
@@ -26562,9 +26562,9 @@ class solarchvision_Model3Ds {
   
       int f = selectedFace_ids[i];
   
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
-        int vNo = allFaces.PNT[f][j];
+        int vNo = allFaces.nodes[f][j];
   
         int previously_added = 0;
         for (int q = 0; q < selectedVertex_ids.length; q++) {
@@ -26592,9 +26592,9 @@ class solarchvision_Model3Ds {
   
       int f = selectedCurve_ids[i];
   
-      for (int j = 0; j < allCurves.PNT[f].length; j++) {
+      for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
-        int vNo = allCurves.PNT[f][j];
+        int vNo = allCurves.nodes[f][j];
   
         int previously_added = 0;
         for (int q = 0; q < selectedVertex_ids.length; q++) {
@@ -27792,7 +27792,7 @@ class solarchvision_Model3Ds {
           }
         }; 
     
-        allFaces.MTLVGC = (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
+        allFaces.options = (int[][]) concat(allFaces.options, newFace_MTLVGC);
     
     
         int[][] newFace = {
@@ -27801,7 +27801,7 @@ class solarchvision_Model3Ds {
           }
         }; 
     
-        allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+        allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
       }
     
       {
@@ -27811,7 +27811,7 @@ class solarchvision_Model3Ds {
           }
         }; 
     
-        //allFaces.MTLVGC = (int[][]) concat(allFaces.MTLVGC, newFace_MTLVGC);
+        //allFaces.options = (int[][]) concat(allFaces.options, newFace_MTLVGC);
     
     
         int[][] newFace = {
@@ -27820,7 +27820,7 @@ class solarchvision_Model3Ds {
           }
         }; 
     
-        //allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+        //allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
       }
     }
   }
@@ -27837,8 +27837,8 @@ class solarchvision_Model3Ds {
   
       int f = OBJ_NUM;
   
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
-        int vNo = allFaces.PNT[f][j];
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
+        int vNo = allFaces.nodes[f][j];
   
         int vertex_listed = -1;
   
@@ -27873,8 +27873,8 @@ class solarchvision_Model3Ds {
   
       int f = OBJ_NUM;
   
-      for (int j = 0; j < allCurves.PNT[f].length; j++) {
-        int vNo = allCurves.PNT[f][j];
+      for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        int vNo = allCurves.nodes[f][j];
   
         int vertex_listed = -1;
   
@@ -27909,10 +27909,10 @@ class solarchvision_Model3Ds {
   
       for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
   
-        if ((0 <= f) && (f < allFaces.PNT.length)) { 
-          for (int j = 0; j < allFaces.PNT[f].length; j++) {
+        if ((0 <= f) && (f < allFaces.nodes.length)) { 
+          for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
-            int vNo = allFaces.PNT[f][j];
+            int vNo = allFaces.nodes[f][j];
   
             int vertex_listed = -1;
   
@@ -27937,10 +27937,10 @@ class solarchvision_Model3Ds {
   
       for (int f = allGroups_Curves[OBJ_NUM][0]; f <= allGroups_Curves[OBJ_NUM][1]; f++) {
   
-        if ((0 <= f) && (f < allCurves.PNT.length)) { 
-          for (int j = 0; j < allCurves.PNT[f].length; j++) {
+        if ((0 <= f) && (f < allCurves.nodes.length)) { 
+          for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
-            int vNo = allCurves.PNT[f][j];
+            int vNo = allCurves.nodes[f][j];
   
             int vertex_listed = -1;
   
@@ -28607,9 +28607,9 @@ class solarchvision_Model3Ds {
   
   void delete_Faces () {
   
-    allFaces.PNT = new int [0][3];
+    allFaces.nodes = new int [0][3];
   
-    allFaces.MTLVGC = new int [0][6];
+    allFaces.options = new int [0][6];
   
     for (int q = 0; q < allGroups_num; q++) {
       allGroups_Faces[q][0] = 0;
@@ -28621,9 +28621,9 @@ class solarchvision_Model3Ds {
   
   void delete_Curves () {
   
-    allCurves.PNT = new int [0][3];
+    allCurves.nodes = new int [0][3];
   
-    allCurves.MTLVGC = new int [0][6];
+    allCurves.options = new int [0][6];
   
     for (int q = 0; q < allGroups_num; q++) {
       allGroups_Curves[q][0] = 0;
@@ -28734,15 +28734,15 @@ class solarchvision_Model3Ds {
   
       if (this.DisplayNormals) {
   
-        for (int f = 0; f < allFaces.PNT.length; f++) {
+        for (int f = 0; f < allFaces.nodes.length; f++) {
   
           int vsb = allFaces.getVisibility(f);
   
           if (vsb > 0) {
   
-            float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
               base_Vertices[j][0] = allVertices[vNo][0];
               base_Vertices[j][1] = allVertices[vNo][1];
               base_Vertices[j][2] = allVertices[vNo][2];
@@ -28815,7 +28815,7 @@ class solarchvision_Model3Ds {
       int PAL_DIR = SHADE.get_PAL_DIR();
       float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
   
-      for (int f = 0; f < allFaces.PNT.length; f++) {
+      for (int f = 0; f < allFaces.nodes.length; f++) {
   
         int vsb = allFaces.getVisibility(f);
   
@@ -28827,8 +28827,8 @@ class solarchvision_Model3Ds {
   
             WIN3D.graphics.beginShape();
   
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
   
               WIN3D.graphics.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D.scale, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D.scale), allVertices[vNo][2] * OBJECTS_scale * WIN3D.scale);
             }    
@@ -28844,11 +28844,11 @@ class solarchvision_Model3Ds {
             if (allFaces.getMaterial(f) == 0) {
               Tessellation += this.Tessellation;
             }
-            if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
-            float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
               base_Vertices[j][0] = allVertices[vNo][0];
               base_Vertices[j][1] = allVertices[vNo][1];
               base_Vertices[j][2] = allVertices[vNo][2];
@@ -28924,7 +28924,7 @@ class solarchvision_Model3Ds {
   
     if (Display_allModel3Ds) {
       
-      for (int f = 0; f < allCurves.PNT.length; f++) {    
+      for (int f = 0; f < allCurves.nodes.length; f++) {    
         
         int vsb = allCurves.getVisibility(f);
   
@@ -28942,9 +28942,9 @@ class solarchvision_Model3Ds {
       
           int Tessellation = int(pow(2, allCurves.getTessellation(f)));
   
-          float[][] base_Vertices = new float [allCurves.PNT[f].length][3];
-          for (int j = 0; j < allCurves.PNT[f].length; j++) {
-            int vNo = allCurves.PNT[f][j];
+          float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
+          for (int j = 0; j < allCurves.nodes[f].length; j++) {
+            int vNo = allCurves.nodes[f][j];
             base_Vertices[j][0] = allVertices[vNo][0];
             base_Vertices[j][1] = allVertices[vNo][1];
             base_Vertices[j][2] = allVertices[vNo][2];
@@ -30073,10 +30073,10 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
   float Progress = 0;
 
-  for (int f = 0; f < allFaces.PNT.length; f++) {
+  for (int f = 0; f < allFaces.nodes.length; f++) {
 
-    if (1 + Progress < 100 * f / float(allFaces.PNT.length)) { 
-      Progress = 100 * f / float(allFaces.PNT.length);
+    if (1 + Progress < 100 * f / float(allFaces.nodes.length)) { 
+      Progress = 100 * f / float(allFaces.nodes.length);
       println("Progress:", int(Progress), "%");
     }
 
@@ -30090,11 +30090,11 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
       if (allFaces.getMaterial(f) == 0) {
         Tessellation += allModel3Ds.Tessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-      float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
-        int vNo = allFaces.PNT[f][j];
+      float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
+        int vNo = allFaces.nodes[f][j];
         base_Vertices[j][0] = allVertices[vNo][0];
         base_Vertices[j][1] = allVertices[vNo][1];
         base_Vertices[j][2] = allVertices[vNo][2];
@@ -30439,11 +30439,11 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
       if (allFaces.getMaterial(f) == 0) {
         Tessellation += allModel3Ds.Tessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-      float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-      for (int j = 0; j < allFaces.PNT[f].length; j++) {
-        int vNo = allFaces.PNT[f][j];
+      float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
+        int vNo = allFaces.nodes[f][j];
         base_Vertices[j][0] = allVertices[vNo][0];
         base_Vertices[j][1] = allVertices[vNo][1];
         base_Vertices[j][2] = allVertices[vNo][2];
@@ -30486,13 +30486,13 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
 
   int hit = 0;
 
-  for (int q = 0; q < allFaces.PNT.length; q++) {
+  for (int q = 0; q < allFaces.nodes.length; q++) {
     
-    int f = (q + firstGuess) % allFaces.PNT.length;
+    int f = (q + firstGuess) % allFaces.nodes.length;
     
     if (f > 0) {
       
-      int n = allFaces.PNT[f].length;
+      int n = allFaces.nodes[f].length;
       
       if (n > 2) {      
   
@@ -30510,10 +30510,10 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
           
           if (n < 5) { // works if n==3 or n==4
       
-            float[] A = allVertices[allFaces.PNT[f][0]];
-            float[] B = allVertices[allFaces.PNT[f][1]];
-            float[] C = allVertices[allFaces.PNT[f][n - 2]];
-            float[] D = allVertices[allFaces.PNT[f][n - 1]];
+            float[] A = allVertices[allFaces.nodes[f][0]];
+            float[] B = allVertices[allFaces.nodes[f][1]];
+            float[] C = allVertices[allFaces.nodes[f][n - 2]];
+            float[] D = allVertices[allFaces.nodes[f][n - 1]];
             
             float[] AC = SOLARCHVISION_3xSub(A, C);
             float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30552,7 +30552,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
               0, 0, 0
             }; 
             for (int j = 0; j < n; j++) {
-              tmpFace[j] = allFaces.PNT[f][j];
+              tmpFace[j] = allFaces.nodes[f][j];
               G[0] += allVertices[tmpFace[j]][0] / float(n); 
               G[1] += allVertices[tmpFace[j]][1] / float(n);
               G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -30563,15 +30563,15 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
               int j_next = (j + 1) % n;
       
               float[] A = {
-                allVertices[allFaces.PNT[f][j]][0],
-                allVertices[allFaces.PNT[f][j]][1],
-                allVertices[allFaces.PNT[f][j]][2]
+                allVertices[allFaces.nodes[f][j]][0],
+                allVertices[allFaces.nodes[f][j]][1],
+                allVertices[allFaces.nodes[f][j]][2]
               };            
               
               float[] B = {
-                allVertices[allFaces.PNT[f][j_next]][0],
-                allVertices[allFaces.PNT[f][j_next]][1],
-                allVertices[allFaces.PNT[f][j_next]][2]
+                allVertices[allFaces.nodes[f][j_next]][0],
+                allVertices[allFaces.nodes[f][j_next]][1],
+                allVertices[allFaces.nodes[f][j_next]][2]
               };                
     
               float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -30629,9 +30629,9 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allFaces.PNT.length][7];
+  float[][] hitPoint = new float [allFaces.nodes.length][7];
 
-  for (int f = 0; f < allFaces.PNT.length; f++) {
+  for (int f = 0; f < allFaces.nodes.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
@@ -30641,9 +30641,9 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
     hitPoint[f][6] = FLOAT_undefined;
   }
   
-  for (int f = 0; f < allFaces.PNT.length; f++) {
+  for (int f = 0; f < allFaces.nodes.length; f++) {
     
-    int n = allFaces.PNT[f].length;
+    int n = allFaces.nodes[f].length;
     
     if (n > 2) {
   
@@ -30661,10 +30661,10 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
         
         if (n < 5) { // works if n==3 or n==4
     
-          float[] A = allVertices[allFaces.PNT[f][0]];
-          float[] B = allVertices[allFaces.PNT[f][1]];
-          float[] C = allVertices[allFaces.PNT[f][n - 2]];
-          float[] D = allVertices[allFaces.PNT[f][n - 1]];
+          float[] A = allVertices[allFaces.nodes[f][0]];
+          float[] B = allVertices[allFaces.nodes[f][1]];
+          float[] C = allVertices[allFaces.nodes[f][n - 2]];
+          float[] D = allVertices[allFaces.nodes[f][n - 1]];
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
           float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30703,7 +30703,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
             0, 0, 0
           }; 
           for (int j = 0; j < n; j++) {
-            tmpFace[j] = allFaces.PNT[f][j];
+            tmpFace[j] = allFaces.nodes[f][j];
             G[0] += allVertices[tmpFace[j]][0] / float(n); 
             G[1] += allVertices[tmpFace[j]][1] / float(n);
             G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -30714,15 +30714,15 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
             int j_next = (j + 1) % n;
     
             float[] A = {
-              allVertices[allFaces.PNT[f][j]][0],
-              allVertices[allFaces.PNT[f][j]][1],
-              allVertices[allFaces.PNT[f][j]][2]
+              allVertices[allFaces.nodes[f][j]][0],
+              allVertices[allFaces.nodes[f][j]][1],
+              allVertices[allFaces.nodes[f][j]][2]
             };            
             
             float[] B = {
-              allVertices[allFaces.PNT[f][j_next]][0],
-              allVertices[allFaces.PNT[f][j_next]][1],
-              allVertices[allFaces.PNT[f][j_next]][2]
+              allVertices[allFaces.nodes[f][j_next]][0],
+              allVertices[allFaces.nodes[f][j_next]][1],
+              allVertices[allFaces.nodes[f][j_next]][2]
             };                
   
             float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -30776,7 +30776,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < allFaces.PNT.length; f++) {
+  for (int f = 0; f < allFaces.nodes.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -30822,7 +30822,7 @@ float[] SOLARCHVISION_intersect_selectedFaces (float[] ray_pnt, float[] ray_dir)
     
     if (f > 0) {  
 
-      int n = allFaces.PNT[f].length;
+      int n = allFaces.nodes[f].length;
       
       if (n > 2) {
         
@@ -30840,10 +30840,10 @@ float[] SOLARCHVISION_intersect_selectedFaces (float[] ray_pnt, float[] ray_dir)
           
           if (n < 5) { // works if n==3 or n==4
       
-            float[] A = allVertices[allFaces.PNT[f][0]];
-            float[] B = allVertices[allFaces.PNT[f][1]];
-            float[] C = allVertices[allFaces.PNT[f][n - 2]];
-            float[] D = allVertices[allFaces.PNT[f][n - 1]];
+            float[] A = allVertices[allFaces.nodes[f][0]];
+            float[] B = allVertices[allFaces.nodes[f][1]];
+            float[] C = allVertices[allFaces.nodes[f][n - 2]];
+            float[] D = allVertices[allFaces.nodes[f][n - 1]];
             
             float[] AC = SOLARCHVISION_3xSub(A, C);
             float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30882,7 +30882,7 @@ float[] SOLARCHVISION_intersect_selectedFaces (float[] ray_pnt, float[] ray_dir)
               0, 0, 0
             }; 
             for (int j = 0; j < n; j++) {
-              tmpFace[j] = allFaces.PNT[f][j];
+              tmpFace[j] = allFaces.nodes[f][j];
               G[0] += allVertices[tmpFace[j]][0] / float(n); 
               G[1] += allVertices[tmpFace[j]][1] / float(n);
               G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -30893,15 +30893,15 @@ float[] SOLARCHVISION_intersect_selectedFaces (float[] ray_pnt, float[] ray_dir)
               int j_next = (j + 1) % n;
       
               float[] A = {
-                allVertices[allFaces.PNT[f][j]][0],
-                allVertices[allFaces.PNT[f][j]][1],
-                allVertices[allFaces.PNT[f][j]][2]
+                allVertices[allFaces.nodes[f][j]][0],
+                allVertices[allFaces.nodes[f][j]][1],
+                allVertices[allFaces.nodes[f][j]][2]
               };            
               
               float[] B = {
-                allVertices[allFaces.PNT[f][j_next]][0],
-                allVertices[allFaces.PNT[f][j_next]][1],
-                allVertices[allFaces.PNT[f][j_next]][2]
+                allVertices[allFaces.nodes[f][j_next]][0],
+                allVertices[allFaces.nodes[f][j_next]][1],
+                allVertices[allFaces.nodes[f][j_next]][2]
               };                
     
               float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -30986,9 +30986,9 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allCurves.PNT.length][7];
+  float[][] hitPoint = new float [allCurves.nodes.length][7];
 
-  for (int f = 0; f < allCurves.PNT.length; f++) {
+  for (int f = 0; f < allCurves.nodes.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
@@ -30998,9 +30998,9 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
     hitPoint[f][6] = FLOAT_undefined;
   }
   
-  for (int f = 0; f < allCurves.PNT.length; f++) {
+  for (int f = 0; f < allCurves.nodes.length; f++) {
     
-    int n = allCurves.PNT[f].length;
+    int n = allCurves.nodes[f].length;
     
     if (n > 2) {
   
@@ -31018,10 +31018,10 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
         
         if (n < 5) { // works if n==3 or n==4
     
-          float[] A = allVertices[allCurves.PNT[f][0]];
-          float[] B = allVertices[allCurves.PNT[f][1]];
-          float[] C = allVertices[allCurves.PNT[f][n - 2]];
-          float[] D = allVertices[allCurves.PNT[f][n - 1]];
+          float[] A = allVertices[allCurves.nodes[f][0]];
+          float[] B = allVertices[allCurves.nodes[f][1]];
+          float[] C = allVertices[allCurves.nodes[f][n - 2]];
+          float[] D = allVertices[allCurves.nodes[f][n - 1]];
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
           float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -31060,7 +31060,7 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
             0, 0, 0
           }; 
           for (int j = 0; j < n; j++) {
-            tmpCurve[j] = allCurves.PNT[f][j];
+            tmpCurve[j] = allCurves.nodes[f][j];
             G[0] += allVertices[tmpCurve[j]][0] / float(n); 
             G[1] += allVertices[tmpCurve[j]][1] / float(n);
             G[2] += allVertices[tmpCurve[j]][2] / float(n);
@@ -31071,15 +31071,15 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
             int j_next = (j + 1) % n;
     
             float[] A = {
-              allVertices[allCurves.PNT[f][j]][0],
-              allVertices[allCurves.PNT[f][j]][1],
-              allVertices[allCurves.PNT[f][j]][2]
+              allVertices[allCurves.nodes[f][j]][0],
+              allVertices[allCurves.nodes[f][j]][1],
+              allVertices[allCurves.nodes[f][j]][2]
             };            
             
             float[] B = {
-              allVertices[allCurves.PNT[f][j_next]][0],
-              allVertices[allCurves.PNT[f][j_next]][1],
-              allVertices[allCurves.PNT[f][j_next]][2]
+              allVertices[allCurves.nodes[f][j_next]][0],
+              allVertices[allCurves.nodes[f][j_next]][1],
+              allVertices[allCurves.nodes[f][j_next]][2]
             };                
   
             float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -31133,7 +31133,7 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < allCurves.PNT.length; f++) {
+  for (int f = 0; f < allCurves.nodes.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -34027,8 +34027,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     int OBJ_NUM = 0;
     float min_dist = FLOAT_undefined;  
 
-    for (int j = 0; j < allFaces.PNT[f].length; j++) {
-      int vNo = allFaces.PNT[f][j];
+    for (int j = 0; j < allFaces.nodes[f].length; j++) {
+      int vNo = allFaces.nodes[f][j];
 
       float x = allVertices[vNo][0];
       float y = allVertices[vNo][1];          
@@ -34444,10 +34444,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
         for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allFaces.PNT.length)) { 
+          if ((0 <= f) && (f < allFaces.nodes.length)) { 
 
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
 
               float x = allVertices[vNo][0] * OBJECTS_scale;
               float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -34488,10 +34488,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
         for (int f = allGroups_Curves[OBJ_NUM][0]; f <= allGroups_Curves[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allCurves.PNT.length)) { 
+          if ((0 <= f) && (f < allCurves.nodes.length)) { 
 
-            for (int j = 0; j < allCurves.PNT[f].length; j++) {
-              int vNo = allCurves.PNT[f][j];
+            for (int j = 0; j < allCurves.nodes[f].length; j++) {
+              int vNo = allCurves.nodes[f][j];
 
               float x = allVertices[vNo][0] * OBJECTS_scale;
               float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -34573,7 +34573,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.FACE) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < allFaces.PNT.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < allFaces.nodes.length; OBJ_NUM++) {
 
       int break_loops = 0;
 
@@ -34582,8 +34582,8 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      for (int j = 0; j < allFaces.PNT[OBJ_NUM].length; j++) {
-        int vNo = allFaces.PNT[OBJ_NUM][j];
+      for (int j = 0; j < allFaces.nodes[OBJ_NUM].length; j++) {
+        int vNo = allFaces.nodes[OBJ_NUM][j];
 
         float x = allVertices[vNo][0] * OBJECTS_scale;
         float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -34661,7 +34661,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.CURVE) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < allCurves.PNT.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < allCurves.nodes.length; OBJ_NUM++) {
 
       int break_loops = 0;
 
@@ -34670,8 +34670,8 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      for (int j = 0; j < allCurves.PNT[OBJ_NUM].length; j++) {
-        int vNo = allCurves.PNT[OBJ_NUM][j];
+      for (int j = 0; j < allCurves.nodes[OBJ_NUM].length; j++) {
+        int vNo = allCurves.nodes[OBJ_NUM][j];
 
         float x = allVertices[vNo][0] * OBJECTS_scale;
         float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -39067,7 +39067,7 @@ void mouseClicked () {
   
                           selectedFace_displayVertexCount = true;                 
   
-                          int n = allFaces.PNT[f].length;
+                          int n = allFaces.nodes[f].length;
   
                           if (n > 2) {
                             int[] tmpFace = new int[n];
@@ -39075,7 +39075,7 @@ void mouseClicked () {
                               0, 0, 0
                             }; 
                             for (int j = 0; j < n; j++) {
-                              tmpFace[j] = allFaces.PNT[f][j];
+                              tmpFace[j] = allFaces.nodes[f][j];
                               G[0] += allVertices[tmpFace[j]][0] / float(n); 
                               G[1] += allVertices[tmpFace[j]][1] / float(n);
                               G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -39109,7 +39109,7 @@ void mouseClicked () {
   
                             if (flip_face == 1) {
                               for (int j = 0; j < n; j++) {
-                                allFaces.PNT[f][j] = tmpFace[n - j - 1];
+                                allFaces.nodes[f][j] = tmpFace[n - j - 1];
                               }
                             }
                           }
@@ -39125,7 +39125,7 @@ void mouseClicked () {
                           }
      
                           for (int q = allGroups_Faces[OBJ_NUM][0]; q <= allGroups_Faces[OBJ_NUM][1]; q++) {                    
-                            int n = allFaces.PNT[q].length;
+                            int n = allFaces.nodes[q].length;
 
                             if (n > 2) {
                               int[] tmpFace = new int[n];
@@ -39133,7 +39133,7 @@ void mouseClicked () {
                                 0, 0, 0
                               }; 
                               for (int j = 0; j < n; j++) {
-                                tmpFace[j] = allFaces.PNT[q][j];
+                                tmpFace[j] = allFaces.nodes[q][j];
                                 G[0] += allVertices[tmpFace[j]][0] / float(n); 
                                 G[1] += allVertices[tmpFace[j]][1] / float(n);
                                 G[2] += allVertices[tmpFace[j]][2] / float(n);
@@ -39167,7 +39167,7 @@ void mouseClicked () {
 
                               if (flip_face == 1) {
                                 for (int j = 0; j < n; j++) {
-                                  allFaces.PNT[q][j] = tmpFace[n - j - 1];
+                                  allFaces.nodes[q][j] = tmpFace[n - j - 1];
                                 }
                               }
                             }
@@ -39186,7 +39186,7 @@ void mouseClicked () {
   
                           selectedFace_displayVertexCount = true;
   
-                          int n = allFaces.PNT[f].length;
+                          int n = allFaces.nodes[f].length;
   
                           if (n > 2) {
   
@@ -39194,7 +39194,7 @@ void mouseClicked () {
                             float min_dist = FLOAT_undefined;
   
                             for (int j = 0; j < n; j++) {
-                              int vNo = allFaces.PNT[f][j];
+                              int vNo = allFaces.nodes[f][j];
   
                               float d = dist(RxP[1], RxP[2], RxP[3], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
   
@@ -39206,11 +39206,11 @@ void mouseClicked () {
   
                             int[] tmpFace = new int[n];
                             for (int j = 0; j < n; j++) {
-                              tmpFace[j] = allFaces.PNT[f][j];
+                              tmpFace[j] = allFaces.nodes[f][j];
                             }  
   
                             for (int j = 0; j < n; j++) {
-                              allFaces.PNT[f][j] = tmpFace[(j + min_num + n) % n];
+                              allFaces.nodes[f][j] = tmpFace[(j + min_num + n) % n];
                             }
                           }
                         }
@@ -39223,7 +39223,7 @@ void mouseClicked () {
   
                           selectedCurve_displayVertexCount = true;
   
-                          int n = allCurves.PNT[f].length;
+                          int n = allCurves.nodes[f].length;
   
                           if (n > 2) {
   
@@ -39231,7 +39231,7 @@ void mouseClicked () {
                             float min_dist = FLOAT_undefined;
   
                             for (int j = 0; j < n; j++) {
-                              int vNo = allCurves.PNT[f][j];
+                              int vNo = allCurves.nodes[f][j];
   
                               float d = dist(RxP[1], RxP[2], RxP[3], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
   
@@ -39243,11 +39243,11 @@ void mouseClicked () {
   
                             int[] tmpCurve = new int[n];
                             for (int j = 0; j < n; j++) {
-                              tmpCurve[j] = allCurves.PNT[f][j];
+                              tmpCurve[j] = allCurves.nodes[f][j];
                             }  
   
                             for (int j = 0; j < n; j++) {
-                              allCurves.PNT[f][j] = tmpCurve[(j + min_num + n) % n];
+                              allCurves.nodes[f][j] = tmpCurve[(j + min_num + n) % n];
                             }
                           }
                         }                      
@@ -39544,7 +39544,7 @@ void mouseClicked () {
                       allModel3Ds.add_VertexToLastFace(x, y, z); 
 
                       selectedFace_ids = new int [1];
-                      selectedFace_ids[0] = allFaces.PNT.length - 1;
+                      selectedFace_ids[0] = allFaces.nodes.length - 1;
     
                       println("SOLARCHVISION_calculate_selection_BoundingBox 9_Face");
                       SOLARCHVISION_calculate_selection_BoundingBox();
@@ -39556,7 +39556,7 @@ void mouseClicked () {
                       allModel3Ds.add_VertexToLastCurve(x, y, z);                   
 
                       selectedCurve_ids = new int [1];
-                      selectedCurve_ids[0] = allCurves.PNT.length - 1;
+                      selectedCurve_ids[0] = allCurves.nodes.length - 1;
     
                       println("SOLARCHVISION_calculate_selection_BoundingBox 9_Curve");
                       SOLARCHVISION_calculate_selection_BoundingBox();
@@ -39648,7 +39648,7 @@ void mouseClicked () {
                         
                         int f = int(RxP[0]);
                         
-                        int n = allFaces.PNT[f].length;
+                        int n = allFaces.nodes[f].length;
       
                         if (n > 2) {
       
@@ -39659,13 +39659,13 @@ void mouseClicked () {
       
                             int j_next = (j + 1) % n;
       
-                            float x1 = allVertices[allFaces.PNT[f][j]][0];
-                            float y1 = allVertices[allFaces.PNT[f][j]][1];
-                            float z1 = allVertices[allFaces.PNT[f][j]][2];                        
+                            float x1 = allVertices[allFaces.nodes[f][j]][0];
+                            float y1 = allVertices[allFaces.nodes[f][j]][1];
+                            float z1 = allVertices[allFaces.nodes[f][j]][2];                        
       
-                            float x2 = allVertices[allFaces.PNT[f][j_next]][0];
-                            float y2 = allVertices[allFaces.PNT[f][j_next]][1];
-                            float z2 = allVertices[allFaces.PNT[f][j_next]][2];                        
+                            float x2 = allVertices[allFaces.nodes[f][j_next]][0];
+                            float y2 = allVertices[allFaces.nodes[f][j_next]][1];
+                            float z2 = allVertices[allFaces.nodes[f][j_next]][2];                        
       
       
                             //float Alpha = asin_ang(z2 - z1);
@@ -39682,9 +39682,9 @@ void mouseClicked () {
       
                           for (int j = 0; j < n; j++) {
       
-                            float x1 = allVertices[allFaces.PNT[f][j]][0];
-                            float y1 = allVertices[allFaces.PNT[f][j]][1];
-                            float z1 = allVertices[allFaces.PNT[f][j]][2];
+                            float x1 = allVertices[allFaces.nodes[f][j]][0];
+                            float y1 = allVertices[allFaces.nodes[f][j]][1];
+                            float z1 = allVertices[allFaces.nodes[f][j]][2];
       
                             float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
                             float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
@@ -39756,17 +39756,17 @@ void mouseClicked () {
                           G[1] = 0;
                           G[2] = 0;
                           for (int j = 0; j < n; j++) {
-                            float the_x = allVertices[allFaces.PNT[f][j]][0];
-                            float the_y = allVertices[allFaces.PNT[f][j]][1];
-                            float the_z = allVertices[allFaces.PNT[f][j]][2];
+                            float the_x = allVertices[allFaces.nodes[f][j]][0];
+                            float the_y = allVertices[allFaces.nodes[f][j]][1];
+                            float the_z = allVertices[allFaces.nodes[f][j]][2];
       
                             G[0] += the_x / float(n); 
                             G[1] += the_y / float(n);
                             G[2] += the_z / float(n);
                           }
       
-                          PVector AG = new PVector(allVertices[allFaces.PNT[f][0]][0] - G[0], allVertices[allFaces.PNT[f][0]][1] - G[1], allVertices[allFaces.PNT[f][0]][2] - G[2]);                       
-                          PVector BG = new PVector(allVertices[allFaces.PNT[f][1]][0] - G[0], allVertices[allFaces.PNT[f][1]][1] - G[1], allVertices[allFaces.PNT[f][1]][2] - G[2]);
+                          PVector AG = new PVector(allVertices[allFaces.nodes[f][0]][0] - G[0], allVertices[allFaces.nodes[f][0]][1] - G[1], allVertices[allFaces.nodes[f][0]][2] - G[2]);                       
+                          PVector BG = new PVector(allVertices[allFaces.nodes[f][1]][0] - G[0], allVertices[allFaces.nodes[f][1]][1] - G[1], allVertices[allFaces.nodes[f][1]][2] - G[2]);
       
                           PVector GAxGB = AG.cross(BG);
       
@@ -40684,11 +40684,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         if (allFaces.getMaterial(f) == 0) {
           Tessellation += allModel3Ds.Tessellation;
         }
-        if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+        if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-        float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-        for (int j = 0; j < allFaces.PNT[f].length; j++) {
-          int vNo = allFaces.PNT[f][j];
+        float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
           base_Vertices[j][0] = allVertices[vNo][0];
           base_Vertices[j][1] = allVertices[vNo][1];
           base_Vertices[j][2] = allVertices[vNo][2];
@@ -40742,8 +40742,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int f = selectedFace_ids[o];
 
-        for (int j = 0; j < allFaces.PNT[f].length; j++) {
-          int vNo = allFaces.PNT[f][j];
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
 
           float x = allVertices[vNo][0] * OBJECTS_scale;
           float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -40786,8 +40786,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int f = selectedCurve_ids[o];
 
-        for (int j = 0; j < allCurves.PNT[f].length; j++) {
-          int vNo = allCurves.PNT[f][j];
+        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+          int vNo = allCurves.nodes[f][j];
 
           float x = allVertices[vNo][0] * OBJECTS_scale;
           float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -40917,7 +40917,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
         for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allFaces.PNT.length)) { 
+          if ((0 <= f) && (f < allFaces.nodes.length)) { 
 
             int Tessellation = allFaces.getTessellation(f);
 
@@ -40925,11 +40925,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             if (allFaces.getMaterial(f) == 0) {
               Tessellation += allModel3Ds.Tessellation;
             }
-            if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
-            float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-            for (int j = 0; j < allFaces.PNT[f].length; j++) {
-              int vNo = allFaces.PNT[f][j];
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
               base_Vertices[j][0] = allVertices[vNo][0];
               base_Vertices[j][1] = allVertices[vNo][1];
               base_Vertices[j][2] = allVertices[vNo][2];
@@ -40961,11 +40961,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
         for (int f = allGroups_Curves[OBJ_NUM][0]; f <= allGroups_Curves[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allCurves.PNT.length)) { 
+          if ((0 <= f) && (f < allCurves.nodes.length)) { 
 
             beginShape();
 
-            for (int vNo = 0; vNo < allCurves.PNT[f].length; vNo++) {
+            for (int vNo = 0; vNo < allCurves.nodes[f].length; vNo++) {
 
               float x = allVertices[vNo][0] * OBJECTS_scale;
               float y = allVertices[vNo][1] * OBJECTS_scale;            
@@ -41902,7 +41902,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             if (Display_allModel3Ds) {
 
-              for (int f = 0; f < allFaces.PNT.length; f++) {
+              for (int f = 0; f < allFaces.nodes.length; f++) {
   
                 int vsb = allFaces.getVisibility(f);
   
@@ -41917,11 +41917,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                     if (allFaces.getMaterial(f) == 0) {
                       Tessellation += allModel3Ds.Tessellation;
                     }
-                    if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                    if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
-                    float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-                    for (int g = 0; g < allFaces.PNT[f].length; g++) {
-                      int vNo = allFaces.PNT[f][g];
+                    float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+                    for (int g = 0; g < allFaces.nodes[f].length; g++) {
+                      int vNo = allFaces.nodes[f][g];
                       base_Vertices[g][0] = allVertices[vNo][0];
                       base_Vertices[g][1] = allVertices[vNo][1];
                       base_Vertices[g][2] = allVertices[vNo][2];
@@ -42517,7 +42517,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           
           if (Display_allModel3Ds) {
 
-            for (int f = 0; f < allFaces.PNT.length; f++) {
+            for (int f = 0; f < allFaces.nodes.length; f++) {
   
               int vsb = allFaces.getVisibility(f);
   
@@ -42532,11 +42532,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                   if (allFaces.getMaterial(f) == 0) {
                     Tessellation += allModel3Ds.Tessellation;
                   }
-                  if (Tessellation > 0) TotalSubNo = allFaces.PNT[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                  if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
-                  float[][] base_Vertices = new float [allFaces.PNT[f].length][3];
-                  for (int g = 0; g < allFaces.PNT[f].length; g++) {
-                    int vNo = allFaces.PNT[f][g];
+                  float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+                  for (int g = 0; g < allFaces.nodes[f].length; g++) {
+                    int vNo = allFaces.nodes[f][g];
                     base_Vertices[g][0] = allVertices[vNo][0];
                     base_Vertices[g][1] = allVertices[vNo][1];
                     base_Vertices[g][2] = allVertices[vNo][2];
@@ -45225,7 +45225,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int OBJ_NUM = selectedGroup_ids[o];
 
       for (int f = allGroups_Faces[OBJ_NUM][0]; f <= allGroups_Faces[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allFaces.PNT.length)) {
+        if ((0 <= f) && (f < allFaces.nodes.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
             int n = allFaces.getMaterial(f);
@@ -45270,7 +45270,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       }
       
       for (int f = allGroups_Curves[OBJ_NUM][0]; f <= allGroups_Curves[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allCurves.PNT.length)) {
+        if ((0 <= f) && (f < allCurves.nodes.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
             int n = allCurves.getMaterial(f);
@@ -50215,30 +50215,30 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   println("Saving:Faces");
   {
     {
-      newChild1 = my_xml.addChild("allFaces.PNT");
-      newChild1.setInt("ni", allFaces.PNT.length);
-      for (int i = 0; i < allFaces.PNT.length; i++) {
+      newChild1 = my_xml.addChild("allFaces.nodes");
+      newChild1.setInt("ni", allFaces.nodes.length);
+      for (int i = 0; i < allFaces.nodes.length; i++) {
         newChild2 = newChild1.addChild("Face");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allFaces.PNT[i].length; j++) {
-          lineSTR += nf(allFaces.PNT[i][j], 0);
-          if (j < allFaces.PNT[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allFaces.nodes[i].length; j++) {
+          lineSTR += nf(allFaces.nodes[i][j], 0);
+          if (j < allFaces.nodes[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       }
     }
 
     {
-      newChild1 = my_xml.addChild("allFaces.MTLVGC");
-      newChild1.setInt("ni", allFaces.MTLVGC.length);
-      for (int i = 0; i < allFaces.MTLVGC.length; i++) {
+      newChild1 = my_xml.addChild("allFaces.options");
+      newChild1.setInt("ni", allFaces.options.length);
+      for (int i = 0; i < allFaces.options.length; i++) {
         newChild2 = newChild1.addChild("Face_MTLVGC");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allFaces.MTLVGC[i].length; j++) {
-          lineSTR += nf(allFaces.MTLVGC[i][j], 0);
-          if (j < allFaces.MTLVGC[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allFaces.options[i].length; j++) {
+          lineSTR += nf(allFaces.options[i][j], 0);
+          if (j < allFaces.options[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       }
@@ -50248,30 +50248,30 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   println("Saving:Curves");
   {
     {
-      newChild1 = my_xml.addChild("allCurves.PNT");
-      newChild1.setInt("ni", allCurves.PNT.length);
-      for (int i = 0; i < allCurves.PNT.length; i++) {
+      newChild1 = my_xml.addChild("allCurves.nodes");
+      newChild1.setInt("ni", allCurves.nodes.length);
+      for (int i = 0; i < allCurves.nodes.length; i++) {
         newChild2 = newChild1.addChild("Curve");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allCurves.PNT[i].length; j++) {
-          lineSTR += nf(allCurves.PNT[i][j], 0);
-          if (j < allCurves.PNT[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allCurves.nodes[i].length; j++) {
+          lineSTR += nf(allCurves.nodes[i][j], 0);
+          if (j < allCurves.nodes[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       }
     }
 
     {
-      newChild1 = my_xml.addChild("allCurves.MTLVGC");
-      newChild1.setInt("ni", allCurves.MTLVGC.length);
-      for (int i = 0; i < allCurves.MTLVGC.length; i++) {
+      newChild1 = my_xml.addChild("allCurves.options");
+      newChild1.setInt("ni", allCurves.options.length);
+      for (int i = 0; i < allCurves.options.length; i++) {
         newChild2 = newChild1.addChild("Curve_MTLVGC");
         newChild2.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < allCurves.MTLVGC[i].length; j++) {
-          lineSTR += nf(allCurves.MTLVGC[i][j], 0);
-          if (j < allCurves.MTLVGC[i].length - 1) lineSTR += ",";
+        for (int j = 0; j < allCurves.options[i].length; j++) {
+          lineSTR += nf(allCurves.options[i][j], 0);
+          if (j < allCurves.options[i].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
       }
@@ -51323,10 +51323,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
     println("Loading:Faces");
     {
-      children0 = FileAll.getChildren("allFaces.PNT");
+      children0 = FileAll.getChildren("allFaces.nodes");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allFaces.PNT = new int [0][0];
+        allFaces.nodes = new int [0][0];
         XML[] children1 = children0[L].getChildren("Face");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
@@ -51336,20 +51336,20 @@ void SOLARCHVISION_load_project (String myFile) {
           for (int j = 0; j < nj; j++) {
             newFace[0][j] = int(parts[j]);
           }
-          allFaces.PNT = (int[][]) concat(allFaces.PNT, newFace);
+          allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
         }
       }   
 
-      children0 = FileAll.getChildren("allFaces.MTLVGC");
+      children0 = FileAll.getChildren("allFaces.options");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allFaces.MTLVGC = new int [ni][6];
+        allFaces.options = new int [ni][6];
         XML[] children1 = children0[L].getChildren("Face_MTLVGC"); 
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
           for (int j = 0; j < parts.length; j++) {
-            allFaces.MTLVGC[i][j] = int(parts[j]);
+            allFaces.options[i][j] = int(parts[j]);
           }
         }
       }
@@ -51358,10 +51358,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
     println("Loading:Curves");
     {
-      children0 = FileAll.getChildren("allCurves.PNT");
+      children0 = FileAll.getChildren("allCurves.nodes");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allCurves.PNT = new int [0][0];
+        allCurves.nodes = new int [0][0];
         XML[] children1 = children0[L].getChildren("Curve");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
@@ -51371,20 +51371,20 @@ void SOLARCHVISION_load_project (String myFile) {
           for (int j = 0; j < nj; j++) {
             newCurve[0][j] = int(parts[j]);
           }
-          allCurves.PNT = (int[][]) concat(allCurves.PNT, newCurve);
+          allCurves.nodes = (int[][]) concat(allCurves.nodes, newCurve);
         }
       }   
 
-      children0 = FileAll.getChildren("allCurves.MTLVGC");
+      children0 = FileAll.getChildren("allCurves.options");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
-        allCurves.MTLVGC = new int [ni][6];
+        allCurves.options = new int [ni][6];
         XML[] children1 = children0[L].getChildren("Curve_MTLVGC"); 
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
           for (int j = 0; j < parts.length; j++) {
-            allCurves.MTLVGC[i][j] = int(parts[j]);
+            allCurves.options[i][j] = int(parts[j]);
           }
         }
       }
