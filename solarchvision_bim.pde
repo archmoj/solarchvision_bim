@@ -2435,23 +2435,23 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_put_3DViewport();
   
-      SKY3D.draw();
+      Sky3D.draw();
   
-      SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY3D.scale);
+      SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * Sky3D.scale);
   
-      SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY3D.scale);
+      SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * Sky3D.scale);
   
       SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
   
-      STAR3D.draw();
+      Star3D.draw();
   
-      MOON3D.draw();
+      Moon3D.draw();
       
-      EARTH3D.draw(TypeWindow.WIN3D);
+      Earth3D.draw(TypeWindow.WIN3D);
   
-      LAND3D.draw(TypeWindow.WIN3D);
+      Land3D.draw(TypeWindow.WIN3D);
       
-      TROPO3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
+      Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
   
       Model3Ds.draw_Faces();
   
@@ -2463,11 +2463,11 @@ class solarchvision_WIN3D {
   
       SOLARCHVISION_draw_WindRoseImage();
   
-      SECTIONS.draw(TypeWindow.WIN3D);
+      Sections.draw(TypeWindow.WIN3D);
   
-      CAMERAS.draw();
+      Cameras.draw();
   
-      SOLIDS.draw();
+      Solids.draw();
   
       SOLARCHVISION_draw_SolidImpact_lines();
   
@@ -3015,8 +3015,8 @@ class solarchvision_WIN3D {
           break;
   
         case '0' :
-          LAND3D.Display_Surface = !LAND3D.Display_Surface;
-          if (LAND3D.Display_Surface) {
+          Land3D.Display_Surface = !Land3D.Display_Surface;
+          if (Land3D.Display_Surface) {
             Current_ObjectCategory = ObjectCategory.LandPoints;
             UI_BAR_b_update = true;
           }
@@ -3162,7 +3162,7 @@ class solarchvision_WIN3D {
   
         case 33: 
           this.CurrentCamera += 1;
-          if (this.CurrentCamera > CAMERAS.num - 1) this.CurrentCamera = 0;
+          if (this.CurrentCamera > Cameras.num - 1) this.CurrentCamera = 0;
           SOLARCHVISION_apply_currentCamera();
   
           SOLARCHVISION_modify_Viewport_Title();
@@ -3173,7 +3173,7 @@ class solarchvision_WIN3D {
   
         case 34: 
           this.CurrentCamera -= 1;
-          if (this.CurrentCamera < 0) this.CurrentCamera = CAMERAS.num - 1;
+          if (this.CurrentCamera < 0) this.CurrentCamera = Cameras.num - 1;
           SOLARCHVISION_apply_currentCamera();
   
           SOLARCHVISION_modify_Viewport_Title();
@@ -3512,7 +3512,7 @@ class solarchvision_WORLD {
     if (return_VIEWPORT != this.VIEW_id) {
       this.loadImages(return_VIEWPORT);
   
-      if (EARTH3D.Display_Surface) WIN3D.update = true;
+      if (Earth3D.Display_Surface) WIN3D.update = true;
     }
   
     return (return_VIEWPORT);
@@ -3574,7 +3574,7 @@ class solarchvision_WORLD {
   
   
   
-      TROPO3D.draw(TypeWindow.WORLD, STUDY.i_Start, STUDY.i_End);
+      Tropo3D.draw(TypeWindow.WORLD, STUDY.i_Start, STUDY.i_End);
   
   
       float R_station = 2 * this.ImageScale;
@@ -4424,7 +4424,7 @@ class solarchvision_STUDY {
           rebuild_GlobalSolar_array = 1;
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;
-          SECTIONS.resize_SolarImpact_array();
+          Sections.resize_SolarImpact_array();
   
           UI_BAR_d_update = true;
           this.update = true; 
@@ -4449,7 +4449,7 @@ class solarchvision_STUDY {
           rebuild_GlobalSolar_array = 1;
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;   
-          SECTIONS.resize_SolarImpact_array();
+          Sections.resize_SolarImpact_array();
   
           UI_BAR_d_update = true; 
           this.update = true; 
@@ -6491,17 +6491,17 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 3) { // Space
   
-        //TROPO3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "TROPO3D.Display_Surface", TROPO3D.Display_Surface, 0, 1, 1), 1));
-        //TROPO3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "TROPO3D.Display_Texture", TROPO3D.Display_Texture, 0, 1, 1), 1));      
+        //Tropo3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.Display_Surface", Tropo3D.Display_Surface, 0, 1, 1), 1));
+        //Tropo3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.Display_Texture", Tropo3D.Display_Texture, 0, 1, 1), 1));      
   
-        //EARTH3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "EARTH3D.Display_Surface", EARTH3D.Display_Surface, 0, 1, 1), 1));
-        //EARTH3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "EARTH3D.Display_Texture", EARTH3D.Display_Texture, 0, 1, 1), 1));
+        //Earth3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.Display_Surface", Earth3D.Display_Surface, 0, 1, 1), 1));
+        //Earth3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.Display_Texture", Earth3D.Display_Texture, 0, 1, 1), 1));
   
-        //MOON3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MOON3D.Display_Surface", MOON3D.Display_Surface, 0, 1, 1), 1));
-        //MOON3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "MOON3D.Display_Texture", MOON3D.Display_Texture, 0, 1, 1), 1));
+        //Moon3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.Display_Surface", Moon3D.Display_Surface, 0, 1, 1), 1));
+        //Moon3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.Display_Texture", Moon3D.Display_Texture, 0, 1, 1), 1));
   
-        //STAR3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "STAR3D.Display_Surface", STAR3D.Display_Surface, 0, 1, 1), 1));
-        //STAR3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "STAR3D.Display_Texture", STAR3D.Display_Texture, 0, 1, 1), 1));      
+        //Star3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.Display_Surface", Star3D.Display_Surface, 0, 1, 1), 1));
+        //Star3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.Display_Texture", Star3D.Display_Texture, 0, 1, 1), 1));      
   
         Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
@@ -6513,10 +6513,10 @@ class solarchvision_ROLLOUT {
   
         Model3Ds.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.Tessellation", Model3Ds.Tessellation, 0, 4, 1), 1));
   
-        LAND3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Tessellation", LAND3D.Tessellation, 0, 4, 1), 1));
+        Land3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Tessellation", Land3D.Tessellation, 0, 4, 1), 1));
   
-        SKY3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Tessellation", SKY3D.Tessellation, 0, 4, 1), 1));   
-        SKY3D.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.scale", SKY3D.scale, 0.0000001, 1000000, -2);
+        Sky3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Tessellation", Sky3D.Tessellation, 0, 4, 1), 1));   
+        Sky3D.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.scale", Sky3D.scale, 0.0000001, 1000000, -2);
   
         BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
   
@@ -6614,14 +6614,14 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 7) { // Environment
   
-        //LAND3D.Load_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Load_Textures", LAND3D.Load_Textures, 0, 1, 1), 1));
-        //LAND3D.Load_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Load_Mesh", LAND3D.Load_Mesh, 0, 1, 1), 1));
-        //LAND3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Surface_SkipStart", LAND3D.Surface_SkipStart, 0, LAND3D.n_I - 1, 1), 1));
-        //LAND3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Surface_SkipEnd", LAND3D.Surface_SkipEnd, 0, LAND3D.n_I - 1, 1), 1));
-        //LAND3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Surface", LAND3D.Display_Surface, 0, 1, 1), 1));
-        //LAND3D.Display_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Textures", LAND3D.Display_Textures, 0, 1, 1), 1));
-        //LAND3D.Display_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Points", LAND3D.Display_Points, 0, 1, 1), 1));     
-        //LAND3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "LAND3D.Display_Depth", LAND3D.Display_Depth, 0, 1, 1), 1));
+        //Land3D.Load_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Load_Textures", Land3D.Load_Textures, 0, 1, 1), 1));
+        //Land3D.Load_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Load_Mesh", Land3D.Load_Mesh, 0, 1, 1), 1));
+        //Land3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.n_I - 1, 1), 1));
+        //Land3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.n_I - 1, 1), 1));
+        //Land3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Surface", Land3D.Display_Surface, 0, 1, 1), 1));
+        //Land3D.Display_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Textures", Land3D.Display_Textures, 0, 1, 1), 1));
+        //Land3D.Display_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Points", Land3D.Display_Points, 0, 1, 1), 1));     
+        //Land3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Depth", Land3D.Display_Depth, 0, 1, 1), 1));
   
         //Display_Model2Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model2Ds", Display_Model2Ds, 0, 1, 1), 1));
         //Display_Model1Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Model1Ds", Display_Model1Ds, 0, 1, 1), 1));
@@ -6642,7 +6642,7 @@ class solarchvision_ROLLOUT {
   
   
   
-        //SKY3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Display_Surface", SKY3D.Display_Surface, 0, 1, 1), 1));
+        //Sky3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Display_Surface", Sky3D.Display_Surface, 0, 1, 1), 1));
   
         //Display_SUN_Path = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Path", Display_SUN_Path, 0, 1, 1), 1));
         //Display_SUN_Pattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Pattern", Display_SUN_Pattern, 0, 1, 1), 1));
@@ -6651,7 +6651,7 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 8) { // Viewport
   
-        WIN3D.CurrentCamera = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CurrentCamera", WIN3D.CurrentCamera, 0, CAMERAS.num, 1), 1));
+        WIN3D.CurrentCamera = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CurrentCamera", WIN3D.CurrentCamera, 0, Cameras.num, 1), 1));
   
         WIN3D.CAM_clipNear = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
         WIN3D.CAM_clipFar = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
@@ -6799,13 +6799,13 @@ class solarchvision_ROLLOUT {
         OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
         OBJECTS_Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.125, 8, -2);
   
-        SKY3D.Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_ACTIVE_CLR", SKY3D.Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        SKY3D.Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_ACTIVE_DIR", SKY3D.Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-        SKY3D.Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_ACTIVE_MLT", SKY3D.Pallet_ACTIVE_MLT, 0.125, 8, -2);
+        Sky3D.Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Pallet_ACTIVE_CLR", Sky3D.Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Pallet_ACTIVE_DIR", Sky3D.Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        Sky3D.Pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Pallet_ACTIVE_MLT", Sky3D.Pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        SKY3D.Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_PASSIVE_CLR", SKY3D.Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        SKY3D.Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_PASSIVE_DIR", SKY3D.Pallet_PASSIVE_DIR, -2, 2, 2), 1));
-        SKY3D.Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SKY3D.Pallet_PASSIVE_MLT", SKY3D.Pallet_PASSIVE_MLT, 0.125, 8, -2);
+        Sky3D.Pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Pallet_PASSIVE_CLR", Sky3D.Pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.Pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Pallet_PASSIVE_DIR", Sky3D.Pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        Sky3D.Pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Pallet_PASSIVE_MLT", Sky3D.Pallet_PASSIVE_MLT, 0.125, 8, -2);
   
         SunPath_Pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_CLR", SunPath_Pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
         SunPath_Pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SunPath_Pallet_ACTIVE_DIR", SunPath_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -6960,7 +6960,7 @@ final int TROPO_timeSteps = 24;
 
 
 
-// TROPO3D.draw --- we only use the first image!
+// Tropo3D.draw --- we only use the first image!
 
 // should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
 
@@ -7089,8 +7089,8 @@ boolean pre_CLIMATE_CLMREC_load;
 boolean pre_ENSEMBLE_FORECAST_load;
 boolean pre_ENSEMBLE_OBSERVED_load;    
 
-boolean pre_LAND3D_Load_Mesh;
-boolean pre_LAND3D_Load_Textures;
+boolean pre_Land3D_Load_Mesh;
+boolean pre_Land3D_Load_Textures;
 
 float pre_LocationLAT;
 float pre_LocationLON;
@@ -7994,12 +7994,12 @@ void setup () {
   SOLARCHVISION_resize_VertexSolar_array(); 
   SOLARCHVISION_resize_GlobalSolar_array();
   
-  TROPO3D.resize_images();
+  Tropo3D.resize_images();
   
-  EARTH3D.resize_images();
+  Earth3D.resize_images();
 
-  STAR3D.load_images();
-  MOON3D.load_images();
+  Star3D.load_images();
+  Moon3D.load_images();
 
   WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
 
@@ -8078,7 +8078,7 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME_Year, TIME_Month, TIME_Day, TIME_Hour);
 
-  if ((Step == 0) || (Step == 7)) LAND3D.update_mesh();
+  if ((Step == 0) || (Step == 7)) Land3D.update_mesh();
 
   //if ((Step == 0) || (Step == 8)) Model1Ds.delete();
 
@@ -8278,7 +8278,7 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("LAND3D.update_mesh", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Land3D.update_mesh", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 18) {
     SOLARCHVISION_update_station(7);
 
@@ -8319,15 +8319,15 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
-    stroke(255); fill(255); text("EARTH3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Earth3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 24) {
-    EARTH3D.load_images();
+    Earth3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
     
-    stroke(255); fill(255); text("TROPO3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Tropo3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 25) {
-    TROPO3D.load_images();
+    Tropo3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
  
@@ -8392,8 +8392,8 @@ void draw () {
 
         pre_WORLD_AutoView = WORLD.AutoView;
 
-        pre_LAND3D_Load_Mesh = LAND3D.Load_Mesh;
-        pre_LAND3D_Load_Textures = LAND3D.Load_Textures;
+        pre_Land3D_Load_Mesh = Land3D.Load_Mesh;
+        pre_Land3D_Load_Textures = Land3D.Load_Textures;
 
         pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
         pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
@@ -8532,7 +8532,7 @@ void draw () {
           rebuild_SolarImpactImage_array = 1;
           rebuild_WindRoseImage_array = 1;      
 
-          SECTIONS.resize_SolarImpact_array();
+          Sections.resize_SolarImpact_array();
         }
 
         if (pre_IMPACTS_DisplayDay != IMPACTS_DisplayDay) {
@@ -8581,13 +8581,13 @@ void draw () {
 
 
 
-        if (pre_LAND3D_Load_Mesh != LAND3D.Load_Mesh) {
-          LAND3D.update_mesh();
+        if (pre_Land3D_Load_Mesh != Land3D.Load_Mesh) {
+          Land3D.update_mesh();
           WIN3D.update = true;
         }
 
-        if (pre_LAND3D_Load_Textures != LAND3D.Load_Textures) {
-          LAND3D.update_textures();
+        if (pre_Land3D_Load_Textures != Land3D.Load_Textures) {
+          Land3D.update_textures();
           WIN3D.update = true;
         }
 
@@ -13552,7 +13552,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
 
 
-  LAND3D.draw(TypeWindow.RAD);
+  Land3D.draw(TypeWindow.RAD);
 
   if (Display_Model3Ds) {
 
@@ -13894,13 +13894,13 @@ void SOLARCHVISION_export_objects_HTML () {
 */
 
 
-  EARTH3D.draw(TypeWindow.HTML);
+  Earth3D.draw(TypeWindow.HTML);
 
-  LAND3D.draw(TypeWindow.HTML);
+  Land3D.draw(TypeWindow.HTML);
 
-  TROPO3D.draw(TypeWindow.HTML, STUDY.i_Start, STUDY.i_End);
+  Tropo3D.draw(TypeWindow.HTML, STUDY.i_Start, STUDY.i_End);
   
-  SECTIONS.draw(TypeWindow.HTML);
+  Sections.draw(TypeWindow.HTML);
   
   Model2Ds.draw(TypeWindow.HTML);
 
@@ -14258,13 +14258,13 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  EARTH3D.draw(TypeWindow.OBJ);
+  Earth3D.draw(TypeWindow.OBJ);
 
-  LAND3D.draw(TypeWindow.OBJ);
+  Land3D.draw(TypeWindow.OBJ);
 
-  TROPO3D.draw(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
+  Tropo3D.draw(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
   
-  SECTIONS.draw(TypeWindow.OBJ);
+  Sections.draw(TypeWindow.OBJ);
   
   Model2Ds.draw(TypeWindow.OBJ);
 
@@ -14961,7 +14961,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
-  if (SKY3D.Display_Surface) {
+  if (Sky3D.Display_Surface) {
 
     if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
@@ -14970,14 +14970,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       float PAL_Multiplier = 1; 
 
       if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = SKY3D.Pallet_ACTIVE_CLR; 
-        PAL_DIR = SKY3D.Pallet_ACTIVE_DIR;  
-        PAL_Multiplier = 1.0 * SKY3D.Pallet_ACTIVE_MLT;
+        PAL_TYPE = Sky3D.Pallet_ACTIVE_CLR; 
+        PAL_DIR = Sky3D.Pallet_ACTIVE_DIR;  
+        PAL_Multiplier = 1.0 * Sky3D.Pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        PAL_TYPE = SKY3D.Pallet_PASSIVE_CLR; 
-        PAL_DIR = SKY3D.Pallet_PASSIVE_DIR;  
-        PAL_Multiplier = 0.05 * SKY3D.Pallet_PASSIVE_MLT;
+        PAL_TYPE = Sky3D.Pallet_PASSIVE_CLR; 
+        PAL_DIR = Sky3D.Pallet_PASSIVE_DIR;  
+        PAL_Multiplier = 0.05 * Sky3D.Pallet_PASSIVE_MLT;
       }             
 
 
@@ -15053,7 +15053,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           int Tessellation = 0;
 
           int TotalSubNo = 1;  
-          Tessellation = SKY3D.Tessellation;
+          Tessellation = Sky3D.Tessellation;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
           float[][] base_Vertices = new float [skyFaces[f].length][3];
@@ -15079,9 +15079,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               int s_next = (s + 1) % subFace.length;
               int s_prev = (s + subFace.length - 1) % subFace.length;
 
-              float x = subFace[s][0] * SKY3D.scale * WIN3D.scale;
-              float y = subFace[s][1] * SKY3D.scale * WIN3D.scale;
-              float z = subFace[s][2] * SKY3D.scale * WIN3D.scale;
+              float x = subFace[s][0] * Sky3D.scale * WIN3D.scale;
+              float y = subFace[s][1] * Sky3D.scale * WIN3D.scale;
+              float z = subFace[s][2] * Sky3D.scale * WIN3D.scale;
 
               float _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
 
@@ -15147,7 +15147,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME_Date;
 
-    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY3D.scale, 0.975 * SKY3D.scale, 0.975 * SKY3D.scale, STUDY.ImpactLayer, 4);
+    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, 4);
 
     STUDY.PerDays = keep_STUDY_PerDays;
     STUDY.JoinDays = keep_STUDY_JoinDays; 
@@ -15480,7 +15480,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
   SKY2D_graphics.hint(ENABLE_DEPTH_TEST);
   
-  LAND3D.draw(TypeWindow.SKY2D);
+  Land3D.draw(TypeWindow.SKY2D);
 
   for (int f = 0; f < allFaces_PNT.length; f++) {
 
@@ -15713,7 +15713,7 @@ int[] getNow_inUTC () {
 
 
 
-class solarchvision_TROPO3D {
+class solarchvision_Tropo3D {
   
   boolean Display_Surface = false;
   boolean Display_Texture = true;  
@@ -16069,7 +16069,7 @@ class solarchvision_TROPO3D {
       }
     }
   
-    TROPO3D.load_images();
+    Tropo3D.load_images();
   }  
     
   
@@ -16124,7 +16124,7 @@ class solarchvision_TROPO3D {
                 mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
               }
   
-              if (TROPO3D.Display_Texture) {
+              if (Tropo3D.Display_Texture) {
       
                 String old_Texture_path = GEOMET_directory + "/" + this.Filenames[n_Map];
       
@@ -16216,7 +16216,7 @@ class solarchvision_TROPO3D {
                   float _lon = b - CEN_lon;
                   float _lat = a - CEN_lat;
       
-                  if (TROPO3D.Display_Texture) {
+                  if (Tropo3D.Display_Texture) {
                     // calculating u and v
                     subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
                     subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -16258,7 +16258,7 @@ class solarchvision_TROPO3D {
                   if (target_window == TypeWindow.WORLD) {
                     WORLD.graphics.beginShape();
                     WORLD.graphics.noStroke();
-                    if (TROPO3D.Display_Texture) {
+                    if (Tropo3D.Display_Texture) {
                       WORLD.graphics.texture(this.Map[n_Map]);
                     }
           
@@ -16316,7 +16316,7 @@ class solarchvision_TROPO3D {
                     
                     WIN3D.graphics.beginShape();
                     WIN3D.graphics.noStroke();
-                    if (TROPO3D.Display_Texture) {
+                    if (Tropo3D.Display_Texture) {
                       WIN3D.graphics.texture(this.Map[n_Map]);
                     }
                   }    
@@ -16437,11 +16437,11 @@ class solarchvision_TROPO3D {
   }
 }
 
-solarchvision_TROPO3D TROPO3D = new solarchvision_TROPO3D();
+solarchvision_Tropo3D Tropo3D = new solarchvision_Tropo3D();
 
 
 
-class solarchvision_SKY3D {
+class solarchvision_Sky3D {
   
   boolean Display_Surface = true;
   int Tessellation = 3; //3;
@@ -16550,11 +16550,11 @@ class solarchvision_SKY3D {
 }
 
 
-solarchvision_SKY3D SKY3D = new solarchvision_SKY3D();
+solarchvision_Sky3D Sky3D = new solarchvision_Sky3D();
 
 
 
-class solarchvision_STAR3D {
+class solarchvision_Star3D {
   
   boolean Display_Surface = false;
   boolean Display_Texture = true;
@@ -16568,7 +16568,7 @@ class solarchvision_STAR3D {
   }
   
   void draw () {
-    if (STAR3D.Display_Surface) {
+    if (Star3D.Display_Surface) {
   
       WIN3D.graphics.strokeWeight(1);
 
@@ -16612,7 +16612,7 @@ class solarchvision_STAR3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (STAR3D.Display_Texture) {
+            if (Star3D.Display_Texture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -16648,7 +16648,7 @@ class solarchvision_STAR3D {
   
           WIN3D.graphics.noStroke();
   
-          if (STAR3D.Display_Texture) {
+          if (Star3D.Display_Texture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -16665,10 +16665,10 @@ class solarchvision_STAR3D {
   }
 }
 
-solarchvision_STAR3D STAR3D = new solarchvision_STAR3D();
+solarchvision_Star3D Star3D = new solarchvision_Star3D();
 
 
-class solarchvision_MOON3D {
+class solarchvision_Moon3D {
   
   boolean Display_Surface = false;
   boolean Display_Texture = true;
@@ -16682,7 +16682,7 @@ class solarchvision_MOON3D {
   }  
   
   void draw () {
-    if (MOON3D.Display_Surface) {
+    if (Moon3D.Display_Surface) {
   
       WIN3D.graphics.strokeWeight(1);
   
@@ -16726,7 +16726,7 @@ class solarchvision_MOON3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (MOON3D.Display_Texture) {
+            if (Moon3D.Display_Texture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -16758,7 +16758,7 @@ class solarchvision_MOON3D {
   
           WIN3D.graphics.noStroke();
   
-          if (MOON3D.Display_Texture) {
+          if (Moon3D.Display_Texture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -16775,14 +16775,14 @@ class solarchvision_MOON3D {
   }
 }
 
-solarchvision_MOON3D MOON3D = new solarchvision_MOON3D();
+solarchvision_Moon3D Moon3D = new solarchvision_Moon3D();
 
 
 
 
 
 
-class solarchvision_EARTH3D {
+class solarchvision_Earth3D {
 
   boolean Display_Surface = false;
   boolean Display_Texture = true;
@@ -16834,7 +16834,7 @@ class solarchvision_EARTH3D {
   
     boolean proceed = true;
   
-    if ((EARTH3D.Display_Surface == false) || (EARTH3D.Display_Texture == false)) {
+    if ((Earth3D.Display_Surface == false) || (Earth3D.Display_Texture == false)) {
       proceed = false;
     }
   
@@ -16885,7 +16885,7 @@ class solarchvision_EARTH3D {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
           }
     
-          if (EARTH3D.Display_Texture) {
+          if (Earth3D.Display_Texture) {
     
             String old_Texture_path = this.Path + "/" + this.Filenames[n_Map];
     
@@ -16961,7 +16961,7 @@ class solarchvision_EARTH3D {
               float _lon = b - CEN_lon;
               float _lat = a - CEN_lat;
     
-              if (EARTH3D.Display_Texture) {
+              if (Earth3D.Display_Texture) {
                 // calculating u and v
                 subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
                 subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -17026,7 +17026,7 @@ class solarchvision_EARTH3D {
       
               WIN3D.graphics.noStroke();
               
-              if (EARTH3D.Display_Texture) {
+              if (Earth3D.Display_Texture) {
       
                 WIN3D.graphics.texture(this.Map[n_Map]);
               }            
@@ -17140,11 +17140,11 @@ class solarchvision_EARTH3D {
   }
 }
 
-solarchvision_EARTH3D EARTH3D = new solarchvision_EARTH3D(); 
+solarchvision_Earth3D Earth3D = new solarchvision_Earth3D(); 
 
 
 
-class solarchvision_LAND3D {
+class solarchvision_Land3D {
   
   boolean Load_Mesh = true; 
   boolean Load_Textures = true;
@@ -17358,7 +17358,7 @@ class solarchvision_LAND3D {
     }
   
   
-    LAND3D.update_textures();
+    Land3D.update_textures();
   }
   
   
@@ -17389,7 +17389,7 @@ class solarchvision_LAND3D {
     }
   
     this.Load_Mesh = true;
-    LAND3D.update_mesh();
+    Land3D.update_mesh();
   
   }
   
@@ -17434,7 +17434,7 @@ class solarchvision_LAND3D {
     }
     
     this.Load_Mesh = true;
-    LAND3D.update_mesh();
+    Land3D.update_mesh();
   
   }
   
@@ -17485,7 +17485,7 @@ class solarchvision_LAND3D {
     }
     
     this.Load_Textures = true;
-    LAND3D.update_textures();
+    Land3D.update_textures();
   
   }
   
@@ -18099,7 +18099,7 @@ class solarchvision_LAND3D {
   }
 }
 
-solarchvision_LAND3D LAND3D = new solarchvision_LAND3D();
+solarchvision_Land3D Land3D = new solarchvision_Land3D();
 
 
 
@@ -18811,7 +18811,7 @@ class solarchvision_Model2Ds {
       }
     };
   
-    int Tessellation = LAND3D.Tessellation;
+    int Tessellation = Land3D.Tessellation;
     if (WIN3D.FacesShade == SHADE.Surface_Base) {
       Tessellation = 0;
     }
@@ -18821,42 +18821,42 @@ class solarchvision_Model2Ds {
   
   
   
-    if ((LAND3D.Display_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+    if ((Land3D.Display_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
   
-      for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
-        for (int j = 0; j < LAND3D.n_J - 1; j++) {
+      for (int i = Land3D.Surface_SkipStart; i < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; i++) {
+        for (int j = 0; j < Land3D.n_J - 1; j++) {
   
           float[][] base_Vertices = new float [4][3];
   
-          base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
-          base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
-          base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
+          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
+          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
+          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
   
-          base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
-          base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
-          base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
+          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
+          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
+          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
   
-          base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
+          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
   
-          base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
-          base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
-          base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];
+          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
+          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
+          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];
   
           for (int n = 0; n < TotalSubNo; n++) {
   
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
   
             int n_Map = -1; 
-            for (int q = 0; q < LAND3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+            for (int q = 0; q < Land3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
   
               n_Map = q; 
   
               for (int s = 0; s < subFace.length; s++) {
   
-                float u = (subFace[s][0] / LAND3D.Textures_scale_U[q] + 0.5);
-                float v = (-subFace[s][1] / LAND3D.Textures_scale_V[q] + 0.5);
+                float u = (subFace[s][0] / Land3D.Textures_scale_U[q] + 0.5);
+                float v = (-subFace[s][1] / Land3D.Textures_scale_V[q] + 0.5);
   
                 if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
   
@@ -18871,7 +18871,7 @@ class solarchvision_Model2Ds {
   
             if (n_Map != -1) {
   
-              int max_o = int(10000 / pow(2, LAND3D.Tessellation)); // number of tries to find green points!
+              int max_o = int(10000 / pow(2, Land3D.Tessellation)); // number of tries to find green points!
   
               //if (max_o > 100) max_o = 100;
   
@@ -18888,13 +18888,13 @@ class solarchvision_Model2Ds {
                 float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
                 float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
   
-                float u = (x / LAND3D.Textures_scale_U[n_Map] + 0.5);
-                float v = (-y / LAND3D.Textures_scale_V[n_Map] + 0.5);
+                float u = (x / Land3D.Textures_scale_U[n_Map] + 0.5);
+                float v = (-y / Land3D.Textures_scale_V[n_Map] + 0.5);
   
-                int uPixel = int(u * LAND3D.Textures_Map[n_Map].width);
-                int vPixel = int(v * LAND3D.Textures_Map[n_Map].height);
+                int uPixel = int(u * Land3D.Textures_Map[n_Map].width);
+                int vPixel = int(v * Land3D.Textures_Map[n_Map].height);
   
-                color COL = LAND3D.Textures_Map[n_Map].get(uPixel, vPixel);
+                color COL = Land3D.Textures_Map[n_Map].get(uPixel, vPixel);
                 //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
                 float r = COL >> 16 & 0xFF; 
                 float g = COL >> 8 & 0xFF;
@@ -18954,32 +18954,32 @@ class solarchvision_Model2Ds {
       }
     } else {
   
-      for (int i = LAND3D.Surface_SkipStart; i < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; i++) {
-        for (int j = 0; j < LAND3D.n_J - 1; j++) {
+      for (int i = Land3D.Surface_SkipStart; i < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; i++) {
+        for (int j = 0; j < Land3D.n_J - 1; j++) {
   
           float[][] base_Vertices = new float [4][3];
   
-          base_Vertices[0][0] = LAND3D.Mesh[i][j][0];
-          base_Vertices[0][1] = LAND3D.Mesh[i][j][1];
-          base_Vertices[0][2] = LAND3D.Mesh[i][j][2];
+          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
+          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
+          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
   
-          base_Vertices[1][0] = LAND3D.Mesh[i+1][j][0];
-          base_Vertices[1][1] = LAND3D.Mesh[i+1][j][1];
-          base_Vertices[1][2] = LAND3D.Mesh[i+1][j][2];
+          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
+          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
+          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
   
-          base_Vertices[2][0] = LAND3D.Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = LAND3D.Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = LAND3D.Mesh[i+1][j+1][2];
+          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
   
-          base_Vertices[3][0] = LAND3D.Mesh[i][j+1][0];
-          base_Vertices[3][1] = LAND3D.Mesh[i][j+1][1];
-          base_Vertices[3][2] = LAND3D.Mesh[i][j+1][2];      
+          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
+          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
+          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];      
   
           for (int n = 0; n < TotalSubNo; n++) {
   
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
   
-            int max_o = int((16.0 / pow(2, LAND3D.Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+            int max_o = int((16.0 / pow(2, Land3D.Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
   
   
             if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -20038,7 +20038,7 @@ solarchvision_Model1Ds Model1Ds = new solarchvision_Model1Ds();
 
 
 
-class solarchvision_SOLIDS {
+class solarchvision_Solids {
 
   float[][] DEF = new float[0][13];
   
@@ -20060,19 +20060,19 @@ class solarchvision_SOLIDS {
   
       for (int f = 0; f < this.DEF.length; f++) {
   
-        float Solid_posX = Solid_get_posX(f);
-        float Solid_posY = Solid_get_posY(f);
-        float Solid_posZ = Solid_get_posZ(f);
-        float Solid_powX = Solid_get_powX(f);
-        float Solid_powY = Solid_get_powY(f);
-        float Solid_powZ = Solid_get_powZ(f);
-        float Solid_scaleX = Solid_get_scaleX(f);
-        float Solid_scaleY = Solid_get_scaleY(f);
-        float Solid_scaleZ = Solid_get_scaleZ(f);
-        float Solid_rotX = Solid_get_rotX(f);
-        float Solid_rotY = Solid_get_rotY(f);
-        float Solid_rotZ = Solid_get_rotZ(f);
-        float Solid_value = Solid_get_value(f);
+        float Solid_posX = Solids.get_posX(f);
+        float Solid_posY = Solids.get_posY(f);
+        float Solid_posZ = Solids.get_posZ(f);
+        float Solid_powX = Solids.get_powX(f);
+        float Solid_powY = Solids.get_powY(f);
+        float Solid_powZ = Solids.get_powZ(f);
+        float Solid_scaleX = Solids.get_scaleX(f);
+        float Solid_scaleY = Solids.get_scaleY(f);
+        float Solid_scaleZ = Solids.get_scaleZ(f);
+        float Solid_rotX = Solids.get_rotX(f);
+        float Solid_rotY = Solids.get_rotY(f);
+        float Solid_rotZ = Solids.get_rotZ(f);
+        float Solid_value = Solids.get_value(f);
   
         for (int plane_type = 0; plane_type < this.numDisplayFaces; plane_type++) {
   
@@ -20091,7 +20091,7 @@ class solarchvision_SOLIDS {
   
           WIN3D.graphics.beginShape();
   
-          float[][] ImageVertex = SOLIDS.getCorners(plane_type, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+          float[][] ImageVertex = Solids.getCorners(plane_type, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
   
           for (int q = 1; q <= this.numDisplayDegree; q++) {
   
@@ -20203,9 +20203,170 @@ class solarchvision_SOLIDS {
   
     return ImageVertex;
   }
+  
+  
+  
+  void updatePosition (int n, float a, float b, float c) {
+  
+    this.DEF[n][0] = a;
+    this.DEF[n][1] = b;
+    this.DEF[n][2] = c;
+  } 
+  
+  void updatePowers (int n, float a, float b, float c) {
+  
+    this.DEF[n][3] = a;
+    this.DEF[n][4] = b;
+    this.DEF[n][5] = c;
+  } 
+  
+  void Scale (int n, float a, float b, float c) {
+  
+    this.DEF[n][6] *= a;
+    this.DEF[n][7] *= b;
+    this.DEF[n][8] *= c;
+  } 
+  
+  void RotateX (int n, float t) {
+  
+    this.DEF[n][9] += t;
+  } 
+  
+  void RotateY (int n, float t) {
+  
+    this.DEF[n][10] += t;
+  } 
+  
+  void RotateZ (int n, float t) {
+  
+    this.DEF[n][11] += t;
+  } 
+  
+  float get_posX (int n) { 
+  
+    return this.DEF[n][0];
+  } 
+  
+  float get_posY (int n) { 
+  
+    return this.DEF[n][1];
+  } 
+  
+  float get_posZ (int n) { 
+  
+    return this.DEF[n][2];
+  } 
+  
+  float get_powX (int n) { 
+  
+    return this.DEF[n][3];
+  } 
+  
+  float get_powY (int n) { 
+  
+    return this.DEF[n][4];
+  } 
+  
+  float get_powZ (int n) { 
+  
+    return this.DEF[n][5];
+  } 
+  
+  float get_scaleX (int n) { 
+  
+    return this.DEF[n][6];
+  } 
+  
+  float get_scaleY (int n) { 
+  
+    return this.DEF[n][7];
+  } 
+  
+  float get_scaleZ (int n) { 
+  
+    return this.DEF[n][8];
+  } 
+  
+  float get_rotX (int n) { 
+  
+    return this.DEF[n][9];
+  } 
+  
+  
+  float get_rotY (int n) { 
+  
+    return this.DEF[n][10];
+  } 
+  
+  float get_rotZ (int n) { 
+  
+    return this.DEF[n][11];
+  } 
+  
+  float get_value (int n) { 
+  
+    return this.DEF[n][12];
+  } 
+  
+  float get_Distance (int n, float a, float b, float c) {
+  
+    float posX = this.DEF[n][0];
+    float posY = this.DEF[n][1];
+    float posZ = this.DEF[n][2];
+    float powX = this.DEF[n][3];
+    float powY = this.DEF[n][4];
+    float powZ = this.DEF[n][5];
+    float scaleX = this.DEF[n][6];
+    float scaleY = this.DEF[n][7];
+    float scaleZ = this.DEF[n][8];
+    float rotX = this.DEF[n][9];
+    float rotY = this.DEF[n][10];
+    float rotZ = this.DEF[n][11];
+    float value = this.DEF[n][12];
+  
+    a -= posX;
+    b -= posY;    
+    c -= posZ;
+  
+    ///////////////////////// NOT SURE START!    
+  
+    float y1 = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
+    float z1 = b * sin_ang(-rotX) + c * cos_ang(-rotX);
+    float x1 = a;
+  
+    a = x1;
+    b = y1;
+    c = z1;  
+  
+    float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
+    float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
+    float y2 = b; 
+  
+    a = x2;
+    b = y2;
+    c = z2;      
+    ///////////////////////// NOT SURE END!
+  
+    float x = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
+    float y = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
+    float z = c;    
+  
+    x += posX;
+    y += posY;  
+    z += posZ;
+  
+     
+    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));
+    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
+    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / (value * scaleX * scaleY * scaleZ * 0.001));
+    //return(scaleX * scaleY * scaleZ * 0.01 * pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
+    
+  
+  }
+  
 }
 
-solarchvision_SOLIDS SOLIDS = new solarchvision_SOLIDS();
+solarchvision_Solids Solids = new solarchvision_Solids();
 
 
 
@@ -20408,12 +20569,12 @@ class solarchvision_Model3Ds {
           x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v
         }
       };
-      SOLIDS.DEF = (float[][]) concat(SOLIDS.DEF, newSolid);
+      Solids.DEF = (float[][]) concat(Solids.DEF, newSolid);
     }
   
-    if (allGroups_num > 0) allGroups_Solids[allGroups_num - 1][1] = SOLIDS.DEF.length - 1;
+    if (allGroups_num > 0) allGroups_Solids[allGroups_num - 1][1] = Solids.DEF.length - 1;
   
-    return(SOLIDS.DEF.length - 1);
+    return(Solids.DEF.length - 1);
   }
   
   
@@ -20423,16 +20584,16 @@ class solarchvision_Model3Ds {
     int[] TempCamera_Type = {
       n
     }; 
-    CAMERAS.Type = concat(CAMERAS.Type, TempCamera_Type);
+    Cameras.Type = concat(Cameras.Type, TempCamera_Type);
   
     float[][] TempCamera_PPPRRRF = {
       {
         x, y, z, s, rx, ry, rz, f
       }
     };
-    CAMERAS.PPPSRRRF = (float[][]) concat(CAMERAS.PPPSRRRF, TempCamera_PPPRRRF);
+    Cameras.PPPSRRRF = (float[][]) concat(Cameras.PPPSRRRF, TempCamera_PPPRRRF);
   
-    CAMERAS.num += 1;
+    Cameras.num += 1;
   }
   
   
@@ -20441,22 +20602,22 @@ class solarchvision_Model3Ds {
     int[] TempSection_Type = {
       n
     }; 
-    SECTIONS.Type = concat(SECTIONS.Type, TempSection_Type);
+    Sections.Type = concat(Sections.Type, TempSection_Type);
   
     int[] TempSection_RES1 = {
       RES1
     }; 
-    SECTIONS.RES1 = concat(SECTIONS.RES1, TempSection_RES1);
+    Sections.RES1 = concat(Sections.RES1, TempSection_RES1);
   
     int[] TempSection_RES2 = {
       RES2
     }; 
-    SECTIONS.RES2 = concat(SECTIONS.RES2, TempSection_RES2);
+    Sections.RES2 = concat(Sections.RES2, TempSection_RES2);
   
     PImage[] TempSection_SolidImpact = {
       createImage(RES1, RES2, RGB)
     }; 
-    SECTIONS.SolidImpact = (PImage[]) concat(SECTIONS.SolidImpact, TempSection_SolidImpact);
+    Sections.SolidImpact = (PImage[]) concat(Sections.SolidImpact, TempSection_SolidImpact);
   
     PImage[][][] TempSection_SolarImpact = new PImage [1][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
     {
@@ -20467,16 +20628,16 @@ class solarchvision_Model3Ds {
         }
       }
     }
-    SECTIONS.SolarImpact = (PImage[][][]) concat(SECTIONS.SolarImpact, TempSection_SolarImpact);    
+    Sections.SolarImpact = (PImage[][][]) concat(Sections.SolarImpact, TempSection_SolarImpact);    
   
     float[][] TempSection_UVERAB = {
       {
         u, v, elev, rot, dU, dV
       }
     };
-    SECTIONS.UVERAB = (float[][]) concat(SECTIONS.UVERAB, TempSection_UVERAB);
+    Sections.UVERAB = (float[][]) concat(Sections.UVERAB, TempSection_UVERAB);
   
-    SECTIONS.num += 1;
+    Sections.num += 1;
   }  
   
   
@@ -20518,7 +20679,7 @@ class solarchvision_Model3Ds {
   
     int[][] newObject_Solids = {
       {
-        SOLIDS.DEF.length, -1
+        Solids.DEF.length, -1
       }
     }; // i.e. null because start > end 
   
@@ -20792,25 +20953,25 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.Solids) {
   
-      int number_of_Solid_before = SOLIDS.DEF.length; 
+      int number_of_Solid_before = Solids.DEF.length; 
   
       for (int o = 0; o < selectedSolid_ids.length; o++) {
   
         int OBJ_NUM = selectedSolid_ids[o];
   
-        float Solid_posX = Solid_get_posX(OBJ_NUM);
-        float Solid_posY = Solid_get_posY(OBJ_NUM);
-        float Solid_posZ = Solid_get_posZ(OBJ_NUM);
-        float Solid_powX = Solid_get_powX(OBJ_NUM);
-        float Solid_powY = Solid_get_powY(OBJ_NUM);
-        float Solid_powZ = Solid_get_powZ(OBJ_NUM);
-        float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
-        float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
-        float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
-        float Solid_rotX = Solid_get_rotX(OBJ_NUM);
-        float Solid_rotY = Solid_get_rotY(OBJ_NUM);
-        float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
-        float Solid_value = Solid_get_value(OBJ_NUM);
+        float Solid_posX = Solids.get_posX(OBJ_NUM);
+        float Solid_posY = Solids.get_posY(OBJ_NUM);
+        float Solid_posZ = Solids.get_posZ(OBJ_NUM);
+        float Solid_powX = Solids.get_powX(OBJ_NUM);
+        float Solid_powY = Solids.get_powY(OBJ_NUM);
+        float Solid_powZ = Solids.get_powZ(OBJ_NUM);
+        float Solid_scaleX = Solids.get_scaleX(OBJ_NUM);
+        float Solid_scaleY = Solids.get_scaleY(OBJ_NUM);
+        float Solid_scaleZ = Solids.get_scaleZ(OBJ_NUM);
+        float Solid_rotX = Solids.get_rotX(OBJ_NUM);
+        float Solid_rotY = Solids.get_rotY(OBJ_NUM);
+        float Solid_rotZ = Solids.get_rotZ(OBJ_NUM);
+        float Solid_value = Solids.get_value(OBJ_NUM);
   
         this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
       }
@@ -20819,7 +20980,7 @@ class solarchvision_Model3Ds {
   
       selectedSolid_ids = new int [0];
   
-      for (int o = number_of_Solid_before; o < SOLIDS.DEF.length; o++) {
+      for (int o = number_of_Solid_before; o < Solids.DEF.length; o++) {
   
         int[] newlyAddedSolid = {o};
   
@@ -20830,22 +20991,22 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.Sections) {
   
-      int number_of_Section_before = SECTIONS.num; 
+      int number_of_Section_before = Sections.num; 
   
       for (int o = 0; o < selectedSection_ids.length; o++) {
   
         int OBJ_NUM = selectedSection_ids[o];
   
-        float Section_offset_U = SECTIONS.UVERAB[OBJ_NUM][0];
-        float Section_offset_V = SECTIONS.UVERAB[OBJ_NUM][1];
-        float Section_Elevation = SECTIONS.UVERAB[OBJ_NUM][2];
-        float Section_Rotation = SECTIONS.UVERAB[OBJ_NUM][3];
-        float Section_scale_U = SECTIONS.UVERAB[OBJ_NUM][4];
-        float Section_scale_V = SECTIONS.UVERAB[OBJ_NUM][5];
+        float Section_offset_U = Sections.UVERAB[OBJ_NUM][0];
+        float Section_offset_V = Sections.UVERAB[OBJ_NUM][1];
+        float Section_Elevation = Sections.UVERAB[OBJ_NUM][2];
+        float Section_Rotation = Sections.UVERAB[OBJ_NUM][3];
+        float Section_scale_U = Sections.UVERAB[OBJ_NUM][4];
+        float Section_scale_V = Sections.UVERAB[OBJ_NUM][5];
   
-        int Section_Type = SECTIONS.Type[OBJ_NUM];
-        int Section_RES1 = SECTIONS.RES1[OBJ_NUM];
-        int Section_RES2 = SECTIONS.RES2[OBJ_NUM];
+        int Section_Type = Sections.Type[OBJ_NUM];
+        int Section_RES1 = Sections.RES1[OBJ_NUM];
+        int Section_RES2 = Sections.RES2[OBJ_NUM];
   
         this.add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
       }
@@ -20854,7 +21015,7 @@ class solarchvision_Model3Ds {
   
       selectedSection_ids = new int [0];
   
-      for (int o = number_of_Section_before; o < SECTIONS.num; o++) {
+      for (int o = number_of_Section_before; o < Sections.num; o++) {
   
         int[] newlyAddedSection = {o};
   
@@ -20864,22 +21025,22 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.Cameras) {
   
-      int number_of_Camera_before = CAMERAS.num; 
+      int number_of_Camera_before = Cameras.num; 
   
       for (int o = 0; o < selectedCamera_ids.length; o++) {
   
         int OBJ_NUM = selectedCamera_ids[o];
   
-        float Camera_X = CAMERAS.PPPSRRRF[OBJ_NUM][0];
-        float Camera_Y = CAMERAS.PPPSRRRF[OBJ_NUM][1];
-        float Camera_Z = CAMERAS.PPPSRRRF[OBJ_NUM][2];
-        float Camera_S = CAMERAS.PPPSRRRF[OBJ_NUM][3];
-        float Camera_RX = CAMERAS.PPPSRRRF[OBJ_NUM][4];
-        float Camera_RY = CAMERAS.PPPSRRRF[OBJ_NUM][5];
-        float Camera_RZ = CAMERAS.PPPSRRRF[OBJ_NUM][6];
-        float Camera_ZOOM = CAMERAS.PPPSRRRF[OBJ_NUM][7];
+        float Camera_X = Cameras.PPPSRRRF[OBJ_NUM][0];
+        float Camera_Y = Cameras.PPPSRRRF[OBJ_NUM][1];
+        float Camera_Z = Cameras.PPPSRRRF[OBJ_NUM][2];
+        float Camera_S = Cameras.PPPSRRRF[OBJ_NUM][3];
+        float Camera_RX = Cameras.PPPSRRRF[OBJ_NUM][4];
+        float Camera_RY = Cameras.PPPSRRRF[OBJ_NUM][5];
+        float Camera_RZ = Cameras.PPPSRRRF[OBJ_NUM][6];
+        float Camera_ZOOM = Cameras.PPPSRRRF[OBJ_NUM][7];
   
-        int Camera_Type = CAMERAS.Type[OBJ_NUM];
+        int Camera_Type = Cameras.Type[OBJ_NUM];
   
         this.add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
       }
@@ -20888,7 +21049,7 @@ class solarchvision_Model3Ds {
   
       selectedCamera_ids = new int [0];
   
-      for (int o = number_of_Camera_before; o < CAMERAS.num; o++) {
+      for (int o = number_of_Camera_before; o < Cameras.num; o++) {
   
         int[] newlyAddedCamera = {o};
   
@@ -20979,19 +21140,19 @@ class solarchvision_Model3Ds {
           if ((0 <= allGroups_Solids[OBJ_NUM][1]) && (allGroups_Solids[OBJ_NUM][0] <= allGroups_Solids[OBJ_NUM][1])) { 
             for (int q = allGroups_Solids[OBJ_NUM][0]; q <= allGroups_Solids[OBJ_NUM][1]; q++) {
   
-              float Solid_posX = Solid_get_posX(q);
-              float Solid_posY = Solid_get_posY(q);
-              float Solid_posZ = Solid_get_posZ(q);
-              float Solid_powX = Solid_get_powX(q);
-              float Solid_powY = Solid_get_powY(q);
-              float Solid_powZ = Solid_get_powZ(q);
-              float Solid_scaleX = Solid_get_scaleX(q);
-              float Solid_scaleY = Solid_get_scaleY(q);
-              float Solid_scaleZ = Solid_get_scaleZ(q);
-              float Solid_rotX = Solid_get_rotX(q);
-              float Solid_rotY = Solid_get_rotY(q);
-              float Solid_rotZ = Solid_get_rotZ(q);
-              float Solid_value = Solid_get_value(q);
+              float Solid_posX = Solids.get_posX(q);
+              float Solid_posY = Solids.get_posY(q);
+              float Solid_posZ = Solids.get_posZ(q);
+              float Solid_powX = Solids.get_powX(q);
+              float Solid_powY = Solids.get_powY(q);
+              float Solid_powZ = Solids.get_powZ(q);
+              float Solid_scaleX = Solids.get_scaleX(q);
+              float Solid_scaleY = Solids.get_scaleY(q);
+              float Solid_scaleZ = Solids.get_scaleZ(q);
+              float Solid_rotX = Solids.get_rotX(q);
+              float Solid_rotY = Solids.get_rotY(q);
+              float Solid_rotZ = Solids.get_rotZ(q);
+              float Solid_value = Solids.get_value(q);
   
               this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
   
@@ -21130,19 +21291,19 @@ class solarchvision_Model3Ds {
           if ((0 <= allGroups_Solids[OBJ_NUM][1]) && (allGroups_Solids[OBJ_NUM][0] <= allGroups_Solids[OBJ_NUM][1])) { 
             for (int q = allGroups_Solids[OBJ_NUM][0]; q <= allGroups_Solids[OBJ_NUM][1]; q++) {
   
-              float Solid_posX = Solid_get_posX(q);
-              float Solid_posY = Solid_get_posY(q);
-              float Solid_posZ = Solid_get_posZ(q);
-              float Solid_powX = Solid_get_powX(q);
-              float Solid_powY = Solid_get_powY(q);
-              float Solid_powZ = Solid_get_powZ(q);
-              float Solid_scaleX = Solid_get_scaleX(q);
-              float Solid_scaleY = Solid_get_scaleY(q);
-              float Solid_scaleZ = Solid_get_scaleZ(q);
-              float Solid_rotX = Solid_get_rotX(q);
-              float Solid_rotY = Solid_get_rotY(q);
-              float Solid_rotZ = Solid_get_rotZ(q);
-              float Solid_value = Solid_get_value(q);
+              float Solid_posX = Solids.get_posX(q);
+              float Solid_posY = Solids.get_posY(q);
+              float Solid_posZ = Solids.get_posZ(q);
+              float Solid_powX = Solids.get_powX(q);
+              float Solid_powY = Solids.get_powY(q);
+              float Solid_powZ = Solids.get_powZ(q);
+              float Solid_scaleX = Solids.get_scaleX(q);
+              float Solid_scaleY = Solids.get_scaleY(q);
+              float Solid_scaleZ = Solids.get_scaleZ(q);
+              float Solid_rotX = Solids.get_rotX(q);
+              float Solid_rotY = Solids.get_rotY(q);
+              float Solid_rotZ = Solids.get_rotZ(q);
+              float Solid_value = Solids.get_value(q);
   
               this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
   
@@ -21314,19 +21475,19 @@ class solarchvision_Model3Ds {
   
           int OBJ_NUM = selectedSolid_ids[o];
   
-          float Solid_posX = Solid_get_posX(OBJ_NUM);
-          float Solid_posY = Solid_get_posY(OBJ_NUM);
-          float Solid_posZ = Solid_get_posZ(OBJ_NUM);
-          float Solid_powX = Solid_get_powX(OBJ_NUM);
-          float Solid_powY = Solid_get_powY(OBJ_NUM);
-          float Solid_powZ = Solid_get_powZ(OBJ_NUM);
-          float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
-          float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
-          float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
-          float Solid_rotX = Solid_get_rotX(OBJ_NUM);
-          float Solid_rotY = Solid_get_rotY(OBJ_NUM);
-          float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
-          float Solid_value = Solid_get_value(OBJ_NUM);
+          float Solid_posX = Solids.get_posX(OBJ_NUM);
+          float Solid_posY = Solids.get_posY(OBJ_NUM);
+          float Solid_posZ = Solids.get_posZ(OBJ_NUM);
+          float Solid_powX = Solids.get_powX(OBJ_NUM);
+          float Solid_powY = Solids.get_powY(OBJ_NUM);
+          float Solid_powZ = Solids.get_powZ(OBJ_NUM);
+          float Solid_scaleX = Solids.get_scaleX(OBJ_NUM);
+          float Solid_scaleY = Solids.get_scaleY(OBJ_NUM);
+          float Solid_scaleZ = Solids.get_scaleZ(OBJ_NUM);
+          float Solid_rotX = Solids.get_rotX(OBJ_NUM);
+          float Solid_rotY = Solids.get_rotY(OBJ_NUM);
+          float Solid_rotZ = Solids.get_rotZ(OBJ_NUM);
+          float Solid_value = Solids.get_value(OBJ_NUM);
   
           this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
         }
@@ -21579,20 +21740,20 @@ class solarchvision_Model3Ds {
         int OBJ_NUM = selectedCamera_ids[o];
   
         {
-          float[][] startList = (float[][]) subset(CAMERAS.PPPSRRRF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(CAMERAS.PPPSRRRF, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(Cameras.PPPSRRRF, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(Cameras.PPPSRRRF, OBJ_NUM + 1);
   
-          CAMERAS.PPPSRRRF = (float[][]) concat(startList, endList);
+          Cameras.PPPSRRRF = (float[][]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(CAMERAS.Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(CAMERAS.Type, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(Cameras.Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(Cameras.Type, OBJ_NUM + 1);
   
-          CAMERAS.Type = (int[]) concat(startList, endList);
+          Cameras.Type = (int[]) concat(startList, endList);
         }
   
-        CAMERAS.num -= 1;
+        Cameras.num -= 1;
   
         if (OBJ_NUM == WIN3D.CurrentCamera) {
     
@@ -21614,48 +21775,48 @@ class solarchvision_Model3Ds {
         int OBJ_NUM = selectedSection_ids[o];
   
         {
-          float[][] startList = (float[][]) subset(SECTIONS.UVERAB, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(SECTIONS.UVERAB, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(Sections.UVERAB, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(Sections.UVERAB, OBJ_NUM + 1);
   
-          SECTIONS.UVERAB = (float[][]) concat(startList, endList);
+          Sections.UVERAB = (float[][]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(SECTIONS.Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(SECTIONS.Type, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(Sections.Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(Sections.Type, OBJ_NUM + 1);
   
-          SECTIONS.Type = (int[]) concat(startList, endList);
+          Sections.Type = (int[]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(SECTIONS.RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(SECTIONS.RES1, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(Sections.RES1, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(Sections.RES1, OBJ_NUM + 1);
   
-          SECTIONS.RES1 = (int[]) concat(startList, endList);
+          Sections.RES1 = (int[]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(SECTIONS.RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(SECTIONS.RES2, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(Sections.RES2, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(Sections.RES2, OBJ_NUM + 1);
   
-          SECTIONS.RES2 = (int[]) concat(startList, endList);
+          Sections.RES2 = (int[]) concat(startList, endList);
         }
   
         {
-          PImage[] startList = (PImage[]) subset(SECTIONS.SolidImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(SECTIONS.SolidImpact, OBJ_NUM + 1);
+          PImage[] startList = (PImage[]) subset(Sections.SolidImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(Sections.SolidImpact, OBJ_NUM + 1);
   
-          SECTIONS.SolidImpact = (PImage[]) concat(startList, endList);
+          Sections.SolidImpact = (PImage[]) concat(startList, endList);
         }
   
         {
-          PImage[][][] startList = (PImage[][][]) subset(SECTIONS.SolarImpact, 0, OBJ_NUM);
-          PImage[][][] endList = (PImage[][][]) subset(SECTIONS.SolarImpact, OBJ_NUM + 1);
+          PImage[][][] startList = (PImage[][][]) subset(Sections.SolarImpact, 0, OBJ_NUM);
+          PImage[][][] endList = (PImage[][][]) subset(Sections.SolarImpact, OBJ_NUM + 1);
   
-          SECTIONS.SolarImpact = (PImage[][][]) concat(startList, endList);
+          Sections.SolarImpact = (PImage[][][]) concat(startList, endList);
         }        
   
-        SECTIONS.num -= 1;
+        Sections.num -= 1;
       }
     }
   
@@ -21800,10 +21961,10 @@ class solarchvision_Model3Ds {
   
   
         {
-          float[][] startList = (float[][]) subset(SOLIDS.DEF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(SOLIDS.DEF, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(Solids.DEF, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(Solids.DEF, OBJ_NUM + 1);
   
-          SOLIDS.DEF = (float[][]) concat(startList, endList);
+          Solids.DEF = (float[][]) concat(startList, endList);
         }
       }
     }
@@ -22123,10 +22284,10 @@ class solarchvision_Model3Ds {
   
         if ((0 <= startSolid) && (startSolid <= endSolid)) {
   
-          float[][] startList = (float[][]) subset(SOLIDS.DEF, 0, startSolid);
-          float[][] endList = (float[][]) subset(SOLIDS.DEF, endSolid + 1);
+          float[][] startList = (float[][]) subset(Solids.DEF, 0, startSolid);
+          float[][] endList = (float[][]) subset(Solids.DEF, endSolid + 1);
   
-          SOLIDS.DEF = (float[][]) concat(startList, endList);
+          Solids.DEF = (float[][]) concat(startList, endList);
   
           Solids_updated = 1;
         }
@@ -22167,7 +22328,7 @@ class solarchvision_Model3Ds {
   
   
   
-    if (CAMERAS.num == 0) {
+    if (Cameras.num == 0) {
       this.add_veryFirstCamera();
     }
   
@@ -24737,8 +24898,8 @@ class solarchvision_Model3Ds {
     if (Current_ObjectCategory == ObjectCategory.Sections) {
       selectedSection_ids = new int [0];
       
-      if (SECTIONS.num > 0) {
-        int[] new_Item = {SECTIONS.num - 1};
+      if (Sections.num > 0) {
+        int[] new_Item = {Sections.num - 1};
         selectedSection_ids = concat(selectedSection_ids, new_Item);
       }
     }   
@@ -24746,8 +24907,8 @@ class solarchvision_Model3Ds {
     if (Current_ObjectCategory == ObjectCategory.Cameras) {
       selectedCamera_ids = new int [0];
       
-      if (CAMERAS.num > 0) {
-        int[] new_Item = {CAMERAS.num - 1};
+      if (Cameras.num > 0) {
+        int[] new_Item = {Cameras.num - 1};
         selectedCamera_ids = concat(selectedCamera_ids, new_Item);
       }
     }   
@@ -24755,8 +24916,8 @@ class solarchvision_Model3Ds {
     if (Current_ObjectCategory == ObjectCategory.Solids) {
       selectedSolid_ids = new int [0];
       
-      if (SOLIDS.DEF.length > 0) {
-        int[] new_Item = {SOLIDS.DEF.length - 1};
+      if (Solids.DEF.length > 0) {
+        int[] new_Item = {Solids.DEF.length - 1};
         selectedSolid_ids = concat(selectedSolid_ids, new_Item);
       }
     } 
@@ -24862,7 +25023,7 @@ class solarchvision_Model3Ds {
   void select_All () {
   
     if (Current_ObjectCategory == ObjectCategory.LandPoints) {
-      selectedLandPoint_ids = new int [LAND3D.n_I * LAND3D.n_J];
+      selectedLandPoint_ids = new int [Land3D.n_I * Land3D.n_J];
       for (int i = 0; i < selectedLandPoint_ids.length; i++) { 
         selectedLandPoint_ids[i] = i;
       }
@@ -24911,21 +25072,21 @@ class solarchvision_Model3Ds {
     }
   
     if (Current_ObjectCategory == ObjectCategory.Solids) {
-      selectedSolid_ids = new int [SOLIDS.DEF.length];
+      selectedSolid_ids = new int [Solids.DEF.length];
       for (int i = 0; i < selectedSolid_ids.length; i++) { 
         selectedSolid_ids[i] = i;
       }
     }  
   
     if (Current_ObjectCategory == ObjectCategory.Sections) {
-      selectedSection_ids = new int [SECTIONS.num];
+      selectedSection_ids = new int [Sections.num];
       for (int i = 0; i < selectedSection_ids.length; i++) { 
         selectedSection_ids[i] = i;
       }
     }  
   
     if (Current_ObjectCategory == ObjectCategory.Cameras) {
-      selectedCamera_ids = new int [CAMERAS.num];
+      selectedCamera_ids = new int [Cameras.num];
       for (int i = 0; i < selectedCamera_ids.length; i++) { 
         selectedCamera_ids[i] = i;
       }
@@ -24943,7 +25104,7 @@ class solarchvision_Model3Ds {
   
       selectedLandPoint_ids = new int [0];
   
-      for (int i = 0; i < LAND3D.n_I * LAND3D.n_J; i++) {
+      for (int i = 0; i < Land3D.n_I * Land3D.n_J; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedLandPoint_ids.length; j++) {
@@ -25140,7 +25301,7 @@ class solarchvision_Model3Ds {
   
       selectedSolid_ids = new int [0];
   
-      for (int i = 0; i < SOLIDS.DEF.length; i++) {
+      for (int i = 0; i < Solids.DEF.length; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedSolid_ids.length; j++) {
@@ -25168,7 +25329,7 @@ class solarchvision_Model3Ds {
   
       selectedSection_ids = new int [0];
   
-      for (int i = 0; i < SECTIONS.num; i++) {
+      for (int i = 0; i < Sections.num; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedSection_ids.length; j++) {
@@ -25196,7 +25357,7 @@ class solarchvision_Model3Ds {
   
       selectedCamera_ids = new int [0];
   
-      for (int i = 0; i < CAMERAS.num; i++) {
+      for (int i = 0; i < Cameras.num; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_selectedCamera_ids.length; j++) {
@@ -27832,7 +27993,7 @@ class solarchvision_Model3Ds {
   
   
   void delete_Solids () {
-    SOLIDS.DEF = new float [0][13]; 
+    Solids.DEF = new float [0][13]; 
   
     for (int q = 0; q < allGroups_num; q++) {
       allGroups_Solids[q][0] = 0;
@@ -27845,9 +28006,9 @@ class solarchvision_Model3Ds {
   
   void delete_Cameras () {
   
-    CAMERAS.PPPSRRRF = new float [0][8]; 
+    Cameras.PPPSRRRF = new float [0][8]; 
   
-    CAMERAS.Type = new int [0];
+    Cameras.Type = new int [0];
   
     this.add_veryFirstCamera();
   
@@ -27856,38 +28017,38 @@ class solarchvision_Model3Ds {
   
   void add_veryFirstCamera () {
     
-    CAMERAS.PPPSRRRF = new float [1][8]; 
-    CAMERAS.PPPSRRRF[0][0] = WIN3D.X_Coordinate;
-    CAMERAS.PPPSRRRF[0][1] = WIN3D.Y_Coordinate;
-    CAMERAS.PPPSRRRF[0][2] = WIN3D.Z_Coordinate;
-    CAMERAS.PPPSRRRF[0][3] = WIN3D.S_Coordinate;
-    CAMERAS.PPPSRRRF[0][4] = WIN3D.RX_Coordinate;
-    CAMERAS.PPPSRRRF[0][5] = WIN3D.RY_Coordinate;
-    CAMERAS.PPPSRRRF[0][6] = WIN3D.RZ_Coordinate;
-    CAMERAS.PPPSRRRF[0][7] = WIN3D.Zoom;
+    Cameras.PPPSRRRF = new float [1][8]; 
+    Cameras.PPPSRRRF[0][0] = WIN3D.X_Coordinate;
+    Cameras.PPPSRRRF[0][1] = WIN3D.Y_Coordinate;
+    Cameras.PPPSRRRF[0][2] = WIN3D.Z_Coordinate;
+    Cameras.PPPSRRRF[0][3] = WIN3D.S_Coordinate;
+    Cameras.PPPSRRRF[0][4] = WIN3D.RX_Coordinate;
+    Cameras.PPPSRRRF[0][5] = WIN3D.RY_Coordinate;
+    Cameras.PPPSRRRF[0][6] = WIN3D.RZ_Coordinate;
+    Cameras.PPPSRRRF[0][7] = WIN3D.Zoom;
   
-    CAMERAS.Type = new int [1];
-    CAMERAS.Type[0] = WIN3D.ViewType;  
+    Cameras.Type = new int [1];
+    Cameras.Type[0] = WIN3D.ViewType;  
     
-    CAMERAS.num = 1;
+    Cameras.num = 1;
   }  
   
 
   
   void delete_Sections () {
-    SECTIONS.UVERAB = new float [0][6]; 
+    Sections.UVERAB = new float [0][6]; 
   
-    SECTIONS.Type = new int [0];
+    Sections.Type = new int [0];
   
-    SECTIONS.RES1 = new int [0];
+    Sections.RES1 = new int [0];
   
-    SECTIONS.RES2 = new int [0];
+    Sections.RES2 = new int [0];
   
-    SECTIONS.SolidImpact = new PImage [0];
+    Sections.SolidImpact = new PImage [0];
   
-    SECTIONS.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    Sections.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
   
-    SECTIONS.num = 0;
+    Sections.num = 0;
   
     this.deselect_All();
   }
@@ -28244,7 +28405,7 @@ class solarchvision_Model3Ds {
   
   void add_DefaultModel (int n) {
   
-    if (LAND3D.Load_Mesh) {
+    if (Land3D.Load_Mesh) {
   
       Model2Ds.add_onLand(1); // 1 = people
   
@@ -28440,9 +28601,9 @@ solarchvision_Model3Ds Model3Ds = new solarchvision_Model3Ds();
 
 
 
-class solarchvision_CAMERAS {
+class solarchvision_Cameras {
 
-  private final static String CLASS_STAMP = "CAMERAS";
+  private final static String CLASS_STAMP = "Cameras";
   
   float[][] PPPSRRRF = {
     {
@@ -28654,13 +28815,13 @@ class solarchvision_CAMERAS {
   }
 }
 
-solarchvision_CAMERAS CAMERAS = new solarchvision_CAMERAS();
+solarchvision_Cameras Cameras = new solarchvision_Cameras();
 
 
 
-class solarchvision_SECTIONS {
+class solarchvision_Sections {
 
-  private final static String CLASS_STAMP = "SECTIONS";
+  private final static String CLASS_STAMP = "Sections";
 
   float[][] UVERAB = new float[0][6];
   int[] Type = new int[0];
@@ -28678,12 +28839,12 @@ class solarchvision_SECTIONS {
 
   void resize_SolarImpact_array () { // called when STUDY.j_End changes
   
-    SECTIONS.SolarImpact = new PImage [SECTIONS.num][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    Sections.SolarImpact = new PImage [Sections.num][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
     {
-      for (int i = 0; i < SECTIONS.num; i++) {
+      for (int i = 0; i < Sections.num; i++) {
         for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) { 
           for (int q = 0; q < numberOfImpactVariations; q++) {
-            SECTIONS.SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
+            Sections.SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
           }
         }
       }
@@ -29003,7 +29164,7 @@ class solarchvision_SECTIONS {
   }
 }  
 
-solarchvision_SECTIONS SECTIONS = new solarchvision_SECTIONS();
+solarchvision_Sections Sections = new solarchvision_Sections();
 
 
 
@@ -29774,31 +29935,31 @@ void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D.X_Coordin
 
 void SOLARCHVISION_record_last3DViewport () {
 
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][0] = WIN3D.X_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][1] = WIN3D.Y_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][2] = WIN3D.Z_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][3] = WIN3D.S_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][4] = WIN3D.RX_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][5] = WIN3D.RY_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][6] = WIN3D.RZ_Coordinate;
-  CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][7] = WIN3D.Zoom;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][0] = WIN3D.X_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][1] = WIN3D.Y_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][2] = WIN3D.Z_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][3] = WIN3D.S_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][4] = WIN3D.RX_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][5] = WIN3D.RY_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][6] = WIN3D.RZ_Coordinate;
+  Cameras.PPPSRRRF[WIN3D.CurrentCamera][7] = WIN3D.Zoom;
 
-  CAMERAS.Type[WIN3D.CurrentCamera] = WIN3D.ViewType;
+  Cameras.Type[WIN3D.CurrentCamera] = WIN3D.ViewType;
 }  
 
 
 void SOLARCHVISION_apply_currentCamera () {
 
-  WIN3D.X_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][0];
-  WIN3D.Y_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][1];
-  WIN3D.Z_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][2];
-  WIN3D.S_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][3];
-  WIN3D.RX_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][4];
-  WIN3D.RY_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][5];
-  WIN3D.RZ_Coordinate = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][6];
-  WIN3D.Zoom = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][7];
+  WIN3D.X_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][0];
+  WIN3D.Y_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][1];
+  WIN3D.Z_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][2];
+  WIN3D.S_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][3];
+  WIN3D.RX_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][4];
+  WIN3D.RY_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][5];
+  WIN3D.RZ_Coordinate = Cameras.PPPSRRRF[WIN3D.CurrentCamera][6];
+  WIN3D.Zoom = Cameras.PPPSRRRF[WIN3D.CurrentCamera][7];
 
-  WIN3D.ViewType = CAMERAS.Type[WIN3D.CurrentCamera];
+  WIN3D.ViewType = Cameras.Type[WIN3D.CurrentCamera];
 }  
 
 
@@ -30632,18 +30793,18 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [CAMERAS.Faces.length][4];
+  float[][] hitPoint = new float [Cameras.Faces.length][4];
 
-  for (int f = 0; f < CAMERAS.Faces.length; f++) {
+  for (int f = 0; f < Cameras.Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  for (int f = 0; f < CAMERAS.Faces.length; f++) {
+  for (int f = 0; f < Cameras.Faces.length; f++) {
 
-    int n = CAMERAS.Faces[f].length;
+    int n = Cameras.Faces[f].length;
     
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -30652,10 +30813,10 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
 
     boolean InPoly = false;
 
-    float[] A = CAMERAS.Vertices[CAMERAS.Faces[f][0]];
-    float[] B = CAMERAS.Vertices[CAMERAS.Faces[f][1]];
-    float[] C = CAMERAS.Vertices[CAMERAS.Faces[f][n - 2]];
-    float[] D = CAMERAS.Vertices[CAMERAS.Faces[f][n - 1]];
+    float[] A = Cameras.Vertices[Cameras.Faces[f][0]];
+    float[] B = Cameras.Vertices[Cameras.Faces[f][1]];
+    float[] C = Cameras.Vertices[Cameras.Faces[f][n - 2]];
+    float[] D = Cameras.Vertices[Cameras.Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30698,7 +30859,7 @@ float[] SOLARCHVISION_intersect_Cameras (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < CAMERAS.Faces.length; f++) {
+  for (int f = 0; f < Cameras.Faces.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -30724,18 +30885,18 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [SECTIONS.Faces.length][4];
+  float[][] hitPoint = new float [Sections.Faces.length][4];
 
-  for (int f = 0; f < SECTIONS.Faces.length; f++) {
+  for (int f = 0; f < Sections.Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  for (int f = 0; f < SECTIONS.Faces.length; f++) {
+  for (int f = 0; f < Sections.Faces.length; f++) {
 
-    int n = SECTIONS.Faces[f].length;
+    int n = Sections.Faces[f].length;
     
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -30744,10 +30905,10 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
     boolean InPoly = false;
 
-    float[] A = SECTIONS.Vertices[SECTIONS.Faces[f][0]];
-    float[] B = SECTIONS.Vertices[SECTIONS.Faces[f][1]];
-    float[] C = SECTIONS.Vertices[SECTIONS.Faces[f][n - 2]];
-    float[] D = SECTIONS.Vertices[SECTIONS.Faces[f][n - 1]];
+    float[] A = Sections.Vertices[Sections.Faces[f][0]];
+    float[] B = Sections.Vertices[Sections.Faces[f][1]];
+    float[] C = Sections.Vertices[Sections.Faces[f][n - 2]];
+    float[] D = Sections.Vertices[Sections.Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30790,7 +30951,7 @@ float[] SOLARCHVISION_intersect_Sections (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < SECTIONS.Faces.length; f++) {
+  for (int f = 0; f < Sections.Faces.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -30813,23 +30974,23 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [SOLIDS.Faces.length][4];
+  float[][] hitPoint = new float [Solids.Faces.length][4];
 
-  for (int f = 0; f < SOLIDS.Faces.length; f++) {
+  for (int f = 0; f < Solids.Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  for (int f = 0; f < SOLIDS.Faces.length; f++) {
+  for (int f = 0; f < Solids.Faces.length; f++) {
     
-    int n = SOLIDS.Faces[f].length;
+    int n = Solids.Faces[f].length;
 
-    float[] A = SOLIDS.Vertices[SOLIDS.Faces[f][0]];
-    float[] B = SOLIDS.Vertices[SOLIDS.Faces[f][1]];
-    float[] C = SOLIDS.Vertices[SOLIDS.Faces[f][n - 2]];
-    float[] D = SOLIDS.Vertices[SOLIDS.Faces[f][n - 1]];
+    float[] A = Solids.Vertices[Solids.Faces[f][0]];
+    float[] B = Solids.Vertices[Solids.Faces[f][1]];
+    float[] C = Solids.Vertices[Solids.Faces[f][n - 2]];
+    float[] D = Solids.Vertices[Solids.Faces[f][n - 1]];
     
     float[] AC = SOLARCHVISION_3xSub(A, C);
     float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -30860,8 +31021,8 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
         for (int i = 0; i < n; i++) {
           int next_i = (i + 1) % n;
   
-          float[] vect1 = {SOLIDS.Vertices[SOLIDS.Faces[f][i]][0] - X_intersect, SOLIDS.Vertices[SOLIDS.Faces[f][i]][1] - Y_intersect, SOLIDS.Vertices[SOLIDS.Faces[f][i]][2] - Z_intersect};
-          float[] vect2 = {SOLIDS.Vertices[SOLIDS.Faces[f][next_i]][0] - X_intersect, SOLIDS.Vertices[SOLIDS.Faces[f][next_i]][1] - Y_intersect, SOLIDS.Vertices[SOLIDS.Faces[f][next_i]][2] - Z_intersect};
+          float[] vect1 = {Solids.Vertices[Solids.Faces[f][i]][0] - X_intersect, Solids.Vertices[Solids.Faces[f][i]][1] - Y_intersect, Solids.Vertices[Solids.Faces[f][i]][2] - Z_intersect};
+          float[] vect2 = {Solids.Vertices[Solids.Faces[f][next_i]][0] - X_intersect, Solids.Vertices[Solids.Faces[f][next_i]][1] - Y_intersect, Solids.Vertices[Solids.Faces[f][next_i]][2] - Z_intersect};
   
           float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
   
@@ -30883,13 +31044,13 @@ float[] SOLARCHVISION_intersect_Solids (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < SOLIDS.Faces.length; f++) {
+  for (int f = 0; f < Solids.Faces.length; f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
       pre_dist = hitPoint[f][3];
 
-      return_point[0] = int(f / SOLIDS.numDisplayFaces);
+      return_point[0] = int(f / Solids.numDisplayFaces);
       return_point[1] = hitPoint[f][0];
       return_point[2] = hitPoint[f][1];
       return_point[3] = hitPoint[f][2];
@@ -30911,16 +31072,16 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [(LAND3D.n_I - 1) * (LAND3D.n_J - 1)][4];
+  float[][] hitPoint = new float [(Land3D.n_I - 1) * (Land3D.n_J - 1)][4];
 
-  for (int f = 0; f < (LAND3D.n_I - 1) * (LAND3D.n_J - 1); f++) {
+  for (int f = 0; f < (Land3D.n_I - 1) * (Land3D.n_J - 1); f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
 
-  for (int f = 0; f < (LAND3D.n_I - 1) * (LAND3D.n_J - 1); f++) {
+  for (int f = 0; f < (Land3D.n_I - 1) * (Land3D.n_J - 1); f++) {
 
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -30929,13 +31090,13 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
     
     boolean InPoly = false;
 
-    int LAND_i = f / (LAND3D.n_J - 1);
-    int LAND_j = f % (LAND3D.n_J - 1);
+    int LAND_i = f / (Land3D.n_J - 1);
+    int LAND_j = f % (Land3D.n_J - 1);
     
-    float[] A = LAND3D.Mesh[LAND_i][LAND_j];
-    float[] B = LAND3D.Mesh[LAND_i][LAND_j + 1];
-    float[] C = LAND3D.Mesh[LAND_i + 1][LAND_j + 1];
-    float[] D = LAND3D.Mesh[LAND_i + 1][LAND_j];
+    float[] A = Land3D.Mesh[LAND_i][LAND_j];
+    float[] B = Land3D.Mesh[LAND_i][LAND_j + 1];
+    float[] C = Land3D.Mesh[LAND_i + 1][LAND_j + 1];
+    float[] D = Land3D.Mesh[LAND_i + 1][LAND_j];
     float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])}; 
     
     for (int i = 0; i < 4; i++) {
@@ -31002,7 +31163,7 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < (LAND3D.n_I - 1) * (LAND3D.n_J - 1); f++) {
+  for (int f = 0; f < (Land3D.n_I - 1) * (Land3D.n_J - 1); f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -31155,7 +31316,7 @@ double[] getLandGrid (int i, int j) {
   //float q = 1.25;
   //float q = 1.125;  
   
-  float t = j * 360.0 / (LAND3D.n_J - 1);
+  float t = j * 360.0 / (Land3D.n_J - 1);
   
   float r = 0;
   if (i > 0) r = pow(q, i - 1);
@@ -31701,16 +31862,16 @@ void SOLARCHVISION_render_Shadows_selectedSections () {
 
     int f = selectedSection_ids[o];
 
-    SolarImpact_sectionType = SECTIONS.Type[f];
-    SolarImpact_RES1 = SECTIONS.RES1[f];
-    SolarImpact_RES2 = SECTIONS.RES2[f];     
+    SolarImpact_sectionType = Sections.Type[f];
+    SolarImpact_RES1 = Sections.RES1[f];
+    SolarImpact_RES2 = Sections.RES2[f];     
 
-    SolarImpact_offset_U = SECTIONS.UVERAB[f][0];
-    SolarImpact_offset_V = SECTIONS.UVERAB[f][1];
-    SolarImpact_Elevation = 0.1 + SECTIONS.UVERAB[f][2];
-    SolarImpact_Rotation = SECTIONS.UVERAB[f][3];
-    SolarImpact_scale_U = SECTIONS.UVERAB[f][4];
-    SolarImpact_scale_V = SECTIONS.UVERAB[f][5];
+    SolarImpact_offset_U = Sections.UVERAB[f][0];
+    SolarImpact_offset_V = Sections.UVERAB[f][1];
+    SolarImpact_Elevation = 0.1 + Sections.UVERAB[f][2];
+    SolarImpact_Rotation = Sections.UVERAB[f][3];
+    SolarImpact_scale_U = Sections.UVERAB[f][4];
+    SolarImpact_scale_V = Sections.UVERAB[f][5];
 
     SceneName = "Section_" + Section_Stamp();
 
@@ -31731,16 +31892,16 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
 
     int f = selectedSection_ids[o];
 
-    SolarImpact_sectionType = SECTIONS.Type[f];
-    SolarImpact_RES1 = SECTIONS.RES1[f];
-    SolarImpact_RES2 = SECTIONS.RES2[f];     
+    SolarImpact_sectionType = Sections.Type[f];
+    SolarImpact_RES1 = Sections.RES1[f];
+    SolarImpact_RES2 = Sections.RES2[f];     
 
-    SolarImpact_offset_U = SECTIONS.UVERAB[f][0];
-    SolarImpact_offset_V = SECTIONS.UVERAB[f][1];
-    SolarImpact_Elevation = 0.1 + SECTIONS.UVERAB[f][2];
-    SolarImpact_Rotation = SECTIONS.UVERAB[f][3];
-    SolarImpact_scale_U = SECTIONS.UVERAB[f][4];
-    SolarImpact_scale_V = SECTIONS.UVERAB[f][5];
+    SolarImpact_offset_U = Sections.UVERAB[f][0];
+    SolarImpact_offset_V = Sections.UVERAB[f][1];
+    SolarImpact_Elevation = 0.1 + Sections.UVERAB[f][2];
+    SolarImpact_Rotation = Sections.UVERAB[f][3];
+    SolarImpact_scale_U = Sections.UVERAB[f][4];
+    SolarImpact_scale_V = Sections.UVERAB[f][5];
 
     SceneName = "Section_" + Section_Stamp();
 
@@ -31749,9 +31910,9 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
     
     for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
       for (int q = 0; q < numberOfImpactVariations; q++) {
-        SECTIONS.SolarImpact[f][j + 1][q] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
+        Sections.SolarImpact[f][j + 1][q] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
 
-        SECTIONS.SolarImpact[f][j + 1][q].copy(SolarImpact_Image[q][j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
+        Sections.SolarImpact[f][j + 1][q].copy(SolarImpact_Image[q][j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
       }
     }
   }
@@ -31768,27 +31929,27 @@ void SOLARCHVISION_calculate_SolidImpact_selectedSections () {
 
     int f = selectedSection_ids[o];
 
-    SolidImpact_sectionType = SECTIONS.Type[f];
-    SolidImpact_RES1 = SECTIONS.RES1[f];
-    SolidImpact_RES2 = SECTIONS.RES2[f];     
+    SolidImpact_sectionType = Sections.Type[f];
+    SolidImpact_RES1 = Sections.RES1[f];
+    SolidImpact_RES2 = Sections.RES2[f];     
 
-    SolidImpact_offset_U[SolidImpact_sectionType] = SECTIONS.UVERAB[f][0];
-    SolidImpact_offset_V[SolidImpact_sectionType] = SECTIONS.UVERAB[f][1];
-    SolidImpact_Elevation[SolidImpact_sectionType] = SECTIONS.UVERAB[f][2];
-    SolidImpact_Rotation[SolidImpact_sectionType] = SECTIONS.UVERAB[f][3];
-    SolidImpact_scale_U[SolidImpact_sectionType] = SECTIONS.UVERAB[f][4];
-    SolidImpact_scale_V[SolidImpact_sectionType] = SECTIONS.UVERAB[f][5];
+    SolidImpact_offset_U[SolidImpact_sectionType] = Sections.UVERAB[f][0];
+    SolidImpact_offset_V[SolidImpact_sectionType] = Sections.UVERAB[f][1];
+    SolidImpact_Elevation[SolidImpact_sectionType] = Sections.UVERAB[f][2];
+    SolidImpact_Rotation[SolidImpact_sectionType] = Sections.UVERAB[f][3];
+    SolidImpact_scale_U[SolidImpact_sectionType] = Sections.UVERAB[f][4];
+    SolidImpact_scale_V[SolidImpact_sectionType] = Sections.UVERAB[f][5];
 
     {
       if ((SolidImpact_Image.width != SolidImpact_RES1) || (SolidImpact_Image.height != SolidImpact_RES2)) {
         SolidImpact_Image = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
 
-        SECTIONS.SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
+        Sections.SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
       }
 
       SOLARCHVISION_calculate_SolidImpact_CurrentSection();
 
-      SECTIONS.SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2);
+      Sections.SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2);
     }
   }
 
@@ -31854,13 +32015,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   float val = 1;
 
-  for (int n = 0; n < SOLIDS.DEF.length; n++) {
+  for (int n = 0; n < Solids.DEF.length; n++) {
 
-    float r = Solid_get_value(n);
-    float d = Solid_get_Distance(n, x, y, z);
+    float r = Solids.get_value(n);
+    float d = Solids.get_Distance(n, x, y, z);
 
     //d *= pow(d, SolidImpact_Power);
-    d *= pow(d, SolidImpact_Power / float(SOLIDS.DEF.length));    
+    d *= pow(d, SolidImpact_Power / float(Solids.DEF.length));    
 
     if (val < 0) val *= abs(d - r);
     else {
@@ -31868,13 +32029,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
     }
   }
 
-  if (SOLIDS.DEF.length > 0) {
+  if (Solids.DEF.length > 0) {
     float val_sign = 1;
     if (val < 0) {
       val_sign = -1;
       val = abs(val);
     } 
-    val = pow(val, 1.0 / float(SOLIDS.DEF.length));
+    val = pow(val, 1.0 / float(Solids.DEF.length));
     val *= val_sign;
   } 
 
@@ -31894,13 +32055,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
 
   for (int o = 0; o < 2; o++) {
 
-    for (int n = 0; n < SOLIDS.DEF.length; n++) {
+    for (int n = 0; n < Solids.DEF.length; n++) {
 
-      float r = Solid_get_value(n);
-      float d = Solid_get_Distance(n, x + o * deltaX, y + o * deltaY, z);
+      float r = Solids.get_value(n);
+      float d = Solids.get_Distance(n, x + o * deltaX, y + o * deltaY, z);
 
       //d *= pow(d, SolidImpact_Power);
-      d *= pow(d, SolidImpact_Power / float(SOLIDS.DEF.length));
+      d *= pow(d, SolidImpact_Power / float(Solids.DEF.length));
 
       if (val[o] < 0) val[o] *= abs(d - r);
       else {
@@ -31908,13 +32069,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
       }
     }
 
-    if (SOLIDS.DEF.length > 0) {
+    if (Solids.DEF.length > 0) {
       float val_sign = 1;
       if (val[o] < 0) {
         val_sign = -1;
         val[o] = abs(val[o]);
       } 
-      val[o] = pow(val[o], 1.0 / float(SOLIDS.DEF.length));
+      val[o] = pow(val[o], 1.0 / float(Solids.DEF.length));
       val[o] *= val_sign;
     }
   }
@@ -31956,7 +32117,7 @@ void SOLARCHVISION_calculate_WindFlow () {
    int Section_RES1 = SolidImpact_RES1;
    int Section_RES2 = SolidImpact_RES2; 
    
-   float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
+   float[][] ImageVertex = Sections.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
    
    float[] SectionCorner_A = ImageVertex[1];
    float[] SectionCorner_B = ImageVertex[2];
@@ -32416,7 +32577,7 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
     int Section_RES1 = SolidImpact_RES1;
     int Section_RES2 = SolidImpact_RES2; 
 
-    float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+    float[][] ImageVertex = Sections.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
     float[] SectionCorner_A = ImageVertex[1];
     float[] SectionCorner_B = ImageVertex[2];
@@ -33970,10 +34131,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.LandPoints) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < LAND3D.n_I * LAND3D.n_J; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < Land3D.n_I * Land3D.n_J; OBJ_NUM++) {
 
-      int i = OBJ_NUM / LAND3D.n_J;
-      int j = OBJ_NUM % LAND3D.n_J;      
+      int i = OBJ_NUM / Land3D.n_J;
+      int j = OBJ_NUM % Land3D.n_J;      
 
       int break_loops = 0;
 
@@ -33984,9 +34145,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!  
 
-        float x = LAND3D.Mesh[i][j][0] * OBJECTS_scale;
-        float y = LAND3D.Mesh[i][j][1] * OBJECTS_scale;
-        float z = -LAND3D.Mesh[i][j][2] * OBJECTS_scale;
+        float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
+        float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
+        float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -34650,7 +34811,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.Solids) {
 
-    for (int f = 0; f < SOLIDS.Faces.length; f++) {
+    for (int f = 0; f < Solids.Faces.length; f++) {
 
       int break_loops = 0;
 
@@ -34659,17 +34820,17 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      int OBJ_NUM = f / SOLIDS.numDisplayFaces;
+      int OBJ_NUM = f / Solids.numDisplayFaces;
 
       //println(f, OBJ_NUM);
 
-      for (int j = 0; j < SOLIDS.Faces[f].length; j++) {
+      for (int j = 0; j < Solids.Faces[f].length; j++) {
 
-        int vNo = SOLIDS.Faces[f][j];
+        int vNo = Solids.Faces[f][j];
 
-        float x = SOLIDS.Vertices[vNo][0] * OBJECTS_scale;
-        float y = SOLIDS.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -SOLIDS.Vertices[vNo][2] * OBJECTS_scale;
+        float x = Solids.Vertices[vNo][0] * OBJECTS_scale;
+        float y = Solids.Vertices[vNo][1] * OBJECTS_scale;
+        float z = -Solids.Vertices[vNo][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -34742,7 +34903,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           selectedSolid_ids = (int[]) concat(selectedSolid_ids, newObject_id);
           
           // skip the same object's drawn faces
-          f += SOLIDS.numDisplayFaces - (f % SOLIDS.numDisplayFaces) - 1;          
+          f += Solids.numDisplayFaces - (f % Solids.numDisplayFaces) - 1;          
         }
       }
     }
@@ -34750,7 +34911,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.Sections) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < SECTIONS.Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < Sections.Faces.length; OBJ_NUM++) {
 
       int break_loops = 0;
 
@@ -34761,13 +34922,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       int f = OBJ_NUM;
 
-      for (int j = 0; j < SECTIONS.Faces[f].length; j++) {
+      for (int j = 0; j < Sections.Faces[f].length; j++) {
 
-        int vNo = SECTIONS.Faces[f][j];
+        int vNo = Sections.Faces[f][j];
 
-        float x = SECTIONS.Vertices[vNo][0] * OBJECTS_scale;
-        float y = SECTIONS.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -SECTIONS.Vertices[vNo][2] * OBJECTS_scale;
+        float x = Sections.Vertices[vNo][0] * OBJECTS_scale;
+        float y = Sections.Vertices[vNo][1] * OBJECTS_scale;
+        float z = -Sections.Vertices[vNo][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -34843,7 +35004,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.Cameras) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < CAMERAS.Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < Cameras.Faces.length; OBJ_NUM++) {
 
       int break_loops = 0;
 
@@ -34854,13 +35015,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       int f = OBJ_NUM;
 
-      for (int j = 0; j < CAMERAS.Faces[f].length; j++) {
+      for (int j = 0; j < Cameras.Faces[f].length; j++) {
 
-        int vNo = CAMERAS.Faces[f][j];
+        int vNo = Cameras.Faces[f][j];
 
-        float x = CAMERAS.Vertices[vNo][0] * OBJECTS_scale;
-        float y = CAMERAS.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -CAMERAS.Vertices[vNo][2] * OBJECTS_scale;
+        float x = Cameras.Vertices[vNo][0] * OBJECTS_scale;
+        float y = Cameras.Vertices[vNo][1] * OBJECTS_scale;
+        float z = -Cameras.Vertices[vNo][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -35354,8 +35515,8 @@ void mouseWheel (MouseEvent event) {
 
                 if (WIN3D.UI_TaskModifyParameter == 0) { // SkydomeSize
 
-                  if (Wheel_Value > 0) SKY3D.scale *= pow(2.0, 0.25);              
-                  if (Wheel_Value < 0) SKY3D.scale /= pow(2.0, 0.25);
+                  if (Wheel_Value > 0) Sky3D.scale *= pow(2.0, 0.25);              
+                  if (Wheel_Value < 0) Sky3D.scale /= pow(2.0, 0.25);
 
                   WIN3D.update = true;
                 }
@@ -35367,12 +35528,12 @@ void mouseWheel (MouseEvent event) {
 
                   if (Wheel_Value > 0) {
                     OBJECTS_scale *= pow(2.0, 0.25);
-                    SKY3D.scale *= pow(2.0, 0.25);
+                    Sky3D.scale *= pow(2.0, 0.25);
                   }              
 
                   if (Wheel_Value < 0) {
                     OBJECTS_scale /= pow(2.0, 0.25);
-                    SKY3D.scale /= pow(2.0, 0.25);
+                    Sky3D.scale /= pow(2.0, 0.25);
                   }      
 
                   WIN3D.update = true;
@@ -36419,23 +36580,23 @@ void mouseClicked () {
             }
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Load Land Mesh")) { 
-              LAND3D.update_textures();
+              Land3D.update_textures();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Load Land Texture")) { 
-              LAND3D.update_textures();
+              Land3D.update_textures();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Land Mesh")) { 
-              LAND3D.download_mesh();
+              Land3D.download_mesh();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Land Texture")) { 
-              LAND3D.download_textures();
+              Land3D.download_textures();
             }   
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Toroposphere")) {
-              TROPO3D.download_images();
+              Tropo3D.download_images();
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Download Aerial")) {
@@ -36645,25 +36806,25 @@ void mouseClicked () {
             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
-              LAND3D.Display_Surface = !LAND3D.Display_Surface;
+              Land3D.Display_Surface = !Land3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-              LAND3D.Display_Textures = !LAND3D.Display_Textures;
+              Land3D.Display_Textures = !Land3D.Display_Textures;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Points")) {
-              LAND3D.Display_Points = !LAND3D.Display_Points;
+              Land3D.Display_Points = !Land3D.Display_Points;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Depth")) {
-              LAND3D.Display_Depth = !LAND3D.Display_Depth;
+              Land3D.Display_Depth = !Land3D.Display_Depth;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -36725,7 +36886,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sky")) {
-              SKY3D.Display_Surface = !SKY3D.Display_Surface;
+              Sky3D.Display_Surface = !Sky3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -36743,25 +36904,25 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Star")) {
-              STAR3D.Display_Surface = !STAR3D.Display_Surface;
+              Star3D.Display_Surface = !Star3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Moon")) {
-              MOON3D.Display_Surface = !MOON3D.Display_Surface;
+              Moon3D.Display_Surface = !Moon3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Earth")) {
-              EARTH3D.Display_Surface = !EARTH3D.Display_Surface;
+              Earth3D.Display_Surface = !Earth3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Troposphere")) {
-              TROPO3D.Display_Surface = !TROPO3D.Display_Surface;
+              Tropo3D.Display_Surface = !Tropo3D.Display_Surface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -37311,7 +37472,7 @@ void mouseClicked () {
 
               Model3Ds.add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
 
-              WIN3D.CurrentCamera = CAMERAS.num - 1;
+              WIN3D.CurrentCamera = Cameras.num - 1;
               SOLARCHVISION_apply_currentCamera();
               SOLARCHVISION_modify_Viewport_Title();
 
@@ -37321,16 +37482,16 @@ void mouseClicked () {
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Camera >> Viewport")) {
 
-              CAMERAS.PPPSRRRF[0][0] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][0];
-              CAMERAS.PPPSRRRF[0][1] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][1];
-              CAMERAS.PPPSRRRF[0][2] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][2];
-              CAMERAS.PPPSRRRF[0][3] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][3];
-              CAMERAS.PPPSRRRF[0][4] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][4];
-              CAMERAS.PPPSRRRF[0][5] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][5];
-              CAMERAS.PPPSRRRF[0][6] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][6];
-              CAMERAS.PPPSRRRF[0][7] = CAMERAS.PPPSRRRF[WIN3D.CurrentCamera][7];
+              Cameras.PPPSRRRF[0][0] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][0];
+              Cameras.PPPSRRRF[0][1] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][1];
+              Cameras.PPPSRRRF[0][2] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][2];
+              Cameras.PPPSRRRF[0][3] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][3];
+              Cameras.PPPSRRRF[0][4] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][4];
+              Cameras.PPPSRRRF[0][5] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][5];
+              Cameras.PPPSRRRF[0][6] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][6];
+              Cameras.PPPSRRRF[0][7] = Cameras.PPPSRRRF[WIN3D.CurrentCamera][7];
 
-              CAMERAS.Type[0] = CAMERAS.Type[WIN3D.CurrentCamera];
+              Cameras.Type[0] = Cameras.Type[WIN3D.CurrentCamera];
 
               WIN3D.CurrentCamera = 0;
               SOLARCHVISION_modify_Viewport_Title();
@@ -37351,13 +37512,13 @@ void mouseClicked () {
             }
             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandMesh >> Group")) {
-              LAND3D.draw(TypeWindow.LandMesh);
+              Land3D.draw(TypeWindow.LandMesh);
               
               WIN3D.update = true;   
             }          
           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("LandGap >> Group")) {
-              LAND3D.draw(TypeWindow.LandGap);
+              Land3D.draw(TypeWindow.LandGap);
 
               WIN3D.update = true;   
             }                
@@ -38663,9 +38824,9 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory.Solids) {
   
-                    x1 = SOLIDS.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][0]; 
-                    y1 = SOLIDS.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][1]; 
-                    z1 = SOLIDS.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][2];
+                    x1 = Solids.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][0]; 
+                    y1 = Solids.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][1]; 
+                    z1 = Solids.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][2];
                   }                 
   
                   if (Current_ObjectCategory == ObjectCategory.Vertices) {
@@ -39069,9 +39230,9 @@ void mouseClicked () {
                   int keep_number_of_Groups = allGroups_num;
                   int keep_number_of_Model2Ds = Model2Ds.num;
                   int keep_number_of_Model1Ds = Model1Ds.num;
-                  int keep_number_of_Solids = SOLIDS.DEF.length;
-                  int keep_number_of_Sections = SECTIONS.num;
-                  int keep_number_of_Cameras = CAMERAS.num;
+                  int keep_number_of_Solids = Solids.DEF.length;
+                  int keep_number_of_Sections = Sections.num;
+                  int keep_number_of_Cameras = Cameras.num;
   
                   float x = RxP[1]; 
                   float y = RxP[2]; 
@@ -39493,7 +39654,7 @@ void mouseClicked () {
       
                           PVector GAxGB = AG.cross(BG);
       
-                          float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                          float[][] ImageVertex = Sections.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
       
                           float[] SectionCorner_A = ImageVertex[1];
                           float[] SectionCorner_B = ImageVertex[2];
@@ -39550,11 +39711,11 @@ void mouseClicked () {
       
                         Model3Ds.add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
     
-                        if (keep_number_of_Sections != SECTIONS.num) { // if any Section created during the process
+                        if (keep_number_of_Sections != Sections.num) { // if any Section created during the process
     
                           selectedSection_ids = new int [0];
     
-                          for (int o = keep_number_of_Sections; o < SECTIONS.num; o++) {
+                          for (int o = keep_number_of_Sections; o < Sections.num; o++) {
     
                             int[] newlyAddedSection = {o};
     
@@ -39590,11 +39751,11 @@ void mouseClicked () {
   
 
   
-                  if (keep_number_of_Solids != SOLIDS.DEF.length) { // if any Solid created during the process
+                  if (keep_number_of_Solids != Solids.DEF.length) { // if any Solid created during the process
   
                     selectedSolid_ids = new int [0];
   
-                    for (int o = keep_number_of_Solids; o < SOLIDS.DEF.length; o++) {
+                    for (int o = keep_number_of_Solids; o < Solids.DEF.length; o++) {
   
                       int[] newlyAddedSolid = {o};
   
@@ -39607,11 +39768,11 @@ void mouseClicked () {
   
   
   
-                  if (keep_number_of_Cameras != CAMERAS.num) { // if any Camera created during the process
+                  if (keep_number_of_Cameras != Cameras.num) { // if any Camera created during the process
   
                     selectedCamera_ids = new int [0];
   
-                    for (int o = keep_number_of_Cameras; o < CAMERAS.num; o++) {
+                    for (int o = keep_number_of_Cameras; o < Cameras.num; o++) {
   
                       int[] newlyAddedCamera = {o};
   
@@ -40125,12 +40286,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         int OBJ_NUM = selectedLandPoint_ids[o];
 
 
-        int i = OBJ_NUM / LAND3D.n_J;
-        int j = OBJ_NUM % LAND3D.n_J;
+        int i = OBJ_NUM / Land3D.n_J;
+        int j = OBJ_NUM % Land3D.n_J;
 
-        float x = LAND3D.Mesh[i][j][0] * OBJECTS_scale;
-        float y = LAND3D.Mesh[i][j][1] * OBJECTS_scale;
-        float z = -LAND3D.Mesh[i][j][2] * OBJECTS_scale;
+        float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
+        float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
+        float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -40166,13 +40327,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           beginShape();
 
-          for (int j = 0; j < CAMERAS.Faces[f].length; j++) {
+          for (int j = 0; j < Cameras.Faces[f].length; j++) {
 
-            int vNo = CAMERAS.Faces[f][j];
+            int vNo = Cameras.Faces[f][j];
 
-            float x = CAMERAS.Vertices[vNo][0] * OBJECTS_scale;
-            float y = CAMERAS.Vertices[vNo][1] * OBJECTS_scale;
-            float z = -CAMERAS.Vertices[vNo][2] * OBJECTS_scale;
+            float x = Cameras.Vertices[vNo][0] * OBJECTS_scale;
+            float y = Cameras.Vertices[vNo][1] * OBJECTS_scale;
+            float z = -Cameras.Vertices[vNo][2] * OBJECTS_scale;
 
             float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -40211,13 +40372,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           beginShape();
 
-          for (int j = 0; j < SECTIONS.Faces[f].length; j++) {
+          for (int j = 0; j < Sections.Faces[f].length; j++) {
 
-            int vNo = SECTIONS.Faces[f][j];
+            int vNo = Sections.Faces[f][j];
 
-            float x = SECTIONS.Vertices[vNo][0] * OBJECTS_scale;
-            float y = SECTIONS.Vertices[vNo][1] * OBJECTS_scale;
-            float z = -SECTIONS.Vertices[vNo][2] * OBJECTS_scale;
+            float x = Sections.Vertices[vNo][0] * OBJECTS_scale;
+            float y = Sections.Vertices[vNo][1] * OBJECTS_scale;
+            float z = -Sections.Vertices[vNo][2] * OBJECTS_scale;
 
             float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -40254,19 +40415,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           int OBJ_NUM = selectedSolid_ids[o];
 
-          for (int plane_type = 0; plane_type < SOLIDS.numDisplayFaces; plane_type++) {          
+          for (int plane_type = 0; plane_type < Solids.numDisplayFaces; plane_type++) {          
 
-            int f = OBJ_NUM * SOLIDS.numDisplayFaces + plane_type; 
+            int f = OBJ_NUM * Solids.numDisplayFaces + plane_type; 
 
             beginShape();
 
-            for (int j = 0; j < SOLIDS.Faces[f].length; j++) {
+            for (int j = 0; j < Solids.Faces[f].length; j++) {
 
-              int vNo = SOLIDS.Faces[f][j];
+              int vNo = Solids.Faces[f][j];
 
-              float x = SOLIDS.Vertices[vNo][0] * OBJECTS_scale;
-              float y = SOLIDS.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -SOLIDS.Vertices[vNo][2] * OBJECTS_scale;
+              float x = Solids.Vertices[vNo][0] * OBJECTS_scale;
+              float y = Solids.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -Solids.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -40759,23 +40920,23 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         for (int q = allGroups_Solids[OBJ_NUM][0]; q <= allGroups_Solids[OBJ_NUM][1]; q++) {
 
-          if ((0 < q) && (q < SOLIDS.Faces.length)) {
+          if ((0 < q) && (q < Solids.Faces.length)) {
 
-            for (int plane_type = 0; plane_type < SOLIDS.numDisplayFaces; plane_type++) {          
+            for (int plane_type = 0; plane_type < Solids.numDisplayFaces; plane_type++) {          
 
-              int f = (q - 1) * SOLIDS.numDisplayFaces + plane_type + 1; 
+              int f = (q - 1) * Solids.numDisplayFaces + plane_type + 1; 
 
-              if ((0 <= f) && (f < SOLIDS.Faces.length)) {               
+              if ((0 <= f) && (f < Solids.Faces.length)) {               
 
                 beginShape();
 
-                for (int j = 0; j < SOLIDS.Faces[f].length; j++) {
+                for (int j = 0; j < Solids.Faces[f].length; j++) {
 
-                  int vNo = SOLIDS.Faces[f][j];
+                  int vNo = Solids.Faces[f][j];
 
-                  float x = SOLIDS.Vertices[vNo][0] * OBJECTS_scale;
-                  float y = SOLIDS.Vertices[vNo][1] * OBJECTS_scale;
-                  float z = -SOLIDS.Vertices[vNo][2] * OBJECTS_scale;
+                  float x = Solids.Vertices[vNo][0] * OBJECTS_scale;
+                  float y = Solids.Vertices[vNo][1] * OBJECTS_scale;
+                  float z = -Solids.Vertices[vNo][2] * OBJECTS_scale;
 
                   float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -41745,9 +41906,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             }
             
 
-            if (LAND3D.Display_Surface) {
+            if (Land3D.Display_Surface) {
               
-              int Tessellation = LAND3D.Tessellation;
+              int Tessellation = Land3D.Tessellation;
               if (WIN3D.FacesShade == SHADE.Surface_Base) {
                 Tessellation = 0;
               }
@@ -41756,26 +41917,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
         
         
-              for (int Li = LAND3D.Surface_SkipStart; Li < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; Li++) {
-                for (int Lj = 0; Lj < LAND3D.n_J - 1; Lj++) {
+              for (int Li = Land3D.Surface_SkipStart; Li < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; Li++) {
+                for (int Lj = 0; Lj < Land3D.n_J - 1; Lj++) {
         
                   float[][] base_Vertices = new float [4][3];
         
-                  base_Vertices[0][0] = LAND3D.Mesh[Li][Lj][0];
-                  base_Vertices[0][1] = LAND3D.Mesh[Li][Lj][1];
-                  base_Vertices[0][2] = LAND3D.Mesh[Li][Lj][2];
+                  base_Vertices[0][0] = Land3D.Mesh[Li][Lj][0];
+                  base_Vertices[0][1] = Land3D.Mesh[Li][Lj][1];
+                  base_Vertices[0][2] = Land3D.Mesh[Li][Lj][2];
         
-                  base_Vertices[1][0] = LAND3D.Mesh[Li+1][Lj][0];
-                  base_Vertices[1][1] = LAND3D.Mesh[Li+1][Lj][1];
-                  base_Vertices[1][2] = LAND3D.Mesh[Li+1][Lj][2];
+                  base_Vertices[1][0] = Land3D.Mesh[Li+1][Lj][0];
+                  base_Vertices[1][1] = Land3D.Mesh[Li+1][Lj][1];
+                  base_Vertices[1][2] = Land3D.Mesh[Li+1][Lj][2];
         
-                  base_Vertices[2][0] = LAND3D.Mesh[Li+1][Lj+1][0];
-                  base_Vertices[2][1] = LAND3D.Mesh[Li+1][Lj+1][1];
-                  base_Vertices[2][2] = LAND3D.Mesh[Li+1][Lj+1][2];
+                  base_Vertices[2][0] = Land3D.Mesh[Li+1][Lj+1][0];
+                  base_Vertices[2][1] = Land3D.Mesh[Li+1][Lj+1][1];
+                  base_Vertices[2][2] = Land3D.Mesh[Li+1][Lj+1][2];
         
-                  base_Vertices[3][0] = LAND3D.Mesh[Li][Lj+1][0];
-                  base_Vertices[3][1] = LAND3D.Mesh[Li][Lj+1][1];
-                  base_Vertices[3][2] = LAND3D.Mesh[Li][Lj+1][2];        
+                  base_Vertices[3][0] = Land3D.Mesh[Li][Lj+1][0];
+                  base_Vertices[3][1] = Land3D.Mesh[Li][Lj+1][1];
+                  base_Vertices[3][2] = Land3D.Mesh[Li][Lj+1][2];        
         
                   for (int n = 0; n < TotalSubNo; n++) {
 
@@ -42358,9 +42519,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }
           
           
-          if (LAND3D.Display_Surface) {
+          if (Land3D.Display_Surface) {
             
-            int Tessellation = LAND3D.Tessellation;
+            int Tessellation = Land3D.Tessellation;
             if (WIN3D.FacesShade == SHADE.Surface_Base) {
               Tessellation = 0;
             }
@@ -42369,26 +42530,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
       
       
-            for (int Li = LAND3D.Surface_SkipStart; Li < LAND3D.n_I - 1 - LAND3D.Surface_SkipEnd; Li++) {
-              for (int Lj = 0; Lj < LAND3D.n_J - 1; Lj++) {
+            for (int Li = Land3D.Surface_SkipStart; Li < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; Li++) {
+              for (int Lj = 0; Lj < Land3D.n_J - 1; Lj++) {
       
                 float[][] base_Vertices = new float [4][3];
       
-                base_Vertices[0][0] = LAND3D.Mesh[Li][Lj][0];
-                base_Vertices[0][1] = LAND3D.Mesh[Li][Lj][1];
-                base_Vertices[0][2] = LAND3D.Mesh[Li][Lj][2];
+                base_Vertices[0][0] = Land3D.Mesh[Li][Lj][0];
+                base_Vertices[0][1] = Land3D.Mesh[Li][Lj][1];
+                base_Vertices[0][2] = Land3D.Mesh[Li][Lj][2];
       
-                base_Vertices[1][0] = LAND3D.Mesh[Li+1][Lj][0];
-                base_Vertices[1][1] = LAND3D.Mesh[Li+1][Lj][1];
-                base_Vertices[1][2] = LAND3D.Mesh[Li+1][Lj][2];
+                base_Vertices[1][0] = Land3D.Mesh[Li+1][Lj][0];
+                base_Vertices[1][1] = Land3D.Mesh[Li+1][Lj][1];
+                base_Vertices[1][2] = Land3D.Mesh[Li+1][Lj][2];
       
-                base_Vertices[2][0] = LAND3D.Mesh[Li+1][Lj+1][0];
-                base_Vertices[2][1] = LAND3D.Mesh[Li+1][Lj+1][1];
-                base_Vertices[2][2] = LAND3D.Mesh[Li+1][Lj+1][2];
+                base_Vertices[2][0] = Land3D.Mesh[Li+1][Lj+1][0];
+                base_Vertices[2][1] = Land3D.Mesh[Li+1][Lj+1][1];
+                base_Vertices[2][2] = Land3D.Mesh[Li+1][Lj+1][2];
       
-                base_Vertices[3][0] = LAND3D.Mesh[Li][Lj+1][0];
-                base_Vertices[3][1] = LAND3D.Mesh[Li][Lj+1][1];
-                base_Vertices[3][2] = LAND3D.Mesh[Li][Lj+1][2];        
+                base_Vertices[3][0] = Land3D.Mesh[Li][Lj+1][0];
+                base_Vertices[3][1] = Land3D.Mesh[Li][Lj+1][1];
+                base_Vertices[3][2] = Land3D.Mesh[Li][Lj+1][2];        
       
                 for (int n = 0; n < TotalSubNo; n++) {
 
@@ -42880,20 +43041,20 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.Cameras) {
       int n = theVertices[q];
 
-      if (n < CAMERAS.num) {
+      if (n < Cameras.num) {
 
-        float Camera_X = CAMERAS.PPPSRRRF[n][0];
-        float Camera_Y = CAMERAS.PPPSRRRF[n][1];
-        float Camera_Z = CAMERAS.PPPSRRRF[n][2];
-        float Camera_S = CAMERAS.PPPSRRRF[n][3];
-        float Camera_RX = CAMERAS.PPPSRRRF[n][4];
-        float Camera_RY = CAMERAS.PPPSRRRF[n][5];
-        float Camera_RZ = CAMERAS.PPPSRRRF[n][6];
-        float Camera_ZOOM = CAMERAS.PPPSRRRF[n][7];
+        float Camera_X = Cameras.PPPSRRRF[n][0];
+        float Camera_Y = Cameras.PPPSRRRF[n][1];
+        float Camera_Z = Cameras.PPPSRRRF[n][2];
+        float Camera_S = Cameras.PPPSRRRF[n][3];
+        float Camera_RX = Cameras.PPPSRRRF[n][4];
+        float Camera_RY = Cameras.PPPSRRRF[n][5];
+        float Camera_RZ = Cameras.PPPSRRRF[n][6];
+        float Camera_ZOOM = Cameras.PPPSRRRF[n][7];
 
-        int Camera_Type = CAMERAS.Type[n];
+        int Camera_Type = Cameras.Type[n];
 
-        float[][] ImageVertex = CAMERAS.getCorners(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+        float[][] ImageVertex = Cameras.getCorners(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
 
         // the first vertex is the Camera point
         x = ImageVertex[0][0]; 
@@ -42905,20 +43066,20 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.Sections) {
       int n = theVertices[q];
 
-      if (n < SECTIONS.num) {
+      if (n < Sections.num) {
 
-        float Section_offset_U = SECTIONS.UVERAB[n][0];
-        float Section_offset_V = SECTIONS.UVERAB[n][1];
-        float Section_Elevation = SECTIONS.UVERAB[n][2];
-        float Section_Rotation = SECTIONS.UVERAB[n][3];
-        float Section_scale_U = SECTIONS.UVERAB[n][4];
-        float Section_scale_V = SECTIONS.UVERAB[n][5];
+        float Section_offset_U = Sections.UVERAB[n][0];
+        float Section_offset_V = Sections.UVERAB[n][1];
+        float Section_Elevation = Sections.UVERAB[n][2];
+        float Section_Rotation = Sections.UVERAB[n][3];
+        float Section_scale_U = Sections.UVERAB[n][4];
+        float Section_scale_V = Sections.UVERAB[n][5];
 
-        int Section_Type = SECTIONS.Type[n];
-        int Section_RES1 = SECTIONS.RES1[n];
-        int Section_RES2 = SECTIONS.RES2[n];
+        int Section_Type = Sections.Type[n];
+        int Section_RES1 = Sections.RES1[n];
+        int Section_RES2 = Sections.RES2[n];
 
-        float[][] ImageVertex = SECTIONS.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+        float[][] ImageVertex = Sections.getCorners(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
         // the first vertex is the center of Section plane
         x = ImageVertex[0][0]; 
@@ -42930,23 +43091,23 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.Solids) {
       int n = theVertices[q];
 
-      if (n < SOLIDS.DEF.length) {
+      if (n < Solids.DEF.length) {
 
-        float Solid_posX = Solid_get_posX(n);
-        float Solid_posY = Solid_get_posY(n);
-        float Solid_posZ = Solid_get_posZ(n);
-        float Solid_powX = Solid_get_powX(n);
-        float Solid_powY = Solid_get_powY(n);
-        float Solid_powZ = Solid_get_powZ(n);
-        float Solid_scaleX = Solid_get_scaleX(n);
-        float Solid_scaleY = Solid_get_scaleY(n);
-        float Solid_scaleZ = Solid_get_scaleZ(n);
-        float Solid_rotX = Solid_get_rotX(n);
-        float Solid_rotY = Solid_get_rotY(n);
-        float Solid_rotZ = Solid_get_rotZ(n);
-        float Solid_value = Solid_get_value(n);
+        float Solid_posX = Solids.get_posX(n);
+        float Solid_posY = Solids.get_posY(n);
+        float Solid_posZ = Solids.get_posZ(n);
+        float Solid_powX = Solids.get_powX(n);
+        float Solid_powY = Solids.get_powY(n);
+        float Solid_powZ = Solids.get_powZ(n);
+        float Solid_scaleX = Solids.get_scaleX(n);
+        float Solid_scaleY = Solids.get_scaleY(n);
+        float Solid_scaleZ = Solids.get_scaleZ(n);
+        float Solid_rotX = Solids.get_rotX(n);
+        float Solid_rotY = Solids.get_rotY(n);
+        float Solid_rotZ = Solids.get_rotZ(n);
+        float Solid_value = Solids.get_value(n);
 
-        float[][] ImageVertex = SOLIDS.getCorners(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+        float[][] ImageVertex = Solids.getCorners(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
 
         // the first vertex is the center of Solid plane
         x = ImageVertex[0][0]; 
@@ -42982,12 +43143,12 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
       int OBJ_NUM = n;
 
-      int the_i = OBJ_NUM / LAND3D.n_J;
-      int the_j = OBJ_NUM % LAND3D.n_J;
+      int the_i = OBJ_NUM / Land3D.n_J;
+      int the_j = OBJ_NUM % Land3D.n_J;
 
-      x = LAND3D.Mesh[the_i][the_j][0];
-      y = LAND3D.Mesh[the_i][the_j][1];
-      z = LAND3D.Mesh[the_i][the_j][2];
+      x = Land3D.Mesh[the_i][the_j][0];
+      y = Land3D.Mesh[the_i][the_j][1];
+      z = Land3D.Mesh[the_i][the_j][2];
 
     }             
 
@@ -43154,13 +43315,13 @@ void SOLARCHVISION_move_selectedGroups (float dx, float dy, float dz) {
     }
 
     for (int f = allGroups_Solids[OBJ_NUM][0]; f <= allGroups_Solids[OBJ_NUM][1]; f++) {
-      if ((0 <= f) && (f < SOLIDS.DEF.length)) {
+      if ((0 <= f) && (f < Solids.DEF.length)) {
 
-        float Solid_posX = Solid_get_posX(f);
-        float Solid_posY = Solid_get_posY(f);
-        float Solid_posZ = Solid_get_posZ(f);
+        float Solid_posX = Solids.get_posX(f);
+        float Solid_posY = Solids.get_posY(f);
+        float Solid_posZ = Solids.get_posZ(f);
 
-        Solid_updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+        Solids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
 
         Solids_updated = 1;
       }
@@ -43395,11 +43556,11 @@ void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
     }         
 
     for (int f = allGroups_Solids[OBJ_NUM][0]; f <= allGroups_Solids[OBJ_NUM][1]; f++) {
-      if ((0 <= f) && (f < SOLIDS.DEF.length)) {
+      if ((0 <= f) && (f < Solids.DEF.length)) {
 
-        float x = Solid_get_posX(f);
-        float y = Solid_get_posY(f);
-        float z = Solid_get_posZ(f);
+        float x = Solids.get_posX(f);
+        float y = Solids.get_posY(f);
+        float z = Solids.get_posZ(f);
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43438,15 +43599,15 @@ void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
         z = B[2];
 
 
-        Solid_updatePosition(f, x, y, z);
+        Solids.updatePosition(f, x, y, z);
 
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Note: these rotations could be translated to locals to avoid problems!
         if (the_Vector == 2) {
-          Solid_RotateZ(f, r * 180 / PI);
+          Solids.RotateZ(f, r * 180 / PI);
         } else if (the_Vector == 1) {
-          Solid_RotateY(f, r * 180 / PI);
+          Solids.RotateY(f, r * 180 / PI);
         } else if (the_Vector == 0) {
-          Solid_RotateX(f, r * 180 / PI);
+          Solids.RotateX(f, r * 180 / PI);
         }
 
         Solids_updated = 1;
@@ -43585,11 +43746,11 @@ void SOLARCHVISION_scale_selectedGroups (float x0, float y0, float z0, float sx,
     }     
 
     for (int f = allGroups_Solids[OBJ_NUM][0]; f <= allGroups_Solids[OBJ_NUM][1]; f++) {
-      if ((0 <= f) && (f < SOLIDS.DEF.length)) {
+      if ((0 <= f) && (f < Solids.DEF.length)) {
 
-        float x = Solid_get_posX(f);
-        float y = Solid_get_posY(f);
-        float z = Solid_get_posZ(f);
+        float x = Solids.get_posX(f);
+        float y = Solids.get_posY(f);
+        float z = Solids.get_posZ(f);
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43603,9 +43764,9 @@ void SOLARCHVISION_scale_selectedGroups (float x0, float y0, float z0, float sx,
         y = B[1];
         z = B[2];
 
-        Solid_updatePosition(f, x, y, z);
+        Solids.updatePosition(f, x, y, z);
 
-        Solid_Scale(f, sx, sy, sz);
+        Solids.Scale(f, sx, sy, sz);
 
         Solids_updated = 1;
       }
@@ -44069,11 +44230,11 @@ void SOLARCHVISION_move_selectedSolids (float dx, float dy, float dz) {
 
     int f = selectedSolid_ids[q];
 
-    float Solid_posX = Solid_get_posX(f);
-    float Solid_posY = Solid_get_posY(f);
-    float Solid_posZ = Solid_get_posZ(f);
+    float Solid_posX = Solids.get_posX(f);
+    float Solid_posY = Solids.get_posY(f);
+    float Solid_posZ = Solids.get_posZ(f);
 
-    Solid_updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+    Solids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
 
     Solids_updated = 1;
   }
@@ -44090,9 +44251,9 @@ void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r,
 
     int f = selectedSolid_ids[q];
 
-    float Solid_posX = Solid_get_posX(f);
-    float Solid_posY = Solid_get_posY(f);
-    float Solid_posZ = Solid_get_posZ(f);
+    float Solid_posX = Solids.get_posX(f);
+    float Solid_posY = Solids.get_posY(f);
+    float Solid_posZ = Solids.get_posZ(f);
 
 
     float x = Solid_posX - x0; 
@@ -44100,17 +44261,17 @@ void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r,
     float z = Solid_posZ - z0;
 
     if (the_Vector == 2) {
-      Solid_updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+      Solids.updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
 
-      Solid_RotateZ(f, r * 180 / PI);
+      Solids.RotateZ(f, r * 180 / PI);
     } else if (the_Vector == 1) {
-      Solid_updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+      Solids.updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
 
-      Solid_RotateY(f, r * 180 / PI);
+      Solids.RotateY(f, r * 180 / PI);
     } else if (the_Vector == 0) {
-      Solid_updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+      Solids.updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
 
-      Solid_RotateX(f, r * 180 / PI);
+      Solids.RotateX(f, r * 180 / PI);
     }
 
     Solids_updated = 1;
@@ -44128,9 +44289,9 @@ void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx,
 
     int f = selectedSolid_ids[q];
 
-    float x = Solid_get_posX(f);
-    float y = Solid_get_posY(f);
-    float z = Solid_get_posZ(f);
+    float x = Solids.get_posX(f);
+    float y = Solids.get_posY(f);
+    float z = Solids.get_posZ(f);
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -44144,9 +44305,9 @@ void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx,
     y = B[1];
     z = B[2];
 
-    Solid_updatePosition(f, x, y, z);
+    Solids.updatePosition(f, x, y, z);
 
-    Solid_Scale(f, sx, sy, sz);    
+    Solids.Scale(f, sx, sy, sz);    
 
     Solids_updated = 1;
   }
@@ -44161,9 +44322,9 @@ void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
 
     int f = selectedSection_ids[q];
 
-    SECTIONS.UVERAB[f][0] += dx;
-    SECTIONS.UVERAB[f][1] += dy;
-    SECTIONS.UVERAB[f][2] += dz;
+    Sections.UVERAB[f][0] += dx;
+    Sections.UVERAB[f][1] += dy;
+    Sections.UVERAB[f][2] += dz;
   }
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections();
@@ -44179,7 +44340,7 @@ void SOLARCHVISION_rotate_selectedSections (float r) {
 
     int f = selectedSection_ids[q];
 
-    SECTIONS.UVERAB[f][3] += r * 180.0 / PI;
+    Sections.UVERAB[f][3] += r * 180.0 / PI;
   }
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
@@ -44194,8 +44355,8 @@ void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
 
     int f = selectedSection_ids[q];
 
-    SECTIONS.UVERAB[f][4] *= sx;
-    SECTIONS.UVERAB[f][5] *= sy;
+    Sections.UVERAB[f][4] *= sx;
+    Sections.UVERAB[f][5] *= sy;
   }
 
   SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
@@ -44216,9 +44377,9 @@ void SOLARCHVISION_move_selectedCameras (float dx, float dy, float dz) {
 
     int f = selectedCamera_ids[q];
 
-    CAMERAS.PPPSRRRF[f][0] += dx; 
-    CAMERAS.PPPSRRRF[f][1] += dy;
-    CAMERAS.PPPSRRRF[f][2] += dz;
+    Cameras.PPPSRRRF[f][0] += dx; 
+    Cameras.PPPSRRRF[f][1] += dy;
+    Cameras.PPPSRRRF[f][2] += dz;
 
     if (f == WIN3D.CurrentCamera) SOLARCHVISION_apply_currentCamera();
   }
@@ -44235,22 +44396,22 @@ void SOLARCHVISION_rotate_selectedCameras (float x0, float y0, float z0, float r
 
     int f = selectedCamera_ids[q];
 
-    float x = CAMERAS.PPPSRRRF[f][0] - x0; 
-    float y = CAMERAS.PPPSRRRF[f][1] - y0; 
-    float z = CAMERAS.PPPSRRRF[f][2] - z0;
+    float x = Cameras.PPPSRRRF[f][0] - x0; 
+    float y = Cameras.PPPSRRRF[f][1] - y0; 
+    float z = Cameras.PPPSRRRF[f][2] - z0;
 
     if (the_Vector == 2) {
-      CAMERAS.PPPSRRRF[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-      CAMERAS.PPPSRRRF[f][1] = y0 + (x * sin(r) + y * cos(r));
-      CAMERAS.PPPSRRRF[f][2] = z0 + (z);
+      Cameras.PPPSRRRF[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      Cameras.PPPSRRRF[f][1] = y0 + (x * sin(r) + y * cos(r));
+      Cameras.PPPSRRRF[f][2] = z0 + (z);
     } else if (the_Vector == 1) {
-      CAMERAS.PPPSRRRF[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-      CAMERAS.PPPSRRRF[f][1] = y0 + (y);
-      CAMERAS.PPPSRRRF[f][2] = z0 + (z * cos(r) - x * sin(r));
+      Cameras.PPPSRRRF[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      Cameras.PPPSRRRF[f][1] = y0 + (y);
+      Cameras.PPPSRRRF[f][2] = z0 + (z * cos(r) - x * sin(r));
     } else if (the_Vector == 0) {
-      CAMERAS.PPPSRRRF[f][0] = x0 + (x); 
-      CAMERAS.PPPSRRRF[f][1] = y0 + (y * cos(r) - z * sin(r));
-      CAMERAS.PPPSRRRF[f][2] = z0 + (y * sin(r) + z * cos(r));
+      Cameras.PPPSRRRF[f][0] = x0 + (x); 
+      Cameras.PPPSRRRF[f][1] = y0 + (y * cos(r) - z * sin(r));
+      Cameras.PPPSRRRF[f][2] = z0 + (y * sin(r) + z * cos(r));
     }    
 
     if (f == WIN3D.CurrentCamera) SOLARCHVISION_apply_currentCamera();
@@ -44269,13 +44430,13 @@ void SOLARCHVISION_scale_selectedCameras (float x0, float y0, float z0, float sx
 
     int f = selectedCamera_ids[q];
 
-    float x = CAMERAS.PPPSRRRF[f][0] - x0; 
-    float y = CAMERAS.PPPSRRRF[f][1] - y0; 
-    float z = CAMERAS.PPPSRRRF[f][2] - z0;
+    float x = Cameras.PPPSRRRF[f][0] - x0; 
+    float y = Cameras.PPPSRRRF[f][1] - y0; 
+    float z = Cameras.PPPSRRRF[f][2] - z0;
 
-    CAMERAS.PPPSRRRF[f][0] = x0 + sx * x; 
-    CAMERAS.PPPSRRRF[f][1] = y0 + sy * y;
-    CAMERAS.PPPSRRRF[f][2] = z0 + sz * z;
+    Cameras.PPPSRRRF[f][0] = x0 + sx * x; 
+    Cameras.PPPSRRRF[f][1] = y0 + sy * y;
+    Cameras.PPPSRRRF[f][2] = z0 + sz * z;
 
     if (f == WIN3D.CurrentCamera) SOLARCHVISION_apply_currentCamera();
   }
@@ -44288,10 +44449,10 @@ void SOLARCHVISION_flatten_selectedLandPoints () {
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND3D.n_J;
-    int j = f % LAND3D.n_J;
+    int i = f / Land3D.n_J;
+    int j = f % Land3D.n_J;
 
-    LAND3D.Mesh[i][j][2] = 0;
+    Land3D.Mesh[i][j][2] = 0;
 
   }
 }
@@ -44304,12 +44465,12 @@ void SOLARCHVISION_move_selectedLandPoints (float dx, float dy, float dz) {
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND3D.n_J;
-    int j = f % LAND3D.n_J;
+    int i = f / Land3D.n_J;
+    int j = f % Land3D.n_J;
 
-    LAND3D.Mesh[i][j][0] += dx; 
-    LAND3D.Mesh[i][j][1] += dy;
-    LAND3D.Mesh[i][j][2] += dz;
+    Land3D.Mesh[i][j][0] += dx; 
+    Land3D.Mesh[i][j][1] += dy;
+    Land3D.Mesh[i][j][2] += dz;
   }
 }
 
@@ -44320,25 +44481,25 @@ void SOLARCHVISION_rotate_selectedLandPoints (float x0, float y0, float z0, floa
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND3D.n_J;
-    int j = f % LAND3D.n_J;
+    int i = f / Land3D.n_J;
+    int j = f % Land3D.n_J;
 
-    float x = LAND3D.Mesh[i][j][0] - x0; 
-    float y = LAND3D.Mesh[i][j][1] - y0; 
-    float z = LAND3D.Mesh[i][j][2] - z0;
+    float x = Land3D.Mesh[i][j][0] - x0; 
+    float y = Land3D.Mesh[i][j][1] - y0; 
+    float z = Land3D.Mesh[i][j][2] - z0;
 
     if (the_Vector == 2) {
-      LAND3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
-      LAND3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
-      LAND3D.Mesh[i][j][2] = z0 + (z);
+      Land3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
+      Land3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
+      Land3D.Mesh[i][j][2] = z0 + (z);
     } else if (the_Vector == 1) {
-      LAND3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
-      LAND3D.Mesh[i][j][1] = y0 + (y);
-      LAND3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
+      Land3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
+      Land3D.Mesh[i][j][1] = y0 + (y);
+      Land3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
     } else if (the_Vector == 0) {
-      LAND3D.Mesh[i][j][0] = x0 + (x); 
-      LAND3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
-      LAND3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
+      Land3D.Mesh[i][j][0] = x0 + (x); 
+      Land3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
+      Land3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
     }
   }
 }
@@ -44350,12 +44511,12 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
 
     int f = selectedLandPoint_ids[q];
 
-    int i = f / LAND3D.n_J;
-    int j = f % LAND3D.n_J;
+    int i = f / Land3D.n_J;
+    int j = f % Land3D.n_J;
 
-    float x = LAND3D.Mesh[i][j][0];
-    float y = LAND3D.Mesh[i][j][1]; 
-    float z = LAND3D.Mesh[i][j][2];
+    float x = Land3D.Mesh[i][j][0];
+    float y = Land3D.Mesh[i][j][1]; 
+    float z = Land3D.Mesh[i][j][2];
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -44369,9 +44530,9 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
     y = B[1];
     z = B[2];
 
-    LAND3D.Mesh[i][j][0] = x; 
-    LAND3D.Mesh[i][j][1] = y;
-    LAND3D.Mesh[i][j][2] = z;
+    Land3D.Mesh[i][j][0] = x; 
+    Land3D.Mesh[i][j][1] = y;
+    Land3D.Mesh[i][j][2] = z;
 
   }
 }
@@ -44736,13 +44897,13 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int f = OBJ_NUM;
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = CAMERAS.Type[f];
+        int n = Cameras.Type[f];
         n += p;
         if (n > 1) n = 0;
         if (n < 0) n = 1;
-        CAMERAS.Type[f] = n;         
+        Cameras.Type[f] = n;         
 
-        if (f == WIN3D.CurrentCamera) WIN3D.ViewType = CAMERAS.Type[f];
+        if (f == WIN3D.CurrentCamera) WIN3D.ViewType = Cameras.Type[f];
       }
     }
   }    
@@ -44758,25 +44919,25 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int f = OBJ_NUM;
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = SECTIONS.Type[f];
+        int n = Sections.Type[f];
         n += p;
         if (n > 3) n = 0;
         if (n < 0) n = 3;
-        SECTIONS.Type[f] = n;         
+        Sections.Type[f] = n;         
 
         Solids_updated = 1;
       }        
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-        int n = SECTIONS.RES1[f];
+        int n = Sections.RES1[f];
         if (p > 0) n *= 2;
         if (p < 0) n /= 2;
 
         if (n > 1600) n = 100;
         if (n < 100) n = 1600;
-        SECTIONS.RES1[f] = n;
+        Sections.RES1[f] = n;
 
-        SECTIONS.RES2[f] = n; // also modifying the other one
+        Sections.RES2[f] = n; // also modifying the other one
 
         println("RES:", n);
 
@@ -44802,9 +44963,9 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       if ((WIN3D.UI_CurrentTask == UITASK.PowerX) ||  (WIN3D.UI_CurrentTask == UITASK.PowerY) ||  (WIN3D.UI_CurrentTask == UITASK.PowerZ) ||  (WIN3D.UI_CurrentTask == UITASK.PowerAll)) {
 
 
-        float Solid_powX = Solid_get_powX(f);
-        float Solid_powY = Solid_get_powY(f);
-        float Solid_powZ = Solid_get_powZ(f);
+        float Solid_powX = Solids.get_powX(f);
+        float Solid_powY = Solids.get_powY(f);
+        float Solid_powZ = Solids.get_powZ(f);
 
 
         float n = 2;
@@ -44831,7 +44992,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Solid_powZ = n;
         } 
 
-        Solid_updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
+        Solids.updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
 
         Solids_updated = 1;
       }
@@ -46981,25 +47142,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
             if (UI_BAR_a_Items[i][0].equals("Display")) {
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Mesh")) {
-                if (LAND3D.Display_Surface == false) {
+                if (Land3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }       
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (LAND3D.Display_Textures == false) {
+                if (Land3D.Display_Textures == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
-                if (LAND3D.Display_Points == false) {
+                if (Land3D.Display_Points == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
-                if (LAND3D.Display_Depth == false) {
+                if (Land3D.Display_Depth == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -47061,7 +47222,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }                
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sky")) {
-                if (SKY3D.Display_Surface == false) {
+                if (Sky3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -47079,25 +47240,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Star")) {
-                if (STAR3D.Display_Surface == false) {
+                if (Star3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Moon")) {
-                if (MOON3D.Display_Surface == false) {
+                if (Moon3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Earth")) {
-                if (EARTH3D.Display_Surface == false) {
+                if (Earth3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Troposphere")) {
-                if (TROPO3D.Display_Surface == false) {
+                if (Tropo3D.Display_Surface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49447,12 +49608,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("SunPath_Pallet_PASSIVE_CLR", SunPath_Pallet_PASSIVE_CLR);
   newChild1.setInt("SunPath_Pallet_PASSIVE_DIR", SunPath_Pallet_PASSIVE_DIR);
   newChild1.setFloat("SunPath_Pallet_PASSIVE_MLT", SunPath_Pallet_PASSIVE_MLT);
-  newChild1.setInt("SKY3D.Pallet_ACTIVE_CLR", SKY3D.Pallet_ACTIVE_CLR);
-  newChild1.setInt("SKY3D.Pallet_ACTIVE_DIR", SKY3D.Pallet_ACTIVE_DIR);
-  newChild1.setFloat("SKY3D.Pallet_ACTIVE_MLT", SKY3D.Pallet_ACTIVE_MLT);
-  newChild1.setInt("SKY3D.Pallet_PASSIVE_CLR", SKY3D.Pallet_PASSIVE_CLR);
-  newChild1.setInt("SKY3D.Pallet_PASSIVE_DIR", SKY3D.Pallet_PASSIVE_DIR);
-  newChild1.setFloat("SKY3D.Pallet_PASSIVE_MLT", SKY3D.Pallet_PASSIVE_MLT);
+  newChild1.setInt("Sky3D.Pallet_ACTIVE_CLR", Sky3D.Pallet_ACTIVE_CLR);
+  newChild1.setInt("Sky3D.Pallet_ACTIVE_DIR", Sky3D.Pallet_ACTIVE_DIR);
+  newChild1.setFloat("Sky3D.Pallet_ACTIVE_MLT", Sky3D.Pallet_ACTIVE_MLT);
+  newChild1.setInt("Sky3D.Pallet_PASSIVE_CLR", Sky3D.Pallet_PASSIVE_CLR);
+  newChild1.setInt("Sky3D.Pallet_PASSIVE_DIR", Sky3D.Pallet_PASSIVE_DIR);
+  newChild1.setFloat("Sky3D.Pallet_PASSIVE_MLT", Sky3D.Pallet_PASSIVE_MLT);
   newChild1.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
   newChild1.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
   newChild1.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT);
@@ -49476,33 +49637,33 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("STUDY.Impacts_update", Boolean.toString(STUDY.Impacts_update));
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
-  newChild1.setInt("LAND3D.Tessellation", LAND3D.Tessellation);
+  newChild1.setInt("Land3D.Tessellation", Land3D.Tessellation);
   newChild1.setInt("Model3Ds.Tessellation", Model3Ds.Tessellation);
-  newChild1.setInt("SKY3D.Tessellation", SKY3D.Tessellation);
-  newChild1.setFloat("SKY3D.scale", SKY3D.scale);
+  newChild1.setInt("Sky3D.Tessellation", Sky3D.Tessellation);
+  newChild1.setFloat("Sky3D.scale", Sky3D.scale);
   newChild1.setFloat("WindRose_scale", WindRose_scale);
 
   newChild1.setFloat("Planetary_Magnification", Planetary_Magnification);
   newChild1.setString("Display_SolarRotation", Boolean.toString(Display_SolarRotation));
   newChild1.setString("Display_SUN_Path", Boolean.toString(Display_SUN_Path));
   newChild1.setString("Display_SUN_Pattern", Boolean.toString(Display_SUN_Pattern));
-  newChild1.setString("SKY3D.Display_Surface", Boolean.toString(SKY3D.Display_Surface));
-  newChild1.setString("STAR3D.Display_Surface", Boolean.toString(STAR3D.Display_Surface));
-  newChild1.setString("STAR3D.Display_Texture", Boolean.toString(STAR3D.Display_Texture));
-  newChild1.setString("MOON3D.Display_Surface", Boolean.toString(MOON3D.Display_Surface));
-  newChild1.setString("MOON3D.Display_Texture", Boolean.toString(MOON3D.Display_Texture));
-  newChild1.setString("TROPO3D.Display_Surface", Boolean.toString(TROPO3D.Display_Surface));
-  newChild1.setString("TROPO3D.Display_Texture", Boolean.toString(TROPO3D.Display_Texture));
-  newChild1.setString("EARTH3D.Display_Surface", Boolean.toString(EARTH3D.Display_Surface));
-  newChild1.setString("EARTH3D.Display_Texture", Boolean.toString(EARTH3D.Display_Texture));
-  newChild1.setString("LAND3D.Load_Textures", Boolean.toString(LAND3D.Load_Textures));  
-  newChild1.setString("LAND3D.Load_Mesh", Boolean.toString(LAND3D.Load_Mesh));
-  newChild1.setString("LAND3D.Display_Surface", Boolean.toString(LAND3D.Display_Surface));
-  newChild1.setString("LAND3D.Display_Points", Boolean.toString(LAND3D.Display_Points));
-  newChild1.setString("LAND3D.Display_Textures", Boolean.toString(LAND3D.Display_Textures));
-  newChild1.setString("LAND3D.Display_Depth", Boolean.toString(LAND3D.Display_Depth));
-  newChild1.setInt("LAND3D.Surface_SkipStart", LAND3D.Surface_SkipStart);
-  newChild1.setInt("LAND3D.Surface_SkipEnd", LAND3D.Surface_SkipEnd);
+  newChild1.setString("Sky3D.Display_Surface", Boolean.toString(Sky3D.Display_Surface));
+  newChild1.setString("Star3D.Display_Surface", Boolean.toString(Star3D.Display_Surface));
+  newChild1.setString("Star3D.Display_Texture", Boolean.toString(Star3D.Display_Texture));
+  newChild1.setString("Moon3D.Display_Surface", Boolean.toString(Moon3D.Display_Surface));
+  newChild1.setString("Moon3D.Display_Texture", Boolean.toString(Moon3D.Display_Texture));
+  newChild1.setString("Tropo3D.Display_Surface", Boolean.toString(Tropo3D.Display_Surface));
+  newChild1.setString("Tropo3D.Display_Texture", Boolean.toString(Tropo3D.Display_Texture));
+  newChild1.setString("Earth3D.Display_Surface", Boolean.toString(Earth3D.Display_Surface));
+  newChild1.setString("Earth3D.Display_Texture", Boolean.toString(Earth3D.Display_Texture));
+  newChild1.setString("Land3D.Load_Textures", Boolean.toString(Land3D.Load_Textures));  
+  newChild1.setString("Land3D.Load_Mesh", Boolean.toString(Land3D.Load_Mesh));
+  newChild1.setString("Land3D.Display_Surface", Boolean.toString(Land3D.Display_Surface));
+  newChild1.setString("Land3D.Display_Points", Boolean.toString(Land3D.Display_Points));
+  newChild1.setString("Land3D.Display_Textures", Boolean.toString(Land3D.Display_Textures));
+  newChild1.setString("Land3D.Display_Depth", Boolean.toString(Land3D.Display_Depth));
+  newChild1.setInt("Land3D.Surface_SkipStart", Land3D.Surface_SkipStart);
+  newChild1.setInt("Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd);
   newChild1.setString("Display_SolidImpact_Points", Boolean.toString(Display_SolidImpact_Points));
   newChild1.setString("Display_SolidImpact_Lines", Boolean.toString(Display_SolidImpact_Lines));
   newChild1.setString("Model3Ds.DisplayVertices", Boolean.toString(Model3Ds.DisplayVertices));       
@@ -49602,8 +49763,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("SOLARCHVISION_GLOBE_stp_dir", SOLARCHVISION_GLOBE_stp_dir);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_slp", SOLARCHVISION_GLOBE_n_slp);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_dir", SOLARCHVISION_GLOBE_n_dir);
-  newChild1.setInt("LAND3D.n_I", LAND3D.n_I);
-  newChild1.setInt("LAND3D.n_J", LAND3D.n_J);
+  newChild1.setInt("Land3D.n_I", Land3D.n_I);
+  newChild1.setInt("Land3D.n_J", Land3D.n_J);
 
   newChild1.setInt("Model2Ds.PEOPLE_Files_Num", Model2Ds.PEOPLE_Files_Num);
   newChild1.setInt("Model2Ds.TREES_Files_Num", Model2Ds.TREES_Files_Num); 
@@ -49625,10 +49786,10 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   newChild1.setString("Default_Font", Default_Font);
 
-  newChild1.setInt("LAND3D.n_I", LAND3D.n_I);
-  newChild1.setInt("LAND3D.n_J", LAND3D.n_J);
+  newChild1.setInt("Land3D.n_I", Land3D.n_I);
+  newChild1.setInt("Land3D.n_J", Land3D.n_J);
 
-  newChild1.setInt("LAND3D.Textures_num", LAND3D.Textures_num);
+  newChild1.setInt("Land3D.Textures_num", Land3D.Textures_num);
 
 
 
@@ -49637,45 +49798,45 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
     String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
 
-    for (int q = 0; q < LAND3D.Textures_num; q++) {
+    for (int q = 0; q < Land3D.Textures_num; q++) {
 
       int n_Map = q; 
 
-      String the_filename = LAND3D.Textures_ImagePath[n_Map].substring(LAND3D.Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
+      String the_filename = Land3D.Textures_ImagePath[n_Map].substring(Land3D.Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
 
       String new_Texture_path = the_dir + "/Textures/" +  the_filename;
 
-      //println("pre_LAND3D.Textures_ImagePath", LAND3D.Textures_ImagePath[n_Map]);
+      //println("pre_Land3D.Textures_ImagePath", Land3D.Textures_ImagePath[n_Map]);
       //println("new_Texture_path", new_Texture_path);
 
-      if (LAND3D.Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+      if (Land3D.Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         TEXTURE_copied = -1;
       } else {
 
-        println("Copying texture:", LAND3D.Textures_ImagePath[n_Map], ">", new_Texture_path);
-        saveBytes(new_Texture_path, loadBytes(LAND3D.Textures_ImagePath[n_Map]));
-        LAND3D.Textures_ImagePath[n_Map] = new_Texture_path;
+        println("Copying texture:", Land3D.Textures_ImagePath[n_Map], ">", new_Texture_path);
+        saveBytes(new_Texture_path, loadBytes(Land3D.Textures_ImagePath[n_Map]));
+        Land3D.Textures_ImagePath[n_Map] = new_Texture_path;
 
         TEXTURE_copied = 1;
       }
 
       //if (TEXTURE_copied == 0) {
       //  println("Saving texture from the scene.");
-      //  LAND3D.Textures_Map[n_Map].save(new_Texture_path);
+      //  Land3D.Textures_Map[n_Map].save(new_Texture_path);
       //}
     }
   }
 
   {
-    newChild1 = my_xml.addChild("LAND3D.Textures_ImagePath");
-    int ni = LAND3D.Textures_ImagePath.length;
+    newChild1 = my_xml.addChild("Land3D.Textures_ImagePath");
+    int ni = Land3D.Textures_ImagePath.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i);
-      newChild2.setFloat("scale_U", LAND3D.Textures_scale_U[i]);
-      newChild2.setFloat("scale_V", LAND3D.Textures_scale_U[i]);
-      newChild2.setContent(LAND3D.Textures_ImagePath[i]);          
+      newChild2.setFloat("scale_U", Land3D.Textures_scale_U[i]);
+      newChild2.setFloat("scale_V", Land3D.Textures_scale_U[i]);
+      newChild2.setContent(Land3D.Textures_ImagePath[i]);          
     }
   }
 
@@ -49729,8 +49890,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("SECTIONS.SolidImpact");
-    int ni = SECTIONS.SolidImpact.length;
+    newChild1 = my_xml.addChild("Sections.SolidImpact");
+    int ni = Sections.SolidImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
 
@@ -49739,7 +49900,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
       String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
 
       println("Saving texture:", TEXTURE_path);
-      SECTIONS.SolidImpact[i].save(TEXTURE_path);
+      Sections.SolidImpact[i].save(TEXTURE_path);
 
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
@@ -49748,12 +49909,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("SECTIONS.SolarImpact");
-    int ni = SECTIONS.SolarImpact.length;
+    newChild1 = my_xml.addChild("Sections.SolarImpact");
+    int ni = Sections.SolarImpact.length;
     if (ni > 0) {
-      int nj = SECTIONS.SolarImpact[0].length;
+      int nj = Sections.SolarImpact[0].length;
       if (nj > 0) {
-        int nk = SECTIONS.SolarImpact[0][0].length;
+        int nk = Sections.SolarImpact[0][0].length;
         newChild1.setInt("ni", ni);
         newChild1.setInt("nj", nj);
         newChild1.setInt("nk", nk);
@@ -49771,7 +49932,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
               String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
       
               println("Saving texture:", TEXTURE_path);
-              SECTIONS.SolarImpact[i][j][k].save(TEXTURE_path);
+              Sections.SolarImpact[i][j][k].save(TEXTURE_path);
       
               newChild2 = newChild1.addChild("Path");
               newChild2.setInt("id", (i * nj + j) * nk + k); 
@@ -49784,19 +49945,19 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
 
-  println("Saving:LAND3D.Mesh");
+  println("Saving:Land3D.Mesh");
   {
-    newChild1 = my_xml.addChild("LAND3D.Mesh");
+    newChild1 = my_xml.addChild("Land3D.Mesh");
     int vNo = 0;
-    for (int i = 0; i < LAND3D.Mesh.length; i++) {
-      for (int j = 0; j < LAND3D.Mesh[i].length; j++) {
+    for (int i = 0; i < Land3D.Mesh.length; i++) {
+      for (int j = 0; j < Land3D.Mesh[i].length; j++) {
         newChild2 = newChild1.addChild("Vertice");
         newChild2.setInt("id", vNo);
         String lineSTR = "";
-        //for (int k = 0; k < LAND3D.Mesh[i][j].length; k++) {
+        //for (int k = 0; k < Land3D.Mesh[i][j].length; k++) {
         for (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(LAND3D.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
-          if (k < LAND3D.Mesh[i][j].length - 1) lineSTR += ",";
+          lineSTR += nf(Land3D.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+          if (k < Land3D.Mesh[i][j].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
         vNo += 1;
@@ -49806,19 +49967,19 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Cameras");
   {
-    newChild1 = my_xml.addChild("allCameras");
-    int ni = CAMERAS.num;
+    newChild1 = my_xml.addChild("Cameras");
+    int ni = Cameras.num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Camera");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < CAMERAS.PPPSRRRF[i].length; j++) {
+      //for (int j = 0; j < Cameras.PPPSRRRF[i].length; j++) {
       for (int j = 0; j < 8; j++) { // x, y, z, s, rx, ry, rz, zoom
-        lineSTR += nf(CAMERAS.PPPSRRRF[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(Cameras.PPPSRRRF[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(CAMERAS.Type[i], 0);
+      lineSTR += nf(Cameras.Type[i], 0);
       lineSTR += ",";
 
       newChild2.setContent(lineSTR);
@@ -49827,23 +49988,23 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Sections");
   {
-    newChild1 = my_xml.addChild("allSections");
-    int ni = SECTIONS.num;
+    newChild1 = my_xml.addChild("Sections");
+    int ni = Sections.num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Section");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < SECTIONS.UVERAB[i].length; j++) {
+      //for (int j = 0; j < Sections.UVERAB[i].length; j++) {
       for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-        lineSTR += nf(SECTIONS.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(Sections.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(SECTIONS.Type[i], 0);
+      lineSTR += nf(Sections.Type[i], 0);
       lineSTR += ",";
-      lineSTR += nf(SECTIONS.RES1[i], 0);
+      lineSTR += nf(Sections.RES1[i], 0);
       lineSTR += ",";
-      lineSTR += nf(SECTIONS.RES2[i], 0);
+      lineSTR += nf(Sections.RES2[i], 0);
 
       newChild2.setContent(lineSTR);
     }
@@ -49851,17 +50012,17 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Solids");
   {
-    newChild1 = my_xml.addChild("SOLIDS.DEF");
-    int ni = SOLIDS.DEF.length;
+    newChild1 = my_xml.addChild("Solids");
+    int ni = Solids.DEF.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Solid");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < SOLIDS.DEF[i].length; j++) {
+      //for (int j = 0; j < Solids.DEF[i].length; j++) {
       for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
-        lineSTR += nf(SOLIDS.DEF[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 != SOLIDS.DEF[i].length) lineSTR += ",";
+        lineSTR += nf(Solids.DEF[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 != Solids.DEF[i].length) lineSTR += ",";
       }
 
       newChild2.setContent(lineSTR);
@@ -49870,7 +50031,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Model1Ds");
   {
-    newChild1 = my_xml.addChild("allModel1Ds");
+    newChild1 = my_xml.addChild("Model1Ds");
     int ni = Model1Ds.num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -49900,7 +50061,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Model2Ds");
   {
-    newChild1 = my_xml.addChild("allModel2Ds");
+    newChild1 = my_xml.addChild("Model2Ds");
     int ni = Model2Ds.num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -50572,12 +50733,12 @@ void SOLARCHVISION_load_project (String myFile) {
       SunPath_Pallet_PASSIVE_CLR = children0[L].getInt("SunPath_Pallet_PASSIVE_CLR");
       SunPath_Pallet_PASSIVE_DIR = children0[L].getInt("SunPath_Pallet_PASSIVE_DIR");
       SunPath_Pallet_PASSIVE_MLT = children0[L].getFloat("SunPath_Pallet_PASSIVE_MLT");
-      SKY3D.Pallet_ACTIVE_CLR = children0[L].getInt("SKY3D.Pallet_ACTIVE_CLR");
-      SKY3D.Pallet_ACTIVE_DIR = children0[L].getInt("SKY3D.Pallet_ACTIVE_DIR");
-      SKY3D.Pallet_ACTIVE_MLT = children0[L].getFloat("SKY3D.Pallet_ACTIVE_MLT");
-      SKY3D.Pallet_PASSIVE_CLR = children0[L].getInt("SKY3D.Pallet_PASSIVE_CLR");
-      SKY3D.Pallet_PASSIVE_DIR = children0[L].getInt("SKY3D.Pallet_PASSIVE_DIR");
-      SKY3D.Pallet_PASSIVE_MLT = children0[L].getFloat("SKY3D.Pallet_PASSIVE_MLT");
+      Sky3D.Pallet_ACTIVE_CLR = children0[L].getInt("Sky3D.Pallet_ACTIVE_CLR");
+      Sky3D.Pallet_ACTIVE_DIR = children0[L].getInt("Sky3D.Pallet_ACTIVE_DIR");
+      Sky3D.Pallet_ACTIVE_MLT = children0[L].getFloat("Sky3D.Pallet_ACTIVE_MLT");
+      Sky3D.Pallet_PASSIVE_CLR = children0[L].getInt("Sky3D.Pallet_PASSIVE_CLR");
+      Sky3D.Pallet_PASSIVE_DIR = children0[L].getInt("Sky3D.Pallet_PASSIVE_DIR");
+      Sky3D.Pallet_PASSIVE_MLT = children0[L].getFloat("Sky3D.Pallet_PASSIVE_MLT");
       ELEVATION_Pallet_CLR = children0[L].getInt("ELEVATION_Pallet_CLR");
       ELEVATION_Pallet_DIR = children0[L].getInt("ELEVATION_Pallet_DIR");
       ELEVATION_Pallet_MLT = children0[L].getFloat("ELEVATION_Pallet_MLT");
@@ -50601,33 +50762,33 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.Impacts_update = Boolean.parseBoolean(children0[L].getString("STUDY.Impacts_update"));
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
-      LAND3D.Tessellation = children0[L].getInt("LAND3D.Tessellation");
+      Land3D.Tessellation = children0[L].getInt("Land3D.Tessellation");
       Model3Ds.Tessellation = children0[L].getInt("Model3Ds.Tessellation");
-      SKY3D.Tessellation = children0[L].getInt("SKY3D.Tessellation");
-      SKY3D.scale = children0[L].getFloat("SKY3D.scale");
+      Sky3D.Tessellation = children0[L].getInt("Sky3D.Tessellation");
+      Sky3D.scale = children0[L].getFloat("Sky3D.scale");
       WindRose_scale = children0[L].getFloat("WindRose_scale");
 
       Planetary_Magnification = children0[L].getFloat("Planetary_Magnification");
       Display_SolarRotation = Boolean.parseBoolean(children0[L].getString("Display_SolarRotation"));      
       Display_SUN_Path = Boolean.parseBoolean(children0[L].getString("Display_SUN_Path"));
       Display_SUN_Pattern = Boolean.parseBoolean(children0[L].getString("Display_SUN_Pattern"));
-      SKY3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("SKY3D.Display_Surface"));
-      STAR3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Surface"));
-      STAR3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("STAR3D.Display_Texture"));            
-      MOON3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Surface"));
-      MOON3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("MOON3D.Display_Texture"));
-      TROPO3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("TROPO3D.Display_Surface"));
-      TROPO3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("TROPO3D.Display_Texture"));
-      EARTH3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Surface"));
-      EARTH3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("EARTH3D.Display_Texture"));
-      LAND3D.Load_Textures = Boolean.parseBoolean(children0[L].getString("LAND3D.Load_Textures"));      
-      LAND3D.Load_Mesh = Boolean.parseBoolean(children0[L].getString("LAND3D.Load_Mesh"));
-      LAND3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Surface"));
-      LAND3D.Display_Points = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Points"));
-      LAND3D.Display_Textures = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Textures"));
-      LAND3D.Display_Depth = Boolean.parseBoolean(children0[L].getString("LAND3D.Display_Depth"));
-      LAND3D.Surface_SkipStart = children0[L].getInt("LAND3D.Surface_SkipStart");
-      LAND3D.Surface_SkipEnd = children0[L].getInt("LAND3D.Surface_SkipEnd");
+      Sky3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Sky3D.Display_Surface"));
+      Star3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Star3D.Display_Surface"));
+      Star3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("Star3D.Display_Texture"));            
+      Moon3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Moon3D.Display_Surface"));
+      Moon3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("Moon3D.Display_Texture"));
+      Tropo3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Tropo3D.Display_Surface"));
+      Tropo3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("Tropo3D.Display_Texture"));
+      Earth3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Earth3D.Display_Surface"));
+      Earth3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("Earth3D.Display_Texture"));
+      Land3D.Load_Textures = Boolean.parseBoolean(children0[L].getString("Land3D.Load_Textures"));      
+      Land3D.Load_Mesh = Boolean.parseBoolean(children0[L].getString("Land3D.Load_Mesh"));
+      Land3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Surface"));
+      Land3D.Display_Points = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Points"));
+      Land3D.Display_Textures = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Textures"));
+      Land3D.Display_Depth = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Depth"));
+      Land3D.Surface_SkipStart = children0[L].getInt("Land3D.Surface_SkipStart");
+      Land3D.Surface_SkipEnd = children0[L].getInt("Land3D.Surface_SkipEnd");
       Display_SolidImpact_Points = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Points"));
       Display_SolidImpact_Lines = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Lines"));
       Model3Ds.DisplayVertices = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayVertices"));  
@@ -50728,8 +50889,8 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_stp_dir = children0[L].getFloat("SOLARCHVISION_GLOBE_stp_dir");
       SOLARCHVISION_GLOBE_n_slp = children0[L].getInt("SOLARCHVISION_GLOBE_n_slp");
       SOLARCHVISION_GLOBE_n_dir = children0[L].getInt("SOLARCHVISION_GLOBE_n_dir");
-      LAND3D.n_I = children0[L].getInt("LAND3D.n_I");
-      LAND3D.n_J = children0[L].getInt("LAND3D.n_J");
+      Land3D.n_I = children0[L].getInt("Land3D.n_I");
+      Land3D.n_J = children0[L].getInt("Land3D.n_J");
       Model2Ds.PEOPLE_Files_Num = children0[L].getInt("Model2Ds.PEOPLE_Files_Num");
       Model2Ds.TREES_Files_Num = children0[L].getInt("Model2Ds.TREES_Files_Num");
       softSelection_Power = children0[L].getFloat("softSelection_Power");
@@ -50759,49 +50920,49 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       } 
 
-      LAND3D.n_I = children0[L].getInt("LAND3D.n_I");
-      LAND3D.n_J = children0[L].getInt("LAND3D.n_J");
+      Land3D.n_I = children0[L].getInt("Land3D.n_I");
+      Land3D.n_J = children0[L].getInt("Land3D.n_J");
 
 
-      int pre_LAND3D_Textures_num = LAND3D.Textures_num;
-      LAND3D.Textures_num = children0[L].getInt("LAND3D.Textures_num");
+      int pre_Land3D_Textures_num = Land3D.Textures_num;
+      Land3D.Textures_num = children0[L].getInt("Land3D.Textures_num");
 
-      if (pre_LAND3D_Textures_num != LAND3D.Textures_num) {
+      if (pre_Land3D_Textures_num != Land3D.Textures_num) {
 
-        int ni = LAND3D.Textures_num;
+        int ni = Land3D.Textures_num;
 
-        LAND3D.Textures_ImagePath = new String [ni];
-        LAND3D.Textures_Map = new PImage [ni];
+        Land3D.Textures_ImagePath = new String [ni];
+        Land3D.Textures_Map = new PImage [ni];
 
         for (int i = 0; i < ni; i++) {
 
-          LAND3D.Textures_ImagePath[i] = "";
-          LAND3D.Textures_Map[i] = createImage(2, 2, RGB); // empty and small
+          Land3D.Textures_ImagePath[i] = "";
+          Land3D.Textures_Map[i] = createImage(2, 2, RGB); // empty and small
         }
       }
     }
 
-    children0 = FileAll.getChildren("LAND3D.Textures_ImagePath");
+    children0 = FileAll.getChildren("Land3D.Textures_ImagePath");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
       XML[] children1 = children0[L].getChildren("Path");       
       for (int i = 0; i < ni; i++) {
         
-        LAND3D.Textures_scale_U[i] = children1[i].getFloat("scale_U");
-        LAND3D.Textures_scale_V[i] = children1[i].getFloat("scale_V");
+        Land3D.Textures_scale_U[i] = children1[i].getFloat("scale_U");
+        Land3D.Textures_scale_V[i] = children1[i].getFloat("scale_V");
 
         String new_Texture_path = children1[i].getContent();
 
-        if (LAND3D.Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+        if (Land3D.Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         } else {
 
-          LAND3D.Textures_ImagePath[i] = new_Texture_path;
+          Land3D.Textures_ImagePath[i] = new_Texture_path;
 
-          if (LAND3D.Textures_ImagePath[i].equals("")) {
+          if (Land3D.Textures_ImagePath[i].equals("")) {
           } else {
-            println("Loading texture:", LAND3D.Textures_ImagePath[i]);
-            LAND3D.Textures_Map[i] = loadImage(LAND3D.Textures_ImagePath[i]);
+            println("Loading texture:", Land3D.Textures_ImagePath[i]);
+            Land3D.Textures_Map[i] = loadImage(Land3D.Textures_ImagePath[i]);
           }
         }
       }
@@ -50849,34 +51010,34 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      children0 = FileAll.getChildren("SECTIONS.SolidImpact");
+      children0 = FileAll.getChildren("Sections.SolidImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
 
-        SECTIONS.SolidImpact = new PImage [ni];
+        Sections.SolidImpact = new PImage [ni];
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
 
           String TEXTURE_path = children1[i].getContent();
 
-          SECTIONS.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
+          Sections.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
 
           println("Loading texture(" + i + "):", TEXTURE_path);
-          SECTIONS.SolidImpact[i] = loadImage(TEXTURE_path);
+          Sections.SolidImpact[i] = loadImage(TEXTURE_path);
           println("loaded!");
         }
       }
     }
 
     {
-      children0 = FileAll.getChildren("SECTIONS.SolarImpact");
+      children0 = FileAll.getChildren("Sections.SolarImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         int nj = children0[L].getInt("nj");
         int nk = children0[L].getInt("nk");
 
-        SECTIONS.SolarImpact = new PImage [ni][nj][nk]; 
+        Sections.SolarImpact = new PImage [ni][nj][nk]; 
 
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
@@ -50885,10 +51046,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
               String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
   
-              SECTIONS.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
+              Sections.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
   
               println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
-              SECTIONS.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
+              Sections.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
               println("loaded!");
             }
           }
@@ -50896,29 +51057,29 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    println("Loading:LAND3D.Mesh");
-    LAND3D.Mesh = new float [LAND3D.n_I][LAND3D.n_J][3];
-    children0 = FileAll.getChildren("LAND3D.Mesh");
+    println("Loading:Land3D.Mesh");
+    Land3D.Mesh = new float [Land3D.n_I][Land3D.n_J][3];
+    children0 = FileAll.getChildren("Land3D.Mesh");
     for (int L = 0; L < children0.length; L++) {
       XML[] children1 = children0[L].getChildren("Vertice");         
-      for (int i = 0; i < LAND3D.n_I * LAND3D.n_J; i++) {
+      for (int i = 0; i < Land3D.n_I * Land3D.n_J; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          LAND3D.Mesh[(i / LAND3D.n_J)][(i % LAND3D.n_J)][j] = float(parts[j]);
+          Land3D.Mesh[(i / Land3D.n_J)][(i % Land3D.n_J)][j] = float(parts[j]);
         }
       }
     }
 
     println("Loading:Cameras");
-    children0 = FileAll.getChildren("allCameras");
+    children0 = FileAll.getChildren("Cameras");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
-      CAMERAS.PPPSRRRF = new float [ni][8];
-      CAMERAS.Type = new int [ni];
+      Cameras.PPPSRRRF = new float [ni][8];
+      Cameras.Type = new int [ni];
 
-      CAMERAS.num = ni;
+      Cameras.num = ni;
 
       XML[] children1 = children0[L].getChildren("Camera");         
       for (int i = 0; i < ni; i++) {
@@ -50926,23 +51087,23 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 8; j++) {
-          CAMERAS.PPPSRRRF[i][j] = float(parts[j]);
+          Cameras.PPPSRRRF[i][j] = float(parts[j]);
         }
 
-        CAMERAS.Type[i] = int(parts[8]);
+        Cameras.Type[i] = int(parts[8]);
       }
     } 
 
     println("Loading:Sections");
-    children0 = FileAll.getChildren("allSections");
+    children0 = FileAll.getChildren("Sections");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
-      SECTIONS.UVERAB = new float [ni][6];
-      SECTIONS.Type = new int [ni];
-      SECTIONS.RES1 = new int [ni];
-      SECTIONS.RES2 = new int [ni];
-      SECTIONS.num = ni;
+      Sections.UVERAB = new float [ni][6];
+      Sections.Type = new int [ni];
+      Sections.RES1 = new int [ni];
+      Sections.RES2 = new int [ni];
+      Sections.num = ni;
 
       XML[] children1 = children0[L].getChildren("Section");         
       for (int i = 0; i < ni; i++) {
@@ -50950,21 +51111,21 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 6; j++) {
-          SECTIONS.UVERAB[i][j] = float(parts[j]);
+          Sections.UVERAB[i][j] = float(parts[j]);
         }
 
-        SECTIONS.Type[i] = int(parts[6]);
-        SECTIONS.RES1[i] = int(parts[7]);
-        SECTIONS.RES2[i] = int(parts[8]);
+        Sections.Type[i] = int(parts[6]);
+        Sections.RES1[i] = int(parts[7]);
+        Sections.RES2[i] = int(parts[8]);
       }
     } 
 
     println("Loading:Solids");
-    children0 = FileAll.getChildren("SOLIDS.DEF");
+    children0 = FileAll.getChildren("Solids");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
-      SOLIDS.DEF = new float [ni][13];
+      Solids.DEF = new float [ni][13];
 
       XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
@@ -50972,13 +51133,13 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 13; j++) {
-          SOLIDS.DEF[i][j] = float(parts[j]);
+          Solids.DEF[i][j] = float(parts[j]);
         }
       }
     } 
 
     println("Loading:Model1Ds");
-    children0 = FileAll.getChildren("allModel1Ds");
+    children0 = FileAll.getChildren("Model1Ds");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
@@ -51010,7 +51171,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }       
 
     println("Loading:Model2Ds");
-    children0 = FileAll.getChildren("allModel2Ds");
+    children0 = FileAll.getChildren("Model2Ds");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
 
@@ -51490,163 +51651,6 @@ void SOLARCHVISION_fetch_project () {
 
 
 
-void Solid_updatePosition (int n, float a, float b, float c) {
-
-  SOLIDS.DEF[n][0] = a;
-  SOLIDS.DEF[n][1] = b;
-  SOLIDS.DEF[n][2] = c;
-} 
-
-void Solid_updatePowers (int n, float a, float b, float c) {
-
-  SOLIDS.DEF[n][3] = a;
-  SOLIDS.DEF[n][4] = b;
-  SOLIDS.DEF[n][5] = c;
-} 
-
-void Solid_Scale (int n, float a, float b, float c) {
-
-  SOLIDS.DEF[n][6] *= a;
-  SOLIDS.DEF[n][7] *= b;
-  SOLIDS.DEF[n][8] *= c;
-} 
-
-void Solid_RotateX (int n, float t) {
-
-  SOLIDS.DEF[n][9] += t;
-} 
-
-void Solid_RotateY (int n, float t) {
-
-  SOLIDS.DEF[n][10] += t;
-} 
-
-void Solid_RotateZ (int n, float t) {
-
-  SOLIDS.DEF[n][11] += t;
-} 
-
-float Solid_get_posX (int n) { 
-
-  return SOLIDS.DEF[n][0];
-} 
-
-float Solid_get_posY (int n) { 
-
-  return SOLIDS.DEF[n][1];
-} 
-
-float Solid_get_posZ (int n) { 
-
-  return SOLIDS.DEF[n][2];
-} 
-
-float Solid_get_powX (int n) { 
-
-  return SOLIDS.DEF[n][3];
-} 
-
-float Solid_get_powY (int n) { 
-
-  return SOLIDS.DEF[n][4];
-} 
-
-float Solid_get_powZ (int n) { 
-
-  return SOLIDS.DEF[n][5];
-} 
-
-float Solid_get_scaleX (int n) { 
-
-  return SOLIDS.DEF[n][6];
-} 
-
-float Solid_get_scaleY (int n) { 
-
-  return SOLIDS.DEF[n][7];
-} 
-
-float Solid_get_scaleZ (int n) { 
-
-  return SOLIDS.DEF[n][8];
-} 
-
-float Solid_get_rotX (int n) { 
-
-  return SOLIDS.DEF[n][9];
-} 
-
-
-float Solid_get_rotY (int n) { 
-
-  return SOLIDS.DEF[n][10];
-} 
-
-float Solid_get_rotZ (int n) { 
-
-  return SOLIDS.DEF[n][11];
-} 
-
-float Solid_get_value (int n) { 
-
-  return SOLIDS.DEF[n][12];
-} 
-
-float Solid_get_Distance (int n, float a, float b, float c) {
-
-  float posX = SOLIDS.DEF[n][0];
-  float posY = SOLIDS.DEF[n][1];
-  float posZ = SOLIDS.DEF[n][2];
-  float powX = SOLIDS.DEF[n][3];
-  float powY = SOLIDS.DEF[n][4];
-  float powZ = SOLIDS.DEF[n][5];
-  float scaleX = SOLIDS.DEF[n][6];
-  float scaleY = SOLIDS.DEF[n][7];
-  float scaleZ = SOLIDS.DEF[n][8];
-  float rotX = SOLIDS.DEF[n][9];
-  float rotY = SOLIDS.DEF[n][10];
-  float rotZ = SOLIDS.DEF[n][11];
-  float value = SOLIDS.DEF[n][12];
-
-  a -= posX;
-  b -= posY;    
-  c -= posZ;
-
-  ///////////////////////// NOT SURE START!    
-
-  float y1 = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
-  float z1 = b * sin_ang(-rotX) + c * cos_ang(-rotX);
-  float x1 = a;
-
-  a = x1;
-  b = y1;
-  c = z1;  
-
-  float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
-  float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
-  float y2 = b; 
-
-  a = x2;
-  b = y2;
-  c = z2;      
-  ///////////////////////// NOT SURE END!
-
-  float x = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
-  float y = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
-  float z = c;    
-
-  x += posX;
-  y += posY;  
-  z += posZ;
-
-   
-  return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));
-  //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
-  //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / (value * scaleX * scaleY * scaleZ * 0.001));
-  //return(scaleX * scaleY * scaleZ * 0.01 * pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
-  
-
-}
 
 
 
