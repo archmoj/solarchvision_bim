@@ -20042,170 +20042,6 @@ class solarchvision_Solids {
 
   float[][] DEF = new float[0][13];
   
-  int numDisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
-  int numDisplayDegree = 16; //8; // internal - number of each face corners 
-  
-  private float[][] Vertices;
-  private int[][] Faces;
-
-  void draw () {
-  
-    this.Faces = new int [this.numDisplayFaces * this.DEF.length][this.numDisplayDegree]; 
-  
-    this.Vertices = new float [this.numDisplayFaces * this.numDisplayDegree * this.DEF.length][3];
-  
-    if (Display_Solids) {
-  
-      WIN3D.graphics.strokeWeight(2);
-  
-      for (int f = 0; f < this.DEF.length; f++) {
-  
-        float Solid_posX = Solids.get_posX(f);
-        float Solid_posY = Solids.get_posY(f);
-        float Solid_posZ = Solids.get_posZ(f);
-        float Solid_powX = Solids.get_powX(f);
-        float Solid_powY = Solids.get_powY(f);
-        float Solid_powZ = Solids.get_powZ(f);
-        float Solid_scaleX = Solids.get_scaleX(f);
-        float Solid_scaleY = Solids.get_scaleY(f);
-        float Solid_scaleZ = Solids.get_scaleZ(f);
-        float Solid_rotX = Solids.get_rotX(f);
-        float Solid_rotY = Solids.get_rotY(f);
-        float Solid_rotZ = Solids.get_rotZ(f);
-        float Solid_value = Solids.get_value(f);
-  
-        for (int plane_type = 0; plane_type < this.numDisplayFaces; plane_type++) {
-  
-          WIN3D.graphics.noFill();        
-          WIN3D.graphics.stroke(0);
-  
-          if (plane_type == 0) {
-            WIN3D.graphics.stroke(0, 255, 0);
-          }  
-          if (plane_type == 1) {
-            WIN3D.graphics.stroke(255, 0, 0);
-          }          
-          if (plane_type == 2) {
-            WIN3D.graphics.stroke(0, 0, 255);
-          }          
-  
-          WIN3D.graphics.beginShape();
-  
-          float[][] ImageVertex = Solids.getCorners(plane_type, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-  
-          for (int q = 1; q <= this.numDisplayDegree; q++) {
-  
-            float x = ImageVertex[q][0];
-            float y = ImageVertex[q][1];
-            float z = ImageVertex[q][2];
-  
-            WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
-  
-            if (q != 0) {
-  
-              int vNo = (f * this.numDisplayFaces + plane_type) * this.numDisplayDegree + q - 1;
-  
-              this.Vertices[vNo][0] = x;
-              this.Vertices[vNo][1] = y;
-              this.Vertices[vNo][2] = z;
-  
-              int fNo = (f * this.numDisplayFaces + plane_type);
-  
-              this.Faces[fNo][q - 1] = vNo;
-            }
-          }        
-  
-          WIN3D.graphics.endShape(CLOSE);
-        }
-      }
-  
-      WIN3D.graphics.noStroke();
-      WIN3D.graphics.strokeWeight(0);
-    }
-  }
-  
-  
-  float[][] getCorners (int plane_type, float Solid_posX, float Solid_posY, float Solid_posZ, float Solid_powX, float Solid_powY, float Solid_powZ, float Solid_scaleX, float Solid_scaleY, float Solid_scaleZ, float Solid_rotX, float Solid_rotY, float Solid_rotZ, float Solid_value) {
-  
-    float[][] ImageVertex = new float [this.numDisplayDegree + 1][3];
-  
-    for (int q = 0; q <= this.numDisplayDegree; q++) {
-  
-      float qx = 0;
-      float qy = 0;
-      float qz = 0;
-  
-      if (q != 0) {
-        if (plane_type == 0) {
-          qx = cos_ang(q * 360.0 / float(this.numDisplayDegree));
-          qy = sin_ang(q * 360.0 / float(this.numDisplayDegree));
-        }
-  
-        if (plane_type == 1) {
-          qy = cos_ang(q * 360.0 / float(this.numDisplayDegree));
-          qz = sin_ang(q * 360.0 / float(this.numDisplayDegree));
-        }
-  
-        if (plane_type == 2) {
-          qz = cos_ang(q * 360.0 / float(this.numDisplayDegree));
-          qx = sin_ang(q * 360.0 / float(this.numDisplayDegree));
-        }
-      }
-  
-      if (q != 0) { // normalizing
-  
-        float d = pow(pow(abs(qx), Solid_powX) + pow(abs(qy), Solid_powY) + pow(abs(qz), Solid_powZ), 3.0 / (Solid_powX + Solid_powY + Solid_powZ));
-  
-        if (d != 0) {
-          qx /= d;
-          qy /= d;
-          qz /= d;
-        }
-      }
-  
-  
-      float a = qx * Solid_scaleX;
-      float b = qy * Solid_scaleY;
-      float c = qz * Solid_scaleZ;  
-  
-      ///////////////////////// NOT SURE START!    
-  
-      float y1 = b * cos_ang(Solid_rotX) - c * sin_ang(Solid_rotX); 
-      float z1 = b * sin_ang(Solid_rotX) + c * cos_ang(Solid_rotX);
-      float x1 = a;
-  
-      a = x1;
-      b = y1;
-      c = z1;  
-  
-      float z2 = c * cos_ang(Solid_rotY) - a * sin_ang(Solid_rotY);
-      float x2 = c * sin_ang(Solid_rotY) + a * cos_ang(Solid_rotY);
-      float y2 = b; 
-  
-      a = x2;
-      b = y2;
-      c = z2;      
-      ///////////////////////// NOT SURE END!
-  
-      float x = a * cos_ang(Solid_rotZ) - b * sin_ang(Solid_rotZ);
-      float y = a * sin_ang(Solid_rotZ) + b * cos_ang(Solid_rotZ);
-      float z = c;         
-  
-  
-      x += Solid_posX;
-      y += Solid_posY;
-      z += Solid_posZ;  
-  
-      ImageVertex[q][0] = x;
-      ImageVertex[q][1] = y;
-      ImageVertex[q][2] = z;
-    }
-  
-    return ImageVertex;
-  }
-  
-  
-  
   void updatePosition (int n, float a, float b, float c) {
   
     this.DEF[n][0] = a;
@@ -20362,8 +20198,171 @@ class solarchvision_Solids {
     //return(scaleX * scaleY * scaleZ * 0.01 * pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
     
   
+  }  
+  
+  
+  int numDisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
+  int numDisplayDegree = 16; //8; // internal - number of each face corners 
+  
+  private float[][] Vertices;
+  private int[][] Faces;
+
+  void draw () {
+  
+    this.Faces = new int [this.numDisplayFaces * this.DEF.length][this.numDisplayDegree]; 
+  
+    this.Vertices = new float [this.numDisplayFaces * this.numDisplayDegree * this.DEF.length][3];
+  
+    if (Display_Solids) {
+  
+      WIN3D.graphics.strokeWeight(2);
+  
+      for (int f = 0; f < this.DEF.length; f++) {
+  
+        float Solid_posX = this.get_posX(f);
+        float Solid_posY = this.get_posY(f);
+        float Solid_posZ = this.get_posZ(f);
+        float Solid_powX = this.get_powX(f);
+        float Solid_powY = this.get_powY(f);
+        float Solid_powZ = this.get_powZ(f);
+        float Solid_scaleX = this.get_scaleX(f);
+        float Solid_scaleY = this.get_scaleY(f);
+        float Solid_scaleZ = this.get_scaleZ(f);
+        float Solid_rotX = this.get_rotX(f);
+        float Solid_rotY = this.get_rotY(f);
+        float Solid_rotZ = this.get_rotZ(f);
+        float Solid_value = this.get_value(f);
+  
+        for (int plane_type = 0; plane_type < this.numDisplayFaces; plane_type++) {
+  
+          WIN3D.graphics.noFill();        
+          WIN3D.graphics.stroke(0);
+  
+          if (plane_type == 0) {
+            WIN3D.graphics.stroke(0, 255, 0);
+          }  
+          if (plane_type == 1) {
+            WIN3D.graphics.stroke(255, 0, 0);
+          }          
+          if (plane_type == 2) {
+            WIN3D.graphics.stroke(0, 0, 255);
+          }          
+  
+          WIN3D.graphics.beginShape();
+  
+          float[][] ImageVertex = this.getCorners(plane_type, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+  
+          for (int q = 1; q <= this.numDisplayDegree; q++) {
+  
+            float x = ImageVertex[q][0];
+            float y = ImageVertex[q][1];
+            float z = ImageVertex[q][2];
+  
+            WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+  
+            if (q != 0) {
+  
+              int vNo = (f * this.numDisplayFaces + plane_type) * this.numDisplayDegree + q - 1;
+  
+              this.Vertices[vNo][0] = x;
+              this.Vertices[vNo][1] = y;
+              this.Vertices[vNo][2] = z;
+  
+              int fNo = (f * this.numDisplayFaces + plane_type);
+  
+              this.Faces[fNo][q - 1] = vNo;
+            }
+          }        
+  
+          WIN3D.graphics.endShape(CLOSE);
+        }
+      }
+  
+      WIN3D.graphics.noStroke();
+      WIN3D.graphics.strokeWeight(0);
+    }
   }
   
+  
+  float[][] getCorners (int plane_type, float Solid_posX, float Solid_posY, float Solid_posZ, float Solid_powX, float Solid_powY, float Solid_powZ, float Solid_scaleX, float Solid_scaleY, float Solid_scaleZ, float Solid_rotX, float Solid_rotY, float Solid_rotZ, float Solid_value) {
+  
+    float[][] ImageVertex = new float [this.numDisplayDegree + 1][3];
+  
+    for (int q = 0; q <= this.numDisplayDegree; q++) {
+  
+      float qx = 0;
+      float qy = 0;
+      float qz = 0;
+  
+      if (q != 0) {
+        if (plane_type == 0) {
+          qx = cos_ang(q * 360.0 / float(this.numDisplayDegree));
+          qy = sin_ang(q * 360.0 / float(this.numDisplayDegree));
+        }
+  
+        if (plane_type == 1) {
+          qy = cos_ang(q * 360.0 / float(this.numDisplayDegree));
+          qz = sin_ang(q * 360.0 / float(this.numDisplayDegree));
+        }
+  
+        if (plane_type == 2) {
+          qz = cos_ang(q * 360.0 / float(this.numDisplayDegree));
+          qx = sin_ang(q * 360.0 / float(this.numDisplayDegree));
+        }
+      }
+  
+      if (q != 0) { // normalizing
+  
+        float d = pow(pow(abs(qx), Solid_powX) + pow(abs(qy), Solid_powY) + pow(abs(qz), Solid_powZ), 3.0 / (Solid_powX + Solid_powY + Solid_powZ));
+  
+        if (d != 0) {
+          qx /= d;
+          qy /= d;
+          qz /= d;
+        }
+      }
+  
+  
+      float a = qx * Solid_scaleX;
+      float b = qy * Solid_scaleY;
+      float c = qz * Solid_scaleZ;  
+  
+      ///////////////////////// NOT SURE START!    
+  
+      float y1 = b * cos_ang(Solid_rotX) - c * sin_ang(Solid_rotX); 
+      float z1 = b * sin_ang(Solid_rotX) + c * cos_ang(Solid_rotX);
+      float x1 = a;
+  
+      a = x1;
+      b = y1;
+      c = z1;  
+  
+      float z2 = c * cos_ang(Solid_rotY) - a * sin_ang(Solid_rotY);
+      float x2 = c * sin_ang(Solid_rotY) + a * cos_ang(Solid_rotY);
+      float y2 = b; 
+  
+      a = x2;
+      b = y2;
+      c = z2;      
+      ///////////////////////// NOT SURE END!
+  
+      float x = a * cos_ang(Solid_rotZ) - b * sin_ang(Solid_rotZ);
+      float y = a * sin_ang(Solid_rotZ) + b * cos_ang(Solid_rotZ);
+      float z = c;         
+  
+  
+      x += Solid_posX;
+      y += Solid_posY;
+      z += Solid_posZ;  
+  
+      ImageVertex[q][0] = x;
+      ImageVertex[q][1] = y;
+      ImageVertex[q][2] = z;
+    }
+  
+    return ImageVertex;
+  }
+
 }
 
 solarchvision_Solids Solids = new solarchvision_Solids();
