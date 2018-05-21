@@ -18690,6 +18690,49 @@ class solarchvision_Land3D {
       
     }
   }
+  
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP + ".Mesh");
+    
+    XML parent = xml.addChild(this.CLASS_STAMP + ".Mesh");
+    int vNo = 0;
+    for (int i = 0; i < this.Mesh.length; i++) {
+      for (int j = 0; j < this.Mesh[i].length; j++) {
+        XML child = parent.addChild("Vertice");
+        child.setInt("id", vNo);
+        String lineSTR = "";
+        //for (int k = 0; k < this.Mesh[i][j].length; k++) {
+        for (int k = 0; k < 3; k++) { // x, y, z 
+          lineSTR += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+          if (k < this.Mesh[i][j].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+        vNo += 1;
+      }
+    }  
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP + ".Mesh");
+    
+    this.Mesh = new float [this.n_I][this.n_J][3];
+    XML parent = xml.getChild(this.CLASS_STAMP + ".Mesh");
+    XML[] children = parent.getChildren("Vertice");         
+    for (int i = 0; i < this.n_I * this.n_J; i++) {
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < parts.length; j++) {
+        this.Mesh[(i / this.n_J)][(i % this.n_J)][j] = float(parts[j]);
+      }
+    }
+  }    
+  
+  
 }
 
 solarchvision_Land3D Land3D = new solarchvision_Land3D();
@@ -50540,27 +50583,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
 
-  println("Saving:Land3D.Mesh");
-  {
-    newChild1 = my_xml.addChild("Land3D.Mesh");
-    int vNo = 0;
-    for (int i = 0; i < Land3D.Mesh.length; i++) {
-      for (int j = 0; j < Land3D.Mesh[i].length; j++) {
-        newChild2 = newChild1.addChild("Vertice");
-        newChild2.setInt("id", vNo);
-        String lineSTR = "";
-        //for (int k = 0; k < Land3D.Mesh[i][j].length; k++) {
-        for (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(Land3D.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
-          if (k < Land3D.Mesh[i][j].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-        vNo += 1;
-      }
-    }
-  }  
 
-  
+  Land3D.to_XML(my_xml);
 
   allSections.to_XML(my_xml);
   
@@ -51553,22 +51577,10 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    println("Loading:Land3D.Mesh");
-    Land3D.Mesh = new float [Land3D.n_I][Land3D.n_J][3];
-    children0 = FileAll.getChildren("Land3D.Mesh");
-    for (int L = 0; L < children0.length; L++) {
-      XML[] children1 = children0[L].getChildren("Vertice");         
-      for (int i = 0; i < Land3D.n_I * Land3D.n_J; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          Land3D.Mesh[(i / Land3D.n_J)][(i % Land3D.n_J)][j] = float(parts[j]);
-        }
-      }
-    }
 
 
 
+    Land3D.from_XML(FileAll);
 
     allSections.from_XML(FileAll);
     
