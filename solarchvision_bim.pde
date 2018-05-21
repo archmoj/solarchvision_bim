@@ -19784,7 +19784,53 @@ class solarchvision_Model2Ds {
   
     allModel3Ds.deselect_All();
   }  
+  
+  
+  
+  public void to_XML (XML xml) {
     
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    int ni = this.num;
+    parent.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < this.XYZS[i].length; j++) {
+      for (int j = 0; j < 4; j++) { // x, y, z, s 
+        lineSTR += nf(this.XYZS[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += this.MAP[i];
+
+      child.setContent(lineSTR);
+    }  
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    int ni = parent.getInt("ni");
+
+    this.XYZS = new float [ni][4];
+    this.MAP = new int [ni];
+    this.num = ni;
+
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < 4; j++) {
+        this.XYZS[i][j] = float(parts[j]);
+      }
+      this.MAP[i] = int(parts[4]);
+    }
+  }    
 }
 
 solarchvision_Model2Ds allModel2Ds = new solarchvision_Model2Ds();
@@ -20761,28 +20807,28 @@ class solarchvision_Model1Ds {
     println("Saving:" + this.CLASS_STAMP);
     
     XML parent = xml.addChild(this.CLASS_STAMP);
-    int ni = allModel1Ds.num;
+    int ni = this.num;
     parent.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allModel1Ds.XYZSR[i].length; j++) {
+      //for (int j = 0; j < this.XYZSR[i].length; j++) {
       for (int j = 0; j < 5; j++) { // x, y, z, s, rot
-        lineSTR += nf(allModel1Ds.XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(this.XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(allModel1Ds.getType(i), 0);
+      lineSTR += nf(this.getType(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getDegreeMin(i), 0);
+      lineSTR += nf(this.getDegreeMin(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getDegreeMax(i), 0);
+      lineSTR += nf(this.getDegreeMax(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getSeed(i), 0);
+      lineSTR += nf(this.getSeed(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
 
       child.setContent(lineSTR);
     } 
@@ -20796,14 +20842,14 @@ class solarchvision_Model1Ds {
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = parent.getInt("ni");
 
-    allModel1Ds.XYZSR = new float [ni][5];
-    allModel1Ds.Type = new int [ni];
-    allModel1Ds.DegreeMin = new int [ni];
-    allModel1Ds.DegreeMax = new int [ni];
-    allModel1Ds.Seed = new int [ni];
-    allModel1Ds.TrunkSize = new float [ni];
-    allModel1Ds.LeafSize = new float [ni];
-    allModel1Ds.num = ni;
+    this.XYZSR = new float [ni][5];
+    this.Type = new int [ni];
+    this.DegreeMin = new int [ni];
+    this.DegreeMax = new int [ni];
+    this.Seed = new int [ni];
+    this.TrunkSize = new float [ni];
+    this.LeafSize = new float [ni];
+    this.num = ni;
 
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
@@ -20811,15 +20857,15 @@ class solarchvision_Model1Ds {
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
       for (int j = 0; j < 5; j++) {
-        allModel1Ds.XYZSR[i][j] = float(parts[j]);
+        this.XYZSR[i][j] = float(parts[j]);
       }
 
-      allModel1Ds.setType(i, int(parts[5]));
-      allModel1Ds.setDegreeMin(i, int(parts[6]));
-      allModel1Ds.setDegreeMax(i, int(parts[7]));
-      allModel1Ds.setSeed(i, int(parts[8]));
-      allModel1Ds.setTrunkSize(i, float(parts[9]));
-      allModel1Ds.setLeafSize(i, float(parts[10]));
+      this.setType(i, int(parts[5]));
+      this.setDegreeMin(i, int(parts[6]));
+      this.setDegreeMax(i, int(parts[7]));
+      this.setSeed(i, int(parts[8]));
+      this.setTrunkSize(i, float(parts[9]));
+      this.setLeafSize(i, float(parts[10]));
     }
   }    
 }
@@ -50523,27 +50569,11 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   allSolids.to_XML(my_xml);
 
   allModel1Ds.to_XML(my_xml);
+  
+  allModel2Ds.to_XML(my_xml);
 
 
-  println("Saving:allModel2Ds");
-  {
-    newChild1 = my_xml.addChild("allModel2Ds");
-    int ni = allModel2Ds.num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("allModel2Ds");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allModel2Ds.XYZS[i].length; j++) {
-      for (int j = 0; j < 4; j++) { // x, y, z, s 
-        lineSTR += nf(allModel2Ds.XYZS[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += allModel2Ds.MAP[i];
 
-      newChild2.setContent(lineSTR);
-    }
-  }
 
   println("Saving:Vertices");
   {
@@ -51547,30 +51577,14 @@ void SOLARCHVISION_load_project (String myFile) {
     allSolids.from_XML(FileAll);
     
     allModel1Ds.from_XML(FileAll);
+    
+    allModel2Ds.from_XML(FileAll);
 
 
 
 
 
-    println("Loading:allModel2Ds");
-    children0 = FileAll.getChildren("allModel2Ds");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
 
-      allModel2Ds.XYZS = new float [ni][4];
-      allModel2Ds.MAP = new int [ni];
-      allModel2Ds.num = ni;
-
-      XML[] children1 = children0[L].getChildren("allModel2Ds");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 4; j++) {
-          allModel2Ds.XYZS[i][j] = float(parts[j]);
-        }
-        allModel2Ds.MAP[i] = int(parts[4]);
-      }
-    }      
 
     println("Loading:Vertices");
     children0 = FileAll.getChildren("allVertices");
