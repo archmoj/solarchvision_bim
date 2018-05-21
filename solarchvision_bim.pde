@@ -8331,10 +8331,12 @@ void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
 
 
-
 float[][] allVertices = new float[0][3];
 
+
 class solarchvision_Faces {
+  
+  private final static String CLASS_STAMP = "Faces";
   
   int[][] nodes = new int[0][0];
   
@@ -8386,12 +8388,89 @@ class solarchvision_Faces {
   
   void setClose (int n, int close) {
     this.options[n][5] = close;
-  }     
+  }    
+ 
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".nodes");
+      parent.setInt("ni", this.nodes.length);
+      for (int i = 0; i < this.nodes.length; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        for (int j = 0; j < this.nodes[i].length; j++) {
+          lineSTR += nf(this.nodes[i][j], 0);
+          if (j < this.nodes[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".options");
+      parent.setInt("ni", this.options.length);
+      for (int i = 0; i < this.options.length; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        for (int j = 0; j < this.options[i].length; j++) {
+          lineSTR += nf(this.options[i][j], 0);
+          if (j < this.options[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".nodes");
+      int ni = parent.getInt("ni");
+      this.nodes = new int [0][0];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        int nj = parts.length;
+        int[][] newFace = new int [1][nj];
+        for (int j = 0; j < nj; j++) {
+          newFace[0][j] = int(parts[j]);
+        }
+        this.nodes = (int[][]) concat(this.nodes, newFace);
+      }
+    }
+    
+    { 
+      XML parent = xml.getChild(this.CLASS_STAMP + ".options");
+      int ni = parent.getInt("ni");
+      this.options = new int [ni][6];
+      XML[] children = parent.getChildren("item"); 
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.options[i][j] = int(parts[j]);
+        }
+      }
+    }
+  }    
+  
 }
 
 solarchvision_Faces allFaces = new solarchvision_Faces(); 
 
 class solarchvision_Curves {
+  
+  private final static String CLASS_STAMP = "Curves";
 
   int[][] nodes = new int[0][0];
   
@@ -8444,6 +8523,81 @@ class solarchvision_Curves {
   void setClose (int n, int close) {
     this.options[n][5] = close;
   }       
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".nodes");
+      parent.setInt("ni", this.nodes.length);
+      for (int i = 0; i < this.nodes.length; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        for (int j = 0; j < this.nodes[i].length; j++) {
+          lineSTR += nf(this.nodes[i][j], 0);
+          if (j < this.nodes[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".options");
+      parent.setInt("ni", this.options.length);
+      for (int i = 0; i < this.options.length; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        for (int j = 0; j < this.options[i].length; j++) {
+          lineSTR += nf(this.options[i][j], 0);
+          if (j < this.options[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".nodes");
+      int ni = parent.getInt("ni");
+      this.nodes = new int [0][0];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        int nj = parts.length;
+        int[][] newFace = new int [1][nj];
+        for (int j = 0; j < nj; j++) {
+          newFace[0][j] = int(parts[j]);
+        }
+        this.nodes = (int[][]) concat(this.nodes, newFace);
+      }
+    }
+    
+    { 
+      XML parent = xml.getChild(this.CLASS_STAMP + ".options");
+      int ni = parent.getInt("ni");
+      this.options = new int [ni][6];
+      XML[] children = parent.getChildren("item"); 
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.options[i][j] = int(parts[j]);
+        }
+      }
+    }
+  }    
+  
 }
 
 solarchvision_Curves allCurves = new solarchvision_Curves(); 
@@ -50595,92 +50749,35 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   allModel1Ds.to_XML(my_xml);
   
   allModel2Ds.to_XML(my_xml);
+  
+  
+
 
 
 
 
   println("Saving:Vertices");
   {
-    newChild1 = my_xml.addChild("allVertices");
-    newChild1.setInt("ni", allVertices.length);
+    XML parent = my_xml.addChild("allVertices");
+    parent.setInt("ni", allVertices.length);
     for (int i = 0; i < allVertices.length; i++) {
-      newChild2 = newChild1.addChild("Vertice");
-      newChild2.setInt("id", i);
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
       String lineSTR = "";
       //for (int j = 0; j < allVertices[i].length; j++) {
       for (int j = 0; j < 3; j++) { // x, y, z 
         lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
         if (j < allVertices[i].length - 1) lineSTR += ",";
       }
-      newChild2.setContent(lineSTR);
+      child.setContent(lineSTR);
     }
   }
 
-  println("Saving:Faces");
-  {
-    {
-      newChild1 = my_xml.addChild("allFaces.nodes");
-      newChild1.setInt("ni", allFaces.nodes.length);
-      for (int i = 0; i < allFaces.nodes.length; i++) {
-        newChild2 = newChild1.addChild("Face");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < allFaces.nodes[i].length; j++) {
-          lineSTR += nf(allFaces.nodes[i][j], 0);
-          if (j < allFaces.nodes[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
 
-    {
-      newChild1 = my_xml.addChild("allFaces.options");
-      newChild1.setInt("ni", allFaces.options.length);
-      for (int i = 0; i < allFaces.options.length; i++) {
-        newChild2 = newChild1.addChild("Face_MTLVGC");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < allFaces.options[i].length; j++) {
-          lineSTR += nf(allFaces.options[i][j], 0);
-          if (j < allFaces.options[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-  }
 
-  println("Saving:Curves");
-  {
-    {
-      newChild1 = my_xml.addChild("allCurves.nodes");
-      newChild1.setInt("ni", allCurves.nodes.length);
-      for (int i = 0; i < allCurves.nodes.length; i++) {
-        newChild2 = newChild1.addChild("Curve");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < allCurves.nodes[i].length; j++) {
-          lineSTR += nf(allCurves.nodes[i][j], 0);
-          if (j < allCurves.nodes[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
+  allCurves.to_XML(my_xml);
 
-    {
-      newChild1 = my_xml.addChild("allCurves.options");
-      newChild1.setInt("ni", allCurves.options.length);
-      for (int i = 0; i < allCurves.options.length; i++) {
-        newChild2 = newChild1.addChild("Curve_MTLVGC");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < allCurves.options[i].length; j++) {
-          lineSTR += nf(allCurves.options[i][j], 0);
-          if (j < allCurves.options[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-  }
+  allFaces.to_XML(my_xml);
 
 
 
@@ -51591,6 +51688,7 @@ void SOLARCHVISION_load_project (String myFile) {
     allModel1Ds.from_XML(FileAll);
     
     allModel2Ds.from_XML(FileAll);
+    
 
 
 
@@ -51598,89 +51696,28 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-    println("Loading:Vertices");
-    children0 = FileAll.getChildren("allVertices");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {  
+      println("Loading:Vertices");
+      XML parent = FileAll.getChild("allVertices");
+      int ni = parent.getInt("ni");
       allVertices = new float [ni][3];
-      XML[] children1 = children0[L].getChildren("Vertice");         
+      XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
+        String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
           allVertices[i][j] = float(parts[j]);
         }
       }
-    }  
-
-    println("Loading:Faces");
-    {
-      children0 = FileAll.getChildren("allFaces.nodes");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
-        allFaces.nodes = new int [0][0];
-        XML[] children1 = children0[L].getChildren("Face");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          int nj = parts.length;
-          int[][] newFace = new int [1][nj];
-          for (int j = 0; j < nj; j++) {
-            newFace[0][j] = int(parts[j]);
-          }
-          allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
-        }
-      }   
-
-      children0 = FileAll.getChildren("allFaces.options");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
-        allFaces.options = new int [ni][6];
-        XML[] children1 = children0[L].getChildren("Face_MTLVGC"); 
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allFaces.options[i][j] = int(parts[j]);
-          }
-        }
-      }
     }
 
+    
+    allCurves.from_XML(FileAll);
 
-    println("Loading:Curves");
-    {
-      children0 = FileAll.getChildren("allCurves.nodes");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
-        allCurves.nodes = new int [0][0];
-        XML[] children1 = children0[L].getChildren("Curve");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          int nj = parts.length;
-          int[][] newCurve = new int [1][nj];
-          for (int j = 0; j < nj; j++) {
-            newCurve[0][j] = int(parts[j]);
-          }
-          allCurves.nodes = (int[][]) concat(allCurves.nodes, newCurve);
-        }
-      }   
+    allFaces.from_XML(FileAll);
+    
+    
 
-      children0 = FileAll.getChildren("allCurves.options");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
-        allCurves.options = new int [ni][6];
-        XML[] children1 = children0[L].getChildren("Curve_MTLVGC"); 
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allCurves.options[i][j] = int(parts[j]);
-          }
-        }
-      }
-    }
 
 
     println("Loading:allGroups");
