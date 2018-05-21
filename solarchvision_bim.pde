@@ -20743,6 +20743,8 @@ solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
 
 
 class solarchvision_Solids {
+  
+  private final static String CLASS_STAMP = "Solids";
 
   float[][] DEF = new float[0][13];
   
@@ -21225,6 +21227,51 @@ class solarchvision_Solids {
   
     return return_point;
   }
+
+
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML children = xml.addChild(this.CLASS_STAMP);
+    int ni = this.DEF.length;
+    children.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      XML child = children.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < this.DEF[i].length; j++) {
+      for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
+        lineSTR += nf(this.DEF[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 != this.DEF[i].length) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }    
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML[] children = xml.getChildren(this.CLASS_STAMP);
+    for (int L = 0; L < children.length; L++) {
+      int ni = children[L].getInt("ni");
+
+      this.DEF = new float [ni][13];
+
+      XML[] child = children[L].getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+
+        String lineSTR = child[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 13; j++) {
+          this.DEF[i][j] = float(parts[j]);
+        }
+      }
+    } 
+  }    
 
 }
 
@@ -50317,24 +50364,9 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     }
   }
 
-  println("Saving:allSolids");
-  {
-    newChild1 = my_xml.addChild("allSolids");
-    int ni = allSolids.DEF.length;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Solid");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allSolids.DEF[i].length; j++) {
-      for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
-        lineSTR += nf(allSolids.DEF[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 != allSolids.DEF[i].length) lineSTR += ",";
-      }
+  allSolids.to_XML(my_xml);
 
-      newChild2.setContent(lineSTR);
-    }
-  }  
+
 
   println("Saving:allModel1Ds");
   {
@@ -51427,23 +51459,9 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     } 
 
-    println("Loading:allSolids");
-    children0 = FileAll.getChildren("allSolids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    allSolids.from_XML(FileAll);
 
-      allSolids.DEF = new float [ni][13];
 
-      XML[] children1 = children0[L].getChildren("Solid");         
-      for (int i = 0; i < ni; i++) {
-
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 13; j++) {
-          allSolids.DEF[i][j] = float(parts[j]);
-        }
-      }
-    } 
 
     println("Loading:allModel1Ds");
     children0 = FileAll.getChildren("allModel1Ds");
