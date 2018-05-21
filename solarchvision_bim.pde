@@ -15987,16 +15987,17 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 void SOLARCHVISION_delete_All () {
   
   allModel1Ds.delete();
-
   allModel2Ds.delete();
-  allModel3Ds.delete_allSolids();
+
   allModel3Ds.delete_Faces();
   allModel3Ds.delete_Curves();
   allModel3Ds.delete_Vertices();
-  allModel3Ds.delete_allGroups(); 
 
+  allModel3Ds.delete_allSolids();
   allModel3Ds.delete_allSections();
   allModel3Ds.delete_allCameras();
+
+  allModel3Ds.delete_allGroups(); 
 
   WIN3D.update = true;
 }
@@ -16293,6 +16294,9 @@ int[] getNow_inUTC () {
 
 
 class solarchvision_Tropo3D {
+  
+  private final static String CLASS_STAMP = "Tropo3D";
+
   
   boolean Display_Surface = false;
   boolean Display_Texture = true;  
@@ -17022,6 +17026,8 @@ solarchvision_Tropo3D Tropo3D = new solarchvision_Tropo3D();
 
 class solarchvision_Sky3D {
   
+  private final static String CLASS_STAMP = "Sky3D";
+  
   boolean Display_Surface = true;
   int Tessellation = 3; //3;
   float scale = 1000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
@@ -17134,6 +17140,8 @@ solarchvision_Sky3D Sky3D = new solarchvision_Sky3D();
 
 
 class solarchvision_Star3D {
+  
+  private final static String CLASS_STAMP = "Star3D";
   
   boolean Display_Surface = false;
   boolean Display_Texture = true;
@@ -17249,6 +17257,8 @@ solarchvision_Star3D Star3D = new solarchvision_Star3D();
 
 class solarchvision_Moon3D {
   
+  private final static String CLASS_STAMP = "Moon3D";
+  
   boolean Display_Surface = false;
   boolean Display_Texture = true;
   
@@ -17362,7 +17372,9 @@ solarchvision_Moon3D Moon3D = new solarchvision_Moon3D();
 
 
 class solarchvision_Earth3D {
-
+  
+  private final static String CLASS_STAMP = "Earth3D";
+    
   boolean Display_Surface = false;
   boolean Display_Texture = true;
   
@@ -17724,6 +17736,8 @@ solarchvision_Earth3D Earth3D = new solarchvision_Earth3D();
 
 
 class solarchvision_Land3D {
+  
+  private final static String CLASS_STAMP = "Land3D";
   
   boolean Load_Mesh = true; 
   boolean Load_Textures = true;
@@ -18685,6 +18699,8 @@ solarchvision_Land3D Land3D = new solarchvision_Land3D();
 
 
 class solarchvision_Model2Ds {
+  
+  private final static String CLASS_STAMP = "Model2Ds";
 
   float[][] XYZS = new float[0][4];
   
@@ -19776,6 +19792,8 @@ solarchvision_Model2Ds allModel2Ds = new solarchvision_Model2Ds();
 
 
 class solarchvision_Model1Ds {
+  
+  private final static String CLASS_STAMP = "Model1Ds";
 
   float[][] XYZSR = new float[0][5];
   
@@ -21294,7 +21312,7 @@ solarchvision_Solids allSolids = new solarchvision_Solids();
 
 class solarchvision_Model3Ds {
   
-  private final static String CLASS_STAMP = "allModel3Ds";
+  private final static String CLASS_STAMP = "Model3Ds";
     
   boolean DisplayVertices = false;
   boolean DisplayEdges = true;
@@ -29510,7 +29528,7 @@ solarchvision_Model3Ds allModel3Ds = new solarchvision_Model3Ds();
 
 class solarchvision_Cameras {
 
-  private final static String CLASS_STAMP = "allCameras";
+  private final static String CLASS_STAMP = "Cameras";
   
   float[][] PPPSRRRF = {
     {
@@ -29816,7 +29834,7 @@ solarchvision_Cameras allCameras = new solarchvision_Cameras();
 
 class solarchvision_Sections {
 
-  private final static String CLASS_STAMP = "allSections";
+  private final static String CLASS_STAMP = "Sections";
 
   float[][] UVERAB = new float[0][6];
   int[] Type = new int[0];
@@ -30245,6 +30263,63 @@ class solarchvision_Sections {
   
     return return_point;
   }
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    int ni = this.num;
+    parent.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < this.UVERAB[i].length; j++) {
+      for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
+        lineSTR += nf(this.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(this.Type[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(this.RES1[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(this.RES2[i], 0);
+
+      child.setContent(lineSTR);
+    }
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+
+    XML parent = xml.getChild(this.CLASS_STAMP);
+
+    int ni = parent.getInt("ni");
+
+    this.UVERAB = new float [ni][6];
+    this.Type = new int [ni];
+    this.RES1 = new int [ni];
+    this.RES2 = new int [ni];
+    this.num = ni;
+
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < 6; j++) {
+        this.UVERAB[i][j] = float(parts[j]);
+      }
+
+      this.Type[i] = int(parts[6]);
+      this.RES1[i] = int(parts[7]);
+      this.RES2[i] = int(parts[8]);
+    }
+  }  
   
 }  
 
@@ -50338,30 +50413,9 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     }
   }  
 
-  println("Saving:allSections");
-  {
-    newChild1 = my_xml.addChild("allSections");
-    int ni = allSections.num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Section");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allSections.UVERAB[i].length; j++) {
-      for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-        lineSTR += nf(allSections.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += nf(allSections.Type[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allSections.RES1[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allSections.RES2[i], 0);
 
-      newChild2.setContent(lineSTR);
-    }
-  }
-
+  allSections.to_XML(my_xml);
+  
   allSolids.to_XML(my_xml);
 
 
@@ -51431,32 +51485,9 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     } 
 
-    println("Loading:allSections");
-    children0 = FileAll.getChildren("allSections");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
 
-      allSections.UVERAB = new float [ni][6];
-      allSections.Type = new int [ni];
-      allSections.RES1 = new int [ni];
-      allSections.RES2 = new int [ni];
-      allSections.num = ni;
-
-      XML[] children1 = children0[L].getChildren("Section");         
-      for (int i = 0; i < ni; i++) {
-
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 6; j++) {
-          allSections.UVERAB[i][j] = float(parts[j]);
-        }
-
-        allSections.Type[i] = int(parts[6]);
-        allSections.RES1[i] = int(parts[7]);
-        allSections.RES2[i] = int(parts[8]);
-      }
-    } 
-
+    allSections.from_XML(FileAll);
+    
     allSolids.from_XML(FileAll);
 
 
