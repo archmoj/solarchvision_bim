@@ -18686,10 +18686,39 @@ solarchvision_Land3D Land3D = new solarchvision_Land3D();
 
 class solarchvision_Model2Ds {
 
-  float[][] Vertices;
-  int[][] Faces;
- 
   float[][] XYZS = new float[0][4];
+  
+  float getX (int n) {
+    return XYZS[n][0]; 
+  }
+
+  float getY (int n) {
+    return XYZS[n][1]; 
+  }
+
+  float getZ (int n) {
+    return XYZS[n][2]; 
+  }
+
+  float getS (int n) {
+    return XYZS[n][3]; 
+  }
+
+  void setX (int n, float x) {
+    XYZS[n][0] = x;  
+  }
+
+  void setY (int n, float y) {
+    XYZS[n][1] = y;  
+  }
+
+  void setZ (int n, float z) {
+    XYZS[n][2] = z;  
+  }
+
+  void setS (int n, float s) {
+    XYZS[n][3] = s;  
+  }  
   
   int[] MAP = new int[0];
   int num = 0; 
@@ -18705,6 +18734,9 @@ class solarchvision_Model2Ds {
  
   PImage[] Images;
   float[] ImageRatios;
+  
+  float[][] Vertices;
+  int[][] Faces;  
   
   void load_images () {
   
@@ -21433,10 +21465,10 @@ class solarchvision_Model3Ds {
   
         int OBJ_NUM = selectedallModel2Ds_ids[o];
   
-        float x = allModel2Ds.XYZS[OBJ_NUM][0];
-        float y = allModel2Ds.XYZS[OBJ_NUM][1];
-        float z = allModel2Ds.XYZS[OBJ_NUM][2];
-        float s = allModel2Ds.XYZS[OBJ_NUM][3];
+        float x = allModel2Ds.getX(OBJ_NUM);
+        float y = allModel2Ds.getY(OBJ_NUM);
+        float z = allModel2Ds.getZ(OBJ_NUM);
+        float s = allModel2Ds.getS(OBJ_NUM);
   
         int n = allModel2Ds.MAP[OBJ_NUM];
         if (abs(n) > n1) {
@@ -21790,10 +21822,10 @@ class solarchvision_Model3Ds {
           if ((0 <= allGroups_allModel2Ds[OBJ_NUM][1]) && (allGroups_allModel2Ds[OBJ_NUM][0] <= allGroups_allModel2Ds[OBJ_NUM][1])) { 
             for (int q = allGroups_allModel2Ds[OBJ_NUM][0]; q <= allGroups_allModel2Ds[OBJ_NUM][1]; q++) {
     
-              float x = allModel2Ds.XYZS[q][0];
-              float y = allModel2Ds.XYZS[q][1];
-              float z = allModel2Ds.XYZS[q][2];
-              float s = allModel2Ds.XYZS[q][3];
+              float x = allModel2Ds.getX(q);
+              float y = allModel2Ds.getY(q);
+              float z = allModel2Ds.getZ(q);
+              float s = allModel2Ds.getS(q);
     
               int n = allModel2Ds.MAP[q];
     
@@ -21942,10 +21974,10 @@ class solarchvision_Model3Ds {
           if ((0 <= allGroups_allModel2Ds[OBJ_NUM][1]) && (allGroups_allModel2Ds[OBJ_NUM][0] <= allGroups_allModel2Ds[OBJ_NUM][1])) { 
             for (int q = allGroups_allModel2Ds[OBJ_NUM][0]; q <= allGroups_allModel2Ds[OBJ_NUM][1]; q++) {
   
-              float x = allModel2Ds.XYZS[q][0];
-              float y = allModel2Ds.XYZS[q][1];
-              float z = allModel2Ds.XYZS[q][2];
-              float s = allModel2Ds.XYZS[q][3];
+              float x = allModel2Ds.getX(q);
+              float y = allModel2Ds.getY(q);
+              float z = allModel2Ds.getZ(q);
+              float s = allModel2Ds.getS(q);
   
               int n = allModel2Ds.MAP[q];
   
@@ -22125,10 +22157,10 @@ class solarchvision_Model3Ds {
   
           int OBJ_NUM = selectedallModel2Ds_ids[o];
   
-          float x = allModel2Ds.XYZS[OBJ_NUM][0];
-          float y = allModel2Ds.XYZS[OBJ_NUM][1];
-          float z = allModel2Ds.XYZS[OBJ_NUM][2];
-          float s = allModel2Ds.XYZS[OBJ_NUM][3];
+          float x = allModel2Ds.getX(OBJ_NUM);
+          float y = allModel2Ds.getY(OBJ_NUM);
+          float z = allModel2Ds.getZ(OBJ_NUM);
+          float s = allModel2Ds.getS(OBJ_NUM);
   
           int n = allModel2Ds.MAP[OBJ_NUM];
           if (abs(n) > n1) {
@@ -38926,9 +38958,9 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-                    x1 = allModel2Ds.XYZS[selectedallModel2Ds_ids[selectedallModel2Ds_ids.length - 1]][0]; 
-                    y1 = allModel2Ds.XYZS[selectedallModel2Ds_ids[selectedallModel2Ds_ids.length - 1]][1]; 
-                    z1 = allModel2Ds.XYZS[selectedallModel2Ds_ids[selectedallModel2Ds_ids.length - 1]][2];
+                    x1 = allModel2Ds.getX(selectedallModel2Ds_ids[selectedallModel2Ds_ids.length - 1]); 
+                    y1 = allModel2Ds.getY(selectedallModel2Ds_ids[selectedallModel2Ds_ids.length - 1]); 
+                    z1 = allModel2Ds.getZ(selectedallModel2Ds_ids[selectedallModel2Ds_ids.length - 1]);
                   }
   
                   if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
@@ -41664,7 +41696,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                 int w = allModel2Ds.Images[n].width; 
                 int h = allModel2Ds.Images[n].height;
 
-                float r = allModel2Ds.XYZS[f][3] * 0.5;
+                float r = allModel2Ds.getS(f) * 0.5;
 
                 float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
 
@@ -41679,9 +41711,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
                     TREES_graphics.texture(allModel2Ds.Images[n]); 
 
-                    x = allModel2Ds.XYZS[f][0];
-                    y = allModel2Ds.XYZS[f][1];
-                    z = allModel2Ds.XYZS[f][2];
+                    x = allModel2Ds.getX(f);
+                    y = allModel2Ds.getY(f);
+                    z = allModel2Ds.getZ(f);
 
                     float[] TX = {
                       0, 0, 0, 0
@@ -41798,9 +41830,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
                       TREES_graphics.texture(allModel2Ds.Images[n]); 
 
-                      x = allModel2Ds.XYZS[f][0];
-                      y = allModel2Ds.XYZS[f][1];
-                      z = allModel2Ds.XYZS[f][2];                      
+                      x = allModel2Ds.getX(f);
+                      y = allModel2Ds.getY(f);
+                      z = allModel2Ds.getZ(f);                      
 
                       float[] TX = {
                         0, 0, 0, 0
@@ -42281,7 +42313,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               int w = allModel2Ds.Images[n].width; 
               int h = allModel2Ds.Images[n].height;
 
-              float r = allModel2Ds.XYZS[f][3] * 0.5;
+              float r = allModel2Ds.getS(f) * 0.5;
 
               float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
 
@@ -42289,18 +42321,18 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
               if (r > 2.5) { // to select only trees!               
 
-                float x = allModel2Ds.XYZS[f][0];
-                float y = allModel2Ds.XYZS[f][1];
-                float z = allModel2Ds.XYZS[f][2];
+                float x = allModel2Ds.getX(f);
+                float y = allModel2Ds.getY(f);
+                float z = allModel2Ds.getZ(f);
 
                 { // Vertical mask
                   TREES_graphics.beginShape();
 
                   TREES_graphics.texture(allModel2Ds.Images[n]); 
 
-                  x = allModel2Ds.XYZS[f][0];
-                  y = allModel2Ds.XYZS[f][1];
-                  z = allModel2Ds.XYZS[f][2];
+                  x = allModel2Ds.getX(f);
+                  y = allModel2Ds.getY(f);
+                  z = allModel2Ds.getZ(f);
 
                   float[] TX = {
                     0, 0, 0, 0
@@ -43243,9 +43275,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
       int n = theVertices[q];
 
-      x = allModel2Ds.XYZS[n][0];
-      y = allModel2Ds.XYZS[n][1];
-      z = allModel2Ds.XYZS[n][2];
+      x = allModel2Ds.getX(n);
+      y = allModel2Ds.getY(n);
+      z = allModel2Ds.getZ(n);
     }     
     if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
       int n = theVertices[q];
@@ -43424,9 +43456,9 @@ void SOLARCHVISION_move_selectedallGroups (float dx, float dy, float dz) {
     for (int f = allGroups_allModel2Ds[OBJ_NUM][0]; f <= allGroups_allModel2Ds[OBJ_NUM][1]; f++) {
       if ((0 <= f) && (f < allModel2Ds.num)) {
 
-        allModel2Ds.XYZS[f][0] += dx;
-        allModel2Ds.XYZS[f][1] += dy;
-        allModel2Ds.XYZS[f][2] += dz;
+        allModel2Ds.setX(f, allModel2Ds.getX(f) + dx);
+        allModel2Ds.setY(f, allModel2Ds.getY(f) + dy);
+        allModel2Ds.setZ(f, allModel2Ds.getZ(f) + dz);
       }
     }
 
@@ -43625,9 +43657,9 @@ void SOLARCHVISION_rotate_selectedallGroups (float r, int the_Vector) {
     for (int f = allGroups_allModel2Ds[OBJ_NUM][0]; f <= allGroups_allModel2Ds[OBJ_NUM][1]; f++) {
       if ((0 <= f) && (f < allModel2Ds.num)) {
 
-        float x = allModel2Ds.XYZS[f][0]; 
-        float y = allModel2Ds.XYZS[f][1]; 
-        float z = allModel2Ds.XYZS[f][2];
+        float x = allModel2Ds.getX(f); 
+        float y = allModel2Ds.getY(f); 
+        float z = allModel2Ds.getZ(f);
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43665,9 +43697,9 @@ void SOLARCHVISION_rotate_selectedallGroups (float r, int the_Vector) {
         y = B[1];
         z = B[2];
 
-        allModel2Ds.XYZS[f][0] = x;
-        allModel2Ds.XYZS[f][1] = y;
-        allModel2Ds.XYZS[f][2] = z;
+        allModel2Ds.setX(f, x);
+        allModel2Ds.setY(f, y);
+        allModel2Ds.setZ(f, z);
       }
     }         
 
@@ -43833,9 +43865,9 @@ void SOLARCHVISION_scale_selectedallGroups (float x0, float y0, float z0, float 
     for (int f = allGroups_allModel2Ds[OBJ_NUM][0]; f <= allGroups_allModel2Ds[OBJ_NUM][1]; f++) {
       if ((0 <= f) && (f < allModel2Ds.num)) {
 
-        float x = allModel2Ds.XYZS[f][0];
-        float y = allModel2Ds.XYZS[f][1]; 
-        float z = allModel2Ds.XYZS[f][2];
+        float x = allModel2Ds.getX(f);
+        float y = allModel2Ds.getY(f); 
+        float z = allModel2Ds.getZ(f);
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43849,14 +43881,14 @@ void SOLARCHVISION_scale_selectedallGroups (float x0, float y0, float z0, float 
         y = B[1];
         z = B[2];         
 
-        allModel2Ds.XYZS[f][0] = x; 
-        allModel2Ds.XYZS[f][1] = y;
-        allModel2Ds.XYZS[f][2] = z;
+        allModel2Ds.setX(f, x); 
+        allModel2Ds.setY(f, y);
+        allModel2Ds.setZ(f, z);
 
         int n = allModel2Ds.MAP[f];
 
         if (abs(n) > n1) { // does not scale poeple!    
-          allModel2Ds.XYZS[f][3] *= sz;
+          allModel2Ds.setS(f, allModel2Ds.getS(f) * sz);
         }
       }
     }     
@@ -44194,9 +44226,9 @@ void SOLARCHVISION_scale_selectedallModel2Ds (float x0, float y0, float z0, floa
 
     int f = selectedallModel2Ds_ids[o];
 
-    float x = allModel2Ds.XYZS[f][0];
-    float y = allModel2Ds.XYZS[f][1]; 
-    float z = allModel2Ds.XYZS[f][2];
+    float x = allModel2Ds.getX(f);
+    float y = allModel2Ds.getY(f); 
+    float z = allModel2Ds.getZ(f);
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -44210,15 +44242,15 @@ void SOLARCHVISION_scale_selectedallModel2Ds (float x0, float y0, float z0, floa
     y = B[1];
     z = B[2];         
 
-    allModel2Ds.XYZS[f][0] = x; 
-    allModel2Ds.XYZS[f][1] = y;
-    allModel2Ds.XYZS[f][2] = z;    
+    allModel2Ds.setX(f, x); 
+    allModel2Ds.setY(f, y);
+    allModel2Ds.setZ(f, z);    
 
 
     int n = allModel2Ds.MAP[f];
 
     if (abs(n) > n1) { // does not scale poeple!    
-      allModel2Ds.XYZS[f][3] *= sz;
+      allModel2Ds.setS(f, allModel2Ds.getS(f) * sz);
     }
   }
 }
@@ -44230,22 +44262,22 @@ void SOLARCHVISION_rotate_selectedallModel2Ds (float x0, float y0, float z0, flo
 
     int f = selectedallModel2Ds_ids[q];
 
-    float x = allModel2Ds.XYZS[f][0] - x0; 
-    float y = allModel2Ds.XYZS[f][1] - y0; 
-    float z = allModel2Ds.XYZS[f][2] - z0;
+    float x = allModel2Ds.getX(f) - x0; 
+    float y = allModel2Ds.getY(f) - y0; 
+    float z = allModel2Ds.getZ(f) - z0;
 
     if (the_Vector == 2) {
-      allModel2Ds.XYZS[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allModel2Ds.XYZS[f][1] = y0 + (x * sin(r) + y * cos(r));
-      allModel2Ds.XYZS[f][2] = z0 + (z);
+      allModel2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+      allModel2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+      allModel2Ds.setZ(f, z0 + (z));
     } else if (the_Vector == 1) {
-      allModel2Ds.XYZS[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allModel2Ds.XYZS[f][1] = y0 + (y);
-      allModel2Ds.XYZS[f][2] = z0 + (z * cos(r) - x * sin(r));
+      allModel2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+      allModel2Ds.setY(f, y0 + (y));
+      allModel2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
     } else if (the_Vector == 0) {
-      allModel2Ds.XYZS[f][0] = x0 + (x); 
-      allModel2Ds.XYZS[f][1] = y0 + (y * cos(r) - z * sin(r));
-      allModel2Ds.XYZS[f][2] = z0 + (y * sin(r) + z * cos(r));
+      allModel2Ds.setX(f, x0 + (x)); 
+      allModel2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+      allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
     }
   }
 }
@@ -44258,9 +44290,9 @@ void SOLARCHVISION_move_selectedallModel2Ds (float dx, float dy, float dz) {
 
     int f = selectedallModel2Ds_ids[o];
     
-    allModel2Ds.XYZS[f][0] += dx; 
-    allModel2Ds.XYZS[f][1] += dy; 
-    allModel2Ds.XYZS[f][2] += dz;
+    allModel2Ds.setX(f, allModel2Ds.getX(f) + dx); 
+    allModel2Ds.setY(f, allModel2Ds.getY(f) + dy); 
+    allModel2Ds.setZ(f, allModel2Ds.getZ(f) + dz);
   }
 } 
 
@@ -44898,9 +44930,9 @@ void SOLARCHVISION_drop_Selection () {
 
       int OBJ_NUM = selectedallModel2Ds_ids[o];
 
-      float x = allModel2Ds.XYZS[OBJ_NUM][0];
-      float y = allModel2Ds.XYZS[OBJ_NUM][1];
-      float z = allModel2Ds.XYZS[OBJ_NUM][2];
+      float x = allModel2Ds.getX(OBJ_NUM);
+      float y = allModel2Ds.getY(OBJ_NUM);
+      float z = allModel2Ds.getZ(OBJ_NUM);
 
       float[] ray_start = {
         x, y, z
@@ -44921,9 +44953,9 @@ void SOLARCHVISION_drop_Selection () {
       }
 
       if (RxP[0] >= 0) {
-        allModel2Ds.XYZS[OBJ_NUM][0] = RxP[1]; 
-        allModel2Ds.XYZS[OBJ_NUM][1] = RxP[2]; 
-        allModel2Ds.XYZS[OBJ_NUM][2] = RxP[3];
+        allModel2Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel2Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel2Ds.setZ(OBJ_NUM, RxP[3]);
       } else {
         ray_direction[2] = 1; // <<<< going upwards
 
@@ -44936,9 +44968,9 @@ void SOLARCHVISION_drop_Selection () {
         }
 
         if (RxP[0] >= 0) {
-          allModel2Ds.XYZS[OBJ_NUM][0] = RxP[1]; 
-          allModel2Ds.XYZS[OBJ_NUM][1] = RxP[2]; 
-          allModel2Ds.XYZS[OBJ_NUM][2] = RxP[3];
+          allModel2Ds.setX(OBJ_NUM, RxP[1]); 
+          allModel2Ds.setY(OBJ_NUM, RxP[2]); 
+          allModel2Ds.setZ(OBJ_NUM, RxP[3]);
         }
       }
     }
