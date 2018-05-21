@@ -29826,6 +29826,60 @@ class solarchvision_Cameras {
   
     return return_point;
   }  
+  
+  
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    int ni = this.num;
+    parent.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < this.PPPSRRRF[i].length; j++) {
+      for (int j = 0; j < 8; j++) { // x, y, z, s, rx, ry, rz, zoom
+        lineSTR += nf(this.PPPSRRRF[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(this.Type[i], 0);
+      lineSTR += ",";
+
+      child.setContent(lineSTR);
+    }
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML parent = xml.getChild(this.CLASS_STAMP);
+
+    int ni = parent.getInt("ni");
+
+    this.PPPSRRRF = new float [ni][8];
+    this.Type = new int [ni];
+
+    this.num = ni;
+
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < 8; j++) {
+        this.PPPSRRRF[i][j] = float(parts[j]);
+      }
+
+      this.Type[i] = int(parts[8]);
+    }
+  }    
+
 }
 
 solarchvision_Cameras allCameras = new solarchvision_Cameras();
@@ -50392,29 +50446,11 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     }
   }  
 
-  println("Saving:allCameras");
-  {
-    newChild1 = my_xml.addChild("allCameras");
-    int ni = allCameras.num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Camera");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allCameras.PPPSRRRF[i].length; j++) {
-      for (int j = 0; j < 8; j++) { // x, y, z, s, rx, ry, rz, zoom
-        lineSTR += nf(allCameras.PPPSRRRF[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += nf(allCameras.Type[i], 0);
-      lineSTR += ",";
-
-      newChild2.setContent(lineSTR);
-    }
-  }  
-
+  
 
   allSections.to_XML(my_xml);
+  
+  allCameras.to_XML(my_xml);
   
   allSolids.to_XML(my_xml);
 
@@ -51462,31 +51498,12 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    println("Loading:allCameras");
-    children0 = FileAll.getChildren("allCameras");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
 
-      allCameras.PPPSRRRF = new float [ni][8];
-      allCameras.Type = new int [ni];
-
-      allCameras.num = ni;
-
-      XML[] children1 = children0[L].getChildren("Camera");         
-      for (int i = 0; i < ni; i++) {
-
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 8; j++) {
-          allCameras.PPPSRRRF[i][j] = float(parts[j]);
-        }
-
-        allCameras.Type[i] = int(parts[8]);
-      }
-    } 
 
 
     allSections.from_XML(FileAll);
+    
+    allCameras.from_XML(FileAll);
     
     allSolids.from_XML(FileAll);
 
