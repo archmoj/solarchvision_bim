@@ -21234,11 +21234,11 @@ class solarchvision_Solids {
     
     println("Saving:" + this.CLASS_STAMP);
     
-    XML children = xml.addChild(this.CLASS_STAMP);
+    XML parent = xml.addChild(this.CLASS_STAMP);
     int ni = this.DEF.length;
-    children.setInt("ni", ni);
+    parent.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
-      XML child = children.addChild("item");
+      XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
       //for (int j = 0; j < this.DEF[i].length; j++) {
@@ -21255,22 +21255,20 @@ class solarchvision_Solids {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    XML[] children = xml.getChildren(this.CLASS_STAMP);
-    for (int L = 0; L < children.length; L++) {
-      int ni = children[L].getInt("ni");
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    int ni = parent.getInt("ni");
 
-      this.DEF = new float [ni][13];
+    this.DEF = new float [ni][13];
 
-      XML[] child = children[L].getChildren("item");         
-      for (int i = 0; i < ni; i++) {
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
 
-        String lineSTR = child[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 13; j++) {
-          this.DEF[i][j] = float(parts[j]);
-        }
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < 13; j++) {
+        this.DEF[i][j] = float(parts[j]);
       }
-    } 
+    }
   }    
 
 }
