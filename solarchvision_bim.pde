@@ -15323,17 +15323,17 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       float r = allModel1Ds.getS(f) * 0.5;
       float rot = allModel1Ds.getR(f);
 
-      int n = allModel1Ds.Type[f];
+      int n = allModel1Ds.getType(f);
 
-      int dMin = allModel1Ds.DegreeMin[f];
+      int dMin = allModel1Ds.getDegreeMin(f);
 
-      int dMax = allModel1Ds.DegreeMax[f];
+      int dMax = allModel1Ds.getDegreeMax(f);
 
-      int s = allModel1Ds.Seed[f];
+      int s = allModel1Ds.getSeed(f);
 
-      float TrunkSize = allModel1Ds.TrunkSize[f];
+      float TrunkSize = allModel1Ds.getTrunkSize(f);
 
-      float LeafSize = allModel1Ds.LeafSize[f];
+      float LeafSize = allModel1Ds.getLeafSize(f);
 
       randomSeed(s);
 
@@ -18689,35 +18689,35 @@ class solarchvision_Model2Ds {
   float[][] XYZS = new float[0][4];
   
   float getX (int n) {
-    return XYZS[n][0]; 
+    return this.XYZS[n][0]; 
   }
 
   float getY (int n) {
-    return XYZS[n][1]; 
+    return this.XYZS[n][1]; 
   }
 
   float getZ (int n) {
-    return XYZS[n][2]; 
+    return this.XYZS[n][2]; 
   }
 
   float getS (int n) {
-    return XYZS[n][3]; 
+    return this.XYZS[n][3]; 
   }
 
   void setX (int n, float x) {
-    XYZS[n][0] = x;  
+    this.XYZS[n][0] = x;  
   }
 
   void setY (int n, float y) {
-    XYZS[n][1] = y;  
+    this.XYZS[n][1] = y;  
   }
 
   void setZ (int n, float z) {
-    XYZS[n][2] = z;  
+    this.XYZS[n][2] = z;  
   }
 
   void setS (int n, float s) {
-    XYZS[n][3] = s;  
+    this.XYZS[n][3] = s;  
   }  
   
   int[] MAP = new int[0];
@@ -19780,51 +19780,103 @@ class solarchvision_Model1Ds {
   float[][] XYZSR = new float[0][5];
   
   float getX (int n) {
-    return XYZSR[n][0]; 
+    return this.XYZSR[n][0]; 
   }
 
   float getY (int n) {
-    return XYZSR[n][1]; 
+    return this.XYZSR[n][1]; 
   }
 
   float getZ (int n) {
-    return XYZSR[n][2]; 
+    return this.XYZSR[n][2]; 
   }
 
   float getS (int n) {
-    return XYZSR[n][3]; 
+    return this.XYZSR[n][3]; 
   }
   
   float getR (int n) {
-    return XYZSR[n][4]; 
+    return this.XYZSR[n][4]; 
   }  
 
   void setX (int n, float x) {
-    XYZSR[n][0] = x;  
+    this.XYZSR[n][0] = x;  
   }
 
   void setY (int n, float y) {
-    XYZSR[n][1] = y;  
+    this.XYZSR[n][1] = y;  
   }
 
   void setZ (int n, float z) {
-    XYZSR[n][2] = z;  
+    this.XYZSR[n][2] = z;  
   }
 
   void setS (int n, float s) {
-    XYZSR[n][3] = s;  
+    this.XYZSR[n][3] = s;  
   }  
   
   void setR (int n, float r) {
-    XYZSR[n][4] = r;  
+    this.XYZSR[n][4] = r;  
   }     
   
   int[] Type = new int[0];
+  int[] Seed = new int[0];  
   int[] DegreeMin = new int[0];
   int[] DegreeMax = new int[0];
-  int[] Seed = new int[0];
+  
+  int getType (int n) {
+    return this.Type[n]; 
+  }  
+
+  void setType (int n, int t) {
+    this.Type[n] = t;  
+  }  
+  
+  int getSeed (int n) {
+    return this.Seed[n]; 
+  }  
+
+  void setSeed (int n, int t) {
+    this.Seed[n] = t;  
+  }    
+  
+  int getDegreeMin (int n) {
+    return this.DegreeMin[n]; 
+  }  
+
+  void setDegreeMin (int n, int t) {
+    this.DegreeMin[n] = t;  
+  }    
+  
+  int getDegreeMax (int n) {
+    return this.DegreeMax[n]; 
+  }  
+
+  void setDegreeMax (int n, int t) {
+    this.DegreeMax[n] = t;  
+  }  
+
+
   float[] TrunkSize = new float[0];
   float[] LeafSize = new float[0];
+
+  float getTrunkSize (int n) {
+    return this.TrunkSize[n]; 
+  }  
+
+  void setTrunkSize (int n, float t) {
+    this.TrunkSize[n] = t;  
+  }  
+  
+  float getLeafSize (int n) {
+    return this.LeafSize[n]; 
+  }  
+
+  void setLeafSize (int n, float t) {
+    this.LeafSize[n] = t;  
+  }   
+  
+  
   int num = 0; 
   
   
@@ -21473,12 +21525,12 @@ class solarchvision_Model3Ds {
         float d = allModel1Ds.getS(OBJ_NUM);
         float rot = allModel1Ds.getR(OBJ_NUM);
   
-        int n = allModel1Ds.Type[OBJ_NUM];
-        int dMin = allModel1Ds.DegreeMin[OBJ_NUM];
-        int dMax = allModel1Ds.DegreeMax[OBJ_NUM];
-        int s = allModel1Ds.Seed[OBJ_NUM];
-        float TrunkSize = allModel1Ds.TrunkSize[OBJ_NUM];
-        float LeafSize = allModel1Ds.LeafSize[OBJ_NUM];
+        int n = allModel1Ds.getType(OBJ_NUM);
+        int dMin = allModel1Ds.getDegreeMin(OBJ_NUM);
+        int dMax = allModel1Ds.getDegreeMax(OBJ_NUM);
+        int s = allModel1Ds.getSeed(OBJ_NUM);
+        float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
+        float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
   
         if (produce_another_variation == 1) randomSeed(millis());
         allModel1Ds.add_single(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
@@ -21838,17 +21890,17 @@ class solarchvision_Model3Ds {
               float d = allModel1Ds.getS(q);
               float rot = allModel1Ds.getR(q);
   
-              int n = allModel1Ds.Type[q];
+              int n = allModel1Ds.getType(q);
   
-              int dMin = allModel1Ds.DegreeMin[q];
+              int dMin = allModel1Ds.getDegreeMin(q);
   
-              int dMax = allModel1Ds.DegreeMax[q];
+              int dMax = allModel1Ds.getDegreeMax(q);
   
-              int s = allModel1Ds.Seed[q];
+              int s = allModel1Ds.getSeed(q);
   
-              float TrunkSize = allModel1Ds.TrunkSize[q];
+              float TrunkSize = allModel1Ds.getTrunkSize(q);
   
-              float LeafSize = allModel1Ds.LeafSize[q];
+              float LeafSize = allModel1Ds.getLeafSize(q);
   
               if (produce_another_variation == 1) {
                 randomSeed(millis());
@@ -21990,17 +22042,17 @@ class solarchvision_Model3Ds {
               float d = allModel1Ds.getS(q);
               float rot = allModel1Ds.getR(q);
   
-              int n = allModel1Ds.Type[q];
+              int n = allModel1Ds.getType(q);
   
-              int dMin = allModel1Ds.DegreeMin[q];
+              int dMin = allModel1Ds.getDegreeMin(q);
   
-              int dMax = allModel1Ds.DegreeMax[q];
+              int dMax = allModel1Ds.getDegreeMax(q);
   
-              int s = allModel1Ds.Seed[q];
+              int s = allModel1Ds.getSeed(q);
   
-              float TrunkSize = allModel1Ds.TrunkSize[q];
+              float TrunkSize = allModel1Ds.getTrunkSize(q);
   
-              float LeafSize = allModel1Ds.LeafSize[q];
+              float LeafSize = allModel1Ds.getLeafSize(q);
   
               if (produce_another_variation == 1) {
                 randomSeed(millis());
@@ -22179,12 +22231,12 @@ class solarchvision_Model3Ds {
           float d = allModel1Ds.getS(OBJ_NUM);
           float rot = allModel1Ds.getR(OBJ_NUM);
   
-          int n = allModel1Ds.Type[OBJ_NUM];
-          int dMin = allModel1Ds.DegreeMin[OBJ_NUM];
-          int dMax = allModel1Ds.DegreeMax[OBJ_NUM];
-          int s = allModel1Ds.Seed[OBJ_NUM];
-          float TrunkSize = allModel1Ds.TrunkSize[OBJ_NUM];
-          float LeafSize = allModel1Ds.LeafSize[OBJ_NUM];
+          int n = allModel1Ds.getType(OBJ_NUM);
+          int dMin = allModel1Ds.getDegreeMin(OBJ_NUM);
+          int dMax = allModel1Ds.getDegreeMax(OBJ_NUM);
+          int s = allModel1Ds.getSeed(OBJ_NUM);
+          float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
+          float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
   
           allModel1Ds.add_single(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
         }
@@ -39373,35 +39425,35 @@ void mouseClicked () {
                       int OBJ_NUM = int(RxP[0]);
   
                       if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) CreateallModel1Ds_DegreeMax = allModel1Ds.DegreeMax[OBJ_NUM];
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) CreateallModel1Ds_DegreeMax = allModel1Ds.getDegreeMax(OBJ_NUM);
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-                          CreateallModel1Ds_DegreeMax = allModel1Ds.DegreeMax[OBJ_NUM]; 
-                          CreateallModel1Ds_DegreeMin = allModel1Ds.DegreeMin[OBJ_NUM];
+                          CreateallModel1Ds_DegreeMax = allModel1Ds.getDegreeMax(OBJ_NUM); 
+                          CreateallModel1Ds_DegreeMin = allModel1Ds.getDegreeMin(OBJ_NUM);
                         }
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) CreateallModel1Ds_DegreeMin = allModel1Ds.DegreeMin[OBJ_NUM];
-                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) CreateallModel1Ds_TrunkSize = allModel1Ds.TrunkSize[OBJ_NUM];
-                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) CreateallModel1Ds_LeafSize = allModel1Ds.LeafSize[OBJ_NUM];
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) CreateallModel1Ds_DegreeMin = allModel1Ds.getDegreeMin(OBJ_NUM);
+                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) CreateallModel1Ds_TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
+                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) CreateallModel1Ds_LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
                         if (WIN3D.UI_CurrentTask == UITASK.AllallModel1DsProps) { // all properties
-                          CreateallModel1Ds_DegreeMax = allModel1Ds.DegreeMax[OBJ_NUM];
-                          CreateallModel1Ds_DegreeMin = allModel1Ds.DegreeMin[OBJ_NUM];
-                          CreateallModel1Ds_TrunkSize = allModel1Ds.TrunkSize[OBJ_NUM];
-                          CreateallModel1Ds_LeafSize = allModel1Ds.LeafSize[OBJ_NUM];
+                          CreateallModel1Ds_DegreeMax = allModel1Ds.getDegreeMax(OBJ_NUM);
+                          CreateallModel1Ds_DegreeMin = allModel1Ds.getDegreeMin(OBJ_NUM);
+                          CreateallModel1Ds_TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
+                          CreateallModel1Ds_LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
                         }
                       } 
                       if (WIN3D.UI_TaskModifyParameter == 2) { //Assign
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.DegreeMax[OBJ_NUM] = CreateallModel1Ds_DegreeMax;                    
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_NUM, CreateallModel1Ds_DegreeMax);                    
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-                          allModel1Ds.DegreeMax[OBJ_NUM] = CreateallModel1Ds_DegreeMax; 
-                          allModel1Ds.DegreeMin[OBJ_NUM] = CreateallModel1Ds_DegreeMin;
+                          allModel1Ds.setDegreeMax(OBJ_NUM, CreateallModel1Ds_DegreeMax); 
+                          allModel1Ds.setDegreeMin(OBJ_NUM, CreateallModel1Ds_DegreeMin);
                         }                 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel1Ds.DegreeMin[OBJ_NUM] = CreateallModel1Ds_DegreeMin;                    
-                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.TrunkSize[OBJ_NUM] = CreateallModel1Ds_TrunkSize;                    
-                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.LeafSize[OBJ_NUM] = CreateallModel1Ds_LeafSize;
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel1Ds.setDegreeMin(OBJ_NUM, CreateallModel1Ds_DegreeMin);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_NUM, CreateallModel1Ds_TrunkSize);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_NUM, CreateallModel1Ds_LeafSize);
                         if (WIN3D.UI_CurrentTask == UITASK.AllallModel1DsProps) { // all properties
-                          allModel1Ds.DegreeMax[OBJ_NUM] = CreateallModel1Ds_DegreeMax;
-                          allModel1Ds.DegreeMin[OBJ_NUM] = CreateallModel1Ds_DegreeMin;                    
-                          allModel1Ds.TrunkSize[OBJ_NUM] = CreateallModel1Ds_TrunkSize;                    
-                          allModel1Ds.LeafSize[OBJ_NUM] = CreateallModel1Ds_LeafSize;
+                          allModel1Ds.setDegreeMax(OBJ_NUM, CreateallModel1Ds_DegreeMax);
+                          allModel1Ds.setDegreeMin(OBJ_NUM, CreateallModel1Ds_DegreeMin);                    
+                          allModel1Ds.setTrunkSize(OBJ_NUM, CreateallModel1Ds_TrunkSize);                    
+                          allModel1Ds.setLeafSize(OBJ_NUM, CreateallModel1Ds_LeafSize);
                         }
                       }
                     }                        
@@ -42234,17 +42286,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                 float r = allModel1Ds.getS(f) * 0.5;
                 float rot = allModel1Ds.getR(f);      
 
-                int n = allModel1Ds.Type[f];
+                int n = allModel1Ds.getType(f);
 
-                int dMin = allModel1Ds.DegreeMin[f];
+                int dMin = allModel1Ds.getDegreeMin(f);
 
-                int dMax = allModel1Ds.DegreeMax[f];
+                int dMax = allModel1Ds.getDegreeMax(f);
 
-                int s = allModel1Ds.Seed[f];
+                int s = allModel1Ds.getSeed(f);
 
-                float TrunkSize = allModel1Ds.TrunkSize[f];
+                float TrunkSize = allModel1Ds.getTrunkSize(f);
 
-                float LeafSize = allModel1Ds.LeafSize[f];
+                float LeafSize = allModel1Ds.getLeafSize(f);
 
                 randomSeed(s);
 
@@ -42845,17 +42897,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               float r = allModel1Ds.getS(f) * 0.5;
               float rot = allModel1Ds.getR(f);      
 
-              int n = allModel1Ds.Type[f];
+              int n = allModel1Ds.getType(f);
 
-              int dMin = allModel1Ds.DegreeMin[f];
+              int dMin = allModel1Ds.getDegreeMin(f);
 
-              int dMax = allModel1Ds.DegreeMax[f];
+              int dMax = allModel1Ds.getDegreeMax(f);
 
-              int s = allModel1Ds.Seed[f];
+              int s = allModel1Ds.getSeed(f);
 
-              float TrunkSize = allModel1Ds.TrunkSize[f];
+              float TrunkSize = allModel1Ds.getTrunkSize(f);
 
-              float LeafSize = allModel1Ds.LeafSize[f];
+              float LeafSize = allModel1Ds.getLeafSize(f);
 
               randomSeed(s);
 
@@ -45447,23 +45499,23 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
-        allModel1Ds.Seed[OBJ_NUM] += p;
+        allModel1Ds.setSeed(OBJ_NUM, allModel1Ds.getSeed(OBJ_NUM) + p);
       } 
       if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) {
-        int q = allModel1Ds.DegreeMax[OBJ_NUM];
+        int q = allModel1Ds.getDegreeMax(OBJ_NUM);
 
         q += p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.DegreeMax[OBJ_NUM] = q;
+        allModel1Ds.setDegreeMax(OBJ_NUM, q);
 
         CreateallModel1Ds_DegreeMax = q;
         ROLLOUT.update = true;
       }
       if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-        int q1 = allModel1Ds.DegreeMin[OBJ_NUM];
-        int q2 = allModel1Ds.DegreeMax[OBJ_NUM];
+        int q1 = allModel1Ds.getDegreeMin(OBJ_NUM);
+        int q2 = allModel1Ds.getDegreeMax(OBJ_NUM);
         q1 += p;
         q2 += p;
 
@@ -45480,8 +45532,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         if (change_them == 1) {
 
-          allModel1Ds.DegreeMin[OBJ_NUM] = q1;
-          allModel1Ds.DegreeMax[OBJ_NUM] = q2;
+          allModel1Ds.setDegreeMin(OBJ_NUM, q1);
+          allModel1Ds.setDegreeMax(OBJ_NUM, q2);
 
           CreateallModel1Ds_DegreeMin = q1;
           CreateallModel1Ds_DegreeMax = q2;
@@ -45490,37 +45542,37 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         }
       }
       if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) {
-        int q = allModel1Ds.DegreeMin[OBJ_NUM];
+        int q = allModel1Ds.getDegreeMin(OBJ_NUM);
 
         q += p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.DegreeMin[OBJ_NUM] = q;
+        allModel1Ds.setDegreeMin(OBJ_NUM, q);
 
         CreateallModel1Ds_DegreeMin = q;
         ROLLOUT.update = true;
       }        
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
-        float q = allModel1Ds.TrunkSize[OBJ_NUM];
+        float q = allModel1Ds.getTrunkSize(OBJ_NUM);
 
         q += 0.25 * p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.TrunkSize[OBJ_NUM] = q;
+        allModel1Ds.setTrunkSize(OBJ_NUM, q);
 
         CreateallModel1Ds_TrunkSize = q;
         ROLLOUT.update = true;
       }
       if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
-        float q = allModel1Ds.LeafSize[OBJ_NUM];
+        float q = allModel1Ds.getLeafSize(OBJ_NUM);
 
         q += 0.25 * p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.LeafSize[OBJ_NUM] = q;
+        allModel1Ds.setLeafSize(OBJ_NUM, q);
 
         CreateallModel1Ds_LeafSize = q;
         ROLLOUT.update = true;
@@ -50232,17 +50284,17 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
         lineSTR += nf(allModel1Ds.XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(allModel1Ds.Type[i], 0);
+      lineSTR += nf(allModel1Ds.getType(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.DegreeMin[i], 0);
+      lineSTR += nf(allModel1Ds.getDegreeMin(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.DegreeMax[i], 0);
+      lineSTR += nf(allModel1Ds.getDegreeMax(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.Seed[i], 0);
+      lineSTR += nf(allModel1Ds.getSeed(i), 0);
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.TrunkSize[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(allModel1Ds.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";
-      lineSTR += nf(allModel1Ds.LeafSize[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(allModel1Ds.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
 
       newChild2.setContent(lineSTR);
     }
@@ -51350,12 +51402,12 @@ void SOLARCHVISION_load_project (String myFile) {
           allModel1Ds.XYZSR[i][j] = float(parts[j]);
         }
 
-        allModel1Ds.Type[i] = int(parts[5]);
-        allModel1Ds.DegreeMin[i] = int(parts[6]);
-        allModel1Ds.DegreeMax[i] = int(parts[7]);
-        allModel1Ds.Seed[i] = int(parts[8]);
-        allModel1Ds.TrunkSize[i] = float(parts[9]);
-        allModel1Ds.LeafSize[i] = float(parts[10]);
+        allModel1Ds.setType(i, int(parts[5]));
+        allModel1Ds.setDegreeMin(i, int(parts[6]));
+        allModel1Ds.setDegreeMax(i, int(parts[7]));
+        allModel1Ds.setSeed(i, int(parts[8]));
+        allModel1Ds.setTrunkSize(i, float(parts[9]));
+        allModel1Ds.setLeafSize(i, float(parts[10]));
       }
     }       
 
