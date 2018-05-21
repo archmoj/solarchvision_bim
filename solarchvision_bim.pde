@@ -20782,6 +20782,72 @@ class solarchvision_Solids {
     this.DEF[n][11] += t;
   } 
   
+  void set_posX (int n, float r) { 
+  
+    this.DEF[n][0] = r;
+  } 
+  
+  void set_posY (int n, float r) { 
+  
+    this.DEF[n][1] = r;
+  } 
+  
+  void set_posZ (int n, float r) { 
+  
+    this.DEF[n][2] = r;
+  } 
+  
+  void set_powX (int n, float r) { 
+  
+    this.DEF[n][3] = r;
+  } 
+  
+  void set_powY (int n, float r) { 
+  
+    this.DEF[n][4] = r;
+  } 
+  
+  void set_powZ (int n, float r) { 
+  
+    this.DEF[n][5] = r;
+  } 
+  
+  void set_scaleX (int n, float r) { 
+  
+    this.DEF[n][6] = r;
+  } 
+  
+  void set_scaleY (int n, float r) { 
+  
+    this.DEF[n][7] = r;
+  } 
+  
+  void set_scaleZ (int n, float r) { 
+  
+    this.DEF[n][8] = r;
+  } 
+  
+  void set_rotX (int n, float r) { 
+  
+    this.DEF[n][9] = r;
+  } 
+  
+  
+  void set_rotY (int n, float r) { 
+  
+    this.DEF[n][10] = r;
+  } 
+  
+  void set_rotZ (int n, float r) { 
+  
+    this.DEF[n][11] = r;
+  } 
+  
+  void set_value (int n, float r) { 
+  
+    this.DEF[n][12] = r;
+  }   
+  
   float get_posX (int n) { 
   
     return this.DEF[n][0];
@@ -39065,9 +39131,9 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory.SOLID) {
   
-                    x1 = allSolids.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][0]; 
-                    y1 = allSolids.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][1]; 
-                    z1 = allSolids.DEF[selectedSolid_ids[selectedSolid_ids.length - 1]][2];
+                    x1 = allSolids.get_posX(selectedSolid_ids[selectedSolid_ids.length - 1]); 
+                    y1 = allSolids.get_posY(selectedSolid_ids[selectedSolid_ids.length - 1]); 
+                    z1 = allSolids.get_posZ(selectedSolid_ids[selectedSolid_ids.length - 1]);
                   }                 
   
                   if (Current_ObjectCategory == ObjectCategory.VERTEX) {
