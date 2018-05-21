@@ -51559,11 +51559,14 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    children0 = FileAll.getChildren("Land3D.Textures_ImagePath");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+
+  
+    {
+      XML parent = FileAll.getChild("Land3D.Textures_ImagePath");
+    
+      int ni = parent.getInt("ni");
       
-      XML[] children1 = children0[L].getChildren("Path");       
+      XML[] children1 = parent.getChildren("Path");       
       for (int i = 0; i < ni; i++) {
         
         Land3D.Textures_scale_U[i] = children1[i].getFloat("scale_U");
@@ -51587,9 +51590,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      children0 = FileAll.getChildren("allModel2Ds.ImagePath");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allModel2Ds.ImagePath");
+      
+        int ni = parent.getInt("ni");
 
         int reload_All_textures = 0;
 
@@ -51600,7 +51604,7 @@ void SOLARCHVISION_load_project (String myFile) {
           reload_All_textures = 1;
         }
 
-        XML[] children1 = children0[L].getChildren("Path");         
+        XML[] children1 = parent.getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
 
           String new_Texture_path = children1[i].getContent();
@@ -51627,13 +51631,14 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      children0 = FileAll.getChildren("allSections.SolidImpact");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allSections.SolidImpact");
+      
+        int ni = parent.getInt("ni");
 
         allSections.SolidImpact = new PImage [ni];
 
-        XML[] children1 = children0[L].getChildren("Path");         
+        XML[] children1 = parent.getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
 
           String TEXTURE_path = children1[i].getContent();
@@ -51648,15 +51653,16 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      children0 = FileAll.getChildren("allSections.SolarImpact");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
-        int nj = children0[L].getInt("nj");
-        int nk = children0[L].getInt("nk");
+      {
+        XML parent = FileAll.getChild("allSections.SolarImpact");
+      
+        int ni = parent.getInt("ni");
+        int nj = parent.getInt("nj");
+        int nk = parent.getInt("nk");
 
         allSections.SolarImpact = new PImage [ni][nj][nk]; 
 
-        XML[] children1 = children0[L].getChildren("Path");         
+        XML[] children1 = parent.getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
           for (int j = 0; j < nj; j++) {
             for (int k = 0; k < nk; k++) {
@@ -51722,16 +51728,17 @@ void SOLARCHVISION_load_project (String myFile) {
 
     println("Loading:allGroups");
     {
-      children0 = FileAll.getChildren("allGroups_PivotXYZ");
-      for (int L = 0; L < children0.length; L++) {
+      {
+        XML parent = FileAll.getChild("allGroups_PivotXYZ");
+      
 
-        int ni = children0[L].getInt("ni");
+        int ni = parent.getInt("ni");
 
         allGroups_num = ni;
 
         allGroups_PivotXYZ = new float [ni][9];
 
-        XML[] children1 = children0[L].getChildren("PivotXYZ");         
+        XML[] children1 = parent.getChildren("PivotXYZ");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51742,13 +51749,14 @@ void SOLARCHVISION_load_project (String myFile) {
       }  
 
 
-      children0 = FileAll.getChildren("allGroups_PivotType");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allGroups_PivotType");
+      
+        int ni = parent.getInt("ni");
 
         allGroups_PivotType = new int [ni][1];
 
-        XML[] children1 = children0[L].getChildren("PivotType");         
+        XML[] children1 = parent.getChildren("PivotType");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51758,11 +51766,12 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }          
 
-      children0 = FileAll.getChildren("allGroups_Faces");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allGroups_Faces");
+      
+        int ni = parent.getInt("ni");
         allGroups_Faces = new int [ni][2];
-        XML[] children1 = children0[L].getChildren("Faces");         
+        XML[] children1 = parent.getChildren("Faces");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51772,11 +51781,12 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
  
-      children0 = FileAll.getChildren("allGroups_Curves");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allGroups_Curves");
+      
+        int ni = parent.getInt("ni");
         allGroups_Curves = new int [ni][2];
-        XML[] children1 = children0[L].getChildren("Curves");         
+        XML[] children1 = parent.getChildren("Curves");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51786,11 +51796,12 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }        
 
-      children0 = FileAll.getChildren("allGroups_allSolids");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allGroups_allSolids");
+      
+        int ni = parent.getInt("ni");
         allGroups_allSolids = new int [ni][2];
-        XML[] children1 = children0[L].getChildren("allSolids");         
+        XML[] children1 = parent.getChildren("allSolids");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51800,11 +51811,12 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       } 
 
-      children0 = FileAll.getChildren("allGroups_allModel2Ds");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allGroups_allModel2Ds");
+      
+        int ni = parent.getInt("ni");
         allGroups_allModel2Ds = new int [ni][2];
-        XML[] children1 = children0[L].getChildren("allModel2Ds");         
+        XML[] children1 = parent.getChildren("allModel2Ds");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51814,11 +51826,12 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       } 
 
-      children0 = FileAll.getChildren("allGroups_allModel1Ds");
-      for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
+      {
+        XML parent = FileAll.getChild("allGroups_allModel1Ds");
+      
+        int ni = parent.getInt("ni");
         allGroups_allModel1Ds = new int [ni][2];
-        XML[] children1 = children0[L].getChildren("allModel1Ds");         
+        XML[] children1 = parent.getChildren("allModel1Ds");         
         for (int i = 0; i < ni; i++) {
           String lineSTR = children1[i].getContent();
           String[] parts = split(lineSTR, ',');
@@ -51830,99 +51843,108 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
 
-    children0 = FileAll.getChildren("selectedLandPoint_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedLandPoint_ids");
+    
+      int ni = parent.getInt("ni");
       selectedLandPoint_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedLandPoint_ids[i] = int(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("selectedallModel1Ds_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedallModel1Ds_ids");
+    
+      int ni = parent.getInt("ni");
       selectedallModel1Ds_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedallModel1Ds_ids[i] = int(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("selectedallModel2Ds_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedallModel2Ds_ids");
+    
+      int ni = parent.getInt("ni");
       selectedallModel2Ds_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedallModel2Ds_ids[i] = int(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("selectedGroup_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedGroup_ids");
+    
+      int ni = parent.getInt("ni");
       selectedGroup_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedGroup_ids[i] = int(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("selectedFace_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedFace_ids");
+    
+      int ni = parent.getInt("ni");
       selectedFace_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedFace_ids[i] = int(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("selectedCurve_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedCurve_ids");
+    
+      int ni = parent.getInt("ni");
       selectedCurve_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedCurve_ids[i] = int(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("selectedVertex_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedVertex_ids");
+    
+      int ni = parent.getInt("ni");
       selectedVertex_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedVertex_ids[i] = int(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("selectedVertex_softSelectionVertices");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedVertex_softSelectionVertices");
+    
+      int ni = parent.getInt("ni");
       selectedVertex_softSelectionVertices = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedVertex_softSelectionVertices[i] = int(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("selectedVertex_softSelectionValues");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedVertex_softSelectionValues");
+    
+      int ni = parent.getInt("ni");
       selectedVertex_softSelectionValues = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedVertex_softSelectionValues[i] = float(parts[i]);
@@ -51930,11 +51952,12 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
 
-    children0 = FileAll.getChildren("selectedSolid_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedSolid_ids");
+    
+      int ni = parent.getInt("ni");
       selectedSolid_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedSolid_ids[i] = int(parts[i]);
@@ -51942,22 +51965,24 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
 
-    children0 = FileAll.getChildren("selectedSection_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedSection_ids");
+    
+      int ni = parent.getInt("ni");
       selectedSection_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedSection_ids[i] = int(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("selectedCamera_ids");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("selectedCamera_ids");
+    
+      int ni = parent.getInt("ni");
       selectedCamera_ids = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         selectedCamera_ids[i] = int(parts[i]);
@@ -51966,71 +51991,79 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-    children0 = FileAll.getChildren("SolidImpact_Elevation");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("SolidImpact_Elevation");
+    
+      int ni = parent.getInt("ni");
       SolidImpact_Elevation = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SolidImpact_Elevation[i] = float(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("SolidImpact_Rotation");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("SolidImpact_Rotation");
+    
+      int ni = parent.getInt("ni");
       SolidImpact_Rotation = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SolidImpact_Rotation[i] = float(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("SolidImpact_scale_U");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("SolidImpact_scale_U");
+    
+      int ni = parent.getInt("ni");
       SolidImpact_scale_U = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SolidImpact_scale_U[i] = float(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("SolidImpact_scale_V");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+        XML parent = FileAll.getChild("SolidImpact_scale_V");
+    
+      int ni = parent.getInt("ni");
       SolidImpact_scale_V = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SolidImpact_scale_V[i] = float(parts[i]);
       }
     }     
 
-    children0 = FileAll.getChildren("SolidImpact_offset_U");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+    {
+      XML parent = FileAll.getChild("SolidImpact_offset_U");
+    
+      int ni = parent.getInt("ni");
       SolidImpact_offset_U = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SolidImpact_offset_U[i] = float(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("SolidImpact_offset_V");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+
+    {
+      XML parent = FileAll.getChild("SolidImpact_offset_V");
+    
+      int ni = parent.getInt("ni");
       SolidImpact_offset_V = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = parent.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SolidImpact_offset_V[i] = float(parts[i]);
       }
     }         
+
     
   }
   println("End of loading project.");
