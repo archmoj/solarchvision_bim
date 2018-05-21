@@ -15316,12 +15316,12 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     for (int f = 0; f < allModel1Ds.num; f++) {
 
-      float x = allModel1Ds.XYZSR[f][0];
-      float y = allModel1Ds.XYZSR[f][1];
-      float z = allModel1Ds.XYZSR[f][2];
+      float x = allModel1Ds.getX(f);
+      float y = allModel1Ds.getY(f);
+      float z = allModel1Ds.getZ(f);
 
-      float r = allModel1Ds.XYZSR[f][3] * 0.5;
-      float rot = allModel1Ds.XYZSR[f][4];
+      float r = allModel1Ds.getS(f) * 0.5;
+      float rot = allModel1Ds.getR(f);
 
       int n = allModel1Ds.Type[f];
 
@@ -19778,6 +19778,47 @@ solarchvision_Model2Ds allModel2Ds = new solarchvision_Model2Ds();
 class solarchvision_Model1Ds {
 
   float[][] XYZSR = new float[0][5];
+  
+  float getX (int n) {
+    return XYZSR[n][0]; 
+  }
+
+  float getY (int n) {
+    return XYZSR[n][1]; 
+  }
+
+  float getZ (int n) {
+    return XYZSR[n][2]; 
+  }
+
+  float getS (int n) {
+    return XYZSR[n][3]; 
+  }
+  
+  float getR (int n) {
+    return XYZSR[n][4]; 
+  }  
+
+  void setX (int n, float x) {
+    XYZSR[n][0] = x;  
+  }
+
+  void setY (int n, float y) {
+    XYZSR[n][1] = y;  
+  }
+
+  void setZ (int n, float z) {
+    XYZSR[n][2] = z;  
+  }
+
+  void setS (int n, float s) {
+    XYZSR[n][3] = s;  
+  }  
+  
+  void setR (int n, float r) {
+    XYZSR[n][4] = r;  
+  }     
+  
   int[] Type = new int[0];
   int[] DegreeMin = new int[0];
   int[] DegreeMax = new int[0];
@@ -21426,11 +21467,11 @@ class solarchvision_Model3Ds {
   
         int OBJ_NUM = selectedallModel1Ds_ids[o];
   
-        float x = allModel1Ds.XYZSR[OBJ_NUM][0];
-        float y = allModel1Ds.XYZSR[OBJ_NUM][1];
-        float z = allModel1Ds.XYZSR[OBJ_NUM][2];
-        float d = allModel1Ds.XYZSR[OBJ_NUM][3];
-        float rot = allModel1Ds.XYZSR[OBJ_NUM][4];
+        float x = allModel1Ds.getX(OBJ_NUM);
+        float y = allModel1Ds.getY(OBJ_NUM);
+        float z = allModel1Ds.getZ(OBJ_NUM);
+        float d = allModel1Ds.getS(OBJ_NUM);
+        float rot = allModel1Ds.getR(OBJ_NUM);
   
         int n = allModel1Ds.Type[OBJ_NUM];
         int dMin = allModel1Ds.DegreeMin[OBJ_NUM];
@@ -21790,12 +21831,12 @@ class solarchvision_Model3Ds {
           if ((0 <= allGroups_allModel1Ds[OBJ_NUM][1]) && (allGroups_allModel1Ds[OBJ_NUM][0] <= allGroups_allModel1Ds[OBJ_NUM][1])) { 
             for (int q = allGroups_allModel1Ds[OBJ_NUM][0]; q <= allGroups_allModel1Ds[OBJ_NUM][1]; q++) {
   
-              float x = allModel1Ds.XYZSR[q][0];
-              float y = allModel1Ds.XYZSR[q][1];
-              float z = allModel1Ds.XYZSR[q][2];
+              float x = allModel1Ds.getX(q);
+              float y = allModel1Ds.getY(q);
+              float z = allModel1Ds.getZ(q);
   
-              float d = allModel1Ds.XYZSR[q][3];
-              float rot = allModel1Ds.XYZSR[q][4];
+              float d = allModel1Ds.getS(q);
+              float rot = allModel1Ds.getR(q);
   
               int n = allModel1Ds.Type[q];
   
@@ -21942,12 +21983,12 @@ class solarchvision_Model3Ds {
           if ((0 <= allGroups_allModel1Ds[OBJ_NUM][1]) && (allGroups_allModel1Ds[OBJ_NUM][0] <= allGroups_allModel1Ds[OBJ_NUM][1])) { 
             for (int q = allGroups_allModel1Ds[OBJ_NUM][0]; q <= allGroups_allModel1Ds[OBJ_NUM][1]; q++) {
   
-              float x = allModel1Ds.XYZSR[q][0];
-              float y = allModel1Ds.XYZSR[q][1];
-              float z = allModel1Ds.XYZSR[q][2];
+              float x = allModel1Ds.getX(q);
+              float y = allModel1Ds.getY(q);
+              float z = allModel1Ds.getZ(q);
   
-              float d = allModel1Ds.XYZSR[q][3];
-              float rot = allModel1Ds.XYZSR[q][4];
+              float d = allModel1Ds.getS(q);
+              float rot = allModel1Ds.getR(q);
   
               int n = allModel1Ds.Type[q];
   
@@ -22132,11 +22173,11 @@ class solarchvision_Model3Ds {
   
           int OBJ_NUM = selectedallModel1Ds_ids[o];
   
-          float x = allModel1Ds.XYZSR[OBJ_NUM][0];
-          float y = allModel1Ds.XYZSR[OBJ_NUM][1];
-          float z = allModel1Ds.XYZSR[OBJ_NUM][2];
-          float d = allModel1Ds.XYZSR[OBJ_NUM][3];
-          float rot = allModel1Ds.XYZSR[OBJ_NUM][4];
+          float x = allModel1Ds.getX(OBJ_NUM);
+          float y = allModel1Ds.getY(OBJ_NUM);
+          float z = allModel1Ds.getZ(OBJ_NUM);
+          float d = allModel1Ds.getS(OBJ_NUM);
+          float rot = allModel1Ds.getR(OBJ_NUM);
   
           int n = allModel1Ds.Type[OBJ_NUM];
           int dMin = allModel1Ds.DegreeMin[OBJ_NUM];
@@ -38965,9 +39006,9 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-                    x1 = allModel1Ds.XYZSR[selectedallModel1Ds_ids[selectedallModel1Ds_ids.length - 1]][0]; 
-                    y1 = allModel1Ds.XYZSR[selectedallModel1Ds_ids[selectedallModel1Ds_ids.length - 1]][1]; 
-                    z1 = allModel1Ds.XYZSR[selectedallModel1Ds_ids[selectedallModel1Ds_ids.length - 1]][2];
+                    x1 = allModel1Ds.getX(selectedallModel1Ds_ids[selectedallModel1Ds_ids.length - 1]); 
+                    y1 = allModel1Ds.getY(selectedallModel1Ds_ids[selectedallModel1Ds_ids.length - 1]); 
+                    z1 = allModel1Ds.getZ(selectedallModel1Ds_ids[selectedallModel1Ds_ids.length - 1]);
                   }            
   
                   if (Current_ObjectCategory == ObjectCategory.SOLID) {
@@ -42186,12 +42227,12 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
               for (int f = 0; f < allModel1Ds.num; f++) {
 
-                float x = allModel1Ds.XYZSR[f][0];
-                float y = allModel1Ds.XYZSR[f][1];
-                float z = allModel1Ds.XYZSR[f][2];
+                float x = allModel1Ds.getX(f);
+                float y = allModel1Ds.getY(f);
+                float z = allModel1Ds.getZ(f);
 
-                float r = allModel1Ds.XYZSR[f][3] * 0.5;
-                float rot = allModel1Ds.XYZSR[f][4];      
+                float r = allModel1Ds.getS(f) * 0.5;
+                float rot = allModel1Ds.getR(f);      
 
                 int n = allModel1Ds.Type[f];
 
@@ -42797,12 +42838,12 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             for (int f = 0; f < allModel1Ds.num; f++) {
 
-              float x = allModel1Ds.XYZSR[f][0];
-              float y = allModel1Ds.XYZSR[f][1];
-              float z = allModel1Ds.XYZSR[f][2];
+              float x = allModel1Ds.getX(f);
+              float y = allModel1Ds.getY(f);
+              float z = allModel1Ds.getZ(f);
 
-              float r = allModel1Ds.XYZSR[f][3] * 0.5;
-              float rot = allModel1Ds.XYZSR[f][4];      
+              float r = allModel1Ds.getS(f) * 0.5;
+              float rot = allModel1Ds.getR(f);      
 
               int n = allModel1Ds.Type[f];
 
@@ -43282,9 +43323,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
       int n = theVertices[q];
 
-      x = allModel1Ds.XYZSR[n][0];
-      y = allModel1Ds.XYZSR[n][1];
-      z = allModel1Ds.XYZSR[n][2];
+      x = allModel1Ds.getX(n);
+      y = allModel1Ds.getY(n);
+      z = allModel1Ds.getZ(n);
     }  
     if (Current_ObjectCategory == ObjectCategory.LANDPOINT) {
       int n = theVertices[q];
@@ -43447,9 +43488,9 @@ void SOLARCHVISION_move_selectedallGroups (float dx, float dy, float dz) {
     for (int f = allGroups_allModel1Ds[OBJ_NUM][0]; f <= allGroups_allModel1Ds[OBJ_NUM][1]; f++) {
       if ((0 <= f) && (f < allModel1Ds.num)) {
 
-        allModel1Ds.XYZSR[f][0] += dx;
-        allModel1Ds.XYZSR[f][1] += dy;
-        allModel1Ds.XYZSR[f][2] += dz;
+        allModel1Ds.setX(f, allModel1Ds.getX(f) + dx);
+        allModel1Ds.setY(f, allModel1Ds.getY(f) + dy);
+        allModel1Ds.setZ(f, allModel1Ds.getZ(f) + dz);
       }
     }
 
@@ -43601,9 +43642,9 @@ void SOLARCHVISION_rotate_selectedallGroups (float r, int the_Vector) {
     for (int f = allGroups_allModel1Ds[OBJ_NUM][0]; f <= allGroups_allModel1Ds[OBJ_NUM][1]; f++) {
       if ((0 <= f) && (f < allModel1Ds.num)) {
 
-        float x = allModel1Ds.XYZSR[f][0]; 
-        float y = allModel1Ds.XYZSR[f][1]; 
-        float z = allModel1Ds.XYZSR[f][2];
+        float x = allModel1Ds.getX(f); 
+        float y = allModel1Ds.getY(f); 
+        float z = allModel1Ds.getZ(f);
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43641,13 +43682,13 @@ void SOLARCHVISION_rotate_selectedallGroups (float r, int the_Vector) {
         y = B[1];
         z = B[2];
 
-        allModel1Ds.XYZSR[f][0] = x;
-        allModel1Ds.XYZSR[f][1] = y;
-        allModel1Ds.XYZSR[f][2] = z;
+        allModel1Ds.setX(f, x);
+        allModel1Ds.setY(f, y);
+        allModel1Ds.setZ(f, z);
 
 
         if (the_Vector == 2) {
-          allModel1Ds.XYZSR[f][4] += r; // <<<<<<<<<
+          allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<
         } else if (the_Vector == 1) {
         } else if (the_Vector == 0) {
         }
@@ -43837,9 +43878,9 @@ void SOLARCHVISION_scale_selectedallGroups (float x0, float y0, float z0, float 
     for (int f = allGroups_allModel1Ds[OBJ_NUM][0]; f <= allGroups_allModel1Ds[OBJ_NUM][1]; f++) {
       if ((0 <= f) && (f < allModel1Ds.num)) {
 
-        float x = allModel1Ds.XYZSR[f][0];
-        float y = allModel1Ds.XYZSR[f][1]; 
-        float z = allModel1Ds.XYZSR[f][2];
+        float x = allModel1Ds.getX(f);
+        float y = allModel1Ds.getY(f); 
+        float z = allModel1Ds.getZ(f);
 
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -43853,11 +43894,11 @@ void SOLARCHVISION_scale_selectedallGroups (float x0, float y0, float z0, float 
         y = B[1];
         z = B[2];
 
-        allModel1Ds.XYZSR[f][0] = x;
-        allModel1Ds.XYZSR[f][1] = y;
-        allModel1Ds.XYZSR[f][2] = z;
+        allModel1Ds.setX(f, x);
+        allModel1Ds.setY(f, y);
+        allModel1Ds.setZ(f, z);
 
-        allModel1Ds.XYZSR[f][3] *= sz;
+        allModel1Ds.setS(f, allModel1Ds.getS(f) * sz);
       }
     }  
 
@@ -44303,9 +44344,9 @@ void SOLARCHVISION_scale_selectedallModel1Ds (float x0, float y0, float z0, floa
 
     int f = selectedallModel1Ds_ids[o];
 
-    float x = allModel1Ds.XYZSR[f][0];
-    float y = allModel1Ds.XYZSR[f][1]; 
-    float z = allModel1Ds.XYZSR[f][2];
+    float x = allModel1Ds.getX(f);
+    float y = allModel1Ds.getY(f); 
+    float z = allModel1Ds.getZ(f);
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
 
@@ -44319,11 +44360,11 @@ void SOLARCHVISION_scale_selectedallModel1Ds (float x0, float y0, float z0, floa
     y = B[1];
     z = B[2];
 
-    allModel1Ds.XYZSR[f][0] = x;
-    allModel1Ds.XYZSR[f][1] = y;
-    allModel1Ds.XYZSR[f][2] = z;
+    allModel1Ds.setX(f, x);
+    allModel1Ds.setY(f, y);
+    allModel1Ds.setZ(f, z);
 
-    allModel1Ds.XYZSR[f][3] *= sz;
+    allModel1Ds.setS(f, allModel1Ds.getS(f) * sz);
   }
 }
 
@@ -44334,24 +44375,24 @@ void SOLARCHVISION_rotate_selectedallModel1Ds (float x0, float y0, float z0, flo
 
     int f = selectedallModel1Ds_ids[q];
 
-    float x = allModel1Ds.XYZSR[f][0] - x0; 
-    float y = allModel1Ds.XYZSR[f][1] - y0; 
-    float z = allModel1Ds.XYZSR[f][2] - z0;
+    float x = allModel1Ds.getX(f) - x0; 
+    float y = allModel1Ds.getY(f) - y0; 
+    float z = allModel1Ds.getZ(f) - z0;
 
     if (the_Vector == 2) {
-      allModel1Ds.XYZSR[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allModel1Ds.XYZSR[f][1] = y0 + (x * sin(r) + y * cos(r));
-      allModel1Ds.XYZSR[f][2] = z0 + (z);
+      allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+      allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+      allModel1Ds.setZ(f, z0 + (z));
 
-      allModel1Ds.XYZSR[f][4] += r; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     } else if (the_Vector == 1) {
-      allModel1Ds.XYZSR[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allModel1Ds.XYZSR[f][1] = y0 + (y);
-      allModel1Ds.XYZSR[f][2] = z0 + (z * cos(r) - x * sin(r));
+      allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+      allModel1Ds.setY(f, y0 + (y));
+      allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
     } else if (the_Vector == 0) {
-      allModel1Ds.XYZSR[f][0] = x0 + (x); 
-      allModel1Ds.XYZSR[f][1] = y0 + (y * cos(r) - z * sin(r));
-      allModel1Ds.XYZSR[f][2] = z0 + (y * sin(r) + z * cos(r));
+      allModel1Ds.setX(f, x0 + (x)); 
+      allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+      allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
     }
   }
 }
@@ -44363,9 +44404,9 @@ void SOLARCHVISION_move_selectedallModel1Ds (float dx, float dy, float dz) {
 
     int f = selectedallModel1Ds_ids[o];
 
-    allModel1Ds.XYZSR[f][0] += dx; 
-    allModel1Ds.XYZSR[f][1] += dy; 
-    allModel1Ds.XYZSR[f][2] += dz;
+    allModel1Ds.setX(f, allModel1Ds.getX(f) + dx); 
+    allModel1Ds.setY(f, allModel1Ds.getY(f) + dy); 
+    allModel1Ds.setZ(f, allModel1Ds.getZ(f) + dz);
   }
 } 
 
@@ -44982,9 +45023,9 @@ void SOLARCHVISION_drop_Selection () {
 
       int OBJ_NUM = selectedallModel1Ds_ids[o];
 
-      float x = allModel1Ds.XYZSR[OBJ_NUM][0];
-      float y = allModel1Ds.XYZSR[OBJ_NUM][1];
-      float z = allModel1Ds.XYZSR[OBJ_NUM][2];
+      float x = allModel1Ds.getX(OBJ_NUM);
+      float y = allModel1Ds.getY(OBJ_NUM);
+      float z = allModel1Ds.getZ(OBJ_NUM);
 
       float[] ray_start = {
         x, y, z
@@ -45005,9 +45046,9 @@ void SOLARCHVISION_drop_Selection () {
       }
 
       if (RxP[0] >= 0) {
-        allModel1Ds.XYZSR[OBJ_NUM][0] = RxP[1]; 
-        allModel1Ds.XYZSR[OBJ_NUM][1] = RxP[2]; 
-        allModel1Ds.XYZSR[OBJ_NUM][2] = RxP[3];
+        allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel1Ds.setZ(OBJ_NUM, RxP[3]);
       } else {
         ray_direction[2] = 1; // <<<< going upwards
 
@@ -45020,9 +45061,9 @@ void SOLARCHVISION_drop_Selection () {
         }
 
         if (RxP[0] >= 0) {
-          allModel1Ds.XYZSR[OBJ_NUM][0] = RxP[1]; 
-          allModel1Ds.XYZSR[OBJ_NUM][1] = RxP[2]; 
-          allModel1Ds.XYZSR[OBJ_NUM][2] = RxP[3];
+          allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+          allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+          allModel1Ds.setZ(OBJ_NUM, RxP[3]);
         }
       }
     }
