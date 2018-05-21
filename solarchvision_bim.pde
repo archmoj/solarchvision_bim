@@ -20754,6 +20754,74 @@ class solarchvision_Model1Ds {
   
     allModel3Ds.deselect_All();
   }  
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    int ni = allModel1Ds.num;
+    parent.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allModel1Ds.XYZSR[i].length; j++) {
+      for (int j = 0; j < 5; j++) { // x, y, z, s, rot
+        lineSTR += nf(allModel1Ds.XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(allModel1Ds.getType(i), 0);
+      lineSTR += ",";
+      lineSTR += nf(allModel1Ds.getDegreeMin(i), 0);
+      lineSTR += ",";
+      lineSTR += nf(allModel1Ds.getDegreeMax(i), 0);
+      lineSTR += ",";
+      lineSTR += nf(allModel1Ds.getSeed(i), 0);
+      lineSTR += ",";
+      lineSTR += nf(allModel1Ds.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(allModel1Ds.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
+
+      child.setContent(lineSTR);
+    } 
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    int ni = parent.getInt("ni");
+
+    allModel1Ds.XYZSR = new float [ni][5];
+    allModel1Ds.Type = new int [ni];
+    allModel1Ds.DegreeMin = new int [ni];
+    allModel1Ds.DegreeMax = new int [ni];
+    allModel1Ds.Seed = new int [ni];
+    allModel1Ds.TrunkSize = new float [ni];
+    allModel1Ds.LeafSize = new float [ni];
+    allModel1Ds.num = ni;
+
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < 5; j++) {
+        allModel1Ds.XYZSR[i][j] = float(parts[j]);
+      }
+
+      allModel1Ds.setType(i, int(parts[5]));
+      allModel1Ds.setDegreeMin(i, int(parts[6]));
+      allModel1Ds.setDegreeMax(i, int(parts[7]));
+      allModel1Ds.setSeed(i, int(parts[8]));
+      allModel1Ds.setTrunkSize(i, float(parts[9]));
+      allModel1Ds.setLeafSize(i, float(parts[10]));
+    }
+  }    
 }
 
 solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
@@ -50454,37 +50522,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   
   allSolids.to_XML(my_xml);
 
+  allModel1Ds.to_XML(my_xml);
 
-
-  println("Saving:allModel1Ds");
-  {
-    newChild1 = my_xml.addChild("allModel1Ds");
-    int ni = allModel1Ds.num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("allModel1Ds");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allModel1Ds.XYZSR[i].length; j++) {
-      for (int j = 0; j < 5; j++) { // x, y, z, s, rot
-        lineSTR += nf(allModel1Ds.XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += nf(allModel1Ds.getType(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getDegreeMin(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getDegreeMax(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getSeed(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(allModel1Ds.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
-
-      newChild2.setContent(lineSTR);
-    }
-  }
 
   println("Saving:allModel2Ds");
   {
@@ -51506,40 +51545,12 @@ void SOLARCHVISION_load_project (String myFile) {
     allCameras.from_XML(FileAll);
     
     allSolids.from_XML(FileAll);
+    
+    allModel1Ds.from_XML(FileAll);
 
 
 
-    println("Loading:allModel1Ds");
-    children0 = FileAll.getChildren("allModel1Ds");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
 
-      allModel1Ds.XYZSR = new float [ni][5];
-      allModel1Ds.Type = new int [ni];
-      allModel1Ds.DegreeMin = new int [ni];
-      allModel1Ds.DegreeMax = new int [ni];
-      allModel1Ds.Seed = new int [ni];
-      allModel1Ds.TrunkSize = new float [ni];
-      allModel1Ds.LeafSize = new float [ni];
-      allModel1Ds.num = ni;
-
-      XML[] children1 = children0[L].getChildren("allModel1Ds");         
-      for (int i = 0; i < ni; i++) {
-
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 5; j++) {
-          allModel1Ds.XYZSR[i][j] = float(parts[j]);
-        }
-
-        allModel1Ds.setType(i, int(parts[5]));
-        allModel1Ds.setDegreeMin(i, int(parts[6]));
-        allModel1Ds.setDegreeMax(i, int(parts[7]));
-        allModel1Ds.setSeed(i, int(parts[8]));
-        allModel1Ds.setTrunkSize(i, float(parts[9]));
-        allModel1Ds.setLeafSize(i, float(parts[10]));
-      }
-    }       
 
     println("Loading:allModel2Ds");
     children0 = FileAll.getChildren("allModel2Ds");
