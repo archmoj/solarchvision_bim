@@ -9072,7 +9072,7 @@ class solarchvision_Selections {
   }   
     
     
-  float[] intersect_selectedFaces (float[] ray_pnt, float[] ray_dir) {
+  float[] intersect (float[] ray_pnt, float[] ray_dir) {
     
     float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
   
@@ -12752,19 +12752,16 @@ void draw () {
 
 
         if (pre_Selection_alignX != allSelections.alignX) {    
-          println("calculate_selection_BoundingBox 24");    
           allSelections.calculate_selection_BoundingBox();
           WIN3D.update = true;
         }        
 
         if (pre_Selection_alignY != allSelections.alignY) {   
-          println("calculate_selection_BoundingBox 25");     
           allSelections.calculate_selection_BoundingBox();
           WIN3D.update = true;
         }      
 
         if (pre_Selection_alignZ != allSelections.alignZ) {        
-          println("calculate_selection_BoundingBox 26");
           allSelections.calculate_selection_BoundingBox();
           WIN3D.update = true;
         }      
@@ -26264,7 +26261,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.GROUP;
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 731");
       allSelections.calculate_selection_BoundingBox();
     }
   }
@@ -27135,7 +27131,6 @@ class solarchvision_Model3Ds {
     Current_ObjectCategory = ObjectCategory.VERTEX; 
     UI_BAR_b_update = true;
   
-    println("calculate_selection_BoundingBox 31");
     allSelections.calculate_selection_BoundingBox();
   }
   
@@ -27208,7 +27203,6 @@ class solarchvision_Model3Ds {
         }
       } 
   
-      println("calculate_selection_BoundingBox 32");
       allSelections.calculate_selection_BoundingBox();
     }
   }
@@ -27317,7 +27311,6 @@ class solarchvision_Model3Ds {
   
       allSelections.Vertex_ids = new int [0];
   
-      println("calculate_selection_BoundingBox 33");
       allSelections.calculate_selection_BoundingBox();
     }
   }
@@ -27423,7 +27416,6 @@ class solarchvision_Model3Ds {
   
       allSelections.Vertex_ids = new int [0];
   
-      println("calculate_selection_BoundingBox 34");
       allSelections.calculate_selection_BoundingBox();
     }
   }
@@ -27445,7 +27437,6 @@ class solarchvision_Model3Ds {
         allVertices[vNo][2] = allSelections.BoundingBox[1][2]; // center
       } 
   
-      println("calculate_selection_BoundingBox 35");
       allSelections.calculate_selection_BoundingBox();
     }
   }
@@ -27501,7 +27492,6 @@ class solarchvision_Model3Ds {
   
       allSelections.Vertex_ids = new int [0];
   
-      println("calculate_selection_BoundingBox 36");
       allSelections.calculate_selection_BoundingBox();
     }
   }
@@ -27667,7 +27657,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 37");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -27864,7 +27853,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 38");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28041,7 +28029,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 39");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28212,7 +28199,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 40");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28406,7 +28392,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 41");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28577,7 +28562,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 42");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28731,7 +28715,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 43");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28889,7 +28872,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 43bbb");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -28949,7 +28931,7 @@ class solarchvision_Model3Ds {
             float[] ray_start = {G[0], G[1], G[2]};
             float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
   
-            float[] RxP = allSelections.intersect_selectedFaces(ray_start, ray_direction);
+            float[] RxP = allSelections.intersect(ray_start, ray_direction);
   
             if (RxP[0] >= 0) {
   
@@ -28964,7 +28946,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 3700");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -29107,7 +29088,6 @@ class solarchvision_Model3Ds {
   
       allSelections.Face_ids = new_selection_Face_ids;
   
-      println("calculate_selection_BoundingBox 101");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -29254,7 +29234,6 @@ class solarchvision_Model3Ds {
       Current_ObjectCategory = ObjectCategory.FACE;
       UI_BAR_b_update = true;
   
-      println("calculate_selection_BoundingBox 101b");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -29397,7 +29376,6 @@ class solarchvision_Model3Ds {
         allVertices[vNo][2] += Vertex_offsetValues[o][2];
       } 
   
-      println("calculate_selection_BoundingBox 102");
       allSelections.calculate_selection_BoundingBox();
   
     }
@@ -29601,7 +29579,6 @@ class solarchvision_Model3Ds {
       }
     } 
   
-    println("calculate_selection_BoundingBox 999");
     allSelections.calculate_selection_BoundingBox();  
   }
   
@@ -29640,7 +29617,6 @@ class solarchvision_Model3Ds {
       allSelections.Solid_ids = new int [0];
     }  
   
-    println("calculate_selection_BoundingBox 0");
     allSelections.calculate_selection_BoundingBox();
   }
   
@@ -29716,7 +29692,6 @@ class solarchvision_Model3Ds {
       }
     }  
   
-    println("calculate_selection_BoundingBox 44");
     allSelections.calculate_selection_BoundingBox();
   }
   
@@ -30004,7 +29979,6 @@ class solarchvision_Model3Ds {
       }
     }    
   
-    println("calculate_selection_BoundingBox 45");
     allSelections.calculate_selection_BoundingBox();
   }  
   
@@ -37506,7 +37480,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 6");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37556,8 +37529,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     WIN3D.update = true;
 
-
-    println("calculate_selection_BoundingBox 6");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37607,7 +37578,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 5");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37669,7 +37639,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
 
 
-    println("calculate_selection_BoundingBox 4");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37716,8 +37685,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       allSelections.Face_ids = (int[]) concat(allSelections.Face_ids, newObject_id);
     }
 
+    WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 3");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37764,7 +37733,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       allSelections.Curve_ids = (int[]) concat(allSelections.Curve_ids, newObject_id);
     }
 
-    println("calculate_selection_BoundingBox 3");
+    WIN3D.update = true;
+
     allSelections.calculate_selection_BoundingBox();
   }
   
@@ -37831,8 +37801,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
       allSelections.Vertex_ids = (int[]) concat(allSelections.Vertex_ids, newObject_id);
     }
 
+    WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 2");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37883,7 +37853,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 6e");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37934,7 +37903,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 6b");
     allSelections.calculate_selection_BoundingBox();
   }
 
@@ -37983,7 +37951,6 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
     WIN3D.update = true;
 
-    println("calculate_selection_BoundingBox 6c");
     allSelections.calculate_selection_BoundingBox();
   }
 }
@@ -39567,7 +39534,6 @@ void mouseReleased () {
 
                 SOLARCHVISION_RectSelect(corner1x, corner1y, corner2x, corner2y);
 
-                println("calculate_selection_BoundingBox 1");
                 allSelections.calculate_selection_BoundingBox();
 
                 allSelections.reset_selectedRefValues();  
@@ -42730,7 +42696,6 @@ void mouseClicked () {
   
                     allSelections.move_Selection(dx, dy, dz);
   
-                    println("calculate_selection_BoundingBox 10");
                     allSelections.calculate_selection_BoundingBox();
                     WIN3D.update = true;
                   }
@@ -43295,7 +43260,6 @@ void mouseClicked () {
                       allSelections.Face_ids = new int [1];
                       allSelections.Face_ids[0] = allFaces.nodes.length - 1;
     
-                      println("calculate_selection_BoundingBox 9_Face");
                       allSelections.calculate_selection_BoundingBox();
                     }
                   }      
@@ -43307,7 +43271,6 @@ void mouseClicked () {
                       allSelections.Curve_ids = new int [1];
                       allSelections.Curve_ids[0] = allCurves.nodes.length - 1;
     
-                      println("calculate_selection_BoundingBox 9_Curve");
                       allSelections.calculate_selection_BoundingBox();
                     }
                   }        
@@ -43587,7 +43550,6 @@ void mouseClicked () {
                             allSelections.Section_ids = concat(allSelections.Section_ids, newlyAddedSection);
                           }  
     
-                          println("calculate_selection_BoundingBox 9_Section");
                           allSelections.calculate_selection_BoundingBox();
                         }      
     
@@ -43627,7 +43589,6 @@ void mouseClicked () {
                       allSelections.Solid_ids = concat(allSelections.Solid_ids, newlyAddedSolid);
                     }  
   
-                    println("calculate_selection_BoundingBox 9_Solid");
                     allSelections.calculate_selection_BoundingBox();
                   }   
   
@@ -43644,7 +43605,6 @@ void mouseClicked () {
                       allSelections.Camera_ids = concat(allSelections.Camera_ids, newlyAddedCamera);
                     }  
   
-                    println("calculate_selection_BoundingBox 9_Camera");
                     allSelections.calculate_selection_BoundingBox();
                   }                   
   
@@ -43660,7 +43620,6 @@ void mouseClicked () {
                       allSelections.Group_ids = concat(allSelections.Group_ids, newlyAddedGroup);
                     }  
   
-                    println("calculate_selection_BoundingBox 9_Group");
                     allSelections.calculate_selection_BoundingBox();
                   }   
   
@@ -43675,7 +43634,6 @@ void mouseClicked () {
                       allSelections.Model2D_ids = concat(allSelections.Model2D_ids, newlyAddedallModel2Ds);
                     }  
   
-                    println("calculate_selection_BoundingBox 9_allModel2Ds");
                     allSelections.calculate_selection_BoundingBox();
                   }   
   
@@ -43691,7 +43649,6 @@ void mouseClicked () {
                       allSelections.Model1D_ids = concat(allSelections.Model1D_ids, newlyAddedallModel1Ds);
                     }  
   
-                    println("calculate_selection_BoundingBox 9_allModel1Ds");
                     allSelections.calculate_selection_BoundingBox();
                   }
                   
