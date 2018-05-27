@@ -8609,12 +8609,12 @@ class solarchvision_Groups {
 
   int[][] Curves = new int[0][2]; // start curve - end curve
   int[][] Faces = new int[0][2]; // start face - end face
-  int[][] allSolids = new int[0][2]; // start solid - end solid
-  int[][] allModel2Ds = new int[0][2]; // start object2D - end object2D
-  int[][] allModel1Ds = new int[0][2]; // start allModel1Ds - end allModel1Ds
+  int[][] Solids = new int[0][2]; // start solid - end solid
+  int[][] Model2Ds = new int[0][2]; // start object2D - end object2D
+  int[][] Model1Ds = new int[0][2]; // start Model1Ds - end Model1Ds
   int num = 0; 
   
-  float[][] PivotXYZ = new float[0][9];
+  float[][] PivotMatrix = new float[0][9];
   int[][] PivotType = new int[0][1]; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 
 
@@ -8623,32 +8623,32 @@ class solarchvision_Groups {
     println("Saving:" + this.CLASS_STAMP);
     
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".allModel2Ds");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Model2Ds");
       parent.setInt("ni", this.num);
       for (int i = 0; i < this.num; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         String lineSTR = "";
-        //for (int j = 0; j < this.allModel2Ds[i].length; j++) {
+        //for (int j = 0; j < this.Model2Ds[i].length; j++) {
         for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.allModel2Ds[i][j], 0);
-          if (j < this.allModel2Ds[i].length - 1) lineSTR += ",";
+          lineSTR += nf(this.Model2Ds[i][j], 0);
+          if (j < this.Model2Ds[i].length - 1) lineSTR += ",";
         }
         child.setContent(lineSTR);
       }
     }
 
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".allModel1Ds");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Model1Ds");
       parent.setInt("ni", this.num);
       for (int i = 0; i < this.num; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         String lineSTR = "";
-        //for (int j = 0; j < this.allModel1Ds[i].length; j++) {
+        //for (int j = 0; j < this.Model1Ds[i].length; j++) {
         for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.allModel1Ds[i][j], 0);
-          if (j < this.allModel1Ds[i].length - 1) lineSTR += ",";
+          lineSTR += nf(this.Model1Ds[i][j], 0);
+          if (j < this.Model1Ds[i].length - 1) lineSTR += ",";
         }
         child.setContent(lineSTR);
       }
@@ -8687,32 +8687,32 @@ class solarchvision_Groups {
     }
 
     {    
-      XML parent = xml.addChild(this.CLASS_STAMP + ".allSolids");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Solids");
       parent.setInt("ni", this.num);
       for (int i = 0; i < this.num; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         String lineSTR = "";
-        //for (int j = 0; j < this.allSolids[i].length; j++) {
+        //for (int j = 0; j < this.Solids[i].length; j++) {
         for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.allSolids[i][j], 0);
-          if (j < this.allSolids[i].length - 1) lineSTR += ",";
+          lineSTR += nf(this.Solids[i][j], 0);
+          if (j < this.Solids[i].length - 1) lineSTR += ",";
         }
         child.setContent(lineSTR);
       }
     }
 
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".PivotXYZ");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".PivotMatrix");
       int ni = this.num;
       parent.setInt("ni", ni);
       for (int i = 0; i < ni; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         String lineSTR = "";
-        for (int j = 0; j < this.PivotXYZ[i].length; j++) {
-          lineSTR += nf(this.PivotXYZ[i][j], 0, 4).replace(",", "."); // <<<<
-          if (j + 1 < this.PivotXYZ[i].length) lineSTR += ",";
+        for (int j = 0; j < this.PivotMatrix[i].length; j++) {
+          lineSTR += nf(this.PivotMatrix[i][j], 0, 4).replace(",", "."); // <<<<
+          if (j + 1 < this.PivotMatrix[i].length) lineSTR += ",";
         }
         child.setContent(lineSTR);
       }
@@ -8741,20 +8741,20 @@ class solarchvision_Groups {
     println("Loading:" + this.CLASS_STAMP);
 
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".PivotXYZ");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".PivotMatrix");
     
       int ni = parent.getInt("ni");
 
       this.num = ni;
 
-      this.PivotXYZ = new float [ni][9];
+      this.PivotMatrix = new float [ni][9];
 
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 9; j++) {
-          this.PivotXYZ[i][j] = float(parts[j]);
+          this.PivotMatrix[i][j] = float(parts[j]);
         }
       }
     }  
@@ -8808,46 +8808,46 @@ class solarchvision_Groups {
     }        
 
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".allSolids");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Solids");
     
       int ni = parent.getInt("ni");
-      this.allSolids = new int [ni][2];
+      this.Solids = new int [ni][2];
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          this.allSolids[i][j] = int(parts[j]);
+          this.Solids[i][j] = int(parts[j]);
         }
       }
     } 
 
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".allModel2Ds");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Model2Ds");
     
       int ni = parent.getInt("ni");
-      this.allModel2Ds = new int [ni][2];
+      this.Model2Ds = new int [ni][2];
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          this.allModel2Ds[i][j] = int(parts[j]);
+          this.Model2Ds[i][j] = int(parts[j]);
         }
       }
     } 
 
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".allModel1Ds");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Model1Ds");
     
       int ni = parent.getInt("ni");
-      this.allModel1Ds = new int [ni][2];
+      this.Model1Ds = new int [ni][2];
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          this.allModel1Ds[i][j] = int(parts[j]);
+          this.Model1Ds[i][j] = int(parts[j]);
         }
       }
     }
@@ -9320,17 +9320,17 @@ class solarchvision_Selections {
     
         int OBJ_NUM = this.Group_ids[o];
     
-        posX = allGroups.PivotXYZ[OBJ_NUM][0];
-        posY = allGroups.PivotXYZ[OBJ_NUM][1];
-        posZ = allGroups.PivotXYZ[OBJ_NUM][2];
+        posX = allGroups.PivotMatrix[OBJ_NUM][0];
+        posY = allGroups.PivotMatrix[OBJ_NUM][1];
+        posZ = allGroups.PivotMatrix[OBJ_NUM][2];
     
-        scaleX = allGroups.PivotXYZ[OBJ_NUM][3];
-        scaleY = allGroups.PivotXYZ[OBJ_NUM][4];
-        scaleZ = allGroups.PivotXYZ[OBJ_NUM][5];
+        scaleX = allGroups.PivotMatrix[OBJ_NUM][3];
+        scaleY = allGroups.PivotMatrix[OBJ_NUM][4];
+        scaleZ = allGroups.PivotMatrix[OBJ_NUM][5];
     
-        rotX = allGroups.PivotXYZ[OBJ_NUM][6];
-        rotY = allGroups.PivotXYZ[OBJ_NUM][7];
-        rotZ = allGroups.PivotXYZ[OBJ_NUM][8];
+        rotX = allGroups.PivotMatrix[OBJ_NUM][6];
+        rotY = allGroups.PivotMatrix[OBJ_NUM][7];
+        rotZ = allGroups.PivotMatrix[OBJ_NUM][8];
       }
     }
   
@@ -9623,12 +9623,12 @@ class solarchvision_Selections {
       int OBJ_NUM = this.Group_ids[o];
   
       {
-        allGroups.PivotXYZ[OBJ_NUM][0] += dx;
-        allGroups.PivotXYZ[OBJ_NUM][1] += dy;
-        allGroups.PivotXYZ[OBJ_NUM][2] += dz;
+        allGroups.PivotMatrix[OBJ_NUM][0] += dx;
+        allGroups.PivotMatrix[OBJ_NUM][1] += dy;
+        allGroups.PivotMatrix[OBJ_NUM][2] += dz;
       }
   
-      for (int f = allGroups.allModel1Ds[OBJ_NUM][0]; f <= allGroups.allModel1Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
           allModel1Ds.setX(f, allModel1Ds.getX(f) + dx);
@@ -9637,7 +9637,7 @@ class solarchvision_Selections {
         }
       }
   
-      for (int f = allGroups.allModel2Ds[OBJ_NUM][0]; f <= allGroups.allModel2Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
           allModel2Ds.setX(f, allModel2Ds.getX(f) + dx);
@@ -9646,7 +9646,7 @@ class solarchvision_Selections {
         }
       }
   
-      for (int f = allGroups.allSolids[OBJ_NUM][0]; f <= allGroups.allSolids[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allSolids.DEF.length)) {
   
           float Solid_posX = allSolids.get_posX(f);
@@ -9728,9 +9728,9 @@ class solarchvision_Selections {
       int OBJ_NUM = this.Group_ids[o];
   
       { 
-        float x = allGroups.PivotXYZ[OBJ_NUM][0]; 
-        float y = allGroups.PivotXYZ[OBJ_NUM][1]; 
-        float z = allGroups.PivotXYZ[OBJ_NUM][2];
+        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
+        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
+        float z = allGroups.PivotMatrix[OBJ_NUM][2];
   
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -9768,21 +9768,21 @@ class solarchvision_Selections {
         y = B[1];
         z = B[2];
   
-        allGroups.PivotXYZ[OBJ_NUM][0] = x;
-        allGroups.PivotXYZ[OBJ_NUM][1] = y;
-        allGroups.PivotXYZ[OBJ_NUM][2] = z;
+        allGroups.PivotMatrix[OBJ_NUM][0] = x;
+        allGroups.PivotMatrix[OBJ_NUM][1] = y;
+        allGroups.PivotMatrix[OBJ_NUM][2] = z;
   
         if (the_Vector == 2) {
-          allGroups.PivotXYZ[OBJ_NUM][8] += r * 180.0 / PI;
+          allGroups.PivotMatrix[OBJ_NUM][8] += r * 180.0 / PI;
         } else if (the_Vector == 1) {
-          allGroups.PivotXYZ[OBJ_NUM][7] += r * 180.0 / PI;
+          allGroups.PivotMatrix[OBJ_NUM][7] += r * 180.0 / PI;
         } else if (the_Vector == 0) {
-          allGroups.PivotXYZ[OBJ_NUM][6] += r * 180.0 / PI;
+          allGroups.PivotMatrix[OBJ_NUM][6] += r * 180.0 / PI;
         }
       }    
   
   
-      for (int f = allGroups.allModel1Ds[OBJ_NUM][0]; f <= allGroups.allModel1Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
           float x = allModel1Ds.getX(f); 
@@ -9838,7 +9838,7 @@ class solarchvision_Selections {
         }
       }         
   
-      for (int f = allGroups.allModel2Ds[OBJ_NUM][0]; f <= allGroups.allModel2Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
           float x = allModel2Ds.getX(f); 
@@ -9887,7 +9887,7 @@ class solarchvision_Selections {
         }
       }         
   
-      for (int f = allGroups.allSolids[OBJ_NUM][0]; f <= allGroups.allSolids[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allSolids.DEF.length)) {
   
           float x = allSolids.get_posX(f);
@@ -9990,9 +9990,9 @@ class solarchvision_Selections {
       int OBJ_NUM = this.Group_ids[o];
   
       {
-        float x = allGroups.PivotXYZ[OBJ_NUM][0]; 
-        float y = allGroups.PivotXYZ[OBJ_NUM][1]; 
-        float z = allGroups.PivotXYZ[OBJ_NUM][2];
+        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
+        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
+        float z = allGroups.PivotMatrix[OBJ_NUM][2];
   
         float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -10006,19 +10006,19 @@ class solarchvision_Selections {
         y = B[1];
         z = B[2];
   
-        allGroups.PivotXYZ[OBJ_NUM][0] = x; 
-        allGroups.PivotXYZ[OBJ_NUM][1] = y;
-        allGroups.PivotXYZ[OBJ_NUM][2] = z;        
+        allGroups.PivotMatrix[OBJ_NUM][0] = x; 
+        allGroups.PivotMatrix[OBJ_NUM][1] = y;
+        allGroups.PivotMatrix[OBJ_NUM][2] = z;        
   
         // ???????
-        //allGroups.PivotXYZ[OBJ_NUM][3] *= sx; 
-        //allGroups.PivotXYZ[OBJ_NUM][4] *= sy;
-        //allGroups.PivotXYZ[OBJ_NUM][5] *= sz;
+        //allGroups.PivotMatrix[OBJ_NUM][3] *= sx; 
+        //allGroups.PivotMatrix[OBJ_NUM][4] *= sy;
+        //allGroups.PivotMatrix[OBJ_NUM][5] *= sz;
         // ???????
       }
   
   
-      for (int f = allGroups.allModel1Ds[OBJ_NUM][0]; f <= allGroups.allModel1Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
           float x = allModel1Ds.getX(f);
@@ -10046,7 +10046,7 @@ class solarchvision_Selections {
       }  
   
   
-      for (int f = allGroups.allModel2Ds[OBJ_NUM][0]; f <= allGroups.allModel2Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
           float x = allModel2Ds.getX(f);
@@ -10077,7 +10077,7 @@ class solarchvision_Selections {
         }
       }     
   
-      for (int f = allGroups.allSolids[OBJ_NUM][0]; f <= allGroups.allSolids[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allSolids.DEF.length)) {
   
           float x = allSolids.get_posX(f);
@@ -22243,7 +22243,7 @@ class solarchvision_Land3D {
     int vNo = 0;
     for (int i = 0; i < this.Mesh.length; i++) {
       for (int j = 0; j < this.Mesh[i].length; j++) {
-        XML child = parent.addChild("Vertice");
+        XML child = parent.addChild("item");
         child.setInt("id", vNo);
         String lineSTR = "";
         //for (int k = 0; k < this.Mesh[i][j].length; k++) {
@@ -22264,7 +22264,7 @@ class solarchvision_Land3D {
     
     this.Mesh = new float [this.n_I][this.n_J][3];
     XML parent = xml.getChild(this.CLASS_STAMP + ".Mesh");
-    XML[] children = parent.getChildren("Vertice");         
+    XML[] children = parent.getChildren("item");         
     for (int i = 0; i < this.n_I * this.n_J; i++) {
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
@@ -23351,7 +23351,7 @@ class solarchvision_Model2Ds {
       }
     }
   
-    if (allGroups.num > 0) allGroups.allModel2Ds[allGroups.num - 1][1] = this.num - 1;
+    if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
   
   void delete () {
@@ -23363,8 +23363,8 @@ class solarchvision_Model2Ds {
     this.num = 0;
   
     for (int q = 0; q < allGroups.num; q++) {
-      allGroups.allModel2Ds[q][0] = 0;
-      allGroups.allModel2Ds[q][1] = -1;
+      allGroups.Model2Ds[q][0] = 0;
+      allGroups.Model2Ds[q][1] = -1;
     }  
   
     allModel3Ds.deselect_All();
@@ -24355,7 +24355,7 @@ class solarchvision_Model1Ds {
     }
   
   
-    if (allGroups.num > 0) allGroups.allModel1Ds[allGroups.num - 1][1] = this.num - 1;
+    if (allGroups.num > 0) allGroups.Model1Ds[allGroups.num - 1][1] = this.num - 1;
   
   }  
   
@@ -24379,8 +24379,8 @@ class solarchvision_Model1Ds {
     this.num = 0;
   
     for (int q = 0; q < allGroups.num; q++) {
-      allGroups.allModel1Ds[q][0] = 0;
-      allGroups.allModel1Ds[q][1] = -1;
+      allGroups.Model1Ds[q][0] = 0;
+      allGroups.Model1Ds[q][1] = -1;
     }    
   
     allModel3Ds.deselect_All();
@@ -25196,7 +25196,7 @@ class solarchvision_Model3Ds {
       allSolids.DEF = (float[][]) concat(allSolids.DEF, newSolid);
     }
   
-    if (allGroups.num > 0) allGroups.allSolids[allGroups.num - 1][1] = allSolids.DEF.length - 1;
+    if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = allSolids.DEF.length - 1;
   
     return(allSolids.DEF.length - 1);
   }
@@ -25268,13 +25268,13 @@ class solarchvision_Model3Ds {
   
   int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
   
-    float[][] newObject_PivotXYZ = {
+    float[][] newObject_PivotMatrix = {
       {
         x, y, z, sx, sy, sz, rx, ry, rz
       }
     }; 
   
-    allGroups.PivotXYZ = (float[][]) concat(allGroups.PivotXYZ, newObject_PivotXYZ);
+    allGroups.PivotMatrix = (float[][]) concat(allGroups.PivotMatrix, newObject_PivotMatrix);
   
     int[][] newObject_Pivot = {
       {
@@ -25291,7 +25291,7 @@ class solarchvision_Model3Ds {
       }
     }; // i.e. null because start > end 
   
-    allGroups.allModel1Ds = (int[][]) concat(allGroups.allModel1Ds, newObject_allModel1Ds);     
+    allGroups.Model1Ds = (int[][]) concat(allGroups.Model1Ds, newObject_allModel1Ds);     
   
     int[][] newObject_allModel2Ds = {
       {
@@ -25299,7 +25299,7 @@ class solarchvision_Model3Ds {
       }
     }; // i.e. null because start > end 
   
-    allGroups.allModel2Ds = (int[][]) concat(allGroups.allModel2Ds, newObject_allModel2Ds);   
+    allGroups.Model2Ds = (int[][]) concat(allGroups.Model2Ds, newObject_allModel2Ds);   
   
     int[][] newObject_allSolids = {
       {
@@ -25307,7 +25307,7 @@ class solarchvision_Model3Ds {
       }
     }; // i.e. null because start > end 
   
-    allGroups.allSolids = (int[][]) concat(allGroups.allSolids, newObject_allSolids);      
+    allGroups.Solids = (int[][]) concat(allGroups.Solids, newObject_allSolids);      
   
     int[][] newObject_Faces = {
       {
@@ -25704,12 +25704,12 @@ class solarchvision_Model3Ds {
   
           allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
   
-          for (int j = 0; j < allGroups.PivotXYZ[OBJ_NUM].length; j++) { 
-            allGroups.PivotXYZ[new_OBJ_NUM][j] = allGroups.PivotXYZ[OBJ_NUM][j];
+          for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
+            allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
           }
   
-          if ((0 <= allGroups.allModel1Ds[OBJ_NUM][1]) && (allGroups.allModel1Ds[OBJ_NUM][0] <= allGroups.allModel1Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.allModel1Ds[OBJ_NUM][0]; q <= allGroups.allModel1Ds[OBJ_NUM][1]; q++) {
+          if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+            for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
   
               float x = allModel1Ds.getX(q);
               float y = allModel1Ds.getY(q);
@@ -25740,8 +25740,8 @@ class solarchvision_Model3Ds {
             }
           }
   
-          if ((0 <= allGroups.allModel2Ds[OBJ_NUM][1]) && (allGroups.allModel2Ds[OBJ_NUM][0] <= allGroups.allModel2Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.allModel2Ds[OBJ_NUM][0]; q <= allGroups.allModel2Ds[OBJ_NUM][1]; q++) {
+          if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+            for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
     
               float x = allModel2Ds.getX(q);
               float y = allModel2Ds.getY(q);
@@ -25761,8 +25761,8 @@ class solarchvision_Model3Ds {
           }
   
   
-          if ((0 <= allGroups.allSolids[OBJ_NUM][1]) && (allGroups.allSolids[OBJ_NUM][0] <= allGroups.allSolids[OBJ_NUM][1])) { 
-            for (int q = allGroups.allSolids[OBJ_NUM][0]; q <= allGroups.allSolids[OBJ_NUM][1]; q++) {
+          if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
+            for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
   
               float Solid_posX = allSolids.get_posX(q);
               float Solid_posY = allSolids.get_posY(q);
@@ -25856,12 +25856,12 @@ class solarchvision_Model3Ds {
   
           allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
   
-          for (int j = 0; j < allGroups.PivotXYZ[OBJ_NUM].length; j++) { 
-            allGroups.PivotXYZ[new_OBJ_NUM][j] = allGroups.PivotXYZ[OBJ_NUM][j];
+          for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
+            allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
           }
   
-          if ((0 <= allGroups.allModel1Ds[OBJ_NUM][1]) && (allGroups.allModel1Ds[OBJ_NUM][0] <= allGroups.allModel1Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.allModel1Ds[OBJ_NUM][0]; q <= allGroups.allModel1Ds[OBJ_NUM][1]; q++) {
+          if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+            for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
   
               float x = allModel1Ds.getX(q);
               float y = allModel1Ds.getY(q);
@@ -25892,8 +25892,8 @@ class solarchvision_Model3Ds {
             }
           }
   
-          if ((0 <= allGroups.allModel2Ds[OBJ_NUM][1]) && (allGroups.allModel2Ds[OBJ_NUM][0] <= allGroups.allModel2Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.allModel2Ds[OBJ_NUM][0]; q <= allGroups.allModel2Ds[OBJ_NUM][1]; q++) {
+          if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+            for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
   
               float x = allModel2Ds.getX(q);
               float y = allModel2Ds.getY(q);
@@ -25912,8 +25912,8 @@ class solarchvision_Model3Ds {
             }
           }
   
-          if ((0 <= allGroups.allSolids[OBJ_NUM][1]) && (allGroups.allSolids[OBJ_NUM][0] <= allGroups.allSolids[OBJ_NUM][1])) { 
-            for (int q = allGroups.allSolids[OBJ_NUM][0]; q <= allGroups.allSolids[OBJ_NUM][1]; q++) {
+          if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
+            for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
   
               float Solid_posX = allSolids.get_posX(q);
               float Solid_posY = allSolids.get_posY(q);
@@ -26288,14 +26288,14 @@ class solarchvision_Model3Ds {
         allGroups.Curves[OBJ_NUM][0] = 0;
         allGroups.Curves[OBJ_NUM][1] = -1;
   
-        allGroups.allModel1Ds[OBJ_NUM][0] = 0;
-        allGroups.allModel1Ds[OBJ_NUM][1] = -1;
+        allGroups.Model1Ds[OBJ_NUM][0] = 0;
+        allGroups.Model1Ds[OBJ_NUM][1] = -1;
   
-        allGroups.allModel2Ds[OBJ_NUM][0] = 0;
-        allGroups.allModel2Ds[OBJ_NUM][1] = -1;
+        allGroups.Model2Ds[OBJ_NUM][0] = 0;
+        allGroups.Model2Ds[OBJ_NUM][1] = -1;
   
-        allGroups.allSolids[OBJ_NUM][0] = 0;
-        allGroups.allSolids[OBJ_NUM][1] = -1;
+        allGroups.Solids[OBJ_NUM][0] = 0;
+        allGroups.Solids[OBJ_NUM][1] = -1;
       }
   
       this.delete_Selection();
@@ -26326,9 +26326,9 @@ class solarchvision_Model3Ds {
   
         if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) notEmpty = 1;
         if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) notEmpty = 1;
-        if ((0 <= allGroups.allModel1Ds[OBJ_NUM][0]) && (allGroups.allModel1Ds[OBJ_NUM][0] <= allGroups.allModel1Ds[OBJ_NUM][1])) notEmpty = 1;
-        if ((0 <= allGroups.allModel2Ds[OBJ_NUM][0]) && (allGroups.allModel2Ds[OBJ_NUM][0] <= allGroups.allModel2Ds[OBJ_NUM][1])) notEmpty = 1;
-        if ((0 <= allGroups.allSolids[OBJ_NUM][0]) && (allGroups.allSolids[OBJ_NUM][0] <= allGroups.allSolids[OBJ_NUM][1])) notEmpty = 1;
+        if ((0 <= allGroups.Model1Ds[OBJ_NUM][0]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) notEmpty = 1;
+        if ((0 <= allGroups.Model2Ds[OBJ_NUM][0]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) notEmpty = 1;
+        if ((0 <= allGroups.Solids[OBJ_NUM][0]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) notEmpty = 1;
   
         if (notEmpty == 0) {
   
@@ -26459,11 +26459,11 @@ class solarchvision_Model3Ds {
   
         for (int q = 0; q < allGroups.num; q++) {
   
-          if ((allGroups.allModel1Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.allModel1Ds[q][1])) {
-            if (allGroups.allModel1Ds[q][1] >= 0) allGroups.allModel1Ds[q][1] -= 1;
-          } else if (allGroups.allModel1Ds[q][0] > OBJ_NUM) {
-            if (allGroups.allModel1Ds[q][0] >= 0) allGroups.allModel1Ds[q][0] -= 1;
-            if (allGroups.allModel1Ds[q][1] >= 0) allGroups.allModel1Ds[q][1] -= 1;
+          if ((allGroups.Model1Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Model1Ds[q][1])) {
+            if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
+          } else if (allGroups.Model1Ds[q][0] > OBJ_NUM) {
+            if (allGroups.Model1Ds[q][0] >= 0) allGroups.Model1Ds[q][0] -= 1;
+            if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
           }
         }
   
@@ -26533,11 +26533,11 @@ class solarchvision_Model3Ds {
   
         for (int q = 0; q < allGroups.num; q++) {
   
-          if ((allGroups.allModel2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.allModel2Ds[q][1])) {
-            if (allGroups.allModel2Ds[q][1] >= 0) allGroups.allModel2Ds[q][1] -= 1;
-          } else if (allGroups.allModel2Ds[q][0] > OBJ_NUM) {
-            if (allGroups.allModel2Ds[q][0] >= 0) allGroups.allModel2Ds[q][0] -= 1;
-            if (allGroups.allModel2Ds[q][1] >= 0) allGroups.allModel2Ds[q][1] -= 1;
+          if ((allGroups.Model2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Model2Ds[q][1])) {
+            if (allGroups.Model2Ds[q][1] >= 0) allGroups.Model2Ds[q][1] -= 1;
+          } else if (allGroups.Model2Ds[q][0] > OBJ_NUM) {
+            if (allGroups.Model2Ds[q][0] >= 0) allGroups.Model2Ds[q][0] -= 1;
+            if (allGroups.Model2Ds[q][1] >= 0) allGroups.Model2Ds[q][1] -= 1;
           }
         }
   
@@ -26575,11 +26575,11 @@ class solarchvision_Model3Ds {
   
         for (int q = 0; q < allGroups.num; q++) {
   
-          if ((allGroups.allSolids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.allSolids[q][1])) {
-            if (allGroups.allSolids[q][1] >= 0) allGroups.allSolids[q][1] -= 1;
-          } else if (allGroups.allSolids[q][0] > OBJ_NUM) {
-            if (allGroups.allSolids[q][0] >= 0) allGroups.allSolids[q][0] -= 1;
-            if (allGroups.allSolids[q][1] >= 0) allGroups.allSolids[q][1] -= 1;
+          if ((allGroups.Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Solids[q][1])) {
+            if (allGroups.Solids[q][1] >= 0) allGroups.Solids[q][1] -= 1;
+          } else if (allGroups.Solids[q][0] > OBJ_NUM) {
+            if (allGroups.Solids[q][0] >= 0) allGroups.Solids[q][0] -= 1;
+            if (allGroups.Solids[q][1] >= 0) allGroups.Solids[q][1] -= 1;
           }
         }
   
@@ -26763,8 +26763,8 @@ class solarchvision_Model3Ds {
         }
   
   
-        int startallModel1Ds = allGroups.allModel1Ds[OBJ_NUM][0];
-        int endallModel1Ds = allGroups.allModel1Ds[OBJ_NUM][1];
+        int startallModel1Ds = allGroups.Model1Ds[OBJ_NUM][0];
+        int endallModel1Ds = allGroups.Model1Ds[OBJ_NUM][1];
   
         {
   
@@ -26774,17 +26774,17 @@ class solarchvision_Model3Ds {
   
               for (int j = 0; j < 2; j++) {
   
-                allGroups.allModel1Ds[i][j] -= 1 + endallModel1Ds - startallModel1Ds;
+                allGroups.Model1Ds[i][j] -= 1 + endallModel1Ds - startallModel1Ds;
   
-                if (allGroups.allModel1Ds[i][j] < 0) allGroups.allModel1Ds[i][j] = 0;
+                if (allGroups.Model1Ds[i][j] < 0) allGroups.Model1Ds[i][j] = 0;
               }
             }
           }   
   
-          int[][] startList = (int[][]) subset(allGroups.allModel1Ds, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allGroups.allModel1Ds, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allGroups.Model1Ds, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allGroups.Model1Ds, OBJ_NUM + 1);
   
-          allGroups.allModel1Ds = (int[][]) concat(startList, endList);
+          allGroups.Model1Ds = (int[][]) concat(startList, endList);
         }  
   
         if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
@@ -26842,8 +26842,8 @@ class solarchvision_Model3Ds {
           allModel1Ds.num = allModel1Ds.XYZSR.length;
         }
   
-        int startallModel2Ds = allGroups.allModel2Ds[OBJ_NUM][0];
-        int endallModel2Ds = allGroups.allModel2Ds[OBJ_NUM][1];
+        int startallModel2Ds = allGroups.Model2Ds[OBJ_NUM][0];
+        int endallModel2Ds = allGroups.Model2Ds[OBJ_NUM][1];
   
         {
   
@@ -26853,17 +26853,17 @@ class solarchvision_Model3Ds {
   
               for (int j = 0; j < 2; j++) {
   
-                allGroups.allModel2Ds[i][j] -= 1 + endallModel2Ds - startallModel2Ds;
+                allGroups.Model2Ds[i][j] -= 1 + endallModel2Ds - startallModel2Ds;
   
-                if (allGroups.allModel2Ds[i][j] < 0) allGroups.allModel2Ds[i][j] = 0;
+                if (allGroups.Model2Ds[i][j] < 0) allGroups.Model2Ds[i][j] = 0;
               }
             }
           }   
   
-          int[][] startList = (int[][]) subset(allGroups.allModel2Ds, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allGroups.allModel2Ds, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allGroups.Model2Ds, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allGroups.Model2Ds, OBJ_NUM + 1);
   
-          allGroups.allModel2Ds = (int[][]) concat(startList, endList);
+          allGroups.Model2Ds = (int[][]) concat(startList, endList);
         }  
   
         if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
@@ -26885,25 +26885,25 @@ class solarchvision_Model3Ds {
           allModel2Ds.num = allModel2Ds.XYZS.length;
         }
   
-        int startSolid = allGroups.allSolids[OBJ_NUM][0];
-        int endSolid = allGroups.allSolids[OBJ_NUM][1];
+        int startSolid = allGroups.Solids[OBJ_NUM][0];
+        int endSolid = allGroups.Solids[OBJ_NUM][1];
   
         {
           if ((0 <= startSolid) && (startSolid <= endSolid)) {
             for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
   
               for (int j = 0; j < 2; j++) {
-                allGroups.allSolids[i][j] -= 1 + endSolid - startSolid;
+                allGroups.Solids[i][j] -= 1 + endSolid - startSolid;
   
-                if (allGroups.allSolids[i][j] < 0) allGroups.allSolids[i][j] = 0;
+                if (allGroups.Solids[i][j] < 0) allGroups.Solids[i][j] = 0;
               }
             }
           }  
   
-          int[][] startList = (int[][]) subset(allGroups.allSolids, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allGroups.allSolids, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allGroups.Solids, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allGroups.Solids, OBJ_NUM + 1);
   
-          allGroups.allSolids = (int[][]) concat(startList, endList);
+          allGroups.Solids = (int[][]) concat(startList, endList);
         }  
   
         if ((0 <= startSolid) && (startSolid <= endSolid)) {
@@ -26918,10 +26918,10 @@ class solarchvision_Model3Ds {
   
   
         {
-          float[][] startList = (float[][]) subset(allGroups.PivotXYZ, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allGroups.PivotXYZ, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allGroups.PivotMatrix, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allGroups.PivotMatrix, OBJ_NUM + 1);
   
-          allGroups.PivotXYZ = (float[][]) concat(startList, endList);
+          allGroups.PivotMatrix = (float[][]) concat(startList, endList);
         } 
   
         {
@@ -30019,7 +30019,7 @@ class solarchvision_Model3Ds {
   
       for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-        if ((allGroups.allModel1Ds[OBJ_NUM][0] <= f) && (f <= allGroups.allModel1Ds[OBJ_NUM][1])) { 
+        if ((allGroups.Model1Ds[OBJ_NUM][0] <= f) && (f <= allGroups.Model1Ds[OBJ_NUM][1])) { 
   
           int previously_added = 0;
           for (int q = 0; q < allSelections.Group_ids.length; q++) {
@@ -30050,7 +30050,7 @@ class solarchvision_Model3Ds {
   
       for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-        if ((allGroups.allModel2Ds[OBJ_NUM][0] <= f) && (f <= allGroups.allModel2Ds[OBJ_NUM][1])) { 
+        if ((allGroups.Model2Ds[OBJ_NUM][0] <= f) && (f <= allGroups.Model2Ds[OBJ_NUM][1])) { 
   
           int previously_added = 0;
           for (int q = 0; q < allSelections.Group_ids.length; q++) {
@@ -30081,7 +30081,7 @@ class solarchvision_Model3Ds {
   
       for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-        if ((allGroups.allSolids[OBJ_NUM][0] <= f) && (f <= allGroups.allSolids[OBJ_NUM][1])) { 
+        if ((allGroups.Solids[OBJ_NUM][0] <= f) && (f <= allGroups.Solids[OBJ_NUM][1])) { 
   
           int previously_added = 0;
           for (int q = 0; q < allSelections.Group_ids.length; q++) {
@@ -30316,7 +30316,7 @@ class solarchvision_Model3Ds {
   
       int OBJ_NUM = allSelections.Group_ids[i];
   
-      for (int f = allGroups.allModel1Ds[OBJ_NUM][0]; f <= allGroups.allModel1Ds[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < allSelections.Model1D_ids.length; q++) {
@@ -30345,7 +30345,7 @@ class solarchvision_Model3Ds {
   
       int OBJ_NUM = allSelections.Group_ids[i];
   
-      for (int f = allGroups.allModel2Ds[OBJ_NUM][0]; f <= allGroups.allModel2Ds[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < allSelections.Model2D_ids.length; q++) {
@@ -30374,7 +30374,7 @@ class solarchvision_Model3Ds {
   
       int OBJ_NUM = allSelections.Group_ids[i];
   
-      for (int f = allGroups.allSolids[OBJ_NUM][0]; f <= allGroups.allSolids[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < allSelections.Solid_ids.length; q++) {
@@ -32458,17 +32458,17 @@ class solarchvision_Model3Ds {
   
   void delete_allGroups () {
     
-    allGroups.allModel1Ds = new int [0][2];
+    allGroups.Model1Ds = new int [0][2];
   
-    allGroups.allModel2Ds = new int [0][2];
+    allGroups.Model2Ds = new int [0][2];
   
     allGroups.Faces = new int [0][2];
   
     allGroups.Curves = new int [0][2];
   
-    allGroups.allSolids = new int [0][2];
+    allGroups.Solids = new int [0][2];
   
-    allGroups.PivotXYZ = new float [0][9];
+    allGroups.PivotMatrix = new float [0][9];
   
     allGroups.PivotType = new int [0][1];
   
@@ -32483,8 +32483,8 @@ class solarchvision_Model3Ds {
     allSolids.DEF = new float [0][13]; 
   
     for (int q = 0; q < allGroups.num; q++) {
-      allGroups.allSolids[q][0] = 0;
-      allGroups.allSolids[q][1] = -1;
+      allGroups.Solids[q][0] = 0;
+      allGroups.Solids[q][1] = -1;
     }
   
     this.deselect_All();
@@ -42798,9 +42798,9 @@ void mouseClicked () {
 
                           float[] P = SOLARCHVISION_getPivot();
 
-                          allGroups.PivotXYZ[OBJ_NUM][0] = P[0];
-                          allGroups.PivotXYZ[OBJ_NUM][1] = P[1];
-                          allGroups.PivotXYZ[OBJ_NUM][2] = P[2];
+                          allGroups.PivotMatrix[OBJ_NUM][0] = P[0];
+                          allGroups.PivotMatrix[OBJ_NUM][1] = P[1];
+                          allGroups.PivotMatrix[OBJ_NUM][2] = P[2];
 
                           //zzzzzzzzzzzzzzzzzzz should add other components?
 
@@ -44732,7 +44732,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
         
 
-        for (int f = allGroups.allModel1Ds[OBJ_NUM][0]; f <= allGroups.allModel1Ds[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
 
           if ((0 <= f) && (f < allModel1Ds.Faces.length)) { 
 
@@ -44758,7 +44758,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
 
 
-        for (int f = allGroups.allModel2Ds[OBJ_NUM][0]; f <= allGroups.allModel2Ds[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
 
           if ((0 <= f) && (f < allModel2Ds.Faces.length)) { 
 
@@ -44783,7 +44783,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           }
         }
 
-        for (int q = allGroups.allSolids[OBJ_NUM][0]; q <= allGroups.allSolids[OBJ_NUM][1]; q++) {
+        for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
 
           if ((0 < q) && (q < allSolids.Faces.length)) {
 
@@ -44999,9 +44999,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }; 
 
 
-        float x0 = allGroups.PivotXYZ[OBJ_NUM][0];
-        float y0 = allGroups.PivotXYZ[OBJ_NUM][1];
-        float z0 = allGroups.PivotXYZ[OBJ_NUM][2];
+        float x0 = allGroups.PivotMatrix[OBJ_NUM][0];
+        float y0 = allGroups.PivotMatrix[OBJ_NUM][1];
+        float z0 = allGroups.PivotMatrix[OBJ_NUM][2];
 
         for (int i = 0; i < Pivot_Vertices.length; i++) {
 
