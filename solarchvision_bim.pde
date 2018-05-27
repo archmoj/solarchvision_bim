@@ -10882,56 +10882,56 @@ class solarchvision_Selections {
   
     if (Current_ObjectCategory == ObjectCategory.CAMERA) {
   
-      allSelections.scale_selectedCameras(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedCameras(x0, y0, z0, sx, sy, sz);
     }   
   
     if (Current_ObjectCategory == ObjectCategory.SECTION) {
   
-      allSelections.scale_selectedSections(sx, sy);
+      this.scale_selectedSections(sx, sy);
     }   
   
     if (Current_ObjectCategory == ObjectCategory.SOLID) {
-      allSelections.scale_selectedSolids(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedSolids(x0, y0, z0, sx, sy, sz);
     }       
   
     if (Current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
   
-      allSelections.softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
+      this.softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
     }    
   
     if (Current_ObjectCategory == ObjectCategory.VERTEX) {
   
-      allSelections.scale_selectedVertices(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedVertices(x0, y0, z0, sx, sy, sz);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.FACE) {
   
-      allSelections.scale_selectedFaces(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedFaces(x0, y0, z0, sx, sy, sz);
     }  
     
     if (Current_ObjectCategory == ObjectCategory.CURVE) {
   
-      allSelections.scale_selectedCurves(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedCurves(x0, y0, z0, sx, sy, sz);
     }    
   
     if (Current_ObjectCategory == ObjectCategory.GROUP) {
   
-      allSelections.scale_selectedGroups(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedGroups(x0, y0, z0, sx, sy, sz);
     }
   
     if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      allSelections.scale_selectedModel2D(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedModel2D(x0, y0, z0, sx, sy, sz);
     }
   
     if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      allSelections.scale_selectedModel1D(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedModel1D(x0, y0, z0, sx, sy, sz);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.LANDPOINT) {
   
-      allSelections.scale_selectedLandPoints(x0, y0, z0, sx, sy, sz);
+      this.scale_selectedLandPoints(x0, y0, z0, sx, sy, sz);
     }
   }
   
@@ -10951,57 +10951,57 @@ class solarchvision_Selections {
   
     if (Current_ObjectCategory == ObjectCategory.CAMERA) {
   
-      allSelections.rotate_selectedCameras(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedCameras(x0, y0, z0, r, the_Vector);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.SECTION) {
   
-      allSelections.rotate_selectedSections(r);
+      this.rotate_selectedSections(r);
     }   
   
     if (Current_ObjectCategory == ObjectCategory.SOLID) {
   
-      allSelections.rotate_selectedSolids(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedSolids(x0, y0, z0, r, the_Vector);
     }       
   
     if (Current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
   
-      allSelections.softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
+      this.softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.VERTEX) {
   
-      allSelections.rotate_selectedVertices(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedVertices(x0, y0, z0, r, the_Vector);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.FACE) {
   
-      allSelections.rotate_selectedFaces(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedFaces(x0, y0, z0, r, the_Vector);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.CURVE) {
   
-      allSelections.rotate_selectedCurves(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedCurves(x0, y0, z0, r, the_Vector);
     }  
     
     if (Current_ObjectCategory == ObjectCategory.GROUP) {
   
-      allSelections.rotate_selectedGroups(r, the_Vector);
+      this.rotate_selectedGroups(r, the_Vector);
     }
   
     if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      allSelections.rotate_selectedModel2D(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedModel2D(x0, y0, z0, r, the_Vector);
     }
   
     if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      allSelections.rotate_selectedModel1D(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedModel1D(x0, y0, z0, r, the_Vector);
     }   
   
     if (Current_ObjectCategory == ObjectCategory.LANDPOINT) {
   
-      allSelections.rotate_selectedLandPoints(x0, y0, z0, r, the_Vector);
+      this.rotate_selectedLandPoints(x0, y0, z0, r, the_Vector);
     }
   } 
   
@@ -11026,57 +11026,57 @@ class solarchvision_Selections {
   
     if (Current_ObjectCategory == ObjectCategory.CAMERA) {
   
-      allSelections.move_selectedCameras(dx, dy, dz);
+      this.move_selectedCameras(dx, dy, dz);
     }     
   
     if (Current_ObjectCategory == ObjectCategory.SECTION) {
   
-      allSelections.move_selectedSections(dx, dy, dz);
+      this.move_selectedSections(dx, dy, dz);
     }   
   
     if (Current_ObjectCategory == ObjectCategory.SOLID) {
   
-      allSelections.move_selectedSolids(dx, dy, dz);
+      this.move_selectedSolids(dx, dy, dz);
     }      
   
     if (Current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
   
-      allSelections.softMove_selectedVertices(dx, dy, dz);
+      this.softMove_selectedVertices(dx, dy, dz);
     }    
   
     if (Current_ObjectCategory == ObjectCategory.VERTEX) {
   
-      allSelections.move_selectedVertices(dx, dy, dz);
+      this.move_selectedVertices(dx, dy, dz);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.FACE) {
   
-      allSelections.move_selectedFaces(dx, dy, dz);
+      this.move_selectedFaces(dx, dy, dz);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.CURVE) {
   
-      allSelections.move_selectedCurves(dx, dy, dz);
+      this.move_selectedCurves(dx, dy, dz);
     }
     
     if (Current_ObjectCategory == ObjectCategory.GROUP) {
   
-      allSelections.move_selectedGroups(dx, dy, dz);
+      this.move_selectedGroups(dx, dy, dz);
     }
   
     if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      allSelections.move_selectedModel2D(dx, dy, dz);
+      this.move_selectedModel2D(dx, dy, dz);
     }  
   
     if (Current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      allSelections.move_selectedModel1D(dx, dy, dz);
+      this.move_selectedModel1D(dx, dy, dz);
     }    
   
     if (Current_ObjectCategory == ObjectCategory.LANDPOINT) {
   
-      allSelections.move_selectedLandPoints(dx, dy, dz);
+      this.move_selectedLandPoints(dx, dy, dz);
     }
   }
   
@@ -11672,6 +11672,315 @@ class solarchvision_Selections {
     }
   }     
   
+  
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".LandPoint_ids");
+      int ni = this.LandPoint_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.LandPoint_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }    
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Model1D_ids");
+      int ni = this.Model1D_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Model1D_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Model2D_ids");
+      int ni = this.Model2D_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Model2D_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Group_ids");
+      int ni = this.Group_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Group_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }  
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Face_ids");
+      int ni = this.Face_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Face_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Curve_ids");
+      int ni = this.Curve_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Curve_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Vertex_ids");
+      int ni = this.Vertex_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Vertex_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Vertex_softSelectionVertices");
+      int ni = this.Vertex_softSelectionVertices.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Vertex_softSelectionVertices[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Vertex_softSelectionValues");
+      int ni = this.Vertex_softSelectionValues.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.Vertex_softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Solid_ids");
+      int ni = this.Solid_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Solid_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Section_ids");
+      int ni = this.Section_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Section_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }
+  
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Camera_ids");
+      int ni = this.Camera_ids.length;
+      parent.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += this.Camera_ids[i];
+        if (i < ni - 1) lineSTR += ",";
+      }
+      parent.setContent(lineSTR);
+    }    
+  }
+  
+
+
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".LandPoint_ids");
+    
+      int ni = parent.getInt("ni");
+      this.LandPoint_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.LandPoint_ids[i] = int(parts[i]);
+      }
+    }
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Model1D_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Model1D_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Model1D_ids[i] = int(parts[i]);
+      }
+    } 
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Model2D_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Model2D_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Model2D_ids[i] = int(parts[i]);
+      }
+    } 
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Group_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Group_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Group_ids[i] = int(parts[i]);
+      }
+    } 
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Face_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Face_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Face_ids[i] = int(parts[i]);
+      }
+    }
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Curve_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Curve_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Curve_ids[i] = int(parts[i]);
+      }
+    }
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Vertex_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Vertex_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Vertex_ids[i] = int(parts[i]);
+      }
+    }
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Vertex_softSelectionVertices");
+    
+      int ni = parent.getInt("ni");
+      this.Vertex_softSelectionVertices = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Vertex_softSelectionVertices[i] = int(parts[i]);
+      }
+    }
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Vertex_softSelectionValues");
+    
+      int ni = parent.getInt("ni");
+      this.Vertex_softSelectionValues = new float [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Vertex_softSelectionValues[i] = float(parts[i]);
+      }
+    }
+
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Solid_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Solid_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Solid_ids[i] = int(parts[i]);
+      }
+    }
+
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Section_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Section_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Section_ids[i] = int(parts[i]);
+      }
+    }
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Camera_ids");
+    
+      int ni = parent.getInt("ni");
+      this.Camera_ids = new int [ni];
+      String lineSTR = parent.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Camera_ids[i] = int(parts[i]);
+      }
+    }
+  }
+
 }
 
 solarchvision_Selections allSelections = new solarchvision_Selections();     
@@ -51040,155 +51349,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   allGroups.to_XML(xml);
 
-
-
-  {
-    newChild1 = xml.addChild("allSelections.LandPoint_ids");
-    int ni = allSelections.LandPoint_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.LandPoint_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }    
-
-  {
-    newChild1 = xml.addChild("allSelections.Model1D_ids");
-    int ni = allSelections.Model1D_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Model1D_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-  {
-    newChild1 = xml.addChild("allSelections.Model2D_ids");
-    int ni = allSelections.Model2D_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Model2D_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-  {
-    newChild1 = xml.addChild("allSelections.Group_ids");
-    int ni = allSelections.Group_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Group_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }  
-
-  {
-    newChild1 = xml.addChild("allSelections.Face_ids");
-    int ni = allSelections.Face_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Face_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = xml.addChild("allSelections.Curve_ids");
-    int ni = allSelections.Curve_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Curve_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-  {
-    newChild1 = xml.addChild("allSelections.Vertex_ids");
-    int ni = allSelections.Vertex_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Vertex_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = xml.addChild("allSelections.Vertex_softSelectionVertices");
-    int ni = allSelections.Vertex_softSelectionVertices.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Vertex_softSelectionVertices[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = xml.addChild("allSelections.Vertex_softSelectionValues");
-    int ni = allSelections.Vertex_softSelectionValues.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSelections.Vertex_softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = xml.addChild("allSelections.Solid_ids");
-    int ni = allSelections.Solid_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Solid_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-  {
-    newChild1 = xml.addChild("allSelections.Section_ids");
-    int ni = allSelections.Section_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Section_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-  {
-    newChild1 = xml.addChild("allSelections.Camera_ids");
-    int ni = allSelections.Camera_ids.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += allSelections.Camera_ids[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }    
+  allSelections.to_XML(xml);
 
 
 
@@ -51869,155 +52030,10 @@ void SOLARCHVISION_load_project (String myFile) {
     
     allGroups.from_XML(xml);
 
+    allSelections.from_XML(xml);
 
 
 
-
-    {
-      XML parent = xml.getChild("allSelections.LandPoint_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.LandPoint_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.LandPoint_ids[i] = int(parts[i]);
-      }
-    }
-
-    {
-      XML parent = xml.getChild("allSelections.Model1D_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Model1D_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Model1D_ids[i] = int(parts[i]);
-      }
-    } 
-
-    {
-      XML parent = xml.getChild("allSelections.Model2D_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Model2D_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Model2D_ids[i] = int(parts[i]);
-      }
-    } 
-
-    {
-      XML parent = xml.getChild("allSelections.Group_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Group_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Group_ids[i] = int(parts[i]);
-      }
-    } 
-
-    {
-      XML parent = xml.getChild("allSelections.Face_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Face_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Face_ids[i] = int(parts[i]);
-      }
-    }
-
-    {
-      XML parent = xml.getChild("allSelections.Curve_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Curve_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Curve_ids[i] = int(parts[i]);
-      }
-    }
-
-    {
-      XML parent = xml.getChild("allSelections.Vertex_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Vertex_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Vertex_ids[i] = int(parts[i]);
-      }
-    }
-
-    {
-      XML parent = xml.getChild("allSelections.Vertex_softSelectionVertices");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Vertex_softSelectionVertices = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Vertex_softSelectionVertices[i] = int(parts[i]);
-      }
-    }
-
-    {
-      XML parent = xml.getChild("allSelections.Vertex_softSelectionValues");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Vertex_softSelectionValues = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Vertex_softSelectionValues[i] = float(parts[i]);
-      }
-    }
-
-
-    {
-      XML parent = xml.getChild("allSelections.Solid_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Solid_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Solid_ids[i] = int(parts[i]);
-      }
-    }
-
-
-    {
-      XML parent = xml.getChild("allSelections.Section_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Section_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Section_ids[i] = int(parts[i]);
-      }
-    }
-
-    {
-      XML parent = xml.getChild("allSelections.Camera_ids");
-    
-      int ni = parent.getInt("ni");
-      allSelections.Camera_ids = new int [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSelections.Camera_ids[i] = int(parts[i]);
-      }
-    }
 
 
 
