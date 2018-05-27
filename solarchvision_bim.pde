@@ -8616,6 +8616,242 @@ class solarchvision_Groups {
   
   float[][] PivotXYZ = new float[0][9];
   int[][] PivotType = new int[0][1]; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".allModel2Ds");
+      parent.setInt("ni", this.num);
+      for (int i = 0; i < this.num; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.allModel2Ds[i].length; j++) {
+        for (int j = 0; j < 2; j++) { // start, end
+          lineSTR += nf(this.allModel2Ds[i][j], 0);
+          if (j < this.allModel2Ds[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".allModel1Ds");
+      parent.setInt("ni", this.num);
+      for (int i = 0; i < this.num; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.allModel1Ds[i].length; j++) {
+        for (int j = 0; j < 2; j++) { // start, end
+          lineSTR += nf(this.allModel1Ds[i][j], 0);
+          if (j < this.allModel1Ds[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Faces");
+      parent.setInt("ni", this.num);
+      for (int i = 0; i < this.num; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.Faces[i].length; j++) {
+        for (int j = 0; j < 2; j++) { // start, end
+          lineSTR += nf(this.Faces[i][j], 0);
+          if (j < this.Faces[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Curves");
+      parent.setInt("ni", this.num);
+      for (int i = 0; i < this.num; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.Curves[i].length; j++) {
+        for (int j = 0; j < 2; j++) { // start, end
+          lineSTR += nf(this.Curves[i][j], 0);
+          if (j < this.Curves[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {    
+      XML parent = xml.addChild(this.CLASS_STAMP + ".allSolids");
+      parent.setInt("ni", this.num);
+      for (int i = 0; i < this.num; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.allSolids[i].length; j++) {
+        for (int j = 0; j < 2; j++) { // start, end
+          lineSTR += nf(this.allSolids[i][j], 0);
+          if (j < this.allSolids[i].length - 1) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".PivotXYZ");
+      int ni = this.num;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        for (int j = 0; j < this.PivotXYZ[i].length; j++) {
+          lineSTR += nf(this.PivotXYZ[i][j], 0, 4).replace(",", "."); // <<<<
+          if (j + 1 < this.PivotXYZ[i].length) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }  
+
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".PivotType");
+      int ni = this.num;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        for (int j = 0; j < this.PivotType[i].length; j++) {
+          lineSTR += nf(this.PivotType[i][j], 0, 4).replace(",", "."); // <<<<
+          if (j + 1 < this.PivotType[i].length) lineSTR += ",";
+        }
+        child.setContent(lineSTR);
+      }
+    }
+  }
+
+
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".PivotXYZ");
+    
+      int ni = parent.getInt("ni");
+
+      this.num = ni;
+
+      this.PivotXYZ = new float [ni][9];
+
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 9; j++) {
+          this.PivotXYZ[i][j] = float(parts[j]);
+        }
+      }
+    }  
+
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".PivotType");
+    
+      int ni = parent.getInt("ni");
+
+      this.PivotType = new int [ni][1];
+
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 1; j++) {
+          this.PivotType[i][j] = int(parts[j]);
+        }
+      }
+    }          
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Faces");
+    
+      int ni = parent.getInt("ni");
+      this.Faces = new int [ni][2];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.Faces[i][j] = int(parts[j]);
+        }
+      }
+    }
+ 
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Curves");
+    
+      int ni = parent.getInt("ni");
+      this.Curves = new int [ni][2];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.Curves[i][j] = int(parts[j]);
+        }
+      }
+    }        
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".allSolids");
+    
+      int ni = parent.getInt("ni");
+      this.allSolids = new int [ni][2];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.allSolids[i][j] = int(parts[j]);
+        }
+      }
+    } 
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".allModel2Ds");
+    
+      int ni = parent.getInt("ni");
+      this.allModel2Ds = new int [ni][2];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.allModel2Ds[i][j] = int(parts[j]);
+        }
+      }
+    } 
+
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".allModel1Ds");
+    
+      int ni = parent.getInt("ni");
+      this.allModel1Ds = new int [ni][2];
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.allModel1Ds[i][j] = int(parts[j]);
+        }
+      }
+    }
+  }  
   
 }
 
@@ -50202,18 +50438,18 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   myFile = myFile.replace(char(92), '/');
 
-  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
   XML newChild1 = null;
   XML newChild2 = null;
   XML newChild3 = null;
 
 
-  my_xml.setName("SOLARCHVISION_" + SOLARCHVISION_version + "_project");
+  xml.setName("SOLARCHVISION_" + SOLARCHVISION_version + "_project");
 
-  STATION.to_XML(my_xml);
+  STATION.to_XML(xml);
 
 
-  newChild1 = my_xml.addChild("SOLARCHVISION_variables");
+  newChild1 = xml.addChild("SOLARCHVISION_variables");
 
   newChild1.setString("Display_Output_in_Explorer", Boolean.toString(Display_Output_in_Explorer));
   newChild1.setString("Display_allModel3Ds", Boolean.toString(Display_allModel3Ds));
@@ -50628,7 +50864,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("Land3D.Textures_ImagePath");
+    newChild1 = xml.addChild("Land3D.Textures_ImagePath");
     int ni = Land3D.Textures_ImagePath.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -50642,7 +50878,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("allModel2Ds.ImagePath");
+    newChild1 = xml.addChild("allModel2Ds.ImagePath");
     int ni = allModel2Ds.ImagePath.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -50690,7 +50926,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("allSections.SolidImpact");
+    newChild1 = xml.addChild("allSections.SolidImpact");
     int ni = allSections.SolidImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -50709,7 +50945,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("allSections.SolarImpact");
+    newChild1 = xml.addChild("allSections.SolarImpact");
     int ni = allSections.SolarImpact.length;
     if (ni > 0) {
       int nj = allSections.SolarImpact[0].length;
@@ -50746,17 +50982,17 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
 
-  Land3D.to_XML(my_xml);
+  Land3D.to_XML(xml);
 
-  allSections.to_XML(my_xml);
+  allSections.to_XML(xml);
   
-  allCameras.to_XML(my_xml);
+  allCameras.to_XML(xml);
   
-  allSolids.to_XML(my_xml);
+  allSolids.to_XML(xml);
 
-  allModel1Ds.to_XML(my_xml);
+  allModel1Ds.to_XML(xml);
   
-  allModel2Ds.to_XML(my_xml);
+  allModel2Ds.to_XML(xml);
   
   
 
@@ -50766,7 +51002,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Vertices");
   {
-    XML parent = my_xml.addChild("allVertices");
+    XML parent = xml.addChild("allVertices");
     parent.setInt("ni", allVertices.length);
     for (int i = 0; i < allVertices.length; i++) {
       XML child = parent.addChild("item");
@@ -50783,129 +51019,16 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
 
-  allCurves.to_XML(my_xml);
+  allCurves.to_XML(xml);
 
-  allFaces.to_XML(my_xml);
+  allFaces.to_XML(xml);
+
+  allGroups.to_XML(xml);
 
 
-
-  println("Saving:allGroups");
-  {
-    {
-      newChild1 = my_xml.addChild("allGroups.allModel2Ds");
-      newChild1.setInt("ni", allGroups.num);
-      for (int i = 0; i < allGroups.num; i++) {
-        newChild2 = newChild1.addChild("allModel2Ds");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < allGroups.allModel2Ds[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(allGroups.allModel2Ds[i][j], 0);
-          if (j < allGroups.allModel2Ds[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-
-    {
-      newChild1 = my_xml.addChild("allGroups.allModel1Ds");
-      newChild1.setInt("ni", allGroups.num);
-      for (int i = 0; i < allGroups.num; i++) {
-        newChild2 = newChild1.addChild("allModel1Ds");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < allGroups.allModel1Ds[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(allGroups.allModel1Ds[i][j], 0);
-          if (j < allGroups.allModel1Ds[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-
-    {
-      newChild1 = my_xml.addChild("allGroups.Faces");
-      newChild1.setInt("ni", allGroups.num);
-      for (int i = 0; i < allGroups.num; i++) {
-        newChild2 = newChild1.addChild("Faces");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < allGroups.Faces[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(allGroups.Faces[i][j], 0);
-          if (j < allGroups.Faces[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-
-    {
-      newChild1 = my_xml.addChild("allGroups.Curves");
-      newChild1.setInt("ni", allGroups.num);
-      for (int i = 0; i < allGroups.num; i++) {
-        newChild2 = newChild1.addChild("Curves");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < allGroups.Curves[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(allGroups.Curves[i][j], 0);
-          if (j < allGroups.Curves[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-
-    {    
-      newChild1 = my_xml.addChild("allGroups.allSolids");
-      newChild1.setInt("ni", allGroups.num);
-      for (int i = 0; i < allGroups.num; i++) {
-        newChild2 = newChild1.addChild("allSolids");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < allGroups.allSolids[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(allGroups.allSolids[i][j], 0);
-          if (j < allGroups.allSolids[i].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-
-    {
-      newChild1 = my_xml.addChild("allGroups.PivotXYZ");
-      int ni = allGroups.num;
-      newChild1.setInt("ni", ni);
-      for (int i = 0; i < ni; i++) {
-        newChild2 = newChild1.addChild("PivotXYZ");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < allGroups.PivotXYZ[i].length; j++) {
-          lineSTR += nf(allGroups.PivotXYZ[i][j], 0, 4).replace(",", "."); // <<<<
-          if (j + 1 < allGroups.PivotXYZ[i].length) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }  
-
-    {
-      newChild1 = my_xml.addChild("allGroups.PivotType");
-      int ni = allGroups.num;
-      newChild1.setInt("ni", ni);
-      for (int i = 0; i < ni; i++) {
-        newChild2 = newChild1.addChild("PivotType");
-        newChild2.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < allGroups.PivotType[i].length; j++) {
-          lineSTR += nf(allGroups.PivotType[i][j], 0, 4).replace(",", "."); // <<<<
-          if (j + 1 < allGroups.PivotType[i].length) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-      }
-    }
-  }
 
   {
-    newChild1 = my_xml.addChild("selectedLandPoint_ids");
+    newChild1 = xml.addChild("selectedLandPoint_ids");
     int ni = selectedLandPoint_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50917,7 +51040,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }    
 
   {
-    newChild1 = my_xml.addChild("selectedallModel1Ds_ids");
+    newChild1 = xml.addChild("selectedallModel1Ds_ids");
     int ni = selectedallModel1Ds_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50929,7 +51052,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("selectedallModel2Ds_ids");
+    newChild1 = xml.addChild("selectedallModel2Ds_ids");
     int ni = selectedallModel2Ds_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50941,7 +51064,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("selectedGroup_ids");
+    newChild1 = xml.addChild("selectedGroup_ids");
     int ni = selectedGroup_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50953,7 +51076,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }  
 
   {
-    newChild1 = my_xml.addChild("selectedFace_ids");
+    newChild1 = xml.addChild("selectedFace_ids");
     int ni = selectedFace_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50966,7 +51089,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("selectedCurve_ids");
+    newChild1 = xml.addChild("selectedCurve_ids");
     int ni = selectedCurve_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50978,7 +51101,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("selectedVertex_ids");
+    newChild1 = xml.addChild("selectedVertex_ids");
     int ni = selectedVertex_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -50991,7 +51114,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("selectedVertex_softSelectionVertices");
+    newChild1 = xml.addChild("selectedVertex_softSelectionVertices");
     int ni = selectedVertex_softSelectionVertices.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51004,7 +51127,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("selectedVertex_softSelectionValues");
+    newChild1 = xml.addChild("selectedVertex_softSelectionValues");
     int ni = selectedVertex_softSelectionValues.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51017,7 +51140,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("selectedSolid_ids");
+    newChild1 = xml.addChild("selectedSolid_ids");
     int ni = selectedSolid_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51029,7 +51152,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("selectedSection_ids");
+    newChild1 = xml.addChild("selectedSection_ids");
     int ni = selectedSection_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51041,7 +51164,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("selectedCamera_ids");
+    newChild1 = xml.addChild("selectedCamera_ids");
     int ni = selectedCamera_ids.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51055,7 +51178,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("SolidImpact_Elevation");
+    newChild1 = xml.addChild("SolidImpact_Elevation");
     int ni = SolidImpact_Elevation.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51067,7 +51190,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("SolidImpact_Rotation");
+    newChild1 = xml.addChild("SolidImpact_Rotation");
     int ni = SolidImpact_Rotation.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51079,7 +51202,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }  
 
   {
-    newChild1 = my_xml.addChild("SolidImpact_scale_U");
+    newChild1 = xml.addChild("SolidImpact_scale_U");
     int ni = SolidImpact_scale_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51091,7 +51214,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }    
 
   {
-    newChild1 = my_xml.addChild("SolidImpact_scale_V");
+    newChild1 = xml.addChild("SolidImpact_scale_V");
     int ni = SolidImpact_scale_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51103,7 +51226,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }    
 
   {
-    newChild1 = my_xml.addChild("SolidImpact_offset_U");
+    newChild1 = xml.addChild("SolidImpact_offset_U");
     int ni = SolidImpact_offset_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51115,7 +51238,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }    
 
   {
-    newChild1 = my_xml.addChild("SolidImpact_offset_V");
+    newChild1 = xml.addChild("SolidImpact_offset_V");
     int ni = SolidImpact_offset_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
@@ -51127,7 +51250,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }    
 
 
-  saveXML(my_xml, myFile);    
+  saveXML(xml, myFile);    
 
   println("End of saving project.");
 
@@ -51142,10 +51265,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
   int continue_process = 1;
 
-  XML FileAll = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
   try {
-    FileAll = loadXML(myFile);
+    xml = loadXML(myFile);
   }
   catch (Exception e) {
     println("Can't read:", myFile);
@@ -51156,9 +51279,9 @@ void SOLARCHVISION_load_project (String myFile) {
 
     XML[] children0;
    
-    STATION.from_XML(FileAll);
+    STATION.from_XML(xml);
 
-    children0 = FileAll.getChildren("SOLARCHVISION_variables");
+    children0 = xml.getChildren("SOLARCHVISION_variables");
     for (int L = 0; L < children0.length; L++) {
 
       Display_Output_in_Explorer = Boolean.parseBoolean(children0[L].getString("Display_Output_in_Explorer"));
@@ -51570,7 +51693,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
   
     {
-      XML parent = FileAll.getChild("Land3D.Textures_ImagePath");
+      XML parent = xml.getChild("Land3D.Textures_ImagePath");
     
       int ni = parent.getInt("ni");
       
@@ -51599,7 +51722,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {
       {
-        XML parent = FileAll.getChild("allModel2Ds.ImagePath");
+        XML parent = xml.getChild("allModel2Ds.ImagePath");
       
         int ni = parent.getInt("ni");
 
@@ -51640,7 +51763,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {
       {
-        XML parent = FileAll.getChild("allSections.SolidImpact");
+        XML parent = xml.getChild("allSections.SolidImpact");
       
         int ni = parent.getInt("ni");
 
@@ -51662,7 +51785,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {
       {
-        XML parent = FileAll.getChild("allSections.SolarImpact");
+        XML parent = xml.getChild("allSections.SolarImpact");
       
         int ni = parent.getInt("ni");
         int nj = parent.getInt("nj");
@@ -51691,17 +51814,17 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-    Land3D.from_XML(FileAll);
+    Land3D.from_XML(xml);
 
-    allSections.from_XML(FileAll);
+    allSections.from_XML(xml);
     
-    allCameras.from_XML(FileAll);
+    allCameras.from_XML(xml);
     
-    allSolids.from_XML(FileAll);
+    allSolids.from_XML(xml);
     
-    allModel1Ds.from_XML(FileAll);
+    allModel1Ds.from_XML(xml);
     
-    allModel2Ds.from_XML(FileAll);
+    allModel2Ds.from_XML(xml);
     
 
 
@@ -51712,7 +51835,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {  
       println("Loading:Vertices");
-      XML parent = FileAll.getChild("allVertices");
+      XML parent = xml.getChild("allVertices");
       int ni = parent.getInt("ni");
       allVertices = new float [ni][3];
       XML[] children = parent.getChildren("item");         
@@ -51726,133 +51849,18 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     
-    allCurves.from_XML(FileAll);
+    allCurves.from_XML(xml);
 
-    allFaces.from_XML(FileAll);
+    allFaces.from_XML(xml);
     
-    
+    allGroups.from_XML(xml);
 
 
 
-    println("Loading:allGroups");
-    {
-      {
-        XML parent = FileAll.getChild("allGroups.PivotXYZ");
-      
-
-        int ni = parent.getInt("ni");
-
-        allGroups.num = ni;
-
-        allGroups.PivotXYZ = new float [ni][9];
-
-        XML[] children1 = parent.getChildren("PivotXYZ");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < 9; j++) {
-            allGroups.PivotXYZ[i][j] = float(parts[j]);
-          }
-        }
-      }  
-
-
-      {
-        XML parent = FileAll.getChild("allGroups.PivotType");
-      
-        int ni = parent.getInt("ni");
-
-        allGroups.PivotType = new int [ni][1];
-
-        XML[] children1 = parent.getChildren("PivotType");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < 1; j++) {
-            allGroups.PivotType[i][j] = int(parts[j]);
-          }
-        }
-      }          
-
-      {
-        XML parent = FileAll.getChild("allGroups.Faces");
-      
-        int ni = parent.getInt("ni");
-        allGroups.Faces = new int [ni][2];
-        XML[] children1 = parent.getChildren("Faces");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allGroups.Faces[i][j] = int(parts[j]);
-          }
-        }
-      }
- 
-      {
-        XML parent = FileAll.getChild("allGroups.Curves");
-      
-        int ni = parent.getInt("ni");
-        allGroups.Curves = new int [ni][2];
-        XML[] children1 = parent.getChildren("Curves");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allGroups.Curves[i][j] = int(parts[j]);
-          }
-        }
-      }        
-
-      {
-        XML parent = FileAll.getChild("allGroups.allSolids");
-      
-        int ni = parent.getInt("ni");
-        allGroups.allSolids = new int [ni][2];
-        XML[] children1 = parent.getChildren("allSolids");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allGroups.allSolids[i][j] = int(parts[j]);
-          }
-        }
-      } 
-
-      {
-        XML parent = FileAll.getChild("allGroups.allModel2Ds");
-      
-        int ni = parent.getInt("ni");
-        allGroups.allModel2Ds = new int [ni][2];
-        XML[] children1 = parent.getChildren("allModel2Ds");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allGroups.allModel2Ds[i][j] = int(parts[j]);
-          }
-        }
-      } 
-
-      {
-        XML parent = FileAll.getChild("allGroups.allModel1Ds");
-      
-        int ni = parent.getInt("ni");
-        allGroups.allModel1Ds = new int [ni][2];
-        XML[] children1 = parent.getChildren("allModel1Ds");         
-        for (int i = 0; i < ni; i++) {
-          String lineSTR = children1[i].getContent();
-          String[] parts = split(lineSTR, ',');
-          for (int j = 0; j < parts.length; j++) {
-            allGroups.allModel1Ds[i][j] = int(parts[j]);
-          }
-        }
-      }
-    }
 
 
     {
-      XML parent = FileAll.getChild("selectedLandPoint_ids");
+      XML parent = xml.getChild("selectedLandPoint_ids");
     
       int ni = parent.getInt("ni");
       selectedLandPoint_ids = new int [ni];
@@ -51864,7 +51872,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      XML parent = FileAll.getChild("selectedallModel1Ds_ids");
+      XML parent = xml.getChild("selectedallModel1Ds_ids");
     
       int ni = parent.getInt("ni");
       selectedallModel1Ds_ids = new int [ni];
@@ -51876,7 +51884,7 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     {
-      XML parent = FileAll.getChild("selectedallModel2Ds_ids");
+      XML parent = xml.getChild("selectedallModel2Ds_ids");
     
       int ni = parent.getInt("ni");
       selectedallModel2Ds_ids = new int [ni];
@@ -51888,7 +51896,7 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     {
-      XML parent = FileAll.getChild("selectedGroup_ids");
+      XML parent = xml.getChild("selectedGroup_ids");
     
       int ni = parent.getInt("ni");
       selectedGroup_ids = new int [ni];
@@ -51900,7 +51908,7 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     {
-      XML parent = FileAll.getChild("selectedFace_ids");
+      XML parent = xml.getChild("selectedFace_ids");
     
       int ni = parent.getInt("ni");
       selectedFace_ids = new int [ni];
@@ -51912,7 +51920,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      XML parent = FileAll.getChild("selectedCurve_ids");
+      XML parent = xml.getChild("selectedCurve_ids");
     
       int ni = parent.getInt("ni");
       selectedCurve_ids = new int [ni];
@@ -51924,7 +51932,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      XML parent = FileAll.getChild("selectedVertex_ids");
+      XML parent = xml.getChild("selectedVertex_ids");
     
       int ni = parent.getInt("ni");
       selectedVertex_ids = new int [ni];
@@ -51936,7 +51944,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      XML parent = FileAll.getChild("selectedVertex_softSelectionVertices");
+      XML parent = xml.getChild("selectedVertex_softSelectionVertices");
     
       int ni = parent.getInt("ni");
       selectedVertex_softSelectionVertices = new int [ni];
@@ -51948,7 +51956,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      XML parent = FileAll.getChild("selectedVertex_softSelectionValues");
+      XML parent = xml.getChild("selectedVertex_softSelectionValues");
     
       int ni = parent.getInt("ni");
       selectedVertex_softSelectionValues = new float [ni];
@@ -51961,7 +51969,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      XML parent = FileAll.getChild("selectedSolid_ids");
+      XML parent = xml.getChild("selectedSolid_ids");
     
       int ni = parent.getInt("ni");
       selectedSolid_ids = new int [ni];
@@ -51974,7 +51982,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      XML parent = FileAll.getChild("selectedSection_ids");
+      XML parent = xml.getChild("selectedSection_ids");
     
       int ni = parent.getInt("ni");
       selectedSection_ids = new int [ni];
@@ -51986,7 +51994,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      XML parent = FileAll.getChild("selectedCamera_ids");
+      XML parent = xml.getChild("selectedCamera_ids");
     
       int ni = parent.getInt("ni");
       selectedCamera_ids = new int [ni];
@@ -52000,7 +52008,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      XML parent = FileAll.getChild("SolidImpact_Elevation");
+      XML parent = xml.getChild("SolidImpact_Elevation");
     
       int ni = parent.getInt("ni");
       SolidImpact_Elevation = new float [ni];
@@ -52012,7 +52020,7 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     {
-      XML parent = FileAll.getChild("SolidImpact_Rotation");
+      XML parent = xml.getChild("SolidImpact_Rotation");
     
       int ni = parent.getInt("ni");
       SolidImpact_Rotation = new float [ni];
@@ -52024,7 +52032,7 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     {
-      XML parent = FileAll.getChild("SolidImpact_scale_U");
+      XML parent = xml.getChild("SolidImpact_scale_U");
     
       int ni = parent.getInt("ni");
       SolidImpact_scale_U = new float [ni];
@@ -52036,7 +52044,7 @@ void SOLARCHVISION_load_project (String myFile) {
     } 
 
     {
-        XML parent = FileAll.getChild("SolidImpact_scale_V");
+        XML parent = xml.getChild("SolidImpact_scale_V");
     
       int ni = parent.getInt("ni");
       SolidImpact_scale_V = new float [ni];
@@ -52048,7 +52056,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }     
 
     {
-      XML parent = FileAll.getChild("SolidImpact_offset_U");
+      XML parent = xml.getChild("SolidImpact_offset_U");
     
       int ni = parent.getInt("ni");
       SolidImpact_offset_U = new float [ni];
@@ -52061,7 +52069,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
     {
-      XML parent = FileAll.getChild("SolidImpact_offset_V");
+      XML parent = xml.getChild("SolidImpact_offset_V");
     
       int ni = parent.getInt("ni");
       SolidImpact_offset_V = new float [ni];
