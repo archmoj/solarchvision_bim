@@ -23649,7 +23649,7 @@ class solarchvision_Land3D {
   
   
   
-  public void to_XML (XML xml, String save_folder) {
+  public void to_XML (XML xml) {
     
     println("Saving:" + this.CLASS_STAMP);
     
@@ -23671,7 +23671,7 @@ class solarchvision_Land3D {
     } 
     
     {
-      int TEXTURE_copied = 0;
+      boolean TEXTURE_copied = false;
   
       String the_dir = save_folder;
   
@@ -23683,21 +23683,18 @@ class solarchvision_Land3D {
   
         String new_Texture_path = the_dir + "/Textures/" +  the_filename;
   
-        //println("pre_this.Textures_ImagePath", this.Textures_ImagePath[n_Map]);
-        //println("new_Texture_path", new_Texture_path);
-  
         if (this.Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
-          TEXTURE_copied = -1;
+          TEXTURE_copied = false;
         } else {
   
           println("Copying texture:", this.Textures_ImagePath[n_Map], ">", new_Texture_path);
           saveBytes(new_Texture_path, loadBytes(this.Textures_ImagePath[n_Map]));
           this.Textures_ImagePath[n_Map] = new_Texture_path;
   
-          TEXTURE_copied = 1;
+          TEXTURE_copied = true;
         }
   
-        //if (TEXTURE_copied == 0) {
+        //if (TEXTURE_copied == false) {
         //  println("Saving texture from the scene.");
         //  this.Textures_Map[n_Map].save(new_Texture_path);
         //}
@@ -24909,22 +24906,67 @@ class solarchvision_Model2Ds {
     
     println("Saving:" + this.CLASS_STAMP);
     
-    XML parent = xml.addChild(this.CLASS_STAMP);
-    int ni = this.num;
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP);
+      int ni = this.num;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.XYZS[i].length; j++) {
+        for (int j = 0; j < 4; j++) { // x, y, z, s 
+          lineSTR += nf(this.XYZS[i][j], 0, 4).replace(",", "."); // <<<<
+          lineSTR += ",";
+        }
+        lineSTR += this.MAP[i];
+  
+        child.setContent(lineSTR);
+      }  
+    }
+    
+  {
+    XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
+    int ni = this.ImagePath.length;
     parent.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
-      XML child = parent.addChild("item");
-      child.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < this.XYZS[i].length; j++) {
-      for (int j = 0; j < 4; j++) { // x, y, z, s 
-        lineSTR += nf(this.XYZS[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += this.MAP[i];
 
-      child.setContent(lineSTR);
-    }  
+      boolean TEXTURE_copied = false;
+
+      String the_dir = save_folder; 
+
+      String the_filename = "";
+      if (this.ImagePath[i].equals("")) {
+      } else {
+        the_filename = this.ImagePath[i].substring(this.ImagePath[i].lastIndexOf("/") + 1); // image name
+
+
+        String new_Texture_path = the_dir + "/Textures/" + the_filename;
+
+        if (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+          TEXTURE_copied = false;
+        } else {
+          if (this.ImagePath[i].equals("")) {
+          } else {
+            println("Copying texture:", this.ImagePath[i], ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(this.ImagePath[i]));
+            this.ImagePath[i] = new_Texture_path;
+
+            TEXTURE_copied = true;
+          }
+        }
+
+        //if (TEXTURE_copied == false) {
+        //  println("Saving texture from the scene.");
+        //  this.Images[i].save(new_Texture_path);
+        //}
+      }
+
+      XML child = parent.addChild("item");
+      child.setInt("id", i); 
+      child.setContent(this.ImagePath[i]);
+    }
+  }
   }
   
   
@@ -24932,21 +24974,61 @@ class solarchvision_Model2Ds {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    XML parent = xml.getChild(this.CLASS_STAMP);
-    int ni = parent.getInt("ni");
-
-    this.XYZS = new float [ni][4];
-    this.MAP = new int [ni];
-    this.num = ni;
-
-    XML[] children = parent.getChildren("item");         
-    for (int i = 0; i < ni; i++) {
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < 4; j++) {
-        this.XYZS[i][j] = float(parts[j]);
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP);
+      int ni = parent.getInt("ni");
+  
+      this.XYZS = new float [ni][4];
+      this.MAP = new int [ni];
+      this.num = ni;
+  
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 4; j++) {
+          this.XYZS[i][j] = float(parts[j]);
+        }
+        this.MAP[i] = int(parts[4]);
       }
-      this.MAP[i] = int(parts[4]);
+    }
+    
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
+    
+      int ni = parent.getInt("ni");
+  
+      int reload_All_textures = 0;
+  
+      if (this.ImagePath.length != ni) {
+        this.Images = new PImage [ni];
+        this.ImageRatios = new float [ni];
+  
+        reload_All_textures = 1;
+      }
+  
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {      
+  
+        String new_Texture_path = children[i].getContent();
+        if ((reload_All_textures == 0) && (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
+        } else {
+          this.ImagePath[i] = new_Texture_path;
+          this.Images[i] = createImage(2, 2, RGB); // empty and small
+          if (this.ImagePath[i].equals("")) {
+          } else {
+            println("Loading texture(" + i + "):", this.ImagePath[i]);
+            this.Images[i] = loadImage(this.ImagePath[i]);
+            println("loaded!");
+  
+            if (this.Images[i].height != 0) {
+              this.ImageRatios[i] = float(this.Images[i].width) / float(this.Images[i].height);
+            } else {
+              this.ImageRatios[i] = 1;
+            }
+          }
+        }
+      }
     }
   }    
 }
@@ -51112,13 +51194,13 @@ void SOLARCHVISION_explore_output (String outputFile) {
 
 
               
-
+String save_folder = "";
 
 void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   myFile = myFile.replace(char(92), '/');
   
-  String save_folder = myFile.substring(0, myFile.lastIndexOf("/")); 
+  save_folder = myFile.substring(0, myFile.lastIndexOf("/")); 
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
@@ -51453,51 +51535,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
 
-  {
-    XML parent = xml.addChild("Model2Ds.ImagePath");
-    int ni = allModel2Ds.ImagePath.length;
-    parent.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
 
-      int TEXTURE_copied = 0;
-
-      String the_dir = save_folder; 
-
-      String the_filename = "";
-      if (allModel2Ds.ImagePath[i].equals("")) {
-      } else {
-        the_filename = allModel2Ds.ImagePath[i].substring(allModel2Ds.ImagePath[i].lastIndexOf("/") + 1); // image name
-
-
-        String new_Texture_path = the_dir + "/Textures/" + the_filename;
-
-        //println("pre_allModel2Ds.ImagePath", allModel2Ds.ImagePath[i]);
-        //println("new_allModel2Ds.ImagePath", new_allModel2Ds.ImagePath[i]);
-
-        if (allModel2Ds.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
-          TEXTURE_copied = -1;
-        } else {
-          if (allModel2Ds.ImagePath[i].equals("")) {
-          } else {
-            println("Copying texture:", allModel2Ds.ImagePath[i], ">", new_Texture_path);
-            saveBytes(new_Texture_path, loadBytes(allModel2Ds.ImagePath[i]));
-            allModel2Ds.ImagePath[i] = new_Texture_path;
-
-            TEXTURE_copied = 1;
-          }
-        }
-
-        //if (TEXTURE_copied == 0) {
-        //  println("Saving texture from the scene.");
-        //  allModel2Ds.Images[i].save(new_Texture_path);
-        //}
-      }
-
-      XML child = parent.addChild("item");
-      child.setInt("id", i); 
-      child.setContent(allModel2Ds.ImagePath[i]);
-    }
-  }
 
 
 
@@ -51595,10 +51633,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   allGroups.to_XML(xml);
   
-  allModel1Ds.to_XML(xml);
-  
-  allModel2Ds.to_XML(xml);
-  
+  allSelections.to_XML(xml);  
+
   allCameras.to_XML(xml);
   
   allSolids.to_XML(xml);
@@ -51606,10 +51642,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   allSolidImpacts.to_XML(xml);
 
   allSections.to_XML(xml);
-
-  allSelections.to_XML(xml);
   
-  Land3D.to_XML(xml, save_folder);  
+  allModel1Ds.to_XML(xml);
+  
+  allModel2Ds.to_XML(xml);
+  
+  Land3D.to_XML(xml);  
 
   STATION.to_XML(xml);
 
@@ -51984,43 +52022,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-    {
-      XML parent = xml.getChild("Model2Ds.ImagePath");
-    
-      int ni = parent.getInt("ni");
-  
-      int reload_All_textures = 0;
-  
-      if (allModel2Ds.ImagePath.length != ni) {
-        allModel2Ds.Images = new PImage [ni];
-        allModel2Ds.ImageRatios = new float [ni];
-  
-        reload_All_textures = 1;
-      }
-  
-      XML[] children1 = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {      
-  
-        String new_Texture_path = children1[i].getContent();
-        if ((reload_All_textures == 0) && (allModel2Ds.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
-        } else {
-          allModel2Ds.ImagePath[i] = new_Texture_path;
-          allModel2Ds.Images[i] = createImage(2, 2, RGB); // empty and small
-          if (allModel2Ds.ImagePath[i].equals("")) {
-          } else {
-            println("Loading texture(" + i + "):", allModel2Ds.ImagePath[i]);
-            allModel2Ds.Images[i] = loadImage(allModel2Ds.ImagePath[i]);
-            println("loaded!");
-  
-            if (allModel2Ds.Images[i].height != 0) {
-              allModel2Ds.ImageRatios[i] = float(allModel2Ds.Images[i].width) / float(allModel2Ds.Images[i].height);
-            } else {
-              allModel2Ds.ImageRatios[i] = 1;
-            }
-          }
-        }
-      }
-    }
+
   
     {
       XML parent = xml.getChild("Sections.SolidImpact");
@@ -52029,10 +52031,10 @@ void SOLARCHVISION_load_project (String myFile) {
   
       allSections.SolidImpact = new PImage [ni];
   
-      XML[] children1 = parent.getChildren("item");         
+      XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {      
   
-        String TEXTURE_path = children1[i].getContent();
+        String TEXTURE_path = children[i].getContent();
   
         allSections.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
   
@@ -52051,12 +52053,12 @@ void SOLARCHVISION_load_project (String myFile) {
   
       allSections.SolarImpact = new PImage [ni][nj][nk]; 
   
-      XML[] children1 = parent.getChildren("item");         
+      XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {      
         for (int j = 0; j < nj; j++) {
           for (int k = 0; k < nk; k++) {
   
-            String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
+            String TEXTURE_path = children[(i * nj + j) * nk + k].getContent();
   
             allSections.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
   
@@ -52084,6 +52086,8 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
   
+
+    
     
     allCurves.from_XML(xml);
   
@@ -52091,9 +52095,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
     allGroups.from_XML(xml);
     
-    allModel1Ds.from_XML(xml);
-    
-    allModel2Ds.from_XML(xml);
+    allSelections.from_XML(xml);
     
     allCameras.from_XML(xml);
     
@@ -52103,7 +52105,11 @@ void SOLARCHVISION_load_project (String myFile) {
   
     allSections.from_XML(xml);
   
-    allSelections.from_XML(xml);
+
+    
+    allModel1Ds.from_XML(xml);
+    
+    allModel2Ds.from_XML(xml);    
     
     Land3D.from_XML(xml);  
     
