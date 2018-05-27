@@ -23649,43 +23649,162 @@ class solarchvision_Land3D {
   
   
   
-  public void to_XML (XML xml) {
+  public void to_XML (XML xml, String save_folder) {
     
-    println("Saving:" + this.CLASS_STAMP + ".Mesh");
+    println("Saving:" + this.CLASS_STAMP);
     
-    XML parent = xml.addChild(this.CLASS_STAMP + ".Mesh");
-    int vNo = 0;
-    for (int i = 0; i < this.Mesh.length; i++) {
-      for (int j = 0; j < this.Mesh[i].length; j++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", vNo);
-        String lineSTR = "";
-        //for (int k = 0; k < this.Mesh[i][j].length; k++) {
-        for (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
-          if (k < this.Mesh[i][j].length - 1) lineSTR += ",";
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP);
+      
+      parent.setInt("Tessellation", this.Tessellation);
+      parent.setString("Load_Textures", Boolean.toString(this.Load_Textures));  
+      parent.setString("Load_Mesh", Boolean.toString(this.Load_Mesh));
+      parent.setString("Display_Surface", Boolean.toString(this.Display_Surface));
+      parent.setString("Display_Points", Boolean.toString(this.Display_Points));
+      parent.setString("Display_Textures", Boolean.toString(this.Display_Textures));
+      parent.setString("Display_Depth", Boolean.toString(this.Display_Depth));
+      parent.setInt("Surface_SkipStart", this.Surface_SkipStart);
+      parent.setInt("Surface_SkipEnd", this.Surface_SkipEnd);
+      parent.setInt("n_I", this.n_I);
+      parent.setInt("n_J", this.n_J);
+      parent.setInt("Textures_num", this.Textures_num); 
+    } 
+    
+    {
+      int TEXTURE_copied = 0;
+  
+      String the_dir = save_folder;
+  
+      for (int q = 0; q < this.Textures_num; q++) {
+  
+        int n_Map = q; 
+  
+        String the_filename = this.Textures_ImagePath[n_Map].substring(this.Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
+  
+        String new_Texture_path = the_dir + "/Textures/" +  the_filename;
+  
+        //println("pre_this.Textures_ImagePath", this.Textures_ImagePath[n_Map]);
+        //println("new_Texture_path", new_Texture_path);
+  
+        if (this.Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+          TEXTURE_copied = -1;
+        } else {
+  
+          println("Copying texture:", this.Textures_ImagePath[n_Map], ">", new_Texture_path);
+          saveBytes(new_Texture_path, loadBytes(this.Textures_ImagePath[n_Map]));
+          this.Textures_ImagePath[n_Map] = new_Texture_path;
+  
+          TEXTURE_copied = 1;
         }
-        child.setContent(lineSTR);
-        vNo += 1;
+  
+        //if (TEXTURE_copied == 0) {
+        //  println("Saving texture from the scene.");
+        //  this.Textures_Map[n_Map].save(new_Texture_path);
+        //}
+      }
+
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
+      int ni = this.Textures_ImagePath.length;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        child.setFloat("scale_U", this.Textures_scale_U[i]);
+        child.setFloat("scale_V", this.Textures_scale_U[i]);
+        child.setContent(this.Textures_ImagePath[i]);          
       }
     }  
+  
+
+    {      
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Mesh");
+      int vNo = 0;
+      for (int i = 0; i < this.Mesh.length; i++) {
+        for (int j = 0; j < this.Mesh[i].length; j++) {
+          XML child = parent.addChild("item");
+          child.setInt("id", vNo);
+          String lineSTR = "";
+          //for (int k = 0; k < this.Mesh[i][j].length; k++) {
+          for (int k = 0; k < 3; k++) { // x, y, z 
+            lineSTR += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+            if (k < this.Mesh[i][j].length - 1) lineSTR += ",";
+          }
+          child.setContent(lineSTR);
+          vNo += 1;
+        }
+      }  
+    }    
   }
   
   
   public void from_XML (XML xml) {
     
-    println("Loading:" + this.CLASS_STAMP + ".Mesh");
+    println("Loading:" + this.CLASS_STAMP);
     
-    this.Mesh = new float [this.n_I][this.n_J][3];
-    XML parent = xml.getChild(this.CLASS_STAMP + ".Mesh");
-    XML[] children = parent.getChildren("item");         
-    for (int i = 0; i < this.n_I * this.n_J; i++) {
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < parts.length; j++) {
-        this.Mesh[(i / this.n_J)][(i % this.n_J)][j] = float(parts[j]);
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.Tessellation = parent.getInt("Tessellation");
+    this.Load_Textures = Boolean.parseBoolean(parent.getString("Load_Textures"));      
+    this.Load_Mesh = Boolean.parseBoolean(parent.getString("Load_Mesh"));
+    this.Display_Surface = Boolean.parseBoolean(parent.getString("Display_Surface"));
+    this.Display_Points = Boolean.parseBoolean(parent.getString("Display_Points"));
+    this.Display_Textures = Boolean.parseBoolean(parent.getString("Display_Textures"));
+    this.Display_Depth = Boolean.parseBoolean(parent.getString("Display_Depth"));
+    this.Surface_SkipStart = parent.getInt("Surface_SkipStart");
+    this.Surface_SkipEnd = parent.getInt("Surface_SkipEnd");
+    this.n_I = parent.getInt("n_I");
+    this.n_J = parent.getInt("n_J");
+        
+    {
+      int pre_Land3D_Textures_num = this.Textures_num;
+      this.Textures_num = parent.getInt("Textures_num");
+  
+      if (pre_Land3D_Textures_num != this.Textures_num) {
+        int ni = this.Textures_num;
+        this.Textures_ImagePath = new String [ni];
+        this.Textures_Map = new PImage [ni];
+        for (int i = 0; i < ni; i++) {
+          this.Textures_ImagePath[i] = "";
+          this.Textures_Map[i] = createImage(2, 2, RGB); // empty and small
+        }
+      }
+
+      parent = xml.getChild(this.CLASS_STAMP + ".Textures");
+      int ni = parent.getInt("ni");
+      XML[] children = parent.getChildren("item");       
+      for (int i = 0; i < ni; i++) {
+        
+        this.Textures_scale_U[i] = children[i].getFloat("scale_U");
+        this.Textures_scale_V[i] = children[i].getFloat("scale_V");
+  
+        String new_Texture_path = children[i].getContent();
+  
+        if (this.Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+        } else {
+  
+          this.Textures_ImagePath[i] = new_Texture_path;
+  
+          if (this.Textures_ImagePath[i].equals("")) {
+          } else {
+            println("Loading texture:", this.Textures_ImagePath[i]);
+            this.Textures_Map[i] = loadImage(this.Textures_ImagePath[i]);
+          }
+        }
       }
     }
+    
+    {
+      this.Mesh = new float [this.n_I][this.n_J][3];
+      parent = xml.getChild(this.CLASS_STAMP + ".Mesh");
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < this.n_I * this.n_J; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.Mesh[(i / this.n_J)][(i % this.n_J)][j] = float(parts[j]);
+        }
+      }
+    }    
   }    
   
   
@@ -50998,6 +51117,8 @@ void SOLARCHVISION_explore_output (String outputFile) {
 void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   myFile = myFile.replace(char(92), '/');
+  
+  String save_folder = myFile.substring(0, myFile.lastIndexOf("/")); 
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
   XML newChild1 = null;
@@ -51232,7 +51353,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("STUDY.Impacts_update", Boolean.toString(STUDY.Impacts_update));
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
-  newChild1.setInt("Land3D.Tessellation", Land3D.Tessellation);
+
   newChild1.setInt("Model3Ds.Tessellation", allModel3Ds.Tessellation);
   newChild1.setInt("Sky3D.Tessellation", Sky3D.Tessellation);
   newChild1.setFloat("Sky3D.scale", Sky3D.scale);
@@ -51251,14 +51372,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("Tropo3D.Display_Texture", Boolean.toString(Tropo3D.Display_Texture));
   newChild1.setString("Earth3D.Display_Surface", Boolean.toString(Earth3D.Display_Surface));
   newChild1.setString("Earth3D.Display_Texture", Boolean.toString(Earth3D.Display_Texture));
-  newChild1.setString("Land3D.Load_Textures", Boolean.toString(Land3D.Load_Textures));  
-  newChild1.setString("Land3D.Load_Mesh", Boolean.toString(Land3D.Load_Mesh));
-  newChild1.setString("Land3D.Display_Surface", Boolean.toString(Land3D.Display_Surface));
-  newChild1.setString("Land3D.Display_Points", Boolean.toString(Land3D.Display_Points));
-  newChild1.setString("Land3D.Display_Textures", Boolean.toString(Land3D.Display_Textures));
-  newChild1.setString("Land3D.Display_Depth", Boolean.toString(Land3D.Display_Depth));
-  newChild1.setInt("Land3D.Surface_SkipStart", Land3D.Surface_SkipStart);
-  newChild1.setInt("Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd);
+
 
   newChild1.setString("Model3Ds.DisplayVertices", Boolean.toString(allModel3Ds.DisplayVertices));       
   newChild1.setString("Model3Ds.DisplayEdges", Boolean.toString(allModel3Ds.DisplayEdges));
@@ -51320,8 +51434,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setFloat("SOLARCHVISION_GLOBE_stp_dir", SOLARCHVISION_GLOBE_stp_dir);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_slp", SOLARCHVISION_GLOBE_n_slp);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_dir", SOLARCHVISION_GLOBE_n_dir);
-  newChild1.setInt("Land3D.n_I", Land3D.n_I);
-  newChild1.setInt("Land3D.n_J", Land3D.n_J);
+
 
   newChild1.setInt("Model2Ds.PEOPLE_Files_Num", allModel2Ds.PEOPLE_Files_Num);
   newChild1.setInt("Model2Ds.TREES_Files_Num", allModel2Ds.TREES_Files_Num); 
@@ -51340,59 +51453,10 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   newChild1.setString("Default_Font", Default_Font);
 
-  newChild1.setInt("Land3D.n_I", Land3D.n_I);
-  newChild1.setInt("Land3D.n_J", Land3D.n_J);
-
-  newChild1.setInt("Land3D.Textures_num", Land3D.Textures_num);
 
 
 
-  {
-    int TEXTURE_copied = 0;
 
-    String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
-
-    for (int q = 0; q < Land3D.Textures_num; q++) {
-
-      int n_Map = q; 
-
-      String the_filename = Land3D.Textures_ImagePath[n_Map].substring(Land3D.Textures_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
-
-      String new_Texture_path = the_dir + "/Textures/" +  the_filename;
-
-      //println("pre_Land3D.Textures_ImagePath", Land3D.Textures_ImagePath[n_Map]);
-      //println("new_Texture_path", new_Texture_path);
-
-      if (Land3D.Textures_ImagePath[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
-        TEXTURE_copied = -1;
-      } else {
-
-        println("Copying texture:", Land3D.Textures_ImagePath[n_Map], ">", new_Texture_path);
-        saveBytes(new_Texture_path, loadBytes(Land3D.Textures_ImagePath[n_Map]));
-        Land3D.Textures_ImagePath[n_Map] = new_Texture_path;
-
-        TEXTURE_copied = 1;
-      }
-
-      //if (TEXTURE_copied == 0) {
-      //  println("Saving texture from the scene.");
-      //  Land3D.Textures_Map[n_Map].save(new_Texture_path);
-      //}
-    }
-  }
-
-  {
-    newChild1 = xml.addChild("Land3D.Textures_ImagePath");
-    int ni = Land3D.Textures_ImagePath.length;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Path");
-      newChild2.setInt("id", i);
-      newChild2.setFloat("scale_U", Land3D.Textures_scale_U[i]);
-      newChild2.setFloat("scale_V", Land3D.Textures_scale_U[i]);
-      newChild2.setContent(Land3D.Textures_ImagePath[i]);          
-    }
-  }
 
 
   {
@@ -51403,7 +51467,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
       int TEXTURE_copied = 0;
 
-      String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
+      String the_dir = save_folder; 
 
       String the_filename = "";
       if (allModel2Ds.ImagePath[i].equals("")) {
@@ -51500,7 +51564,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
 
-  Land3D.to_XML(xml);
+  Land3D.to_XML(xml, save_folder);
 
   allSections.to_XML(xml);
   
@@ -51809,7 +51873,7 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.Impacts_update = Boolean.parseBoolean(children0[L].getString("STUDY.Impacts_update"));
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
-      Land3D.Tessellation = children0[L].getInt("Land3D.Tessellation");
+
       allModel3Ds.Tessellation = children0[L].getInt("Model3Ds.Tessellation");
       Sky3D.Tessellation = children0[L].getInt("Sky3D.Tessellation");
       Sky3D.scale = children0[L].getFloat("Sky3D.scale");
@@ -51828,14 +51892,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Tropo3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("Tropo3D.Display_Texture"));
       Earth3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Earth3D.Display_Surface"));
       Earth3D.Display_Texture = Boolean.parseBoolean(children0[L].getString("Earth3D.Display_Texture"));
-      Land3D.Load_Textures = Boolean.parseBoolean(children0[L].getString("Land3D.Load_Textures"));      
-      Land3D.Load_Mesh = Boolean.parseBoolean(children0[L].getString("Land3D.Load_Mesh"));
-      Land3D.Display_Surface = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Surface"));
-      Land3D.Display_Points = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Points"));
-      Land3D.Display_Textures = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Textures"));
-      Land3D.Display_Depth = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Depth"));
-      Land3D.Surface_SkipStart = children0[L].getInt("Land3D.Surface_SkipStart");
-      Land3D.Surface_SkipEnd = children0[L].getInt("Land3D.Surface_SkipEnd");
+
 
       allModel3Ds.DisplayVertices = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayVertices"));  
       allModel3Ds.DisplayEdges = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayEdges"));
@@ -51898,8 +51955,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_stp_dir = children0[L].getFloat("SOLARCHVISION_GLOBE_stp_dir");
       SOLARCHVISION_GLOBE_n_slp = children0[L].getInt("SOLARCHVISION_GLOBE_n_slp");
       SOLARCHVISION_GLOBE_n_dir = children0[L].getInt("SOLARCHVISION_GLOBE_n_dir");
-      Land3D.n_I = children0[L].getInt("Land3D.n_I");
-      Land3D.n_J = children0[L].getInt("Land3D.n_J");
+
       allModel2Ds.PEOPLE_Files_Num = children0[L].getInt("Model2Ds.PEOPLE_Files_Num");
       allModel2Ds.TREES_Files_Num = children0[L].getInt("Model2Ds.TREES_Files_Num");
 
@@ -51917,7 +51973,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Export_BackSides = Boolean.parseBoolean(children0[L].getString("Export_BackSides"));
      
       Export_PalletResolution = children0[L].getInt("Export_PalletResolution");
-
+    
 
       {
         String new_Default_Font = children0[L].getString("Default_Font");
@@ -51927,155 +51983,101 @@ void SOLARCHVISION_load_project (String myFile) {
           SOLARCHVISION_loadDefaultFontStyle();
         }
       } 
-
-      Land3D.n_I = children0[L].getInt("Land3D.n_I");
-      Land3D.n_J = children0[L].getInt("Land3D.n_J");
-
-
-      int pre_Land3D_Textures_num = Land3D.Textures_num;
-      Land3D.Textures_num = children0[L].getInt("Land3D.Textures_num");
-
-      if (pre_Land3D_Textures_num != Land3D.Textures_num) {
-
-        int ni = Land3D.Textures_num;
-
-        Land3D.Textures_ImagePath = new String [ni];
-        Land3D.Textures_Map = new PImage [ni];
-
-        for (int i = 0; i < ni; i++) {
-
-          Land3D.Textures_ImagePath[i] = "";
-          Land3D.Textures_Map[i] = createImage(2, 2, RGB); // empty and small
-        }
-      }
     }
 
 
-  
+
+
+
+
     {
-      XML parent = xml.getChild("Land3D.Textures_ImagePath");
+      XML parent = xml.getChild("Model2Ds.ImagePath");
     
       int ni = parent.getInt("ni");
-      
-      XML[] children1 = parent.getChildren("Path");       
-      for (int i = 0; i < ni; i++) {
-        
-        Land3D.Textures_scale_U[i] = children1[i].getFloat("scale_U");
-        Land3D.Textures_scale_V[i] = children1[i].getFloat("scale_V");
-
+  
+      int reload_All_textures = 0;
+  
+      if (allModel2Ds.ImagePath.length != ni) {
+        allModel2Ds.Images = new PImage [ni];
+        allModel2Ds.ImageRatios = new float [ni];
+  
+        reload_All_textures = 1;
+      }
+  
+      XML[] children1 = parent.getChildren("Path");         
+      for (int i = 0; i < ni; i++) {      
+  
         String new_Texture_path = children1[i].getContent();
-
-        if (Land3D.Textures_ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+        if ((reload_All_textures == 0) && (allModel2Ds.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
         } else {
-
-          Land3D.Textures_ImagePath[i] = new_Texture_path;
-
-          if (Land3D.Textures_ImagePath[i].equals("")) {
+          allModel2Ds.ImagePath[i] = new_Texture_path;
+          allModel2Ds.Images[i] = createImage(2, 2, RGB); // empty and small
+          if (allModel2Ds.ImagePath[i].equals("")) {
           } else {
-            println("Loading texture:", Land3D.Textures_ImagePath[i]);
-            Land3D.Textures_Map[i] = loadImage(Land3D.Textures_ImagePath[i]);
-          }
-        }
-      }
-    }
-
-
-    {
-      {
-        XML parent = xml.getChild("Model2Ds.ImagePath");
-      
-        int ni = parent.getInt("ni");
-
-        int reload_All_textures = 0;
-
-        if (allModel2Ds.ImagePath.length != ni) {
-          allModel2Ds.Images = new PImage [ni];
-          allModel2Ds.ImageRatios = new float [ni];
-
-          reload_All_textures = 1;
-        }
-
-        XML[] children1 = parent.getChildren("Path");         
-        for (int i = 0; i < ni; i++) {      
-
-          String new_Texture_path = children1[i].getContent();
-          if ((reload_All_textures == 0) && (allModel2Ds.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
-          } else {
-            allModel2Ds.ImagePath[i] = new_Texture_path;
-            allModel2Ds.Images[i] = createImage(2, 2, RGB); // empty and small
-            if (allModel2Ds.ImagePath[i].equals("")) {
+            println("Loading texture(" + i + "):", allModel2Ds.ImagePath[i]);
+            allModel2Ds.Images[i] = loadImage(allModel2Ds.ImagePath[i]);
+            println("loaded!");
+  
+            if (allModel2Ds.Images[i].height != 0) {
+              allModel2Ds.ImageRatios[i] = float(allModel2Ds.Images[i].width) / float(allModel2Ds.Images[i].height);
             } else {
-              println("Loading texture(" + i + "):", allModel2Ds.ImagePath[i]);
-              allModel2Ds.Images[i] = loadImage(allModel2Ds.ImagePath[i]);
-              println("loaded!");
-
-              if (allModel2Ds.Images[i].height != 0) {
-                allModel2Ds.ImageRatios[i] = float(allModel2Ds.Images[i].width) / float(allModel2Ds.Images[i].height);
-              } else {
-                allModel2Ds.ImageRatios[i] = 1;
-              }
+              allModel2Ds.ImageRatios[i] = 1;
             }
           }
         }
       }
     }
-
-
+  
     {
-      {
-        XML parent = xml.getChild("Sections.SolidImpact");
-      
-        int ni = parent.getInt("ni");
-
-        allSections.SolidImpact = new PImage [ni];
-
-        XML[] children1 = parent.getChildren("Path");         
-        for (int i = 0; i < ni; i++) {      
-
-          String TEXTURE_path = children1[i].getContent();
-
-          allSections.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
-
-          println("Loading texture(" + i + "):", TEXTURE_path);
-          allSections.SolidImpact[i] = loadImage(TEXTURE_path);
-          println("loaded!");
-        }
+      XML parent = xml.getChild("Sections.SolidImpact");
+    
+      int ni = parent.getInt("ni");
+  
+      allSections.SolidImpact = new PImage [ni];
+  
+      XML[] children1 = parent.getChildren("Path");         
+      for (int i = 0; i < ni; i++) {      
+  
+        String TEXTURE_path = children1[i].getContent();
+  
+        allSections.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
+  
+        println("Loading texture(" + i + "):", TEXTURE_path);
+        allSections.SolidImpact[i] = loadImage(TEXTURE_path);
+        println("loaded!");
       }
     }
-
+  
     {
-      {
-        XML parent = xml.getChild("Sections.SolarImpact");
-      
-        int ni = parent.getInt("ni");
-        int nj = parent.getInt("nj");
-        int nk = parent.getInt("nk");
-
-        allSections.SolarImpact = new PImage [ni][nj][nk]; 
-
-        XML[] children1 = parent.getChildren("Path");         
-        for (int i = 0; i < ni; i++) {      
-          for (int j = 0; j < nj; j++) {
-            for (int k = 0; k < nk; k++) {
-
-              String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
+      XML parent = xml.getChild("Sections.SolarImpact");
+    
+      int ni = parent.getInt("ni");
+      int nj = parent.getInt("nj");
+      int nk = parent.getInt("nk");
   
-              allSections.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
+      allSections.SolarImpact = new PImage [ni][nj][nk]; 
   
-              println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
-              allSections.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
-              println("loaded!");
-            }
+      XML[] children1 = parent.getChildren("Path");         
+      for (int i = 0; i < ni; i++) {      
+        for (int j = 0; j < nj; j++) {
+          for (int k = 0; k < nk; k++) {
+  
+            String TEXTURE_path = children1[(i * nj + j) * nk + k].getContent();
+  
+            allSections.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
+  
+            println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
+            allSections.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
+            println("loaded!");
           }
         }
       }
     }
-
-
-
-
+  
+  
+  
     Land3D.from_XML(xml);
-
+  
     allSections.from_XML(xml);
     
     allCameras.from_XML(xml);
@@ -52086,13 +52088,13 @@ void SOLARCHVISION_load_project (String myFile) {
     
     allModel2Ds.from_XML(xml);
     
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
     {  
       println("Loading:Vertices");
       XML parent = xml.getChild("Vertices");
@@ -52107,25 +52109,19 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
     }
-
+  
     
     allCurves.from_XML(xml);
-
+  
     allFaces.from_XML(xml);
     
     allGroups.from_XML(xml);
-
+  
     allSelections.from_XML(xml);
-
+  
     allSolidImpacts.from_XML(xml);
-
-
-
-
-
-
-    
   }
+  
   println("End of loading project.");
 
 
