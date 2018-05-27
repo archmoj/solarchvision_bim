@@ -9915,9 +9915,9 @@ class solarchvision_SolidImpacts {
   
     cursor(WAIT);  
   
-    allSolidImpacts.WindFlow_Vertices = new float [0][4];
+    this.WindFlow_Vertices = new float [0][4];
   
-    allSolidImpacts.WindFlow_Lines = new int [0][2];
+    this.WindFlow_Lines = new int [0][2];
   
   
   
@@ -10027,9 +10027,9 @@ class solarchvision_SolidImpacts {
                     x1, y1, z1, AB
                   }
                 };
-                allSolidImpacts.WindFlow_Vertices = (float[][]) concat(allSolidImpacts.WindFlow_Vertices, newVertex);
+                this.WindFlow_Vertices = (float[][]) concat(this.WindFlow_Vertices, newVertex);
   
-                point_prev = allSolidImpacts.WindFlow_Vertices.length - 1;
+                point_prev = this.WindFlow_Vertices.length - 1;
               }      
   
   
@@ -10039,9 +10039,9 @@ class solarchvision_SolidImpacts {
                     x2, y2, z2, AB
                   }
                 };
-                allSolidImpacts.WindFlow_Vertices = (float[][]) concat(allSolidImpacts.WindFlow_Vertices, newVertex);
+                this.WindFlow_Vertices = (float[][]) concat(this.WindFlow_Vertices, newVertex);
   
-                point_next = allSolidImpacts.WindFlow_Vertices.length - 1;
+                point_next = this.WindFlow_Vertices.length - 1;
               }      
   
               if ((point_prev != 0) && (point_next != 0)) {
@@ -10050,7 +10050,7 @@ class solarchvision_SolidImpacts {
                     point_prev, point_next
                   }
                 };
-                allSolidImpacts.WindFlow_Lines = (int[][]) concat(allSolidImpacts.WindFlow_Lines, newU1Line);
+                this.WindFlow_Lines = (int[][]) concat(this.WindFlow_Lines, newU1Line);
   
                 point_prev = point_next;
               }      
