@@ -44005,13 +44005,13 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     theVertices = allSelections.Vertex_ids;
   }
   if (Current_ObjectCategory == ObjectCategory.FACE) {
-    theVertices = allModel3Ds.allSelections.get_Face_Vertices();
+    theVertices = allSelections.get_Face_Vertices();
   }  
   if (Current_ObjectCategory == ObjectCategory.CURVE) {
-    theVertices = allModel3Ds.allSelections.get_Curve_Vertices();
+    theVertices = allSelections.get_Curve_Vertices();
   }    
   if (Current_ObjectCategory == ObjectCategory.GROUP) {
-    theVertices = allModel3Ds.allSelections.get_Group_Vertices();
+    theVertices = allSelections.get_Group_Vertices();
   }
   if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
     theVertices = allSelections.Model2D_ids;
@@ -44325,7 +44325,7 @@ void SOLARCHVISION_reset_selectedRefValues () {
 
 void SOLARCHVISION_move_selectedGroups (float dx, float dy, float dz) {
 
-  int[] PolymeshVertices = allModel3Ds.allSelections.get_Group_Vertices();
+  int[] PolymeshVertices = allSelections.get_Group_Vertices();
 
   for (int q = 0; q < PolymeshVertices.length; q++) {
 
@@ -44385,7 +44385,7 @@ void SOLARCHVISION_move_selectedGroups (float dx, float dy, float dz) {
 
 void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
 
-  int[] PolymeshVertices = allModel3Ds.allSelections.get_Group_Vertices();
+  int[] PolymeshVertices = allSelections.get_Group_Vertices();
 
   for (int q = 0; q < PolymeshVertices.length; q++) {
 
@@ -44674,7 +44674,7 @@ void SOLARCHVISION_rotate_selectedGroups (float r, int the_Vector) {
 
 void SOLARCHVISION_scale_selectedGroups (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-  int[] PolymeshVertices = allModel3Ds.allSelections.get_Group_Vertices();
+  int[] PolymeshVertices = allSelections.get_Group_Vertices();
 
   for (int q = 0; q < PolymeshVertices.length; q++) {
 
@@ -44832,7 +44832,7 @@ void SOLARCHVISION_scale_selectedGroups (float x0, float y0, float z0, float sx,
 
 void SOLARCHVISION_move_allSelections_Faces (float dx, float dy, float dz) {
 
-  int[] FaceVertices = allModel3Ds.allSelections.get_Face_Vertices();
+  int[] FaceVertices = allSelections.get_Face_Vertices();
 
   for (int q = 0; q < FaceVertices.length; q++) {
 
@@ -44846,7 +44846,7 @@ void SOLARCHVISION_move_allSelections_Faces (float dx, float dy, float dz) {
 
 void SOLARCHVISION_rotate_allSelections_Faces (float x0, float y0, float z0, float r, int the_Vector) {
 
-  int[] FaceVertices = allModel3Ds.allSelections.get_Face_Vertices();
+  int[] FaceVertices = allSelections.get_Face_Vertices();
 
   for (int q = 0; q < FaceVertices.length; q++) {
 
@@ -44874,7 +44874,7 @@ void SOLARCHVISION_rotate_allSelections_Faces (float x0, float y0, float z0, flo
 
 void SOLARCHVISION_scale_allSelections_Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-  int[] FaceVertices = allModel3Ds.allSelections.get_Face_Vertices();
+  int[] FaceVertices = allSelections.get_Face_Vertices();
 
   for (int q = 0; q < FaceVertices.length; q++) {
 
@@ -44905,7 +44905,7 @@ void SOLARCHVISION_scale_allSelections_Faces (float x0, float y0, float z0, floa
 
 void SOLARCHVISION_move_allSelections_Curves (float dx, float dy, float dz) {
 
-  int[] CurveVertices = allModel3Ds.allSelections.get_Curve_Vertices();
+  int[] CurveVertices = allSelections.get_Curve_Vertices();
 
   for (int q = 0; q < CurveVertices.length; q++) {
 
@@ -44919,7 +44919,7 @@ void SOLARCHVISION_move_allSelections_Curves (float dx, float dy, float dz) {
 
 void SOLARCHVISION_rotate_allSelections_Curves (float x0, float y0, float z0, float r, int the_Vector) {
 
-  int[] CurveVertices = allModel3Ds.allSelections.get_Curve_Vertices();
+  int[] CurveVertices = allSelections.get_Curve_Vertices();
 
   for (int q = 0; q < CurveVertices.length; q++) {
 
@@ -44947,7 +44947,7 @@ void SOLARCHVISION_rotate_allSelections_Curves (float x0, float y0, float z0, fl
 
 void SOLARCHVISION_scale_allSelections_Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-  int[] CurveVertices = allModel3Ds.allSelections.get_Curve_Vertices();
+  int[] CurveVertices = allSelections.get_Curve_Vertices();
 
   for (int q = 0; q < CurveVertices.length; q++) {
 
