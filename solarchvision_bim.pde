@@ -6767,7 +6767,7 @@ String[][] allRollouts = {
   }
   , 
   {
-    "Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "allModel2Ds", "Environment", "Viewport", "Simulation"
+    "Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Model2Ds", "Environment", "Viewport", "Simulation"
   }
   , 
   {
@@ -6986,7 +6986,7 @@ class solarchvision_ROLLOUT {
   
         CreateInput_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_MeshOrSolid", CreateInput_MeshOrSolid, 0, 1, 1), 1));
   
-        allModel3Ds.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel3Ds.Tessellation", allModel3Ds.Tessellation, 0, 4, 1), 1));
+        allModel3Ds.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.Tessellation", allModel3Ds.Tessellation, 0, 4, 1), 1));
   
         Land3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Tessellation", Land3D.Tessellation, 0, 4, 1), 1));
   
@@ -7133,9 +7133,9 @@ class solarchvision_ROLLOUT {
   
         //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
-        //allModel3Ds.DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel3Ds.DisplayVertices", allModel3Ds.DisplayVertices, 0, 1, 1), 1));
-        //allModel3Ds.DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel3Ds.DisplayEdges", allModel3Ds.DisplayEdges, 0, 1, 1), 1));
-        //allModel3Ds.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel3Ds.DisplayNormals", allModel3Ds.DisplayNormals, 0, 1, 1), 1));
+        //allModel3Ds.DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayVertices", allModel3Ds.DisplayVertices, 0, 1, 1), 1));
+        //allModel3Ds.DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allModel3Ds.DisplayEdges, 0, 1, 1), 1));
+        //allModel3Ds.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayNormals", allModel3Ds.DisplayNormals, 0, 1, 1), 1));
   
         //Display_allCameras = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allCameras", Display_allCameras, 0, 1, 1), 1));
       }    
@@ -11867,34 +11867,34 @@ class solarchvision_Selections {
     
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.posVector = parent.getInt(".posVector");
-    this.rotVector = parent.getInt(".rotVector");
-    this.scaleVector = parent.getInt(".scaleVector");
-    this.posValue = parent.getFloat(".posValue");
-    this.rotValue = parent.getFloat(".rotValue");
-    this.scaleValue = parent.getFloat(".scaleValue");
-    this.alignX = parent.getInt(".alignX");
-    this.alignY = parent.getInt(".alignY");
-    this.alignZ = parent.getInt(".alignZ");
+    this.posVector = parent.getInt("posVector");
+    this.rotVector = parent.getInt("rotVector");
+    this.scaleVector = parent.getInt("scaleVector");
+    this.posValue = parent.getFloat("posValue");
+    this.rotValue = parent.getFloat("rotValue");
+    this.scaleValue = parent.getFloat("scaleValue");
+    this.alignX = parent.getInt("alignX");
+    this.alignY = parent.getInt("alignY");
+    this.alignZ = parent.getInt("alignZ");
 
-    this.displayReferencePivot = Boolean.parseBoolean(parent.getString(".displayReferencePivot"));
-    this.Group_displayPivot = Boolean.parseBoolean(parent.getString(".Group_displayPivot"));
-    this.Group_displayEdges = Boolean.parseBoolean(parent.getString(".Group_displayEdges"));
-    this.Group_displayBox = Boolean.parseBoolean(parent.getString(".Group_displayBox"));
-    this.Face_displayEdges = Boolean.parseBoolean(parent.getString(".Face_displayEdges"));
-    this.Face_displayVertexCount = Boolean.parseBoolean(parent.getString(".Face_displayVertexCount"));
-    this.Curve_displayVertexCount = Boolean.parseBoolean(parent.getString(".Curve_displayVertexCount"));
-    this.Vertex_displayVertices = Boolean.parseBoolean(parent.getString(".Vertex_displayVertices"));      
-    this.Curve_displayVertices = Boolean.parseBoolean(parent.getString(".Curve_displayVertices"));
-    this.Model2D_displayEdges = Boolean.parseBoolean(parent.getString(".Model2D_displayEdges"));
-    this.Model1D_displayEdges = Boolean.parseBoolean(parent.getString(".Model1D_displayEdges"));
-    this.Solid_displayEdges = Boolean.parseBoolean(parent.getString(".Solid_displayEdges"));
-    this.Section_displayEdges = Boolean.parseBoolean(parent.getString(".Section_displayEdges"));
-    this.Camera_displayEdges = Boolean.parseBoolean(parent.getString(".Camera_displayEdges"));
-    this.LandPoint_displayPoints = Boolean.parseBoolean(parent.getString(".LandPoint_displayPoints"));
+    this.displayReferencePivot = Boolean.parseBoolean(parent.getString("displayReferencePivot"));
+    this.Group_displayPivot = Boolean.parseBoolean(parent.getString("Group_displayPivot"));
+    this.Group_displayEdges = Boolean.parseBoolean(parent.getString("Group_displayEdges"));
+    this.Group_displayBox = Boolean.parseBoolean(parent.getString("Group_displayBox"));
+    this.Face_displayEdges = Boolean.parseBoolean(parent.getString("Face_displayEdges"));
+    this.Face_displayVertexCount = Boolean.parseBoolean(parent.getString("Face_displayVertexCount"));
+    this.Curve_displayVertexCount = Boolean.parseBoolean(parent.getString("Curve_displayVertexCount"));
+    this.Vertex_displayVertices = Boolean.parseBoolean(parent.getString("Vertex_displayVertices"));      
+    this.Curve_displayVertices = Boolean.parseBoolean(parent.getString("Curve_displayVertices"));
+    this.Model2D_displayEdges = Boolean.parseBoolean(parent.getString("Model2D_displayEdges"));
+    this.Model1D_displayEdges = Boolean.parseBoolean(parent.getString("Model1D_displayEdges"));
+    this.Solid_displayEdges = Boolean.parseBoolean(parent.getString("Solid_displayEdges"));
+    this.Section_displayEdges = Boolean.parseBoolean(parent.getString("Section_displayEdges"));
+    this.Camera_displayEdges = Boolean.parseBoolean(parent.getString("Camera_displayEdges"));
+    this.LandPoint_displayPoints = Boolean.parseBoolean(parent.getString("LandPoint_displayPoints"));
 
-    this.softPower = parent.getFloat(".softPower");
-    this.softRadius = parent.getFloat(".softRadius");
+    this.softPower = parent.getFloat("softPower");
+    this.softRadius = parent.getFloat("softRadius");
 
     {
       XML child = xml.getChild(this.CLASS_STAMP + ".LandPoint_ids");
@@ -12319,7 +12319,7 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("allModel2Ds.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Model2Ds.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 4) {
     allModel2Ds.load_images();
 
@@ -12405,7 +12405,7 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("allModel1Ds.delete", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Model1Ds.delete", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 19) {
     SOLARCHVISION_update_station(8);
 
@@ -12413,7 +12413,7 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("allModel2Ds.delete", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Model2Ds.delete", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 20) {
     SOLARCHVISION_update_station(9);
 
@@ -12421,20 +12421,20 @@ void draw () {
     rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
     stroke(255); fill(255);
-    text("allModel2Ds.add_onLand", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    text("Model2Ds.add_onLand", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 21) {
     SOLARCHVISION_update_station(10);
 
     stroke(0); fill(0);
     rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("allModel3Ds.delete_allGroups", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Model3Ds.delete_allGroups", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 22) {
     SOLARCHVISION_update_models(1);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("allModel3Ds.add_Model_Main", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Model3Ds.add_Model_Main", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 23) {
     SOLARCHVISION_update_models(2);
 
@@ -18828,7 +18828,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
       if (allModel1Ds.num != 0) {
 
-        mtlOutput.println("newmtl " + "allModel1Ds_Trunk");
+        mtlOutput.println("newmtl " + "Model1Ds_Trunk");
         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
         mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
         mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
@@ -18841,7 +18841,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
 
-        mtlOutput.println("newmtl " + "allModel1Ds_Leaf");
+        mtlOutput.println("newmtl " + "Model1Ds_Leaf");
         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
         mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
         mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
@@ -40962,9 +40962,9 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("allModel1Ds")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Model1Ds")) {
               UI_set_to_Create_allModel1Ds();
-              SOLARCHVISION_highlight_in_BAR_b("allModel1Ds");
+              SOLARCHVISION_highlight_in_BAR_b("Model1Ds");
               UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Tree")) {
@@ -41761,7 +41761,7 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b_update = true;
             }                
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("allModel2Ds >> Group")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Model2Ds >> Group")) {
               allModel3Ds.convert_allModel2Ds_to_allGroups();
               Current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
@@ -41773,7 +41773,7 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b_update = true;
             }             
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("allModel1Ds >> Group")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Model1Ds >> Group")) {
               allModel3Ds.convert_allModel1Ds_to_allGroups();
               Current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
@@ -48421,11 +48421,11 @@ String[][] UI_BAR_a_Items = {
   }
   , 
   {
-    "Create", "Begin New Group at Origin", "Begin New Group at Pivot", "LandMesh >> Group", "LandGap >> Group", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "allModel1Ds", "Tree", "Person", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", "Begin New Group at Origin", "Begin New Group at Pivot", "LandMesh >> Group", "LandGap >> Group", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Model1Ds", "Tree", "Person", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
   }
   , 
   {
-    "Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section", "Select Camera", "Select LandPoint", "Select allModel1Ds", "Select allModel2Ds", "Select Group", "Select Face", "Select Curve", "Select Vertex", "Soft Selection", "Group >> Vertex", "Group >> Curve", "Group >> Face", "Group >> Solid", "Group >> allModel2Ds", "Group >> allModel1Ds", "allModel1Ds >> Group", "allModel2Ds >> Group", "Solid >> Group", "Face >> Group", "Curve >> Group", "Vertex >> Group", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"
+    "Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section", "Select Camera", "Select LandPoint", "Select allModel1Ds", "Select allModel2Ds", "Select Group", "Select Face", "Select Curve", "Select Vertex", "Soft Selection", "Group >> Vertex", "Group >> Curve", "Group >> Face", "Group >> Solid", "Group >> allModel2Ds", "Group >> allModel1Ds", "Model1Ds >> Group", "Model2Ds >> Group", "Solid >> Group", "Face >> Group", "Curve >> Group", "Vertex >> Group", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"
   }
   ,
  
@@ -48969,7 +48969,7 @@ String[][] UI_BAR_b_Items = {
   , 
 
   {
-    "2", "allModel1Ds", "Tree", "Person", "allModel2DsType", "1.5"
+    "2", "Model1Ds", "Tree", "Person", "Model2DsType", "1.5"
   }
   , 
   {
@@ -48982,7 +48982,7 @@ String[][] UI_BAR_b_Items = {
   , 
 
   {
-    "4", "LandP", "allModel1Ds", "2½D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
+    "4", "LandP", "Model1Ds", "2½D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
   }
   , 
   {
@@ -49202,8 +49202,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
           ROLLOUT.update = true;
         }        
 
-        if ((Bar_Switch.equals("allModel2DsType")) || (Bar_Switch.equals("BuildingType"))) {
-          if ((UI_BAR_b_Items[i][j]).equals("allModel1Ds")) UI_set_to_Create_allModel1Ds();
+        if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
+          if ((UI_BAR_b_Items[i][j]).equals("Model1Ds")) UI_set_to_Create_allModel1Ds();
           else if ((UI_BAR_b_Items[i][j]).equals("Tree")) UI_set_to_Create_Tree();
           else if ((UI_BAR_b_Items[i][j]).equals("Person")) UI_set_to_Create_Person();
           else if ((UI_BAR_b_Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
@@ -51063,7 +51063,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("DrawnFrame", DrawnFrame);
 
   newChild1.setInt("Land3D.Tessellation", Land3D.Tessellation);
-  newChild1.setInt("allModel3Ds.Tessellation", allModel3Ds.Tessellation);
+  newChild1.setInt("Model3Ds.Tessellation", allModel3Ds.Tessellation);
   newChild1.setInt("Sky3D.Tessellation", Sky3D.Tessellation);
   newChild1.setFloat("Sky3D.scale", Sky3D.scale);
   newChild1.setFloat("WindRose_scale", WindRose_scale);
@@ -51091,9 +51091,9 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd);
   newChild1.setString("Display_SolidImpact_Points", Boolean.toString(Display_SolidImpact_Points));
   newChild1.setString("Display_SolidImpact_Lines", Boolean.toString(Display_SolidImpact_Lines));
-  newChild1.setString("allModel3Ds.DisplayVertices", Boolean.toString(allModel3Ds.DisplayVertices));       
-  newChild1.setString("allModel3Ds.DisplayEdges", Boolean.toString(allModel3Ds.DisplayEdges));
-  newChild1.setString("allModel3Ds.DisplayNormals", Boolean.toString(allModel3Ds.DisplayNormals));
+  newChild1.setString("Model3Ds.DisplayVertices", Boolean.toString(allModel3Ds.DisplayVertices));       
+  newChild1.setString("Model3Ds.DisplayEdges", Boolean.toString(allModel3Ds.DisplayEdges));
+  newChild1.setString("Model3Ds.DisplayNormals", Boolean.toString(allModel3Ds.DisplayNormals));
   newChild1.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
   //newChild1.setInt("Camera_Variation", Camera_Variation);
   newChild1.setString("STUDY.DisplayRaws", Boolean.toString(STUDY.DisplayRaws));
@@ -51164,8 +51164,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("Land3D.n_I", Land3D.n_I);
   newChild1.setInt("Land3D.n_J", Land3D.n_J);
 
-  newChild1.setInt("allModel2Ds.PEOPLE_Files_Num", allModel2Ds.PEOPLE_Files_Num);
-  newChild1.setInt("allModel2Ds.TREES_Files_Num", allModel2Ds.TREES_Files_Num); 
+  newChild1.setInt("Model2Ds.PEOPLE_Files_Num", allModel2Ds.PEOPLE_Files_Num);
+  newChild1.setInt("Model2Ds.TREES_Files_Num", allModel2Ds.TREES_Files_Num); 
 
   newChild1.setInt("addToLastGroup", addToLastGroup);
 
@@ -51237,7 +51237,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = xml.addChild("allModel2Ds.ImagePath");
+    newChild1 = xml.addChild("Model2Ds.ImagePath");
     int ni = allModel2Ds.ImagePath.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -51285,7 +51285,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
 
   {
-    newChild1 = xml.addChild("allSections.SolidImpact");
+    newChild1 = xml.addChild("Sections.SolidImpact");
     int ni = allSections.SolidImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -51304,7 +51304,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
   {
-    newChild1 = xml.addChild("allSections.SolarImpact");
+    newChild1 = xml.addChild("Sections.SolarImpact");
     int ni = allSections.SolarImpact.length;
     if (ni > 0) {
       int nj = allSections.SolarImpact[0].length;
@@ -51361,7 +51361,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("Saving:Vertices");
   {
-    XML parent = xml.addChild("allVertices");
+    XML parent = xml.addChild("Vertices");
     parent.setInt("ni", allVertices.length);
     for (int i = 0; i < allVertices.length; i++) {
       XML child = parent.addChild("item");
@@ -51722,7 +51722,7 @@ void SOLARCHVISION_load_project (String myFile) {
       DrawnFrame = children0[L].getInt("DrawnFrame");
 
       Land3D.Tessellation = children0[L].getInt("Land3D.Tessellation");
-      allModel3Ds.Tessellation = children0[L].getInt("allModel3Ds.Tessellation");
+      allModel3Ds.Tessellation = children0[L].getInt("Model3Ds.Tessellation");
       Sky3D.Tessellation = children0[L].getInt("Sky3D.Tessellation");
       Sky3D.scale = children0[L].getFloat("Sky3D.scale");
       WindRose_scale = children0[L].getFloat("WindRose_scale");
@@ -51750,9 +51750,9 @@ void SOLARCHVISION_load_project (String myFile) {
       Land3D.Surface_SkipEnd = children0[L].getInt("Land3D.Surface_SkipEnd");
       Display_SolidImpact_Points = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Points"));
       Display_SolidImpact_Lines = Boolean.parseBoolean(children0[L].getString("Display_SolidImpact_Lines"));
-      allModel3Ds.DisplayVertices = Boolean.parseBoolean(children0[L].getString("allModel3Ds.DisplayVertices"));  
-      allModel3Ds.DisplayEdges = Boolean.parseBoolean(children0[L].getString("allModel3Ds.DisplayEdges"));
-      allModel3Ds.DisplayNormals = Boolean.parseBoolean(children0[L].getString("allModel3Ds.DisplayNormals"));
+      allModel3Ds.DisplayVertices = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayVertices"));  
+      allModel3Ds.DisplayEdges = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayEdges"));
+      allModel3Ds.DisplayNormals = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayNormals"));
       Display_WindFlow = Boolean.parseBoolean(children0[L].getString("Display_WindFlow"));
       Camera_Variation = children0[L].getInt("Camera_Variation");
       STUDY.DisplayRaws = Boolean.parseBoolean(children0[L].getString("STUDY.DisplayRaws"));
@@ -51823,8 +51823,8 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_n_dir = children0[L].getInt("SOLARCHVISION_GLOBE_n_dir");
       Land3D.n_I = children0[L].getInt("Land3D.n_I");
       Land3D.n_J = children0[L].getInt("Land3D.n_J");
-      allModel2Ds.PEOPLE_Files_Num = children0[L].getInt("allModel2Ds.PEOPLE_Files_Num");
-      allModel2Ds.TREES_Files_Num = children0[L].getInt("allModel2Ds.TREES_Files_Num");
+      allModel2Ds.PEOPLE_Files_Num = children0[L].getInt("Model2Ds.PEOPLE_Files_Num");
+      allModel2Ds.TREES_Files_Num = children0[L].getInt("Model2Ds.TREES_Files_Num");
 
 
       addToLastGroup = children0[L].getInt("addToLastGroup");      
@@ -51905,7 +51905,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {
       {
-        XML parent = xml.getChild("allModel2Ds.ImagePath");
+        XML parent = xml.getChild("Model2Ds.ImagePath");
       
         int ni = parent.getInt("ni");
 
@@ -51946,7 +51946,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {
       {
-        XML parent = xml.getChild("allSections.SolidImpact");
+        XML parent = xml.getChild("Sections.SolidImpact");
       
         int ni = parent.getInt("ni");
 
@@ -51968,7 +51968,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {
       {
-        XML parent = xml.getChild("allSections.SolarImpact");
+        XML parent = xml.getChild("Sections.SolarImpact");
       
         int ni = parent.getInt("ni");
         int nj = parent.getInt("nj");
@@ -52018,7 +52018,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     {  
       println("Loading:Vertices");
-      XML parent = xml.getChild("allVertices");
+      XML parent = xml.getChild("Vertices");
       int ni = parent.getInt("ni");
       allVertices = new float [ni][3];
       XML[] children = parent.getChildren("item");         
@@ -52651,7 +52651,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (parts[q].toLowerCase().equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("group3ds")) {allModel3Ds.delete_allGroups(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("object2ds")) {allModel2Ds.delete(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("allModel1Ds")) {allModel1Ds.delete(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("Model1Ds")) {allModel1Ds.delete(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
@@ -52706,7 +52706,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
              if (parts[q].toLowerCase().equals("group3ds")) {Current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b_update = true;}
         else if (parts[q].toLowerCase().equals("object2ds")) {Current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("allModel1Ds")) {Current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b_update = true;}
+        else if (parts[q].toLowerCase().equals("Model1Ds")) {Current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b_update = true;}
         else if (parts[q].toLowerCase().equals("vertices")) {Current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b_update = true;}
         else if (parts[q].toLowerCase().equals("faces")) {Current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b_update = true;}
         else if (parts[q].toLowerCase().equals("lines")) {Current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b_update = true;}
@@ -52841,7 +52841,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
       
       UI_set_to_Create_allModel1Ds();
-      SOLARCHVISION_highlight_in_BAR_b("allModel1Ds");
+      SOLARCHVISION_highlight_in_BAR_b("Model1Ds");
       UI_BAR_b_update = true;      
     }  
   }     
