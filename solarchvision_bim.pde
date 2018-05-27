@@ -10072,6 +10072,206 @@ class solarchvision_SolidImpacts {
   }
   
 
+
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+
+    parent.setFloat(this.CLASS_STAMP + ".WindSpeed", this.WindSpeed); 
+    parent.setFloat(this.CLASS_STAMP + ".WindDirection", this.WindDirection);
+    parent.setFloat(this.CLASS_STAMP + ".Power", this.Power);
+    parent.setString(this.CLASS_STAMP + ".Display_Points", Boolean.toString(this.Display_Points));
+    parent.setString(this.CLASS_STAMP + ".Display_Lines", Boolean.toString(this.Display_Lines));  
+    
+    parent.setInt(this.CLASS_STAMP + ".RES1", this.RES1);
+    parent.setInt(this.CLASS_STAMP + ".RES2", this.RES2);
+    parent.setFloat(this.CLASS_STAMP + ".Grade", this.Grade);
+    parent.setString(this.CLASS_STAMP + ".Display_Image", Boolean.toString(this.Display_Image));
+    parent.setInt(this.CLASS_STAMP + ".sectionType", this.sectionType);
+    parent.setFloat(this.CLASS_STAMP + ".positionStep", this.positionStep);
+    parent.setInt(this.CLASS_STAMP + ".Process_subDivisions", this.Process_subDivisions);
+    parent.setFloat(this.CLASS_STAMP + ".deltaStep", this.deltaStep);
+    parent.setFloat(this.CLASS_STAMP + ".deltaLines", this.deltaLines);
+    parent.setFloat(this.CLASS_STAMP + ".MinimumDistance_traceU", this.MinimumDistance_traceU);
+    parent.setFloat(this.CLASS_STAMP + ".MinimumDistance_traceV", this.MinimumDistance_traceV);  
+  
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + ".Elevation");
+      int ni = this.Elevation.length;
+      child.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.Elevation[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }
+  
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + ".Rotation");
+      int ni = this.Rotation.length;
+      child.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.Rotation[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }  
+  
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + ".scale_U");
+      int ni = this.scale_U.length;
+      child.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.scale_U[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }    
+  
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + ".scale_V");
+      int ni = this.scale_V.length;
+      child.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.scale_V[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }    
+  
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + ".offset_U");
+      int ni = this.offset_U.length;
+      child.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.offset_U[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }    
+  
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + ".offset_V");
+      int ni = this.offset_V.length;
+      child.setInt("ni", ni);
+      String lineSTR = "";
+      for (int i = 0; i < ni; i++) {
+        lineSTR += nf(this.offset_V[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }    
+    
+  }
+
+
+
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML parent = xml.getChild(this.CLASS_STAMP);
+
+    this.WindSpeed = parent.getFloat(this.CLASS_STAMP + ".WindSpeed"); 
+    this.WindDirection = parent.getFloat(this.CLASS_STAMP + ".WindDirection");
+    this.Power = parent.getFloat(this.CLASS_STAMP + ".Power");
+
+    this.Display_Points = Boolean.parseBoolean(parent.getString(this.CLASS_STAMP + ".Display_Points"));
+    this.Display_Lines = Boolean.parseBoolean(parent.getString(this.CLASS_STAMP + ".Display_Lines"));
+    
+    this.RES1 = parent.getInt(this.CLASS_STAMP + ".RES1");
+    this.RES2 = parent.getInt(this.CLASS_STAMP + ".RES2");
+    this.Grade = parent.getFloat(this.CLASS_STAMP + ".Grade");
+    this.Display_Image = Boolean.parseBoolean(parent.getString(this.CLASS_STAMP + ".Display_Image"));
+    this.sectionType = parent.getInt(this.CLASS_STAMP + ".sectionType");
+    this.positionStep = parent.getFloat(this.CLASS_STAMP + ".positionStep");
+    this.Process_subDivisions = parent.getInt(this.CLASS_STAMP + ".Process_subDivisions");
+    this.deltaStep = parent.getFloat(this.CLASS_STAMP + ".deltaStep");
+    this.deltaLines = parent.getFloat(this.CLASS_STAMP + ".deltaLines");
+    this.MinimumDistance_traceU = parent.getFloat(this.CLASS_STAMP + ".MinimumDistance_traceU");
+    this.MinimumDistance_traceV = parent.getFloat(this.CLASS_STAMP + ".MinimumDistance_traceV");
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + ".Elevation");
+    
+      int ni = child.getInt("ni");
+      this.Elevation = new float [ni];
+      String lineSTR = child.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Elevation[i] = float(parts[i]);
+      }
+    } 
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + ".Rotation");
+    
+      int ni = child.getInt("ni");
+      this.Rotation = new float [ni];
+      String lineSTR = child.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.Rotation[i] = float(parts[i]);
+      }
+    } 
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + ".scale_U");
+    
+      int ni = child.getInt("ni");
+      this.scale_U = new float [ni];
+      String lineSTR = child.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.scale_U[i] = float(parts[i]);
+      }
+    } 
+
+    {
+        XML child = xml.getChild(this.CLASS_STAMP + ".scale_V");
+    
+      int ni = child.getInt("ni");
+      this.scale_V = new float [ni];
+      String lineSTR = child.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.scale_V[i] = float(parts[i]);
+      }
+    }     
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + ".offset_U");
+    
+      int ni = child.getInt("ni");
+      this.offset_U = new float [ni];
+      String lineSTR = child.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.offset_U[i] = float(parts[i]);
+      }
+    } 
+
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + ".offset_V");
+    
+      int ni = child.getInt("ni");
+      this.offset_V = new float [ni];
+      String lineSTR = child.getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        this.offset_V[i] = float(parts[i]);
+      }
+    }  
+  }    
 }
 
 solarchvision_SolidImpacts allSolidImpacts = new solarchvision_SolidImpacts();   
@@ -50882,9 +51082,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("Display_CLMREC_Nearest", Boolean.toString(Display_CLMREC_Nearest));
   newChild1.setString("Display_TMYEPW_Nearest", Boolean.toString(Display_TMYEPW_Nearest));
 
-  newChild1.setFloat("allSolidImpacts.WindSpeed", allSolidImpacts.WindSpeed); 
-  newChild1.setFloat("allSolidImpacts.WindDirection", allSolidImpacts.WindDirection);
-  newChild1.setFloat("allSolidImpacts.Power", allSolidImpacts.Power);
+
   newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
   newChild1.setFloat("Interpolation_Weight", Interpolation_Weight);
   newChild1.setFloat("GLOBE_calculatedResolution", GLOBE_calculatedResolution);
@@ -51061,8 +51259,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setString("Land3D.Display_Depth", Boolean.toString(Land3D.Display_Depth));
   newChild1.setInt("Land3D.Surface_SkipStart", Land3D.Surface_SkipStart);
   newChild1.setInt("Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd);
-  newChild1.setString("allSolidImpacts.Display_Points", Boolean.toString(allSolidImpacts.Display_Points));
-  newChild1.setString("allSolidImpacts.Display_Lines", Boolean.toString(allSolidImpacts.Display_Lines));
+
   newChild1.setString("Model3Ds.DisplayVertices", Boolean.toString(allModel3Ds.DisplayVertices));       
   newChild1.setString("Model3Ds.DisplayEdges", Boolean.toString(allModel3Ds.DisplayEdges));
   newChild1.setString("Model3Ds.DisplayNormals", Boolean.toString(allModel3Ds.DisplayNormals));
@@ -51118,17 +51315,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   newChild1.setInt("SolarImpact_RES1", SolarImpact_RES1);
   newChild1.setInt("SolarImpact_RES2", SolarImpact_RES2);
   newChild1.setFloat("SolarImpact_Elevation", SolarImpact_Elevation);
-  newChild1.setInt("allSolidImpacts.RES1", allSolidImpacts.RES1);
-  newChild1.setInt("allSolidImpacts.RES2", allSolidImpacts.RES2);
-  newChild1.setFloat("allSolidImpacts.Grade", allSolidImpacts.Grade);
-  newChild1.setString("allSolidImpacts.Display_Image", Boolean.toString(allSolidImpacts.Display_Image));
-  newChild1.setInt("allSolidImpacts.sectionType", allSolidImpacts.sectionType);
-  newChild1.setFloat("allSolidImpacts.positionStep", allSolidImpacts.positionStep);
-  newChild1.setInt("allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions);
-  newChild1.setFloat("allSolidImpacts.deltaStep", allSolidImpacts.deltaStep);
-  newChild1.setFloat("allSolidImpacts.deltaLines", allSolidImpacts.deltaLines);
-  newChild1.setFloat("allSolidImpacts.MinimumDistance_traceU", allSolidImpacts.MinimumDistance_traceU);
-  newChild1.setFloat("allSolidImpacts.MinimumDistance_traceV", allSolidImpacts.MinimumDistance_traceV);
+
   newChild1.setFloat("SOLARCHVISION_GLOBE_stp_slp", SOLARCHVISION_GLOBE_stp_slp);
   newChild1.setFloat("SOLARCHVISION_GLOBE_stp_dir", SOLARCHVISION_GLOBE_stp_dir);
   newChild1.setInt("SOLARCHVISION_GLOBE_n_slp", SOLARCHVISION_GLOBE_n_slp);
@@ -51262,7 +51449,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
 
-      String the_filename = "allSolidImpacts." + nf(i, 0) + ".bmp";
+      String the_filename = "SolidImpact_" + nf(i, 0) + ".bmp";
 
       String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
 
@@ -51357,80 +51544,12 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   allGroups.to_XML(xml);
 
   allSelections.to_XML(xml);
+  
+  allSolidImpacts.to_XML(xml);
 
 
 
-  {
-    newChild1 = xml.addChild("allSolidImpacts.Elevation");
-    int ni = allSolidImpacts.Elevation.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSolidImpacts.Elevation[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
 
-  {
-    newChild1 = xml.addChild("allSolidImpacts.Rotation");
-    int ni = allSolidImpacts.Rotation.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSolidImpacts.Rotation[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }  
-
-  {
-    newChild1 = xml.addChild("allSolidImpacts.scale_U");
-    int ni = allSolidImpacts.scale_U.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSolidImpacts.scale_U[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }    
-
-  {
-    newChild1 = xml.addChild("allSolidImpacts.scale_V");
-    int ni = allSolidImpacts.scale_V.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSolidImpacts.scale_V[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }    
-
-  {
-    newChild1 = xml.addChild("allSolidImpacts.offset_U");
-    int ni = allSolidImpacts.offset_U.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSolidImpacts.offset_U[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }    
-
-  {
-    newChild1 = xml.addChild("allSolidImpacts.offset_V");
-    int ni = allSolidImpacts.offset_V.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(allSolidImpacts.offset_V[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }    
 
 
   saveXML(xml, myFile);    
@@ -51537,9 +51656,6 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_CLMREC_Nearest = Boolean.parseBoolean(children0[L].getString("Display_CLMREC_Nearest"));      
       Display_TMYEPW_Nearest = Boolean.parseBoolean(children0[L].getString("Display_TMYEPW_Nearest"));
 
-      allSolidImpacts.WindSpeed = children0[L].getFloat("allSolidImpacts.WindSpeed"); 
-      allSolidImpacts.WindDirection = children0[L].getFloat("allSolidImpacts.WindDirection");
-      allSolidImpacts.Power = children0[L].getFloat("allSolidImpacts.Power");
       GlobalAlbedo = children0[L].getFloat("GlobalAlbedo");
       Interpolation_Weight = children0[L].getFloat("Interpolation_Weight");
       GLOBE_calculatedResolution = children0[L].getFloat("GLOBE_calculatedResolution");
@@ -51720,8 +51836,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Land3D.Display_Depth = Boolean.parseBoolean(children0[L].getString("Land3D.Display_Depth"));
       Land3D.Surface_SkipStart = children0[L].getInt("Land3D.Surface_SkipStart");
       Land3D.Surface_SkipEnd = children0[L].getInt("Land3D.Surface_SkipEnd");
-      allSolidImpacts.Display_Points = Boolean.parseBoolean(children0[L].getString("allSolidImpacts.Display_Points"));
-      allSolidImpacts.Display_Lines = Boolean.parseBoolean(children0[L].getString("allSolidImpacts.Display_Lines"));
+
       allModel3Ds.DisplayVertices = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayVertices"));  
       allModel3Ds.DisplayEdges = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayEdges"));
       allModel3Ds.DisplayNormals = Boolean.parseBoolean(children0[L].getString("Model3Ds.DisplayNormals"));
@@ -51778,17 +51893,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SolarImpact_RES1 = children0[L].getInt("SolarImpact_RES1");
       SolarImpact_RES2 = children0[L].getInt("SolarImpact_RES2");
       SolarImpact_Elevation = children0[L].getFloat("SolarImpact_Elevation");
-      allSolidImpacts.RES1 = children0[L].getInt("allSolidImpacts.RES1");
-      allSolidImpacts.RES2 = children0[L].getInt("allSolidImpacts.RES2");
-      allSolidImpacts.Grade = children0[L].getFloat("allSolidImpacts.Grade");
-      allSolidImpacts.Display_Image = Boolean.parseBoolean(children0[L].getString("allSolidImpacts.Display_Image"));
-      allSolidImpacts.sectionType = children0[L].getInt("allSolidImpacts.sectionType");
-      allSolidImpacts.positionStep = children0[L].getFloat("allSolidImpacts.positionStep");
-      allSolidImpacts.Process_subDivisions = children0[L].getInt("allSolidImpacts.Process_subDivisions");
-      allSolidImpacts.deltaStep = children0[L].getFloat("allSolidImpacts.deltaStep");
-      allSolidImpacts.deltaLines = children0[L].getFloat("allSolidImpacts.deltaLines");
-      allSolidImpacts.MinimumDistance_traceU = children0[L].getFloat("allSolidImpacts.MinimumDistance_traceU");
-      allSolidImpacts.MinimumDistance_traceV = children0[L].getFloat("allSolidImpacts.MinimumDistance_traceV");
+
       SOLARCHVISION_GLOBE_stp_slp = children0[L].getFloat("SOLARCHVISION_GLOBE_stp_slp");
       SOLARCHVISION_GLOBE_stp_dir = children0[L].getFloat("SOLARCHVISION_GLOBE_stp_dir");
       SOLARCHVISION_GLOBE_n_slp = children0[L].getInt("SOLARCHVISION_GLOBE_n_slp");
@@ -52012,83 +52117,12 @@ void SOLARCHVISION_load_project (String myFile) {
 
     allSelections.from_XML(xml);
 
+    allSolidImpacts.from_XML(xml);
 
 
 
 
 
-    {
-      XML parent = xml.getChild("allSolidImpacts.Elevation");
-    
-      int ni = parent.getInt("ni");
-      allSolidImpacts.Elevation = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSolidImpacts.Elevation[i] = float(parts[i]);
-      }
-    } 
-
-    {
-      XML parent = xml.getChild("allSolidImpacts.Rotation");
-    
-      int ni = parent.getInt("ni");
-      allSolidImpacts.Rotation = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSolidImpacts.Rotation[i] = float(parts[i]);
-      }
-    } 
-
-    {
-      XML parent = xml.getChild("allSolidImpacts.scale_U");
-    
-      int ni = parent.getInt("ni");
-      allSolidImpacts.scale_U = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSolidImpacts.scale_U[i] = float(parts[i]);
-      }
-    } 
-
-    {
-        XML parent = xml.getChild("allSolidImpacts.scale_V");
-    
-      int ni = parent.getInt("ni");
-      allSolidImpacts.scale_V = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSolidImpacts.scale_V[i] = float(parts[i]);
-      }
-    }     
-
-    {
-      XML parent = xml.getChild("allSolidImpacts.offset_U");
-    
-      int ni = parent.getInt("ni");
-      allSolidImpacts.offset_U = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSolidImpacts.offset_U[i] = float(parts[i]);
-      }
-    } 
-
-
-    {
-      XML parent = xml.getChild("allSolidImpacts.offset_V");
-    
-      int ni = parent.getInt("ni");
-      allSolidImpacts.offset_V = new float [ni];
-      String lineSTR = parent.getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        allSolidImpacts.offset_V[i] = float(parts[i]);
-      }
-    }         
 
     
   }
