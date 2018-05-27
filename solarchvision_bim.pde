@@ -2,21 +2,6 @@
 
 // please define station elevation data for CWEEDS points!
 
-  
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
 String SOLARCHVISION_version = "2017"; 
 String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
 
@@ -14525,18 +14510,9 @@ void draw () {
     //STUDY.update = false;
 
     //noLoop(); // <<<<<<<<<<<<
-    
-    
-    
+  
   }
 } 
-
-
-
-
-
-
-
 
 void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
@@ -14567,41 +14543,6 @@ void SOLARCHVISION_regenerate_desired_bakings () {
   }
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 String[] SOLARCHVISION_getfiles (String _Folder) {
@@ -15611,19 +15552,6 @@ void SOLARCHVISION_update_date () {
   TIME_Day = CalendarDate[int(TIME_Date)][1];
   TIME_Hour = int(24 * (TIME_Date - int(TIME_Date)));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -35477,26 +35405,83 @@ class solarchvision_Sections {
     
     println("Saving:" + this.CLASS_STAMP);
 
-    XML parent = xml.addChild(this.CLASS_STAMP);
-    int ni = this.num;
-    parent.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      XML child = parent.addChild("item");
-      child.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < this.UVERAB[i].length; j++) {
-      for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-        lineSTR += nf(this.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP);
+      int ni = this.num;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+        XML child = parent.addChild("item");
+        child.setInt("id", i);
+        String lineSTR = "";
+        //for (int j = 0; j < this.UVERAB[i].length; j++) {
+        for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
+          lineSTR += nf(this.UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+          lineSTR += ",";
+        }
+        lineSTR += nf(this.Type[i], 0);
         lineSTR += ",";
+        lineSTR += nf(this.RES1[i], 0);
+        lineSTR += ",";
+        lineSTR += nf(this.RES2[i], 0);
+  
+        child.setContent(lineSTR);
       }
-      lineSTR += nf(this.Type[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(this.RES1[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(this.RES2[i], 0);
-
-      child.setContent(lineSTR);
     }
+
+    {
+      XML parent = xml.addChild("Sections.SolidImpact");
+      int ni = this.SolidImpact.length;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+  
+        String the_filename = "SolidImpact_" + nf(i, 0) + ".bmp";
+  
+        String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
+  
+        println("Saving texture:", TEXTURE_path);
+        this.SolidImpact[i].save(TEXTURE_path);
+  
+        XML child = parent.addChild("item");
+        child.setInt("id", i); 
+        child.setContent(TEXTURE_path);
+      }
+    }
+
+    {
+      XML parent = xml.addChild("Sections.SolarImpact");
+      int ni = this.SolarImpact.length;
+      if (ni > 0) {
+        int nj = this.SolarImpact[0].length;
+        if (nj > 0) {
+          int nk = this.SolarImpact[0][0].length;
+          parent.setInt("ni", ni);
+          parent.setInt("nj", nj);
+          parent.setInt("nk", nk);
+      
+          println("ni", ni);
+          println("nj", nj);
+          println("nk", nk);
+      
+          for (int i = 0; i < ni; i++) {
+            for (int j = 0; j < nj; j++) {
+              for (int k = 0; k < nk; k++) {
+      
+                String the_filename = "SolarImpact_" + nf((i * nj + j) * nk + k, 0) + ".bmp";
+        
+                String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
+        
+                println("Saving texture:", TEXTURE_path);
+                this.SolarImpact[i][j][k].save(TEXTURE_path);
+        
+                XML child = parent.addChild("item");
+                child.setInt("id", (i * nj + j) * nk + k); 
+                child.setContent(TEXTURE_path);
+              }
+            }
+          }
+        }
+      }
+    }    
   }
   
   
@@ -35504,29 +35489,77 @@ class solarchvision_Sections {
     
     println("Loading:" + this.CLASS_STAMP);
 
-    XML parent = xml.getChild(this.CLASS_STAMP);
-
-    int ni = parent.getInt("ni");
-
-    this.UVERAB = new float [ni][6];
-    this.Type = new int [ni];
-    this.RES1 = new int [ni];
-    this.RES2 = new int [ni];
-    this.num = ni;
-
-    XML[] children = parent.getChildren("item");         
-    for (int i = 0; i < ni; i++) {
-
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < 6; j++) {
-        this.UVERAB[i][j] = float(parts[j]);
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP);
+  
+      int ni = parent.getInt("ni");
+  
+      this.UVERAB = new float [ni][6];
+      this.Type = new int [ni];
+      this.RES1 = new int [ni];
+      this.RES2 = new int [ni];
+      this.num = ni;
+  
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {
+  
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 6; j++) {
+          this.UVERAB[i][j] = float(parts[j]);
+        }
+  
+        this.Type[i] = int(parts[6]);
+        this.RES1[i] = int(parts[7]);
+        this.RES2[i] = int(parts[8]);
       }
-
-      this.Type[i] = int(parts[6]);
-      this.RES1[i] = int(parts[7]);
-      this.RES2[i] = int(parts[8]);
     }
+    
+    {
+      XML parent = xml.getChild("Sections.SolidImpact");
+    
+      int ni = parent.getInt("ni");
+  
+      this.SolidImpact = new PImage [ni];
+  
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {      
+  
+        String TEXTURE_path = children[i].getContent();
+  
+        this.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
+  
+        println("Loading texture(" + i + "):", TEXTURE_path);
+        this.SolidImpact[i] = loadImage(TEXTURE_path);
+        println("loaded!");
+      }
+    }
+  
+    {
+      XML parent = xml.getChild("Sections.SolarImpact");
+    
+      int ni = parent.getInt("ni");
+      int nj = parent.getInt("nj");
+      int nk = parent.getInt("nk");
+  
+      this.SolarImpact = new PImage [ni][nj][nk]; 
+  
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < ni; i++) {      
+        for (int j = 0; j < nj; j++) {
+          for (int k = 0; k < nk; k++) {
+  
+            String TEXTURE_path = children[(i * nj + j) * nk + k].getContent();
+  
+            this.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
+  
+            println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
+            this.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
+            println("loaded!");
+          }
+        }
+      }
+    }    
   }  
   
 }  
@@ -51531,83 +51564,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
 
-
-
-
-
-
-
-
-
-  {
-    XML parent = xml.addChild("Sections.SolidImpact");
-    int ni = allSections.SolidImpact.length;
-    parent.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-
-      String the_filename = "SolidImpact_" + nf(i, 0) + ".bmp";
-
-      String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
-
-      println("Saving texture:", TEXTURE_path);
-      allSections.SolidImpact[i].save(TEXTURE_path);
-
-      XML child = parent.addChild("item");
-      child.setInt("id", i); 
-      child.setContent(TEXTURE_path);
-    }
-  }
-
-  {
-    XML parent = xml.addChild("Sections.SolarImpact");
-    int ni = allSections.SolarImpact.length;
-    if (ni > 0) {
-      int nj = allSections.SolarImpact[0].length;
-      if (nj > 0) {
-        int nk = allSections.SolarImpact[0][0].length;
-        parent.setInt("ni", ni);
-        parent.setInt("nj", nj);
-        parent.setInt("nk", nk);
-    
-        println("ni", ni);
-        println("nj", nj);
-        println("nk", nk);
-    
-        for (int i = 0; i < ni; i++) {
-          for (int j = 0; j < nj; j++) {
-            for (int k = 0; k < nk; k++) {
-    
-              String the_filename = "SolarImpact_" + nf((i * nj + j) * nk + k, 0) + ".bmp";
-      
-              String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
-      
-              println("Saving texture:", TEXTURE_path);
-              allSections.SolarImpact[i][j][k].save(TEXTURE_path);
-      
-              XML child = parent.addChild("item");
-              child.setInt("id", (i * nj + j) * nk + k); 
-              child.setContent(TEXTURE_path);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  
-  
-  
-  
-  
-  
-
-
-  
-
-
-
-
-
   println("Saving:Vertices");
   {
     XML parent = xml.addChild("Vertices");
@@ -51624,8 +51580,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
       child.setContent(lineSTR);
     }
   }
-
-
 
   allCurves.to_XML(xml);
 
@@ -52015,61 +51969,6 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       } 
     }
-
-
-
-
-
-
-
-
-  
-    {
-      XML parent = xml.getChild("Sections.SolidImpact");
-    
-      int ni = parent.getInt("ni");
-  
-      allSections.SolidImpact = new PImage [ni];
-  
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {      
-  
-        String TEXTURE_path = children[i].getContent();
-  
-        allSections.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
-  
-        println("Loading texture(" + i + "):", TEXTURE_path);
-        allSections.SolidImpact[i] = loadImage(TEXTURE_path);
-        println("loaded!");
-      }
-    }
-  
-    {
-      XML parent = xml.getChild("Sections.SolarImpact");
-    
-      int ni = parent.getInt("ni");
-      int nj = parent.getInt("nj");
-      int nk = parent.getInt("nk");
-  
-      allSections.SolarImpact = new PImage [ni][nj][nk]; 
-  
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {      
-        for (int j = 0; j < nj; j++) {
-          for (int k = 0; k < nk; k++) {
-  
-            String TEXTURE_path = children[(i * nj + j) * nk + k].getContent();
-  
-            allSections.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
-  
-            println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
-            allSections.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
-            println("loaded!");
-          }
-        }
-      }
-    }
-
   
     {  
       println("Loading:Vertices");
@@ -52085,9 +51984,6 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
     }
-  
-
-    
     
     allCurves.from_XML(xml);
   
@@ -56008,9 +55904,4 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
  
   CurrentDataSource = keep_CurrentDataSource; 
 }
-
-
-
-
-
 
