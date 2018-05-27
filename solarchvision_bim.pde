@@ -51556,20 +51556,14 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     }
   }
 
+  
+  
+  
+  
+  
+  
 
 
-  Land3D.to_XML(xml, save_folder);
-
-  allSections.to_XML(xml);
-  
-  allCameras.to_XML(xml);
-  
-  allSolids.to_XML(xml);
-
-  allModel1Ds.to_XML(xml);
-  
-  allModel2Ds.to_XML(xml);
-  
   
 
 
@@ -51600,10 +51594,22 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   allFaces.to_XML(xml);
 
   allGroups.to_XML(xml);
+  
+  allModel1Ds.to_XML(xml);
+  
+  allModel2Ds.to_XML(xml);
+  
+  allCameras.to_XML(xml);
+  
+  allSolids.to_XML(xml);
+  
+  allSolidImpacts.to_XML(xml);
+
+  allSections.to_XML(xml);
 
   allSelections.to_XML(xml);
   
-  allSolidImpacts.to_XML(xml);
+  Land3D.to_XML(xml, save_folder);  
 
   STATION.to_XML(xml);
 
@@ -52061,27 +52067,7 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
     }
-  
-  
-  
-    Land3D.from_XML(xml);
-  
-    allSections.from_XML(xml);
-    
-    allCameras.from_XML(xml);
-    
-    allSolids.from_XML(xml);
-    
-    allModel1Ds.from_XML(xml);
-    
-    allModel2Ds.from_XML(xml);
-    
-  
-  
-  
-  
-  
-  
+
   
     {  
       println("Loading:Vertices");
@@ -52102,12 +52088,24 @@ void SOLARCHVISION_load_project (String myFile) {
     allCurves.from_XML(xml);
   
     allFaces.from_XML(xml);
-    
+  
     allGroups.from_XML(xml);
+    
+    allModel1Ds.from_XML(xml);
+    
+    allModel2Ds.from_XML(xml);
+    
+    allCameras.from_XML(xml);
+    
+    allSolids.from_XML(xml);
+    
+    allSolidImpacts.from_XML(xml);
+  
+    allSections.from_XML(xml);
   
     allSelections.from_XML(xml);
-  
-    allSolidImpacts.from_XML(xml);
+    
+    Land3D.from_XML(xml);  
     
     STATION.from_XML(xml);
 
