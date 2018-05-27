@@ -8918,6 +8918,21 @@ class solarchvision_Selections {
   float softPower = 1;
   float softRadius = 2; // 2 = 2m
   
+  
+  float[][] BoundingBox = {
+    {
+      0, 0, 0, 1, 1, 1, 0, 0, 0
+    }
+    , {
+      0, 0, 0, 1, 1, 1, 0, 0, 0
+    }
+    , {
+      0, 0, 0, 1, 1, 1, 0, 0, 0
+    }
+  }; // [min|mid|max]
+  
+
+  
   int[] get_Face_Vertices () {
   
     int[] FaceVertices = new int [0];
@@ -9240,6 +9255,13 @@ class solarchvision_Selections {
 }
 
 solarchvision_Selections allSelections = new solarchvision_Selections();     
+
+
+float[][] saved_BoundingBox = allSelections.BoundingBox;
+
+int saved_alignX = allSelections.alignX;
+int saved_alignY = allSelections.alignY;
+int saved_alignZ = allSelections.alignZ;  
 
 
 int addNewSelectionToPreviousSelection = 0; // internal
@@ -23219,9 +23241,9 @@ class solarchvision_Model3Ds {
     if (run_process == 1) {
   
       if (createNewGroup == 1) {
-        float x = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][0];
-        float y = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][1];
-        float z = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][2];
+        float x = allSelections.BoundingBox[1 + allSelections.alignX][0];
+        float y = allSelections.BoundingBox[1 + allSelections.alignX][1];
+        float z = allSelections.BoundingBox[1 + allSelections.alignX][2];
   
         float rot = CreateInput_Orientation;
         if (rot == 360) rot = WIN3D.RZ_Coordinate;
@@ -24627,9 +24649,9 @@ class solarchvision_Model3Ds {
   
         int vNo = allSelections.Vertex_ids[o];
   
-        allVertices[vNo][0] = SOLARCHVISION_selection_BoundingBox[1][0]; // center
-        allVertices[vNo][1] = SOLARCHVISION_selection_BoundingBox[1][1]; // center
-        allVertices[vNo][2] = SOLARCHVISION_selection_BoundingBox[1][2]; // center
+        allVertices[vNo][0] = allSelections.BoundingBox[1][0]; // center
+        allVertices[vNo][1] = allSelections.BoundingBox[1][1]; // center
+        allVertices[vNo][2] = allSelections.BoundingBox[1][2]; // center
       } 
   
       println("SOLARCHVISION_calculate_selection_BoundingBox 35");
@@ -38452,7 +38474,7 @@ void mouseClicked () {
               UI_BAR_b_update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Reset Saved ReferenceBox")) {
-              SOLARCHVISION_apply_saved_ReferenceBox();
+              SOLARCHVISION_apply_saved_BoundingBox();
               SOLARCHVISION_highlight_in_BAR_b(">pvt<");
               UI_BAR_b_update = true;  
               WIN3D.update = true;
@@ -38483,7 +38505,7 @@ void mouseClicked () {
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Begin New Group at Pivot")) {
 
-              allModel3Ds.beginNewGroup(SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][0], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][1], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][2], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][3], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][4], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][5], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][6], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][7], SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][8]);
+              allModel3Ds.beginNewGroup(allSelections.BoundingBox[1 + allSelections.alignX][0], allSelections.BoundingBox[1 + allSelections.alignX][1], allSelections.BoundingBox[1 + allSelections.alignX][2], allSelections.BoundingBox[1 + allSelections.alignX][3], allSelections.BoundingBox[1 + allSelections.alignX][4], allSelections.BoundingBox[1 + allSelections.alignX][5], allSelections.BoundingBox[1 + allSelections.alignX][6], allSelections.BoundingBox[1 + allSelections.alignX][7], allSelections.BoundingBox[1 + allSelections.alignX][8]);
 
               allSelections.Group_ids = new int [1];
               allSelections.Group_ids[0] = allGroups.num - 1;       
@@ -42036,13 +42058,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float posY = P[1];
       float posZ = P[2];
 
-      float posX_min = SOLARCHVISION_selection_BoundingBox[0][0];
-      float posY_min = SOLARCHVISION_selection_BoundingBox[0][1];
-      float posZ_min = SOLARCHVISION_selection_BoundingBox[0][2];
+      float posX_min = allSelections.BoundingBox[0][0];
+      float posY_min = allSelections.BoundingBox[0][1];
+      float posZ_min = allSelections.BoundingBox[0][2];
 
-      float posX_max = SOLARCHVISION_selection_BoundingBox[2][0];
-      float posY_max = SOLARCHVISION_selection_BoundingBox[2][1];
-      float posZ_max = SOLARCHVISION_selection_BoundingBox[2][2];
+      float posX_max = allSelections.BoundingBox[2][0];
+      float posY_max = allSelections.BoundingBox[2][1];
+      float posZ_max = allSelections.BoundingBox[2][2];
 
       float[][] BoundingBox_Vertices = {
         {
@@ -43949,33 +43971,7 @@ void SOLARCHVISION_draw_referencePivot () {
 
 
 
-float[][] SOLARCHVISION_selection_BoundingBox = {
-  {
-    0, 0, 0, 1, 1, 1, 0, 0, 0
-  }
-  , {
-    0, 0, 0, 1, 1, 1, 0, 0, 0
-  }
-  , {
-    0, 0, 0, 1, 1, 1, 0, 0, 0
-  }
-}; // [min|mid|max]
 
-float[][] SOLARCHVISION_saved_BoundingBox = {
-  {
-    0, 0, 0, 1, 1, 1, 0, 0, 0
-  }
-  , {
-    0, 0, 0, 1, 1, 1, 0, 0, 0
-  }
-  , {
-    0, 0, 0, 1, 1, 1, 0, 0, 0
-  }
-};
-
-int SOLARCHVISION_saved_alignX = 0;
-int SOLARCHVISION_saved_alignY = 0;
-int SOLARCHVISION_saved_alignZ = 0;
 
 void SOLARCHVISION_calculate_selection_BoundingBox () {
 
@@ -44060,17 +44056,17 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
   for (int i = 0; i < 3; i++) {
     float ratio = 0.5 * i;
-    SOLARCHVISION_selection_BoundingBox[i][0] = posX;
-    SOLARCHVISION_selection_BoundingBox[i][1] = posY;
-    SOLARCHVISION_selection_BoundingBox[i][2] = posZ;
+    allSelections.BoundingBox[i][0] = posX;
+    allSelections.BoundingBox[i][1] = posY;
+    allSelections.BoundingBox[i][2] = posZ;
 
-    SOLARCHVISION_selection_BoundingBox[i][3] = scaleX;
-    SOLARCHVISION_selection_BoundingBox[i][4] = scaleY;
-    SOLARCHVISION_selection_BoundingBox[i][5] = scaleZ;
+    allSelections.BoundingBox[i][3] = scaleX;
+    allSelections.BoundingBox[i][4] = scaleY;
+    allSelections.BoundingBox[i][5] = scaleZ;
 
-    SOLARCHVISION_selection_BoundingBox[i][6] = rotX;
-    SOLARCHVISION_selection_BoundingBox[i][7] = rotY;
-    SOLARCHVISION_selection_BoundingBox[i][8] = rotZ;
+    allSelections.BoundingBox[i][6] = rotX;
+    allSelections.BoundingBox[i][7] = rotY;
+    allSelections.BoundingBox[i][8] = rotZ;
   }   
 
 
@@ -44239,17 +44235,17 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
-      SOLARCHVISION_selection_BoundingBox[i][0] = (1 - ratio) * posX_min + ratio * posX_max;
-      SOLARCHVISION_selection_BoundingBox[i][1] = (1 - ratio) * posY_min + ratio * posY_max;
-      SOLARCHVISION_selection_BoundingBox[i][2] = (1 - ratio) * posZ_min + ratio * posZ_max;
+      allSelections.BoundingBox[i][0] = (1 - ratio) * posX_min + ratio * posX_max;
+      allSelections.BoundingBox[i][1] = (1 - ratio) * posY_min + ratio * posY_max;
+      allSelections.BoundingBox[i][2] = (1 - ratio) * posZ_min + ratio * posZ_max;
 
-      SOLARCHVISION_selection_BoundingBox[i][3] = scaleX;
-      SOLARCHVISION_selection_BoundingBox[i][4] = scaleY;
-      SOLARCHVISION_selection_BoundingBox[i][5] = scaleZ;
+      allSelections.BoundingBox[i][3] = scaleX;
+      allSelections.BoundingBox[i][4] = scaleY;
+      allSelections.BoundingBox[i][5] = scaleZ;
 
-      SOLARCHVISION_selection_BoundingBox[i][6] = rotX;
-      SOLARCHVISION_selection_BoundingBox[i][7] = rotY;
-      SOLARCHVISION_selection_BoundingBox[i][8] = rotZ;
+      allSelections.BoundingBox[i][6] = rotX;
+      allSelections.BoundingBox[i][7] = rotY;
+      allSelections.BoundingBox[i][8] = rotZ;
     }
   }
 
@@ -44266,42 +44262,42 @@ void SOLARCHVISION_save_current_BoundingBox () {
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 9; j++) {
-      SOLARCHVISION_saved_BoundingBox[i][j] = SOLARCHVISION_selection_BoundingBox[i][j];
+      saved_BoundingBox[i][j] = allSelections.BoundingBox[i][j];
     }
   } 
 
-  SOLARCHVISION_saved_alignX = allSelections.alignX;
-  SOLARCHVISION_saved_alignY = allSelections.alignY;
-  SOLARCHVISION_saved_alignZ = allSelections.alignZ;
+  saved_alignX = allSelections.alignX;
+  saved_alignY = allSelections.alignY;
+  saved_alignZ = allSelections.alignZ;
 }
 
 
-void SOLARCHVISION_apply_saved_ReferenceBox () {
+void SOLARCHVISION_apply_saved_BoundingBox () {
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 9; j++) {
-      SOLARCHVISION_selection_BoundingBox[i][j] = SOLARCHVISION_saved_BoundingBox[i][j];
+      allSelections.BoundingBox[i][j] = saved_BoundingBox[i][j];
     }
   } 
 
-  allSelections.alignX = SOLARCHVISION_saved_alignX;
-  allSelections.alignY = SOLARCHVISION_saved_alignY;
-  allSelections.alignZ = SOLARCHVISION_saved_alignZ;
+  allSelections.alignX = saved_alignX;
+  allSelections.alignY = saved_alignY;
+  allSelections.alignZ = saved_alignZ;
 }
 
 
 void SOLARCHVISION_apply_origin_ReferenceBox () {
 
   for (int i = 0; i < 3; i++) {
-    SOLARCHVISION_selection_BoundingBox[i][0] = 0;
-    SOLARCHVISION_selection_BoundingBox[i][1] = 0;
-    SOLARCHVISION_selection_BoundingBox[i][2] = 0;
-    SOLARCHVISION_selection_BoundingBox[i][3] = 1;
-    SOLARCHVISION_selection_BoundingBox[i][4] = 1;
-    SOLARCHVISION_selection_BoundingBox[i][5] = 1;
-    SOLARCHVISION_selection_BoundingBox[i][6] = 0;
-    SOLARCHVISION_selection_BoundingBox[i][7] = 0;
-    SOLARCHVISION_selection_BoundingBox[i][8] = 0;
+    allSelections.BoundingBox[i][0] = 0;
+    allSelections.BoundingBox[i][1] = 0;
+    allSelections.BoundingBox[i][2] = 0;
+    allSelections.BoundingBox[i][3] = 1;
+    allSelections.BoundingBox[i][4] = 1;
+    allSelections.BoundingBox[i][5] = 1;
+    allSelections.BoundingBox[i][6] = 0;
+    allSelections.BoundingBox[i][7] = 0;
+    allSelections.BoundingBox[i][8] = 0;
   }
 
   //allSelections.alignX = 0;
@@ -52164,9 +52160,9 @@ void SOLARCHVISION_fetch_project () {
 float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c) {
 
 
-  float rotX = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][6];
-  float rotY = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][7];
-  float rotZ = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][8];
+  float rotX = allSelections.BoundingBox[1 + allSelections.alignX][6];
+  float rotY = allSelections.BoundingBox[1 + allSelections.alignY][7];
+  float rotZ = allSelections.BoundingBox[1 + allSelections.alignZ][8];
 
   float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
   float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
@@ -52188,13 +52184,13 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
   float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
   float z = c;      
 
-  x *= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][3];
-  y *= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][4];
-  z *= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][5]; 
+  x *= allSelections.BoundingBox[1 + allSelections.alignX][3];
+  y *= allSelections.BoundingBox[1 + allSelections.alignY][4];
+  z *= allSelections.BoundingBox[1 + allSelections.alignZ][5]; 
 
-  x += SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][0];
-  y += SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][1];
-  z += SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][2];  
+  x += allSelections.BoundingBox[1 + allSelections.alignX][0];
+  y += allSelections.BoundingBox[1 + allSelections.alignY][1];
+  z += allSelections.BoundingBox[1 + allSelections.alignZ][2];  
 
   float[] return_array = {
     x, y, z
@@ -52207,19 +52203,19 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
 
 float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
 
-  a -= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][0];
-  b -= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][1];
-  c -= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][2];   
+  a -= allSelections.BoundingBox[1 + allSelections.alignX][0];
+  b -= allSelections.BoundingBox[1 + allSelections.alignY][1];
+  c -= allSelections.BoundingBox[1 + allSelections.alignZ][2];   
 
-  a /= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][3];
-  b /= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][4];
-  c /= SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][5];    
+  a /= allSelections.BoundingBox[1 + allSelections.alignX][3];
+  b /= allSelections.BoundingBox[1 + allSelections.alignY][4];
+  c /= allSelections.BoundingBox[1 + allSelections.alignZ][5];    
 
 
 
-  float rotX = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][6];
-  float rotY = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][7];
-  float rotZ = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][8];
+  float rotX = allSelections.BoundingBox[1 + allSelections.alignX][6];
+  float rotY = allSelections.BoundingBox[1 + allSelections.alignY][7];
+  float rotZ = allSelections.BoundingBox[1 + allSelections.alignZ][8];
 
   float x1 = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
   float y1 = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
@@ -52254,13 +52250,13 @@ float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c
 
 float[] SOLARCHVISION_getPivot () {
 
-  float posX = SOLARCHVISION_selection_BoundingBox[1][0];
-  float posY = SOLARCHVISION_selection_BoundingBox[1][1];
-  float posZ = SOLARCHVISION_selection_BoundingBox[1][2];
+  float posX = allSelections.BoundingBox[1][0];
+  float posY = allSelections.BoundingBox[1][1];
+  float posZ = allSelections.BoundingBox[1][2];
 
-  float x = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignX][0];
-  float y = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignY][1];
-  float z = SOLARCHVISION_selection_BoundingBox[1 + allSelections.alignZ][2];
+  float x = allSelections.BoundingBox[1 + allSelections.alignX][0];
+  float y = allSelections.BoundingBox[1 + allSelections.alignY][1];
+  float z = allSelections.BoundingBox[1 + allSelections.alignZ][2];
 
   {
     int keep_selection_alignX = allSelections.alignX;
