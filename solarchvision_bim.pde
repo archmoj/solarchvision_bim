@@ -746,7 +746,9 @@ class solarchvision_STATION {
 
 solarchvision_STATION STATION = new solarchvision_STATION(
 
-  "", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
+  //"", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
+
+  "", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
   
 );
   
@@ -7745,7 +7747,7 @@ boolean Display_Leaves = true;
 
 boolean Display_allSolids = true;
 boolean Display_allSections = true;
-boolean Display_allCameras = true;
+boolean Display_allCameras = false;
 
 
 int defaultMaterial = 7;
@@ -10286,7 +10288,7 @@ class solarchvision_Selections {
   boolean displayReferencePivot = true;
   
   boolean Group_displayPivot = true;
-  boolean Group_displayEdges = true; // false; 
+  boolean Group_displayEdges = false; 
   boolean Group_displayBox = true;
   
   boolean Face_displayEdges = true;
@@ -22259,7 +22261,7 @@ class solarchvision_Earth3D {
   
   private final static String CLASS_STAMP = "Earth3D";
     
-  boolean Display_Surface = false;
+  boolean Display_Surface = true;
   boolean Display_Texture = true;
   
   PImage[] Map;
@@ -35011,7 +35013,7 @@ class solarchvision_Sections {
   
     boolean proceed = true;
   
-    if (Display_allSections) {
+    if (Display_allSections == false) {
       proceed = false;
     }
   
@@ -41133,7 +41135,7 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }                
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide allModel2Ds Objects")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model2Ds")) {
               Display_allModel2Ds = !Display_allModel2Ds;
               Display_allModel1Ds = Display_allModel2Ds; // <<<<<<<
               Display_Leaves = Display_allModel1Ds; // <<<<<<
@@ -41141,25 +41143,25 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Building Objects")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model3Ds")) {
               Display_allModel3Ds = !Display_allModel3Ds;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }           
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide allSolids")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solids")) {
               Display_allSolids = !Display_allSolids;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }               
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide allSections")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sections")) {
               Display_allSections = !Display_allSections;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide allCameras")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Cameras")) {
               Display_allCameras = !Display_allCameras;
 
               WIN3D.update = true;  
@@ -41219,19 +41221,19 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected allSolids")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Solids")) {
               allSelections.Solid_displayEdges = !allSelections.Solid_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }            
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected allSections")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Sections")) {
               allSelections.Section_displayEdges = !allSelections.Section_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected allCameras")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected Cameras")) {
               allSelections.Camera_displayEdges = !allSelections.Camera_displayEdges;
 
               WIN3D.update = true;  
