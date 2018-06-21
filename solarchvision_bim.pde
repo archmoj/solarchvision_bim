@@ -2867,8 +2867,8 @@ class solarchvision_WIN3D {
           break;
   
         case '2' :
-          Display_allModel2Ds = !Display_allModel2Ds;
-          if (Display_allModel2Ds) {
+          allModel2Ds.Display = !allModel2Ds.Display;
+          if (allModel2Ds.Display) {
             Current_ObjectCategory = ObjectCategory.MODEL2D;
             UI_BAR_b_update = true;
           }
@@ -7085,7 +7085,7 @@ class solarchvision_ROLLOUT {
         //Land3D.Display_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Points", Land3D.Display_Points, 0, 1, 1), 1));     
         //Land3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Depth", Land3D.Display_Depth, 0, 1, 1), 1));
   
-        //Display_allModel2Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allModel2Ds", Display_allModel2Ds, 0, 1, 1), 1));
+        //allModel2Ds.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.Display", allModel2Ds.Display, 0, 1, 1), 1));
         //Display_allModel1Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allModel1Ds", Display_allModel1Ds, 0, 1, 1), 1));
         //Display_Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Leaves", Display_Leaves, 0, 1, 1), 1));
         //Display_allModel3Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allModel3Ds", Display_allModel3Ds, 0, 1, 1), 1));
@@ -7741,7 +7741,7 @@ float Planetary_Magnification = 2.5; // <<<<<<<<<<
 boolean Display_Output_in_Explorer = true;
 
 boolean Display_allModel3Ds = true;
-boolean Display_allModel2Ds = true;
+
 boolean Display_allModel1Ds = true;
 boolean Display_Leaves = true;
 
@@ -23747,6 +23747,8 @@ class solarchvision_Model2Ds {
   
   private final static String CLASS_STAMP = "Model2Ds";
 
+  boolean Display = true;
+
   float[][] XYZS = new float[0][4];
   
   float getX (int n) {
@@ -23850,7 +23852,7 @@ class solarchvision_Model2Ds {
     
     boolean proceed = true;
   
-    if (Display_allModel2Ds == false) {
+    if (this.Display == false) {
       proceed = false;
     }
   
@@ -24853,50 +24855,52 @@ class solarchvision_Model2Ds {
   
         child.setContent(lineSTR);
       }  
+      
+      parent.setString("Display", Boolean.toString(this.Display));
     }
     
-  {
-    XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
-    int ni = this.ImagePath.length;
-    parent.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-
-      boolean TEXTURE_copied = false;
-
-      String the_dir = save_folder; 
-
-      String the_filename = "";
-      if (this.ImagePath[i].equals("")) {
-      } else {
-        the_filename = this.ImagePath[i].substring(this.ImagePath[i].lastIndexOf("/") + 1); // image name
-
-
-        String new_Texture_path = the_dir + "/Textures/" + the_filename;
-
-        if (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
-          TEXTURE_copied = false;
+    {
+      XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
+      int ni = this.ImagePath.length;
+      parent.setInt("ni", ni);
+      for (int i = 0; i < ni; i++) {
+  
+        boolean TEXTURE_copied = false;
+  
+        String the_dir = save_folder; 
+  
+        String the_filename = "";
+        if (this.ImagePath[i].equals("")) {
         } else {
-          if (this.ImagePath[i].equals("")) {
+          the_filename = this.ImagePath[i].substring(this.ImagePath[i].lastIndexOf("/") + 1); // image name
+  
+  
+          String new_Texture_path = the_dir + "/Textures/" + the_filename;
+  
+          if (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+            TEXTURE_copied = false;
           } else {
-            println("Copying texture:", this.ImagePath[i], ">", new_Texture_path);
-            saveBytes(new_Texture_path, loadBytes(this.ImagePath[i]));
-            this.ImagePath[i] = new_Texture_path;
-
-            TEXTURE_copied = true;
+            if (this.ImagePath[i].equals("")) {
+            } else {
+              println("Copying texture:", this.ImagePath[i], ">", new_Texture_path);
+              saveBytes(new_Texture_path, loadBytes(this.ImagePath[i]));
+              this.ImagePath[i] = new_Texture_path;
+  
+              TEXTURE_copied = true;
+            }
           }
+  
+          //if (TEXTURE_copied == false) {
+          //  println("Saving texture from the scene.");
+          //  this.Images[i].save(new_Texture_path);
+          //}
         }
-
-        //if (TEXTURE_copied == false) {
-        //  println("Saving texture from the scene.");
-        //  this.Images[i].save(new_Texture_path);
-        //}
+  
+        XML child = parent.addChild("item");
+        child.setInt("id", i); 
+        child.setContent(this.ImagePath[i]);
       }
-
-      XML child = parent.addChild("item");
-      child.setInt("id", i); 
-      child.setContent(this.ImagePath[i]);
     }
-  }
   }
   
   
@@ -24921,6 +24925,8 @@ class solarchvision_Model2Ds {
         }
         this.MAP[i] = int(parts[4]);
       }
+      
+      this.Display = Boolean.parseBoolean(parent.getString("Display"));
     }
     
     {
@@ -41159,7 +41165,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model2Ds")) {
-              Display_allModel2Ds = !Display_allModel2Ds;
+              allModel2Ds.Display = !allModel2Ds.Display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -45833,7 +45839,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             TREES_graphics.blendMode(BLEND);        
 
-            if (Display_allModel2Ds) {
+            if (allModel2Ds.Display) {
 
               for (int f = 0; f < allModel2Ds.num; f++) {
 
@@ -46369,7 +46375,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           SHADOW_graphics.save(File_Name + "3D_.JPG"); //just to test   
 
-          if (Display_allModel2Ds) {
+          if (allModel2Ds.Display) {
 
             PImage img = loadImage(File_Name + "_2D.JPG");
 
@@ -46450,7 +46456,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           TREES_graphics.blendMode(BLEND);        
 
-          if (Display_allModel2Ds) {
+          if (allModel2Ds.Display) {
 
             for (int f = 0; f < allModel2Ds.num; f++) {
 
@@ -46979,7 +46985,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
         SHADOW_graphics.save(File_Name + "3D_.JPG"); //just to test   
 
-        if (Display_allModel2Ds) {
+        if (allModel2Ds.Display) {
 
           PImage img = loadImage(File_Name + nf(i, 3) + "_2D.JPG");
 
@@ -49435,7 +49441,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }               
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Model2Ds")) {
-                if (Display_allModel2Ds == false) {
+                if (allModel2Ds.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51656,7 +51662,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   
     parent.setString("Display_Output_in_Explorer", Boolean.toString(Display_Output_in_Explorer));
     parent.setString("Display_allModel3Ds", Boolean.toString(Display_allModel3Ds));
-    parent.setString("Display_allModel2Ds", Boolean.toString(Display_allModel2Ds));
+    
     parent.setString("Display_allModel1Ds", Boolean.toString(Display_allModel1Ds));
     parent.setString("Display_Leaves", Boolean.toString(Display_Leaves));
   
@@ -52047,7 +52053,7 @@ void SOLARCHVISION_load_project (String myFile) {
       
       Display_Output_in_Explorer = Boolean.parseBoolean(parent.getString("Display_Output_in_Explorer"));
       Display_allModel3Ds = Boolean.parseBoolean(parent.getString("Display_allModel3Ds"));
-      Display_allModel2Ds = Boolean.parseBoolean(parent.getString("Display_allModel2Ds"));
+      
       Display_allModel1Ds = Boolean.parseBoolean(parent.getString("Display_allModel1Ds"));
       Display_Leaves = Boolean.parseBoolean(parent.getString("Display_Leaves"));
   
