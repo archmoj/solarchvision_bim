@@ -8373,6 +8373,376 @@ class solarchvision_Faces {
     this.options[n][5] = close;
   }    
  
+
+
+  void draw (int target_window) {
+   
+    if (allFaces.Display) {
+      
+      if (target_window == TypeWindow.HTML) {
+    
+        int Create_Face_Texture = 0;
+    
+        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solid) || (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+          Create_Face_Texture = 1;
+        }    
+        
+        int PAL_TYPE = SHADE.get_PAL_TYPE(); 
+        int PAL_DIR = SHADE.get_PAL_DIR();
+        float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+    
+        String the_filename = "";
+        String TEXTURE_path = "";        
+    
+        if (Export_MaterialLibrary) {
+          
+          if (Create_Face_Texture == 0) {
+            
+            int[] Materials_Used = new int [Materials_Number];
+    
+            for (int i = 0; i < Materials_Used.length; i++) {
+              Materials_Used[i] = 0;
+            }
+    
+            for (int f = 0; f < allFaces.nodes.length; f++) {
+    
+              int mt = allFaces.getMaterial(f);
+    
+              Materials_Used[mt] += 1;
+            }    
+    
+            for (int mt = 0; mt < Materials_Number; mt++) {
+    
+              if (Materials_Used[mt] != 0) {        
+    
+                htmlOutput.println("\t\t\t\t<Appearance DEF='SurfaceMaterial" + nf(mt, 0) + "'>");
+                htmlOutput.print  ("\t\t\t\t\t<Material");
+                htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
+                htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
+                htmlOutput.println("></Material>");
+                htmlOutput.println("\t\t\t\t</Appearance>");
+                
+              }
+            }
+    
+          } else {
+            
+            the_filename = "shadePallet.bmp";
+            
+            TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+            
+            htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
+            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+            htmlOutput.println("\t\t\t\t</Appearance>");
+    
+            println("Saving texture:", TEXTURE_path);
+    
+            int RES1 = Export_PalletResolution; 
+            int RES2 = Export_PalletResolution / 16;      
+    
+            PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+    
+            Pallet_Texture.loadPixels();
+    
+            for (int np = 0; np < (RES1 * RES2); np++) {
+              int Image_X = np % RES1;
+              int Image_Y = np / RES1;
+    
+              float _val = (Image_X / (0.5 * RES1)) - 1; 
+    
+              float _u = 0.5 + _val;
+    
+              if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+              }            
+    
+              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+    
+              Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+            }
+    
+            Pallet_Texture.updatePixels();   
+    
+            Pallet_Texture.save(TEXTURE_path);  
+    
+          } 
+        }
+    
+    
+        for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
+    
+          if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+    
+            htmlOutput.println("\t\t\t\t<group>");
+            
+            for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+          
+              if (allFaces.nodes[f].length > 2) {
+                
+                int mt = allFaces.getMaterial(f);
+        
+                int Tessellation = allFaces.getTessellation(f);
+        
+                int TotalSubNo = 1;  
+                if (allFaces.getMaterial(f) == 0) {
+                  Tessellation += allModel3Ds.Tessellation;
+                }
+        
+                if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+        
+                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+                for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                  int vNo = allFaces.nodes[f][j];
+                  base_Vertices[j][0] = allVertices[vNo][0];
+                  base_Vertices[j][1] = allVertices[vNo][1];
+                  base_Vertices[j][2] = allVertices[vNo][2];
+                }
+        
+                for (int n = 0; n < TotalSubNo; n++) {
+        
+                  float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+                  
+                  for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+        
+                    htmlOutput.println("\t\t\t\t\t<shape>");
+        
+                    if (Create_Face_Texture == 0) {
+                      htmlOutput.println("\t\t\t\t\t\t<Appearance USE='SurfaceMaterial" + nf(mt, 0) + "'></Appearance>");
+                    }
+                    else {
+                      htmlOutput.println("\t\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
+                    }              
+        
+                    
+                    htmlOutput.print  ("\t\t\t\t\t\t<IndexedFaceSet");
+                    
+                    htmlOutput.print  (" coordIndex='");
+                    for (int q = 0; q < subFace.length; q++) {
+                      if (q > 0) {
+                        htmlOutput.print(" ");
+                      }         
+                      htmlOutput.print(nf(q, 0));          
+                    }
+                    htmlOutput.println(" -1'>");
+                    
+                    htmlOutput.print  ("\t\t\t\t\t\t\t<Coordinate point='");
+                    for (int q = 0; q < subFace.length; q++) {
+                      if (q > 0) {
+                        htmlOutput.print(",");
+                      }                  
+                      int s = q;
+                      if (back_or_front == 0) {
+                        s = subFace.length - 1 - q;
+                      }
+                      
+                      htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                    }                
+                    htmlOutput.println("'></Coordinate>");
+        
+        
+        
+        
+        
+        
+                    if (Create_Face_Texture == 1) {
+         
+                      htmlOutput.print  ("\t\t\t\t\t\t\t<TextureCoordinate point='");
+                      for (int q = 0; q < subFace.length; q++) {
+                        if (q > 0) {
+                          htmlOutput.print(",");
+                        }                  
+                        int s = q;
+                        if (back_or_front == 0) {
+                          s = subFace.length - 1 - q;
+                        }
+                        
+                        float _u = 0;
+          
+            
+                        if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                          int s_next = (s + 1) % subFace.length;
+                          int s_prev = (s + subFace.length - 1) % subFace.length;
+            
+                          if (back_or_front == 0) {
+                            int s_temp = s_next;
+                            s_next = s_prev;
+                            s_prev = s_temp;
+                          }
+            
+                          _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                        }
+            
+                        if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+                          
+                          _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                        }                            
+            
+                        if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+            
+                          _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                        }                  
+            
+                        if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+            
+                          _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                        }
+            
+            
+                        float u0 = 0.5 * (_u + 0.5);
+            
+                        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                          if (Impact_TYPE == Impact_ACTIVE) {
+                            u0 = _u;
+                          }
+                        }
+            
+                        if (u0 > 1) u0 = 1;
+                        if (u0 < 0) u0 = 0;
+          
+                        SOLARCHVISION_HTMLprintVtexture(u0, 0.5);
+                      }                
+                      
+                      htmlOutput.println("'></TextureCoordinate>");           
+                    }
+                    
+            
+                    htmlOutput.println("\t\t\t\t\t\t</IndexedFaceSet>");
+                   
+                    htmlOutput.println("\t\t\t\t\t</shape>");
+                    
+                  }
+                }
+              }
+            }
+            htmlOutput.println("\t\t\t\t</group>");
+          }
+        }
+      }      
+      
+      
+      if (target_window == TypeWindow.RAD) {
+    
+        int[] Materials_Used = new int [Materials_Number];
+    
+        for (int i = 0; i < Materials_Used.length; i++) {
+          Materials_Used[i] = 0;
+        }
+    
+        for (int f = 0; f < allFaces.nodes.length; f++) {
+    
+          int mt = allFaces.getMaterial(f);
+    
+          Materials_Used[mt] += 1;
+        }    
+    
+        for (int mt = 0; mt < Materials_Number; mt++) {
+    
+          if (Materials_Used[mt] != 0) {
+    
+            float a = Materials_Color[mt][0] / 255.0; 
+            float r = Materials_Color[mt][1] / 255.0; 
+            float g = Materials_Color[mt][2] / 255.0; 
+            float b = Materials_Color[mt][3] / 255.0; 
+    
+            radOutput.println("void plastic " + "SurfaceMaterial" + nf(mt, 0));
+            radOutput.println("0");
+            radOutput.println("0");
+            radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
+    
+          }
+        }
+      
+        for (int f = 0; f < allFaces.nodes.length; f++) {
+      
+          if (allFaces.nodes[f].length > 2) {
+    
+            int mt = allFaces.getMaterial(f);
+    
+            int Tessellation = allFaces.getTessellation(f);
+    
+            int TotalSubNo = 1;  
+            if (allFaces.getMaterial(f) == 0) {
+              Tessellation += allModel3Ds.Tessellation;
+            }
+    
+            if ((allFaces.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
+              Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+            }
+    
+            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+    
+            for (int n = 0; n < TotalSubNo; n++) {
+    
+              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+              
+              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+    
+                if (back_or_front == 1) {
+    
+                  radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
+                  radOutput.println("0");
+                  radOutput.println("0");
+                  radOutput.println("9");      
+                  
+                  radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+                  
+                  if (subFace.length == 4) {
+    
+                    radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
+                    radOutput.println("0");
+                    radOutput.println("0");
+                    radOutput.println("9");      
+                    
+                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+                  }
+                  
+                  
+                } else {
+    
+                  radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
+                  radOutput.println("0");
+                  radOutput.println("0");
+                  radOutput.println("9");    
+                  
+                  radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+                  
+                  if (subFace.length == 4) { 
+                    
+                    radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
+                    radOutput.println("0");
+                    radOutput.println("0");
+                    radOutput.println("9");                   
+                    
+                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                  }
+                }
+              }
+            }
+              
+            radOutput.println();
+          }
+        }
+      } 
+    }
+  }
+ 
+ 
   
   public void to_XML (XML xml) {
     
@@ -19031,125 +19401,9 @@ void SOLARCHVISION_export_objects_RAD () {
 
   Land3D.draw(TypeWindow.RAD);
 
-  if (allFaces.Display) {
+  allFaces.draw(TypeWindow.RAD);
 
-    int[] Materials_Used = new int [Materials_Number];
 
-    for (int i = 0; i < Materials_Used.length; i++) {
-      Materials_Used[i] = 0;
-    }
-
-    for (int f = 0; f < allFaces.nodes.length; f++) {
-
-      int mt = allFaces.getMaterial(f);
-
-      Materials_Used[mt] += 1;
-    }    
-
-    for (int mt = 0; mt < Materials_Number; mt++) {
-
-      if (Materials_Used[mt] != 0) {
-
-        float a = Materials_Color[mt][0] / 255.0; 
-        float r = Materials_Color[mt][1] / 255.0; 
-        float g = Materials_Color[mt][2] / 255.0; 
-        float b = Materials_Color[mt][3] / 255.0; 
-
-        radOutput.println("void plastic " + "SurfaceMaterial" + nf(mt, 0));
-        radOutput.println("0");
-        radOutput.println("0");
-        radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
-
-      }
-    }
-  
-    for (int f = 0; f < allFaces.nodes.length; f++) {
-  
-      if (allFaces.nodes[f].length > 2) {
-
-        int mt = allFaces.getMaterial(f);
-
-        int Tessellation = allFaces.getTessellation(f);
-
-        int TotalSubNo = 1;  
-        if (allFaces.getMaterial(f) == 0) {
-          Tessellation += allModel3Ds.Tessellation;
-        }
-
-        if ((allFaces.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
-          Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-        }
-
-        if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-        float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-        for (int j = 0; j < allFaces.nodes[f].length; j++) {
-          int vNo = allFaces.nodes[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-
-        for (int n = 0; n < TotalSubNo; n++) {
-
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-          
-          for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
-
-            if (back_or_front == 1) {
-
-              radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
-              radOutput.println("0");
-              radOutput.println("0");
-              radOutput.println("9");      
-              
-              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-              
-              if (subFace.length == 4) {
-
-                radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
-                radOutput.println("0");
-                radOutput.println("0");
-                radOutput.println("9");      
-                
-                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-              }
-              
-              
-            } else {
-
-              radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
-              radOutput.println("0");
-              radOutput.println("0");
-              radOutput.println("9");    
-              
-              radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-              radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-              radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-              
-              if (subFace.length == 4) { 
-                
-                radOutput.println("SurfaceMaterial" + nf(mt, 0) + " polygon " + "FACE");
-                radOutput.println("0");
-                radOutput.println("0");
-                radOutput.println("9");                   
-                
-                radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-                radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-              }
-            }
-          }
-        }
-          
-        radOutput.println();
-      }
-    }
-  }
   
   for (int i = 15; i < 180; i += 15) {
     radOutput.println("!gensky -ang " + nf(i, 0) + " 45 +s -trb 4.0");
@@ -19380,247 +19634,9 @@ void SOLARCHVISION_export_objects_HTML () {
   allSections.draw(TypeWindow.HTML);
   
   allModel2Ds.draw(TypeWindow.HTML);
-
-  if (allFaces.Display) {
-
-    int Create_Face_Texture = 0;
-
-    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solid) || (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
-      Create_Face_Texture = 1;
-    }    
-    
-    int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-    int PAL_DIR = SHADE.get_PAL_DIR();
-    float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
-
-    String the_filename = "";
-    String TEXTURE_path = "";        
-
-    if (Export_MaterialLibrary) {
-      
-      if (Create_Face_Texture == 0) {
-        
-        int[] Materials_Used = new int [Materials_Number];
-
-        for (int i = 0; i < Materials_Used.length; i++) {
-          Materials_Used[i] = 0;
-        }
-
-        for (int f = 0; f < allFaces.nodes.length; f++) {
-
-          int mt = allFaces.getMaterial(f);
-
-          Materials_Used[mt] += 1;
-        }    
-
-        for (int mt = 0; mt < Materials_Number; mt++) {
-
-          if (Materials_Used[mt] != 0) {        
-
-            htmlOutput.println("\t\t\t\t<Appearance DEF='SurfaceMaterial" + nf(mt, 0) + "'>");
-            htmlOutput.print  ("\t\t\t\t\t<Material");
-            htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
-            htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
-            htmlOutput.println("></Material>");
-            htmlOutput.println("\t\t\t\t</Appearance>");
-            
-          }
-        }
-
-      } else {
-        
-        the_filename = "shadePallet.bmp";
-        
-        TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
-        
-        htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-        htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
-        htmlOutput.println("\t\t\t\t</Appearance>");
-
-        println("Saving texture:", TEXTURE_path);
-
-        int RES1 = Export_PalletResolution; 
-        int RES2 = Export_PalletResolution / 16;      
-
-        PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-
-        Pallet_Texture.loadPixels();
-
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-
-          float _val = (Image_X / (0.5 * RES1)) - 1; 
-
-          float _u = 0.5 + _val;
-
-          if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-            if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-          }            
-
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
-
-          Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        }
-
-        Pallet_Texture.updatePixels();   
-
-        Pallet_Texture.save(TEXTURE_path);  
-
-      } 
-    }
-
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
-
-      if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
-
-        htmlOutput.println("\t\t\t\t<group>");
-        
-        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-      
-          if (allFaces.nodes[f].length > 2) {
-            
-            int mt = allFaces.getMaterial(f);
-    
-            int Tessellation = allFaces.getTessellation(f);
-    
-            int TotalSubNo = 1;  
-            if (allFaces.getMaterial(f) == 0) {
-              Tessellation += allModel3Ds.Tessellation;
-            }
-    
-            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-    
-            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
-    
-            for (int n = 0; n < TotalSubNo; n++) {
-    
-              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-              
-              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
-    
-                htmlOutput.println("\t\t\t\t\t<shape>");
-    
-                if (Create_Face_Texture == 0) {
-                  htmlOutput.println("\t\t\t\t\t\t<Appearance USE='SurfaceMaterial" + nf(mt, 0) + "'></Appearance>");
-                }
-                else {
-                  htmlOutput.println("\t\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
-                }              
-    
-                
-                htmlOutput.print  ("\t\t\t\t\t\t<IndexedFaceSet");
-                
-                htmlOutput.print  (" coordIndex='");
-                for (int q = 0; q < subFace.length; q++) {
-                  if (q > 0) {
-                    htmlOutput.print(" ");
-                  }         
-                  htmlOutput.print(nf(q, 0));          
-                }
-                htmlOutput.println(" -1'>");
-                
-                htmlOutput.print  ("\t\t\t\t\t\t\t<Coordinate point='");
-                for (int q = 0; q < subFace.length; q++) {
-                  if (q > 0) {
-                    htmlOutput.print(",");
-                  }                  
-                  int s = q;
-                  if (back_or_front == 0) {
-                    s = subFace.length - 1 - q;
-                  }
-                  
-                  htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
-                }                
-                htmlOutput.println("'></Coordinate>");
-    
-    
-    
-    
-    
-    
-                if (Create_Face_Texture == 1) {
-     
-                  htmlOutput.print  ("\t\t\t\t\t\t\t<TextureCoordinate point='");
-                  for (int q = 0; q < subFace.length; q++) {
-                    if (q > 0) {
-                      htmlOutput.print(",");
-                    }                  
-                    int s = q;
-                    if (back_or_front == 0) {
-                      s = subFace.length - 1 - q;
-                    }
-                    
-                    float _u = 0;
-      
-        
-                    if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                      int s_next = (s + 1) % subFace.length;
-                      int s_prev = (s + subFace.length - 1) % subFace.length;
-        
-                      if (back_or_front == 0) {
-                        int s_temp = s_next;
-                        s_next = s_prev;
-                        s_prev = s_temp;
-                      }
-        
-                      _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                    }
-        
-                    if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-                      
-                      _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                    }                            
-        
-                    if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-        
-                      _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                    }                  
-        
-                    if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-        
-                      _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                    }
-        
-        
-                    float u0 = 0.5 * (_u + 0.5);
-        
-                    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-                      if (Impact_TYPE == Impact_ACTIVE) {
-                        u0 = _u;
-                      }
-                    }
-        
-                    if (u0 > 1) u0 = 1;
-                    if (u0 < 0) u0 = 0;
-      
-                    SOLARCHVISION_HTMLprintVtexture(u0, 0.5);
-                  }                
-                  
-                  htmlOutput.println("'></TextureCoordinate>");           
-                }
-                
-        
-                htmlOutput.println("\t\t\t\t\t\t</IndexedFaceSet>");
-               
-                htmlOutput.println("\t\t\t\t\t</shape>");
-                
-              }
-            }
-          }
-        }
-        htmlOutput.println("\t\t\t\t</group>");
-      }
-    }
-  }
   
+  allFaces.draw(TypeWindow.HTML);
+
   
   
   
