@@ -87,7 +87,7 @@ void SOLARCHVISION_update_folders () {
   
   ExportFolder          = ProjectFolder + "/Export";
   graphicsFolder        = ExportFolder + "/graphics" + "/" + RunStamp;
-  allModel3DsFolder         = ExportFolder + "/allModel3Ds" + "/" + RunStamp;
+  allModel3DsFolder     = ExportFolder + "/allModel3Ds" + "/" + RunStamp;
   ViewsFromSkyFolder    = ExportFolder + "/ViewsFromSky" + "/" + RunStamp;
   ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + RunStamp;
 
