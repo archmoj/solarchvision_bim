@@ -12148,9 +12148,9 @@ class solarchvision_Selections {
   
       int n = PolymeshVertices[q];
   
-      allPoints.setX(n, allPoints.getX(n) + dx); 
-      allPoints.setY(n, allPoints.getY(n) + dy);
-      allPoints.setZ(n, allPoints.getZ(n) + dz);
+      allPoints.addX(n, dx); 
+      allPoints.addY(n, dy);
+      allPoints.addZ(n, dz);
     }
   
     boolean allSolids_updated = false;
@@ -12168,18 +12168,18 @@ class solarchvision_Selections {
       for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
-          allModel1Ds.setX(f, allModel1Ds.getX(f) + dx);
-          allModel1Ds.setY(f, allModel1Ds.getY(f) + dy);
-          allModel1Ds.setZ(f, allModel1Ds.getZ(f) + dz);
+          allModel1Ds.addX(f, dx);
+          allModel1Ds.addY(f, dy);
+          allModel1Ds.addZ(f, dz);
         }
       }
   
       for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
-          allModel2Ds.setX(f, allModel2Ds.getX(f) + dx);
-          allModel2Ds.setY(f, allModel2Ds.getY(f) + dy);
-          allModel2Ds.setZ(f, allModel2Ds.getZ(f) + dz);
+          allModel2Ds.addX(f, dx);
+          allModel2Ds.addY(f, dy);
+          allModel2Ds.addZ(f, dz);
         }
       }
   
@@ -12578,7 +12578,7 @@ class solarchvision_Selections {
           allModel1Ds.setY(f, y);
           allModel1Ds.setZ(f, z);
   
-          allModel1Ds.setS(f, allModel1Ds.getS(f) * sz);
+          allModel1Ds.magS(f, sz);
         }
       }  
   
@@ -12609,7 +12609,7 @@ class solarchvision_Selections {
           int n = allModel2Ds.MAP[f];
   
           if (abs(n) > n1) { // does not scale poeple!    
-            allModel2Ds.setS(f, allModel2Ds.getS(f) * sz);
+            allModel2Ds.magS(f, sz);
           }
         }
       }     
@@ -12655,9 +12655,9 @@ class solarchvision_Selections {
   
       int f = FaceVertices[q];
   
-      allPoints.setX(f, allPoints.getX(f) + dx); 
-      allPoints.setY(f, allPoints.getY(f) + dy);
-      allPoints.setZ(f, allPoints.getZ(f) + dz);
+      allPoints.addX(f, dx); 
+      allPoints.addY(f, dy);
+      allPoints.addZ(f, dz);
     }
   }
   
@@ -12728,9 +12728,9 @@ class solarchvision_Selections {
   
       int f = CurveVertices[q];
   
-      allPoints.setX(f, allPoints.getX(f) + dx); 
-      allPoints.setY(f, allPoints.getY(f) + dy);
-      allPoints.setZ(f, allPoints.getZ(f) + dz);
+      allPoints.addX(f, dx); 
+      allPoints.addY(f, dy);
+      allPoints.addZ(f, dz);
     }
   }
   
@@ -12798,9 +12798,9 @@ class solarchvision_Selections {
   
       int f = this.Vertex_ids[q];
   
-      allPoints.setX(f, allPoints.getX(f) + dx); 
-      allPoints.setY(f, allPoints.getY(f) + dy);
-      allPoints.setZ(f, allPoints.getZ(f) + dz);
+      allPoints.addX(f, dx); 
+      allPoints.addY(f, dy);
+      allPoints.addZ(f, dz);
     }
   }
   
@@ -12882,9 +12882,9 @@ class solarchvision_Selections {
   
       float v = this.Vertex_softSelectionValues[q];
   
-      allPoints.setX(f, allPoints.getX(f) + dx * v); 
-      allPoints.setY(f, allPoints.getY(f) + dy * v);
-      allPoints.setZ(f, allPoints.getZ(f) + dz * v);
+      allPoints.addX(f, dx * v); 
+      allPoints.addY(f, dy * v);
+      allPoints.addZ(f, dz * v);
     }
   }
   
@@ -12971,7 +12971,7 @@ class solarchvision_Selections {
       int n = allModel2Ds.MAP[f];
   
       if (abs(n) > n1) { // does not scale poeple!    
-        allModel2Ds.setS(f, allModel2Ds.getS(f) * sz);
+        allModel2Ds.magS(f, sz);
       }
     }
   }
@@ -13011,9 +13011,9 @@ class solarchvision_Selections {
   
       int f = this.Model2D_ids[o];
       
-      allModel2Ds.setX(f, allModel2Ds.getX(f) + dx); 
-      allModel2Ds.setY(f, allModel2Ds.getY(f) + dy); 
-      allModel2Ds.setZ(f, allModel2Ds.getZ(f) + dz);
+      allModel2Ds.addX(f, dx); 
+      allModel2Ds.addY(f, dy); 
+      allModel2Ds.addZ(f, dz);
     }
   } 
   
@@ -13044,7 +13044,7 @@ class solarchvision_Selections {
       allModel1Ds.setY(f, y);
       allModel1Ds.setZ(f, z);
   
-      allModel1Ds.setS(f, allModel1Ds.getS(f) * sz);
+      allModel1Ds.magS(f, sz);
     }
   }
   
@@ -13084,9 +13084,9 @@ class solarchvision_Selections {
   
       int f = this.Model1D_ids[o];
   
-      allModel1Ds.setX(f, allModel1Ds.getX(f) + dx); 
-      allModel1Ds.setY(f, allModel1Ds.getY(f) + dy); 
-      allModel1Ds.setZ(f, allModel1Ds.getZ(f) + dz);
+      allModel1Ds.addX(f, dx); 
+      allModel1Ds.addY(f, dy); 
+      allModel1Ds.addZ(f, dz);
     }
   } 
   
@@ -24096,10 +24096,26 @@ class solarchvision_Model2Ds {
   void setZ (int n, float z) {
     this.XYZS[n][2] = z;  
   }
-
+  
   void setS (int n, float s) {
     this.XYZS[n][3] = s;  
   }  
+
+  void addX (int n, float dx) {
+    this.XYZS[n][0] += dx;  
+  }
+
+  void addY (int n, float dy) {
+    this.XYZS[n][1] += dy;  
+  }
+
+  void addZ (int n, float dz) {
+    this.XYZS[n][2] += dz;  
+  }
+  
+  void magS (int n, float ds) {
+    this.XYZS[n][3] *= ds;  
+  }
   
   int[] MAP = new int[0];
   int num = 0; 
@@ -25339,6 +25355,23 @@ class solarchvision_Model1Ds {
   void setR (int n, float r) {
     this.XYZSR[n][4] = r;  
   }     
+  
+  void addX (int n, float dx) {
+    this.XYZSR[n][0] += dx;  
+  }  
+
+  void addY (int n, float dy) {
+    this.XYZSR[n][1] += dy;  
+  }  
+
+  void addZ (int n, float dz) {
+    this.XYZSR[n][2] += dz;  
+  }  
+  
+  void magS (int n, float ds) {
+    this.XYZSR[n][3] *= ds;  
+  }    
+
   
   int[] Type = new int[0];
   int[] Seed = new int[0];  
@@ -26916,7 +26949,25 @@ class solarchvision_Points {
   
     allVertices[n][2] = z;
   }   
+  
+  void addX (int n, float dx) { 
+  
+    allVertices[n][0] += dx;
+  }     
+  
+  void addY (int n, float dy) { 
+  
+    allVertices[n][1] += dy;
+  }     
 
+  void addZ (int n, float dz) { 
+  
+    allVertices[n][2] += dz;
+  }       
+  
+  int getLength () {
+    return  allVertices.length;
+  }
   
   float getX (int n) { 
   
@@ -26933,7 +26984,6 @@ class solarchvision_Points {
     return allVertices[n][2];
   } 
 
-
   float[] getPosition (int n) {
    
     float[] result = {this.getX(n), this.getY(n), this.getZ(n)};
@@ -26941,9 +26991,7 @@ class solarchvision_Points {
     return result;
   } 
   
-  int getLength () {
-    return  allVertices.length;
-  }
+
   
   
   void draw () {
@@ -31391,9 +31439,9 @@ class solarchvision_Model3Ds {
   
         int vNo = allSelections.Vertex_ids[o];
   
-        allPoints.setX(vNo, allPoints.getX(vNo) + Vertex_offsetValues[o][0]);
-        allPoints.setY(vNo, allPoints.getY(vNo) + Vertex_offsetValues[o][1]);
-        allPoints.setZ(vNo, allPoints.getZ(vNo) + Vertex_offsetValues[o][2]);
+        allPoints.addX(vNo, Vertex_offsetValues[o][0]);
+        allPoints.addY(vNo, Vertex_offsetValues[o][1]);
+        allPoints.addZ(vNo, Vertex_offsetValues[o][2]);
       } 
   
       allSelections.calculate_selection_BoundingBox();
