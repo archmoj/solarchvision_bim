@@ -2927,8 +2927,8 @@ class solarchvision_WIN3D {
           break; 
   
         case '8' :
-          Display_allSections = !Display_allSections;
-          if (Display_allSections) {
+          allSections.Display = !allSections.Display;
+          if (allSections.Display) {
             Current_ObjectCategory = ObjectCategory.SECTION;
             UI_BAR_b_update = true;
           } 
@@ -2937,8 +2937,8 @@ class solarchvision_WIN3D {
           break; 
   
         case '9' :
-          Display_allCameras = !Display_allCameras;
-          if (Display_allCameras) {
+          allCameras.Display = !allCameras.Display;
+          if (allCameras.Display) {
             Current_ObjectCategory = ObjectCategory.CAMERA;
             UI_BAR_b_update = true;
           } 
@@ -7092,7 +7092,7 @@ class solarchvision_ROLLOUT {
   
         //allSolids.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Display", allSolids.Display, 0, 1, 1), 1));
   
-        //Display_allSections = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allSections", Display_allSections, 0, 1, 1), 1));
+        //allSections.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.Display", allSections.Display, 0, 1, 1), 1));
   
   
   
@@ -7124,7 +7124,7 @@ class solarchvision_ROLLOUT {
         //allModel3Ds.DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allModel3Ds.DisplayEdges, 0, 1, 1), 1));
         //allModel3Ds.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayNormals", allModel3Ds.DisplayNormals, 0, 1, 1), 1));
   
-        //Display_allCameras = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allCameras", Display_allCameras, 0, 1, 1), 1));
+        //allCameras.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.Display", allCameras.Display, 0, 1, 1), 1));
       }    
   
   
@@ -7746,8 +7746,8 @@ boolean Display_allModel1Ds = true;
 boolean Display_Leaves = true;
 
 
-boolean Display_allSections = true;
-boolean Display_allCameras = false;
+
+
 
 
 int defaultMaterial = 7;
@@ -34620,6 +34620,8 @@ class solarchvision_Cameras {
 
   private final static String CLASS_STAMP = "Cameras";
   
+  boolean Display = false;
+  
   float[][] PPPSRRRF = {
     {
       WIN3D.X_Coordinate, WIN3D.Y_Coordinate, WIN3D.Z_Coordinate, WIN3D.S_Coordinate, WIN3D.RX_Coordinate, WIN3D.RY_Coordinate, WIN3D.RZ_Coordinate, WIN3D.Zoom
@@ -34640,7 +34642,7 @@ class solarchvision_Cameras {
   
     this.Vertices = new float [4 * this.num][3];
   
-    if (Display_allCameras) {
+    if (this.Display) {
   
       for (int f = 0; f < this.num; f++) {
   
@@ -34941,6 +34943,8 @@ class solarchvision_Cameras {
 
       child.setContent(lineSTR);
     }
+    
+    parent.setString("Display", Boolean.toString(this.Display));
   }
   
   
@@ -34968,6 +34972,8 @@ class solarchvision_Cameras {
 
       this.Type[i] = int(parts[8]);
     }
+    
+    this.Display = Boolean.parseBoolean(parent.getString("Display"));
   }    
 
 }
@@ -34979,6 +34985,8 @@ solarchvision_Cameras allCameras = new solarchvision_Cameras();
 class solarchvision_Sections {
 
   private final static String CLASS_STAMP = "Sections";
+  
+  boolean Display = true;
 
   float[][] UVERAB = new float[0][6];
   int[] Type = new int[0];
@@ -35019,7 +35027,7 @@ class solarchvision_Sections {
   
     boolean proceed = true;
   
-    if (Display_allSections == false) {
+    if (this.Display == false) {
       proceed = false;
     }
   
@@ -35434,10 +35442,12 @@ class solarchvision_Sections {
   
         child.setContent(lineSTR);
       }
+      
+      parent.setString("Display", Boolean.toString(this.Display));
     }
 
     {
-      XML parent = xml.addChild("Sections.SolidImpact");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".SolidImpact");
       int ni = this.SolidImpact.length;
       parent.setInt("ni", ni);
       for (int i = 0; i < ni; i++) {
@@ -35456,7 +35466,7 @@ class solarchvision_Sections {
     }
 
     {
-      XML parent = xml.addChild("Sections.SolarImpact");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".SolarImpact");
       int ni = this.SolarImpact.length;
       if (ni > 0) {
         int nj = this.SolarImpact[0].length;
@@ -35499,7 +35509,7 @@ class solarchvision_Sections {
 
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
-  
+      
       int ni = parent.getInt("ni");
   
       this.UVERAB = new float [ni][6];
@@ -35521,10 +35531,12 @@ class solarchvision_Sections {
         this.RES1[i] = int(parts[7]);
         this.RES2[i] = int(parts[8]);
       }
+      
+      this.Display = Boolean.parseBoolean(parent.getString("Display"));      
     }
     
     {
-      XML parent = xml.getChild("Sections.SolidImpact");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".SolidImpact");
     
       int ni = parent.getInt("ni");
   
@@ -35544,7 +35556,7 @@ class solarchvision_Sections {
     }
   
     {
-      XML parent = xml.getChild("Sections.SolarImpact");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".SolarImpact");
     
       int ni = parent.getInt("ni");
       int nj = parent.getInt("nj");
@@ -41167,13 +41179,13 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sections")) {
-              Display_allSections = !Display_allSections;
+              allSections.Display = !allSections.Display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Cameras")) {
-              Display_allCameras = !Display_allCameras;
+              allCameras.Display = !allCameras.Display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -49443,13 +49455,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }                  
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sections")) {
-                if (Display_allSections == false) {
+                if (allSections.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
               }          
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Cameras")) {
-                if (Display_allCameras == false) {
+                if (allCameras.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51651,8 +51663,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setString("Display_Leaves", Boolean.toString(Display_Leaves));
   
     
-    parent.setString("Display_allSections", Boolean.toString(Display_allSections));
-    parent.setString("Display_allCameras", Boolean.toString(Display_allCameras));
   
     parent.setInt("DEFAULT_CreateMaterial", DEFAULT_CreateMaterial);  
     parent.setInt("DEFAULT_CreateTessellation", DEFAULT_CreateTessellation);
@@ -52044,8 +52054,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_Leaves = Boolean.parseBoolean(parent.getString("Display_Leaves"));
   
       
-      Display_allSections = Boolean.parseBoolean(parent.getString("Display_allSections"));
-      Display_allCameras = Boolean.parseBoolean(parent.getString("Display_allCameras"));
+      
+      
   
       DEFAULT_CreateMaterial = parent.getInt("DEFAULT_CreateMaterial");
       DEFAULT_CreateTessellation = parent.getInt("DEFAULT_CreateTessellation");
