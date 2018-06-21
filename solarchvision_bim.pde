@@ -51,7 +51,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Roodbar";    
+  ProjectFolder = BaseFolder + "/Projects/Esfahan";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -2917,8 +2917,8 @@ class solarchvision_WIN3D {
           break;                       
   
         case '7' :
-          Display_allSolids = !Display_allSolids;
-          if (Display_allSolids) {
+          allSolids.Display = !allSolids.Display;
+          if (allSolids.Display) {
             Current_ObjectCategory = ObjectCategory.SOLID;
             UI_BAR_b_update = true;
           } 
@@ -7090,7 +7090,7 @@ class solarchvision_ROLLOUT {
         //Display_Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Leaves", Display_Leaves, 0, 1, 1), 1));
         //Display_allModel3Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allModel3Ds", Display_allModel3Ds, 0, 1, 1), 1));
   
-        //Display_allSolids = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allSolids", Display_allSolids, 0, 1, 1), 1));
+        //allSolids.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Display", allSolids.Display, 0, 1, 1), 1));
   
         //Display_allSections = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allSections", Display_allSections, 0, 1, 1), 1));
   
@@ -7745,7 +7745,7 @@ boolean Display_allModel2Ds = true;
 boolean Display_allModel1Ds = true;
 boolean Display_Leaves = true;
 
-boolean Display_allSolids = true;
+
 boolean Display_allSections = true;
 boolean Display_allCameras = false;
 
@@ -26007,6 +26007,8 @@ solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
 class solarchvision_Solids {
   
   private final static String CLASS_STAMP = "Solids";
+  
+  boolean Display = true;  
 
   float[][] DEF = new float[0][13];
   
@@ -26247,7 +26249,7 @@ class solarchvision_Solids {
   
     this.Vertices = new float [this.numDisplayFaces * this.numDisplayDegree * this.DEF.length][3];
   
-    if (Display_allSolids) {
+    if (this.Display) {
   
       WIN3D.graphics.strokeWeight(2);
   
@@ -26510,6 +26512,8 @@ class solarchvision_Solids {
       }
       child.setContent(lineSTR);
     }    
+    
+    parent.setString("Display", Boolean.toString(this.Display));    
   }
   
   
@@ -26531,6 +26535,8 @@ class solarchvision_Solids {
         this.DEF[i][j] = float(parts[j]);
       }
     }
+    
+    this.Display = Boolean.parseBoolean(parent.getString("Display"));    
   }    
 
 }
@@ -41134,11 +41140,16 @@ void mouseClicked () {
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
-            }                
+            } 
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model1Ds")) {
+              Display_allModel1Ds = !Display_allModel1Ds;
+              Display_Leaves = Display_allModel1Ds; // <<<<<<
+
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
+            } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model2Ds")) {
               Display_allModel2Ds = !Display_allModel2Ds;
-              Display_allModel1Ds = Display_allModel2Ds; // <<<<<<<
-              Display_Leaves = Display_allModel1Ds; // <<<<<<
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41150,7 +41161,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }           
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solids")) {
-              Display_allSolids = !Display_allSolids;
+              allSolids.Display = !allSolids.Display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41305,13 +41316,13 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected 2D Edges")) {
               allSelections.Model2D_displayEdges = !allSelections.Model2D_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected ∞-D Edges")) {
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Selected 1D Edges")) {
               allSelections.Model1D_displayEdges = !allSelections.Model1D_displayEdges;
 
               WIN3D.update = true;  
@@ -48789,35 +48800,194 @@ int UI_BAR_a_selected_child = 0;
 
 String[][] UI_BAR_a_Items = {
   {
-    "SOLARCHVISION-2017", "Designed & developed by", "Mojtaba Samimi", "www.solarchvision.com"
+    "SOLARCHVISION-2017", 
+    "Designed & developed by", 
+    "Mojtaba Samimi", 
+    "www.solarchvision.com"
   }
   , 
   {
-    "Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model > SCR", "Export 3D-Model > RAD", "Export 3D-Model > HTML", "Export 3D-Model > OBJ", "Export 3D-Model > OBJ (date-series)", "Export 3D-Model > OBJ (time-series)", "Import 3D-Model...", "Execute CommandFile...", "Preferences", "Quit"
+    "Project", 
+    "New", 
+    "Save", 
+    "Hold", 
+    "Fetch", 
+    "Open...", 
+    "Save As...", 
+    "Export 3D-Model > SCR", 
+    "Export 3D-Model > RAD", 
+    "Export 3D-Model > HTML", 
+    "Export 3D-Model > OBJ", 
+    "Export 3D-Model > OBJ (date-series)", 
+    "Export 3D-Model > OBJ (time-series)", 
+    "Import 3D-Model...", 
+    "Execute CommandFile...", 
+    "Preferences", 
+    "Quit"
   }
   , 
   {
-    "Site", "update Station", "Load Land Mesh", "Load Land Texture", "Download Land Mesh", "Download Land Texture", "Download Toroposphere", "Download NAEFS", "Download SWOB", "Download CLMREC", "Download Aerial" 
+    "Site", 
+    "update Station", 
+    "Load Land Mesh", 
+    "Load Land Texture", 
+    "Download Land Mesh", 
+    "Download Land Texture", 
+    "Download Toroposphere", 
+    "Download NAEFS", 
+    "Download SWOB", 
+    "Download CLMREC", 
+    "Download Aerial" 
   }
   , 
   {
-    "Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Long-term (CLMREC)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)", "update NAEFS", "update SWOB", "update CLMREC", "update CWEEDS", "update TMYEPW", "update Aerial"
+    "Data", 
+    "Typical Year (TMY)", 
+    "Long-term (CWEEDS)", 
+    "Long-term (CLMREC)", 
+    "Real-time Observed (SWOB)", 
+    "Weather Forecast (NAEFS)", 
+    "update NAEFS", 
+    "update SWOB", 
+    "update CLMREC", 
+    "update CWEEDS", 
+    "update TMYEPW", 
+    "update Aerial"
   }
   , 
   {
-    "View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Display All Viewports", "Enlarge 3D Viewport", "Enlarge Map Viewport", "Enlarge Time Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at direction", "Look at selection", "Pan", "PanX", "PanY", "LandOrbit", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance", "3DModelSize", "SkydomeSize"
+    "View", 
+    "Camera >> Viewport", 
+    "GoTo Selected Camera", 
+    "Top", 
+    "Front", 
+    "Left", 
+    "Back", 
+    "Right", 
+    "Bottom", 
+    "S.W.", 
+    "S.E.", 
+    "N.E.", 
+    "N.W.", 
+    "Display All Viewports", 
+    "Enlarge 3D Viewport", 
+    "Enlarge Map Viewport", 
+    "Enlarge Time Viewport", 
+    "Perspective", 
+    "Orthographic", 
+    "Zoom", 
+    "Zoom as default", 
+    "Look at origin", 
+    "Look at direction", 
+    "Look at selection", 
+    "Pan", 
+    "PanX", 
+    "PanY", 
+    "LandOrbit", 
+    "Orbit", 
+    "OrbitXY", 
+    "OrbitZ", 
+    "CameraRoll", 
+    "CameraRollXY", 
+    "CameraRollZ", 
+    "TargetRoll", 
+    "TargetRollXY", 
+    "TargetRollZ", 
+    "TruckX", 
+    "TruckY", 
+    "TruckZ", 
+    "DistZ", 
+    "DistMouseXY", 
+    "CameraDistance", 
+    "3DModelSize", 
+    "SkydomeSize"
   }
   , 
   {
-    "Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Model2Ds", "Display/Hide Model3Ds", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected allSolids", "Display/Hide Selected allSections", "Display/Hide Selected allCameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Curves Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected REF Pivot", "Display/Hide Selected Group Pivot", "Display/Hide Selected Group Edges", "Display/Hide Selected Group Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide CLMREC points", "Display/Hide CLMREC nearest", "Display/Hide TMYEPW points", "Display/Hide TMYEPW nearest"
+    "Display", 
+    "Display/Hide Land Mesh", 
+    "Display/Hide Land Texture", 
+    "Display/Hide Land Points", 
+    "Display/Hide Land Depth", 
+    "Display/Hide Vertices", 
+    "Display/Hide Edges", 
+    "Display/Hide Normals", 
+    "Display/Hide Leaves", 
+    "Display/Hide Model1Ds",
+    "Display/Hide Model2Ds", 
+    "Display/Hide Model3Ds", 
+    "Display/Hide Solids", 
+    "Display/Hide Sections", 
+    "Display/Hide Cameras", 
+    "Display/Hide Sky", 
+    "Display/Hide Sun Path", 
+    "Display/Hide Sun Pattern", 
+    "Display/Hide Star", 
+    "Display/Hide Moon", 
+    "Display/Hide Troposphere", 
+    "Display/Hide Earth", 
+    "Display/Hide Solar Section", 
+    "Display/Hide Solid Section", 
+    "Display/Hide Wind Flow", 
+    "Display/Hide Selected allSolids", 
+    "Display/Hide Selected allSections", 
+    "Display/Hide Selected allCameras", 
+    "Display/Hide Selected LandPoints", 
+    "Display/Hide Selected Faces", 
+    "Display/Hide Selected Faces Vertex Count", 
+    "Display/Hide Selected Curves Vertex Count", 
+    "Display/Hide Selected Vertices", 
+    "Display/Hide Selected REF Pivot", 
+    "Display/Hide Selected Group Pivot", 
+    "Display/Hide Selected Group Edges", 
+    "Display/Hide Selected Group Box", 
+    "Display/Hide Selected 2D Edges", 
+    "Display/Hide Selected 1D Edges", 
+    "Display/Hide SWOB points", 
+    "Display/Hide SWOB nearest", 
+    "Display/Hide NAEFS points", 
+    "Display/Hide NAEFS nearest", 
+    "Display/Hide CWEEDS points", 
+    "Display/Hide CWEEDS nearest", 
+    "Display/Hide CLMREC points", 
+    "Display/Hide CLMREC nearest", 
+    "Display/Hide TMYEPW points", 
+    "Display/Hide TMYEPW nearest"
   }
   , 
   {
-    "Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation"
+    "Shade", 
+    "Shade Surface Wire", 
+    "Shade Surface Base", 
+    "Shade Surface White", 
+    "Shade Surface Materials", 
+    "Shade Global Solar", 
+    "Shade Vertex Solar", 
+    "Shade Vertex Solid", 
+    "Shade Vertex Elevation"
   }
   , 
   {
-    "Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Render Viewport", "PreBake Viewport", "Pre-bake Selected allSections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"
+    "Study", 
+    "Wind pattern (active)", 
+    "Wind pattern (passive)", 
+    "Urban solar potential (active)", 
+    "Urban solar potential (passive)", 
+    "Orientation potential (active)", 
+    "Orientation potential (passive)", 
+    "Hourly sun position (active)", 
+    "Hourly sun position (passive)", 
+    "View from sun & sky (active)", 
+    "View from sun & sky (passive)", 
+    "Annual cycle sun path (active)", 
+    "Annual cycle sun path (passive)", 
+    "Render Viewport", 
+    "PreBake Viewport", 
+    "Pre-bake Selected allSections", 
+    "Process Active Impact", 
+    "Process Passive Impact", 
+    "Process Solid Impact", 
+    "Run wind 3D-model"
   }
   , 
   {
@@ -48825,31 +48995,257 @@ String[][] UI_BAR_a_Items = {
   }
   , // Parameters 
   {
-    "Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"
+    "Layout", 
+    "Layout -2", 
+    "Layout -1", 
+    "Layout 0", 
+    "Layout 1", 
+    "Layout 2", 
+    "Layout 3", 
+    "Layout 4", 
+    "Layout 5", 
+    "Layout 6", 
+    "Layout 7", 
+    "Layout 8", 
+    "Layout 9", 
+    "Layout 10", 
+    "Layout 11", 
+    "Layout 12", 
+    "Layout 13", 
+    "Layout 14"
   }
   , 
   {
-    "Create", "Begin New Group at Origin", "Begin New Group at Pivot", "LandMesh >> Group", "LandGap >> Group", "Viewport >> Camera", "Camera", "Section", "Solid", "Point", "Spline", "Surface", "Model1Ds", "Tree", "Person", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"
+    "Create", 
+    "Begin New Group at Origin", 
+    "Begin New Group at Pivot", 
+    "LandMesh >> Group", 
+    "LandGap >> Group", 
+    "Viewport >> Camera", 
+    "Camera", 
+    "Section", 
+    "Solid", 
+    "Point", 
+    "Spline", 
+    "Surface", 
+    "Model1Ds", 
+    "Tree", 
+    "Person", 
+    "House1", 
+    "House2", 
+    "Box", 
+    "Cushion", 
+    "Cylinder", 
+    "Sphere", 
+    "Octahedron", 
+    "Icosahedron", 
+    "Tri", 
+    "Hyper", 
+    "Plane", 
+    "Poly", 
+    "Extrude", 
+    "Parametric 1", 
+    "Parametric 2", 
+    "Parametric 3", 
+    "Parametric 4", 
+    "Parametric 5", 
+    "Parametric 6", 
+    "Parametric 7", 
+    "Get dX", 
+    "Get dY", 
+    "Get dZ", 
+    "Get dXYZ", 
+    "Get dXY", 
+    "Get Angle"
   }
   , 
   {
-    "Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section", "Select Camera", "Select LandPoint", "Select allModel1Ds", "Select allModel2Ds", "Select Group", "Select Face", "Select Curve", "Select Vertex", "Soft Selection", "Group >> Vertex", "Group >> Curve", "Group >> Face", "Group >> Solid", "Group >> allModel2Ds", "Group >> allModel1Ds", "Model1Ds >> Group", "Model2Ds >> Group", "Solid >> Group", "Face >> Group", "Curve >> Group", "Vertex >> Group", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"
+    "Select", 
+    "Reverse Selection", 
+    "Deselect All", 
+    "Select All", 
+    "Select Solid", 
+    "Select Section", 
+    "Select Camera", 
+    "Select LandPoint", 
+    "Select allModel1Ds", 
+    "Select allModel2Ds", 
+    "Select Group", 
+    "Select Face", 
+    "Select Curve", 
+    "Select Vertex", 
+    "Soft Selection", 
+    "Group >> Vertex", 
+    "Group >> Curve", 
+    "Group >> Face", 
+    "Group >> Solid", 
+    "Group >> allModel2Ds", 
+    "Group >> allModel1Ds", 
+    "Model1Ds >> Group", 
+    "Model2Ds >> Group", 
+    "Solid >> Group", 
+    "Face >> Group", 
+    "Curve >> Group", 
+    "Vertex >> Group", 
+    "Vertex >> Face", 
+    "Face >> Vertex", 
+    "Click Select", 
+    "Click Select+", 
+    "Click Select-", 
+    "Window Select", 
+    "Window Select+", 
+    "Window Select-", 
+    "Select Near Vertices Selection", 
+    "Select All Isolated Vertices"
   }
   ,
  
   {
-    "Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from allGroups", "Group Selection", "Ungroup Selection", "Delete All Empty allGroups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Extrude Curve Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Auto-Normal Faces Selection", "Force Triangulate Faces Selection", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selection", "Reverse Visibility of All Curves", "Hide All Curves", "Hide Selected Curves", "Unhide Selected Curves", "Unhide All Curves", "Flatten Selected LandPoints"  }
-  , 
-  {
-    "Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip Normal", "Set-Out Normal", "Set-In Normal", "Get FirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change Weight", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"
+    "Edit", 
+    "Duplicate Selection (Identical)", 
+    "Duplicate Selection (Variation)", 
+    "Attach to Last Group", 
+    "Dettach from allGroups", 
+    "Group Selection", 
+    "Ungroup Selection", 
+    "Delete All Empty allGroups", 
+    "Delete Selection", 
+    "Delete All Isolated Vertices", 
+    "Delete Isolated Vertices Selection", 
+    "Separate Vertices Selection", 
+    "Reposition Vertices Selection", 
+    "Weld Objects Vertices Selection", 
+    "Weld Scene Vertices Selection", 
+    "Offset(above) Vertices", 
+    "Offset(below) Vertices", 
+    "Offset(expand) Vertices", 
+    "Offset(shrink) Vertices", 
+    "Extrude Face Edges", 
+    "Extrude Curve Edges", 
+    "Tessellation Triangular", 
+    "Tessellate Rectangular", 
+    "Tessellate Rows & Columns", 
+    "Auto-Normal Faces Selection", 
+    "Force Triangulate Faces Selection", 
+    "Insert Corner Opennings", 
+    "Insert Parallel Opennings", 
+    "Insert Rotated Opennings", 
+    "Insert Edge Opennings", 
+    "Reverse Visibility of All Faces", 
+    "Hide All Faces", 
+    "Hide Selected Faces", 
+    "Unhide Selected Faces", 
+    "Unhide All Faces", 
+    "Isolate Selection", 
+    "Reverse Visibility of All Curves", 
+    "Hide All Curves", 
+    "Hide Selected Curves", 
+    "Unhide Selected Curves", 
+    "Unhide All Curves", 
+    "Flatten Selected LandPoints"
   }
   , 
   {
-    "Match", "Save Current ReferenceBox", "Reset Saved ReferenceBox", "Use Selection ReferenceBox", "Use Origin ReferenceBox", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllallModel1DsProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllallModel1DsProps", "Assign Pivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"
+    "Modify", 
+    "Move", 
+    "MoveX", 
+    "MoveY", 
+    "MoveZ", 
+    "Rotate", 
+    "RotateX", 
+    "RotateY", 
+    "RotateZ", 
+    "Scale", 
+    "ScaleX", 
+    "ScaleY", 
+    "ScaleZ", 
+    "Power", 
+    "PowerX", 
+    "PowerY", 
+    "PowerZ", 
+    "Flip Normal", 
+    "Set-Out Normal", 
+    "Set-In Normal", 
+    "Get FirstVertex", 
+    "Change Seed/Material", 
+    "Change Tessellation", 
+    "Change Layer", 
+    "Change Visibility", 
+    "Change Weight", 
+    "Change DegreeMax", 
+    "Change DegreeDif", 
+    "Change DegreeMin", 
+    "Change TrunkSize", 
+    "Change LeafSize"
   }
   , 
   {
-    "Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG 3D Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC.", "ERASE_allModel1Ds", "ERASE_allModel2Ds", "ERASE_allGroups", "ERASE_allSolids", "ERASE_allSections", "ERASE_allCameras", "ERASE_Faces", "ERASE_Curves", "ERASE_All"
+    "Match", 
+    "Save Current ReferenceBox", 
+    "Reset Saved ReferenceBox", 
+    "Use Selection ReferenceBox", 
+    "Use Origin ReferenceBox", 
+    "PivotX:Minimum", 
+    "PivotX:Center", 
+    "PivotX:Maximum", 
+    "PivotY:Minimum", 
+    "PivotY:Center", 
+    "PivotY:Maximum", 
+    "PivotZ:Minimum", 
+    "PivotZ:Center", 
+    "PivotZ:Maximum", 
+    "Pick Seed/Material", 
+    "Pick Tessellation", 
+    "Pick Layer", 
+    "Pick Visibility", 
+    "Pick DegreeMax", 
+    "Pick DegreeDif", 
+    "Pick DegreeMin", 
+    "Pick TrunkSize", 
+    "Pick LeafSize", 
+    "Pick AllallModel1DsProps", 
+    "Assign Seed/Material", 
+    "Assign Tessellation", 
+    "Assign Layer", 
+    "Assign Visibility", 
+    "Assign DegreeMax", 
+    "Assign DegreeDif", 
+    "Assign DegreeMin", 
+    "Assign TrunkSize", 
+    "Assign LeafSize", 
+    "Assign AllallModel1DsProps", 
+    "Assign Pivot", 
+    "Drop on LandSurface", 
+    "Drop on ModelSurface (Up)", 
+    "Drop on ModelSurface (Down)"
+  }
+  , 
+  {
+    "Action", 
+    "Undo", 
+    "Redo", 
+    "JPG Time Graph", 
+    "PDF Time Graph", 
+    "JPG Location Graph", 
+    "PDF Location Graph", 
+    "JPG 3D Graph", 
+    "Screenshot", 
+    "Screenshot+Click", 
+    "Screenshot+Drag", 
+    "REC. Time Graph", 
+    "REC. Location Graph", 
+    "REC. Solid Graph", 
+    "REC. Screenshot", 
+    "Stop REC.", 
+    "ERASE_allModel1Ds", 
+    "ERASE_allModel2Ds", 
+    "ERASE_allGroups", 
+    "ERASE_allSolids", 
+    "ERASE_allSections", 
+    "ERASE_allCameras", 
+    "ERASE_Faces", 
+    "ERASE_Curves", 
+    "ERASE_All"
   }
 };
 
@@ -49021,34 +49417,38 @@ void SOLARCHVISION_draw_window_BAR_a () {
                   stroke(127); 
                   fill(127);
                 }
-              }                
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide allModel2Ds Objects")) {
+              }  
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Model1Ds")) {
+                if (Display_allModel1Ds == false) {
+                  stroke(127); 
+                  fill(127);
+                }
+              }               
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Model2Ds")) {
                 if (Display_allModel2Ds == false) {
                   stroke(127); 
                   fill(127);
                 }
-                //if (Display_allModel1Ds == false) {stroke(127); fill(127);}
-                //if (Display_Leaves == false) {stroke(127); fill(127);}
               } 
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Building Objects")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Model3Ds")) {
                 if (Display_allModel3Ds == false) {
                   stroke(127); 
                   fill(127);
                 }
               }           
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide allSolids")) {
-                if (Display_allSolids == false) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Solids")) {
+                if (allSolids.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
               }                  
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide allSections")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sections")) {
                 if (Display_allSections == false) {
                   stroke(127); 
                   fill(127);
                 }
               }          
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide allCameras")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Cameras")) {
                 if (Display_allCameras == false) {
                   stroke(127); 
                   fill(127);
@@ -49192,13 +49592,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
                   fill(127);
                 }
               }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected 2½D Edges")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected 2D Edges")) {
                 if (allSelections.Model2D_displayEdges == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected ∞-D Edges")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected 1D Edges")) {
                 if (allSelections.Model1D_displayEdges == false) {
                   stroke(127); 
                   fill(127);
@@ -49390,7 +49790,7 @@ String[][] UI_BAR_b_Items = {
   , 
 
   {
-    "4", "LandP", "Model1Ds", "2½D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
+    "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
   }
   , 
   {
@@ -51250,7 +51650,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setString("Display_allModel1Ds", Boolean.toString(Display_allModel1Ds));
     parent.setString("Display_Leaves", Boolean.toString(Display_Leaves));
   
-    parent.setString("Display_allSolids", Boolean.toString(Display_allSolids));
+    
     parent.setString("Display_allSections", Boolean.toString(Display_allSections));
     parent.setString("Display_allCameras", Boolean.toString(Display_allCameras));
   
@@ -51643,7 +52043,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_allModel1Ds = Boolean.parseBoolean(parent.getString("Display_allModel1Ds"));
       Display_Leaves = Boolean.parseBoolean(parent.getString("Display_Leaves"));
   
-      Display_allSolids = Boolean.parseBoolean(parent.getString("Display_allSolids"));
+      
       Display_allSections = Boolean.parseBoolean(parent.getString("Display_allSections"));
       Display_allCameras = Boolean.parseBoolean(parent.getString("Display_allCameras"));
   
