@@ -34939,7 +34939,6 @@ class solarchvision_Cameras {
         lineSTR += ",";
       }
       lineSTR += nf(this.Type[i], 0);
-      lineSTR += ",";
 
       child.setContent(lineSTR);
     }
@@ -35467,35 +35466,34 @@ class solarchvision_Sections {
 
     {
       XML parent = xml.addChild(this.CLASS_STAMP + ".SolarImpact");
-      int ni = this.SolarImpact.length;
+      int ni = 0, nj = 0, nk = 0;
+      
+      ni = this.SolarImpact.length;
       if (ni > 0) {
-        int nj = this.SolarImpact[0].length;
+        nj = this.SolarImpact[0].length;
         if (nj > 0) {
-          int nk = this.SolarImpact[0][0].length;
-          parent.setInt("ni", ni);
-          parent.setInt("nj", nj);
-          parent.setInt("nk", nk);
+          nk = this.SolarImpact[0][0].length;
+        }
+      }
       
-          println("ni", ni);
-          println("nj", nj);
-          println("nk", nk);
-      
-          for (int i = 0; i < ni; i++) {
-            for (int j = 0; j < nj; j++) {
-              for (int k = 0; k < nk; k++) {
-      
-                String the_filename = "SolarImpact_" + nf((i * nj + j) * nk + k, 0) + ".bmp";
-        
-                String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
-        
-                println("Saving texture:", TEXTURE_path);
-                this.SolarImpact[i][j][k].save(TEXTURE_path);
-        
-                XML child = parent.addChild("item");
-                child.setInt("id", (i * nj + j) * nk + k); 
-                child.setContent(TEXTURE_path);
-              }
-            }
+      parent.setInt("ni", ni);
+      parent.setInt("nj", nj);
+      parent.setInt("nk", nk);
+  
+      for (int i = 0; i < ni; i++) {
+        for (int j = 0; j < nj; j++) {
+          for (int k = 0; k < nk; k++) {
+  
+            String the_filename = "SolarImpact_" + nf((i * nj + j) * nk + k, 0) + ".bmp";
+    
+            String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
+    
+            println("Saving texture:", TEXTURE_path);
+            this.SolarImpact[i][j][k].save(TEXTURE_path);
+    
+            XML child = parent.addChild("item");
+            child.setInt("id", (i * nj + j) * nk + k); 
+            child.setContent(TEXTURE_path);
           }
         }
       }
