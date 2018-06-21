@@ -2446,7 +2446,7 @@ class solarchvision_WIN3D {
       
       allCurves.draw(TypeWindow.WIN3D);
   
-      allModel3Ds.draw_Vertices();
+      allPoints.draw();
   
       allModel1Ds.draw();
   
@@ -7123,7 +7123,7 @@ class solarchvision_ROLLOUT {
   
         //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
-        //allModel3Ds.DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayVertices", allModel3Ds.DisplayVertices, 0, 1, 1), 1));
+        //allPoints.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayVertices", allPoints.Display, 0, 1, 1), 1));
         //allFaces.Edges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allFaces.Edges, 0, 1, 1), 1));
         //allFaces.Normals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayNormals", allFaces.Normals, 0, 1, 1), 1));
   
@@ -7605,7 +7605,7 @@ int pre_WIN3D_FacesShade;
 
 int pre_allModel3Ds_Tessellation;
 
-boolean pre_allModel3Ds_DisplayVertices;
+boolean pre_allPoints_Display;
 boolean pre_allFaces_Edges;
 boolean pre_allFaces_Normals;
 
@@ -8314,7 +8314,7 @@ void SOLARCHVISION_empty_Materials_DiffuseArea () {
 
 
 
-float[][] allVertices = new float[0][3];
+
 
 
 class solarchvision_Faces {
@@ -15088,7 +15088,7 @@ void draw () {
 
         pre_Selection_Model1D_displayEdges = allSelections.Model1D_displayEdges;
         pre_Selection_Model2D_displayEdges = allSelections.Model2D_displayEdges;
-        pre_allModel3Ds_DisplayVertices = allModel3Ds.DisplayVertices;
+        pre_allPoints_Display = allPoints.Display;
         pre_allFaces_Edges = allFaces.Edges;
         pre_allFaces_Normals = allFaces.Normals;
 
@@ -15520,7 +15520,7 @@ void draw () {
         if (pre_allSolidImpacts_Display_Points != allSolidImpacts.Display_Points) WIN3D.update = true;
         if (pre_allSolidImpacts_Display_Lines != allSolidImpacts.Display_Lines) WIN3D.update = true;
 
-        if (pre_allModel3Ds_DisplayVertices != allModel3Ds.DisplayVertices) WIN3D.update = true;
+        if (pre_allPoints_Display != allPoints.Display) WIN3D.update = true;
         if (pre_allFaces_Edges != allFaces.Edges) WIN3D.update = true;
         if (pre_allFaces_Normals != allFaces.Normals) WIN3D.update = true;
 
@@ -26924,18 +26924,100 @@ solarchvision_Solids allSolids = new solarchvision_Solids();
 
 
 
+ 
+float[][] allVertices = new float[0][3];
 
+// to increase performance we defined vertices array outside Points class
 
+class solarchvision_Points {
+  
+  private final static String CLASS_STAMP = "Points";
+    
+  boolean Display = false;
+  
+  
+  void draw () {
+  
+    if (this.Display) {
+      
+      WIN3D.graphics.strokeWeight(3);
+    
+      WIN3D.graphics.stroke(0); 
+      
+      WIN3D.graphics.noFill();      
+      
+      float d = 0.5; // <<<<<<<<<<<<<< distance 
+  
+      for (int f = 0; f < allVertices.length; f++) {    
+                
+        float x = allVertices[f][0];
+        float y = allVertices[f][1];
+        float z = allVertices[f][2];
+        
+        WIN3D.graphics.line((x - d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, (x + d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
+  
+        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -((y - d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -((y + d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
+  
+        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z - d) * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z + d) * OBJECTS_scale * WIN3D.scale);
+              
+      }
+      
+      WIN3D.graphics.strokeWeight(0);
+    }
+  }  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    parent.setInt("ni", allVertices.length);
+    for (int i = 0; i < allVertices.length; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allVertices[i].length; j++) {
+      for (int j = 0; j < 3; j++) { // x, y, z 
+        lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j < allVertices[i].length - 1) lineSTR += ",";
+      }
+      child.setContent(lineSTR);
+    }    
+
+    parent.setString("Display", Boolean.toString(this.Display));
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    int ni = parent.getInt("ni");
+    allVertices = new float [ni][3];
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int j = 0; j < parts.length; j++) {
+        allVertices[i][j] = float(parts[j]);
+      }
+    }    
+    
+    this.Display = Boolean.parseBoolean(parent.getString("Display"));
+  }      
+  
+  
+}
+
+solarchvision_Points allPoints = new solarchvision_Points();
+
+          
 
 class solarchvision_Model3Ds {
   
   private final static String CLASS_STAMP = "Model3Ds";
-    
-  boolean DisplayVertices = false;
-  
-  
-
-
 
   void beginNewCurve () {
   
@@ -34443,37 +34525,7 @@ class solarchvision_Model3Ds {
   
   
   
-  void draw_Vertices () {
-  
-    WIN3D.graphics.strokeWeight(3);
-  
-    WIN3D.graphics.stroke(0); 
-    
-    WIN3D.graphics.noFill();
-     
-  
-    if (this.DisplayVertices) {
-      
-      float d = 0.5; // <<<<<<<<<<<<<< distance 
-  
-      for (int f = 0; f < allVertices.length; f++) {    
-                
-        float x = allVertices[f][0];
-        float y = allVertices[f][1];
-        float z = allVertices[f][2];
-        
-        WIN3D.graphics.line((x - d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, (x + d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
-  
-        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -((y - d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -((y + d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
-  
-        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z - d) * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z + d) * OBJECTS_scale * WIN3D.scale);
-  
-              
-      }
-    }
-    
-    WIN3D.graphics.strokeWeight(0);
-  }
+
   
   
   
@@ -41187,7 +41239,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Vertices")) {
-              allModel3Ds.DisplayVertices = !allModel3Ds.DisplayVertices;
+              allPoints.Display = !allPoints.Display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -49471,7 +49523,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }  
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Vertices")) {
-                if (allModel3Ds.DisplayVertices == false) {
+                if (allPoints.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51963,9 +52015,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setString("Earth3D.Display_Texture", Boolean.toString(Earth3D.Display_Texture));
   
   
-    parent.setString("Model3Ds.DisplayVertices", Boolean.toString(allModel3Ds.DisplayVertices));       
-    parent.setString("Model3Ds.DisplayEdges", Boolean.toString(allFaces.Edges));
-    parent.setString("Model3Ds.DisplayNormals", Boolean.toString(allFaces.Normals));
+           
+
     parent.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
     //parent.setInt("Camera_Variation", Camera_Variation);
     parent.setString("STUDY.DisplayRaws", Boolean.toString(STUDY.DisplayRaws));
@@ -52044,22 +52095,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   }
 
 
-  println("Saving:Vertices");
-  {
-    XML parent = xml.addChild("Vertices");
-    parent.setInt("ni", allVertices.length);
-    for (int i = 0; i < allVertices.length; i++) {
-      XML child = parent.addChild("item");
-      child.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allVertices[i].length; j++) {
-      for (int j = 0; j < 3; j++) { // x, y, z 
-        lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j < allVertices[i].length - 1) lineSTR += ",";
-      }
-      child.setContent(lineSTR);
-    }
-  }
+  
+  allPoints.to_XML(xml);
 
   allCurves.to_XML(xml);
 
@@ -52357,10 +52394,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Earth3D.Display_Surface = Boolean.parseBoolean(parent.getString("Earth3D.Display_Surface"));
       Earth3D.Display_Texture = Boolean.parseBoolean(parent.getString("Earth3D.Display_Texture"));
   
-  
-      allModel3Ds.DisplayVertices = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayVertices"));  
-      allFaces.Edges = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayEdges"));
-      allFaces.Normals = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayNormals"));
+
+
       Display_WindFlow = Boolean.parseBoolean(parent.getString("Display_WindFlow"));
       Camera_Variation = parent.getInt("Camera_Variation");
       STUDY.DisplayRaws = Boolean.parseBoolean(parent.getString("STUDY.DisplayRaws"));
@@ -52449,20 +52484,9 @@ void SOLARCHVISION_load_project (String myFile) {
       } 
     }
   
-    {  
-      println("Loading:Vertices");
-      XML parent = xml.getChild("Vertices");
-      int ni = parent.getInt("ni");
-      allVertices = new float [ni][3];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          allVertices[i][j] = float(parts[j]);
-        }
-      }
-    }
+
+    
+    allPoints.from_XML(xml);
     
     allCurves.from_XML(xml);
   
@@ -52479,8 +52503,6 @@ void SOLARCHVISION_load_project (String myFile) {
     allSolidImpacts.from_XML(xml);
   
     allSections.from_XML(xml);
-  
-
     
     allModel1Ds.from_XML(xml);
     
