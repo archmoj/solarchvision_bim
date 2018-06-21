@@ -8402,9 +8402,9 @@ class solarchvision_Faces {
               float[][] base_Vertices = new float [this.nodes[f].length][3];
               for (int j = 0; j < this.nodes[f].length; j++) {
                 int vNo = this.nodes[f][j];
-                base_Vertices[j][0] = allVertices[vNo][0];
-                base_Vertices[j][1] = allVertices[vNo][1];
-                base_Vertices[j][2] = allVertices[vNo][2];
+                base_Vertices[j][0] = allPoints.getX(vNo);
+                base_Vertices[j][1] = allPoints.getY(vNo);
+                base_Vertices[j][2] = allPoints.getZ(vNo);
               }
     
               float G_x0 = 0;
@@ -8489,7 +8489,7 @@ class solarchvision_Faces {
               for (int j = 0; j < this.nodes[f].length; j++) {
                 int vNo = this.nodes[f][j];
     
-                WIN3D.graphics.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D.scale, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D.scale), allVertices[vNo][2] * OBJECTS_scale * WIN3D.scale);
+                WIN3D.graphics.vertex(allPoints.getX(vNo) * OBJECTS_scale * WIN3D.scale, -(allPoints.getY(vNo) * OBJECTS_scale * WIN3D.scale), allPoints.getZ(vNo) * OBJECTS_scale * WIN3D.scale);
               }    
     
               WIN3D.graphics.endShape(CLOSE);
@@ -8508,9 +8508,9 @@ class solarchvision_Faces {
               float[][] base_Vertices = new float [this.nodes[f].length][3];
               for (int j = 0; j < this.nodes[f].length; j++) {
                 int vNo = this.nodes[f][j];
-                base_Vertices[j][0] = allVertices[vNo][0];
-                base_Vertices[j][1] = allVertices[vNo][1];
-                base_Vertices[j][2] = allVertices[vNo][2];
+                base_Vertices[j][0] = allPoints.getX(vNo);
+                base_Vertices[j][1] = allPoints.getY(vNo);
+                base_Vertices[j][2] = allPoints.getZ(vNo);
               }
     
               for (int n = 0; n < TotalSubNo; n++) {
@@ -8666,9 +8666,9 @@ class solarchvision_Faces {
                     float[][] base_Vertices = new float [this.nodes[f].length][3];
                     for (int j = 0; j < this.nodes[f].length; j++) {
                       int vNo = this.nodes[f][j];
-                      base_Vertices[j][0] = allVertices[vNo][0];
-                      base_Vertices[j][1] = allVertices[vNo][1];
-                      base_Vertices[j][2] = allVertices[vNo][2];
+                      base_Vertices[j][0] = allPoints.getX(vNo);
+                      base_Vertices[j][1] = allPoints.getY(vNo);
+                      base_Vertices[j][2] = allPoints.getZ(vNo);
                     }
     
                     for (int n = 0; n < TotalSubNo; n++) {
@@ -8857,9 +8857,9 @@ class solarchvision_Faces {
                     float[][] base_Vertices = new float [this.nodes[f].length][3];
                     for (int j = 0; j < this.nodes[f].length; j++) {
                       int vNo = this.nodes[f][j];
-                      base_Vertices[j][0] = allVertices[vNo][0];
-                      base_Vertices[j][1] = allVertices[vNo][1];
-                      base_Vertices[j][2] = allVertices[vNo][2];
+                      base_Vertices[j][0] = allPoints.getX(vNo);
+                      base_Vertices[j][1] = allPoints.getY(vNo);
+                      base_Vertices[j][2] = allPoints.getZ(vNo);
                     }
     
                     for (int n = 0; n < TotalSubNo; n++) {
@@ -9112,9 +9112,9 @@ class solarchvision_Faces {
                 float[][] base_Vertices = new float [this.nodes[f].length][3];
                 for (int j = 0; j < this.nodes[f].length; j++) {
                   int vNo = this.nodes[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
+                  base_Vertices[j][0] = allPoints.getX(vNo);
+                  base_Vertices[j][1] = allPoints.getY(vNo);
+                  base_Vertices[j][2] = allPoints.getZ(vNo);
                 }
         
                 for (int n = 0; n < TotalSubNo; n++) {
@@ -9293,9 +9293,9 @@ class solarchvision_Faces {
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
               int vNo = this.nodes[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
+              base_Vertices[j][0] = allPoints.getX(vNo);
+              base_Vertices[j][1] = allPoints.getY(vNo);
+              base_Vertices[j][2] = allPoints.getZ(vNo);
             }
     
             for (int n = 0; n < TotalSubNo; n++) {
@@ -9541,9 +9541,9 @@ class solarchvision_Curves {
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
               int vNo = this.nodes[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
+              base_Vertices[j][0] = allPoints.getX(vNo);
+              base_Vertices[j][1] = allPoints.getY(vNo);
+              base_Vertices[j][2] = allPoints.getZ(vNo);
             }
             
             
@@ -11650,10 +11650,10 @@ class solarchvision_Selections {
             
             if (n < 5) { // works if n==3 or n==4
         
-              float[] A = allVertices[allFaces.nodes[f][0]];
-              float[] B = allVertices[allFaces.nodes[f][1]];
-              float[] C = allVertices[allFaces.nodes[f][n - 2]];
-              float[] D = allVertices[allFaces.nodes[f][n - 1]];
+              float[] A = allPoints.getPosition(allFaces.nodes[f][0]);
+              float[] B = allPoints.getPosition(allFaces.nodes[f][1]);
+              float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
+              float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
               
               float[] AC = SOLARCHVISION_3xSub(A, C);
               float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -11693,9 +11693,9 @@ class solarchvision_Selections {
               }; 
               for (int j = 0; j < n; j++) {
                 tmpFace[j] = allFaces.nodes[f][j];
-                G[0] += allVertices[tmpFace[j]][0] / float(n); 
-                G[1] += allVertices[tmpFace[j]][1] / float(n);
-                G[2] += allVertices[tmpFace[j]][2] / float(n);
+                G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+                G[1] += allPoints.getY(tmpFace[j]) / float(n);
+                G[2] += allPoints.getZ(tmpFace[j]) / float(n);
               }  
               
               for (int j = 0; j < n; j++) {
@@ -11703,15 +11703,15 @@ class solarchvision_Selections {
                 int j_next = (j + 1) % n;
         
                 float[] A = {
-                  allVertices[allFaces.nodes[f][j]][0],
-                  allVertices[allFaces.nodes[f][j]][1],
-                  allVertices[allFaces.nodes[f][j]][2]
+                  allPoints.getX(allFaces.nodes[f][j]),
+                  allPoints.getY(allFaces.nodes[f][j]),
+                  allPoints.getZ(allFaces.nodes[f][j])
                 };            
                 
                 float[] B = {
-                  allVertices[allFaces.nodes[f][j_next]][0],
-                  allVertices[allFaces.nodes[f][j_next]][1],
-                  allVertices[allFaces.nodes[f][j_next]][2]
+                  allPoints.getX(allFaces.nodes[f][j_next]),
+                  allPoints.getY(allFaces.nodes[f][j_next]),
+                  allPoints.getZ(allFaces.nodes[f][j_next])
                 };                
       
                 float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -11986,9 +11986,9 @@ class solarchvision_Selections {
       if ((Current_ObjectCategory == ObjectCategory.GROUP) || (Current_ObjectCategory == ObjectCategory.FACE) || (Current_ObjectCategory == ObjectCategory.CURVE) || (Current_ObjectCategory == ObjectCategory.VERTEX) || (Current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
         int n = theVertices[q];
   
-        x = allVertices[n][0];
-        y = allVertices[n][1];
-        z = allVertices[n][2];
+        x = allPoints.getX(n);
+        y = allPoints.getY(n);
+        z = allPoints.getZ(n);
       }
       if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
         int n = theVertices[q];
@@ -12148,9 +12148,9 @@ class solarchvision_Selections {
   
       int n = PolymeshVertices[q];
   
-      allVertices[n][0] += dx; 
-      allVertices[n][1] += dy;
-      allVertices[n][2] += dz;
+      allPoints.setX(n, allPoints.getX(n) + dx); 
+      allPoints.setY(n, allPoints.getY(n) + dy);
+      allPoints.setZ(n, allPoints.getZ(n) + dz);
     }
   
     boolean allSolids_updated = false;
@@ -12208,9 +12208,9 @@ class solarchvision_Selections {
   
       int n = PolymeshVertices[q];
   
-      float x = allVertices[n][0]; 
-      float y = allVertices[n][1]; 
-      float z = allVertices[n][2];
+      float x = allPoints.getX(n); 
+      float y = allPoints.getY(n); 
+      float z = allPoints.getZ(n);
   
       float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -12248,9 +12248,9 @@ class solarchvision_Selections {
       y = B[1];
       z = B[2];
   
-      allVertices[n][0] = x; 
-      allVertices[n][1] = y;
-      allVertices[n][2] = z;
+      allPoints.setX(n, x); 
+      allPoints.setY(n, y);
+      allPoints.setZ(n, z);
     }
   
   
@@ -12497,9 +12497,9 @@ class solarchvision_Selections {
   
       int n = PolymeshVertices[q];
   
-      float x = allVertices[n][0]; 
-      float y = allVertices[n][1]; 
-      float z = allVertices[n][2];
+      float x = allPoints.getX(n); 
+      float y = allPoints.getY(n); 
+      float z = allPoints.getZ(n);
   
       float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -12513,9 +12513,9 @@ class solarchvision_Selections {
       y = B[1];
       z = B[2];
   
-      allVertices[n][0] = x; 
-      allVertices[n][1] = y;
-      allVertices[n][2] = z;
+      allPoints.setX(n, x); 
+      allPoints.setY(n, y);
+      allPoints.setZ(n, z);
     }
   
     int n1 = allModel2Ds.PEOPLE_Files_Num;
@@ -12655,9 +12655,9 @@ class solarchvision_Selections {
   
       int f = FaceVertices[q];
   
-      allVertices[f][0] += dx; 
-      allVertices[f][1] += dy;
-      allVertices[f][2] += dz;
+      allPoints.setX(f, allPoints.getX(f) + dx); 
+      allPoints.setY(f, allPoints.getY(f) + dy);
+      allPoints.setZ(f, allPoints.getZ(f) + dz);
     }
   }
   
@@ -12669,22 +12669,22 @@ class solarchvision_Selections {
   
       int f = FaceVertices[q];
   
-      float x = allVertices[f][0] - x0; 
-      float y = allVertices[f][1] - y0; 
-      float z = allVertices[f][2] - z0;
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allVertices[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-        allVertices[f][1] = y0 + (x * sin(r) + y * cos(r));
-        allVertices[f][2] = z0 + (z);
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
       } else if (the_Vector == 1) {
-        allVertices[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-        allVertices[f][1] = y0 + (y);
-        allVertices[f][2] = z0 + (z * cos(r) - x * sin(r));
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allVertices[f][0] = x0 + (x); 
-        allVertices[f][1] = y0 + (y * cos(r) - z * sin(r));
-        allVertices[f][2] = z0 + (y * sin(r) + z * cos(r));
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
   }
@@ -12697,9 +12697,9 @@ class solarchvision_Selections {
   
       int f = FaceVertices[q];
   
-      float x = allVertices[f][0];
-      float y = allVertices[f][1];
-      float z = allVertices[f][2];
+      float x = allPoints.getX(f);
+      float y = allPoints.getY(f);
+      float z = allPoints.getZ(f);
   
       float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -12713,9 +12713,9 @@ class solarchvision_Selections {
       y = B[1];
       z = B[2];    
   
-      allVertices[f][0] = x; 
-      allVertices[f][1] = y;
-      allVertices[f][2] = z;
+      allPoints.setX(f, x); 
+      allPoints.setY(f, y);
+      allPoints.setZ(f, z);
     }
   }
   
@@ -12728,9 +12728,9 @@ class solarchvision_Selections {
   
       int f = CurveVertices[q];
   
-      allVertices[f][0] += dx; 
-      allVertices[f][1] += dy;
-      allVertices[f][2] += dz;
+      allPoints.setX(f, allPoints.getX(f) + dx); 
+      allPoints.setY(f, allPoints.getY(f) + dy);
+      allPoints.setZ(f, allPoints.getZ(f) + dz);
     }
   }
   
@@ -12742,22 +12742,22 @@ class solarchvision_Selections {
   
       int f = CurveVertices[q];
   
-      float x = allVertices[f][0] - x0; 
-      float y = allVertices[f][1] - y0; 
-      float z = allVertices[f][2] - z0;
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allVertices[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-        allVertices[f][1] = y0 + (x * sin(r) + y * cos(r));
-        allVertices[f][2] = z0 + (z);
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
       } else if (the_Vector == 1) {
-        allVertices[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-        allVertices[f][1] = y0 + (y);
-        allVertices[f][2] = z0 + (z * cos(r) - x * sin(r));
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allVertices[f][0] = x0 + (x); 
-        allVertices[f][1] = y0 + (y * cos(r) - z * sin(r));
-        allVertices[f][2] = z0 + (y * sin(r) + z * cos(r));
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
   }
@@ -12770,9 +12770,9 @@ class solarchvision_Selections {
   
       int f = CurveVertices[q];
   
-      float x = allVertices[f][0];
-      float y = allVertices[f][1];
-      float z = allVertices[f][2];
+      float x = allPoints.getX(f);
+      float y = allPoints.getY(f);
+      float z = allPoints.getZ(f);
   
       float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -12786,9 +12786,9 @@ class solarchvision_Selections {
       y = B[1];
       z = B[2];    
   
-      allVertices[f][0] = x; 
-      allVertices[f][1] = y;
-      allVertices[f][2] = z;
+      allPoints.setX(f, x); 
+      allPoints.setY(f, y);
+      allPoints.setZ(f, z);
     }
   }
   
@@ -12798,9 +12798,9 @@ class solarchvision_Selections {
   
       int f = this.Vertex_ids[q];
   
-      allVertices[f][0] += dx; 
-      allVertices[f][1] += dy;
-      allVertices[f][2] += dz;
+      allPoints.setX(f, allPoints.getX(f) + dx); 
+      allPoints.setY(f, allPoints.getY(f) + dy);
+      allPoints.setZ(f, allPoints.getZ(f) + dz);
     }
   }
   
@@ -12811,22 +12811,22 @@ class solarchvision_Selections {
   
       int f = this.Vertex_ids[q];
   
-      float x = allVertices[f][0] - x0; 
-      float y = allVertices[f][1] - y0; 
-      float z = allVertices[f][2] - z0;
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allVertices[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-        allVertices[f][1] = y0 + (x * sin(r) + y * cos(r));
-        allVertices[f][2] = z0 + (z);
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
       } else if (the_Vector == 1) {
-        allVertices[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-        allVertices[f][1] = y0 + (y);
-        allVertices[f][2] = z0 + (z * cos(r) - x * sin(r));
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allVertices[f][0] = x0 + (x); 
-        allVertices[f][1] = y0 + (y * cos(r) - z * sin(r));
-        allVertices[f][2] = z0 + (y * sin(r) + z * cos(r));
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
   }
@@ -12838,9 +12838,9 @@ class solarchvision_Selections {
   
       int f = this.Vertex_ids[q];
   
-      float x = allVertices[f][0]; 
-      float y = allVertices[f][1]; 
-      float z = allVertices[f][2];
+      float x = allPoints.getX(f); 
+      float y = allPoints.getY(f); 
+      float z = allPoints.getZ(f);
   
       float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -12854,9 +12854,9 @@ class solarchvision_Selections {
       y = B[1];
       z = B[2];
   
-      allVertices[f][0] = x; 
-      allVertices[f][1] = y;
-      allVertices[f][2] = z;
+      allPoints.setX(f, x); 
+      allPoints.setY(f, y);
+      allPoints.setZ(f, z);
     }
   }
   
@@ -12882,9 +12882,9 @@ class solarchvision_Selections {
   
       float v = this.Vertex_softSelectionValues[q];
   
-      allVertices[f][0] += dx * v; 
-      allVertices[f][1] += dy * v;
-      allVertices[f][2] += dz * v;
+      allPoints.setX(f, allPoints.getX(f) + dx * v); 
+      allPoints.setY(f, allPoints.getY(f) + dy * v);
+      allPoints.setZ(f, allPoints.getZ(f) + dz * v);
     }
   }
   
@@ -12897,22 +12897,22 @@ class solarchvision_Selections {
   
       float v = this.Vertex_softSelectionValues[q];
   
-      float x = allVertices[f][0] - x0; 
-      float y = allVertices[f][1] - y0; 
-      float z = allVertices[f][2] - z0;
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allVertices[f][0] = x0 + (x * cos(r * v) - y * sin(r * v)); 
-        allVertices[f][1] = y0 + (x * sin(r * v) + y * cos(r * v));
-        allVertices[f][2] = z0 + (z);
+        allPoints.setX(f, x0 + (x * cos(r * v) - y * sin(r * v))); 
+        allPoints.setY(f, y0 + (x * sin(r * v) + y * cos(r * v)));
+        allPoints.setZ(f, z0 + (z));
       } else if (the_Vector == 1) {
-        allVertices[f][0] = x0 + (z * sin(r * v) + x * cos(r * v)); 
-        allVertices[f][1] = y0 + (y);
-        allVertices[f][2] = z0 + (z * cos(r * v) - x * sin(r * v));
+        allPoints.setX(f, x0 + (z * sin(r * v) + x * cos(r * v))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r * v) - x * sin(r * v)));
       } else if (the_Vector == 0) {
-        allVertices[f][0] = x0 + (x); 
-        allVertices[f][1] = y0 + (y * cos(r * v) - z * sin(r * v));
-        allVertices[f][2] = z0 + (y * sin(r * v) + z * cos(r * v));
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r * v) - z * sin(r * v)));
+        allPoints.setZ(f, z0 + (y * sin(r * v) + z * cos(r * v)));
       }
     }
   }
@@ -12927,13 +12927,13 @@ class solarchvision_Selections {
   
       float v = this.Vertex_softSelectionValues[q];    
   
-      float x = allVertices[f][0] - x0; 
-      float y = allVertices[f][1] - y0; 
-      float z = allVertices[f][2] - z0;
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
   
-      allVertices[f][0] = (x0 + sx * x) * v + (x0 + x) * (1 - v); 
-      allVertices[f][1] = (y0 + sy * y) * v + (y0 + y) * (1 - v); 
-      allVertices[f][2] = (z0 + sz * z) * v + (z0 + z) * (1 - v);
+      allPoints.setX(f, (x0 + sx * x) * v + (x0 + x) * (1 - v)); 
+      allPoints.setY(f, (y0 + sy * y) * v + (y0 + y) * (1 - v)); 
+      allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
     }
   }
   
@@ -20046,9 +20046,9 @@ void SOLARCHVISION_export_objects_SCR () {
 
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
 
-        float x = allVertices[allFaces.nodes[f][j]][0];
-        float y = allVertices[allFaces.nodes[f][j]][1];
-        float z = allVertices[allFaces.nodes[f][j]][2];
+        float x = allPoints.getX(allFaces.nodes[f][j]);
+        float y = allPoints.getY(allFaces.nodes[f][j]);
+        float z = allPoints.getZ(allFaces.nodes[f][j]);
 
         scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
       }
@@ -20063,9 +20063,9 @@ void SOLARCHVISION_export_objects_SCR () {
 
     for (int j = 0; j < allCurves.nodes[f].length; j++) {
 
-      float x = allVertices[allCurves.nodes[f][j]][0];
-      float y = allVertices[allCurves.nodes[f][j]][1];
-      float z = allVertices[allCurves.nodes[f][j]][2];
+      float x = allPoints.getX(allCurves.nodes[f][j]);
+      float y = allPoints.getY(allCurves.nodes[f][j]);
+      float z = allPoints.getZ(allCurves.nodes[f][j]);
 
       scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
     }
@@ -21048,7 +21048,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
         if (vertexNumber > 0) {
           newFace[n] = importVerticeNumber[vertexNumber];
         } else if (vertexNumber < 0) { // for negative numbering
-          newFace[n] = allVertices.length - abs(vertexNumber);
+          newFace[n] = allPoints.getLength() - abs(vertexNumber);
         } else { // case 0
         }
       }
@@ -21283,9 +21283,9 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
         int vNo = allFaces.nodes[f][j];
-        base_Vertices[j][0] = allVertices[vNo][0];
-        base_Vertices[j][1] = allVertices[vNo][1];
-        base_Vertices[j][2] = allVertices[vNo][2];
+        base_Vertices[j][0] = allPoints.getX(vNo);
+        base_Vertices[j][1] = allPoints.getY(vNo);
+        base_Vertices[j][2] = allPoints.getZ(vNo);
       }
 
       for (int n = 0; n < TotalSubNo; n++) {
@@ -23776,10 +23776,10 @@ class solarchvision_Land3D {
               if (target_window == TypeWindow.LandMesh) {
                 if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center 
                   int[] newFace = new int[4];
-                  newFace[0] = allVertices.length - 4;
-                  newFace[1] = allVertices.length - 3;
-                  newFace[2] = allVertices.length - 2;
-                  newFace[3] = allVertices.length - 1;
+                  newFace[0] = allPoints.getLength() - 4;
+                  newFace[1] = allPoints.getLength() - 3;
+                  newFace[2] = allPoints.getLength() - 2;
+                  newFace[3] = allPoints.getLength() - 1;
                   allModel3Ds.add_Face(newFace);
                 }
               }
@@ -26902,6 +26902,49 @@ class solarchvision_Points {
     
   boolean Display = false;
   
+  void setX (int n, float x) { 
+  
+    allVertices[n][0] = x;
+  }   
+
+  void setY (int n, float y) { 
+  
+    allVertices[n][1] = y;
+  }   
+
+  void setZ (int n, float z) { 
+  
+    allVertices[n][2] = z;
+  }   
+
+  
+  float getX (int n) { 
+  
+    return allVertices[n][0];
+  } 
+
+  float getY (int n) { 
+  
+    return allVertices[n][1];
+  } 
+
+  float getZ (int n) { 
+  
+    return allVertices[n][2];
+  } 
+
+
+  float[] getPosition (int n) {
+   
+    float[] result = {this.getX(n), this.getY(n), this.getZ(n)};
+  
+    return result;
+  } 
+  
+  int getLength () {
+    return  allVertices.length;
+  }
+  
   
   void draw () {
   
@@ -26915,11 +26958,11 @@ class solarchvision_Points {
       
       float d = 0.5; // <<<<<<<<<<<<<< distance 
   
-      for (int f = 0; f < allVertices.length; f++) {    
+      for (int f = 0; f < allPoints.getLength(); f++) {    
                 
-        float x = allVertices[f][0];
-        float y = allVertices[f][1];
-        float z = allVertices[f][2];
+        float x = allPoints.getX(f);
+        float y = allPoints.getY(f);
+        float z = allPoints.getZ(f);
         
         WIN3D.graphics.line((x - d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, (x + d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
   
@@ -26938,16 +26981,16 @@ class solarchvision_Points {
     println("Saving:" + this.CLASS_STAMP);
     
     XML parent = xml.addChild(this.CLASS_STAMP);
-    parent.setInt("ni", allVertices.length);
-    for (int i = 0; i < allVertices.length; i++) {
+    parent.setInt("ni", allPoints.getLength());
+    for (int i = 0; i < allPoints.getLength(); i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allVertices[i].length; j++) {
-      for (int j = 0; j < 3; j++) { // x, y, z 
-        lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j < allVertices[i].length - 1) lineSTR += ",";
-      }
+      lineSTR += nf(allPoints.getX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(allPoints.getY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(allPoints.getZ(i), 0, 4).replace(",", "."); // <<<<
       child.setContent(lineSTR);
     }    
 
@@ -26967,9 +27010,10 @@ class solarchvision_Points {
     for (int i = 0; i < ni; i++) {
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < parts.length; j++) {
-        allVertices[i][j] = float(parts[j]);
-      }
+ 
+      allPoints.setX(i, float(parts[0]));
+      allPoints.setY(i, float(parts[1]));
+      allPoints.setZ(i, float(parts[2]));
     }    
     
     this.Display = Boolean.parseBoolean(parent.getString("Display"));
@@ -27039,7 +27083,7 @@ class solarchvision_Model3Ds {
   
     allVertices = (float[][]) concat(allVertices, newVertex);
   
-    return(allVertices.length - 1);
+    return(allPoints.getLength() - 1);
   }
   
   
@@ -27386,7 +27430,7 @@ class solarchvision_Model3Ds {
   
         int f = allSelections.Face_ids[o];        
   
-        int number_of_Vertices_before = allVertices.length;
+        int number_of_Vertices_before = allPoints.getLength();
   
         int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
@@ -27414,9 +27458,9 @@ class solarchvision_Model3Ds {
               };
               PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
   
-              float x = allVertices[vNo][0];
-              float y = allVertices[vNo][1];
-              float z = allVertices[vNo][2];
+              float x = allPoints.getX(vNo);
+              float y = allPoints.getY(vNo);
+              float z = allPoints.getZ(vNo);
   
               int[] newVertexAdded = {
                 this.add_Vertex(x, y, z)
@@ -27465,7 +27509,7 @@ class solarchvision_Model3Ds {
   
         int f = allSelections.Curve_ids[o];        
   
-        int number_of_Vertices_before = allVertices.length;
+        int number_of_Vertices_before = allPoints.getLength();
   
         int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
@@ -27493,9 +27537,9 @@ class solarchvision_Model3Ds {
               };
               PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
   
-              float x = allVertices[vNo][0];
-              float y = allVertices[vNo][1];
-              float z = allVertices[vNo][2];
+              float x = allPoints.getX(vNo);
+              float y = allPoints.getY(vNo);
+              float z = allPoints.getZ(vNo);
   
               int[] newVertexAdded = {
                 this.add_Vertex(x, y, z)
@@ -27660,7 +27704,7 @@ class solarchvision_Model3Ds {
   
         if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) { 
   
-          int number_of_Vertices_before = allVertices.length;
+          int number_of_Vertices_before = allPoints.getLength();
   
           this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
@@ -27778,9 +27822,9 @@ class solarchvision_Model3Ds {
                   };
                   PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
   
-                  float x = allVertices[vNo][0];
-                  float y = allVertices[vNo][1];
-                  float z = allVertices[vNo][2];
+                  float x = allPoints.getX(vNo);
+                  float y = allPoints.getY(vNo);
+                  float z = allPoints.getZ(vNo);
   
                   int[] newVertexAdded = {
                     this.add_Vertex(x, y, z)
@@ -27812,7 +27856,7 @@ class solarchvision_Model3Ds {
         
         if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) { 
   
-          int number_of_Vertices_before = allVertices.length;
+          int number_of_Vertices_before = allPoints.getLength();
   
           this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
@@ -27928,9 +27972,9 @@ class solarchvision_Model3Ds {
                   };
                   PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
   
-                  float x = allVertices[vNo][0];
-                  float y = allVertices[vNo][1];
-                  float z = allVertices[vNo][2];
+                  float x = allPoints.getX(vNo);
+                  float y = allPoints.getY(vNo);
+                  float z = allPoints.getZ(vNo);
   
                   int[] newVertexAdded = {
                     this.add_Vertex(x, y, z)
@@ -28090,7 +28134,7 @@ class solarchvision_Model3Ds {
   
           int f = allSelections.Face_ids[o];        
   
-          int number_of_Vertices_before = allVertices.length;
+          int number_of_Vertices_before = allPoints.getLength();
   
           int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
           int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
@@ -28118,9 +28162,9 @@ class solarchvision_Model3Ds {
                 };
                 PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
   
-                float x = allVertices[vNo][0];
-                float y = allVertices[vNo][1];
-                float z = allVertices[vNo][2];
+                float x = allPoints.getX(vNo);
+                float y = allPoints.getY(vNo);
+                float z = allPoints.getZ(vNo);
   
                 int[] newVertexAdded = {
                   this.add_Vertex(x, y, z)
@@ -28154,7 +28198,7 @@ class solarchvision_Model3Ds {
   
           int f = allSelections.Curve_ids[o];        
   
-          int number_of_Vertices_before = allVertices.length;
+          int number_of_Vertices_before = allPoints.getLength();
   
           int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
           int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
@@ -28182,9 +28226,9 @@ class solarchvision_Model3Ds {
                 };
                 PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
   
-                float x = allVertices[vNo][0];
-                float y = allVertices[vNo][1];
-                float z = allVertices[vNo][2];
+                float x = allPoints.getX(vNo);
+                float y = allPoints.getY(vNo);
+                float z = allPoints.getZ(vNo);
   
                 int[] newVertexAdded = {
                   this.add_Vertex(x, y, z)
@@ -28997,7 +29041,7 @@ class solarchvision_Model3Ds {
   
   void deleteIsolatedVertices_Scene () {
   
-    for (int vNo = allVertices.length - 1; vNo >= 0; vNo--) {
+    for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
   
       int found = -1;
   
@@ -29059,7 +29103,7 @@ class solarchvision_Model3Ds {
   
     allSelections.Vertex_ids = new int [0];
   
-    for (int vNo = allVertices.length - 1; vNo >= 0; vNo--) { 
+    for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) { 
   
       int found = -1;
   
@@ -29126,7 +29170,7 @@ class solarchvision_Model3Ds {
   
       int[] pre_Selection_Vertex_ids = allSelections.Vertex_ids;
   
-      for (int vNo = allVertices.length - 1; vNo >= 0; vNo--) {
+      for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
   
         int isNearEnough = -1;
   
@@ -29148,7 +29192,7 @@ class solarchvision_Model3Ds {
   
           if (found == -1) { 
   
-            float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+            float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
             if (d <= ModifyInput_WeldTreshold) { 
   
@@ -29211,7 +29255,7 @@ class solarchvision_Model3Ds {
   
               if (q > vNo) { // it is faster than (q != vNo)
   
-                float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+                float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
                 if (d <= max_distance) { 
   
@@ -29232,7 +29276,7 @@ class solarchvision_Model3Ds {
   
               if (q > vNo) { // it is faster than (q != vNo)
   
-                float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+                float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
                 if (d <= max_distance) { 
   
@@ -29318,7 +29362,7 @@ class solarchvision_Model3Ds {
   
           int q = allSelections.Vertex_ids[m];
   
-          float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+          float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
           if (d <= max_distance) { 
   
@@ -29399,9 +29443,9 @@ class solarchvision_Model3Ds {
   
         int vNo = allSelections.Vertex_ids[o];
   
-        allVertices[vNo][0] = allSelections.BoundingBox[1][0]; // center
-        allVertices[vNo][1] = allSelections.BoundingBox[1][1]; // center
-        allVertices[vNo][2] = allSelections.BoundingBox[1][2]; // center
+        allPoints.setX(vNo, allSelections.BoundingBox[1][0]); // center
+        allPoints.setY(vNo, allSelections.BoundingBox[1][1]); // center
+        allPoints.setZ(vNo, allSelections.BoundingBox[1][2]); // center
       } 
   
       allSelections.calculate_selection_BoundingBox();
@@ -29440,7 +29484,7 @@ class solarchvision_Model3Ds {
   
             if (allFaces.nodes[i][j] == vNo) { 
   
-              allFaces.nodes[i][j] = this.add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+              allFaces.nodes[i][j] = this.add_Vertex(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
             }
           }
         }
@@ -29450,7 +29494,7 @@ class solarchvision_Model3Ds {
   
             if (allCurves.nodes[i][j] == vNo) { 
   
-              allCurves.nodes[i][j] = this.add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+              allCurves.nodes[i][j] = this.add_Vertex(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
             }
           }
         }        
@@ -29534,9 +29578,11 @@ class solarchvision_Model3Ds {
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
               for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                }
+                
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
+                
               }
   
               float[] G_face = {
@@ -29698,9 +29744,10 @@ class solarchvision_Model3Ds {
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
               for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                }
+                
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
               }
   
               float[] G_face = {
@@ -29895,9 +29942,10 @@ class solarchvision_Model3Ds {
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
               for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                }
+                
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);                
               }
   
               float[] G_face = {
@@ -30070,9 +30118,10 @@ class solarchvision_Model3Ds {
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
               for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                }
+
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
               }
   
               float[] G_face = {
@@ -30243,9 +30292,10 @@ class solarchvision_Model3Ds {
                 float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
                 for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                  for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                  }
+
+                  base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                  base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                  base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
                 }
   
   
@@ -30434,9 +30484,10 @@ class solarchvision_Model3Ds {
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
               for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                }
+
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
               }
   
               float[] G_face = {
@@ -30604,9 +30655,10 @@ class solarchvision_Model3Ds {
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
               for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                }
+
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
               }
   
               float[] G_face = {
@@ -30760,9 +30812,10 @@ class solarchvision_Model3Ds {
                 float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
   
                 for (int i = 0; i < allFaces.nodes[f].length; i++) {
-                  for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces.nodes[f][i])][j];
-                  }
+
+                  base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                  base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                  base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
                 }
   
                 float[] G_face = {
@@ -30885,13 +30938,13 @@ class solarchvision_Model3Ds {
             }; 
             for (int j = 0; j < n; j++) {
               tmpFace[j] = allFaces.nodes[f][j];
-              G[0] += allVertices[tmpFace[j]][0] / float(n); 
-              G[1] += allVertices[tmpFace[j]][1] / float(n);
-              G[2] += allVertices[tmpFace[j]][2] / float(n);
+              G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+              G[1] += allPoints.getY(tmpFace[j]) / float(n);
+              G[2] += allPoints.getZ(tmpFace[j]) / float(n);
             }  
             
-            PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
-            PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+            PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);                       
+            PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
     
             PVector GAxGB = AG.cross(BG);
   
@@ -30964,13 +31017,13 @@ class solarchvision_Model3Ds {
             for (int s = 0; s < allFaces.nodes[f].length; s++) {
               int vNo = allFaces.nodes[f][s];
   
-              base_Vertices[s][0] = allVertices[vNo][0];
-              base_Vertices[s][1] = allVertices[vNo][1];
-              base_Vertices[s][2] = allVertices[vNo][2];
+              base_Vertices[s][0] = allPoints.getX(vNo);
+              base_Vertices[s][1] = allPoints.getY(vNo);
+              base_Vertices[s][2] = allPoints.getZ(vNo);
   
-              top_Vertices[s][0] = allVertices[vNo][0];
-              top_Vertices[s][1] = allVertices[vNo][1];
-              top_Vertices[s][2] = allVertices[vNo][2];
+              top_Vertices[s][0] = allPoints.getX(vNo);
+              top_Vertices[s][1] = allPoints.getY(vNo);
+              top_Vertices[s][2] = allPoints.getZ(vNo);
             }
   
             for (int s = 0; s < allFaces.nodes[f].length; s++) {
@@ -31106,13 +31159,13 @@ class solarchvision_Model3Ds {
             for (int s = 0; s < allCurves.nodes[f].length; s++) {
               int vNo = allCurves.nodes[f][s];
   
-              base_Vertices[s][0] = allVertices[vNo][0];
-              base_Vertices[s][1] = allVertices[vNo][1];
-              base_Vertices[s][2] = allVertices[vNo][2];
+              base_Vertices[s][0] = allPoints.getX(vNo);
+              base_Vertices[s][1] = allPoints.getY(vNo);
+              base_Vertices[s][2] = allPoints.getZ(vNo);
   
-              top_Vertices[s][0] = allVertices[vNo][0];
-              top_Vertices[s][1] = allVertices[vNo][1];
-              top_Vertices[s][2] = allVertices[vNo][2];
+              top_Vertices[s][0] = allPoints.getX(vNo);
+              top_Vertices[s][1] = allPoints.getY(vNo);
+              top_Vertices[s][2] = allPoints.getZ(vNo);
             }
   
             for (int s = 0; s < allCurves.nodes[f].length; s++) {
@@ -31252,9 +31305,9 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                base_Vertices[s][0] = allVertices[allFaces.nodes[f][s]][0];
-                base_Vertices[s][1] = allVertices[allFaces.nodes[f][s]][1];
-                base_Vertices[s][2] = allVertices[allFaces.nodes[f][s]][2];
+                base_Vertices[s][0] = allPoints.getX(allFaces.nodes[f][s]);
+                base_Vertices[s][1] = allPoints.getY(allFaces.nodes[f][s]);
+                base_Vertices[s][2] = allPoints.getZ(allFaces.nodes[f][s]);
               }
   
               for (int s = 0; s < base_Vertices.length; s++) {
@@ -31293,9 +31346,9 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allCurves.nodes[f].length; s++) {
   
-                base_Vertices[s][0] = allVertices[allCurves.nodes[f][s]][0];
-                base_Vertices[s][1] = allVertices[allCurves.nodes[f][s]][1];
-                base_Vertices[s][2] = allVertices[allCurves.nodes[f][s]][2];
+                base_Vertices[s][0] = allPoints.getX(allCurves.nodes[f][s]);
+                base_Vertices[s][1] = allPoints.getY(allCurves.nodes[f][s]);
+                base_Vertices[s][2] = allPoints.getZ(allCurves.nodes[f][s]);
               }
   
               for (int s = 0; s < base_Vertices.length; s++) {
@@ -31338,9 +31391,9 @@ class solarchvision_Model3Ds {
   
         int vNo = allSelections.Vertex_ids[o];
   
-        allVertices[vNo][0] += Vertex_offsetValues[o][0];
-        allVertices[vNo][1] += Vertex_offsetValues[o][1];
-        allVertices[vNo][2] += Vertex_offsetValues[o][2];
+        allPoints.setX(vNo, allPoints.getX(vNo) + Vertex_offsetValues[o][0]);
+        allPoints.setY(vNo, allPoints.getY(vNo) + Vertex_offsetValues[o][1]);
+        allPoints.setZ(vNo, allPoints.getZ(vNo) + Vertex_offsetValues[o][2]);
       } 
   
       allSelections.calculate_selection_BoundingBox();
@@ -31530,8 +31583,8 @@ class solarchvision_Model3Ds {
     if (Current_ObjectCategory == ObjectCategory.VERTEX) {
       allSelections.Vertex_ids = new int [0];
       
-      if (allVertices.length > 0) {
-        int[] new_Item = {allVertices.length - 1};
+      if (allPoints.getLength() > 0) {
+        int[] new_Item = {allPoints.getLength() - 1};
         allSelections.Vertex_ids = concat(allSelections.Vertex_ids, new_Item);
       }
     } 
@@ -31625,7 +31678,7 @@ class solarchvision_Model3Ds {
     }
   
     if (Current_ObjectCategory == ObjectCategory.VERTEX) {
-      allSelections.Vertex_ids = new int [allVertices.length];
+      allSelections.Vertex_ids = new int [allPoints.getLength()];
       for (int i = 0; i < allSelections.Vertex_ids.length; i++) { 
         allSelections.Vertex_ids[i] = i;
       }
@@ -31839,7 +31892,7 @@ class solarchvision_Model3Ds {
   
       allSelections.Vertex_ids = new int [0];
   
-      for (int i = 0; i < allVertices.length; i++) {
+      for (int i = 0; i < allPoints.getLength(); i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_Selection_Vertex_ids.length; j++) {
@@ -32531,7 +32584,7 @@ class solarchvision_Model3Ds {
   
         int m = keep_selection_Vertex_ids[p];
   
-        float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+        float d = dist(allPoints.getX(m), allPoints.getY(m), allPoints.getZ(m), allPoints.getX(n), allPoints.getY(n), allPoints.getZ(n));
   
         if (d_min > d) {
           d_min = d;
@@ -33630,22 +33683,22 @@ class solarchvision_Model3Ds {
       { 
         float[][] the_points = {
           {
-            allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz
+            allPoints.getX(D) - cx, allPoints.getY(D) - cy, allPoints.getZ(D) - cz
           }
           , {
-            allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz
+            allPoints.getX(A) - cx, allPoints.getY(A) - cy, allPoints.getZ(A) - cz
           }
           , {
-            allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz
+            allPoints.getX(B) - cx, allPoints.getY(B) - cy, allPoints.getZ(B) - cz
           }
         };
     
         G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
         M = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
-        G[0] = (allVertices[C][0] - cx) + (allVertices[D][0] - cx) - (allVertices[M][0] - cx);
-        G[1] = (allVertices[C][1] - cy) + (allVertices[D][1] - cy) - (allVertices[M][1] - cy);
-        G[2] = (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
+        G[0] = (allPoints.getX(C) - cx) + (allPoints.getX(D) - cx) - (allPoints.getX(M) - cx);
+        G[1] = (allPoints.getY(C) - cy) + (allPoints.getY(D) - cy) - (allPoints.getY(M) - cy);
+        G[2] = (allPoints.getZ(C) - cz) + (allPoints.getZ(D) - cz) - (allPoints.getZ(M) - cz);
         G = SOLARCHVISION_fn_normalize(G);
         MM = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }   
@@ -33654,13 +33707,13 @@ class solarchvision_Model3Ds {
       { 
         float[][] the_points = {
           {
-            allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz
+            allPoints.getX(B) - cx, allPoints.getY(B) - cy, allPoints.getZ(B) - cz
           }
           , {
-            allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz
+            allPoints.getX(C) - cx, allPoints.getY(C) - cy, allPoints.getZ(C) - cz
           }
           , {
-            allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz
+            allPoints.getX(D) - cx, allPoints.getY(D) - cy, allPoints.getZ(D) - cz
           }
         };
     
@@ -33668,9 +33721,9 @@ class solarchvision_Model3Ds {
         N = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
     
-        G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (allVertices[N][0] - cx);
-        G[1] = (allVertices[A][1] - cy) + (allVertices[B][1] - cy) - (allVertices[N][1] - cy);
-        G[2] = (allVertices[A][2] - cz) + (allVertices[B][2] - cz) - (allVertices[N][2] - cz);
+        G[0] = (allPoints.getX(A) - cx) + (allPoints.getX(B) - cx) - (allPoints.getX(N) - cx);
+        G[1] = (allPoints.getY(A) - cy) + (allPoints.getY(B) - cy) - (allPoints.getY(N) - cy);
+        G[2] = (allPoints.getZ(A) - cz) + (allPoints.getZ(B) - cz) - (allPoints.getZ(N) - cz);
         G = SOLARCHVISION_fn_normalize(G);    
         NN = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }
@@ -34602,13 +34655,13 @@ class solarchvision_Model3Ds {
   
       float model_scale = 12; // to make grid scale equal to 12m. <<<<
   
-      for (int i = 1; i < allVertices.length; i++) {
-        allVertices[i][0] -= 6.5;
-        allVertices[i][1] -= 6.5; 
+      for (int i = 1; i < allPoints.getLength(); i++) {
+        allPoints.setX(i, allPoints.getX(i) - 6.5);
+        allPoints.setY(i, allPoints.getY(i) - 6.5); 
   
-        allVertices[i][0] *= model_scale;
-        allVertices[i][1] *= model_scale; 
-        allVertices[i][2] *= model_scale;
+        allPoints.setX(i, allPoints.getX(i) * model_scale);
+        allPoints.setY(i, allPoints.getY(i) * model_scale); 
+        allPoints.setZ(i, allPoints.getZ(i) * model_scale);
       }
     }      
   
@@ -35743,9 +35796,9 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
         int vNo = allFaces.nodes[f][j];
-        base_Vertices[j][0] = allVertices[vNo][0];
-        base_Vertices[j][1] = allVertices[vNo][1];
-        base_Vertices[j][2] = allVertices[vNo][2];
+        base_Vertices[j][0] = allPoints.getX(vNo);
+        base_Vertices[j][1] = allPoints.getY(vNo);
+        base_Vertices[j][2] = allPoints.getZ(vNo);
       }     
 
       for (int n = 0; n < TotalSubNo; n++) {
@@ -36092,9 +36145,9 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
         int vNo = allFaces.nodes[f][j];
-        base_Vertices[j][0] = allVertices[vNo][0];
-        base_Vertices[j][1] = allVertices[vNo][1];
-        base_Vertices[j][2] = allVertices[vNo][2];
+        base_Vertices[j][0] = allPoints.getX(vNo);
+        base_Vertices[j][1] = allPoints.getY(vNo);
+        base_Vertices[j][2] = allPoints.getZ(vNo);
       }
 
       for (int n = 0; n < TotalSubNo; n++) {
@@ -36158,10 +36211,10 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
           
           if (n < 5) { // works if n==3 or n==4
       
-            float[] A = allVertices[allFaces.nodes[f][0]];
-            float[] B = allVertices[allFaces.nodes[f][1]];
-            float[] C = allVertices[allFaces.nodes[f][n - 2]];
-            float[] D = allVertices[allFaces.nodes[f][n - 1]];
+            float[] A = allPoints.getPosition(allFaces.nodes[f][0]);
+            float[] B = allPoints.getPosition(allFaces.nodes[f][1]);
+            float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
+            float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
             
             float[] AC = SOLARCHVISION_3xSub(A, C);
             float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -36201,9 +36254,9 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
             }; 
             for (int j = 0; j < n; j++) {
               tmpFace[j] = allFaces.nodes[f][j];
-              G[0] += allVertices[tmpFace[j]][0] / float(n); 
-              G[1] += allVertices[tmpFace[j]][1] / float(n);
-              G[2] += allVertices[tmpFace[j]][2] / float(n);
+              G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+              G[1] += allPoints.getY(tmpFace[j]) / float(n);
+              G[2] += allPoints.getZ(tmpFace[j]) / float(n);
             }  
             
             for (int j = 0; j < n; j++) {
@@ -36211,15 +36264,15 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
               int j_next = (j + 1) % n;
       
               float[] A = {
-                allVertices[allFaces.nodes[f][j]][0],
-                allVertices[allFaces.nodes[f][j]][1],
-                allVertices[allFaces.nodes[f][j]][2]
+                allPoints.getX(allFaces.nodes[f][j]),
+                allPoints.getY(allFaces.nodes[f][j]),
+                allPoints.getZ(allFaces.nodes[f][j])
               };            
               
               float[] B = {
-                allVertices[allFaces.nodes[f][j_next]][0],
-                allVertices[allFaces.nodes[f][j_next]][1],
-                allVertices[allFaces.nodes[f][j_next]][2]
+                allPoints.getX(allFaces.nodes[f][j_next]),
+                allPoints.getY(allFaces.nodes[f][j_next]),
+                allPoints.getZ(allFaces.nodes[f][j_next])
               };                
     
               float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -36309,10 +36362,10 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
         
         if (n < 5) { // works if n==3 or n==4
     
-          float[] A = allVertices[allFaces.nodes[f][0]];
-          float[] B = allVertices[allFaces.nodes[f][1]];
-          float[] C = allVertices[allFaces.nodes[f][n - 2]];
-          float[] D = allVertices[allFaces.nodes[f][n - 1]];
+          float[] A = allPoints.getPosition(allFaces.nodes[f][0]);
+          float[] B = allPoints.getPosition(allFaces.nodes[f][1]);
+          float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
+          float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
           float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -36352,9 +36405,9 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
           }; 
           for (int j = 0; j < n; j++) {
             tmpFace[j] = allFaces.nodes[f][j];
-            G[0] += allVertices[tmpFace[j]][0] / float(n); 
-            G[1] += allVertices[tmpFace[j]][1] / float(n);
-            G[2] += allVertices[tmpFace[j]][2] / float(n);
+            G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+            G[1] += allPoints.getY(tmpFace[j]) / float(n);
+            G[2] += allPoints.getZ(tmpFace[j]) / float(n);
           }  
           
           for (int j = 0; j < n; j++) {
@@ -36362,15 +36415,15 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
             int j_next = (j + 1) % n;
     
             float[] A = {
-              allVertices[allFaces.nodes[f][j]][0],
-              allVertices[allFaces.nodes[f][j]][1],
-              allVertices[allFaces.nodes[f][j]][2]
+              allPoints.getX(allFaces.nodes[f][j]),
+              allPoints.getY(allFaces.nodes[f][j]),
+              allPoints.getZ(allFaces.nodes[f][j])
             };            
             
             float[] B = {
-              allVertices[allFaces.nodes[f][j_next]][0],
-              allVertices[allFaces.nodes[f][j_next]][1],
-              allVertices[allFaces.nodes[f][j_next]][2]
+              allPoints.getX(allFaces.nodes[f][j_next]),
+              allPoints.getY(allFaces.nodes[f][j_next]),
+              allPoints.getZ(allFaces.nodes[f][j_next])
             };                
   
             float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -36488,10 +36541,10 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
         
         if (n < 5) { // works if n==3 or n==4
     
-          float[] A = allVertices[allCurves.nodes[f][0]];
-          float[] B = allVertices[allCurves.nodes[f][1]];
-          float[] C = allVertices[allCurves.nodes[f][n - 2]];
-          float[] D = allVertices[allCurves.nodes[f][n - 1]];
+          float[] A = allPoints.getPosition(allCurves.nodes[f][0]);
+          float[] B = allPoints.getPosition(allCurves.nodes[f][1]);
+          float[] C = allPoints.getPosition(allCurves.nodes[f][n - 2]);
+          float[] D = allPoints.getPosition(allCurves.nodes[f][n - 1]);
           
           float[] AC = SOLARCHVISION_3xSub(A, C);
           float[] BD = SOLARCHVISION_3xSub(B, D);
@@ -36531,9 +36584,9 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
           }; 
           for (int j = 0; j < n; j++) {
             tmpCurve[j] = allCurves.nodes[f][j];
-            G[0] += allVertices[tmpCurve[j]][0] / float(n); 
-            G[1] += allVertices[tmpCurve[j]][1] / float(n);
-            G[2] += allVertices[tmpCurve[j]][2] / float(n);
+            G[0] += allPoints.getX(tmpCurve[j]) / float(n); 
+            G[1] += allPoints.getY(tmpCurve[j]) / float(n);
+            G[2] += allPoints.getZ(tmpCurve[j]) / float(n);
           }  
           
           for (int j = 0; j < n; j++) {
@@ -36541,15 +36594,15 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
             int j_next = (j + 1) % n;
     
             float[] A = {
-              allVertices[allCurves.nodes[f][j]][0],
-              allVertices[allCurves.nodes[f][j]][1],
-              allVertices[allCurves.nodes[f][j]][2]
+              allPoints.getX(allCurves.nodes[f][j]),
+              allPoints.getY(allCurves.nodes[f][j]),
+              allPoints.getZ(allCurves.nodes[f][j])
             };            
             
             float[] B = {
-              allVertices[allCurves.nodes[f][j_next]][0],
-              allVertices[allCurves.nodes[f][j_next]][1],
-              allVertices[allCurves.nodes[f][j_next]][2]
+              allPoints.getX(allCurves.nodes[f][j_next]),
+              allPoints.getY(allCurves.nodes[f][j_next]),
+              allPoints.getZ(allCurves.nodes[f][j_next])
             };                
   
             float[] AG = SOLARCHVISION_3xSub(A, G);
@@ -38294,9 +38347,9 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     for (int j = 0; j < allFaces.nodes[f].length; j++) {
       int vNo = allFaces.nodes[f][j];
 
-      float x = allVertices[vNo][0];
-      float y = allVertices[vNo][1];          
-      float z = allVertices[vNo][2];
+      float x = allPoints.getX(vNo);
+      float y = allPoints.getY(vNo);          
+      float z = allPoints.getZ(vNo);
 
       float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
 
@@ -38710,9 +38763,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
             for (int j = 0; j < allFaces.nodes[f].length; j++) {
               int vNo = allFaces.nodes[f][j];
 
-              float x = allVertices[vNo][0] * OBJECTS_scale;
-              float y = allVertices[vNo][1] * OBJECTS_scale;            
-              float z = -allVertices[vNo][2] * OBJECTS_scale;
+              float x = allPoints.getX(vNo) * OBJECTS_scale;
+              float y = allPoints.getY(vNo) * OBJECTS_scale;            
+              float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
               float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -38754,9 +38807,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
             for (int j = 0; j < allCurves.nodes[f].length; j++) {
               int vNo = allCurves.nodes[f][j];
 
-              float x = allVertices[vNo][0] * OBJECTS_scale;
-              float y = allVertices[vNo][1] * OBJECTS_scale;            
-              float z = -allVertices[vNo][2] * OBJECTS_scale;
+              float x = allPoints.getX(vNo) * OBJECTS_scale;
+              float y = allPoints.getY(vNo) * OBJECTS_scale;            
+              float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
               float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -38846,9 +38899,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       for (int j = 0; j < allFaces.nodes[OBJ_NUM].length; j++) {
         int vNo = allFaces.nodes[OBJ_NUM][j];
 
-        float x = allVertices[vNo][0] * OBJECTS_scale;
-        float y = allVertices[vNo][1] * OBJECTS_scale;            
-        float z = -allVertices[vNo][2] * OBJECTS_scale;
+        float x = allPoints.getX(vNo) * OBJECTS_scale;
+        float y = allPoints.getY(vNo) * OBJECTS_scale;            
+        float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -38934,9 +38987,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       for (int j = 0; j < allCurves.nodes[OBJ_NUM].length; j++) {
         int vNo = allCurves.nodes[OBJ_NUM][j];
 
-        float x = allVertices[vNo][0] * OBJECTS_scale;
-        float y = allVertices[vNo][1] * OBJECTS_scale;            
-        float z = -allVertices[vNo][2] * OBJECTS_scale;
+        float x = allPoints.getX(vNo) * OBJECTS_scale;
+        float y = allPoints.getY(vNo) * OBJECTS_scale;            
+        float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -39011,16 +39064,16 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.VERTEX) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < allVertices.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < allPoints.getLength(); OBJ_NUM++) {
 
       int include_OBJ_in_newSelection = -1;    
 
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-      float x = allVertices[OBJ_NUM][0] * OBJECTS_scale;
-      float y = allVertices[OBJ_NUM][1] * OBJECTS_scale;            
-      float z = -allVertices[OBJ_NUM][2] * OBJECTS_scale;
+      float x = allPoints.getX(OBJ_NUM) * OBJECTS_scale;
+      float y = allPoints.getY(OBJ_NUM) * OBJECTS_scale;            
+      float z = -allPoints.getZ(OBJ_NUM) * OBJECTS_scale;
 
       float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -43218,9 +43271,9 @@ void mouseClicked () {
   
                   if (Current_ObjectCategory == ObjectCategory.VERTEX) {
   
-                    x1 = allVertices[allSelections.Vertex_ids[allSelections.Vertex_ids.length - 1]][0]; 
-                    y1 = allVertices[allSelections.Vertex_ids[allSelections.Vertex_ids.length - 1]][1]; 
-                    z1 = allVertices[allSelections.Vertex_ids[allSelections.Vertex_ids.length - 1]][2];
+                    x1 = allPoints.getX(allSelections.Vertex_ids[allSelections.Vertex_ids.length - 1]); 
+                    y1 = allPoints.getY(allSelections.Vertex_ids[allSelections.Vertex_ids.length - 1]); 
+                    z1 = allPoints.getZ(allSelections.Vertex_ids[allSelections.Vertex_ids.length - 1]);
                   }             
   
                   if ((x1 != FLOAT_undefined) && (y1 != FLOAT_undefined) && (z1 != FLOAT_undefined)) {       
@@ -43346,16 +43399,16 @@ void mouseClicked () {
                             }; 
                             for (int j = 0; j < n; j++) {
                               tmpFace[j] = allFaces.nodes[f][j];
-                              G[0] += allVertices[tmpFace[j]][0] / float(n); 
-                              G[1] += allVertices[tmpFace[j]][1] / float(n);
-                              G[2] += allVertices[tmpFace[j]][2] / float(n);
+                              G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+                              G[1] += allPoints.getY(tmpFace[j]) / float(n);
+                              G[2] += allPoints.getZ(tmpFace[j]) / float(n);
                             }  
   
                             int flip_face = 0;
                             if (WIN3D.UI_TaskModifyParameter == 1) flip_face = 1;
                             else {
-                              PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
-                              PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+                              PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);                       
+                              PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
   
                               PVector GAxGB = AG.cross(BG);
   
@@ -43404,16 +43457,16 @@ void mouseClicked () {
                               }; 
                               for (int j = 0; j < n; j++) {
                                 tmpFace[j] = allFaces.nodes[q][j];
-                                G[0] += allVertices[tmpFace[j]][0] / float(n); 
-                                G[1] += allVertices[tmpFace[j]][1] / float(n);
-                                G[2] += allVertices[tmpFace[j]][2] / float(n);
+                                G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+                                G[1] += allPoints.getY(tmpFace[j]) / float(n);
+                                G[2] += allPoints.getZ(tmpFace[j]) / float(n);
                               }  
 
                               int flip_face = 0;
                               if (WIN3D.UI_TaskModifyParameter == 1) flip_face = 1;
                               else {
-                                PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
-                                PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+                                PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);                       
+                                PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
 
                                 PVector GAxGB = AG.cross(BG);
 
@@ -43466,7 +43519,7 @@ void mouseClicked () {
                             for (int j = 0; j < n; j++) {
                               int vNo = allFaces.nodes[f][j];
   
-                              float d = dist(RxP[1], RxP[2], RxP[3], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+                              float d = dist(RxP[1], RxP[2], RxP[3], allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
                               if (min_dist > d) {
                                 min_dist = d;
@@ -43503,7 +43556,7 @@ void mouseClicked () {
                             for (int j = 0; j < n; j++) {
                               int vNo = allCurves.nodes[f][j];
   
-                              float d = dist(RxP[1], RxP[2], RxP[3], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+                              float d = dist(RxP[1], RxP[2], RxP[3], allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
                               if (min_dist > d) {
                                 min_dist = d;
@@ -43927,13 +43980,13 @@ void mouseClicked () {
       
                             int j_next = (j + 1) % n;
       
-                            float x1 = allVertices[allFaces.nodes[f][j]][0];
-                            float y1 = allVertices[allFaces.nodes[f][j]][1];
-                            float z1 = allVertices[allFaces.nodes[f][j]][2];                        
+                            float x1 = allPoints.getX(allFaces.nodes[f][j]);
+                            float y1 = allPoints.getY(allFaces.nodes[f][j]);
+                            float z1 = allPoints.getZ(allFaces.nodes[f][j]);                        
       
-                            float x2 = allVertices[allFaces.nodes[f][j_next]][0];
-                            float y2 = allVertices[allFaces.nodes[f][j_next]][1];
-                            float z2 = allVertices[allFaces.nodes[f][j_next]][2];                        
+                            float x2 = allPoints.getX(allFaces.nodes[f][j_next]);
+                            float y2 = allPoints.getY(allFaces.nodes[f][j_next]);
+                            float z2 = allPoints.getZ(allFaces.nodes[f][j_next]);                        
       
       
                             //float Alpha = asin_ang(z2 - z1);
@@ -43950,9 +44003,9 @@ void mouseClicked () {
       
                           for (int j = 0; j < n; j++) {
       
-                            float x1 = allVertices[allFaces.nodes[f][j]][0];
-                            float y1 = allVertices[allFaces.nodes[f][j]][1];
-                            float z1 = allVertices[allFaces.nodes[f][j]][2];
+                            float x1 = allPoints.getX(allFaces.nodes[f][j]);
+                            float y1 = allPoints.getY(allFaces.nodes[f][j]);
+                            float z1 = allPoints.getZ(allFaces.nodes[f][j]);
       
                             float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
                             float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
@@ -44024,17 +44077,17 @@ void mouseClicked () {
                           G[1] = 0;
                           G[2] = 0;
                           for (int j = 0; j < n; j++) {
-                            float the_x = allVertices[allFaces.nodes[f][j]][0];
-                            float the_y = allVertices[allFaces.nodes[f][j]][1];
-                            float the_z = allVertices[allFaces.nodes[f][j]][2];
+                            float the_x = allPoints.getX(allFaces.nodes[f][j]);
+                            float the_y = allPoints.getY(allFaces.nodes[f][j]);
+                            float the_z = allPoints.getZ(allFaces.nodes[f][j]);
       
                             G[0] += the_x / float(n); 
                             G[1] += the_y / float(n);
                             G[2] += the_z / float(n);
                           }
       
-                          PVector AG = new PVector(allVertices[allFaces.nodes[f][0]][0] - G[0], allVertices[allFaces.nodes[f][0]][1] - G[1], allVertices[allFaces.nodes[f][0]][2] - G[2]);                       
-                          PVector BG = new PVector(allVertices[allFaces.nodes[f][1]][0] - G[0], allVertices[allFaces.nodes[f][1]][1] - G[1], allVertices[allFaces.nodes[f][1]][2] - G[2]);
+                          PVector AG = new PVector(allPoints.getX(allFaces.nodes[f][0]) - G[0], allPoints.getY(allFaces.nodes[f][0]) - G[1], allPoints.getZ(allFaces.nodes[f][0]) - G[2]);                       
+                          PVector BG = new PVector(allPoints.getX(allFaces.nodes[f][1]) - G[0], allPoints.getY(allFaces.nodes[f][1]) - G[1], allPoints.getZ(allFaces.nodes[f][1]) - G[2]);
       
                           PVector GAxGB = AG.cross(BG);
       
@@ -44951,9 +45004,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
           int vNo = allFaces.nodes[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
+          base_Vertices[j][0] = allPoints.getX(vNo);
+          base_Vertices[j][1] = allPoints.getY(vNo);
+          base_Vertices[j][2] = allPoints.getZ(vNo);
         }
 
         for (int n = 0; n < TotalSubNo; n++) {
@@ -45007,9 +45060,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
           int vNo = allFaces.nodes[f][j];
 
-          float x = allVertices[vNo][0] * OBJECTS_scale;
-          float y = allVertices[vNo][1] * OBJECTS_scale;            
-          float z = -allVertices[vNo][2] * OBJECTS_scale;
+          float x = allPoints.getX(vNo) * OBJECTS_scale;
+          float y = allPoints.getY(vNo) * OBJECTS_scale;            
+          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
           float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -45051,9 +45104,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         for (int j = 0; j < allCurves.nodes[f].length; j++) {
           int vNo = allCurves.nodes[f][j];
 
-          float x = allVertices[vNo][0] * OBJECTS_scale;
-          float y = allVertices[vNo][1] * OBJECTS_scale;            
-          float z = -allVertices[vNo][2] * OBJECTS_scale;
+          float x = allPoints.getX(vNo) * OBJECTS_scale;
+          float y = allPoints.getY(vNo) * OBJECTS_scale;            
+          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
           float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -45094,9 +45147,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int vNo = allSelections.Vertex_ids[o];
 
-        float x = allVertices[vNo][0] * OBJECTS_scale;
-        float y = allVertices[vNo][1] * OBJECTS_scale;
-        float z = -allVertices[vNo][2] * OBJECTS_scale;
+        float x = allPoints.getX(vNo) * OBJECTS_scale;
+        float y = allPoints.getY(vNo) * OBJECTS_scale;
+        float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -45133,9 +45186,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         float _u = allSelections.Vertex_softSelectionValues[q];    
 
-        float x = allVertices[vNo][0] * OBJECTS_scale;
-        float y = allVertices[vNo][1] * OBJECTS_scale;
-        float z = -allVertices[vNo][2] * OBJECTS_scale;
+        float x = allPoints.getX(vNo) * OBJECTS_scale;
+        float y = allPoints.getY(vNo) * OBJECTS_scale;
+        float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -45192,9 +45245,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
             for (int j = 0; j < allFaces.nodes[f].length; j++) {
               int vNo = allFaces.nodes[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
+              base_Vertices[j][0] = allPoints.getX(vNo);
+              base_Vertices[j][1] = allPoints.getY(vNo);
+              base_Vertices[j][2] = allPoints.getZ(vNo);
             }
 
             for (int n = 0; n < TotalSubNo; n++) {
@@ -45229,9 +45282,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             for (int vNo = 0; vNo < allCurves.nodes[f].length; vNo++) {
 
-              float x = allVertices[vNo][0] * OBJECTS_scale;
-              float y = allVertices[vNo][1] * OBJECTS_scale;            
-              float z = -allVertices[vNo][2] * OBJECTS_scale;
+              float x = allPoints.getX(vNo) * OBJECTS_scale;
+              float y = allPoints.getY(vNo) * OBJECTS_scale;            
+              float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
               float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
 
@@ -46184,9 +46237,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                     float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
                     for (int g = 0; g < allFaces.nodes[f].length; g++) {
                       int vNo = allFaces.nodes[f][g];
-                      base_Vertices[g][0] = allVertices[vNo][0];
-                      base_Vertices[g][1] = allVertices[vNo][1];
-                      base_Vertices[g][2] = allVertices[vNo][2];
+                      base_Vertices[g][0] = allPoints.getX(vNo);
+                      base_Vertices[g][1] = allPoints.getY(vNo);
+                      base_Vertices[g][2] = allPoints.getZ(vNo);
                     }
   
                     for (int n = 0; n < TotalSubNo; n++) {
@@ -46799,9 +46852,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                   float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
                   for (int g = 0; g < allFaces.nodes[f].length; g++) {
                     int vNo = allFaces.nodes[f][g];
-                    base_Vertices[g][0] = allVertices[vNo][0];
-                    base_Vertices[g][1] = allVertices[vNo][1];
-                    base_Vertices[g][2] = allVertices[vNo][2];
+                    base_Vertices[g][0] = allPoints.getX(vNo);
+                    base_Vertices[g][1] = allPoints.getY(vNo);
+                    base_Vertices[g][2] = allPoints.getZ(vNo);
                   }
   
                   for (int n = 0; n < TotalSubNo; n++) {
