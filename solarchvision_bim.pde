@@ -1,4 +1,8 @@
 
+//    allModel2Ds.add_onLand(1); // 1 = people
+
+//    allModel2Ds.add_onLand(2); // 2 = 2D trees
+
 
 
 
@@ -9636,7 +9640,7 @@ class solarchvision_Curves {
     println("Saving:" + this.CLASS_STAMP);
     
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".nodes");
+      XML parent = xml.addChild(this.CLASS_STAMP);
       parent.setInt("ni", this.nodes.length);
       for (int i = 0; i < this.nodes.length; i++) {
         XML child = parent.addChild("item");
@@ -14734,16 +14738,6 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 7)) Land3D.update_mesh();
 
-  //if ((Step == 0) || (Step == 8)) allModel1Ds.delete();
-
-  if ((Step == 0) || (Step == 9)) allModel2Ds.delete();
-
-  if ((Step == 0) || (Step == 10)) {
-
-    allModel2Ds.add_onLand(1); // 1 = people
-
-    allModel2Ds.add_onLand(2); // 2 = 2D trees
-  }
 }
 
 void SOLARCHVISION_update_models (int Step) {
@@ -14938,55 +14932,20 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("Model1Ds.delete", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 19) {
-    SOLARCHVISION_update_station(8);
-
-    stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
-
-    stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
-
-    stroke(255); fill(255); text("Model2Ds.delete", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 20) {
-    SOLARCHVISION_update_station(9);
-
-    stroke(0); fill(0);
-    rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
-
-    stroke(255); fill(255);
-    text("Model2Ds.add_onLand", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 21) {
-    SOLARCHVISION_update_station(10);
-
-    stroke(0); fill(0);
-    rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
-
-    stroke(255); fill(255); text("Model3Ds.delete_allGroups", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 22) {
-    SOLARCHVISION_update_models(1);
-
-    stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
-
-    stroke(255); fill(255); text("Model3Ds.add_Model_Main", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 23) {
-    SOLARCHVISION_update_models(2);
-
-    stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
-
     stroke(255); fill(255); text("Earth3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 24) {
+  } else if (frameCount == 19) {
     Earth3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
     
     stroke(255); fill(255); text("Tropo3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 25) {
+  } else if (frameCount == 20) {
     Tropo3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);    
  
     stroke(255); fill(255); text("SOLARCHVISION_build_SkySphere", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 26) {
+  } else if (frameCount == 21) {
     
     SOLARCHVISION_build_SkySphere(1); //1 - 3
     SOLARCHVISION_resize_GlobalSolar_array();    
@@ -23122,6 +23081,8 @@ class solarchvision_Land3D {
       }
     }
   
+    Boolean using_default_mesh = true;
+  
     try { 
   
       if (this.Load_Mesh) {
@@ -23184,8 +23145,16 @@ class solarchvision_Land3D {
     }
   
     catch (Exception e) {
-      println("ERROR loading this.Mesh!");
+      println("Warning: problem in loading topography from file.");
+      
+      using_default_mesh = true;
     }
+    
+    if (using_default_mesh) {
+      println("Using default flat mesh:");
+      
+      this.flat_mesh();
+    }    
   
   
     Land3D.update_textures();
@@ -23219,8 +23188,6 @@ class solarchvision_Land3D {
     }
   
     this.Load_Mesh = true;
-    Land3D.update_mesh();
-  
   }
   
   
