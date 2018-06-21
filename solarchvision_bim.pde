@@ -2273,7 +2273,7 @@ class solarchvision_SHADE {
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_TYPE = ELEVATION_Pallet_CLR;
+      PAL_TYPE = Land3D.Pallet_CLR;
     }  
   
     return PAL_TYPE;
@@ -2294,7 +2294,7 @@ class solarchvision_SHADE {
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_DIR = ELEVATION_Pallet_DIR;
+      PAL_DIR = Land3D.Pallet_DIR;
     }  
   
     return PAL_DIR;
@@ -2315,7 +2315,7 @@ class solarchvision_SHADE {
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_Multiplier = ELEVATION_Pallet_MLT;
+      PAL_Multiplier = Land3D.Pallet_MLT;
     }
   
     return PAL_Multiplier;
@@ -3715,9 +3715,9 @@ class solarchvision_WIN3D {
   
     if (this.FacesShade == SHADE.Vertex_Elevation) {
   
-      PAL_TYPE = ELEVATION_Pallet_CLR; 
-      PAL_DIR = ELEVATION_Pallet_DIR; 
-      PAL_Multiplier = ELEVATION_Pallet_MLT; 
+      PAL_TYPE = Land3D.Pallet_CLR; 
+      PAL_DIR = Land3D.Pallet_DIR; 
+      PAL_Multiplier = Land3D.Pallet_MLT; 
   
       draw_pal = 1;
     }
@@ -7496,9 +7496,9 @@ class solarchvision_ROLLOUT {
         allSolids.Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Pallet_DIR", allSolids.Pallet_DIR, -2, 2, 2), 1));
         allSolids.Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Pallet_MLT", allSolids.Pallet_MLT, 0.0001, 64, -2);      
   
-        ELEVATION_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        ELEVATION_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
-        ELEVATION_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.001, 0.5, -2);   
+        Land3D.Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Pallet_CLR", Land3D.Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Land3D.Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Pallet_DIR", Land3D.Pallet_DIR, -2, 2, 2), 1));
+        Land3D.Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Pallet_MLT", Land3D.Pallet_MLT, 0.001, 0.5, -2);   
   
         WindFlow_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_CLR", WindFlow_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
         WindFlow_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_Pallet_DIR", WindFlow_Pallet_DIR, -2, 2, 2), 1));
@@ -8203,9 +8203,7 @@ float SunPath_Pallet_PASSIVE_MLT = 1; //1;
 
 
 
-int ELEVATION_Pallet_CLR = 1; 
-int ELEVATION_Pallet_DIR = -1; 
-float ELEVATION_Pallet_MLT = 0.05; 
+
 
 
 
@@ -23255,7 +23253,9 @@ solarchvision_Earth3D Earth3D = new solarchvision_Earth3D();
 
 
 
-class solarchvision_Land3D {
+class solarchvision_Land3D 
+
+{
   
   private final static String CLASS_STAMP = "Land3D";
   
@@ -23266,6 +23266,10 @@ class solarchvision_Land3D {
   boolean displayPoints = false;
   boolean displayTexture = true;
   boolean displayDepth = false;  
+  
+  int Pallet_CLR = 1; 
+  int Pallet_DIR = -1; 
+  float Pallet_MLT = 0.05; 
   
   float[][][] Mesh;
   
@@ -23480,7 +23484,7 @@ class solarchvision_Land3D {
     }    
   
   
-    Land3D.update_textures();
+    this.update_textures();
   }
   
   
@@ -23554,7 +23558,7 @@ class solarchvision_Land3D {
     }
     
     this.loadMesh = true;
-    Land3D.update_mesh();
+    this.update_mesh();
   
   }
   
@@ -23605,7 +23609,7 @@ class solarchvision_Land3D {
     }
     
     this.loadTextures = true;
-    Land3D.update_textures();
+    this.update_textures();
   
   }
   
@@ -24234,6 +24238,9 @@ class solarchvision_Land3D {
       parent.setString("displayPoints", Boolean.toString(this.displayPoints));
       parent.setString("displayTexture", Boolean.toString(this.displayTexture));
       parent.setString("displayDepth", Boolean.toString(this.displayDepth));
+      parent.setInt("Pallet_CLR", this.Pallet_CLR);
+      parent.setInt("Pallet_DIR", this.Pallet_DIR);
+      parent.setFloat("Pallet_MLT", this.Pallet_MLT);
       parent.setInt("Surface_SkipStart", this.Surface_SkipStart);
       parent.setInt("Surface_SkipEnd", this.Surface_SkipEnd);
       parent.setInt("num_rows", this.num_rows);
@@ -24302,6 +24309,10 @@ class solarchvision_Land3D {
   }
   
   
+
+
+
+  
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
@@ -24316,10 +24327,14 @@ class solarchvision_Land3D {
       this.displayPoints = Boolean.parseBoolean(parent.getString("displayPoints"));
       this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
       this.displayDepth = Boolean.parseBoolean(parent.getString("displayDepth"));
+      this.Pallet_CLR = parent.getInt("Pallet_CLR");
+      this.Pallet_DIR = parent.getInt("Pallet_DIR");
+      this.Pallet_MLT = parent.getFloat("Pallet_MLT");  
       this.Surface_SkipStart = parent.getInt("Surface_SkipStart");
       this.Surface_SkipEnd = parent.getInt("Surface_SkipEnd");
       this.num_rows = parent.getInt("num_rows");
       this.num_columns = parent.getInt("num_columns");
+
 
       this.Mesh = new float [this.num_rows][this.num_columns][3];
 
@@ -24377,6 +24392,7 @@ class solarchvision_Land3D {
   
   
 }
+
 
 solarchvision_Land3D Land3D = new solarchvision_Land3D();
 
@@ -52348,9 +52364,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("SunPath_Pallet_PASSIVE_DIR", SunPath_Pallet_PASSIVE_DIR);
     parent.setFloat("SunPath_Pallet_PASSIVE_MLT", SunPath_Pallet_PASSIVE_MLT);
 
-    parent.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
-    parent.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
-    parent.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT);
+
 
     parent.setInt("WindFlow_Pallet_CLR", WindFlow_Pallet_CLR);
     parent.setInt("WindFlow_Pallet_DIR", WindFlow_Pallet_DIR);
@@ -52662,9 +52676,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SunPath_Pallet_PASSIVE_DIR = parent.getInt("SunPath_Pallet_PASSIVE_DIR");
       SunPath_Pallet_PASSIVE_MLT = parent.getFloat("SunPath_Pallet_PASSIVE_MLT");
 
-      ELEVATION_Pallet_CLR = parent.getInt("ELEVATION_Pallet_CLR");
-      ELEVATION_Pallet_DIR = parent.getInt("ELEVATION_Pallet_DIR");
-      ELEVATION_Pallet_MLT = parent.getFloat("ELEVATION_Pallet_MLT");
+
 
       WindFlow_Pallet_CLR = parent.getInt("WindFlow_Pallet_CLR");
       WindFlow_Pallet_DIR = parent.getInt("WindFlow_Pallet_DIR");
