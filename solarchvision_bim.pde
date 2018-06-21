@@ -2269,7 +2269,7 @@ class solarchvision_SHADE {
     }          
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_TYPE = SOLID_Pallet_CLR;
+      PAL_TYPE = allSolids.Pallet_CLR;
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
@@ -2290,7 +2290,7 @@ class solarchvision_SHADE {
     }              
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_DIR = SOLID_Pallet_DIR;
+      PAL_DIR = allSolids.Pallet_DIR;
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
@@ -2311,7 +2311,7 @@ class solarchvision_SHADE {
     }              
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_Multiplier = SOLID_Pallet_MLT;
+      PAL_Multiplier = allSolids.Pallet_MLT;
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
@@ -3724,9 +3724,9 @@ class solarchvision_WIN3D {
   
     if (this.FacesShade == SHADE.Vertex_Solid) {
   
-      PAL_TYPE = SOLID_Pallet_CLR; 
-      PAL_DIR = SOLID_Pallet_DIR;
-      PAL_Multiplier = SOLID_Pallet_MLT;
+      PAL_TYPE = allSolids.Pallet_CLR; 
+      PAL_DIR = allSolids.Pallet_DIR;
+      PAL_Multiplier = allSolids.Pallet_MLT;
   
       draw_pal = 1;
     }          
@@ -3845,7 +3845,78 @@ class solarchvision_WIN3D {
       this.graphics.popMatrix();
     }
   }  
+
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setFloat("CAM_x", this.CAM_x);
+    parent.setFloat("CAM_y", this.CAM_y);
+    parent.setFloat("CAM_z", this.CAM_z);
+    parent.setFloat("CAM_fov", this.CAM_fov);
+    parent.setFloat("CAM_dist", this.CAM_dist);
+    parent.setFloat("CAM_clipNear", this.CAM_clipNear);
+    parent.setFloat("CAM_clipFar", this.CAM_clipFar);
+    parent.setInt("CurrentCamera", this.CurrentCamera);
+    
+    parent.setFloat("refScale", this.refScale);
+    parent.setFloat("X_Coordinate", this.X_Coordinate);
+    parent.setFloat("Y_Coordinate", this.Y_Coordinate);
+    parent.setFloat("Z_Coordinate", this.Z_Coordinate);
+    parent.setFloat("S_Coordinate", this.S_Coordinate);
+    parent.setFloat("RX_Coordinate", this.RX_Coordinate);
+    parent.setFloat("RY_Coordinate", this.RY_Coordinate);
+    parent.setFloat("RZ_Coordinate", this.RZ_Coordinate);
+    parent.setFloat("RS_Coordinate", this.RS_Coordinate);
+    parent.setFloat("Zoom", this.Zoom);
+    parent.setInt("ViewType", this.ViewType);
+    parent.setInt("FacesShade", this.FacesShade);    
+    
+    parent.setInt("UI_CurrentTask", this.UI_CurrentTask);
+    parent.setInt("UI_OptionXorY", this.UI_OptionXorY);
+    parent.setInt("UI_TaskModifyParameter", this.UI_TaskModifyParameter);      
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.CAM_x = parent.getFloat("CAM_x");
+    this.CAM_y = parent.getFloat("CAM_y");
+    this.CAM_z = parent.getFloat("CAM_z");
+    this.CAM_fov = parent.getFloat("CAM_fov");
+    this.CAM_dist = parent.getFloat("CAM_dist");
+    this.CAM_clipNear = parent.getFloat("CAM_clipNear");
+    this.CAM_clipFar = parent.getFloat("CAM_clipFar");
+    this.CurrentCamera = parent.getInt("CurrentCamera");
+    
+    this.refScale = parent.getFloat("refScale");
+    this.X_Coordinate = parent.getFloat("X_Coordinate");
+    this.Y_Coordinate = parent.getFloat("Y_Coordinate");
+    this.Z_Coordinate = parent.getFloat("Z_Coordinate");
+    this.S_Coordinate = parent.getFloat("S_Coordinate");
+    this.RX_Coordinate = parent.getFloat("RX_Coordinate");
+    this.RY_Coordinate = parent.getFloat("RY_Coordinate");
+    this.RZ_Coordinate = parent.getFloat("RZ_Coordinate");
+    this.RS_Coordinate = parent.getFloat("RS_Coordinate");
+    this.Zoom = parent.getFloat("Zoom");
+    this.ViewType = parent.getInt("ViewType");
+    this.FacesShade = parent.getInt("FacesShade");
+
+    this.UI_CurrentTask = parent.getInt("UI_CurrentTask");
+    this.UI_OptionXorY = parent.getInt("UI_OptionXorY");
+    this.UI_TaskModifyParameter = parent.getInt("UI_TaskModifyParameter");    
+  }       
+
 }
+
+solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
 
 
 
@@ -4598,9 +4669,30 @@ class solarchvision_WORLD {
       if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;
     }
   }
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setInt("Viewport_ZOOM", this.Viewport_ZOOM);
+  }
+
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.Viewport_ZOOM = parent.getInt("Viewport_ZOOM");
+  }    
     
 }
 
+solarchvision_WORLD WORLD = new solarchvision_WORLD();
 
 
 
@@ -6598,13 +6690,123 @@ class solarchvision_STUDY {
   
     cursor(ARROW);
   }
-  
-  
 
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setInt("j_Start", this.j_Start);
+    parent.setInt("j_End", this.j_End);
+    parent.setFloat("perDays", this.perDays);
+    parent.setInt("joinDays", this.joinDays);
+    
+    parent.setFloat("T_scale", this.T_scale);
+    parent.setFloat("U_scale", this.U_scale);
+
+    parent.setInt("skyScenario", this.skyScenario);    
+    parent.setInt("filter", this.filter);
+    parent.setInt("TrendJoinHours", this.TrendJoinHours);
+    parent.setInt("TrendJoinType", this.TrendJoinType);
+    parent.setString("Export_info_node", Boolean.toString(this.Export_info_node));
+    parent.setString("Export_info_norm", Boolean.toString(this.Export_info_norm));
+    parent.setString("Export_info_prob", Boolean.toString(this.Export_info_prob));
+    parent.setInt("Pallet_SORT_CLR", this.Pallet_SORT_CLR);
+    parent.setInt("Pallet_SORT_DIR", this.Pallet_SORT_DIR);
+    parent.setFloat("Pallet_SORT_MLT", this.Pallet_SORT_MLT);
+    parent.setInt("Pallet_PROB_CLR", this.Pallet_PROB_CLR);
+    parent.setInt("Pallet_PROB_DIR", this.Pallet_PROB_DIR);
+    parent.setFloat("Pallet_PROB_MLT", this.Pallet_PROB_MLT);
+    parent.setInt("Pallet_ACTIVE_CLR", this.Pallet_ACTIVE_CLR);
+    parent.setInt("Pallet_ACTIVE_DIR", this.Pallet_ACTIVE_DIR);
+    parent.setFloat("Pallet_ACTIVE_MLT", this.Pallet_ACTIVE_MLT);
+    parent.setInt("Pallet_PASSIVE_CLR", this.Pallet_PASSIVE_CLR);
+    parent.setInt("Pallet_PASSIVE_DIR", this.Pallet_PASSIVE_DIR);
+    parent.setFloat("Pallet_PASSIVE_MLT", this.Pallet_PASSIVE_MLT);    
+    
+    parent.setFloat("O_scale", this.O_scale);
+    parent.setFloat("W_scale", this.W_scale);    
+    parent.setFloat("rect_scale", this.rect_scale);
+    parent.setFloat("rect_offset_x", this.rect_offset_x);
+    
+    parent.setString("impact_summary", Boolean.toString(this.impact_summary));
+    parent.setInt("ImpactLayer", this.ImpactLayer);
+    parent.setInt("PlotImpacts", this.PlotImpacts);
+    parent.setString("Impacts_update", Boolean.toString(this.Impacts_update));   
+   
+    parent.setString("displayRaws", Boolean.toString(this.displayRaws));
+    parent.setString("displaySorted", Boolean.toString(this.displaySorted));
+    parent.setString("displayNormals", Boolean.toString(this.displayNormals));
+    parent.setString("displayProbs", Boolean.toString(this.displayProbs));
+    parent.setInt("sumInterval", this.sumInterval);
+    parent.setFloat("LevelPix", this.LevelPix);
+    parent.setFloat("Pix", this.Pix);
+    parent.setInt("plotSetup", this.plotSetup);
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.i_Start = parent.getInt("i_Start");
+    this.i_End = parent.getInt("i_End");
+    //this.j_Start = parent.getInt("j_Start");
+    this.j_End = parent.getInt("j_End");
+    this.perDays = parent.getFloat("perDays");
+    this.joinDays = parent.getInt("joinDays");
+    
+    this.T_scale = parent.getFloat("T_scale");
+    this.U_scale = parent.getFloat("U_scale");
+    this.skyScenario = parent.getInt("skyScenario");      
+    this.filter = parent.getInt("filter");
+    this.TrendJoinHours = parent.getInt("TrendJoinHours");
+    this.TrendJoinType = parent.getInt("TrendJoinType");
+    this.Export_info_node = Boolean.parseBoolean(parent.getString("Export_info_node"));
+    this.Export_info_norm = Boolean.parseBoolean(parent.getString("Export_info_norm"));
+    this.Export_info_prob = Boolean.parseBoolean(parent.getString("Export_info_prob"));
+    this.Pallet_SORT_CLR = parent.getInt("Pallet_SORT_CLR");
+    this.Pallet_SORT_DIR = parent.getInt("Pallet_SORT_DIR");
+    this.Pallet_SORT_MLT = parent.getFloat("Pallet_SORT_MLT");
+    this.Pallet_PROB_CLR = parent.getInt("Pallet_PROB_CLR");
+    this.Pallet_PROB_DIR = parent.getInt("Pallet_PROB_DIR");
+    this.Pallet_PROB_MLT = parent.getFloat("Pallet_PROB_MLT");
+    this.Pallet_ACTIVE_CLR = parent.getInt("Pallet_ACTIVE_CLR");
+    this.Pallet_ACTIVE_DIR = parent.getInt("Pallet_ACTIVE_DIR");
+    this.Pallet_ACTIVE_MLT = parent.getFloat("Pallet_ACTIVE_MLT");
+    this.Pallet_PASSIVE_CLR = parent.getInt("Pallet_PASSIVE_CLR");
+    this.Pallet_PASSIVE_DIR = parent.getInt("Pallet_PASSIVE_DIR");
+    this.Pallet_PASSIVE_MLT = parent.getFloat("Pallet_PASSIVE_MLT");
+    
+    
+    this.O_scale = parent.getFloat("O_scale");
+    this.W_scale = parent.getFloat("W_scale");
+    this.rect_scale = parent.getFloat("rect_scale");
+    this.rect_offset_x = parent.getFloat("rect_offset_x");
+    
+    this.impact_summary = Boolean.parseBoolean(parent.getString("impact_summary"));
+    this.ImpactLayer = parent.getInt("ImpactLayer");
+    this.PlotImpacts = parent.getInt("PlotImpacts");
+    this.Impacts_update = Boolean.parseBoolean(parent.getString("Impacts_update"));
+    
+    this.displayRaws = Boolean.parseBoolean(parent.getString("displayRaws"));
+    this.displaySorted = Boolean.parseBoolean(parent.getString("displaySorted"));
+    this.displayNormals = Boolean.parseBoolean(parent.getString("displayNormals"));
+    this.displayProbs = Boolean.parseBoolean(parent.getString("displayProbs"));
+    this.sumInterval = parent.getInt("sumInterval");
+    this.LevelPix = parent.getFloat("LevelPix");
+    this.Pix = parent.getFloat("Pix");
+    this.plotSetup = parent.getInt("plotSetup");
  
+  }       
+
 }
 
-
+solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 
 
@@ -7290,9 +7492,9 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 4) { // 3D-Solid   
   
-        SOLID_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_CLR", SOLID_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        SOLID_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_DIR", SOLID_Pallet_DIR, -2, 2, 2), 1));
-        SOLID_Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "SOLID_Pallet_MLT", SOLID_Pallet_MLT, 0.0001, 64, -2);      
+        allSolids.Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Pallet_CLR", allSolids.Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allSolids.Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Pallet_DIR", allSolids.Pallet_DIR, -2, 2, 2), 1));
+        allSolids.Pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Pallet_MLT", allSolids.Pallet_MLT, 0.0001, 64, -2);      
   
         ELEVATION_Pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
         ELEVATION_Pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
@@ -7395,6 +7597,10 @@ class solarchvision_ROLLOUT {
   
 }
 
+solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
+
+
+
 
 class solarchvision_MESSAGE {
   
@@ -7406,11 +7612,10 @@ class solarchvision_MESSAGE {
   int dY = int(1.5 * MessageSize);
 }
 
-solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
 solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
-solarchvision_WORLD WORLD = new solarchvision_WORLD();
-solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
-solarchvision_STUDY STUDY = new solarchvision_STUDY();
+
+
+
 
 
 
@@ -7625,9 +7830,9 @@ int pre_STUDY_CurrentLayer_id;
 int pre_STUDY_SkyScenario;
 int pre_STUDY_PlotImpacts;
 
-int pre_SOLID_Pallet_CLR;
-int pre_SOLID_Pallet_DIR; 
-float pre_SOLID_Pallet_MLT; 
+int pre_allSolids_Pallet_CLR;
+int pre_allSolids_Pallet_DIR; 
+float pre_allSolids_Pallet_MLT; 
 
 
 
@@ -8002,9 +8207,7 @@ int ELEVATION_Pallet_CLR = 1;
 int ELEVATION_Pallet_DIR = -1; 
 float ELEVATION_Pallet_MLT = 0.05; 
 
-int SOLID_Pallet_CLR = 17; //1; 
-int SOLID_Pallet_DIR = -1; 
-float SOLID_Pallet_MLT = 0.01; //1; 
+
 
 int WindFlow_Pallet_CLR = 18; 
 int WindFlow_Pallet_DIR = -1;  
@@ -10447,9 +10650,9 @@ class solarchvision_SolidImpacts {
       this.Contours_V2Lines[0][1] = 0;  
   
   
-      int PAL_TYPE = SOLID_Pallet_CLR; 
-      int PAL_DIR = SOLID_Pallet_DIR;
-      float PAL_Multiplier = SOLID_Pallet_MLT;     
+      int PAL_TYPE = allSolids.Pallet_CLR; 
+      int PAL_DIR = allSolids.Pallet_DIR;
+      float PAL_Multiplier = allSolids.Pallet_MLT;     
   
       this.Image.loadPixels();
   
@@ -15008,9 +15211,9 @@ void draw () {
         pre_Land3D_loadMesh = Land3D.loadMesh;
         pre_Land3D_loadTextures = Land3D.loadTextures;
 
-        pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
-        pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
-        pre_SOLID_Pallet_MLT = SOLID_Pallet_MLT;         
+        pre_allSolids_Pallet_CLR = allSolids.Pallet_CLR;
+        pre_allSolids_Pallet_DIR = allSolids.Pallet_DIR; 
+        pre_allSolids_Pallet_MLT = allSolids.Pallet_MLT;         
 
         pre_CreateInput_powAll = CreateInput_powAll;
 
@@ -15412,15 +15615,15 @@ void draw () {
         }
 
 
-        if (pre_SOLID_Pallet_CLR != SOLID_Pallet_CLR) {
+        if (pre_allSolids_Pallet_CLR != allSolids.Pallet_CLR) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
           WIN3D.update = true;
         }
-        if (pre_SOLID_Pallet_DIR != SOLID_Pallet_DIR) {
+        if (pre_allSolids_Pallet_DIR != allSolids.Pallet_DIR) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
           WIN3D.update = true;
         }
-        if (pre_SOLID_Pallet_MLT != SOLID_Pallet_MLT) {
+        if (pre_allSolids_Pallet_MLT != allSolids.Pallet_MLT) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
           WIN3D.update = true;
         }
@@ -22358,6 +22561,14 @@ class solarchvision_Sky3D {
     XML parent = xml.addChild(this.CLASS_STAMP);
     
     parent.setString("displaySurface", Boolean.toString(this.displaySurface));
+    parent.setInt("displayTessellation", this.displayTessellation);
+    parent.setFloat("scale", this.scale);
+    parent.setInt("Pallet_ACTIVE_CLR", this.Pallet_ACTIVE_CLR);
+    parent.setInt("Pallet_ACTIVE_DIR", this.Pallet_ACTIVE_DIR);
+    parent.setFloat("Pallet_ACTIVE_MLT", this.Pallet_ACTIVE_MLT);
+    parent.setInt("Pallet_PASSIVE_CLR", this.Pallet_PASSIVE_CLR);
+    parent.setInt("Pallet_PASSIVE_DIR", this.Pallet_PASSIVE_DIR);
+    parent.setFloat("Pallet_PASSIVE_MLT", this.Pallet_PASSIVE_MLT);
   }
   
   
@@ -22368,9 +22579,16 @@ class solarchvision_Sky3D {
     XML parent = xml.getChild(this.CLASS_STAMP);
     
     this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+    this.displayTessellation = parent.getInt("displayTessellation");
+    this.scale = parent.getFloat("scale");
+    this.Pallet_ACTIVE_CLR = parent.getInt("Pallet_ACTIVE_CLR");
+    this.Pallet_ACTIVE_DIR = parent.getInt("Pallet_ACTIVE_DIR");
+    this.Pallet_ACTIVE_MLT = parent.getFloat("Pallet_ACTIVE_MLT");
+    this.Pallet_PASSIVE_CLR = parent.getInt("Pallet_PASSIVE_CLR");
+    this.Pallet_PASSIVE_DIR = parent.getInt("Pallet_PASSIVE_DIR");
+    this.Pallet_PASSIVE_MLT = parent.getFloat("Pallet_PASSIVE_MLT");
   }   
 }
-
 
 solarchvision_Sky3D Sky3D = new solarchvision_Sky3D();
 
@@ -26485,6 +26703,9 @@ class solarchvision_Solids {
   private final static String CLASS_STAMP = "Solids";
   
   boolean displayAll = true;  
+  int Pallet_CLR = 17; //1; 
+  int Pallet_DIR = -1; 
+  float Pallet_MLT = 0.01; //1; 
 
   float[][] DEF = new float[0][13];
   
@@ -26989,7 +27210,10 @@ class solarchvision_Solids {
       child.setContent(lineSTR);
     }    
     
-    parent.setString("displayAll", Boolean.toString(this.displayAll));    
+    parent.setString("displayAll", Boolean.toString(this.displayAll));
+    parent.setInt("Pallet_CLR", this.Pallet_CLR);
+    parent.setInt("Pallet_DIR", this.Pallet_DIR);
+    parent.setFloat("Pallet_MLT", this.Pallet_MLT);
   }
   
   
@@ -27013,6 +27237,9 @@ class solarchvision_Solids {
     }
     
     this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));    
+    this.Pallet_CLR = parent.getInt("Pallet_CLR");
+    this.Pallet_DIR = parent.getInt("Pallet_DIR");
+    this.Pallet_MLT = parent.getFloat("Pallet_MLT");   
   }    
 
 }
@@ -52005,9 +52232,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setFloat("CreateallModel1Ds_LeafSize", CreateallModel1Ds_LeafSize);
     parent.setInt("Current_ObjectCategory", Current_ObjectCategory);
     parent.setInt("CreateInput_MeshOrSolid", CreateInput_MeshOrSolid);
-    parent.setInt("WIN3D.UI_CurrentTask", WIN3D.UI_CurrentTask);
-    parent.setInt("WIN3D.UI_OptionXorY", WIN3D.UI_OptionXorY);
-    parent.setInt("WIN3D.UI_TaskModifyParameter", WIN3D.UI_TaskModifyParameter);  
+
   
     parent.setInt("Display_SWOB_Points", Display_SWOB_Points);
     parent.setInt("Display_NAEFS_Points", Display_NAEFS_Points);
@@ -52037,10 +52262,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("TIME_BeginDay", TIME_BeginDay);
     parent.setFloat("TIME_Date", TIME_Date);
   
-    parent.setInt("STUDY.j_Start", STUDY.j_Start);
-    parent.setInt("STUDY.j_End", STUDY.j_End);
-    parent.setFloat("STUDY.perDays", STUDY.perDays);
-    parent.setInt("STUDY.joinDays", STUDY.joinDays);
+
     parent.setInt("CLIMATE_TMYEPW_start", CLIMATE_TMYEPW_start);
     parent.setInt("CLIMATE_TMYEPW_end", CLIMATE_TMYEPW_end);
     parent.setInt("CLIMATE_CWEEDS_start", CLIMATE_CWEEDS_start);
@@ -52107,29 +52329,12 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setFloat("Develop_AngleOrientation", Develop_AngleOrientation);
     parent.setInt("CurrentLayer_id", CurrentLayer_id);
     parent.setInt("DevelopLayer_id", DevelopLayer_id);
-    parent.setFloat("STUDY.T_scale", STUDY.T_scale);
-    parent.setFloat("STUDY.U_scale", STUDY.U_scale);
-    parent.setInt("STUDY.skyScenario", STUDY.skyScenario);
+
+
     parent.setInt("FILTER_Hourly", FILTER_Hourly);
     parent.setInt("FILTER_Daily", FILTER_Daily);
-    parent.setInt("STUDY.filter", STUDY.filter);
-    parent.setInt("STUDY.TrendJoinHours", STUDY.TrendJoinHours);
-    parent.setInt("STUDY.TrendJoinType", STUDY.TrendJoinType);
-    parent.setString("STUDY.Export_info_node", Boolean.toString(STUDY.Export_info_node));
-    parent.setString("STUDY.Export_info_norm", Boolean.toString(STUDY.Export_info_norm));
-    parent.setString("STUDY.Export_info_prob", Boolean.toString(STUDY.Export_info_prob));
-    parent.setInt("STUDY.Pallet_SORT_CLR", STUDY.Pallet_SORT_CLR);
-    parent.setInt("STUDY.Pallet_SORT_DIR", STUDY.Pallet_SORT_DIR);
-    parent.setFloat("STUDY.Pallet_SORT_MLT", STUDY.Pallet_SORT_MLT);
-    parent.setInt("STUDY.Pallet_PROB_CLR", STUDY.Pallet_PROB_CLR);
-    parent.setInt("STUDY.Pallet_PROB_DIR", STUDY.Pallet_PROB_DIR);
-    parent.setFloat("STUDY.Pallet_PROB_MLT", STUDY.Pallet_PROB_MLT);
-    parent.setInt("STUDY.Pallet_ACTIVE_CLR", STUDY.Pallet_ACTIVE_CLR);
-    parent.setInt("STUDY.Pallet_ACTIVE_DIR", STUDY.Pallet_ACTIVE_DIR);
-    parent.setFloat("STUDY.Pallet_ACTIVE_MLT", STUDY.Pallet_ACTIVE_MLT);
-    parent.setInt("STUDY.Pallet_PASSIVE_CLR", STUDY.Pallet_PASSIVE_CLR);
-    parent.setInt("STUDY.Pallet_PASSIVE_DIR", STUDY.Pallet_PASSIVE_DIR);
-    parent.setFloat("STUDY.Pallet_PASSIVE_MLT", STUDY.Pallet_PASSIVE_MLT);
+    
+
     parent.setInt("OBJECTS_Pallet_ACTIVE_CLR", OBJECTS_Pallet_ACTIVE_CLR);
     parent.setInt("OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR);
     parent.setFloat("OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT);
@@ -52142,39 +52347,27 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("SunPath_Pallet_PASSIVE_CLR", SunPath_Pallet_PASSIVE_CLR);
     parent.setInt("SunPath_Pallet_PASSIVE_DIR", SunPath_Pallet_PASSIVE_DIR);
     parent.setFloat("SunPath_Pallet_PASSIVE_MLT", SunPath_Pallet_PASSIVE_MLT);
-    parent.setInt("Sky3D.Pallet_ACTIVE_CLR", Sky3D.Pallet_ACTIVE_CLR);
-    parent.setInt("Sky3D.Pallet_ACTIVE_DIR", Sky3D.Pallet_ACTIVE_DIR);
-    parent.setFloat("Sky3D.Pallet_ACTIVE_MLT", Sky3D.Pallet_ACTIVE_MLT);
-    parent.setInt("Sky3D.Pallet_PASSIVE_CLR", Sky3D.Pallet_PASSIVE_CLR);
-    parent.setInt("Sky3D.Pallet_PASSIVE_DIR", Sky3D.Pallet_PASSIVE_DIR);
-    parent.setFloat("Sky3D.Pallet_PASSIVE_MLT", Sky3D.Pallet_PASSIVE_MLT);
+
     parent.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
     parent.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
     parent.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT);
-    parent.setInt("SOLID_Pallet_CLR", SOLID_Pallet_CLR);
-    parent.setInt("SOLID_Pallet_DIR", SOLID_Pallet_DIR);
-    parent.setFloat("SOLID_Pallet_MLT", SOLID_Pallet_MLT);
+
     parent.setInt("WindFlow_Pallet_CLR", WindFlow_Pallet_CLR);
     parent.setInt("WindFlow_Pallet_DIR", WindFlow_Pallet_DIR);
     parent.setFloat("WindFlow_Pallet_MLT", WindFlow_Pallet_MLT);
     parent.setInt("Impact_TYPE", Impact_TYPE);
-    parent.setFloat("STUDY.O_scale", STUDY.O_scale);
-    parent.setFloat("STUDY.W_scale", STUDY.W_scale);
+
     parent.setInt("COLOR_STYLE_Current", COLOR_STYLE_Current);
     parent.setInt("COLOR_STYLE_Number", COLOR_STYLE_Number);
-    parent.setFloat("STUDY.rect_scale", STUDY.rect_scale);
-    parent.setFloat("STUDY.rect_offset_x", STUDY.rect_offset_x);
+    
+
+    
     parent.setInt("CurrentDataSource", CurrentDataSource);
-    parent.setString("STUDY.impact_summary", Boolean.toString(STUDY.impact_summary));
-    parent.setInt("STUDY.ImpactLayer", STUDY.ImpactLayer);
-    parent.setInt("STUDY.PlotImpacts", STUDY.PlotImpacts);
-    parent.setString("STUDY.Impacts_update", Boolean.toString(STUDY.Impacts_update));
     parent.setInt("DrawnFrame", DrawnFrame);
   
   
     
-    parent.setInt("Sky3D.displayTessellation", Sky3D.displayTessellation);
-    parent.setFloat("Sky3D.scale", Sky3D.scale);
+
     parent.setFloat("WindRose_scale", WindRose_scale);
   
     parent.setFloat("Planetary_Magnification", Planetary_Magnification);
@@ -52185,39 +52378,13 @@ void SOLARCHVISION_save_project (String myFile) {
 
     parent.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
     //parent.setInt("Camera_Variation", Camera_Variation);
-    parent.setString("STUDY.displayRaws", Boolean.toString(STUDY.displayRaws));
-    parent.setString("STUDY.displaySorted", Boolean.toString(STUDY.displaySorted));
-    parent.setString("STUDY.displayNormals", Boolean.toString(STUDY.displayNormals));
-    parent.setString("STUDY.displayProbs", Boolean.toString(STUDY.displayProbs));
-    parent.setInt("STUDY.sumInterval", STUDY.sumInterval);
-    parent.setFloat("STUDY.LevelPix", STUDY.LevelPix);
-    parent.setFloat("STUDY.Pix", STUDY.Pix);
-    parent.setInt("STUDY.plotSetup", STUDY.plotSetup);
+
     parent.setInt("Materials_Selection", Materials_Selection);
-    parent.setFloat("WIN3D.CAM_x", WIN3D.CAM_x);
-    parent.setFloat("WIN3D.CAM_y", WIN3D.CAM_y);
-    parent.setFloat("WIN3D.CAM_z", WIN3D.CAM_z);
-    parent.setFloat("WIN3D.CAM_fov", WIN3D.CAM_fov);
-    parent.setFloat("WIN3D.CAM_dist", WIN3D.CAM_dist);
-    parent.setFloat("WIN3D.CAM_clipNear", WIN3D.CAM_clipNear);
-    parent.setFloat("WIN3D.CAM_clipFar", WIN3D.CAM_clipFar);
-    parent.setInt("WIN3D.CurrentCamera", WIN3D.CurrentCamera);
     parent.setFloat("OBJECTS_scale", OBJECTS_scale);
-    parent.setFloat("WIN3D.refScale", WIN3D.refScale);
-    parent.setFloat("WIN3D.X_Coordinate", WIN3D.X_Coordinate);
-    parent.setFloat("WIN3D.Y_Coordinate", WIN3D.Y_Coordinate);
-    parent.setFloat("WIN3D.Z_Coordinate", WIN3D.Z_Coordinate);
-    parent.setFloat("WIN3D.S_Coordinate", WIN3D.S_Coordinate);
-    parent.setFloat("WIN3D.RX_Coordinate", WIN3D.RX_Coordinate);
-    parent.setFloat("WIN3D.RY_Coordinate", WIN3D.RY_Coordinate);
-    parent.setFloat("WIN3D.RZ_Coordinate", WIN3D.RZ_Coordinate);
-    parent.setFloat("WIN3D.RS_Coordinate", WIN3D.RS_Coordinate);
-    parent.setFloat("WIN3D.Zoom", WIN3D.Zoom);
-    parent.setInt("WIN3D.ViewType", WIN3D.ViewType);
-    parent.setInt("WIN3D.FacesShade", WIN3D.FacesShade);
+
   
   
-    parent.setInt("WORLD.Viewport_ZOOM", WORLD.Viewport_ZOOM);
+
     parent.setInt("FrameVariation", FrameVariation);
     parent.setInt("Language_Active", Language_Active);
   
@@ -52261,6 +52428,7 @@ void SOLARCHVISION_save_project (String myFile) {
 
 
   
+  
   allPoints.to_XML(xml);
 
   allCurves.to_XML(xml);
@@ -52287,12 +52455,20 @@ void SOLARCHVISION_save_project (String myFile) {
   
   Earth3D.to_XML(xml);
   
+  Sky3D.to_XML(xml);
+  
   Tropo3D.to_XML(xml);
   
   Moon3D.to_XML(xml);
   
   Star3D.to_XML(xml);
 
+  WIN3D.to_XML(xml);
+  
+  WORLD.to_XML(xml);
+  
+  STUDY.to_XML(xml);
+  
   STATION.to_XML(xml);
 
   saveXML(xml, myFile);    
@@ -52325,14 +52501,7 @@ void SOLARCHVISION_load_project (String myFile) {
       XML parent = xml.getChild("SOLARCHVISION_variables");
       
       displayOutput_inExplorer = Boolean.parseBoolean(parent.getString("displayOutput_inExplorer"));
-      
-      
 
-  
-      
-      
-      
-  
       DEFAULT_CreateMaterial = parent.getInt("DEFAULT_CreateMaterial");
       DEFAULT_CreateTessellation = parent.getInt("DEFAULT_CreateTessellation");
       DEFAULT_CreateLayer = parent.getInt("DEFAULT_CreateLayer");
@@ -52377,9 +52546,7 @@ void SOLARCHVISION_load_project (String myFile) {
       CreateallModel1Ds_LeafSize = parent.getFloat("CreateallModel1Ds_LeafSize");
       Current_ObjectCategory = parent.getInt("Current_ObjectCategory");
       CreateInput_MeshOrSolid = parent.getInt("CreateInput_MeshOrSolid");
-      WIN3D.UI_CurrentTask = parent.getInt("WIN3D.UI_CurrentTask");
-      WIN3D.UI_OptionXorY = parent.getInt("WIN3D.UI_OptionXorY");
-      WIN3D.UI_TaskModifyParameter = parent.getInt("WIN3D.UI_TaskModifyParameter");      
+
   
       Display_SWOB_Points = parent.getInt("Display_SWOB_Points");
       Display_NAEFS_Points = parent.getInt("Display_NAEFS_Points");
@@ -52408,12 +52575,7 @@ void SOLARCHVISION_load_project (String myFile) {
       TIME_BeginDay = parent.getInt("TIME_BeginDay");
       TIME_Date = parent.getFloat("TIME_Date");
   
-      STUDY.i_Start = parent.getInt("STUDY.i_Start");
-      STUDY.i_End = parent.getInt("STUDY.i_End");
-      //STUDY.j_Start = parent.getInt("STUDY.j_Start");
-      STUDY.j_End = parent.getInt("STUDY.j_End");
-      STUDY.perDays = parent.getFloat("STUDY.perDays");
-      STUDY.joinDays = parent.getInt("STUDY.joinDays");
+
       CLIMATE_TMYEPW_start = parent.getInt("CLIMATE_TMYEPW_start");
       CLIMATE_TMYEPW_end = parent.getInt("CLIMATE_TMYEPW_end");
       CLIMATE_CWEEDS_start = parent.getInt("CLIMATE_CWEEDS_start");
@@ -52482,29 +52644,11 @@ void SOLARCHVISION_load_project (String myFile) {
       changeCurrentLayerTo(parent.getInt("CurrentLayer_id"));
       
       DevelopLayer_id = parent.getInt("DevelopLayer_id");
-      STUDY.T_scale = parent.getFloat("STUDY.T_scale");
-      STUDY.U_scale = parent.getFloat("STUDY.U_scale");
-      STUDY.skyScenario = parent.getInt("STUDY.skyScenario");
+
       FILTER_Hourly = parent.getInt("FILTER_Hourly");
       FILTER_Daily = parent.getInt("FILTER_Daily");
-      STUDY.filter = parent.getInt("STUDY.filter");
-      STUDY.TrendJoinHours = parent.getInt("STUDY.TrendJoinHours");
-      STUDY.TrendJoinType = parent.getInt("STUDY.TrendJoinType");
-      STUDY.Export_info_node = Boolean.parseBoolean(parent.getString("STUDY.Export_info_node"));
-      STUDY.Export_info_norm = Boolean.parseBoolean(parent.getString("STUDY.Export_info_norm"));
-      STUDY.Export_info_prob = Boolean.parseBoolean(parent.getString("STUDY.Export_info_prob"));
-      STUDY.Pallet_SORT_CLR = parent.getInt("STUDY.Pallet_SORT_CLR");
-      STUDY.Pallet_SORT_DIR = parent.getInt("STUDY.Pallet_SORT_DIR");
-      STUDY.Pallet_SORT_MLT = parent.getFloat("STUDY.Pallet_SORT_MLT");
-      STUDY.Pallet_PROB_CLR = parent.getInt("STUDY.Pallet_PROB_CLR");
-      STUDY.Pallet_PROB_DIR = parent.getInt("STUDY.Pallet_PROB_DIR");
-      STUDY.Pallet_PROB_MLT = parent.getFloat("STUDY.Pallet_PROB_MLT");
-      STUDY.Pallet_ACTIVE_CLR = parent.getInt("STUDY.Pallet_ACTIVE_CLR");
-      STUDY.Pallet_ACTIVE_DIR = parent.getInt("STUDY.Pallet_ACTIVE_DIR");
-      STUDY.Pallet_ACTIVE_MLT = parent.getFloat("STUDY.Pallet_ACTIVE_MLT");
-      STUDY.Pallet_PASSIVE_CLR = parent.getInt("STUDY.Pallet_PASSIVE_CLR");
-      STUDY.Pallet_PASSIVE_DIR = parent.getInt("STUDY.Pallet_PASSIVE_DIR");
-      STUDY.Pallet_PASSIVE_MLT = parent.getFloat("STUDY.Pallet_PASSIVE_MLT");
+      
+
       OBJECTS_Pallet_ACTIVE_CLR = parent.getInt("OBJECTS_Pallet_ACTIVE_CLR");
       OBJECTS_Pallet_ACTIVE_DIR = parent.getInt("OBJECTS_Pallet_ACTIVE_DIR");
       OBJECTS_Pallet_ACTIVE_MLT = parent.getFloat("OBJECTS_Pallet_ACTIVE_MLT");
@@ -52517,39 +52661,27 @@ void SOLARCHVISION_load_project (String myFile) {
       SunPath_Pallet_PASSIVE_CLR = parent.getInt("SunPath_Pallet_PASSIVE_CLR");
       SunPath_Pallet_PASSIVE_DIR = parent.getInt("SunPath_Pallet_PASSIVE_DIR");
       SunPath_Pallet_PASSIVE_MLT = parent.getFloat("SunPath_Pallet_PASSIVE_MLT");
-      Sky3D.Pallet_ACTIVE_CLR = parent.getInt("Sky3D.Pallet_ACTIVE_CLR");
-      Sky3D.Pallet_ACTIVE_DIR = parent.getInt("Sky3D.Pallet_ACTIVE_DIR");
-      Sky3D.Pallet_ACTIVE_MLT = parent.getFloat("Sky3D.Pallet_ACTIVE_MLT");
-      Sky3D.Pallet_PASSIVE_CLR = parent.getInt("Sky3D.Pallet_PASSIVE_CLR");
-      Sky3D.Pallet_PASSIVE_DIR = parent.getInt("Sky3D.Pallet_PASSIVE_DIR");
-      Sky3D.Pallet_PASSIVE_MLT = parent.getFloat("Sky3D.Pallet_PASSIVE_MLT");
+
       ELEVATION_Pallet_CLR = parent.getInt("ELEVATION_Pallet_CLR");
       ELEVATION_Pallet_DIR = parent.getInt("ELEVATION_Pallet_DIR");
       ELEVATION_Pallet_MLT = parent.getFloat("ELEVATION_Pallet_MLT");
-      SOLID_Pallet_CLR = parent.getInt("SOLID_Pallet_CLR");
-      SOLID_Pallet_DIR = parent.getInt("SOLID_Pallet_DIR");
-      SOLID_Pallet_MLT = parent.getFloat("SOLID_Pallet_MLT");
+
       WindFlow_Pallet_CLR = parent.getInt("WindFlow_Pallet_CLR");
       WindFlow_Pallet_DIR = parent.getInt("WindFlow_Pallet_DIR");
       WindFlow_Pallet_MLT = parent.getFloat("WindFlow_Pallet_MLT");
       Impact_TYPE = parent.getInt("Impact_TYPE");
-      STUDY.O_scale = parent.getFloat("STUDY.O_scale");
-      STUDY.W_scale = parent.getFloat("STUDY.W_scale");
+
       COLOR_STYLE_Current = parent.getInt("COLOR_STYLE_Current");
       COLOR_STYLE_Number = parent.getInt("COLOR_STYLE_Number");
-      STUDY.rect_scale = parent.getFloat("STUDY.rect_scale");
-      STUDY.rect_offset_x = parent.getFloat("STUDY.rect_offset_x");
+      
+
+      
       CurrentDataSource = parent.getInt("CurrentDataSource");
-      STUDY.impact_summary = Boolean.parseBoolean(parent.getString("STUDY.impact_summary"));
-      STUDY.ImpactLayer = parent.getInt("STUDY.ImpactLayer");
-      STUDY.PlotImpacts = parent.getInt("STUDY.PlotImpacts");
-      STUDY.Impacts_update = Boolean.parseBoolean(parent.getString("STUDY.Impacts_update"));
       DrawnFrame = parent.getInt("DrawnFrame");
   
   
       
-      Sky3D.displayTessellation = parent.getInt("Sky3D.displayTessellation");
-      Sky3D.scale = parent.getFloat("Sky3D.scale");
+
       WindRose_scale = parent.getFloat("WindRose_scale");
   
       Planetary_Magnification = parent.getFloat("Planetary_Magnification");
@@ -52559,40 +52691,15 @@ void SOLARCHVISION_load_project (String myFile) {
       
       Display_WindFlow = Boolean.parseBoolean(parent.getString("Display_WindFlow"));
       Camera_Variation = parent.getInt("Camera_Variation");
-      STUDY.displayRaws = Boolean.parseBoolean(parent.getString("STUDY.displayRaws"));
-      STUDY.displaySorted = Boolean.parseBoolean(parent.getString("STUDY.displaySorted"));
-      STUDY.displayNormals = Boolean.parseBoolean(parent.getString("STUDY.displayNormals"));
-      STUDY.displayProbs = Boolean.parseBoolean(parent.getString("STUDY.displayProbs"));
-      STUDY.sumInterval = parent.getInt("STUDY.sumInterval");
-      STUDY.LevelPix = parent.getFloat("STUDY.LevelPix");
-      STUDY.Pix = parent.getFloat("STUDY.Pix");
-      STUDY.plotSetup = parent.getInt("STUDY.plotSetup");
+
       Materials_Selection = parent.getInt("Materials_Selection");
-      WIN3D.CAM_x = parent.getFloat("WIN3D.CAM_x");
-      WIN3D.CAM_y = parent.getFloat("WIN3D.CAM_y");
-      WIN3D.CAM_z = parent.getFloat("WIN3D.CAM_z");
-      WIN3D.CAM_fov = parent.getFloat("WIN3D.CAM_fov");
-      WIN3D.CAM_dist = parent.getFloat("WIN3D.CAM_dist");
-      WIN3D.CAM_clipNear = parent.getFloat("WIN3D.CAM_clipNear");
-      WIN3D.CAM_clipFar = parent.getFloat("WIN3D.CAM_clipFar");
-      WIN3D.CurrentCamera = parent.getInt("WIN3D.CurrentCamera");
       OBJECTS_scale = parent.getFloat("OBJECTS_scale");
-      WIN3D.refScale = parent.getFloat("WIN3D.refScale");
-      WIN3D.X_Coordinate = parent.getFloat("WIN3D.X_Coordinate");
-      WIN3D.Y_Coordinate = parent.getFloat("WIN3D.Y_Coordinate");
-      WIN3D.Z_Coordinate = parent.getFloat("WIN3D.Z_Coordinate");
-      WIN3D.S_Coordinate = parent.getFloat("WIN3D.S_Coordinate");
-      WIN3D.RX_Coordinate = parent.getFloat("WIN3D.RX_Coordinate");
-      WIN3D.RY_Coordinate = parent.getFloat("WIN3D.RY_Coordinate");
-      WIN3D.RZ_Coordinate = parent.getFloat("WIN3D.RZ_Coordinate");
-      WIN3D.RS_Coordinate = parent.getFloat("WIN3D.RS_Coordinate");
-      WIN3D.Zoom = parent.getFloat("WIN3D.Zoom");
-      WIN3D.ViewType = parent.getInt("WIN3D.ViewType");
-      WIN3D.FacesShade = parent.getInt("WIN3D.FacesShade");
+      
+
   
   
   
-      WORLD.Viewport_ZOOM = parent.getInt("WORLD.Viewport_ZOOM");
+      
       FrameVariation = parent.getInt("FrameVariation");
       Language_Active = parent.getInt("Language_Active");
   
@@ -52647,6 +52754,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
 
     
+    
     allPoints.from_XML(xml);
     
     allCurves.from_XML(xml);
@@ -52673,13 +52781,23 @@ void SOLARCHVISION_load_project (String myFile) {
     
     Earth3D.from_XML(xml);
     
+    Sky3D.from_XML(xml);
+    
     Tropo3D.from_XML(xml);
     
     Moon3D.from_XML(xml);
     
-    Star3D.from_XML(xml);    
+    Star3D.from_XML(xml);
+
+    WIN3D.from_XML(xml);    
+    
+    WORLD.from_XML(xml);
+    
+    STUDY.from_XML(xml);
     
     STATION.from_XML(xml);
+    
+    
 
   
     println("End of loading XML.");
