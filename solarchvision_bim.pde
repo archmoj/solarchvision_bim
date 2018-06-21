@@ -1,5 +1,7 @@
 
 
+
+
 // please define station elevation data for CWEEDS points!
 
 String SOLARCHVISION_version = "2017"; 
@@ -2440,10 +2442,10 @@ class solarchvision_WIN3D {
       
       Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
   
-      allModel3Ds.draw_Faces();
-  
-      allModel3Ds.draw_Curves();
+      allFaces.draw(TypeWindow.WIN3D);
       
+      allCurves.draw(TypeWindow.WIN3D);
+  
       allModel3Ds.draw_Vertices();
   
       allModel1Ds.draw();
@@ -6973,7 +6975,7 @@ class solarchvision_ROLLOUT {
   
         CreateInput_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_MeshOrSolid", CreateInput_MeshOrSolid, 0, 1, 1), 1));
   
-        allModel3Ds.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.Tessellation", allModel3Ds.Tessellation, 0, 4, 1), 1));
+        allFaces.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.Tessellation", allFaces.Tessellation, 0, 4, 1), 1));
   
         Land3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Tessellation", Land3D.Tessellation, 0, 4, 1), 1));
   
@@ -7122,8 +7124,8 @@ class solarchvision_ROLLOUT {
         //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
         //allModel3Ds.DisplayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayVertices", allModel3Ds.DisplayVertices, 0, 1, 1), 1));
-        //allModel3Ds.DisplayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allModel3Ds.DisplayEdges, 0, 1, 1), 1));
-        //allModel3Ds.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayNormals", allModel3Ds.DisplayNormals, 0, 1, 1), 1));
+        //allFaces.Edges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allFaces.Edges, 0, 1, 1), 1));
+        //allFaces.Normals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayNormals", allFaces.Normals, 0, 1, 1), 1));
   
         //allCameras.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.Display", allCameras.Display, 0, 1, 1), 1));
       }    
@@ -7604,8 +7606,8 @@ int pre_WIN3D_FacesShade;
 int pre_allModel3Ds_Tessellation;
 
 boolean pre_allModel3Ds_DisplayVertices;
-boolean pre_allModel3Ds_DisplayEdges;
-boolean pre_allModel3Ds_DisplayNormals;
+boolean pre_allFaces_Edges;
+boolean pre_allFaces_Normals;
 
 
 
@@ -8320,6 +8322,10 @@ class solarchvision_Faces {
   private final static String CLASS_STAMP = "Faces";
   
   boolean Display = true; 
+  boolean Normals = false;
+  boolean Edges = true;
+  
+  int Tessellation = 2;
   
   int[][] nodes = new int[0][0];
   
@@ -8377,7 +8383,616 @@ class solarchvision_Faces {
 
   void draw (int target_window) {
    
-    if (allFaces.Display) {
+    if (this.Display) {
+      
+      if (target_window == TypeWindow.WIN3D) {
+    
+        if (this.Normals) {
+    
+          for (int f = 0; f < this.nodes.length; f++) {
+    
+            int vsb = this.getVisibility(f);
+    
+            if (vsb > 0) {
+    
+              float[][] base_Vertices = new float [this.nodes[f].length][3];
+              for (int j = 0; j < this.nodes[f].length; j++) {
+                int vNo = this.nodes[f][j];
+                base_Vertices[j][0] = allVertices[vNo][0];
+                base_Vertices[j][1] = allVertices[vNo][1];
+                base_Vertices[j][2] = allVertices[vNo][2];
+              }
+    
+              float G_x0 = 0;
+              float G_y0 = 0;
+              float G_z0 = 0;
+    
+              float G_x1 = 0;
+              float G_y1 = 0;
+              float G_z1 = 0;
+    
+              float n = float(base_Vertices.length);
+    
+              for (int s = 0; s < base_Vertices.length; s++) {
+    
+                int s_next = (s + 1) % base_Vertices.length;
+                int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+    
+                PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
+                PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
+                PVector UV = U.cross(V);
+                float[] W = {
+                  UV.x, UV.y, UV.z
+                };
+                W = SOLARCHVISION_fn_normalize(W);
+    
+                float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
+                float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
+                float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
+    
+                float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D.scale;
+                float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D.scale;
+                float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D.scale;
+    
+                G_x0 += x0 / n;
+                G_y0 += y0 / n;
+                G_z0 += z0 / n;
+    
+                G_x1 += x1 / n;
+                G_y1 += y1 / n;
+                G_z1 += z1 / n;
+              }
+    
+              WIN3D.graphics.strokeWeight(3);
+              WIN3D.graphics.stroke(127, 255, 127);
+              WIN3D.graphics.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
+    
+              WIN3D.graphics.strokeWeight(1);
+              WIN3D.graphics.stroke(0, 127, 0);
+    
+              for (int s = 0; s < base_Vertices.length; s++) {
+    
+                float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
+                float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
+                float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
+    
+                WIN3D.graphics.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
+              }
+            }
+          }
+        }
+    
+        WIN3D.graphics.strokeWeight(1);
+        WIN3D.graphics.stroke(0, 0, 0);
+        if (this.Edges == false) WIN3D.graphics.noStroke();
+    
+        int PAL_TYPE = SHADE.get_PAL_TYPE(); 
+        int PAL_DIR = SHADE.get_PAL_DIR();
+        float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+    
+        for (int f = 0; f < this.nodes.length; f++) {
+    
+          int vsb = this.getVisibility(f);
+    
+          if (vsb > 0) {        
+    
+            if (WIN3D.FacesShade == SHADE.Surface_Base) {
+    
+              WIN3D.graphics.fill(255, 255, 255);
+    
+              WIN3D.graphics.beginShape();
+    
+              for (int j = 0; j < this.nodes[f].length; j++) {
+                int vNo = this.nodes[f][j];
+    
+                WIN3D.graphics.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D.scale, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D.scale), allVertices[vNo][2] * OBJECTS_scale * WIN3D.scale);
+              }    
+    
+              WIN3D.graphics.endShape(CLOSE);
+            } else {
+    
+              int mt = this.getMaterial(f);
+    
+              int Tessellation = this.getTessellation(f);
+    
+              int TotalSubNo = 1;  
+              if (this.getMaterial(f) == 0) {
+                Tessellation += this.Tessellation;
+              }
+              if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+              float[][] base_Vertices = new float [this.nodes[f].length][3];
+              for (int j = 0; j < this.nodes[f].length; j++) {
+                int vNo = this.nodes[f][j];
+                base_Vertices[j][0] = allVertices[vNo][0];
+                base_Vertices[j][1] = allVertices[vNo][1];
+                base_Vertices[j][2] = allVertices[vNo][2];
+              }
+    
+              for (int n = 0; n < TotalSubNo; n++) {
+    
+                float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+    
+                WIN3D.graphics.beginShape();
+    
+                for (int s = 0; s < subFace.length; s++) {
+    
+                  if (WIN3D.FacesShade != SHADE.Surface_Wire) {
+    
+                    float[] COL = {
+                      255, 255, 255, 255
+                    };
+    
+                    if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                      int s_next = (s + 1) % subFace.length;
+                      int s_prev = (s + subFace.length - 1) % subFace.length;
+                      
+                      COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }        
+              
+                    if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+    
+                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }                   
+    
+                    if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+    
+                      COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }
+    
+                    if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+    
+                      COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }
+    
+                    if (WIN3D.FacesShade == SHADE.Surface_Materials) {
+                      COL = SHADE.vertexRender_Surface_Materials(mt);
+                    }              
+    
+                    if (WIN3D.FacesShade == SHADE.Surface_White) {
+                      COL = SHADE.vertexRender_Surface_White(255);
+                    }
+               
+                    WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+                  } else {
+                    WIN3D.graphics.noFill();
+                  }
+    
+                  WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -(subFace[s][1] * OBJECTS_scale * WIN3D.scale), subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+                }
+    
+                WIN3D.graphics.endShape(CLOSE);
+              }
+            }
+          }
+        }
+      }      
+      
+      
+      if (target_window == TypeWindow.OBJ) {
+    
+        int Create_Face_Texture = 0;
+    
+        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solid) || (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+          Create_Face_Texture = 1;
+        }
+    
+        if (Create_Face_Texture == 0) {
+    
+          if (Export_MaterialLibrary) {
+    
+            int[] Materials_Used = new int [Materials_Number];
+    
+            for (int i = 0; i < Materials_Used.length; i++) {
+              Materials_Used[i] = 0;
+            }
+    
+            for (int f = 0; f < this.nodes.length; f++) {
+    
+              int mt = this.getMaterial(f);
+    
+              Materials_Used[mt] += 1;
+            }    
+    
+            for (int mt = 0; mt < Materials_Number; mt++) {
+    
+              if (Materials_Used[mt] != 0) {
+    
+                float a = Materials_Color[mt][0] / 255.0; 
+                float r = Materials_Color[mt][1] / 255.0; 
+                float g = Materials_Color[mt][2] / 255.0; 
+                float b = Materials_Color[mt][3] / 255.0; 
+    
+                mtlOutput.println("newmtl SurfaceMaterial" + nf(mt, 0));
+                mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
+                mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
+                mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+                mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
+                mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+              }
+            }
+          }
+    
+    
+          for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
+    
+            if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+    
+              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+    
+                num_vertices_added = 0;
+    
+                for (int _turn = 1; _turn < 4; _turn++) {
+    
+                  if (_turn == 3) {
+                    if (Export_PolyToPoly == 1) {
+                      obj_lastGroupNumber += 1;
+                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
+                    }
+                  }  
+    
+                  int prev_mt = -1;
+    
+                  for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+    
+                    if (_turn == 3) {
+                      if (Export_MaterialLibrary) {
+                        int mt = this.getMaterial(f);
+                        if (prev_mt != mt) {
+                          objOutput.println("usemtl SurfaceMaterial" + nf(mt, 0));
+                          prev_mt = mt;
+                        }
+                      }
+                    }                  
+    
+                    int Tessellation = this.getTessellation(f);
+    
+                    int TotalSubNo = 1;  
+                    if (this.getMaterial(f) == 0) {
+                      Tessellation += allFaces.Tessellation;
+                    }
+    
+                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+                    float[][] base_Vertices = new float [this.nodes[f].length][3];
+                    for (int j = 0; j < this.nodes[f].length; j++) {
+                      int vNo = this.nodes[f][j];
+                      base_Vertices[j][0] = allVertices[vNo][0];
+                      base_Vertices[j][1] = allVertices[vNo][1];
+                      base_Vertices[j][2] = allVertices[vNo][2];
+                    }
+    
+                    for (int n = 0; n < TotalSubNo; n++) {
+    
+                      float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+    
+                      for (int s = 0; s < subFace.length; s++) {
+    
+                        if (_turn == 1) {
+                          SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                        }
+    
+                        if (_turn == 2) {
+    
+                          float t = PI / float(subFace.length);
+    
+                          float u = 0.5 * cos((2 * s + 1) * t) / cos(t) + 0.5;
+                          float v = 0.5 * sin((2 * s + 1) * t) / cos(t) + 0.5;
+    
+                          SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                        }
+                      }
+    
+    
+                      if (_turn == 3) {
+    
+                        num_vertices_added += subFace.length;
+    
+                        if (Export_PolyToPoly == 0) {
+                          obj_lastGroupNumber += 1;
+                          objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
+                        }                    
+    
+                        obj_lastFaceNumber += 1;
+    
+                        objOutput.print("f ");
+                        if (back_or_front == 1) {
+                          for (int s = 0; s < subFace.length; s++) {
+                            String n_txt = nf(obj_lastVertexNumber + num_vertices_added - s, 0);
+                            String m_txt = nf(obj_lastVtextureNumber + num_vertices_added - s, 0);  
+                            objOutput.print(n_txt + "/" + m_txt);
+                            if (s < subFace.length - 1) {
+                              objOutput.print(" ");
+                            }
+                          }
+                        } else {
+                          for (int s = subFace.length - 1; s >= 0; s--) {
+                            String n_txt = nf(obj_lastVertexNumber + num_vertices_added - s, 0);
+                            String m_txt = nf(obj_lastVtextureNumber + num_vertices_added - s, 0);  
+                            objOutput.print(n_txt + "/" + m_txt);
+                            if (s > 0) {
+                              objOutput.print(" ");
+                            }
+                          }
+                        }
+                        objOutput.println("");
+                      }
+                    }
+                  }
+                }
+    
+                obj_lastVertexNumber += num_vertices_added;
+                obj_lastVtextureNumber += num_vertices_added;
+              }
+            }
+          }
+        } else {
+    
+          int PAL_TYPE = SHADE.get_PAL_TYPE(); 
+          int PAL_DIR = SHADE.get_PAL_DIR();
+          float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+    
+          String the_filename = "";
+          String TEXTURE_path = "";
+    
+          if (Export_MaterialLibrary) {
+    
+            the_filename = "shadePallet.bmp";
+    
+            TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+    
+            println("Saving texture:", TEXTURE_path);
+    
+            int RES1 = Export_PalletResolution; 
+            int RES2 = Export_PalletResolution / 16;      
+    
+            PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+    
+    
+            Pallet_Texture.loadPixels();
+    
+            for (int np = 0; np < (RES1 * RES2); np++) {
+              int Image_X = np % RES1;
+              int Image_Y = np / RES1;
+    
+              float _val = (Image_X / (0.5 * RES1)) - 1; 
+    
+              float _u = 0.5 + _val;
+    
+              if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+              }            
+    
+              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+    
+              Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+            }
+    
+            Pallet_Texture.updatePixels();   
+    
+            Pallet_Texture.save(TEXTURE_path);
+    
+    
+    
+            mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+            mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+            //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+         
+          }
+    
+    
+          for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
+    
+            if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+    
+              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+    
+                num_vertices_added = 0;
+    
+                for (int _turn = 1; _turn < 4; _turn++) {
+    
+                  int CurrentFaceTextureNumber = -1;
+    
+                  if (_turn == 3) {
+    
+                    if (Export_PolyToPoly == 1) {
+                      obj_lastGroupNumber += 1;
+                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
+                    }
+    
+                    if (Export_MaterialLibrary) {
+    
+                      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+    
+                    }
+                  }  
+    
+                  for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+    
+                    int Tessellation = this.getTessellation(f);
+    
+                    int TotalSubNo = 1;  
+                    if (this.getMaterial(f) == 0) {
+                      Tessellation += allFaces.Tessellation;
+                    }
+    
+                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+    
+                    float x1 = 0;
+                    float y1 = 0;
+                    float z1 = 0;
+    
+                    float x2 = 0;
+                    float y2 = 0;
+                    float z2 = 0;
+    
+                    float x3 = 0;
+                    float y3 = 0;
+                    float z3 = 0;
+    
+                    float x4 = 0;
+                    float y4 = 0;
+                    float z4 = 0;
+    
+                    float[][] base_Vertices = new float [this.nodes[f].length][3];
+                    for (int j = 0; j < this.nodes[f].length; j++) {
+                      int vNo = this.nodes[f][j];
+                      base_Vertices[j][0] = allVertices[vNo][0];
+                      base_Vertices[j][1] = allVertices[vNo][1];
+                      base_Vertices[j][2] = allVertices[vNo][2];
+                    }
+    
+                    for (int n = 0; n < TotalSubNo; n++) {
+    
+                      float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+    
+                      CurrentFaceTextureNumber += 1;
+    
+                      if (_turn == 1) {   
+    
+                        if (Export_MaterialLibrary) {
+    
+                          for (int s = 0; s < subFace.length; s++) {
+    
+                            float[] COL = {
+                              255, 255, 255, 255
+                            };
+    
+                            if (s == 0) {
+                              x1 = subFace[s][0];
+                              y1 = subFace[s][1];
+                              z1 = subFace[s][2];
+                            }
+                            if (s == 1) {
+                              x2 = subFace[s][0];
+                              y2 = subFace[s][1];
+                              z2 = subFace[s][2];
+                            }            
+                            if (s == 2) { 
+                              x3 = subFace[s][0];
+                              y3 = subFace[s][1];
+                              z3 = subFace[s][2];
+                            }          
+                            if (s == 3) {
+                              x4 = subFace[s][0];
+                              y4 = subFace[s][1];
+                              z4 = subFace[s][2];
+                            }
+                          }
+    
+                        }
+    
+                        SOLARCHVISION_OBJprintVertex(x1, y1, z1);
+                        SOLARCHVISION_OBJprintVertex(x2, y2, z2);
+                        SOLARCHVISION_OBJprintVertex(x3, y3, z3);
+                        SOLARCHVISION_OBJprintVertex(x4, y4, z4);
+                      }
+    
+                      if (_turn == 2) {
+    
+                        for (int s = 0; s < subFace.length; s++) {
+    
+                          float _u = 0;
+    
+                          if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                            int s_next = (s + 1) % subFace.length;
+                            int s_prev = (s + subFace.length - 1) % subFace.length;
+    
+                            if (back_or_front == 0) {
+                              int s_temp = s_next;
+                              s_next = s_prev;
+                              s_prev = s_temp;
+                            }
+    
+                            _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }
+            
+                          if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+                            
+                            _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }                            
+    
+                          if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+    
+                            _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }                  
+    
+                          if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+    
+                            _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }
+    
+    
+                          float u0 = 0.5 * (_u + 0.5);
+    
+                          if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                            if (Impact_TYPE == Impact_ACTIVE) {
+                              u0 = _u;
+                            }
+                          }
+    
+                          if (u0 > 1) u0 = 1;
+                          if (u0 < 0) u0 = 0;
+                          
+                          SOLARCHVISION_OBJprintVtexture(u0, 0.5, 0);
+                        }
+    
+                        
+                      }
+    
+                      if (_turn == 3) {
+    
+                        num_vertices_added += 4;
+    
+                        if (Export_PolyToPoly == 0) {
+                          obj_lastGroupNumber += 1;
+                          objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
+                        }
+    
+                        String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+                        String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+                        String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+                        String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+    
+                        String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+                        String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+                        String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+                        String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+    
+                        obj_lastFaceNumber += 1;
+                        if (back_or_front == 1) {
+                          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                        } else {
+                          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                        }
+                      }
+                    }
+                  }
+                }
+    
+                obj_lastVertexNumber += num_vertices_added;
+                obj_lastVtextureNumber += num_vertices_added;
+              }
+            }
+          }
+        }
+      }      
       
       if (target_window == TypeWindow.HTML) {
     
@@ -8404,9 +9019,9 @@ class solarchvision_Faces {
               Materials_Used[i] = 0;
             }
     
-            for (int f = 0; f < allFaces.nodes.length; f++) {
+            for (int f = 0; f < this.nodes.length; f++) {
     
-              int mt = allFaces.getMaterial(f);
+              int mt = this.getMaterial(f);
     
               Materials_Used[mt] += 1;
             }    
@@ -8477,22 +9092,22 @@ class solarchvision_Faces {
             
             for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
           
-              if (allFaces.nodes[f].length > 2) {
+              if (this.nodes[f].length > 2) {
                 
-                int mt = allFaces.getMaterial(f);
+                int mt = this.getMaterial(f);
         
-                int Tessellation = allFaces.getTessellation(f);
+                int Tessellation = this.getTessellation(f);
         
                 int TotalSubNo = 1;  
-                if (allFaces.getMaterial(f) == 0) {
-                  Tessellation += allModel3Ds.Tessellation;
+                if (this.getMaterial(f) == 0) {
+                  Tessellation += allFaces.Tessellation;
                 }
         
-                if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
         
-                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-                for (int j = 0; j < allFaces.nodes[f].length; j++) {
-                  int vNo = allFaces.nodes[f][j];
+                float[][] base_Vertices = new float [this.nodes[f].length][3];
+                for (int j = 0; j < this.nodes[f].length; j++) {
+                  int vNo = this.nodes[f][j];
                   base_Vertices[j][0] = allVertices[vNo][0];
                   base_Vertices[j][1] = allVertices[vNo][1];
                   base_Vertices[j][2] = allVertices[vNo][2];
@@ -8628,9 +9243,9 @@ class solarchvision_Faces {
           Materials_Used[i] = 0;
         }
     
-        for (int f = 0; f < allFaces.nodes.length; f++) {
+        for (int f = 0; f < this.nodes.length; f++) {
     
-          int mt = allFaces.getMaterial(f);
+          int mt = this.getMaterial(f);
     
           Materials_Used[mt] += 1;
         }    
@@ -8652,28 +9267,28 @@ class solarchvision_Faces {
           }
         }
       
-        for (int f = 0; f < allFaces.nodes.length; f++) {
+        for (int f = 0; f < this.nodes.length; f++) {
       
-          if (allFaces.nodes[f].length > 2) {
+          if (this.nodes[f].length > 2) {
     
-            int mt = allFaces.getMaterial(f);
+            int mt = this.getMaterial(f);
     
-            int Tessellation = allFaces.getTessellation(f);
+            int Tessellation = this.getTessellation(f);
     
             int TotalSubNo = 1;  
-            if (allFaces.getMaterial(f) == 0) {
-              Tessellation += allModel3Ds.Tessellation;
+            if (this.getMaterial(f) == 0) {
+              Tessellation += allFaces.Tessellation;
             }
     
-            if ((allFaces.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
+            if ((this.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
               Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
             }
     
-            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
     
-            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
+            float[][] base_Vertices = new float [this.nodes[f].length][3];
+            for (int j = 0; j < this.nodes[f].length; j++) {
+              int vNo = this.nodes[f][j];
               base_Vertices[j][0] = allVertices[vNo][0];
               base_Vertices[j][1] = allVertices[vNo][1];
               base_Vertices[j][2] = allVertices[vNo][2];
@@ -8763,6 +9378,9 @@ class solarchvision_Faces {
       }
       
       parent.setString("Display", Boolean.toString(this.Display));
+      parent.setString("Normals", Boolean.toString(this.Normals));
+      parent.setString("Edges", Boolean.toString(this.Edges));
+      parent.setInt("Tessellation", this.Tessellation);
     }
 
     {
@@ -8804,6 +9422,9 @@ class solarchvision_Faces {
       }
       
       this.Display = Boolean.parseBoolean(parent.getString("Display"));
+      this.Normals = Boolean.parseBoolean(parent.getString("Normals"));
+      this.Edges = Boolean.parseBoolean(parent.getString("Edges"));
+      this.Tessellation = parent.getInt("Tessellation");
     }
     
     { 
@@ -8882,6 +9503,132 @@ class solarchvision_Curves {
   void setClose (int n, int close) {
     this.options[n][5] = close;
   }       
+  
+  
+  
+  void draw (int target_window) {
+   
+    if (allFaces.Display) {
+      
+      if (target_window == TypeWindow.WIN3D) {
+  
+        WIN3D.graphics.strokeWeight(3);
+        
+        WIN3D.graphics.noFill();      
+          
+        for (int f = 0; f < this.nodes.length; f++) {    
+          
+          int vsb = this.getVisibility(f);
+    
+          if (vsb > 0) {      
+        
+            int mt = this.getMaterial(f);  
+        
+            float[] COL = {
+              Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+            };      
+            
+            float weight = 0.1 * this.getWeight(f);
+          
+            WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
+        
+            int Tessellation = int(pow(2, this.getTessellation(f)));
+    
+            float[][] base_Vertices = new float [this.nodes[f].length][3];
+            for (int j = 0; j < this.nodes[f].length; j++) {
+              int vNo = this.nodes[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+            
+            
+            WIN3D.graphics.beginShape();
+            
+            int div = base_Vertices.length;
+            
+            for (int j = 0; j < base_Vertices.length; j++) {
+              
+              int drawSegment = 1;
+              
+              int nA = j % div;
+              int nB = (j + 1)  % div;
+              int nB_after = (j + 2) % div;
+              int nA_before = (j - 1 + div) % div;        
+              
+              if (this.getClose(f) == 0) { // if not closed
+    
+                if (nB_after < nB) nB_after = nB;
+                if (nA_before > nA) nA_before = nA; 
+                
+                if (j == base_Vertices.length - 1) drawSegment = 0; 
+              }
+              
+              if (drawSegment == 1) {
+    
+                for (int q = 0; q <= Tessellation; q++) {
+      
+                  float[] P = {0, 0, 0};
+                  
+                  for (int i = 0; i < 3; i++) {
+                    P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
+                  }
+                  
+                  
+                  float[] ANG_start = {0, 0, 0};
+                  float[] ANG_end = {0, 0, 0};
+                  
+                  for (int i = 0; i < 3; i++) {
+                    ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+      
+                    ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
+                  }
+                  
+                  if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
+                    ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
+                  }
+                  if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
+                    ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
+                  }
+                
+                
+                  float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+                  float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+                  
+                  for (int i = 0; i < 3; i++) {
+                    ANG_start[i] *= dist_start;
+                    ANG_end[i] *= dist_end;
+                  }
+                  
+                  for (int i = 0; i < 3; i++) {
+                    P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
+                  }        
+       
+                  
+                  
+                  WIN3D.graphics.vertex(P[0] * OBJECTS_scale * WIN3D.scale, -(P[1] * OBJECTS_scale * WIN3D.scale), P[2] * OBJECTS_scale * WIN3D.scale);
+                  
+                }
+              }
+              
+            }
+            
+            if (this.getClose(f) == 0) { // if not closed
+              WIN3D.graphics.endShape();
+            }
+            else {
+              WIN3D.graphics.endShape(CLOSE);
+            }
+              
+              
+          }
+        }
+        
+        WIN3D.graphics.strokeWeight(0);
+      }
+    }
+  }  
+  
   
   
   public void to_XML (XML xml) {
@@ -14342,8 +15089,8 @@ void draw () {
         pre_Selection_Model1D_displayEdges = allSelections.Model1D_displayEdges;
         pre_Selection_Model2D_displayEdges = allSelections.Model2D_displayEdges;
         pre_allModel3Ds_DisplayVertices = allModel3Ds.DisplayVertices;
-        pre_allModel3Ds_DisplayEdges = allModel3Ds.DisplayEdges;
-        pre_allModel3Ds_DisplayNormals = allModel3Ds.DisplayNormals;
+        pre_allFaces_Edges = allFaces.Edges;
+        pre_allFaces_Normals = allFaces.Normals;
 
         pre_Selection_softPower = allSelections.softPower;
         pre_Selection_softRadius = allSelections.softRadius;
@@ -14373,7 +15120,7 @@ void draw () {
 
         pre_WIN3D_FacesShade = WIN3D.FacesShade;
 
-        pre_allModel3Ds_Tessellation = allModel3Ds.Tessellation;
+        pre_allModel3Ds_Tessellation = allFaces.Tessellation;
 
 
         pre_Load_DefaultModels = Load_DefaultModels;
@@ -14676,7 +15423,7 @@ void draw () {
           WIN3D.update = true;
         }             
 
-        if (pre_allModel3Ds_Tessellation != allModel3Ds.Tessellation) {
+        if (pre_allModel3Ds_Tessellation != allFaces.Tessellation) {
           //rebuild_VertexSolar_array = 1;
         }
 
@@ -14774,8 +15521,8 @@ void draw () {
         if (pre_allSolidImpacts_Display_Lines != allSolidImpacts.Display_Lines) WIN3D.update = true;
 
         if (pre_allModel3Ds_DisplayVertices != allModel3Ds.DisplayVertices) WIN3D.update = true;
-        if (pre_allModel3Ds_DisplayEdges != allModel3Ds.DisplayEdges) WIN3D.update = true;
-        if (pre_allModel3Ds_DisplayNormals != allModel3Ds.DisplayNormals) WIN3D.update = true;
+        if (pre_allFaces_Edges != allFaces.Edges) WIN3D.update = true;
+        if (pre_allFaces_Normals != allFaces.Normals) WIN3D.update = true;
 
         if (pre_Display_WindFlow != Display_WindFlow) WIN3D.update = true;
 
@@ -19760,436 +20507,12 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   allSections.draw(TypeWindow.OBJ);
   
   allModel2Ds.draw(TypeWindow.OBJ);
+  
+  allFaces.draw(TypeWindow.OBJ);
 
 
 
 
-  if (allFaces.Display) {
-
-
-
-    int Create_Face_Texture = 0;
-
-    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solid) || (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
-      Create_Face_Texture = 1;
-    }
-
-    if (Create_Face_Texture == 0) {
-
-      if (Export_MaterialLibrary) {
-
-        int[] Materials_Used = new int [Materials_Number];
-
-        for (int i = 0; i < Materials_Used.length; i++) {
-          Materials_Used[i] = 0;
-        }
-
-        for (int f = 0; f < allFaces.nodes.length; f++) {
-
-          int mt = allFaces.getMaterial(f);
-
-          Materials_Used[mt] += 1;
-        }    
-
-        for (int mt = 0; mt < Materials_Number; mt++) {
-
-          if (Materials_Used[mt] != 0) {
-
-            float a = Materials_Color[mt][0] / 255.0; 
-            float r = Materials_Color[mt][1] / 255.0; 
-            float g = Materials_Color[mt][2] / 255.0; 
-            float b = Materials_Color[mt][3] / 255.0; 
-
-            mtlOutput.println("newmtl SurfaceMaterial" + nf(mt, 0));
-            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-            mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
-            mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
-            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-            mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-            mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
-            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-          }
-        }
-      }
-
-
-      for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
-
-        if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
-
-          for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
-
-            num_vertices_added = 0;
-
-            for (int _turn = 1; _turn < 4; _turn++) {
-
-              if (_turn == 3) {
-                if (Export_PolyToPoly == 1) {
-                  obj_lastGroupNumber += 1;
-                  objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
-                }
-              }  
-
-              int prev_mt = -1;
-
-              for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-
-                if (_turn == 3) {
-                  if (Export_MaterialLibrary) {
-                    int mt = allFaces.getMaterial(f);
-                    if (prev_mt != mt) {
-                      objOutput.println("usemtl SurfaceMaterial" + nf(mt, 0));
-                      prev_mt = mt;
-                    }
-                  }
-                }                  
-
-                int Tessellation = allFaces.getTessellation(f);
-
-                int TotalSubNo = 1;  
-                if (allFaces.getMaterial(f) == 0) {
-                  Tessellation += allModel3Ds.Tessellation;
-                }
-
-                if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-                for (int j = 0; j < allFaces.nodes[f].length; j++) {
-                  int vNo = allFaces.nodes[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
-                }
-
-                for (int n = 0; n < TotalSubNo; n++) {
-
-                  float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-                  for (int s = 0; s < subFace.length; s++) {
-
-                    if (_turn == 1) {
-                      SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
-                    }
-
-                    if (_turn == 2) {
-
-                      float t = PI / float(subFace.length);
-
-                      float u = 0.5 * cos((2 * s + 1) * t) / cos(t) + 0.5;
-                      float v = 0.5 * sin((2 * s + 1) * t) / cos(t) + 0.5;
-
-                      SOLARCHVISION_OBJprintVtexture(u, v, 0);
-                    }
-                  }
-
-
-                  if (_turn == 3) {
-
-                    num_vertices_added += subFace.length;
-
-                    if (Export_PolyToPoly == 0) {
-                      obj_lastGroupNumber += 1;
-                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
-                    }                    
-
-                    obj_lastFaceNumber += 1;
-
-                    objOutput.print("f ");
-                    if (back_or_front == 1) {
-                      for (int s = 0; s < subFace.length; s++) {
-                        String n_txt = nf(obj_lastVertexNumber + num_vertices_added - s, 0);
-                        String m_txt = nf(obj_lastVtextureNumber + num_vertices_added - s, 0);  
-                        objOutput.print(n_txt + "/" + m_txt);
-                        if (s < subFace.length - 1) {
-                          objOutput.print(" ");
-                        }
-                      }
-                    } else {
-                      for (int s = subFace.length - 1; s >= 0; s--) {
-                        String n_txt = nf(obj_lastVertexNumber + num_vertices_added - s, 0);
-                        String m_txt = nf(obj_lastVtextureNumber + num_vertices_added - s, 0);  
-                        objOutput.print(n_txt + "/" + m_txt);
-                        if (s > 0) {
-                          objOutput.print(" ");
-                        }
-                      }
-                    }
-                    objOutput.println("");
-                  }
-                }
-              }
-            }
-
-            obj_lastVertexNumber += num_vertices_added;
-            obj_lastVtextureNumber += num_vertices_added;
-          }
-        }
-      }
-    } else {
-
-      int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-      int PAL_DIR = SHADE.get_PAL_DIR();
-      float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
-
-      String the_filename = "";
-      String TEXTURE_path = "";
-
-      if (Export_MaterialLibrary) {
-
-        the_filename = "shadePallet.bmp";
-
-        TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
-
-        println("Saving texture:", TEXTURE_path);
-
-        int RES1 = Export_PalletResolution; 
-        int RES2 = Export_PalletResolution / 16;      
-
-        PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-
-
-        Pallet_Texture.loadPixels();
-
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-
-          float _val = (Image_X / (0.5 * RES1)) - 1; 
-
-          float _u = 0.5 + _val;
-
-          if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-            if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-          }            
-
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
-
-          Pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-        }
-
-        Pallet_Texture.updatePixels();   
-
-        Pallet_Texture.save(TEXTURE_path);
-
-
-
-        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-        //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
-     
-      }
-
-
-      for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
-
-        if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
-
-          for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
-
-            num_vertices_added = 0;
-
-            for (int _turn = 1; _turn < 4; _turn++) {
-
-              int CurrentFaceTextureNumber = -1;
-
-              if (_turn == 3) {
-
-                if (Export_PolyToPoly == 1) {
-                  obj_lastGroupNumber += 1;
-                  objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
-                }
-
-                if (Export_MaterialLibrary) {
-
-                  objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-
-                }
-              }  
-
-              for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-
-                int Tessellation = allFaces.getTessellation(f);
-
-                int TotalSubNo = 1;  
-                if (allFaces.getMaterial(f) == 0) {
-                  Tessellation += allModel3Ds.Tessellation;
-                }
-
-                if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-
-                float x1 = 0;
-                float y1 = 0;
-                float z1 = 0;
-
-                float x2 = 0;
-                float y2 = 0;
-                float z2 = 0;
-
-                float x3 = 0;
-                float y3 = 0;
-                float z3 = 0;
-
-                float x4 = 0;
-                float y4 = 0;
-                float z4 = 0;
-
-                float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-                for (int j = 0; j < allFaces.nodes[f].length; j++) {
-                  int vNo = allFaces.nodes[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
-                }
-
-                for (int n = 0; n < TotalSubNo; n++) {
-
-                  float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-
-                  CurrentFaceTextureNumber += 1;
-
-                  if (_turn == 1) {   
-
-                    if (Export_MaterialLibrary) {
-
-                      for (int s = 0; s < subFace.length; s++) {
-
-                        float[] COL = {
-                          255, 255, 255, 255
-                        };
-
-                        if (s == 0) {
-                          x1 = subFace[s][0];
-                          y1 = subFace[s][1];
-                          z1 = subFace[s][2];
-                        }
-                        if (s == 1) {
-                          x2 = subFace[s][0];
-                          y2 = subFace[s][1];
-                          z2 = subFace[s][2];
-                        }            
-                        if (s == 2) { 
-                          x3 = subFace[s][0];
-                          y3 = subFace[s][1];
-                          z3 = subFace[s][2];
-                        }          
-                        if (s == 3) {
-                          x4 = subFace[s][0];
-                          y4 = subFace[s][1];
-                          z4 = subFace[s][2];
-                        }
-                      }
-
-                    }
-
-                    SOLARCHVISION_OBJprintVertex(x1, y1, z1);
-                    SOLARCHVISION_OBJprintVertex(x2, y2, z2);
-                    SOLARCHVISION_OBJprintVertex(x3, y3, z3);
-                    SOLARCHVISION_OBJprintVertex(x4, y4, z4);
-                  }
-
-                  if (_turn == 2) {
-
-                    for (int s = 0; s < subFace.length; s++) {
-
-                      float _u = 0;
-
-                      if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                        int s_next = (s + 1) % subFace.length;
-                        int s_prev = (s + subFace.length - 1) % subFace.length;
-
-                        if (back_or_front == 0) {
-                          int s_temp = s_next;
-                          s_next = s_prev;
-                          s_prev = s_temp;
-                        }
-
-                        _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                      }
-        
-                      if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-                        
-                        _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                      }                            
-
-                      if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-
-                        _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                      }                  
-
-                      if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-
-                        _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                      }
-
-
-                      float u0 = 0.5 * (_u + 0.5);
-
-                      if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-                        if (Impact_TYPE == Impact_ACTIVE) {
-                          u0 = _u;
-                        }
-                      }
-
-                      if (u0 > 1) u0 = 1;
-                      if (u0 < 0) u0 = 0;
-                      
-                      SOLARCHVISION_OBJprintVtexture(u0, 0.5, 0);
-                    }
-
-                    
-                  }
-
-                  if (_turn == 3) {
-
-                    num_vertices_added += 4;
-
-                    if (Export_PolyToPoly == 0) {
-                      obj_lastGroupNumber += 1;
-                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
-                    }
-
-                    String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
-                    String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-                    String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-                    String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-
-                    String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
-                    String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
-                    String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
-                    String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
-
-                    obj_lastFaceNumber += 1;
-                    if (back_or_front == 1) {
-                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    } else {
-                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                    }
-                  }
-                }
-              }
-            }
-
-            obj_lastVertexNumber += num_vertices_added;
-            obj_lastVtextureNumber += num_vertices_added;
-          }
-        }
-      }
-    }
-  }
 
 
 
@@ -20994,7 +21317,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allModel3Ds.Tessellation;
+        Tessellation += allFaces.Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -23218,7 +23541,7 @@ class solarchvision_Land3D {
   
                 WIN3D.graphics.strokeWeight(1);
                 WIN3D.graphics.stroke(0, 0, 0);
-                if (allModel3Ds.DisplayEdges == false) WIN3D.graphics.noStroke();
+                if (allFaces.Edges == false) WIN3D.graphics.noStroke();
                 if (this.Display_Textures) WIN3D.graphics.noStroke();
   
                 if (this.Display_Textures) {
@@ -25449,7 +25772,7 @@ class solarchvision_Model1Ds {
   
         WIN3D.graphics.strokeWeight(1);
   
-        if (allModel3Ds.DisplayEdges == false) {
+        if (allFaces.Edges == false) {
           WIN3D.graphics.noStroke();
         } else {
           WIN3D.graphics.stroke(0);
@@ -26609,10 +26932,7 @@ class solarchvision_Model3Ds {
   private final static String CLASS_STAMP = "Model3Ds";
     
   boolean DisplayVertices = false;
-  boolean DisplayEdges = true;
-  boolean DisplayNormals = false;
   
-  int Tessellation = 2;
   
 
 
@@ -34116,315 +34436,10 @@ class solarchvision_Model3Ds {
 
   
   
-  void draw_Faces () {
-  
-    if (allFaces.Display) {
-  
-      if (this.DisplayNormals) {
-  
-        for (int f = 0; f < allFaces.nodes.length; f++) {
-  
-          int vsb = allFaces.getVisibility(f);
-  
-          if (vsb > 0) {
-  
-            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
-  
-            float G_x0 = 0;
-            float G_y0 = 0;
-            float G_z0 = 0;
-  
-            float G_x1 = 0;
-            float G_y1 = 0;
-            float G_z1 = 0;
-  
-            float n = float(base_Vertices.length);
-  
-            for (int s = 0; s < base_Vertices.length; s++) {
-  
-              int s_next = (s + 1) % base_Vertices.length;
-              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
-  
-              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
-              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
-              PVector UV = U.cross(V);
-              float[] W = {
-                UV.x, UV.y, UV.z
-              };
-              W = SOLARCHVISION_fn_normalize(W);
-  
-              float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
-              float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
-              float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
-  
-              float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D.scale;
-              float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D.scale;
-              float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D.scale;
-  
-              G_x0 += x0 / n;
-              G_y0 += y0 / n;
-              G_z0 += z0 / n;
-  
-              G_x1 += x1 / n;
-              G_y1 += y1 / n;
-              G_z1 += z1 / n;
-            }
-  
-            WIN3D.graphics.strokeWeight(3);
-            WIN3D.graphics.stroke(127, 255, 127);
-            WIN3D.graphics.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
-  
-            WIN3D.graphics.strokeWeight(1);
-            WIN3D.graphics.stroke(0, 127, 0);
-  
-            for (int s = 0; s < base_Vertices.length; s++) {
-  
-              float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
-              float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
-              float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
-  
-              WIN3D.graphics.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
-            }
-          }
-        }
-      }
-  
-      WIN3D.graphics.strokeWeight(1);
-      WIN3D.graphics.stroke(0, 0, 0);
-      if (this.DisplayEdges == false) WIN3D.graphics.noStroke();
-  
-      int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-      int PAL_DIR = SHADE.get_PAL_DIR();
-      float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
-  
-      for (int f = 0; f < allFaces.nodes.length; f++) {
-  
-        int vsb = allFaces.getVisibility(f);
-  
-        if (vsb > 0) {        
-  
-          if (WIN3D.FacesShade == SHADE.Surface_Base) {
-  
-            WIN3D.graphics.fill(255, 255, 255);
-  
-            WIN3D.graphics.beginShape();
-  
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
-  
-              WIN3D.graphics.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D.scale, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D.scale), allVertices[vNo][2] * OBJECTS_scale * WIN3D.scale);
-            }    
-  
-            WIN3D.graphics.endShape(CLOSE);
-          } else {
-  
-            int mt = allFaces.getMaterial(f);
-  
-            int Tessellation = allFaces.getTessellation(f);
-  
-            int TotalSubNo = 1;  
-            if (allFaces.getMaterial(f) == 0) {
-              Tessellation += this.Tessellation;
-            }
-            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-  
-            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
-  
-            for (int n = 0; n < TotalSubNo; n++) {
-  
-              float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-  
-              WIN3D.graphics.beginShape();
-  
-              for (int s = 0; s < subFace.length; s++) {
-  
-                if (WIN3D.FacesShade != SHADE.Surface_Wire) {
-  
-                  float[] COL = {
-                    255, 255, 255, 255
-                  };
-  
-                  if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
-                    
-                    COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }        
-            
-                  if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-  
-                    COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }                   
-  
-                  if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-  
-                    COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }
-  
-                  if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-  
-                    COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }
-  
-                  if (WIN3D.FacesShade == SHADE.Surface_Materials) {
-                    COL = SHADE.vertexRender_Surface_Materials(mt);
-                  }              
-  
-                  if (WIN3D.FacesShade == SHADE.Surface_White) {
-                    COL = SHADE.vertexRender_Surface_White(255);
-                  }
-             
-                  WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-                } else {
-                  WIN3D.graphics.noFill();
-                }
-  
-                WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -(subFace[s][1] * OBJECTS_scale * WIN3D.scale), subFace[s][2] * OBJECTS_scale * WIN3D.scale);
-              }
-  
-              WIN3D.graphics.endShape(CLOSE);
-            }
-          }
-        }
-      }
-    }
-  }
+
   
   
-  
-  void draw_Curves () {
-  
-    WIN3D.graphics.strokeWeight(3);
-    
-    WIN3D.graphics.noFill();
-  
-    if (allCurves.Display) {
-      
-      for (int f = 0; f < allCurves.nodes.length; f++) {    
-        
-        int vsb = allCurves.getVisibility(f);
-  
-        if (vsb > 0) {      
-      
-          int mt = allCurves.getMaterial(f);  
-      
-          float[] COL = {
-            Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
-          };      
-          
-          float weight = 0.1 * allCurves.getWeight(f);
-        
-          WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
-      
-          int Tessellation = int(pow(2, allCurves.getTessellation(f)));
-  
-          float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
-          for (int j = 0; j < allCurves.nodes[f].length; j++) {
-            int vNo = allCurves.nodes[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
-          
-          
-          WIN3D.graphics.beginShape();
-          
-          int div = base_Vertices.length;
-          
-          for (int j = 0; j < base_Vertices.length; j++) {
-            
-            int drawSegment = 1;
-            
-            int nA = j % div;
-            int nB = (j + 1)  % div;
-            int nB_after = (j + 2) % div;
-            int nA_before = (j - 1 + div) % div;        
-            
-            if (allCurves.getClose(f) == 0) { // if not closed
-  
-              if (nB_after < nB) nB_after = nB;
-              if (nA_before > nA) nA_before = nA; 
-              
-              if (j == base_Vertices.length - 1) drawSegment = 0; 
-            }
-            
-            if (drawSegment == 1) {
-  
-              for (int q = 0; q <= Tessellation; q++) {
-    
-                float[] P = {0, 0, 0};
-                
-                for (int i = 0; i < 3; i++) {
-                  P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
-                }
-                
-                
-                float[] ANG_start = {0, 0, 0};
-                float[] ANG_end = {0, 0, 0};
-                
-                for (int i = 0; i < 3; i++) {
-                  ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
-    
-                  ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
-                }
-                
-                if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-                  ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
-                }
-                if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-                  ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
-                }
-              
-              
-                float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-                float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
-                
-                for (int i = 0; i < 3; i++) {
-                  ANG_start[i] *= dist_start;
-                  ANG_end[i] *= dist_end;
-                }
-                
-                for (int i = 0; i < 3; i++) {
-                  P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
-                }        
-     
-                
-                
-                WIN3D.graphics.vertex(P[0] * OBJECTS_scale * WIN3D.scale, -(P[1] * OBJECTS_scale * WIN3D.scale), P[2] * OBJECTS_scale * WIN3D.scale);
-                
-              }
-            }
-            
-          }
-          
-          if (allCurves.getClose(f) == 0) { // if not closed
-            WIN3D.graphics.endShape();
-          }
-          else {
-            WIN3D.graphics.endShape(CLOSE);
-          }
-            
-            
-        }
-      }
-    }
-    
-    WIN3D.graphics.strokeWeight(0);
-  }
-  
-  
+
   
   
   
@@ -35702,7 +35717,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allModel3Ds.Tessellation;
+        Tessellation += allFaces.Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -36051,7 +36066,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allModel3Ds.Tessellation;
+        Tessellation += allFaces.Tessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -41105,7 +41120,7 @@ void mouseClicked () {
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Wire")) {
               WIN3D.FacesShade = SHADE.Surface_Wire;
-              allModel3Ds.DisplayEdges = true; //<<<<<<<<<<<<<<<
+              allFaces.Edges = true; //<<<<<<<<<<<<<<<
 
               WIN3D.update = true;  
             }       
@@ -41178,13 +41193,13 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Edges")) {
-              allModel3Ds.DisplayEdges = !allModel3Ds.DisplayEdges;
+              allFaces.Edges = !allFaces.Edges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Normals")) {
-              allModel3Ds.DisplayNormals = !allModel3Ds.DisplayNormals;
+              allFaces.Normals = !allFaces.Normals;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -44910,7 +44925,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int TotalSubNo = 1;  
         if (allFaces.getMaterial(f) == 0) {
-          Tessellation += allModel3Ds.Tessellation;
+          Tessellation += allFaces.Tessellation;
         }
         if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -45151,7 +45166,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             int TotalSubNo = 1;  
             if (allFaces.getMaterial(f) == 0) {
-              Tessellation += allModel3Ds.Tessellation;
+              Tessellation += allFaces.Tessellation;
             }
             if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -46143,7 +46158,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
   
                     int TotalSubNo = 1;  
                     if (allFaces.getMaterial(f) == 0) {
-                      Tessellation += allModel3Ds.Tessellation;
+                      Tessellation += allFaces.Tessellation;
                     }
                     if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
@@ -46758,7 +46773,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
   
                   int TotalSubNo = 1;  
                   if (allFaces.getMaterial(f) == 0) {
-                    Tessellation += allModel3Ds.Tessellation;
+                    Tessellation += allFaces.Tessellation;
                   }
                   if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
@@ -49462,13 +49477,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Edges")) {
-                if (allModel3Ds.DisplayEdges == false) {
+                if (allFaces.Edges == false) {
                   stroke(127); 
                   fill(127);
                 }
               } 
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Normals")) {
-                if (allModel3Ds.DisplayNormals == false) {
+                if (allFaces.Normals == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51928,7 +51943,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setInt("DrawnFrame", DrawnFrame);
   
   
-    parent.setInt("Model3Ds.Tessellation", allModel3Ds.Tessellation);
+    
     parent.setInt("Sky3D.Tessellation", Sky3D.Tessellation);
     parent.setFloat("Sky3D.scale", Sky3D.scale);
     parent.setFloat("WindRose_scale", WindRose_scale);
@@ -51949,8 +51964,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   
   
     parent.setString("Model3Ds.DisplayVertices", Boolean.toString(allModel3Ds.DisplayVertices));       
-    parent.setString("Model3Ds.DisplayEdges", Boolean.toString(allModel3Ds.DisplayEdges));
-    parent.setString("Model3Ds.DisplayNormals", Boolean.toString(allModel3Ds.DisplayNormals));
+    parent.setString("Model3Ds.DisplayEdges", Boolean.toString(allFaces.Edges));
+    parent.setString("Model3Ds.DisplayNormals", Boolean.toString(allFaces.Normals));
     parent.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
     //parent.setInt("Camera_Variation", Camera_Variation);
     parent.setString("STUDY.DisplayRaws", Boolean.toString(STUDY.DisplayRaws));
@@ -52323,7 +52338,7 @@ void SOLARCHVISION_load_project (String myFile) {
       DrawnFrame = parent.getInt("DrawnFrame");
   
   
-      allModel3Ds.Tessellation = parent.getInt("Model3Ds.Tessellation");
+      
       Sky3D.Tessellation = parent.getInt("Sky3D.Tessellation");
       Sky3D.scale = parent.getFloat("Sky3D.scale");
       WindRose_scale = parent.getFloat("WindRose_scale");
@@ -52344,8 +52359,8 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
       allModel3Ds.DisplayVertices = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayVertices"));  
-      allModel3Ds.DisplayEdges = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayEdges"));
-      allModel3Ds.DisplayNormals = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayNormals"));
+      allFaces.Edges = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayEdges"));
+      allFaces.Normals = Boolean.parseBoolean(parent.getString("Model3Ds.DisplayNormals"));
       Display_WindFlow = Boolean.parseBoolean(parent.getString("Display_WindFlow"));
       Camera_Variation = parent.getInt("Camera_Variation");
       STUDY.DisplayRaws = Boolean.parseBoolean(parent.getString("STUDY.DisplayRaws"));
@@ -54763,7 +54778,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (Command_CAPITAL.equals("SHADE.WIRE")) {
     WIN3D.FacesShade = SHADE.Surface_Wire;
-    allModel3Ds.DisplayEdges = true; //<<<<<<<<<<<<<<<
+    allFaces.Edges = true; //<<<<<<<<<<<<<<<
     WIN3D.update = true;  
   }       
   else if (Command_CAPITAL.equals("SHADE.BASE")) {
