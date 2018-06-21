@@ -57,7 +57,7 @@ String HoldStamp = "";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Esfahan";    
+  ProjectFolder = BaseFolder + "/Projects/Roodbar";    
   
   Wgrib2TempFolder = ProjectFolder + "/Temp";
 
@@ -752,9 +752,9 @@ class solarchvision_STATION {
 
 solarchvision_STATION STATION = new solarchvision_STATION(
 
-  //"", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
+  "", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
 
-  "", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
+  //"", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
   
 );
   
@@ -6979,11 +6979,11 @@ class solarchvision_ROLLOUT {
   
         CreateInput_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_MeshOrSolid", CreateInput_MeshOrSolid, 0, 1, 1), 1));
   
-        allFaces.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.Tessellation", allFaces.Tessellation, 0, 4, 1), 1));
+        allFaces.displayTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
   
-        Land3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Tessellation", Land3D.Tessellation, 0, 4, 1), 1));
+        Land3D.displayTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
   
-        Sky3D.Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Tessellation", Sky3D.Tessellation, 0, 4, 1), 1));   
+        Sky3D.displayTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));   
         Sky3D.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.scale", Sky3D.scale, 0.0000001, 1000000, -2);
   
         BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
@@ -7082,18 +7082,18 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 7) { // Environment
   
-        //Land3D.Load_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Load_Textures", Land3D.Load_Textures, 0, 1, 1), 1));
-        //Land3D.Load_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Load_Mesh", Land3D.Load_Mesh, 0, 1, 1), 1));
-        //Land3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.n_I - 1, 1), 1));
-        //Land3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.n_I - 1, 1), 1));
+        //Land3D.loadTextures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
+        //Land3D.loadMesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
+        //Land3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.num_rows - 1, 1), 1));
+        //Land3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.num_rows - 1, 1), 1));
         //Land3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
         //Land3D.displayTextures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTextures", Land3D.displayTextures, 0, 1, 1), 1));
-        //Land3D.Display_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Points", Land3D.Display_Points, 0, 1, 1), 1));     
-        //Land3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Depth", Land3D.Display_Depth, 0, 1, 1), 1));
+        //Land3D.displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
+        //Land3D.displayDepth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
   
         //allModel2Ds.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
         //allModel1Ds.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.Leaves", allModel1Ds.Leaves, 0, 1, 1), 1));
+        //allModel1Ds.displayLeaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
         //allCurves.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
         //allFaces.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
   
@@ -7558,8 +7558,8 @@ boolean pre_CLIMATE_CLMREC_load;
 boolean pre_ENSEMBLE_FORECAST_load;
 boolean pre_ENSEMBLE_OBSERVED_load;    
 
-boolean pre_Land3D_Load_Mesh;
-boolean pre_Land3D_Load_Textures;
+boolean pre_Land3D_loadMesh;
+boolean pre_Land3D_loadTextures;
 
 float pre_LocationLAT;
 float pre_LocationLON;
@@ -8329,7 +8329,7 @@ class solarchvision_Faces {
   boolean displayNormals = false;
   boolean displayEdges = true;
   
-  int Tessellation = 2;
+  int displayTessellation = 2;
   
   int[][] nodes = new int[0][0];
   
@@ -8501,7 +8501,7 @@ class solarchvision_Faces {
     
               int TotalSubNo = 1;  
               if (this.getMaterial(f) == 0) {
-                Tessellation += this.Tessellation;
+                Tessellation += this.displayTessellation;
               }
               if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
     
@@ -8658,7 +8658,7 @@ class solarchvision_Faces {
     
                     int TotalSubNo = 1;  
                     if (this.getMaterial(f) == 0) {
-                      Tessellation += allFaces.Tessellation;
+                      Tessellation += allFaces.displayTessellation;
                     }
     
                     if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -8833,7 +8833,7 @@ class solarchvision_Faces {
     
                     int TotalSubNo = 1;  
                     if (this.getMaterial(f) == 0) {
-                      Tessellation += allFaces.Tessellation;
+                      Tessellation += allFaces.displayTessellation;
                     }
     
                     if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -9104,7 +9104,7 @@ class solarchvision_Faces {
         
                 int TotalSubNo = 1;  
                 if (this.getMaterial(f) == 0) {
-                  Tessellation += allFaces.Tessellation;
+                  Tessellation += allFaces.displayTessellation;
                 }
         
                 if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -9281,7 +9281,7 @@ class solarchvision_Faces {
     
             int TotalSubNo = 1;  
             if (this.getMaterial(f) == 0) {
-              Tessellation += allFaces.Tessellation;
+              Tessellation += allFaces.displayTessellation;
             }
     
             if ((this.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
@@ -9384,7 +9384,7 @@ class solarchvision_Faces {
       parent.setString("displayAll", Boolean.toString(this.displayAll));
       parent.setString("displayNormals", Boolean.toString(this.displayNormals));
       parent.setString("displayEdges", Boolean.toString(this.displayEdges));
-      parent.setInt("Tessellation", this.Tessellation);
+      parent.setInt("displayTessellation", this.displayTessellation);
     }
 
     {
@@ -9428,7 +9428,7 @@ class solarchvision_Faces {
       this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
       this.displayNormals = Boolean.parseBoolean(parent.getString("displayNormals"));
       this.displayEdges = Boolean.parseBoolean(parent.getString("displayEdges"));
-      this.Tessellation = parent.getInt("Tessellation");
+      this.displayTessellation = parent.getInt("displayTessellation");
     }
     
     { 
@@ -12009,8 +12009,8 @@ class solarchvision_Selections {
   
         int OBJ_NUM = n;
   
-        int the_i = OBJ_NUM / Land3D.n_J;
-        int the_j = OBJ_NUM % Land3D.n_J;
+        int the_i = OBJ_NUM / Land3D.num_columns;
+        int the_j = OBJ_NUM % Land3D.num_columns;
   
         x = Land3D.Mesh[the_i][the_j][0];
         y = Land3D.Mesh[the_i][the_j][1];
@@ -13318,8 +13318,8 @@ class solarchvision_Selections {
   
       int f = this.LandPoint_ids[q];
   
-      int i = f / Land3D.n_J;
-      int j = f % Land3D.n_J;
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
   
       Land3D.Mesh[i][j][2] = 0;
   
@@ -13334,8 +13334,8 @@ class solarchvision_Selections {
   
       int f = this.LandPoint_ids[q];
   
-      int i = f / Land3D.n_J;
-      int j = f % Land3D.n_J;
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
   
       Land3D.Mesh[i][j][0] += dx; 
       Land3D.Mesh[i][j][1] += dy;
@@ -13350,8 +13350,8 @@ class solarchvision_Selections {
   
       int f = this.LandPoint_ids[q];
   
-      int i = f / Land3D.n_J;
-      int j = f % Land3D.n_J;
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
   
       float x = Land3D.Mesh[i][j][0] - x0; 
       float y = Land3D.Mesh[i][j][1] - y0; 
@@ -13380,8 +13380,8 @@ class solarchvision_Selections {
   
       int f = this.LandPoint_ids[q];
   
-      int i = f / Land3D.n_J;
-      int j = f % Land3D.n_J;
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
   
       float x = Land3D.Mesh[i][j][0];
       float y = Land3D.Mesh[i][j][1]; 
@@ -15005,8 +15005,8 @@ void draw () {
 
         pre_WORLD_AutoView = WORLD.AutoView;
 
-        pre_Land3D_Load_Mesh = Land3D.Load_Mesh;
-        pre_Land3D_Load_Textures = Land3D.Load_Textures;
+        pre_Land3D_loadMesh = Land3D.loadMesh;
+        pre_Land3D_loadTextures = Land3D.loadTextures;
 
         pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
         pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
@@ -15079,7 +15079,7 @@ void draw () {
 
         pre_WIN3D_FacesShade = WIN3D.FacesShade;
 
-        pre_allModel3Ds_Tessellation = allFaces.Tessellation;
+        pre_allModel3Ds_Tessellation = allFaces.displayTessellation;
 
 
         pre_Load_DefaultModels = Load_DefaultModels;
@@ -15194,12 +15194,12 @@ void draw () {
 
 
 
-        if (pre_Land3D_Load_Mesh != Land3D.Load_Mesh) {
+        if (pre_Land3D_loadMesh != Land3D.loadMesh) {
           Land3D.update_mesh();
           WIN3D.update = true;
         }
 
-        if (pre_Land3D_Load_Textures != Land3D.Load_Textures) {
+        if (pre_Land3D_loadTextures != Land3D.loadTextures) {
           Land3D.update_textures();
           WIN3D.update = true;
         }
@@ -15382,7 +15382,7 @@ void draw () {
           WIN3D.update = true;
         }             
 
-        if (pre_allModel3Ds_Tessellation != allFaces.Tessellation) {
+        if (pre_allModel3Ds_Tessellation != allFaces.displayTessellation) {
           //rebuild_VertexSolar_array = 1;
         }
 
@@ -20828,7 +20828,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
           int Tessellation = 0;
 
           int TotalSubNo = 1;  
-          Tessellation = Sky3D.Tessellation;
+          Tessellation = Sky3D.displayTessellation;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
           float[][] base_Vertices = new float [skyFaces[f].length][3];
@@ -21276,7 +21276,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allFaces.Tessellation;
+        Tessellation += allFaces.displayTessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -22225,7 +22225,7 @@ class solarchvision_Sky3D {
   private final static String CLASS_STAMP = "Sky3D";
   
   boolean displaySurface = true;
-  int Tessellation = 3; //3;
+  int displayTessellation = 3; //3;
   float scale = 1000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 
@@ -22264,7 +22264,7 @@ class solarchvision_Sky3D {
           int Tessellation = 0;
     
           int TotalSubNo = 1;  
-          Tessellation = this.Tessellation;
+          Tessellation = this.displayTessellation;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
     
           float[][] base_Vertices = new float [skyFaces[f].length][3];
@@ -22935,13 +22935,13 @@ class solarchvision_Land3D {
   
   private final static String CLASS_STAMP = "Land3D";
   
-  boolean Load_Mesh = true; 
-  boolean Load_Textures = true;
+  boolean loadMesh = true; 
+  boolean loadTextures = true;
   
   boolean displaySurface = true; 
-  boolean Display_Points = false;
+  boolean displayPoints = false;
   boolean displayTextures = true;
-  boolean Display_Depth = false;  
+  boolean displayDepth = false;  
   
   float[][][] Mesh;
   
@@ -22953,13 +22953,13 @@ class solarchvision_Land3D {
   
   
   //Polar
-  int n_I = 24;  
-  int n_J = 48 + 1;  
+  int num_rows = 24;  
+  int num_columns = 48 + 1;  
   
   int Surface_SkipStart = 0; 
   int Surface_SkipEnd = 6; 
   
-  int Tessellation = 1; //0; //2;  
+  int displayTessellation = 1; //0; //2;  
 
   
   void update_textures () {
@@ -22972,7 +22972,7 @@ class solarchvision_Land3D {
   
     this.displayTextures = false;
   
-    if (this.Load_Textures) {
+    if (this.loadTextures) {
   
       try {     
     
@@ -23071,29 +23071,29 @@ class solarchvision_Land3D {
   
   void update_mesh () {
   
-    this.Mesh = new float [this.n_I][this.n_J][3];
+    this.Mesh = new float [this.num_rows][this.num_columns][3];
   
-    for (int i = 0; i < this.n_I; i++) {
-      for (int j = 0; j < this.n_J; j++) {
+    for (int i = 0; i < this.num_rows; i++) {
+      for (int j = 0; j < this.num_columns; j++) {
         this.Mesh[i][j][0] = FLOAT_undefined;
         this.Mesh[i][j][1] = FLOAT_undefined;
         this.Mesh[i][j][2] = FLOAT_undefined;
       }
     }
   
-    Boolean using_default_mesh = true;
+    Boolean using_default_mesh = false;
   
     try { 
   
-      if (this.Load_Mesh) {
+      if (this.loadMesh) {
         
-        for (int i = 0; i < this.n_I; i++) {
+        for (int i = 0; i < this.num_rows; i++) {
   
           XML FileALL = loadXML(LandFolder + "/" + nf(i, 0) + ".xml");
   
           XML[] children0 = FileALL.getChildren("result");
   
-          for (int j = 0; j < this.n_J; j++) {
+          for (int j = 0; j < this.num_columns; j++) {
   
             String txt_elevation = children0[j].getChild("elevation").getContent();
   
@@ -23123,8 +23123,8 @@ class solarchvision_Land3D {
   
         h += HeightAboveGround;
   
-        for (int i = 0; i < this.n_I; i++) {
-          for (int j = 0; j < this.n_J; j++) {
+        for (int i = 0; i < this.num_rows; i++) {
+          for (int j = 0; j < this.num_columns; j++) {
   
             this.Mesh[i][j][2] -= h;
           }
@@ -23133,8 +23133,8 @@ class solarchvision_Land3D {
         /*
         // this is to modify the surronding ponits and set them at the same elevation of the the central point 
         for (int j = 0; j < 2; j++) {
-          if (j < this.n_J) {
-            for (int i = 0; i < this.n_I; i++) {
+          if (j < this.num_columns) {
+            for (int i = 0; i < this.num_rows; i++) {
               this.Mesh[i][j][2] = this.Mesh[0][0][2];
             }
           }
@@ -23143,7 +23143,6 @@ class solarchvision_Land3D {
         
       }
     }
-  
     catch (Exception e) {
       println("Warning: problem in loading topography from file.");
       
@@ -23164,12 +23163,12 @@ class solarchvision_Land3D {
   
   void flat_mesh () {
   
-    this.Mesh = new float [this.n_I][this.n_J][3];
+    this.Mesh = new float [this.num_rows][this.num_columns][3];
   
-    for (int i = 0; i < this.n_I; i++) {
+    for (int i = 0; i < this.num_rows; i++) {
       
      
-      for (int j = 0; j < this.n_J; j++) {
+      for (int j = 0; j < this.num_columns; j++) {
   
        
         double[] LON_LAT = getLandGrid(i,j);
@@ -23187,16 +23186,16 @@ class solarchvision_Land3D {
   
     }
   
-    this.Load_Mesh = true;
+    this.loadMesh = true;
   }
   
   
   
   void download_mesh () {
   
-    this.Mesh = new float [this.n_I][this.n_J][3];
+    this.Mesh = new float [this.num_rows][this.num_columns][3];
   
-    for (int i = 0; i < this.n_I; i++) {
+    for (int i = 0; i < this.num_rows; i++) {
       
       String the_target = LandFolder + "/" + nf(i, 0) + ".xml";
       
@@ -23205,7 +23204,7 @@ class solarchvision_Land3D {
   
         String the_link = "";
         
-        for (int j = 0; j < this.n_J; j++) {
+        for (int j = 0; j < this.num_columns; j++) {
     
           if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
           else the_link += "%7C"; //"|";
@@ -23230,7 +23229,7 @@ class solarchvision_Land3D {
   
     }
     
-    this.Load_Mesh = true;
+    this.loadMesh = true;
     Land3D.update_mesh();
   
   }
@@ -23281,7 +23280,7 @@ class solarchvision_Land3D {
       }
     }
     
-    this.Load_Textures = true;
+    this.loadTextures = true;
     Land3D.update_textures();
   
   }
@@ -23293,7 +23292,7 @@ class solarchvision_Land3D {
   
     boolean proceed = true;
   
-    if ((this.displaySurface == false) || (this.Load_Mesh == false)) {
+    if ((this.displaySurface == false) || (this.loadMesh == false)) {
       proceed = false;
     }
   
@@ -23420,7 +23419,7 @@ class solarchvision_Land3D {
   
   
   
-        int Tessellation = this.Tessellation;
+        int Tessellation = this.displayTessellation;
         if (WIN3D.FacesShade == SHADE.Surface_Base) {
           Tessellation = 0;
         }
@@ -23433,7 +23432,7 @@ class solarchvision_Land3D {
         if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
         int i_start = this.Surface_SkipStart;
-        int i_end = this.n_I - 1 - this.Surface_SkipEnd;
+        int i_end = this.num_rows - 1 - this.Surface_SkipEnd;
   
         if (target_window == TypeWindow.LandGap) {
           i_start = 0;
@@ -23445,7 +23444,7 @@ class solarchvision_Land3D {
          
         for (int i = i_start; i < i_end; i++) {
           
-          for (int j = 0; j < this.n_J - 1; j++) {
+          for (int j = 0; j < this.num_columns - 1; j++) {
   
             float[][] base_Vertices = new float [4][3];
   
@@ -23788,7 +23787,7 @@ class solarchvision_Land3D {
   
               if (this.displayTextures) {
   
-                if (this.Display_Depth) {
+                if (this.displayDepth) {
   
   
                   if (target_window == TypeWindow.WIN3D) {
@@ -23843,7 +23842,7 @@ class solarchvision_Land3D {
             // This is to create a polygon around the center
             if (i == 0) {
               
-              int[] newFace = new int[this.n_J - 1];
+              int[] newFace = new int[this.num_columns - 1];
               for (int j = 0; j < newFace.length; j++) {
                 newFace[j] = allModel3Ds.add_Vertex(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
               }
@@ -23859,15 +23858,15 @@ class solarchvision_Land3D {
       }    
   
       if (target_window == TypeWindow.WIN3D) {
-        if (this.Display_Points) {
+        if (this.displayPoints) {
   
           WIN3D.graphics.fill(191, 191, 0); 
           WIN3D.graphics.noStroke();
   
           WIN3D.graphics.sphereDetail(6, 4);
   
-          for (int i = 0; i < this.n_I; i++) {
-            for (int j = 0; j < this.n_J; j++) {
+          for (int i = 0; i < this.num_rows; i++) {
+            for (int j = 0; j < this.num_columns; j++) {
   
               float x = this.Mesh[i][j][0];
               float y = this.Mesh[i][j][1];
@@ -23904,19 +23903,35 @@ class solarchvision_Land3D {
     {
       XML parent = xml.addChild(this.CLASS_STAMP);
       
-      parent.setInt("Tessellation", this.Tessellation);
-      parent.setString("Load_Textures", Boolean.toString(this.Load_Textures));  
-      parent.setString("Load_Mesh", Boolean.toString(this.Load_Mesh));
+      parent.setInt("displayTessellation", this.displayTessellation);
+      parent.setString("loadTextures", Boolean.toString(this.loadTextures));  
+      parent.setString("loadMesh", Boolean.toString(this.loadMesh));
       parent.setString("displaySurface", Boolean.toString(this.displaySurface));
-      parent.setString("Display_Points", Boolean.toString(this.Display_Points));
+      parent.setString("displayPoints", Boolean.toString(this.displayPoints));
       parent.setString("displayTextures", Boolean.toString(this.displayTextures));
-      parent.setString("Display_Depth", Boolean.toString(this.Display_Depth));
+      parent.setString("displayDepth", Boolean.toString(this.displayDepth));
       parent.setInt("Surface_SkipStart", this.Surface_SkipStart);
       parent.setInt("Surface_SkipEnd", this.Surface_SkipEnd);
-      parent.setInt("n_I", this.n_I);
-      parent.setInt("n_J", this.n_J);
-      parent.setInt("Textures_num", this.Textures_num); 
-    } 
+      parent.setInt("num_rows", this.num_rows);
+      parent.setInt("num_columns", this.num_columns);
+      
+
+      int vNo = 0;
+      for (int i = 0; i < this.Mesh.length; i++) {
+        for (int j = 0; j < this.Mesh[i].length; j++) {
+          XML child = parent.addChild("item");
+          child.setInt("id", vNo);
+          String lineSTR = "";
+          //for (int k = 0; k < this.Mesh[i][j].length; k++) {
+          for (int k = 0; k < 3; k++) { // x, y, z 
+            lineSTR += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+            if (k < this.Mesh[i][j].length - 1) lineSTR += ",";
+          }
+          child.setContent(lineSTR);
+          vNo += 1;
+        }
+      }  
+    }    
     
     {
       boolean TEXTURE_copied = false;
@@ -23949,9 +23964,9 @@ class solarchvision_Land3D {
       }
 
       XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
-      int ni = this.Textures_ImagePath.length;
-      parent.setInt("ni", ni);
-      for (int i = 0; i < ni; i++) {
+      parent.setInt("ni", this.Textures_num); 
+      
+      for (int i = 0; i < this.Textures_num; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         child.setFloat("scale_U", this.Textures_scale_U[i]);
@@ -23960,25 +23975,6 @@ class solarchvision_Land3D {
       }
     }  
   
-
-    {      
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Mesh");
-      int vNo = 0;
-      for (int i = 0; i < this.Mesh.length; i++) {
-        for (int j = 0; j < this.Mesh[i].length; j++) {
-          XML child = parent.addChild("item");
-          child.setInt("id", vNo);
-          String lineSTR = "";
-          //for (int k = 0; k < this.Mesh[i][j].length; k++) {
-          for (int k = 0; k < 3; k++) { // x, y, z 
-            lineSTR += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
-            if (k < this.Mesh[i][j].length - 1) lineSTR += ",";
-          }
-          child.setContent(lineSTR);
-          vNo += 1;
-        }
-      }  
-    }    
   }
   
   
@@ -23986,38 +23982,52 @@ class solarchvision_Land3D {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    XML parent = xml.getChild(this.CLASS_STAMP);
-    
-    this.Tessellation = parent.getInt("Tessellation");
-    this.Load_Textures = Boolean.parseBoolean(parent.getString("Load_Textures"));      
-    this.Load_Mesh = Boolean.parseBoolean(parent.getString("Load_Mesh"));
-    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
-    this.Display_Points = Boolean.parseBoolean(parent.getString("Display_Points"));
-    this.displayTextures = Boolean.parseBoolean(parent.getString("displayTextures"));
-    this.Display_Depth = Boolean.parseBoolean(parent.getString("Display_Depth"));
-    this.Surface_SkipStart = parent.getInt("Surface_SkipStart");
-    this.Surface_SkipEnd = parent.getInt("Surface_SkipEnd");
-    this.n_I = parent.getInt("n_I");
-    this.n_J = parent.getInt("n_J");
+    {
+      XML parent = xml.getChild(this.CLASS_STAMP);
+      
+      this.displayTessellation = parent.getInt("displayTessellation");
+      this.loadTextures = Boolean.parseBoolean(parent.getString("loadTextures"));      
+      this.loadMesh = Boolean.parseBoolean(parent.getString("loadMesh"));
+      this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+      this.displayPoints = Boolean.parseBoolean(parent.getString("displayPoints"));
+      this.displayTextures = Boolean.parseBoolean(parent.getString("displayTextures"));
+      this.displayDepth = Boolean.parseBoolean(parent.getString("displayDepth"));
+      this.Surface_SkipStart = parent.getInt("Surface_SkipStart");
+      this.Surface_SkipEnd = parent.getInt("Surface_SkipEnd");
+      this.num_rows = parent.getInt("num_rows");
+      this.num_columns = parent.getInt("num_columns");
+
+      this.Mesh = new float [this.num_rows][this.num_columns][3];
+
+      XML[] children = parent.getChildren("item");         
+      for (int i = 0; i < this.num_rows * this.num_columns; i++) {
+        String lineSTR = children[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          this.Mesh[(i / this.num_columns)][(i % this.num_columns)][j] = float(parts[j]);
+        }
+      }
+    }    
         
     {
+      
+      XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
+      
       int pre_Land3D_Textures_num = this.Textures_num;
-      this.Textures_num = parent.getInt("Textures_num");
+      this.Textures_num = parent.getInt("ni");
   
       if (pre_Land3D_Textures_num != this.Textures_num) {
         int ni = this.Textures_num;
         this.Textures_ImagePath = new String [ni];
         this.Textures_Map = new PImage [ni];
-        for (int i = 0; i < ni; i++) {
+        for (int i = 0; i < this.Textures_num; i++) {
           this.Textures_ImagePath[i] = "";
           this.Textures_Map[i] = createImage(2, 2, RGB); // empty and small
         }
       }
 
-      parent = xml.getChild(this.CLASS_STAMP + ".Textures");
-      int ni = parent.getInt("ni");
       XML[] children = parent.getChildren("item");       
-      for (int i = 0; i < ni; i++) {
+      for (int i = 0; i < this.Textures_num; i++) {
         
         this.Textures_scale_U[i] = children[i].getFloat("scale_U");
         this.Textures_scale_V[i] = children[i].getFloat("scale_V");
@@ -24038,18 +24048,7 @@ class solarchvision_Land3D {
       }
     }
     
-    {
-      this.Mesh = new float [this.n_I][this.n_J][3];
-      parent = xml.getChild(this.CLASS_STAMP + ".Mesh");
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < this.n_I * this.n_J; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.Mesh[(i / this.n_J)][(i % this.n_J)][j] = float(parts[j]);
-        }
-      }
-    }    
+        
   }    
   
   
@@ -24819,7 +24818,7 @@ class solarchvision_Model2Ds {
       }
     };
   
-    int Tessellation = Land3D.Tessellation;
+    int Tessellation = Land3D.displayTessellation;
     if (WIN3D.FacesShade == SHADE.Surface_Base) {
       Tessellation = 0;
     }
@@ -24831,8 +24830,8 @@ class solarchvision_Model2Ds {
   
     if ((Land3D.displayTextures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
   
-      for (int i = Land3D.Surface_SkipStart; i < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; i++) {
-        for (int j = 0; j < Land3D.n_J - 1; j++) {
+      for (int i = Land3D.Surface_SkipStart; i < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; i++) {
+        for (int j = 0; j < Land3D.num_columns - 1; j++) {
   
           float[][] base_Vertices = new float [4][3];
   
@@ -24879,7 +24878,7 @@ class solarchvision_Model2Ds {
   
             if (n_Map != -1) {
   
-              int max_o = int(10000 / pow(2, Land3D.Tessellation)); // number of tries to find green points!
+              int max_o = int(10000 / pow(2, Land3D.displayTessellation)); // number of tries to find green points!
   
               //if (max_o > 100) max_o = 100;
   
@@ -24962,8 +24961,8 @@ class solarchvision_Model2Ds {
       }
     } else {
   
-      for (int i = Land3D.Surface_SkipStart; i < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; i++) {
-        for (int j = 0; j < Land3D.n_J - 1; j++) {
+      for (int i = Land3D.Surface_SkipStart; i < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; i++) {
+        for (int j = 0; j < Land3D.num_columns - 1; j++) {
   
           float[][] base_Vertices = new float [4][3];
   
@@ -24987,7 +24986,7 @@ class solarchvision_Model2Ds {
   
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
   
-            int max_o = int((16.0 / pow(2, Land3D.Tessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+            int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
   
   
             if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -25312,7 +25311,7 @@ class solarchvision_Model1Ds {
   private final static String CLASS_STAMP = "Model1Ds";
 
   boolean displayAll = true;
-  boolean Leaves = true;
+  boolean displayLeaves = true;
 
   float[][] XYZSR = new float[0][5];
   
@@ -25630,7 +25629,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int c = int(random(127));  
   
-      if (this.Leaves) {
+      if (this.displayLeaves) {
   
         float LeafVertices[][] = {
           {
@@ -25834,7 +25833,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int c = int(random(127));  
   
-      if (this.Leaves) {
+      if (this.displayLeaves) {
   
         WIN3D.graphics.strokeWeight(0);
   
@@ -25908,7 +25907,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int c = int(random(127));  
   
-      if (this.Leaves) {
+      if (this.displayLeaves) {
   
         float r0 = 0.5 * LeafSize;
         allModel3Ds.add_Solid(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, CreateInput_MeshOrSolid);
@@ -26075,7 +26074,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int COL = int(random(127));      
   
-      if (this.Leaves) {
+      if (this.displayLeaves) {
   
         float x0_Rotated = x0;
         float y0_Rotated = y0;
@@ -26325,7 +26324,7 @@ class solarchvision_Model1Ds {
     
     
     parent.setString("displayAll", Boolean.toString(this.displayAll));
-    parent.setString("Leaves", Boolean.toString(this.Leaves));
+    parent.setString("displayLeaves", Boolean.toString(this.displayLeaves));
   }
   
   
@@ -26363,7 +26362,7 @@ class solarchvision_Model1Ds {
     }
     
     this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
-    this.Leaves = Boolean.parseBoolean(parent.getString("Leaves"));
+    this.displayLeaves = Boolean.parseBoolean(parent.getString("displayLeaves"));
   }    
 }
 
@@ -31691,7 +31690,7 @@ class solarchvision_Model3Ds {
   void select_All () {
   
     if (Current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      allSelections.LandPoint_ids = new int [Land3D.n_I * Land3D.n_J];
+      allSelections.LandPoint_ids = new int [Land3D.num_rows * Land3D.num_columns];
       for (int i = 0; i < allSelections.LandPoint_ids.length; i++) { 
         allSelections.LandPoint_ids[i] = i;
       }
@@ -31771,7 +31770,7 @@ class solarchvision_Model3Ds {
   
       allSelections.LandPoint_ids = new int [0];
   
-      for (int i = 0; i < Land3D.n_I * Land3D.n_J; i++) {
+      for (int i = 0; i < Land3D.num_rows * Land3D.num_columns; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_Selection_LandPoint_ids.length; j++) {
@@ -34599,7 +34598,7 @@ class solarchvision_Model3Ds {
   
   void add_DefaultModel (int n) {
   
-    if (Land3D.Load_Mesh) {
+    if (Land3D.loadMesh) {
   
       allModel2Ds.add_onLand(1); // 1 = people
   
@@ -35837,7 +35836,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allFaces.Tessellation;
+        Tessellation += allFaces.displayTessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -36186,7 +36185,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allFaces.Tessellation;
+        Tessellation += allFaces.displayTessellation;
       }
       if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -36759,16 +36758,16 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [(Land3D.n_I - 1) * (Land3D.n_J - 1)][4];
+  float[][] hitPoint = new float [(Land3D.num_rows - 1) * (Land3D.num_columns - 1)][4];
 
-  for (int f = 0; f < (Land3D.n_I - 1) * (Land3D.n_J - 1); f++) {
+  for (int f = 0; f < (Land3D.num_rows - 1) * (Land3D.num_columns - 1); f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
 
-  for (int f = 0; f < (Land3D.n_I - 1) * (Land3D.n_J - 1); f++) {
+  for (int f = 0; f < (Land3D.num_rows - 1) * (Land3D.num_columns - 1); f++) {
 
     float X_intersect = FLOAT_undefined;         
     float Y_intersect = FLOAT_undefined;
@@ -36777,8 +36776,8 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
     
     boolean InPoly = false;
 
-    int LAND_i = f / (Land3D.n_J - 1);
-    int LAND_j = f % (Land3D.n_J - 1);
+    int LAND_i = f / (Land3D.num_columns - 1);
+    int LAND_j = f % (Land3D.num_columns - 1);
     
     float[] A = Land3D.Mesh[LAND_i][LAND_j];
     float[] B = Land3D.Mesh[LAND_i][LAND_j + 1];
@@ -36850,7 +36849,7 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
   float pre_dist = FLOAT_undefined;
 
-  for (int f = 0; f < (Land3D.n_I - 1) * (Land3D.n_J - 1); f++) {
+  for (int f = 0; f < (Land3D.num_rows - 1) * (Land3D.num_columns - 1); f++) {
 
     if (pre_dist > hitPoint[f][3]) {
 
@@ -37003,7 +37002,7 @@ double[] getLandGrid (int i, int j) {
   //float q = 1.25;
   //float q = 1.125;  
   
-  float t = j * 360.0 / (Land3D.n_J - 1);
+  float t = j * 360.0 / (Land3D.num_columns - 1);
   
   float r = 0;
   if (i > 0) r = pow(q, i - 1);
@@ -38609,10 +38608,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Current_ObjectCategory == ObjectCategory.LANDPOINT) {
 
-    for (int OBJ_NUM = 0; OBJ_NUM < Land3D.n_I * Land3D.n_J; OBJ_NUM++) {
+    for (int OBJ_NUM = 0; OBJ_NUM < Land3D.num_rows * Land3D.num_columns; OBJ_NUM++) {
 
-      int i = OBJ_NUM / Land3D.n_J;
-      int j = OBJ_NUM % Land3D.n_J;      
+      int i = OBJ_NUM / Land3D.num_columns;
+      int j = OBJ_NUM % Land3D.num_columns;      
 
       int break_loops = 0;
 
@@ -41295,13 +41294,13 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Points")) {
-              Land3D.Display_Points = !Land3D.Display_Points;
+              Land3D.displayPoints = !Land3D.displayPoints;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }                 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Depth")) {
-              Land3D.Display_Depth = !Land3D.Display_Depth;
+              Land3D.displayDepth = !Land3D.displayDepth;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41325,14 +41324,14 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Leaves")) {
-              allModel1Ds.Leaves = !allModel1Ds.Leaves;
+              allModel1Ds.displayLeaves = !allModel1Ds.displayLeaves;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model1Ds")) {
               allModel1Ds.displayAll = !allModel1Ds.displayAll;
-              allModel1Ds.Leaves = allModel1Ds.displayAll; // <<<<<<
+              allModel1Ds.displayLeaves = allModel1Ds.displayAll; // <<<<<<
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -44765,8 +44764,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         int OBJ_NUM = allSelections.LandPoint_ids[o];
 
 
-        int i = OBJ_NUM / Land3D.n_J;
-        int j = OBJ_NUM % Land3D.n_J;
+        int i = OBJ_NUM / Land3D.num_columns;
+        int j = OBJ_NUM % Land3D.num_columns;
 
         float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
         float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
@@ -45045,7 +45044,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int TotalSubNo = 1;  
         if (allFaces.getMaterial(f) == 0) {
-          Tessellation += allFaces.Tessellation;
+          Tessellation += allFaces.displayTessellation;
         }
         if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -45286,7 +45285,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             int TotalSubNo = 1;  
             if (allFaces.getMaterial(f) == 0) {
-              Tessellation += allFaces.Tessellation;
+              Tessellation += allFaces.displayTessellation;
             }
             if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -46278,7 +46277,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
   
                     int TotalSubNo = 1;  
                     if (allFaces.getMaterial(f) == 0) {
-                      Tessellation += allFaces.Tessellation;
+                      Tessellation += allFaces.displayTessellation;
                     }
                     if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
@@ -46387,7 +46386,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             if (Land3D.displaySurface) {
               
-              int Tessellation = Land3D.Tessellation;
+              int Tessellation = Land3D.displayTessellation;
               if (WIN3D.FacesShade == SHADE.Surface_Base) {
                 Tessellation = 0;
               }
@@ -46396,8 +46395,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
         
         
-              for (int Li = Land3D.Surface_SkipStart; Li < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; Li++) {
-                for (int Lj = 0; Lj < Land3D.n_J - 1; Lj++) {
+              for (int Li = Land3D.Surface_SkipStart; Li < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; Li++) {
+                for (int Lj = 0; Lj < Land3D.num_columns - 1; Lj++) {
         
                   float[][] base_Vertices = new float [4][3];
         
@@ -46893,7 +46892,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
   
                   int TotalSubNo = 1;  
                   if (allFaces.getMaterial(f) == 0) {
-                    Tessellation += allFaces.Tessellation;
+                    Tessellation += allFaces.displayTessellation;
                   }
                   if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
   
@@ -47000,7 +46999,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           
           if (Land3D.displaySurface) {
             
-            int Tessellation = Land3D.Tessellation;
+            int Tessellation = Land3D.displayTessellation;
             if (WIN3D.FacesShade == SHADE.Surface_Base) {
               Tessellation = 0;
             }
@@ -47009,8 +47008,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
       
       
-            for (int Li = Land3D.Surface_SkipStart; Li < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; Li++) {
-              for (int Lj = 0; Lj < Land3D.n_J - 1; Lj++) {
+            for (int Li = Land3D.Surface_SkipStart; Li < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; Li++) {
+              for (int Lj = 0; Lj < Land3D.num_columns - 1; Lj++) {
       
                 float[][] base_Vertices = new float [4][3];
       
@@ -49579,13 +49578,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
-                if (Land3D.Display_Points == false) {
+                if (Land3D.displayPoints == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
-                if (Land3D.Display_Depth == false) {
+                if (Land3D.displayDepth == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49609,7 +49608,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }               
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Leaves")) {
-                if (allModel1Ds.Leaves == false) {
+                if (allModel1Ds.displayLeaves == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -52064,7 +52063,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   
   
     
-    parent.setInt("Sky3D.Tessellation", Sky3D.Tessellation);
+    parent.setInt("Sky3D.displayTessellation", Sky3D.displayTessellation);
     parent.setFloat("Sky3D.scale", Sky3D.scale);
     parent.setFloat("WindRose_scale", WindRose_scale);
   
@@ -52444,7 +52443,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
       
-      Sky3D.Tessellation = parent.getInt("Sky3D.Tessellation");
+      Sky3D.displayTessellation = parent.getInt("Sky3D.displayTessellation");
       Sky3D.scale = parent.getFloat("Sky3D.scale");
       WindRose_scale = parent.getFloat("WindRose_scale");
   
