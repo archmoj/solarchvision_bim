@@ -2857,8 +2857,8 @@ class solarchvision_WIN3D {
           break;
   
         case '1' :
-          Display_allModel1Ds = !Display_allModel1Ds;
-          if (Display_allModel1Ds) {
+          allModel1Ds.Display = !allModel1Ds.Display;
+          if (allModel1Ds.Display) {
             Current_ObjectCategory = ObjectCategory.MODEL1D;
             UI_BAR_b_update = true;
           }
@@ -2877,8 +2877,8 @@ class solarchvision_WIN3D {
           break;
   
         case '3' :
-          Display_allModel3Ds = !Display_allModel3Ds;
-          if (Display_allModel3Ds) {
+          allFaces.Display = !allFaces.Display;
+          if (allFaces.Display) {
             Current_ObjectCategory = ObjectCategory.GROUP;
             UI_BAR_b_update = true;
           } 
@@ -2887,8 +2887,8 @@ class solarchvision_WIN3D {
           break;
   
         case '4' :
-          Display_allModel3Ds = !Display_allModel3Ds;
-          if (Display_allModel3Ds) {
+          allFaces.Display = !allFaces.Display;
+          if (allFaces.Display) {
             Current_ObjectCategory = ObjectCategory.FACE;
             UI_BAR_b_update = true;
           } 
@@ -2897,8 +2897,8 @@ class solarchvision_WIN3D {
           break;                  
   
         case '5' :
-          Display_allModel3Ds = !Display_allModel3Ds;
-          if (Display_allModel3Ds) {
+          allFaces.Display = !allFaces.Display;
+          if (allFaces.Display) {
             Current_ObjectCategory = ObjectCategory.VERTEX;
             UI_BAR_b_update = true;
           } 
@@ -2907,8 +2907,8 @@ class solarchvision_WIN3D {
           break;  
   
         case '6' :
-          Display_allModel3Ds = !Display_allModel3Ds;
-          if (Display_allModel3Ds) {
+          allCurves.Display = !allCurves.Display;
+          if (allFaces.Display) {
             Current_ObjectCategory = ObjectCategory.CURVE;
             UI_BAR_b_update = true;
           } 
@@ -7086,9 +7086,10 @@ class solarchvision_ROLLOUT {
         //Land3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Depth", Land3D.Display_Depth, 0, 1, 1), 1));
   
         //allModel2Ds.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.Display", allModel2Ds.Display, 0, 1, 1), 1));
-        //Display_allModel1Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allModel1Ds", Display_allModel1Ds, 0, 1, 1), 1));
-        //Display_Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_Leaves", Display_Leaves, 0, 1, 1), 1));
-        //Display_allModel3Ds = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_allModel3Ds", Display_allModel3Ds, 0, 1, 1), 1));
+        //allModel1Ds.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.Display", allModel1Ds.Display, 0, 1, 1), 1));
+        //allModel1Ds.Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.Leaves", allModel1Ds.Leaves, 0, 1, 1), 1));
+        //allCurves.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.Display", allCurves.Display, 0, 1, 1), 1));
+        //allFaces.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.Display", allFaces.Display, 0, 1, 1), 1));
   
         //allSolids.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Display", allSolids.Display, 0, 1, 1), 1));
   
@@ -7740,10 +7741,9 @@ float Planetary_Magnification = 2.5; // <<<<<<<<<<
 
 boolean Display_Output_in_Explorer = true;
 
-boolean Display_allModel3Ds = true;
 
-boolean Display_allModel1Ds = true;
-boolean Display_Leaves = true;
+
+
 
 
 
@@ -8319,6 +8319,8 @@ class solarchvision_Faces {
   
   private final static String CLASS_STAMP = "Faces";
   
+  boolean Display = true; 
+  
   int[][] nodes = new int[0][0];
   
   int[][] options = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
@@ -8377,7 +8379,7 @@ class solarchvision_Faces {
     println("Saving:" + this.CLASS_STAMP);
     
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".nodes");
+      XML parent = xml.addChild(this.CLASS_STAMP);
       parent.setInt("ni", this.nodes.length);
       for (int i = 0; i < this.nodes.length; i++) {
         XML child = parent.addChild("item");
@@ -8389,6 +8391,8 @@ class solarchvision_Faces {
         }
         child.setContent(lineSTR);
       }
+      
+      parent.setString("Display", Boolean.toString(this.Display));
     }
 
     {
@@ -8414,7 +8418,7 @@ class solarchvision_Faces {
     println("Loading:" + this.CLASS_STAMP);
     
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".nodes");
+      XML parent = xml.getChild(this.CLASS_STAMP);
       int ni = parent.getInt("ni");
       this.nodes = new int [0][0];
       XML[] children = parent.getChildren("item");         
@@ -8428,6 +8432,8 @@ class solarchvision_Faces {
         }
         this.nodes = (int[][]) concat(this.nodes, newFace);
       }
+      
+      this.Display = Boolean.parseBoolean(parent.getString("Display"));
     }
     
     { 
@@ -8452,6 +8458,8 @@ solarchvision_Faces allFaces = new solarchvision_Faces();
 class solarchvision_Curves {
   
   private final static String CLASS_STAMP = "Curves";
+  
+  boolean Display = true; 
 
   int[][] nodes = new int[0][0];
   
@@ -8523,6 +8531,8 @@ class solarchvision_Curves {
         }
         child.setContent(lineSTR);
       }
+      
+      parent.setString("Display", Boolean.toString(this.Display));
     }
 
     {
@@ -8548,7 +8558,7 @@ class solarchvision_Curves {
     println("Loading:" + this.CLASS_STAMP);
     
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".nodes");
+      XML parent = xml.getChild(this.CLASS_STAMP);
       int ni = parent.getInt("ni");
       this.nodes = new int [0][0];
       XML[] children = parent.getChildren("item");         
@@ -8562,6 +8572,8 @@ class solarchvision_Curves {
         }
         this.nodes = (int[][]) concat(this.nodes, newFace);
       }
+      
+      this.Display = Boolean.parseBoolean(parent.getString("Display"));
     }
     
     { 
@@ -19019,7 +19031,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
   Land3D.draw(TypeWindow.RAD);
 
-  if (Display_allModel3Ds) {
+  if (allFaces.Display) {
 
     int[] Materials_Used = new int [Materials_Number];
 
@@ -19369,7 +19381,7 @@ void SOLARCHVISION_export_objects_HTML () {
   
   allModel2Ds.draw(TypeWindow.HTML);
 
-  if (Display_allModel3Ds) {
+  if (allFaces.Display) {
 
     int Create_Face_Texture = 0;
 
@@ -19736,7 +19748,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  if (Display_allModel3Ds) {
+  if (allFaces.Display) {
 
 
 
@@ -20166,7 +20178,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  if (Display_allModel1Ds) {
+  if (allModel1Ds.Display) {
 
     if (Export_MaterialLibrary) {
 
@@ -24977,6 +24989,9 @@ class solarchvision_Model1Ds {
   
   private final static String CLASS_STAMP = "Model1Ds";
 
+  boolean Display = true;
+  boolean Leaves = true;
+
   float[][] XYZSR = new float[0][5];
   
   float getX (int n) {
@@ -25090,7 +25105,7 @@ class solarchvision_Model1Ds {
   
     this.Vertices = new float [4 * this.num][3];
   
-    if (Display_allModel1Ds) {
+    if (this.Display) {
   
       for (int f = 0; f < this.num; f++) {
   
@@ -25191,7 +25206,7 @@ class solarchvision_Model1Ds {
         float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
         float z_new = z0 + z_rot; 
   
-        if (Display_allModel1Ds) {
+        if (this.Display) {
           int nSeg = 6; 
           for (int q = 0; q < nSeg; q++) {
   
@@ -25276,7 +25291,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int c = int(random(127));  
   
-      if (Display_Leaves) {
+      if (this.Leaves) {
   
         float LeafVertices[][] = {
           {
@@ -25438,7 +25453,7 @@ class solarchvision_Model1Ds {
         float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
         float z_new = z0 + z_rot; 
   
-        if (Display_allModel1Ds) {
+        if (this.Display) {
           int nSeg = 6; 
           for (int q = 0; q < nSeg; q++) {
             WIN3D.graphics.beginShape();
@@ -25480,7 +25495,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int c = int(random(127));  
   
-      if (Display_Leaves) {
+      if (this.Leaves) {
   
         WIN3D.graphics.strokeWeight(0);
   
@@ -25554,7 +25569,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int c = int(random(127));  
   
-      if (Display_Leaves) {
+      if (this.Leaves) {
   
         float r0 = 0.5 * LeafSize;
         allModel3Ds.add_Solid(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, CreateInput_MeshOrSolid);
@@ -25594,7 +25609,7 @@ class solarchvision_Model1Ds {
         float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
         float z_new = z0 + z_rot; 
   
-        if (Display_allModel1Ds) {
+        if (this.Display) {
           int nSeg = 6; 
           float[][] subFace = new float [nSeg * 4][3];
           for (int q = 0; q < nSeg; q++) {
@@ -25721,7 +25736,7 @@ class solarchvision_Model1Ds {
       float rotXY = Beta + random(-PI, PI);
       int COL = int(random(127));      
   
-      if (Display_Leaves) {
+      if (this.Leaves) {
   
         float x0_Rotated = x0;
         float y0_Rotated = y0;
@@ -25968,6 +25983,10 @@ class solarchvision_Model1Ds {
 
       child.setContent(lineSTR);
     } 
+    
+    
+    parent.setString("Display", Boolean.toString(this.Display));
+    parent.setString("Leaves", Boolean.toString(this.Leaves));
   }
   
   
@@ -26003,6 +26022,9 @@ class solarchvision_Model1Ds {
       this.setTrunkSize(i, float(parts[9]));
       this.setLeafSize(i, float(parts[10]));
     }
+    
+    this.Display = Boolean.parseBoolean(parent.getString("Display"));
+    this.Leaves = Boolean.parseBoolean(parent.getString("Leaves"));
   }    
 }
 
@@ -34080,7 +34102,7 @@ class solarchvision_Model3Ds {
   
   void draw_Faces () {
   
-    if (Display_allModel3Ds) {
+    if (allFaces.Display) {
   
       if (this.DisplayNormals) {
   
@@ -34272,7 +34294,7 @@ class solarchvision_Model3Ds {
     
     WIN3D.graphics.noFill();
   
-    if (Display_allModel3Ds) {
+    if (allCurves.Display) {
       
       for (int f = 0; f < allCurves.nodes.length; f++) {    
         
@@ -41152,14 +41174,14 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Leaves")) {
-              Display_Leaves = !Display_Leaves;
+              allModel1Ds.Leaves = !allModel1Ds.Leaves;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model1Ds")) {
-              Display_allModel1Ds = !Display_allModel1Ds;
-              Display_Leaves = Display_allModel1Ds; // <<<<<<
+              allModel1Ds.Display = !allModel1Ds.Display;
+              allModel1Ds.Leaves = allModel1Ds.Display; // <<<<<<
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41170,12 +41192,18 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model3Ds")) {
-              Display_allModel3Ds = !Display_allModel3Ds;
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Curves")) {
+              allCurves.Display = !allCurves.Display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
-            }           
+            }          
+            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Faces")) {
+              allFaces.Display = !allFaces.Display;
+
+              WIN3D.update = true;  
+              ROLLOUT.update = true;
+            }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solids")) {
               allSolids.Display = !allSolids.Display;
 
@@ -46084,7 +46112,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             SHADOW_graphics.stroke(0); 
             SHADOW_graphics.fill(0);              
 
-            if (Display_allModel3Ds) {
+            if (allFaces.Display) {
 
               for (int f = 0; f < allFaces.nodes.length; f++) {
   
@@ -46334,7 +46362,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             
 
             //now calculating allModel1Ds plants
-            if (Display_allModel1Ds) {
+            if (allModel1Ds.Display) {
 
               for (int f = 0; f < allModel1Ds.num; f++) {
 
@@ -46699,7 +46727,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           SHADOW_graphics.stroke(0); 
           SHADOW_graphics.fill(0);
           
-          if (Display_allModel3Ds) {
+          if (allFaces.Display) {
 
             for (int f = 0; f < allFaces.nodes.length; f++) {
   
@@ -46945,7 +46973,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }          
 
           //now calculating allModel1Ds plants
-          if (Display_allModel1Ds) {
+          if (allModel1Ds.Display) {
 
             for (int f = 0; f < allModel1Ds.num; f++) {
 
@@ -48930,8 +48958,9 @@ String[][] UI_BAR_a_Items = {
     "Display/Hide Normals", 
     "Display/Hide Leaves", 
     "Display/Hide Model1Ds",
-    "Display/Hide Model2Ds", 
-    "Display/Hide Model3Ds", 
+    "Display/Hide Model2Ds",
+    "Display/Hide Curves", 
+    "Display/Hide Faces", 
     "Display/Hide Solids", 
     "Display/Hide Sections", 
     "Display/Hide Cameras", 
@@ -49429,13 +49458,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }               
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Leaves")) {
-                if (Display_Leaves == false) {
+                if (allModel1Ds.Leaves == false) {
                   stroke(127); 
                   fill(127);
                 }
               }  
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Model1Ds")) {
-                if (Display_allModel1Ds == false) {
+                if (allModel1Ds.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49446,12 +49475,18 @@ void SOLARCHVISION_draw_window_BAR_a () {
                   fill(127);
                 }
               } 
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Model3Ds")) {
-                if (Display_allModel3Ds == false) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Curves")) {
+                if (allFaces.Display == false) {
                   stroke(127); 
                   fill(127);
                 }
-              }           
+              }   
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Faces")) {
+                if (allFaces.Display == false) {
+                  stroke(127); 
+                  fill(127);
+                }
+              }      
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Solids")) {
                 if (allSolids.Display == false) {
                   stroke(127); 
@@ -51661,10 +51696,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     XML parent = xml.addChild("SOLARCHVISION_variables");
   
     parent.setString("Display_Output_in_Explorer", Boolean.toString(Display_Output_in_Explorer));
-    parent.setString("Display_allModel3Ds", Boolean.toString(Display_allModel3Ds));
     
-    parent.setString("Display_allModel1Ds", Boolean.toString(Display_allModel1Ds));
-    parent.setString("Display_Leaves", Boolean.toString(Display_Leaves));
+
   
     
   
@@ -52052,10 +52085,9 @@ void SOLARCHVISION_load_project (String myFile) {
       XML parent = xml.getChild("SOLARCHVISION_variables");
       
       Display_Output_in_Explorer = Boolean.parseBoolean(parent.getString("Display_Output_in_Explorer"));
-      Display_allModel3Ds = Boolean.parseBoolean(parent.getString("Display_allModel3Ds"));
       
-      Display_allModel1Ds = Boolean.parseBoolean(parent.getString("Display_allModel1Ds"));
-      Display_Leaves = Boolean.parseBoolean(parent.getString("Display_Leaves"));
+      
+
   
       
       
