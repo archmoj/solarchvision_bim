@@ -7066,8 +7066,8 @@ class solarchvision_ROLLOUT {
         CreateInput_PolyDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateInput_PolyDegree", CreateInput_PolyDegree, 3, 36, 1), 1));
   
         CreateParametric_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreateParametric_Type", CreateParametric_Type, 0, 7, 1), 1));
-        CreatePerson_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePerson_Type", CreatePerson_Type, 0, allModel2Ds.PEOPLE_Files_Num, 1), 1));
-        CreatePlant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePlant_Type", CreatePlant_Type, 0, allModel2Ds.TREES_Files_Num, 1), 1));
+        CreatePerson_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePerson_Type", CreatePerson_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
+        CreatePlant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "CreatePlant_Type", CreatePlant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
       }
   
       if (this.child == 6) { // allModel2Ds
@@ -7087,7 +7087,7 @@ class solarchvision_ROLLOUT {
         //Land3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.num_rows - 1, 1), 1));
         //Land3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.num_rows - 1, 1), 1));
         //Land3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
-        //Land3D.displayTextures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTextures", Land3D.displayTextures, 0, 1, 1), 1));
+        //Land3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
         //Land3D.displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
         //Land3D.displayDepth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
   
@@ -7372,7 +7372,7 @@ class solarchvision_ROLLOUT {
         //Export_PalletResolution = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PalletResolution", Export_PalletResolution, 32, 2048, -2), 1));
   
   
-        //Display_Output_in_Explorer = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
+        //displayOutput_inExplorer = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
       }  
   
       if (this.child == 2) { // Media
@@ -7745,7 +7745,7 @@ float Planetary_Magnification = 2.5; // <<<<<<<<<<
 
 
 
-boolean Display_Output_in_Explorer = true;
+boolean displayOutput_inExplorer = true;
 
 
 
@@ -12518,7 +12518,7 @@ class solarchvision_Selections {
       allPoints.setZ(n, z);
     }
   
-    int n1 = allModel2Ds.PEOPLE_Files_Num;
+    int n1 = allModel2Ds.num_files_PEOPLE;
   
     boolean allSolids_updated = false;
   
@@ -12941,7 +12941,7 @@ class solarchvision_Selections {
   
   void scale_selectedModel2D (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
-    int n1 = allModel2Ds.PEOPLE_Files_Num;    
+    int n1 = allModel2Ds.num_files_PEOPLE;    
   
     for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
   
@@ -14082,8 +14082,8 @@ class solarchvision_Selections {
   
           n = abs(n);
   
-          int n1 = allModel2Ds.PEOPLE_Files_Num;
-          int n2 = allModel2Ds.PEOPLE_Files_Num + allModel2Ds.TREES_Files_Num;
+          int n1 = allModel2Ds.num_files_PEOPLE;
+          int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
   
   
           if (n <= n1) { // case: people 
@@ -22214,6 +22214,28 @@ class solarchvision_Tropo3D {
       }
     }
   }
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setString("displaySurface", Boolean.toString(this.displaySurface));
+    parent.setString("displayTexture", Boolean.toString(this.displayTexture));
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+    this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
+  }   
 }
 
 solarchvision_Tropo3D Tropo3D = new solarchvision_Tropo3D();
@@ -22328,6 +22350,25 @@ class solarchvision_Sky3D {
   
     }
   }
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setString("displaySurface", Boolean.toString(this.displaySurface));
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+  }   
 }
 
 
@@ -22446,6 +22487,27 @@ class solarchvision_Star3D {
       }
     }
   }
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setString("displaySurface", Boolean.toString(this.displaySurface));
+    parent.setString("displayTexture", Boolean.toString(this.displayTexture));
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+    this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
+  }   
 }
 
 solarchvision_Star3D Star3D = new solarchvision_Star3D();
@@ -22558,6 +22620,27 @@ class solarchvision_Moon3D {
       }
     }
   }
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setString("displaySurface", Boolean.toString(this.displaySurface));
+    parent.setString("displayTexture", Boolean.toString(this.displayTexture));
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+    this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
+  }   
 }
 
 solarchvision_Moon3D Moon3D = new solarchvision_Moon3D();
@@ -22925,6 +23008,29 @@ class solarchvision_Earth3D {
       }
     }
   }
+
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setString("displaySurface", Boolean.toString(this.displaySurface));
+    parent.setString("displayTexture", Boolean.toString(this.displayTexture));
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
+    this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
+  }      
+
 }
 
 solarchvision_Earth3D Earth3D = new solarchvision_Earth3D(); 
@@ -22940,7 +23046,7 @@ class solarchvision_Land3D {
   
   boolean displaySurface = true; 
   boolean displayPoints = false;
-  boolean displayTextures = true;
+  boolean displayTexture = true;
   boolean displayDepth = false;  
   
   float[][][] Mesh;
@@ -22970,7 +23076,7 @@ class solarchvision_Land3D {
     this.Textures_ImagePath = new String [0];
     this.Textures_num = 0;
   
-    this.displayTextures = false;
+    this.displayTexture = false;
   
     if (this.loadTextures) {
   
@@ -23051,7 +23157,7 @@ class solarchvision_Land3D {
                   this.Textures_num += 1;
     
     
-                  this.displayTextures = true;
+                  this.displayTexture = true;
                 }
               }
             }
@@ -23346,7 +23452,7 @@ class solarchvision_Land3D {
   
           if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
   
-            if (this.displayTextures) {
+            if (this.displayTexture) {
               if (n_Map != -1) {
     
                 String old_Texture_path = this.Textures_ImagePath[n_Map]; 
@@ -23408,7 +23514,7 @@ class solarchvision_Land3D {
   
           if (_turn == 3) {
             
-            if (this.displayTextures) {   
+            if (this.displayTexture) {   
   
               obj_lastGroupNumber += 1;
               objOutput.println("g LandMap");
@@ -23469,7 +23575,7 @@ class solarchvision_Land3D {
               float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
   
               int n_Map = -1; 
-              if (this.displayTextures) { 
+              if (this.displayTexture) { 
   
                 for (int q = 0; q < this.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
   
@@ -23508,9 +23614,9 @@ class solarchvision_Land3D {
                 WIN3D.graphics.strokeWeight(1);
                 WIN3D.graphics.stroke(0, 0, 0);
                 if (allFaces.displayEdges == false) WIN3D.graphics.noStroke();
-                if (this.displayTextures) WIN3D.graphics.noStroke();
+                if (this.displayTexture) WIN3D.graphics.noStroke();
   
-                if (this.displayTextures) {
+                if (this.displayTexture) {
                   if (n_Map != -1) {
                     WIN3D.graphics.texture(this.Textures_Map[n_Map]);
                   } else {
@@ -23525,7 +23631,7 @@ class solarchvision_Land3D {
   
                 if (_turn == 3) {
   
-                  if (this.displayTextures) {
+                  if (this.displayTexture) {
   
                     if (Export_MaterialLibrary) {
                       if (n_Map != -1) {    
@@ -23577,7 +23683,7 @@ class solarchvision_Land3D {
                   SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
                 }           
   
-                if (this.displayTextures == false) {
+                if (this.displayTexture == false) {
   
                   if (WIN3D.FacesShade != SHADE.Surface_Wire) {
   
@@ -23635,7 +23741,7 @@ class solarchvision_Land3D {
                   
                   if (target_window == TypeWindow.RAD) {
   
-                    if (this.displayTextures) {   
+                    if (this.displayTexture) {   
                     
                       radOutput.println("LandMesh_0" + " polygon " + "LAND");
                       radOutput.println("0");
@@ -23680,7 +23786,7 @@ class solarchvision_Land3D {
   
                   if (target_window == TypeWindow.OBJ) {
                     
-                    if (this.displayTextures) {   
+                    if (this.displayTexture) {   
                     
                       if (_turn == 1) {
                         SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
@@ -23750,7 +23856,7 @@ class solarchvision_Land3D {
   
                 if (_turn == 3) {
                   
-                  if (this.displayTextures) {   
+                  if (this.displayTexture) {   
   
                     String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
                     String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
@@ -23785,7 +23891,7 @@ class solarchvision_Land3D {
               
   
   
-              if (this.displayTextures) {
+              if (this.displayTexture) {
   
                 if (this.displayDepth) {
   
@@ -23908,7 +24014,7 @@ class solarchvision_Land3D {
       parent.setString("loadMesh", Boolean.toString(this.loadMesh));
       parent.setString("displaySurface", Boolean.toString(this.displaySurface));
       parent.setString("displayPoints", Boolean.toString(this.displayPoints));
-      parent.setString("displayTextures", Boolean.toString(this.displayTextures));
+      parent.setString("displayTexture", Boolean.toString(this.displayTexture));
       parent.setString("displayDepth", Boolean.toString(this.displayDepth));
       parent.setInt("Surface_SkipStart", this.Surface_SkipStart);
       parent.setInt("Surface_SkipEnd", this.Surface_SkipEnd);
@@ -23990,7 +24096,7 @@ class solarchvision_Land3D {
       this.loadMesh = Boolean.parseBoolean(parent.getString("loadMesh"));
       this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
       this.displayPoints = Boolean.parseBoolean(parent.getString("displayPoints"));
-      this.displayTextures = Boolean.parseBoolean(parent.getString("displayTextures"));
+      this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
       this.displayDepth = Boolean.parseBoolean(parent.getString("displayDepth"));
       this.Surface_SkipStart = parent.getInt("Surface_SkipStart");
       this.Surface_SkipEnd = parent.getInt("Surface_SkipEnd");
@@ -24120,8 +24226,8 @@ class solarchvision_Model2Ds {
   int num = 0; 
   
   String[] ImagePath;
-  int PEOPLE_Files_Num = 0;
-  int TREES_Files_Num = 0; 
+  int num_files_PEOPLE = 0;
+  int num_files_TREES = 0; 
 
   int numDisplayFaces = 3; // internal - number of faces: Vertical, Horizontal Front, Horizontal Back
  
@@ -24145,8 +24251,8 @@ class solarchvision_Model2Ds {
     this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
     this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
   
-    this.PEOPLE_Files_Num = this.Filenames_PEOPLE.length;
-    this.TREES_Files_Num = this.Filenames_TREES.length;
+    this.num_files_PEOPLE = this.Filenames_PEOPLE.length;
+    this.num_files_TREES = this.Filenames_TREES.length;
   
   
     int n = this.ImagePath.length;
@@ -24156,7 +24262,7 @@ class solarchvision_Model2Ds {
   
     for (int i = 1; i < n; i++) { // leaving [0] null  
   
-      if (i <= this.PEOPLE_Files_Num) {
+      if (i <= this.num_files_PEOPLE) {
         this.ImagePath[i] = allModel2DsFolder_PEOPLE + "/" + this.ImagePath[i];
       } else {
         this.ImagePath[i] = allModel2DsFolder_TREES + "/" + this.ImagePath[i];
@@ -24503,7 +24609,7 @@ class solarchvision_Model2Ds {
                   nf += 2;
                 }            
                 
-                if (n > this.PEOPLE_Files_Num) { // case: trees   
+                if (n > this.num_files_PEOPLE) { // case: trees   
     
                   float ratio = 0.5;
                   
@@ -24828,7 +24934,7 @@ class solarchvision_Model2Ds {
   
   
   
-    if ((Land3D.displayTextures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+    if ((Land3D.displayTexture) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
   
       for (int i = Land3D.Surface_SkipStart; i < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; i++) {
         for (int j = 0; j < Land3D.num_columns - 1; j++) {
@@ -25105,8 +25211,8 @@ class solarchvision_Model2Ds {
   
   void add_single (String t, int m, float x, float y, float z, float s) {
   
-    int n1 = this.PEOPLE_Files_Num;    
-    int n2 = this.PEOPLE_Files_Num + this.TREES_Files_Num;
+    int n1 = this.num_files_PEOPLE;    
+    int n2 = this.num_files_PEOPLE + this.num_files_TREES;
   
     int n = m;
   
@@ -25190,6 +25296,8 @@ class solarchvision_Model2Ds {
       }  
       
       parent.setString("displayAll", Boolean.toString(this.displayAll));
+      parent.setInt("num_files_PEOPLE", this.num_files_PEOPLE);
+      parent.setInt("num_files_TREES", this.num_files_TREES);   
     }
     
     {
@@ -25260,6 +25368,8 @@ class solarchvision_Model2Ds {
       }
       
       this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
+      this.num_files_PEOPLE = parent.getInt("num_files_PEOPLE");
+      this.num_files_TREES = parent.getInt("num_files_TREES");  
     }
     
     {
@@ -27433,7 +27543,7 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      int n1 = allModel2Ds.PEOPLE_Files_Num;
+      int n1 = allModel2Ds.num_files_PEOPLE;
   
       int number_of_allModel2Ds_before = allModel2Ds.num; 
   
@@ -27739,7 +27849,7 @@ class solarchvision_Model3Ds {
   
     if (Current_ObjectCategory == ObjectCategory.GROUP) {
   
-      int n1 = allModel2Ds.PEOPLE_Files_Num;
+      int n1 = allModel2Ds.num_files_PEOPLE;
   
       int SOLID_added = 0;
   
@@ -28127,7 +28237,7 @@ class solarchvision_Model3Ds {
   
       if (Current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-        int n1 = allModel2Ds.PEOPLE_Files_Num;
+        int n1 = allModel2Ds.num_files_PEOPLE;
   
         for (int o = 0; o < allSelections.Model2D_ids.length; o++) {
   
@@ -40623,7 +40733,7 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
 
     SOLARCHVISION_update_project_info(selectedFile);
 
-    SOLARCHVISION_save_project(Filename, Display_Output_in_Explorer);
+    SOLARCHVISION_save_project(Filename);
   }
 }     
 
@@ -40734,7 +40844,7 @@ void mouseClicked () {
             }  
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Save")) { 
-              SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml", false);
+              SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml");
             }
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Hold")) {
@@ -41288,7 +41398,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-              Land3D.displayTextures = !Land3D.displayTextures;
+              Land3D.displayTexture = !Land3D.displayTexture;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -43642,8 +43752,8 @@ void mouseClicked () {
                       int sign_n = 1;
                       if (n < 0) sign_n = -1;
                       n = abs(n);
-                      int n1 = allModel2Ds.PEOPLE_Files_Num;
-                      int n2 = allModel2Ds.PEOPLE_Files_Num + allModel2Ds.TREES_Files_Num;
+                      int n1 = allModel2Ds.num_files_PEOPLE;
+                      int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
   
                       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
   
@@ -43886,7 +43996,7 @@ void mouseClicked () {
     
                     if (CreateObject == CREATE.Plant) {
                       int n = 0;
-                      if (CreatePlant_Type > 0) n = CreatePlant_Type + allModel2Ds.PEOPLE_Files_Num;
+                      if (CreatePlant_Type > 0) n = CreatePlant_Type + allModel2Ds.num_files_PEOPLE;
     
                       randomSeed(millis());
                       allModel2Ds.add_single("TREES", n, x, y, z, 2 * rz);
@@ -49572,7 +49682,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }       
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (Land3D.displayTextures == false) {
+                if (Land3D.displayTexture == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51820,7 +51930,7 @@ int[] get_startK_endK () {
 
 void SOLARCHVISION_explore_output (String outputFile) {
 
-  if ((Display_Output_in_Explorer)  && (STUDY.record_AUTO == false) && (WORLD.record_AUTO == false) && (WIN3D.record_AUTO == false) && (FRAME_record_AUTO == false)) {
+  if ((displayOutput_inExplorer)  && (STUDY.record_AUTO == false) && (WORLD.record_AUTO == false) && (WIN3D.record_AUTO == false) && (FRAME_record_AUTO == false)) {
     launch("explorer /select," + outputFile.replace('/', char(92)));
   }
 }
@@ -51832,7 +51942,7 @@ void SOLARCHVISION_explore_output (String outputFile) {
               
 String save_folder = "";
 
-void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
+void SOLARCHVISION_save_project (String myFile) {
 
   myFile = myFile.replace(char(92), '/');
   
@@ -51845,7 +51955,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   {
     XML parent = xml.addChild("SOLARCHVISION_variables");
   
-    parent.setString("Display_Output_in_Explorer", Boolean.toString(Display_Output_in_Explorer));
+    parent.setString("displayOutput_inExplorer", Boolean.toString(displayOutput_inExplorer));
     
 
   
@@ -52071,17 +52181,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setString("Display_SolarRotation", Boolean.toString(Display_SolarRotation));
     parent.setString("Display_SUN_Path", Boolean.toString(Display_SUN_Path));
     parent.setString("Display_SUN_Pattern", Boolean.toString(Display_SUN_Pattern));
-    parent.setString("Sky3D.displaySurface", Boolean.toString(Sky3D.displaySurface));
-    parent.setString("Star3D.displaySurface", Boolean.toString(Star3D.displaySurface));
-    parent.setString("Star3D.displayTexture", Boolean.toString(Star3D.displayTexture));
-    parent.setString("Moon3D.displaySurface", Boolean.toString(Moon3D.displaySurface));
-    parent.setString("Moon3D.displayTexture", Boolean.toString(Moon3D.displayTexture));
-    parent.setString("Tropo3D.displaySurface", Boolean.toString(Tropo3D.displaySurface));
-    parent.setString("Tropo3D.displayTexture", Boolean.toString(Tropo3D.displayTexture));
-    parent.setString("Earth3D.displaySurface", Boolean.toString(Earth3D.displaySurface));
-    parent.setString("Earth3D.displayTexture", Boolean.toString(Earth3D.displayTexture));
-  
-  
            
 
     parent.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
@@ -52143,8 +52242,7 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setInt("SOLARCHVISION_GLOBE_n_dir", SOLARCHVISION_GLOBE_n_dir);
   
   
-    parent.setInt("Model2Ds.PEOPLE_Files_Num", allModel2Ds.PEOPLE_Files_Num);
-    parent.setInt("Model2Ds.TREES_Files_Num", allModel2Ds.TREES_Files_Num); 
+
   
     parent.setInt("addToLastGroup", addToLastGroup);
   
@@ -52186,6 +52284,14 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   allModel2Ds.to_XML(xml);
   
   Land3D.to_XML(xml);  
+  
+  Earth3D.to_XML(xml);
+  
+  Tropo3D.to_XML(xml);
+  
+  Moon3D.to_XML(xml);
+  
+  Star3D.to_XML(xml);
 
   STATION.to_XML(xml);
 
@@ -52193,7 +52299,6 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
 
   println("End of saving XML.");
 
-  if (explore_output) SOLARCHVISION_explore_output(myFile);
 }
 
 
@@ -52219,7 +52324,7 @@ void SOLARCHVISION_load_project (String myFile) {
     {
       XML parent = xml.getChild("SOLARCHVISION_variables");
       
-      Display_Output_in_Explorer = Boolean.parseBoolean(parent.getString("Display_Output_in_Explorer"));
+      displayOutput_inExplorer = Boolean.parseBoolean(parent.getString("displayOutput_inExplorer"));
       
       
 
@@ -52452,18 +52557,6 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_SUN_Path = Boolean.parseBoolean(parent.getString("Display_SUN_Path"));
       Display_SUN_Pattern = Boolean.parseBoolean(parent.getString("Display_SUN_Pattern"));
       
-      Sky3D.displaySurface = Boolean.parseBoolean(parent.getString("Sky3D.displaySurface"));
-      Star3D.displaySurface = Boolean.parseBoolean(parent.getString("Star3D.displaySurface"));
-      Star3D.displayTexture = Boolean.parseBoolean(parent.getString("Star3D.displayTexture"));            
-      Moon3D.displaySurface = Boolean.parseBoolean(parent.getString("Moon3D.displaySurface"));
-      Moon3D.displayTexture = Boolean.parseBoolean(parent.getString("Moon3D.displayTexture"));
-      Tropo3D.displaySurface = Boolean.parseBoolean(parent.getString("Tropo3D.displaySurface"));
-      Tropo3D.displayTexture = Boolean.parseBoolean(parent.getString("Tropo3D.displayTexture"));
-      Earth3D.displaySurface = Boolean.parseBoolean(parent.getString("Earth3D.displaySurface"));
-      Earth3D.displayTexture = Boolean.parseBoolean(parent.getString("Earth3D.displayTexture"));
-  
-
-
       Display_WindFlow = Boolean.parseBoolean(parent.getString("Display_WindFlow"));
       Camera_Variation = parent.getInt("Camera_Variation");
       STUDY.displayRaws = Boolean.parseBoolean(parent.getString("STUDY.displayRaws"));
@@ -52522,9 +52615,9 @@ void SOLARCHVISION_load_project (String myFile) {
       SOLARCHVISION_GLOBE_stp_dir = parent.getFloat("SOLARCHVISION_GLOBE_stp_dir");
       SOLARCHVISION_GLOBE_n_slp = parent.getInt("SOLARCHVISION_GLOBE_n_slp");
       SOLARCHVISION_GLOBE_n_dir = parent.getInt("SOLARCHVISION_GLOBE_n_dir");
-  
-      allModel2Ds.PEOPLE_Files_Num = parent.getInt("Model2Ds.PEOPLE_Files_Num");
-      allModel2Ds.TREES_Files_Num = parent.getInt("Model2Ds.TREES_Files_Num");
+
+
+
   
   
       addToLastGroup = parent.getInt("addToLastGroup");      
@@ -52578,6 +52671,14 @@ void SOLARCHVISION_load_project (String myFile) {
     
     Land3D.from_XML(xml);  
     
+    Earth3D.from_XML(xml);
+    
+    Tropo3D.from_XML(xml);
+    
+    Moon3D.from_XML(xml);
+    
+    Star3D.from_XML(xml);    
+    
     STATION.from_XML(xml);
 
   
@@ -52630,7 +52731,7 @@ void SOLARCHVISION_hold_project () {
 
   HoldStamp = nf(millis(), 0);
 
-  SOLARCHVISION_save_project(ProjectFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml", false);  
+  SOLARCHVISION_save_project(ProjectFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");  
 }
 
 void SOLARCHVISION_fetch_project () {
@@ -52957,7 +53058,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }
 
   else if (Command_CAPITAL.equals("SAVE")) {
-    SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml", false);
+    SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml");
   }    
 
   else if (Command_CAPITAL.equals("HOLD")) {
