@@ -2853,8 +2853,8 @@ class solarchvision_WIN3D {
           break;
   
         case '0' :
-          Land3D.Display_Surface = !Land3D.Display_Surface;
-          if (Land3D.Display_Surface) {
+          Land3D.displaySurface = !Land3D.displaySurface;
+          if (Land3D.displaySurface) {
             Current_ObjectCategory = ObjectCategory.LANDPOINT;
             UI_BAR_b_update = true;
           }
@@ -2863,8 +2863,8 @@ class solarchvision_WIN3D {
           break;
   
         case '1' :
-          allModel1Ds.Display = !allModel1Ds.Display;
-          if (allModel1Ds.Display) {
+          allModel1Ds.displayAll = !allModel1Ds.displayAll;
+          if (allModel1Ds.displayAll) {
             Current_ObjectCategory = ObjectCategory.MODEL1D;
             UI_BAR_b_update = true;
           }
@@ -2873,8 +2873,8 @@ class solarchvision_WIN3D {
           break;
   
         case '2' :
-          allModel2Ds.Display = !allModel2Ds.Display;
-          if (allModel2Ds.Display) {
+          allModel2Ds.displayAll = !allModel2Ds.displayAll;
+          if (allModel2Ds.displayAll) {
             Current_ObjectCategory = ObjectCategory.MODEL2D;
             UI_BAR_b_update = true;
           }
@@ -2883,8 +2883,8 @@ class solarchvision_WIN3D {
           break;
   
         case '3' :
-          allFaces.Display = !allFaces.Display;
-          if (allFaces.Display) {
+          allFaces.displayAll = !allFaces.displayAll;
+          if (allFaces.displayAll) {
             Current_ObjectCategory = ObjectCategory.GROUP;
             UI_BAR_b_update = true;
           } 
@@ -2893,8 +2893,8 @@ class solarchvision_WIN3D {
           break;
   
         case '4' :
-          allFaces.Display = !allFaces.Display;
-          if (allFaces.Display) {
+          allFaces.displayAll = !allFaces.displayAll;
+          if (allFaces.displayAll) {
             Current_ObjectCategory = ObjectCategory.FACE;
             UI_BAR_b_update = true;
           } 
@@ -2903,8 +2903,8 @@ class solarchvision_WIN3D {
           break;                  
   
         case '5' :
-          allFaces.Display = !allFaces.Display;
-          if (allFaces.Display) {
+          allFaces.displayAll = !allFaces.displayAll;
+          if (allFaces.displayAll) {
             Current_ObjectCategory = ObjectCategory.VERTEX;
             UI_BAR_b_update = true;
           } 
@@ -2913,8 +2913,8 @@ class solarchvision_WIN3D {
           break;  
   
         case '6' :
-          allCurves.Display = !allCurves.Display;
-          if (allFaces.Display) {
+          allCurves.displayAll = !allCurves.displayAll;
+          if (allFaces.displayAll) {
             Current_ObjectCategory = ObjectCategory.CURVE;
             UI_BAR_b_update = true;
           } 
@@ -2923,8 +2923,8 @@ class solarchvision_WIN3D {
           break;                       
   
         case '7' :
-          allSolids.Display = !allSolids.Display;
-          if (allSolids.Display) {
+          allSolids.displayAll = !allSolids.displayAll;
+          if (allSolids.displayAll) {
             Current_ObjectCategory = ObjectCategory.SOLID;
             UI_BAR_b_update = true;
           } 
@@ -2933,8 +2933,8 @@ class solarchvision_WIN3D {
           break; 
   
         case '8' :
-          allSections.Display = !allSections.Display;
-          if (allSections.Display) {
+          allSections.displayAll = !allSections.displayAll;
+          if (allSections.displayAll) {
             Current_ObjectCategory = ObjectCategory.SECTION;
             UI_BAR_b_update = true;
           } 
@@ -2943,8 +2943,8 @@ class solarchvision_WIN3D {
           break; 
   
         case '9' :
-          allCameras.Display = !allCameras.Display;
-          if (allCameras.Display) {
+          allCameras.displayAll = !allCameras.displayAll;
+          if (allCameras.displayAll) {
             Current_ObjectCategory = ObjectCategory.CAMERA;
             UI_BAR_b_update = true;
           } 
@@ -3980,7 +3980,7 @@ class solarchvision_WORLD {
     if (return_VIEWPORT != this.VIEW_id) {
       this.loadImages(return_VIEWPORT);
   
-      if (Earth3D.Display_Surface) WIN3D.update = true;
+      if (Earth3D.displaySurface) WIN3D.update = true;
     }
   
     return (return_VIEWPORT);
@@ -4629,8 +4629,8 @@ class solarchvision_STUDY {
   int j_Start = 0; // constant
   int j_End = 8; //6; //2; //16; // Variable  
 
-  float PerDays = 45; //61; //1; //45; //61; //30.5;
-  int JoinDays = 1; //30;//PerDays; // it should be set up to 1 in order to plot only one day  
+  float perDays = 45; //61; //1; //45; //61; //30.5;
+  int joinDays = 1; //30;//perDays; // it should be set up to 1 in order to plot only one day  
   
   boolean PrintTtitle = true;
   
@@ -4686,12 +4686,12 @@ class solarchvision_STUDY {
   int PlotImpacts = 4; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
   boolean Impacts_update = true; 
   
-  boolean DisplayRaws = false;
-  boolean DisplaySorted = true;
-  boolean DisplayNormals = true;
-  boolean DisplayProbs = false;
+  boolean displayRaws = false;
+  boolean displaySorted = true;
+  boolean displayNormals = true;
+  boolean displayProbs = false;
   
-  int SumInterval = 2;
+  int sumInterval = 2;
   float LevelPix = 8;
   
   float Pix = 0; 
@@ -4880,10 +4880,10 @@ class solarchvision_STUDY {
           this.U_scale = 18.0 / float(this.j_End - this.j_Start);
           /*
            if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
-           this.PerDays = int(365 / float(this.j_End - this.j_Start));
+           this.perDays = int(365 / float(this.j_End - this.j_Start));
            } 
            if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-           this.PerDays = 1;
+           this.perDays = 1;
            }
            */
           DevelopData_update = true;
@@ -4905,10 +4905,10 @@ class solarchvision_STUDY {
           this.U_scale = 18.0 / float(this.j_End - this.j_Start);
           /*
            if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
-           this.PerDays = int(365 / float(this.j_End - this.j_Start));
+           this.perDays = int(365 / float(this.j_End - this.j_Start));
            } 
            if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-           this.PerDays = 1;
+           this.perDays = 1;
            }                  
            */
           DevelopData_update = true;
@@ -5012,27 +5012,27 @@ class solarchvision_STUDY {
           break;
   
         case 'V' :
-          this.DisplayRaws = !this.DisplayRaws; 
+          this.displayRaws = !this.displayRaws; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'v' :
-          this.DisplayRaws = !this.DisplayRaws; 
+          this.displayRaws = !this.displayRaws; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case '`' :
-          this.JoinDays += 2;
-          if (this.JoinDays > 365) this.JoinDays = 365;
+          this.joinDays += 2;
+          if (this.joinDays > 365) this.joinDays = 365;
           DevelopData_update = true; 
           UI_BAR_d_update = true; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '~' :
-          this.JoinDays -= 2;
-          if (this.JoinDays < 1) this.JoinDays = 1;
+          this.joinDays -= 2;
+          if (this.joinDays < 1) this.joinDays = 1;
           DevelopData_update = true; 
           UI_BAR_d_update = true; 
           this.update = true; 
@@ -5055,34 +5055,34 @@ class solarchvision_STUDY {
           break;  
   
         case 'm' :
-          this.DisplaySorted = !this.DisplaySorted; 
+          this.displaySorted = !this.displaySorted; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'M' :
-          this.DisplaySorted = !this.DisplaySorted; 
+          this.displaySorted = !this.displaySorted; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case 'n' :
-          this.DisplayNormals = !this.DisplayNormals; 
+          this.displayNormals = !this.displayNormals; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'N' :
-          this.DisplayNormals = !this.DisplayNormals; 
+          this.displayNormals = !this.displayNormals; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case 'b' :
-          this.DisplayProbs = !this.DisplayProbs; 
+          this.displayProbs = !this.displayProbs; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'B' :
-          this.DisplayProbs = !this.DisplayProbs; 
+          this.displayProbs = !this.displayProbs; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
@@ -5099,20 +5099,20 @@ class solarchvision_STUDY {
           break;
   
         case 'i' :
-          if (this.SumInterval > 24) this.SumInterval -= 24;
-          if (this.SumInterval > 6) this.SumInterval -= 6; 
-          else if (this.SumInterval > 1) this.SumInterval -= 1;
-          if (this.SumInterval == 5) this.SumInterval = 4;
-          println("this.SumInterval =", this.SumInterval);
+          if (this.sumInterval > 24) this.sumInterval -= 24;
+          if (this.sumInterval > 6) this.sumInterval -= 6; 
+          else if (this.sumInterval > 1) this.sumInterval -= 1;
+          if (this.sumInterval == 5) this.sumInterval = 4;
+          println("this.sumInterval =", this.sumInterval);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'I' :
-          if (this.SumInterval < 6) this.SumInterval += 1;
-          else if (this.SumInterval < 24) this.SumInterval += 6;
-          else this.SumInterval += 24;
-          if (this.SumInterval == 5) this.SumInterval = 6;
-          println("this.SumInterval =", this.SumInterval);
+          if (this.sumInterval < 6) this.sumInterval += 1;
+          else if (this.sumInterval < 24) this.sumInterval += 6;
+          else this.sumInterval += 24;
+          if (this.sumInterval == 5) this.sumInterval = 6;
+          println("this.sumInterval =", this.sumInterval);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
@@ -5322,9 +5322,9 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((i - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(CalendarDay[int((365 + i * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / this.U_scale);
-        if (this.JoinDays > 1) {
-          //this.graphics.text(("±" + int(this.JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        this.graphics.text(CalendarDay[int((365 + i * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / this.U_scale);
+        if (this.joinDays > 1) {
+          //this.graphics.text(("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
       }
     }
@@ -5392,7 +5392,7 @@ class solarchvision_STUDY {
     int PAL_DIR = this.Pallet_PROB_DIR;  
     float PAL_Multiplier = this.Pallet_PROB_MLT;
   
-    float txt_max_width = (this.SumInterval * this.S_View * 100 / 24.0) * this.U_scale;
+    float txt_max_width = (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale;
     float txt_max_height = this.Pix;
     if (txt_max_height > txt_max_width) this.graphics.textSize(0.9 * txt_max_width);
     else this.graphics.textSize(0.9 * txt_max_height);
@@ -5454,7 +5454,7 @@ class solarchvision_STUDY {
             this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
             this.graphics.strokeWeight(this.T_scale * 0); 
-            this.graphics.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * this.Pix) - 0.5 * this.Pix, -(this.SumInterval * this.S_View * 100 / 24.0) * this.U_scale, this.Pix); 
+            this.graphics.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * this.Pix) - 0.5 * this.Pix, -(this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, this.Pix); 
   
             if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
               this.graphics.stroke(127);
@@ -5465,15 +5465,15 @@ class solarchvision_STUDY {
               this.graphics.fill(255);
               this.graphics.strokeWeight(2);
             }   
-            this.graphics.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.SumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix) - 0.05 * txt_max_height);
+            this.graphics.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix) - 0.05 * txt_max_height);
   
-            if ((this.Export_info_prob) && (this.DisplayProbs)) {
+            if ((this.Export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
             }
           }
         }  
   
-        if ((this.Export_info_prob) && (this.DisplayProbs)) {
+        if ((this.Export_info_prob) && (this.displayProbs)) {
           FILE_outputProbs[(j - this.j_Start)].println("");
         }
       }
@@ -5755,12 +5755,12 @@ class solarchvision_STUDY {
         this.graphics.line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, (j + ((i + 0.5 + TIME_Interval) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot);
       } 
   
-      if ((this.Export_info_norm) && (this.DisplayNormals)) {
+      if ((this.Export_info_norm) && (this.displayNormals)) {
         if (is_undefined_FLOAT(NormalsA[l]) == false) FILE_outputNorms[(j - this.j_Start)].print(nfs(NormalsA[l] - this.V_offset, 5, 5) + "\t"); 
         else FILE_outputNorms[(j - this.j_Start)].print("[undefined]\t");
       }
     }
-    if ((this.Export_info_norm) && (this.DisplayNormals)) FILE_outputNorms[(j - this.j_Start)].println();
+    if ((this.Export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].println();
   }  
 
 
@@ -5811,21 +5811,21 @@ class solarchvision_STUDY {
   
     float[] _valuesA;
     float[] _valuesB; 
-    _valuesA = new float [count_k * this.JoinDays];
-    _valuesB = new float [count_k * this.JoinDays]; 
+    _valuesA = new float [count_k * this.joinDays];
+    _valuesB = new float [count_k * this.joinDays]; 
   
     float[] _valuesSUM; 
     float[] _valuesNUM;
     int _interval = 0;
-    _valuesSUM = new float [count_k * this.JoinDays];
-    _valuesNUM = new float [count_k * this.JoinDays];
+    _valuesSUM = new float [count_k * this.joinDays];
+    _valuesNUM = new float [count_k * this.joinDays];
     
     for (int k = 0; k < count_k; k++) {
-      for (int j_ADD = 0; j_ADD < this.JoinDays; j_ADD++) {
-        _valuesA[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
-        _valuesB[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
-        _valuesSUM[(k * this.JoinDays + j_ADD)] = 0; // Note: must be initialized to zero; not undefined.
-        _valuesNUM[(k * this.JoinDays + j_ADD)] = 0;
+      for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+        _valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+        _valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+        _valuesSUM[(k * this.joinDays + j_ADD)] = 0; // Note: must be initialized to zero; not undefined.
+        _valuesNUM[(k * this.joinDays + j_ADD)] = 0;
       }  
     }
   
@@ -5851,19 +5851,19 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / this.U_scale);
-        if (this.JoinDays > 1) {
-          this.graphics.text(("±" + int(this.JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        this.graphics.text(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / this.U_scale);
+        if (this.joinDays > 1) {
+          this.graphics.text(("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
       }
   
       String _FilenamesAdd = "";
-      if (this.JoinDays > 1) {
-        _FilenamesAdd = ("±" + int(this.JoinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
+      if (this.joinDays > 1) {
+        _FilenamesAdd = ("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
       }
-      if ((this.Export_info_node) && (this.DisplayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+      if ((this.Export_info_node) && (this.displayRaws)) {
+        FILE_outputRaw[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
   
         FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
         for (int k = 0; k < count_k; k++) {   
@@ -5871,35 +5871,35 @@ class solarchvision_STUDY {
         }
         FILE_outputRaw[(j - this.j_Start)].println("");
       }
-      if ((this.Export_info_norm) && (this.DisplayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+      if ((this.Export_info_norm) && (this.displayNormals)) {
+        FILE_outputNorms[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
         FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
         for (int l = 0; l < 9; l++) {
           FILE_outputNorms[(j - this.j_Start)].print(STAT_N_Title[l] + "\t");
         }
         FILE_outputNorms[(j - this.j_Start)].println("");
       }
-      if ((this.Export_info_prob) && (this.DisplayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.PerDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+      if ((this.Export_info_prob) && (this.displayProbs)) {
+        FILE_outputProbs[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
   
         FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
         FILE_outputProbs[(j - this.j_Start)].println("");
       }
   
       for (int i = 0; i < 24; i++) {
-        if ((this.Export_info_node) && (this.DisplayRaws)) FILE_outputRaw[(j - this.j_Start)].print(nf(i, 2) + "\t");
-        if ((this.Export_info_norm) && (this.DisplayNormals)) FILE_outputNorms[(j - this.j_Start)].print(nf(i, 2) + "\t");
-        if ((this.Export_info_prob) && (this.DisplayProbs)) FILE_outputProbs[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if ((this.Export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if ((this.Export_info_prob) && (this.displayProbs)) FILE_outputProbs[(j - this.j_Start)].print(nf(i, 2) + "\t");
   
         for (int k = 0; k < count_k; k++) {   
-          for (int j_ADD = 0; j_ADD < this.JoinDays; j_ADD++) {
+          for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
   
-            _valuesA[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
-            _valuesB[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
-            _valuesSUM[(k * this.JoinDays + j_ADD)] = 0;
-            _valuesNUM[(k * this.JoinDays + j_ADD)] = 1;
+            _valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+            _valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+            _valuesSUM[(k * this.joinDays + j_ADD)] = 0;
+            _valuesNUM[(k * this.joinDays + j_ADD)] = 1;
   
             float[] COL = PAINT.getColorStyle(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -5908,7 +5908,7 @@ class solarchvision_STUDY {
   
             int now_k = k + start_k;
             int now_i = i;
-            int now_j = int(j * this.PerDays + (j_ADD - int(roundTo(0.5 * this.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+            int now_j = int(j * this.perDays + (j_ADD - int(roundTo(0.5 * this.joinDays, 1))) + TIME_BeginDay + 365) % 365;
   
   
             if (now_j >= 365) {
@@ -5933,21 +5933,21 @@ class solarchvision_STUDY {
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, CurrentLayer_id); 
           
             if (is_undefined_FLOAT(Pa)) {
-              _valuesA[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
+              _valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
   
-              if ((this.Export_info_node) && (this.DisplayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
+              if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
             } else {
               int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
   
               if (memberCount == 1) {
-                _valuesA[(k * this.JoinDays + j_ADD)] = Pa;
-                _valuesA[(k * this.JoinDays + j_ADD)] += this.V_offset;
+                _valuesA[(k * this.joinDays + j_ADD)] = Pa;
+                _valuesA[(k * this.joinDays + j_ADD)] += this.V_offset;
   
-                _valuesSUM[(k * this.JoinDays + j_ADD)] += _valuesA[(k * this.JoinDays + j_ADD)];
-                _valuesNUM[(k * this.JoinDays + j_ADD)] += 1;
+                _valuesSUM[(k * this.joinDays + j_ADD)] += _valuesA[(k * this.joinDays + j_ADD)];
+                _valuesNUM[(k * this.joinDays + j_ADD)] += 1;
   
-                if ((this.Export_info_node) && (this.DisplayRaws)) {
-                  if (is_undefined_FLOAT(_valuesA[(k * this.JoinDays + j_ADD)]) == false) FILE_outputRaw[(j - this.j_Start)].print(nfs(_valuesA[(k * this.JoinDays + j_ADD)] - this.V_offset, 5, 5) + "\t"); 
+                if ((this.Export_info_node) && (this.displayRaws)) {
+                  if (is_undefined_FLOAT(_valuesA[(k * this.joinDays + j_ADD)]) == false) FILE_outputRaw[(j - this.j_Start)].print(nfs(_valuesA[(k * this.joinDays + j_ADD)] - this.V_offset, 5, 5) + "\t"); 
                   else FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
                 }
   
@@ -5956,81 +5956,81 @@ class solarchvision_STUDY {
                   Pb = getValue_CurrentDataSource(next_i, next_j, next_k, CurrentLayer_id);                 
                   
                   if (is_undefined_FLOAT(Pb)) {
-                    _valuesB[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
+                    _valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
                   } else {
-                    _valuesB[(k * this.JoinDays + j_ADD)] = Pb;
-                    _valuesB[(k * this.JoinDays + j_ADD)] += this.V_offset;
+                    _valuesB[(k * this.joinDays + j_ADD)] = Pb;
+                    _valuesB[(k * this.joinDays + j_ADD)] += this.V_offset;
   
-                    if (this.DisplayRaws) {
-                      if ((CurrentLayer_id == LAYER_winddir.id) && (abs(_valuesB[(k * this.JoinDays + j_ADD)] - _valuesA[(k * this.JoinDays + j_ADD)]) > 180)) {
+                    if (this.displayRaws) {
+                      if ((CurrentLayer_id == LAYER_winddir.id) && (abs(_valuesB[(k * this.joinDays + j_ADD)] - _valuesA[(k * this.joinDays + j_ADD)]) > 180)) {
                       } else {                        
                         Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
-                        Ay_LINES = append(Ay_LINES, _valuesA[(k * this.JoinDays + j_ADD)] * sy_Plot);
+                        Ay_LINES = append(Ay_LINES, _valuesA[(k * this.joinDays + j_ADD)] * sy_Plot);
                         Az_LINES = append(Az_LINES, now_k * sz_Plot * this.W_scale);
                         Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
-                        By_LINES = append(By_LINES, _valuesB[(k * this.JoinDays + j_ADD)] * sy_Plot);
+                        By_LINES = append(By_LINES, _valuesB[(k * this.joinDays + j_ADD)] * sy_Plot);
                         Bz_LINES = append(Bz_LINES, next_k * sz_Plot * this.W_scale);
                       }
                     }
                   }
                 }
               } else {
-                if ((this.Export_info_node) && (this.DisplayRaws)) FILE_outputRaw[(j - this.j_Start)].print("not_the_case\t");
+                if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("not_the_case\t");
               }
             }
           }
         }
         
   
-        if ((this.Export_info_node) && (this.DisplayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
+        if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
   
   
         _interval += 1; 
-        if ((_interval % this.SumInterval) == 0) {
+        if ((_interval % this.sumInterval) == 0) {
           for (int k = 0; k < count_k; k++) {
-            for (int j_ADD = 0; j_ADD < this.JoinDays; j_ADD++) {
-              _valuesSUM[(k * this.JoinDays + j_ADD)] += _valuesA[(k * this.JoinDays + j_ADD)];
-              _valuesNUM[(k * this.JoinDays + j_ADD)] += 1;
+            for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+              _valuesSUM[(k * this.joinDays + j_ADD)] += _valuesA[(k * this.joinDays + j_ADD)];
+              _valuesNUM[(k * this.joinDays + j_ADD)] += 1;
   
-              if (_valuesNUM[(k * this.JoinDays + j_ADD)] != 0) {
-                _valuesSUM[(k * this.JoinDays + j_ADD)] /= _valuesNUM[(k * this.JoinDays + j_ADD)];
+              if (_valuesNUM[(k * this.joinDays + j_ADD)] != 0) {
+                _valuesSUM[(k * this.joinDays + j_ADD)] /= _valuesNUM[(k * this.joinDays + j_ADD)];
               }
               else {
-                _valuesSUM[(k * this.JoinDays + j_ADD)] = FLOAT_undefined;
+                _valuesSUM[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
               }
             }
           }        
-          if (this.DisplayProbs) {
+          if (this.displayProbs) {
             this.drawProbs(i, j, _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
           }
           for (int k = 0; k < count_k; k++) {
-            for (int j_ADD = 0; j_ADD < this.JoinDays; j_ADD++) {
-              _valuesSUM[(k * this.JoinDays + j_ADD)] = 0;
-              _valuesNUM[(k * this.JoinDays + j_ADD)] = 0;
+            for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+              _valuesSUM[(k * this.joinDays + j_ADD)] = 0;
+              _valuesNUM[(k * this.joinDays + j_ADD)] = 0;
             }
           }
         }      
   
-        if (this.DisplaySorted) {
+        if (this.displaySorted) {
           this.drawSorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
   
-        if (this.DisplayNormals) {
+        if (this.displayNormals) {
           this.drawNormals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
       }
       
-      if ((this.Export_info_node) && (this.DisplayRaws)) {
+      if ((this.Export_info_node) && (this.displayRaws)) {
         FILE_outputRaw[(j - this.j_Start)].flush(); 
         FILE_outputRaw[(j - this.j_Start)].close();
       }
   
-      if ((this.Export_info_norm) && (this.DisplayNormals)) {
+      if ((this.Export_info_norm) && (this.displayNormals)) {
         FILE_outputNorms[(j - this.j_Start)].flush(); 
         FILE_outputNorms[(j - this.j_Start)].close();
       }
   
-      if ((this.Export_info_prob) && (this.DisplayProbs)) {
+      if ((this.Export_info_prob) && (this.displayProbs)) {
         FILE_outputProbs[(j - this.j_Start)].flush(); 
         FILE_outputProbs[(j - this.j_Start)].close();
       }
@@ -6038,7 +6038,7 @@ class solarchvision_STUDY {
   
     }
   
-    if (this.DisplayRaws) {
+    if (this.displayRaws) {
       this.drawData(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
     }    
   
@@ -6065,19 +6065,19 @@ class solarchvision_STUDY {
         if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
   
           int keep_TIME_BeginDay = TIME_BeginDay;
-          float keep_STUDY_PerDays = this.PerDays;
+          float keep_STUDY_perDays = this.perDays;
           int keep_STUDY_j_End = this.j_End;
           float keep_STUDY_U_scale = this.U_scale;
   
           TIME_BeginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
-          this.PerDays = 183;
+          this.perDays = 183;
           this.j_End = 2;
           this.U_scale = 18.0 / float(this.j_End - this.j_Start);
   
           SOLARCHVISION_PlotIMPACT(0, 0 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
           TIME_BeginDay = keep_TIME_BeginDay;
-          this.PerDays = keep_STUDY_PerDays;
+          this.perDays = keep_STUDY_perDays;
           this.j_End = keep_STUDY_j_End;
           this.U_scale = keep_STUDY_U_scale;
         } else {
@@ -6133,31 +6133,31 @@ class solarchvision_STUDY {
   
       CurrentDataSource = dataID_ENSEMBLE_FORECAST; 
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true;
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false; 
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false; 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       CurrentDataSource = dataID_CLIMATE_CWEEDS;
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true;
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
   
       this.plotHourly(0, -175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false; 
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false; 
       this.plotHourly(0, -525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       CurrentDataSource = pre_CurrentDataSource;
@@ -6302,16 +6302,16 @@ class solarchvision_STUDY {
   
     if (this.plotSetup == 7) {
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true; 
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true; 
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false;
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false;
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = -2;
@@ -6326,16 +6326,16 @@ class solarchvision_STUDY {
   
     if (this.plotSetup == 8) {    
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true;
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false; 
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false; 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 3;
@@ -6348,16 +6348,16 @@ class solarchvision_STUDY {
   
     if (this.plotSetup == 9) {
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true;
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View); 
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false; 
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false; 
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 2;
@@ -6369,16 +6369,16 @@ class solarchvision_STUDY {
   
     if (this.plotSetup == 10) {
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true;
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false;
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false;
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 4;
@@ -6390,16 +6390,16 @@ class solarchvision_STUDY {
   
     if (this.plotSetup == 11) {
   
-      this.DisplaySorted = false;
-      this.DisplayNormals = false;
-      this.DisplayRaws = true;
-      this.DisplayProbs = true;
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
       this.plotHourly(0, 525 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
-      this.DisplaySorted = true;
-      this.DisplayNormals = true;
-      this.DisplayRaws = false;
-      this.DisplayProbs = false;
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false;
       this.plotHourly(0, 175 * this.S_View, 0, (100.0 * this.U_scale * this.S_View), (-1.0 * this.V_scale * this.S_View), 1.0 * this.S_View);
   
       this.PlotImpacts = 5;
@@ -6412,10 +6412,10 @@ class solarchvision_STUDY {
     if (this.plotSetup == 12) {
   
       if (SOLARCHVISION_automated != 0) {
-        this.DisplaySorted = false;
-        this.DisplayNormals = true;
-        this.DisplayRaws = false;
-        this.DisplayProbs = true;
+        this.displaySorted = false;
+        this.displayNormals = true;
+        this.displayRaws = false;
+        this.displayProbs = true;
       }
   
       changeCurrentLayerTo(LAYER_windspd.id); 
@@ -6441,10 +6441,10 @@ class solarchvision_STUDY {
     if (this.plotSetup == 13) {
   
       if (SOLARCHVISION_automated != 0) {
-        this.DisplaySorted = true;
-        this.DisplayNormals = true;
-        this.DisplayRaws = false;
-        this.DisplayProbs = false;
+        this.displaySorted = true;
+        this.displayNormals = true;
+        this.displayRaws = false;
+        this.displayProbs = false;
       }
   
       changeCurrentLayerTo(LAYER_dirnorrad.id); 
@@ -6959,17 +6959,17 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 3) { // Space
   
-        //Tropo3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.Display_Surface", Tropo3D.Display_Surface, 0, 1, 1), 1));
-        //Tropo3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.Display_Texture", Tropo3D.Display_Texture, 0, 1, 1), 1));      
+        //Tropo3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
+        //Tropo3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));      
   
-        //Earth3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.Display_Surface", Earth3D.Display_Surface, 0, 1, 1), 1));
-        //Earth3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.Display_Texture", Earth3D.Display_Texture, 0, 1, 1), 1));
+        //Earth3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
+        //Earth3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
   
-        //Moon3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.Display_Surface", Moon3D.Display_Surface, 0, 1, 1), 1));
-        //Moon3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.Display_Texture", Moon3D.Display_Texture, 0, 1, 1), 1));
+        //Moon3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
+        //Moon3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
   
-        //Star3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.Display_Surface", Star3D.Display_Surface, 0, 1, 1), 1));
-        //Star3D.Display_Texture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.Display_Texture", Star3D.Display_Texture, 0, 1, 1), 1));      
+        //Star3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.displaySurface", Star3D.displaySurface, 0, 1, 1), 1));
+        //Star3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.displayTexture", Star3D.displayTexture, 0, 1, 1), 1));      
   
         Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
@@ -7086,20 +7086,20 @@ class solarchvision_ROLLOUT {
         //Land3D.Load_Mesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Load_Mesh", Land3D.Load_Mesh, 0, 1, 1), 1));
         //Land3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.n_I - 1, 1), 1));
         //Land3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.n_I - 1, 1), 1));
-        //Land3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Surface", Land3D.Display_Surface, 0, 1, 1), 1));
-        //Land3D.Display_Textures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Textures", Land3D.Display_Textures, 0, 1, 1), 1));
+        //Land3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
+        //Land3D.displayTextures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTextures", Land3D.displayTextures, 0, 1, 1), 1));
         //Land3D.Display_Points = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Points", Land3D.Display_Points, 0, 1, 1), 1));     
         //Land3D.Display_Depth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Display_Depth", Land3D.Display_Depth, 0, 1, 1), 1));
   
-        //allModel2Ds.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.Display", allModel2Ds.Display, 0, 1, 1), 1));
-        //allModel1Ds.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.Display", allModel1Ds.Display, 0, 1, 1), 1));
+        //allModel2Ds.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
+        //allModel1Ds.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
         //allModel1Ds.Leaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.Leaves", allModel1Ds.Leaves, 0, 1, 1), 1));
-        //allCurves.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.Display", allCurves.Display, 0, 1, 1), 1));
-        //allFaces.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.Display", allFaces.Display, 0, 1, 1), 1));
+        //allCurves.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
+        //allFaces.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
   
-        //allSolids.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.Display", allSolids.Display, 0, 1, 1), 1));
+        //allSolids.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
   
-        //allSections.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.Display", allSections.Display, 0, 1, 1), 1));
+        //allSections.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.displayAll", allSections.displayAll, 0, 1, 1), 1));
   
   
   
@@ -7111,7 +7111,7 @@ class solarchvision_ROLLOUT {
   
   
   
-        //Sky3D.Display_Surface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.Display_Surface", Sky3D.Display_Surface, 0, 1, 1), 1));
+        //Sky3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
   
         //Display_SUN_Path = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Path", Display_SUN_Path, 0, 1, 1), 1));
         //Display_SUN_Pattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Display_SUN_Pattern", Display_SUN_Pattern, 0, 1, 1), 1));
@@ -7127,11 +7127,11 @@ class solarchvision_ROLLOUT {
   
         //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
-        //allPoints.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayVertices", allPoints.Display, 0, 1, 1), 1));
-        //allFaces.Edges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allFaces.Edges, 0, 1, 1), 1));
-        //allFaces.Normals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayNormals", allFaces.Normals, 0, 1, 1), 1));
+        //allPoints.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayVertices", allPoints.displayAll, 0, 1, 1), 1));
+        //allFaces.displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.DisplayEdges", allFaces.displayEdges, 0, 1, 1), 1));
+        //allFaces.displayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
   
-        //allCameras.Display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.Display", allCameras.Display, 0, 1, 1), 1));
+        //allCameras.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
       }    
   
   
@@ -7192,7 +7192,7 @@ class solarchvision_ROLLOUT {
         STUDY.i_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
         STUDY.i_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
   
-        STUDY.JoinDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.JoinDays", STUDY.JoinDays, 1, 64, -2), 1));
+        STUDY.joinDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.joinDays", STUDY.joinDays, 1, 64, -2), 1));
         
   //??????
         SampleYear_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
@@ -7227,11 +7227,11 @@ class solarchvision_ROLLOUT {
         
         STUDY.V_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
   
-        //STUDY.DisplayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.DisplayRaws, 0, 1, 1), 1));
-        //STUDY.DisplaySorted = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.DisplaySorted, 0, 1, 1), 1));
-        //STUDY.DisplayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.DisplayNormals, 0, 1, 1), 1));
-        //STUDY.DisplayProbs = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.DisplayProbs, 0, 1, 1), 1));
-        STUDY.SumInterval = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.SumInterval, 1, 24, 1), 1));
+        //STUDY.displayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
+        //STUDY.displaySorted = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
+        //STUDY.displayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
+        //STUDY.displayProbs = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
+        STUDY.sumInterval = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1), 1));
         STUDY.LevelPix = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
       }
   
@@ -7540,7 +7540,7 @@ int pre_SampleMember_End;
 int pre_SampleStation_Start; 
 int pre_SampleStation_End;
 
-int pre_STUDY_JoinDays;
+int pre_STUDY_joinDays;
 int pre_STUDY_i_Start;
 int pre_STUDY_i_End;
 int pre_STUDY_j_End;
@@ -7609,9 +7609,9 @@ int pre_WIN3D_FacesShade;
 
 int pre_allModel3Ds_Tessellation;
 
-boolean pre_allPoints_Display;
-boolean pre_allFaces_Edges;
-boolean pre_allFaces_Normals;
+boolean pre_allPoints_displayAll;
+boolean pre_allFaces_displayEdges;
+boolean pre_allFaces_displayNormals;
 
 
 
@@ -8325,9 +8325,9 @@ class solarchvision_Faces {
   
   private final static String CLASS_STAMP = "Faces";
   
-  boolean Display = true; 
-  boolean Normals = false;
-  boolean Edges = true;
+  boolean displayAll = true; 
+  boolean displayNormals = false;
+  boolean displayEdges = true;
   
   int Tessellation = 2;
   
@@ -8387,11 +8387,11 @@ class solarchvision_Faces {
 
   void draw (int target_window) {
    
-    if (this.Display) {
+    if (this.displayAll) {
       
       if (target_window == TypeWindow.WIN3D) {
     
-        if (this.Normals) {
+        if (this.displayNormals) {
     
           for (int f = 0; f < this.nodes.length; f++) {
     
@@ -8468,7 +8468,7 @@ class solarchvision_Faces {
     
         WIN3D.graphics.strokeWeight(1);
         WIN3D.graphics.stroke(0, 0, 0);
-        if (this.Edges == false) WIN3D.graphics.noStroke();
+        if (this.displayEdges == false) WIN3D.graphics.noStroke();
     
         int PAL_TYPE = SHADE.get_PAL_TYPE(); 
         int PAL_DIR = SHADE.get_PAL_DIR();
@@ -9381,9 +9381,9 @@ class solarchvision_Faces {
         child.setContent(lineSTR);
       }
       
-      parent.setString("Display", Boolean.toString(this.Display));
-      parent.setString("Normals", Boolean.toString(this.Normals));
-      parent.setString("Edges", Boolean.toString(this.Edges));
+      parent.setString("displayAll", Boolean.toString(this.displayAll));
+      parent.setString("displayNormals", Boolean.toString(this.displayNormals));
+      parent.setString("displayEdges", Boolean.toString(this.displayEdges));
       parent.setInt("Tessellation", this.Tessellation);
     }
 
@@ -9425,9 +9425,9 @@ class solarchvision_Faces {
         this.nodes = (int[][]) concat(this.nodes, newFace);
       }
       
-      this.Display = Boolean.parseBoolean(parent.getString("Display"));
-      this.Normals = Boolean.parseBoolean(parent.getString("Normals"));
-      this.Edges = Boolean.parseBoolean(parent.getString("Edges"));
+      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
+      this.displayNormals = Boolean.parseBoolean(parent.getString("displayNormals"));
+      this.displayEdges = Boolean.parseBoolean(parent.getString("displayEdges"));
       this.Tessellation = parent.getInt("Tessellation");
     }
     
@@ -9454,7 +9454,7 @@ class solarchvision_Curves {
   
   private final static String CLASS_STAMP = "Curves";
   
-  boolean Display = true; 
+  boolean displayAll = true; 
 
   int[][] nodes = new int[0][0];
   
@@ -9512,7 +9512,7 @@ class solarchvision_Curves {
   
   void draw (int target_window) {
    
-    if (allFaces.Display) {
+    if (allFaces.displayAll) {
       
       if (target_window == TypeWindow.WIN3D) {
   
@@ -9653,7 +9653,7 @@ class solarchvision_Curves {
         child.setContent(lineSTR);
       }
       
-      parent.setString("Display", Boolean.toString(this.Display));
+      parent.setString("displayAll", Boolean.toString(this.displayAll));
     }
 
     {
@@ -9694,7 +9694,7 @@ class solarchvision_Curves {
         this.nodes = (int[][]) concat(this.nodes, newFace);
       }
       
-      this.Display = Boolean.parseBoolean(parent.getString("Display"));
+      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
     }
     
     { 
@@ -14979,7 +14979,7 @@ void draw () {
         pre_SampleMember_End = SampleMember_End;
         pre_SampleStation_Start = SampleStation_Start; 
         pre_SampleStation_End = SampleStation_End;
-        pre_STUDY_JoinDays = STUDY.JoinDays;
+        pre_STUDY_joinDays = STUDY.joinDays;
         pre_STUDY_i_Start = STUDY.i_Start;
         pre_STUDY_i_End = STUDY.i_End;        
         pre_STUDY_j_End = STUDY.j_End;
@@ -15047,9 +15047,9 @@ void draw () {
 
         pre_Selection_Model1D_displayEdges = allSelections.Model1D_displayEdges;
         pre_Selection_Model2D_displayEdges = allSelections.Model2D_displayEdges;
-        pre_allPoints_Display = allPoints.Display;
-        pre_allFaces_Edges = allFaces.Edges;
-        pre_allFaces_Normals = allFaces.Normals;
+        pre_allPoints_displayAll = allPoints.displayAll;
+        pre_allFaces_displayEdges = allFaces.displayEdges;
+        pre_allFaces_displayNormals = allFaces.displayNormals;
 
         pre_Selection_softPower = allSelections.softPower;
         pre_Selection_softRadius = allSelections.softRadius;
@@ -15124,7 +15124,7 @@ void draw () {
           UI_BAR_d_update = true;
         }  
 
-        if (pre_STUDY_JoinDays != STUDY.JoinDays) {
+        if (pre_STUDY_joinDays != STUDY.joinDays) {
           UI_BAR_d_update = true;
         }            
 
@@ -15479,9 +15479,9 @@ void draw () {
         if (pre_allSolidImpacts_Display_Points != allSolidImpacts.Display_Points) WIN3D.update = true;
         if (pre_allSolidImpacts_Display_Lines != allSolidImpacts.Display_Lines) WIN3D.update = true;
 
-        if (pre_allPoints_Display != allPoints.Display) WIN3D.update = true;
-        if (pre_allFaces_Edges != allFaces.Edges) WIN3D.update = true;
-        if (pre_allFaces_Normals != allFaces.Normals) WIN3D.update = true;
+        if (pre_allPoints_displayAll != allPoints.displayAll) WIN3D.update = true;
+        if (pre_allFaces_displayEdges != allFaces.displayEdges) WIN3D.update = true;
+        if (pre_allFaces_displayNormals != allFaces.displayNormals) WIN3D.update = true;
 
         if (pre_Display_WindFlow != Display_WindFlow) WIN3D.update = true;
 
@@ -16849,19 +16849,19 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
   float[] _valuesSUM_RAD; 
   float[] _valuesSUM_EFF;
   float[] _valuesNUM;
-  _valuesSUM_RAD = new float [(count_k * STUDY.JoinDays)];
-  _valuesSUM_EFF = new float [(count_k * STUDY.JoinDays)];
-  _valuesNUM = new float [(count_k * STUDY.JoinDays)];
+  _valuesSUM_RAD = new float [(count_k * STUDY.joinDays)];
+  _valuesSUM_EFF = new float [(count_k * STUDY.joinDays)];
+  _valuesNUM = new float [(count_k * STUDY.joinDays)];
 
-  for (int j_ADD = 0; j_ADD < STUDY.JoinDays; j_ADD++) {
+  for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {
     for (int k = 0; k < count_k; k++) { 
-      _valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)] = FLOAT_undefined;
-      _valuesSUM_EFF[(k * STUDY.JoinDays + j_ADD)] = FLOAT_undefined;
-      _valuesNUM[(k * STUDY.JoinDays + j_ADD)] = 0;
+      _valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)] = FLOAT_undefined;
+      _valuesSUM_EFF[(k * STUDY.joinDays + j_ADD)] = FLOAT_undefined;
+      _valuesNUM[(k * STUDY.joinDays + j_ADD)] = 0;
     }
   }
 
-  for (int j_ADD = 0; j_ADD < STUDY.JoinDays; j_ADD++) {
+  for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {
 
     for (int k = 0; k < count_k; k++) {
 
@@ -16872,7 +16872,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
 
         int now_k = k + start_k;
         int now_i = i;
-        int now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+        int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -16897,15 +16897,15 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
             _values_E_dir = 0.0001 * Pc;
             _values_E_dif = 0; //0.0001 * Pd;
 
-            if (is_undefined_FLOAT(_valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)])) {
-              _valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)] = 0;
-              _valuesSUM_EFF[(k * STUDY.JoinDays + j_ADD)] = 0;
-              _valuesNUM[(k * STUDY.JoinDays + j_ADD)] = 0;
+            if (is_undefined_FLOAT(_valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)])) {
+              _valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)] = 0;
+              _valuesSUM_EFF[(k * STUDY.joinDays + j_ADD)] = 0;
+              _valuesNUM[(k * STUDY.joinDays + j_ADD)] = 0;
             }                  
 
-            _valuesSUM_RAD[(k * STUDY.JoinDays + j_ADD)] += ((_values_R_dir * SunR[3]) + (_values_R_dif)); // calculates total horizontal radiation
-            _valuesSUM_EFF[(k * STUDY.JoinDays + j_ADD)] += ((_values_E_dir * SunR[3]) + (_values_E_dif)); // calculates total horizontal effects
-            _valuesNUM[(k * STUDY.JoinDays + j_ADD)] += 1;
+            _valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)] += ((_values_R_dir * SunR[3]) + (_values_R_dif)); // calculates total horizontal radiation
+            _valuesSUM_EFF[(k * STUDY.joinDays + j_ADD)] += ((_values_E_dir * SunR[3]) + (_values_E_dif)); // calculates total horizontal effects
+            _valuesNUM[(k * STUDY.joinDays + j_ADD)] += 1;
           }
         }
       }
@@ -16924,12 +16924,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   STUDY.graphics.pushMatrix();
   STUDY.graphics.translate(x_Plot, y_Plot);
 
-  float keep_STUDY_PerDays = STUDY.PerDays;
-  int keep_STUDY_JoinDays = STUDY.JoinDays;
+  float keep_STUDY_perDays = STUDY.perDays;
+  int keep_STUDY_joinDays = STUDY.joinDays;
 
   if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-    STUDY.PerDays = 1;
-    STUDY.JoinDays = 1;
+    STUDY.perDays = 1;
+    STUDY.joinDays = 1;
   }
 
   int[] startK_endK = get_startK_endK();
@@ -16991,7 +16991,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //WIND_graphics.background(255);
       WIND_graphics.translate(0.5 * RES, 0.5 * RES);
 
-      for (int j_ADD = 0; j_ADD < STUDY.JoinDays; j_ADD++) {    
+      for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {    
         for (int i = 0; i < 24; i++) {
           if (STUDY.isInHourlyRange(i) == 1) {
 
@@ -17007,7 +17007,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                 int now_k = k + start_k;
                 int now_i = i;
-                int now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -17059,7 +17059,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       if (STUDY.skyScenario > 1) _s *= 3; // to improve visibility of those cases.
 
-                      _s /= float(STUDY.JoinDays);
+                      _s /= float(STUDY.joinDays);
 
                       if (_s < 10) _s = 10;
 
@@ -17104,7 +17104,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     total_WIND_graphics.translate(0.5 * RES, 0.5 * RES);
 
     for (int j = STUDY.j_Start; j < STUDY.j_End; j++) { 
-      for (int j_ADD = 0; j_ADD < STUDY.JoinDays; j_ADD++) {    
+      for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {    
         for (int i = 0; i < 24; i++) {
           if (STUDY.isInHourlyRange(i) == 1) {
 
@@ -17120,7 +17120,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                 int now_k = k + start_k;
                 int now_i = i;
-                int now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -17172,7 +17172,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       if (STUDY.skyScenario > 1) _s *= 3; // to improve visibility of those cases.
 
-                      _s /= float(STUDY.JoinDays);
+                      _s /= float(STUDY.joinDays);
 
                       if (_s < 10) _s = 10;
 
@@ -17358,7 +17358,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-          now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+          now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
           if (now_j >= 365) {
             now_j = now_j % 365;
@@ -17583,7 +17583,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-        now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+        now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -17603,8 +17603,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {
-            int k = int(nk / STUDY.JoinDays);
-            int j_ADD = nk % STUDY.JoinDays; 
+            int k = int(nk / STUDY.joinDays);
+            int j_ADD = nk % STUDY.joinDays; 
 
             for (int a = 0; a <= int (90 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
               float Alpha = a * SOLARCHVISION_GLOBE_stp_slp;
@@ -17626,7 +17626,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       now_k = k + start_k;
                       now_i = i;
-                      now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                      now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                       if (now_j >= 365) {
                         now_j = now_j % 365;
@@ -17999,7 +17999,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-        now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+        now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -18019,8 +18019,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {
-            int k = int(nk / STUDY.JoinDays);
-            int j_ADD = nk % STUDY.JoinDays; 
+            int k = int(nk / STUDY.joinDays);
+            int j_ADD = nk % STUDY.joinDays; 
 
             float _valuesSUM_RAD = 0;
             float _valuesSUM_EFF = 0;
@@ -18038,7 +18038,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                   now_k = k + start_k;
                   now_i = i;
-                  now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                   if (now_j >= 365) {
                     now_j = now_j % 365;
@@ -18263,7 +18263,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-      now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+      now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
       if (now_j >= 365) {
         now_j = now_j % 365;
@@ -18292,7 +18292,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
 
         now_i = i;
-        now_j = int(j * STUDY.PerDays + TIME_BeginDay + 365) % 365;
+        now_j = int(j * STUDY.perDays + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -18594,8 +18594,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     STUDY.drawDailyGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   }
 
-  keep_STUDY_PerDays = STUDY.PerDays;
-  STUDY.JoinDays = keep_STUDY_JoinDays;
+  keep_STUDY_perDays = STUDY.perDays;
+  STUDY.joinDays = keep_STUDY_joinDays;
 
 
   
@@ -18764,11 +18764,11 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
     for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-      float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY.PerDays / STUDY.JoinDays)][3];        
+      float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY.perDays / STUDY.joinDays)][3];        
 
-      for (int more_J = 0; more_J < STUDY.PerDays; more_J += STUDY.JoinDays) {
+      for (int more_J = 0; more_J < STUDY.perDays; more_J += STUDY.joinDays) {
 
-        now_j = (more_J + j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+        now_j = (more_J + j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -18795,8 +18795,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {
-            int k = int(nk / STUDY.JoinDays);
-            int j_ADD = nk % STUDY.JoinDays; 
+            int k = int(nk / STUDY.joinDays);
+            int j_ADD = nk % STUDY.joinDays; 
 
             float _valuesSUM_RAD = 0;
             float _valuesSUM_EFF = 0;
@@ -18833,7 +18833,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1; 
 
-              now_j = int(more_J + j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+              now_j = int(more_J + j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
               if (now_j >= 365) {
                 now_j = now_j % 365;
@@ -18884,7 +18884,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
               if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
 
-              int row_J = more_J / STUDY.JoinDays;
+              int row_J = more_J / STUDY.joinDays;
 
               SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
               SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
@@ -18901,7 +18901,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha = 90 - acos_ang(SunR[3]);
               float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
 
-              int row_J = more_J / STUDY.JoinDays;
+              int row_J = more_J / STUDY.joinDays;
 
               SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
               SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
@@ -18913,9 +18913,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
 
 
-      for (int more_J = 0; more_J < STUDY.PerDays - STUDY.JoinDays; more_J += STUDY.JoinDays) { //count one less!
+      for (int more_J = 0; more_J < STUDY.perDays - STUDY.joinDays; more_J += STUDY.joinDays) { //count one less!
 
-        now_j = (more_J + j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+        now_j = (more_J + j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -18948,7 +18948,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               for (int s = 0; s < 4; s++) {
 
                 int a = int(i * TES_hour);
-                int b = more_J / STUDY.JoinDays;
+                int b = more_J / STUDY.joinDays;
 
                 if ((s == 1) || (s == 2)) {
                   a += 1;
@@ -19162,7 +19162,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       for (float myHOUR = 0; myHOUR < 24; myHOUR++) {
 
-        int myDATE_step = STUDY.JoinDays;
+        int myDATE_step = STUDY.joinDays;
 
         int myDATE_start = 0;
         int myDATE_end = 360; 
@@ -19338,19 +19338,19 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
 
   if (Display_SUN_Pattern) {
 
-    float keep_STUDY_PerDays = STUDY.PerDays;
-    int keep_STUDY_JoinDays = STUDY.JoinDays;
+    float keep_STUDY_perDays = STUDY.perDays;
+    int keep_STUDY_joinDays = STUDY.joinDays;
     if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-      STUDY.PerDays = 1;
-      STUDY.JoinDays = 1;
+      STUDY.perDays = 1;
+      STUDY.joinDays = 1;
     }    
 
     float previous_DATE = TIME_Date;
 
     SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, 3);
 
-    STUDY.PerDays = keep_STUDY_PerDays;
-    STUDY.JoinDays = keep_STUDY_JoinDays; 
+    STUDY.perDays = keep_STUDY_perDays;
+    STUDY.joinDays = keep_STUDY_joinDays; 
     TIME_Date = previous_DATE;
     SOLARCHVISION_update_date();
   }
@@ -19360,11 +19360,11 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
   if (Display_SUN_Path) {
 
-    float keep_STUDY_PerDays = STUDY.PerDays;
-    int keep_STUDY_JoinDays = STUDY.JoinDays;
+    float keep_STUDY_perDays = STUDY.perDays;
+    int keep_STUDY_joinDays = STUDY.joinDays;
     if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-      STUDY.PerDays = 1;
-      STUDY.JoinDays = 1;
+      STUDY.perDays = 1;
+      STUDY.joinDays = 1;
     }    
 
     float previous_DATE = TIME_Date;
@@ -19433,7 +19433,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
         int now_i2 = 0;
         int now_j = 0;
 
-        now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+        now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -19455,8 +19455,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {
-            int k = int(nk / STUDY.JoinDays);
-            int j_ADD = nk % STUDY.JoinDays; 
+            int k = int(nk / STUDY.joinDays);
+            int j_ADD = nk % STUDY.joinDays; 
 
             for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
               if (STUDY.isInHourlyRange(i) == 1) {
@@ -19470,7 +19470,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                 now_i2 = (1 + now_i1) % 24;
                 float i_ratio = i - now_i1;
 
-                now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -19541,8 +19541,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
 
 
-    STUDY.PerDays = keep_STUDY_PerDays;
-    STUDY.JoinDays = keep_STUDY_JoinDays; 
+    STUDY.perDays = keep_STUDY_perDays;
+    STUDY.joinDays = keep_STUDY_joinDays; 
     TIME_Date = previous_DATE;
     SOLARCHVISION_update_date();
   }
@@ -20476,7 +20476,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  if (allModel1Ds.Display) {
+  if (allModel1Ds.displayAll) {
 
     if (Export_MaterialLibrary) {
 
@@ -20736,7 +20736,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
-  if (Sky3D.Display_Surface) {
+  if (Sky3D.displaySurface) {
 
     if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
@@ -20913,19 +20913,19 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   if (Display_SUN_Pattern) {
 
-    float keep_STUDY_PerDays = STUDY.PerDays;
-    int keep_STUDY_JoinDays = STUDY.JoinDays;
+    float keep_STUDY_perDays = STUDY.perDays;
+    int keep_STUDY_joinDays = STUDY.joinDays;
     if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-      STUDY.PerDays = 1;
-      STUDY.JoinDays = 1;
+      STUDY.perDays = 1;
+      STUDY.joinDays = 1;
     }    
 
     float previous_DATE = TIME_Date;
 
     SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, 4);
 
-    STUDY.PerDays = keep_STUDY_PerDays;
-    STUDY.JoinDays = keep_STUDY_JoinDays; 
+    STUDY.perDays = keep_STUDY_perDays;
+    STUDY.joinDays = keep_STUDY_joinDays; 
     TIME_Date = previous_DATE;
     SOLARCHVISION_update_date();
   }
@@ -21494,8 +21494,8 @@ class solarchvision_Tropo3D {
   private final static String CLASS_STAMP = "Tropo3D";
 
   
-  boolean Display_Surface = false;
-  boolean Display_Texture = true;  
+  boolean displaySurface = false;
+  boolean displayTexture = true;  
   
   String[] Filenames;
   PImage[] Map;
@@ -21865,7 +21865,7 @@ class solarchvision_Tropo3D {
   
     boolean proceed = true;
   
-    if ((Display_Surface == false) || (Display_Texture == false)) {
+    if ((displaySurface == false) || (displayTexture == false)) {
       proceed = false;
     }
   
@@ -21903,7 +21903,7 @@ class solarchvision_Tropo3D {
                 mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
               }
   
-              if (Tropo3D.Display_Texture) {
+              if (Tropo3D.displayTexture) {
       
                 String old_Texture_path = GEOMET_directory + "/" + this.Filenames[n_Map];
       
@@ -21995,7 +21995,7 @@ class solarchvision_Tropo3D {
                   float _lon = b - CEN_lon;
                   float _lat = a - CEN_lat;
       
-                  if (Tropo3D.Display_Texture) {
+                  if (Tropo3D.displayTexture) {
                     // calculating u and v
                     subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
                     subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -22037,7 +22037,7 @@ class solarchvision_Tropo3D {
                   if (target_window == TypeWindow.WORLD) {
                     WORLD.graphics.beginShape();
                     WORLD.graphics.noStroke();
-                    if (Tropo3D.Display_Texture) {
+                    if (Tropo3D.displayTexture) {
                       WORLD.graphics.texture(this.Map[n_Map]);
                     }
           
@@ -22095,7 +22095,7 @@ class solarchvision_Tropo3D {
                     
                     WIN3D.graphics.beginShape();
                     WIN3D.graphics.noStroke();
-                    if (Tropo3D.Display_Texture) {
+                    if (Tropo3D.displayTexture) {
                       WIN3D.graphics.texture(this.Map[n_Map]);
                     }
                   }    
@@ -22224,7 +22224,7 @@ class solarchvision_Sky3D {
   
   private final static String CLASS_STAMP = "Sky3D";
   
-  boolean Display_Surface = true;
+  boolean displaySurface = true;
   int Tessellation = 3; //3;
   float scale = 1000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
@@ -22240,7 +22240,7 @@ class solarchvision_Sky3D {
   
   void draw () {
   
-    if (this.Display_Surface) {
+    if (this.displaySurface) {
   
       if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
   
@@ -22339,8 +22339,8 @@ class solarchvision_Star3D {
   
   private final static String CLASS_STAMP = "Star3D";
   
-  boolean Display_Surface = false;
-  boolean Display_Texture = true;
+  boolean displaySurface = false;
+  boolean displayTexture = true;
  
   String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
   
@@ -22351,7 +22351,7 @@ class solarchvision_Star3D {
   }
   
   void draw () {
-    if (Star3D.Display_Surface) {
+    if (Star3D.displaySurface) {
   
       WIN3D.graphics.strokeWeight(1);
 
@@ -22395,7 +22395,7 @@ class solarchvision_Star3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Star3D.Display_Texture) {
+            if (Star3D.displayTexture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -22431,7 +22431,7 @@ class solarchvision_Star3D {
   
           WIN3D.graphics.noStroke();
   
-          if (Star3D.Display_Texture) {
+          if (Star3D.displayTexture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -22455,8 +22455,8 @@ class solarchvision_Moon3D {
   
   private final static String CLASS_STAMP = "Moon3D";
   
-  boolean Display_Surface = false;
-  boolean Display_Texture = true;
+  boolean displaySurface = false;
+  boolean displayTexture = true;
   
   String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
 
@@ -22467,7 +22467,7 @@ class solarchvision_Moon3D {
   }  
   
   void draw () {
-    if (Moon3D.Display_Surface) {
+    if (Moon3D.displaySurface) {
   
       WIN3D.graphics.strokeWeight(1);
   
@@ -22511,7 +22511,7 @@ class solarchvision_Moon3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Moon3D.Display_Texture) {
+            if (Moon3D.displayTexture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -22543,7 +22543,7 @@ class solarchvision_Moon3D {
   
           WIN3D.graphics.noStroke();
   
-          if (Moon3D.Display_Texture) {
+          if (Moon3D.displayTexture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -22571,8 +22571,8 @@ class solarchvision_Earth3D {
   
   private final static String CLASS_STAMP = "Earth3D";
     
-  boolean Display_Surface = true;
-  boolean Display_Texture = true;
+  boolean displaySurface = true;
+  boolean displayTexture = true;
   
   PImage[] Map;
   
@@ -22621,7 +22621,7 @@ class solarchvision_Earth3D {
   
     boolean proceed = true;
   
-    if ((Earth3D.Display_Surface == false) || (Earth3D.Display_Texture == false)) {
+    if ((Earth3D.displaySurface == false) || (Earth3D.displayTexture == false)) {
       proceed = false;
     }
   
@@ -22672,7 +22672,7 @@ class solarchvision_Earth3D {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
           }
     
-          if (Earth3D.Display_Texture) {
+          if (Earth3D.displayTexture) {
     
             String old_Texture_path = this.Path + "/" + this.Filenames[n_Map];
     
@@ -22748,7 +22748,7 @@ class solarchvision_Earth3D {
               float _lon = b - CEN_lon;
               float _lat = a - CEN_lat;
     
-              if (Earth3D.Display_Texture) {
+              if (Earth3D.displayTexture) {
                 // calculating u and v
                 subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
                 subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -22813,7 +22813,7 @@ class solarchvision_Earth3D {
       
               WIN3D.graphics.noStroke();
               
-              if (Earth3D.Display_Texture) {
+              if (Earth3D.displayTexture) {
       
                 WIN3D.graphics.texture(this.Map[n_Map]);
               }            
@@ -22938,9 +22938,9 @@ class solarchvision_Land3D {
   boolean Load_Mesh = true; 
   boolean Load_Textures = true;
   
-  boolean Display_Surface = true; 
+  boolean displaySurface = true; 
   boolean Display_Points = false;
-  boolean Display_Textures = true;
+  boolean displayTextures = true;
   boolean Display_Depth = false;  
   
   float[][][] Mesh;
@@ -22970,7 +22970,7 @@ class solarchvision_Land3D {
     this.Textures_ImagePath = new String [0];
     this.Textures_num = 0;
   
-    this.Display_Textures = false;
+    this.displayTextures = false;
   
     if (this.Load_Textures) {
   
@@ -23051,7 +23051,7 @@ class solarchvision_Land3D {
                   this.Textures_num += 1;
     
     
-                  this.Display_Textures = true;
+                  this.displayTextures = true;
                 }
               }
             }
@@ -23293,7 +23293,7 @@ class solarchvision_Land3D {
   
     boolean proceed = true;
   
-    if ((this.Display_Surface == false) || (this.Load_Mesh == false)) {
+    if ((this.displaySurface == false) || (this.Load_Mesh == false)) {
       proceed = false;
     }
   
@@ -23347,7 +23347,7 @@ class solarchvision_Land3D {
   
           if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
   
-            if (this.Display_Textures) {
+            if (this.displayTextures) {
               if (n_Map != -1) {
     
                 String old_Texture_path = this.Textures_ImagePath[n_Map]; 
@@ -23409,7 +23409,7 @@ class solarchvision_Land3D {
   
           if (_turn == 3) {
             
-            if (this.Display_Textures) {   
+            if (this.displayTextures) {   
   
               obj_lastGroupNumber += 1;
               objOutput.println("g LandMap");
@@ -23470,7 +23470,7 @@ class solarchvision_Land3D {
               float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
   
               int n_Map = -1; 
-              if (this.Display_Textures) { 
+              if (this.displayTextures) { 
   
                 for (int q = 0; q < this.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
   
@@ -23508,10 +23508,10 @@ class solarchvision_Land3D {
   
                 WIN3D.graphics.strokeWeight(1);
                 WIN3D.graphics.stroke(0, 0, 0);
-                if (allFaces.Edges == false) WIN3D.graphics.noStroke();
-                if (this.Display_Textures) WIN3D.graphics.noStroke();
+                if (allFaces.displayEdges == false) WIN3D.graphics.noStroke();
+                if (this.displayTextures) WIN3D.graphics.noStroke();
   
-                if (this.Display_Textures) {
+                if (this.displayTextures) {
                   if (n_Map != -1) {
                     WIN3D.graphics.texture(this.Textures_Map[n_Map]);
                   } else {
@@ -23526,7 +23526,7 @@ class solarchvision_Land3D {
   
                 if (_turn == 3) {
   
-                  if (this.Display_Textures) {
+                  if (this.displayTextures) {
   
                     if (Export_MaterialLibrary) {
                       if (n_Map != -1) {    
@@ -23578,7 +23578,7 @@ class solarchvision_Land3D {
                   SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
                 }           
   
-                if (this.Display_Textures == false) {
+                if (this.displayTextures == false) {
   
                   if (WIN3D.FacesShade != SHADE.Surface_Wire) {
   
@@ -23636,7 +23636,7 @@ class solarchvision_Land3D {
                   
                   if (target_window == TypeWindow.RAD) {
   
-                    if (this.Display_Textures) {   
+                    if (this.displayTextures) {   
                     
                       radOutput.println("LandMesh_0" + " polygon " + "LAND");
                       radOutput.println("0");
@@ -23681,7 +23681,7 @@ class solarchvision_Land3D {
   
                   if (target_window == TypeWindow.OBJ) {
                     
-                    if (this.Display_Textures) {   
+                    if (this.displayTextures) {   
                     
                       if (_turn == 1) {
                         SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
@@ -23751,7 +23751,7 @@ class solarchvision_Land3D {
   
                 if (_turn == 3) {
                   
-                  if (this.Display_Textures) {   
+                  if (this.displayTextures) {   
   
                     String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
                     String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
@@ -23786,7 +23786,7 @@ class solarchvision_Land3D {
               
   
   
-              if (this.Display_Textures) {
+              if (this.displayTextures) {
   
                 if (this.Display_Depth) {
   
@@ -23907,9 +23907,9 @@ class solarchvision_Land3D {
       parent.setInt("Tessellation", this.Tessellation);
       parent.setString("Load_Textures", Boolean.toString(this.Load_Textures));  
       parent.setString("Load_Mesh", Boolean.toString(this.Load_Mesh));
-      parent.setString("Display_Surface", Boolean.toString(this.Display_Surface));
+      parent.setString("displaySurface", Boolean.toString(this.displaySurface));
       parent.setString("Display_Points", Boolean.toString(this.Display_Points));
-      parent.setString("Display_Textures", Boolean.toString(this.Display_Textures));
+      parent.setString("displayTextures", Boolean.toString(this.displayTextures));
       parent.setString("Display_Depth", Boolean.toString(this.Display_Depth));
       parent.setInt("Surface_SkipStart", this.Surface_SkipStart);
       parent.setInt("Surface_SkipEnd", this.Surface_SkipEnd);
@@ -23991,9 +23991,9 @@ class solarchvision_Land3D {
     this.Tessellation = parent.getInt("Tessellation");
     this.Load_Textures = Boolean.parseBoolean(parent.getString("Load_Textures"));      
     this.Load_Mesh = Boolean.parseBoolean(parent.getString("Load_Mesh"));
-    this.Display_Surface = Boolean.parseBoolean(parent.getString("Display_Surface"));
+    this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
     this.Display_Points = Boolean.parseBoolean(parent.getString("Display_Points"));
-    this.Display_Textures = Boolean.parseBoolean(parent.getString("Display_Textures"));
+    this.displayTextures = Boolean.parseBoolean(parent.getString("displayTextures"));
     this.Display_Depth = Boolean.parseBoolean(parent.getString("Display_Depth"));
     this.Surface_SkipStart = parent.getInt("Surface_SkipStart");
     this.Surface_SkipEnd = parent.getInt("Surface_SkipEnd");
@@ -24065,7 +24065,7 @@ class solarchvision_Model2Ds {
   
   private final static String CLASS_STAMP = "Model2Ds";
 
-  boolean Display = true;
+  boolean displayAll = true;
 
   float[][] XYZS = new float[0][4];
   
@@ -24186,7 +24186,7 @@ class solarchvision_Model2Ds {
     
     boolean proceed = true;
   
-    if (this.Display == false) {
+    if (this.displayAll == false) {
       proceed = false;
     }
   
@@ -24829,7 +24829,7 @@ class solarchvision_Model2Ds {
   
   
   
-    if ((Land3D.Display_Textures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+    if ((Land3D.displayTextures) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
   
       for (int i = Land3D.Surface_SkipStart; i < Land3D.n_I - 1 - Land3D.Surface_SkipEnd; i++) {
         for (int j = 0; j < Land3D.n_J - 1; j++) {
@@ -25190,7 +25190,7 @@ class solarchvision_Model2Ds {
         child.setContent(lineSTR);
       }  
       
-      parent.setString("Display", Boolean.toString(this.Display));
+      parent.setString("displayAll", Boolean.toString(this.displayAll));
     }
     
     {
@@ -25260,7 +25260,7 @@ class solarchvision_Model2Ds {
         this.MAP[i] = int(parts[4]);
       }
       
-      this.Display = Boolean.parseBoolean(parent.getString("Display"));
+      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
     }
     
     {
@@ -25311,7 +25311,7 @@ class solarchvision_Model1Ds {
   
   private final static String CLASS_STAMP = "Model1Ds";
 
-  boolean Display = true;
+  boolean displayAll = true;
   boolean Leaves = true;
 
   float[][] XYZSR = new float[0][5];
@@ -25444,7 +25444,7 @@ class solarchvision_Model1Ds {
   
     this.Vertices = new float [4 * this.num][3];
   
-    if (this.Display) {
+    if (this.displayAll) {
   
       for (int f = 0; f < this.num; f++) {
   
@@ -25545,7 +25545,7 @@ class solarchvision_Model1Ds {
         float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
         float z_new = z0 + z_rot; 
   
-        if (this.Display) {
+        if (this.displayAll) {
           int nSeg = 6; 
           for (int q = 0; q < nSeg; q++) {
   
@@ -25772,7 +25772,7 @@ class solarchvision_Model1Ds {
   
         WIN3D.graphics.strokeWeight(1);
   
-        if (allFaces.Edges == false) {
+        if (allFaces.displayEdges == false) {
           WIN3D.graphics.noStroke();
         } else {
           WIN3D.graphics.stroke(0);
@@ -25792,7 +25792,7 @@ class solarchvision_Model1Ds {
         float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
         float z_new = z0 + z_rot; 
   
-        if (this.Display) {
+        if (this.displayAll) {
           int nSeg = 6; 
           for (int q = 0; q < nSeg; q++) {
             WIN3D.graphics.beginShape();
@@ -25854,7 +25854,7 @@ class solarchvision_Model1Ds {
   }
   
   
-  void branch_addallSolids (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
+  void branch_add_allSolids (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
   
   
     h *= getRatio_Plant_branch(d);
@@ -25899,7 +25899,7 @@ class solarchvision_Model1Ds {
         allModel3Ds.add_Solid(cx, cy, cz, 2, 2, 2, rx, ry, rz, 0, (rotZX * 180 / PI), (rotXY * 180 / PI), CreateInput_MeshOrSolid);
   
   
-        this.branch_addallSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
+        this.branch_add_allSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
       }
     } else {
   
@@ -25948,7 +25948,7 @@ class solarchvision_Model1Ds {
         float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
         float z_new = z0 + z_rot; 
   
-        if (this.Display) {
+        if (this.displayAll) {
           int nSeg = 6; 
           float[][] subFace = new float [nSeg * 4][3];
           for (int q = 0; q < nSeg; q++) {
@@ -26256,7 +26256,7 @@ class solarchvision_Model1Ds {
   
       randomSeed(q);
   
-      this.branch_addallSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin, PlantDegreeMin, PlantDegreeMax, TrunkSize, LeafSize);
+      this.branch_add_allSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin, PlantDegreeMin, PlantDegreeMax, TrunkSize, LeafSize);
     }
   
   
@@ -26324,7 +26324,7 @@ class solarchvision_Model1Ds {
     } 
     
     
-    parent.setString("Display", Boolean.toString(this.Display));
+    parent.setString("displayAll", Boolean.toString(this.displayAll));
     parent.setString("Leaves", Boolean.toString(this.Leaves));
   }
   
@@ -26362,7 +26362,7 @@ class solarchvision_Model1Ds {
       this.setLeafSize(i, float(parts[10]));
     }
     
-    this.Display = Boolean.parseBoolean(parent.getString("Display"));
+    this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
     this.Leaves = Boolean.parseBoolean(parent.getString("Leaves"));
   }    
 }
@@ -26375,7 +26375,7 @@ class solarchvision_Solids {
   
   private final static String CLASS_STAMP = "Solids";
   
-  boolean Display = true;  
+  boolean displayAll = true;  
 
   float[][] DEF = new float[0][13];
   
@@ -26605,18 +26605,18 @@ class solarchvision_Solids {
   
   
   int numDisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
-  int numDisplayDegree = 16; //8; // internal - number of each face corners 
+  int numdisplayAllDegree = 16; //8; // internal - number of each face corners 
   
   private float[][] Vertices;
   private int[][] Faces;
 
   void draw () {
   
-    this.Faces = new int [this.numDisplayFaces * this.DEF.length][this.numDisplayDegree]; 
+    this.Faces = new int [this.numDisplayFaces * this.DEF.length][this.numdisplayAllDegree]; 
   
-    this.Vertices = new float [this.numDisplayFaces * this.numDisplayDegree * this.DEF.length][3];
+    this.Vertices = new float [this.numDisplayFaces * this.numdisplayAllDegree * this.DEF.length][3];
   
-    if (this.Display) {
+    if (this.displayAll) {
   
       WIN3D.graphics.strokeWeight(2);
   
@@ -26655,7 +26655,7 @@ class solarchvision_Solids {
   
           float[][] ImageVertex = this.getCorners(plane_type, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
   
-          for (int q = 1; q <= this.numDisplayDegree; q++) {
+          for (int q = 1; q <= this.numdisplayAllDegree; q++) {
   
             float x = ImageVertex[q][0];
             float y = ImageVertex[q][1];
@@ -26665,7 +26665,7 @@ class solarchvision_Solids {
   
             if (q != 0) {
   
-              int vNo = (f * this.numDisplayFaces + plane_type) * this.numDisplayDegree + q - 1;
+              int vNo = (f * this.numDisplayFaces + plane_type) * this.numdisplayAllDegree + q - 1;
   
               this.Vertices[vNo][0] = x;
               this.Vertices[vNo][1] = y;
@@ -26689,9 +26689,9 @@ class solarchvision_Solids {
   
   float[][] getCorners (int plane_type, float Solid_posX, float Solid_posY, float Solid_posZ, float Solid_powX, float Solid_powY, float Solid_powZ, float Solid_scaleX, float Solid_scaleY, float Solid_scaleZ, float Solid_rotX, float Solid_rotY, float Solid_rotZ, float Solid_value) {
   
-    float[][] ImageVertex = new float [this.numDisplayDegree + 1][3];
+    float[][] ImageVertex = new float [this.numdisplayAllDegree + 1][3];
   
-    for (int q = 0; q <= this.numDisplayDegree; q++) {
+    for (int q = 0; q <= this.numdisplayAllDegree; q++) {
   
       float qx = 0;
       float qy = 0;
@@ -26699,18 +26699,18 @@ class solarchvision_Solids {
   
       if (q != 0) {
         if (plane_type == 0) {
-          qx = cos_ang(q * 360.0 / float(this.numDisplayDegree));
-          qy = sin_ang(q * 360.0 / float(this.numDisplayDegree));
+          qx = cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qy = sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
         }
   
         if (plane_type == 1) {
-          qy = cos_ang(q * 360.0 / float(this.numDisplayDegree));
-          qz = sin_ang(q * 360.0 / float(this.numDisplayDegree));
+          qy = cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qz = sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
         }
   
         if (plane_type == 2) {
-          qz = cos_ang(q * 360.0 / float(this.numDisplayDegree));
-          qx = sin_ang(q * 360.0 / float(this.numDisplayDegree));
+          qz = cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qx = sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
         }
       }
   
@@ -26880,7 +26880,7 @@ class solarchvision_Solids {
       child.setContent(lineSTR);
     }    
     
-    parent.setString("Display", Boolean.toString(this.Display));    
+    parent.setString("displayAll", Boolean.toString(this.displayAll));    
   }
   
   
@@ -26903,7 +26903,7 @@ class solarchvision_Solids {
       }
     }
     
-    this.Display = Boolean.parseBoolean(parent.getString("Display"));    
+    this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));    
   }    
 
 }
@@ -26933,7 +26933,7 @@ class solarchvision_Points {
   
   private final static String CLASS_STAMP = "Points";
     
-  boolean Display = false;
+  boolean displayAll = false;
   
   void setX (int n, float x) { 
   
@@ -26996,7 +26996,7 @@ class solarchvision_Points {
   
   void draw () {
   
-    if (this.Display) {
+    if (this.displayAll) {
       
       WIN3D.graphics.strokeWeight(3);
     
@@ -27042,7 +27042,7 @@ class solarchvision_Points {
       child.setContent(lineSTR);
     }    
 
-    parent.setString("Display", Boolean.toString(this.Display));
+    parent.setString("displayAll", Boolean.toString(this.displayAll));
   }
   
   
@@ -27064,7 +27064,7 @@ class solarchvision_Points {
       allPoints.setZ(i, float(parts[2]));
     }    
     
-    this.Display = Boolean.parseBoolean(parent.getString("Display"));
+    this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
   }      
   
   
@@ -34799,7 +34799,7 @@ class solarchvision_Cameras {
 
   private final static String CLASS_STAMP = "Cameras";
   
-  boolean Display = false;
+  boolean displayAll = false;
   
   float[][] PPPSRRRF = {
     {
@@ -34821,7 +34821,7 @@ class solarchvision_Cameras {
   
     this.Vertices = new float [4 * this.num][3];
   
-    if (this.Display) {
+    if (this.displayAll) {
   
       for (int f = 0; f < this.num; f++) {
   
@@ -35122,7 +35122,7 @@ class solarchvision_Cameras {
       child.setContent(lineSTR);
     }
     
-    parent.setString("Display", Boolean.toString(this.Display));
+    parent.setString("displayAll", Boolean.toString(this.displayAll));
   }
   
   
@@ -35151,7 +35151,7 @@ class solarchvision_Cameras {
       this.Type[i] = int(parts[8]);
     }
     
-    this.Display = Boolean.parseBoolean(parent.getString("Display"));
+    this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
   }    
 
 }
@@ -35164,7 +35164,7 @@ class solarchvision_Sections {
 
   private final static String CLASS_STAMP = "Sections";
   
-  boolean Display = true;
+  boolean displayAll = true;
 
   float[][] UVERAB = new float[0][6];
   int[] Type = new int[0];
@@ -35205,7 +35205,7 @@ class solarchvision_Sections {
   
     boolean proceed = true;
   
-    if (this.Display == false) {
+    if (this.displayAll == false) {
       proceed = false;
     }
   
@@ -35621,7 +35621,7 @@ class solarchvision_Sections {
         child.setContent(lineSTR);
       }
       
-      parent.setString("Display", Boolean.toString(this.Display));
+      parent.setString("displayAll", Boolean.toString(this.displayAll));
     }
 
     {
@@ -35709,7 +35709,7 @@ class solarchvision_Sections {
         this.RES2[i] = int(parts[8]);
       }
       
-      this.Display = Boolean.parseBoolean(parent.getString("Display"));      
+      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));      
     }
     
     {
@@ -35785,11 +35785,11 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   SOLARCHVISION_resize_VertexSolar_array();
 
-  float keep_STUDY_PerDays = STUDY.PerDays;
-  int keep_STUDY_JoinDays = STUDY.JoinDays;
+  float keep_STUDY_perDays = STUDY.perDays;
+  int keep_STUDY_joinDays = STUDY.joinDays;
   if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-    STUDY.PerDays = 1;
-    STUDY.JoinDays = 1;
+    STUDY.perDays = 1;
+    STUDY.joinDays = 1;
   }
 
   int[] startK_endK = get_startK_endK();
@@ -35928,7 +35928,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               float _valuesSUM_EFF_N = FLOAT_undefined;
               int _valuesNUM = 0;                     
   
-              now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+              now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
   
               if (now_j >= 365) {
                 now_j = now_j % 365;
@@ -35961,8 +35961,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               int nk = Normals_COL_N[l];
   
               if (nk != -1) {
-                int k = int(nk / STUDY.JoinDays);
-                int j_ADD = nk % STUDY.JoinDays; 
+                int k = int(nk / STUDY.joinDays);
+                int j_ADD = nk % STUDY.joinDays; 
   
                 for (int i = 0; i < 24; i++) {
   
@@ -35975,7 +35975,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
                       now_k = k + start_k;
                       now_i = i;
-                      now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                      now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
   
                       if (now_j >= 365) {
                         now_j = now_j % 365;
@@ -37174,7 +37174,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
       for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-        now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+        now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -37202,8 +37202,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {
-            int k = int(nk / STUDY.JoinDays);
-            int j_ADD = nk % STUDY.JoinDays; 
+            int k = int(nk / STUDY.joinDays);
+            int j_ADD = nk % STUDY.joinDays; 
 
             float[][][][] Matrix_ARGB;
 
@@ -37238,7 +37238,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentPreBaked () {
 
                   now_k = k + start_k;
                   now_i = i;
-                  now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                   if (now_j >= 365) {
                     now_j = now_j % 365;
@@ -37740,11 +37740,11 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
     SOLARCHVISION_resize_GlobalSolar_array();
   }
 
-  float keep_STUDY_PerDays = STUDY.PerDays;
-  int keep_STUDY_JoinDays = STUDY.JoinDays;
+  float keep_STUDY_perDays = STUDY.perDays;
+  int keep_STUDY_joinDays = STUDY.joinDays;
   if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-    STUDY.PerDays = 1;
-    STUDY.JoinDays = 1;
+    STUDY.perDays = 1;
+    STUDY.joinDays = 1;
   }
 
   int[] startK_endK = get_startK_endK();
@@ -37792,7 +37792,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-    now_j = (j * int(STUDY.PerDays) + TIME_BeginDay + 365) % 365;
+    now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
 
     if (now_j >= 365) {
       now_j = now_j % 365;
@@ -37812,8 +37812,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
     for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
       if (nk != -1) {
-        int k = int(nk / STUDY.JoinDays);
-        int j_ADD = nk % STUDY.JoinDays; 
+        int k = int(nk / STUDY.joinDays);
+        int j_ADD = nk % STUDY.joinDays; 
 
         for (int a = 0; a <= int (180 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
           float Alpha = a * SOLARCHVISION_GLOBE_stp_slp - 90;
@@ -37835,7 +37835,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
                   now_k = k + start_k;
                   now_i = i;
-                  now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
                   if (now_j >= 365) {
                     now_j = now_j % 365;
@@ -37968,8 +37968,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
   }
 
 
-  keep_STUDY_PerDays = STUDY.PerDays;
-  STUDY.JoinDays = keep_STUDY_JoinDays;
+  keep_STUDY_perDays = STUDY.perDays;
+  STUDY.joinDays = keep_STUDY_joinDays;
 
   cursor(ARROW);
 }
@@ -39646,15 +39646,15 @@ void mouseWheel (MouseEvent event) {
 
                 if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
 
-                  int keep_STUDY_JoinDays = STUDY.JoinDays;
+                  int keep_STUDY_joinDays = STUDY.joinDays;
 
-                  if (Wheel_Value > 0) STUDY.JoinDays += 2;
-                  if (Wheel_Value < 0) STUDY.JoinDays -= 2;
+                  if (Wheel_Value > 0) STUDY.joinDays += 2;
+                  if (Wheel_Value < 0) STUDY.joinDays -= 2;
 
-                  if (STUDY.JoinDays > 365 / STUDY.j_End) STUDY.JoinDays = 365 / STUDY.j_End;
-                  if (STUDY.JoinDays < 1) STUDY.JoinDays = 1;
+                  if (STUDY.joinDays > 365 / STUDY.j_End) STUDY.joinDays = 365 / STUDY.j_End;
+                  if (STUDY.joinDays < 1) STUDY.joinDays = 1;
 
-                  if (keep_STUDY_JoinDays != STUDY.JoinDays) {
+                  if (keep_STUDY_joinDays != STUDY.joinDays) {
 
                     ROLLOUT.update = true;
                     STUDY.update = true;
@@ -41240,7 +41240,7 @@ void mouseClicked () {
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Shade Surface Wire")) {
               WIN3D.FacesShade = SHADE.Surface_Wire;
-              allFaces.Edges = true; //<<<<<<<<<<<<<<<
+              allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
 
               WIN3D.update = true;  
             }       
@@ -41283,13 +41283,13 @@ void mouseClicked () {
             
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
-              Land3D.Display_Surface = !Land3D.Display_Surface;
+              Land3D.displaySurface = !Land3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-              Land3D.Display_Textures = !Land3D.Display_Textures;
+              Land3D.displayTextures = !Land3D.displayTextures;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41307,19 +41307,19 @@ void mouseClicked () {
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Vertices")) {
-              allPoints.Display = !allPoints.Display;
+              allPoints.displayAll = !allPoints.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }             
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Edges")) {
-              allFaces.Edges = !allFaces.Edges;
+              allFaces.displayEdges = !allFaces.displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Normals")) {
-              allFaces.Normals = !allFaces.Normals;
+              allFaces.displayNormals = !allFaces.displayNormals;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41331,50 +41331,50 @@ void mouseClicked () {
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model1Ds")) {
-              allModel1Ds.Display = !allModel1Ds.Display;
-              allModel1Ds.Leaves = allModel1Ds.Display; // <<<<<<
+              allModel1Ds.displayAll = !allModel1Ds.displayAll;
+              allModel1Ds.Leaves = allModel1Ds.displayAll; // <<<<<<
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Model2Ds")) {
-              allModel2Ds.Display = !allModel2Ds.Display;
+              allModel2Ds.displayAll = !allModel2Ds.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Curves")) {
-              allCurves.Display = !allCurves.Display;
+              allCurves.displayAll = !allCurves.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }          
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Faces")) {
-              allFaces.Display = !allFaces.Display;
+              allFaces.displayAll = !allFaces.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }       
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Solids")) {
-              allSolids.Display = !allSolids.Display;
+              allSolids.displayAll = !allSolids.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sections")) {
-              allSections.Display = !allSections.Display;
+              allSections.displayAll = !allSections.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Cameras")) {
-              allCameras.Display = !allCameras.Display;
+              allCameras.displayAll = !allCameras.displayAll;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Sky")) {
-              Sky3D.Display_Surface = !Sky3D.Display_Surface;
+              Sky3D.displaySurface = !Sky3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -41392,25 +41392,25 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }               
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Star")) {
-              Star3D.Display_Surface = !Star3D.Display_Surface;
+              Star3D.displaySurface = !Star3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Moon")) {
-              Moon3D.Display_Surface = !Moon3D.Display_Surface;
+              Moon3D.displaySurface = !Moon3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Earth")) {
-              Earth3D.Display_Surface = !Earth3D.Display_Surface;
+              Earth3D.displaySurface = !Earth3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide Troposphere")) {
-              Tropo3D.Display_Surface = !Tropo3D.Display_Surface;
+              Tropo3D.displaySurface = !Tropo3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -46018,7 +46018,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             TREES_graphics.blendMode(BLEND);        
 
-            if (allModel2Ds.Display) {
+            if (allModel2Ds.displayAll) {
 
               for (int f = 0; f < allModel2Ds.num; f++) {
 
@@ -46263,7 +46263,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             SHADOW_graphics.stroke(0); 
             SHADOW_graphics.fill(0);              
 
-            if (allFaces.Display) {
+            if (allFaces.displayAll) {
 
               for (int f = 0; f < allFaces.nodes.length; f++) {
   
@@ -46385,7 +46385,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             }
             
 
-            if (Land3D.Display_Surface) {
+            if (Land3D.displaySurface) {
               
               int Tessellation = Land3D.Tessellation;
               if (WIN3D.FacesShade == SHADE.Surface_Base) {
@@ -46513,7 +46513,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             
 
             //now calculating allModel1Ds plants
-            if (allModel1Ds.Display) {
+            if (allModel1Ds.displayAll) {
 
               for (int f = 0; f < allModel1Ds.num; f++) {
 
@@ -46554,7 +46554,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           SHADOW_graphics.save(File_Name + "3D_.JPG"); //just to test   
 
-          if (allModel2Ds.Display) {
+          if (allModel2Ds.displayAll) {
 
             PImage img = loadImage(File_Name + "_2D.JPG");
 
@@ -46635,7 +46635,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           TREES_graphics.blendMode(BLEND);        
 
-          if (allModel2Ds.Display) {
+          if (allModel2Ds.displayAll) {
 
             for (int f = 0; f < allModel2Ds.num; f++) {
 
@@ -46878,7 +46878,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           SHADOW_graphics.stroke(0); 
           SHADOW_graphics.fill(0);
           
-          if (allFaces.Display) {
+          if (allFaces.displayAll) {
 
             for (int f = 0; f < allFaces.nodes.length; f++) {
   
@@ -46998,7 +46998,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }
           
           
-          if (Land3D.Display_Surface) {
+          if (Land3D.displaySurface) {
             
             int Tessellation = Land3D.Tessellation;
             if (WIN3D.FacesShade == SHADE.Surface_Base) {
@@ -47124,7 +47124,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }          
 
           //now calculating allModel1Ds plants
-          if (allModel1Ds.Display) {
+          if (allModel1Ds.displayAll) {
 
             for (int f = 0; f < allModel1Ds.num; f++) {
 
@@ -47164,7 +47164,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
         SHADOW_graphics.save(File_Name + "3D_.JPG"); //just to test   
 
-        if (allModel2Ds.Display) {
+        if (allModel2Ds.displayAll) {
 
           PImage img = loadImage(File_Name + nf(i, 3) + "_2D.JPG");
 
@@ -49567,13 +49567,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
             if (UI_BAR_a_Items[i][0].equals("Display")) {
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Mesh")) {
-                if (Land3D.Display_Surface == false) {
+                if (Land3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }       
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (Land3D.Display_Textures == false) {
+                if (Land3D.displayTextures == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49591,19 +49591,19 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }  
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Vertices")) {
-                if (allPoints.Display == false) {
+                if (allPoints.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Edges")) {
-                if (allFaces.Edges == false) {
+                if (allFaces.displayEdges == false) {
                   stroke(127); 
                   fill(127);
                 }
               } 
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Normals")) {
-                if (allFaces.Normals == false) {
+                if (allFaces.displayNormals == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49615,49 +49615,49 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }  
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Model1Ds")) {
-                if (allModel1Ds.Display == false) {
+                if (allModel1Ds.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }               
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Model2Ds")) {
-                if (allModel2Ds.Display == false) {
+                if (allModel2Ds.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               } 
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Curves")) {
-                if (allFaces.Display == false) {
+                if (allFaces.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }   
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Faces")) {
-                if (allFaces.Display == false) {
+                if (allFaces.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }      
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Solids")) {
-                if (allSolids.Display == false) {
+                if (allSolids.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }                  
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sections")) {
-                if (allSections.Display == false) {
+                if (allSections.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }          
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Cameras")) {
-                if (allCameras.Display == false) {
+                if (allCameras.displayAll == false) {
                   stroke(127); 
                   fill(127);
                 }
               }                
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sky")) {
-                if (Sky3D.Display_Surface == false) {
+                if (Sky3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -49675,25 +49675,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Star")) {
-                if (Star3D.Display_Surface == false) {
+                if (Star3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Moon")) {
-                if (Moon3D.Display_Surface == false) {
+                if (Moon3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Earth")) {
-                if (Earth3D.Display_Surface == false) {
+                if (Earth3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }    
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Troposphere")) {
-                if (Tropo3D.Display_Surface == false) {
+                if (Tropo3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -51365,9 +51365,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
             if (TIME_Date > _DATE2) _DATE2 += 365;
 
-            STUDY.PerDays = int(roundTo((_DATE2 - TIME_Date) / float(STUDY.j_End - STUDY.j_Start - 1), 1));
+            STUDY.perDays = int(roundTo((_DATE2 - TIME_Date) / float(STUDY.j_End - STUDY.j_Start - 1), 1));
 
-            if (STUDY.PerDays < 0) STUDY.PerDays = 1;
+            if (STUDY.perDays < 0) STUDY.perDays = 1;
 
             STUDY.update = true; 
             ROLLOUT.update = true;
@@ -51377,18 +51377,18 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
         }        
 
-        float keep_STUDY_PerDays = STUDY.PerDays;
-        int keep_STUDY_JoinDays = STUDY.JoinDays;
+        float keep_STUDY_perDays = STUDY.perDays;
+        int keep_STUDY_joinDays = STUDY.joinDays;
         if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-          STUDY.PerDays = 1;
-          STUDY.JoinDays = 1;
+          STUDY.perDays = 1;
+          STUDY.joinDays = 1;
         }
 
         for (int j = STUDY.j_Start; j < STUDY.j_End; j++) { 
 
-          for (int j_ADD = 0; j_ADD < STUDY.JoinDays; j_ADD++) {    
+          for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {    
 
-            int now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+            int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
 
             if (now_j >= 365) {
               now_j = now_j % 365;
@@ -51423,8 +51423,8 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
         }        
 
-        STUDY.PerDays = keep_STUDY_PerDays;
-        STUDY.JoinDays = keep_STUDY_JoinDays;
+        STUDY.perDays = keep_STUDY_perDays;
+        STUDY.joinDays = keep_STUDY_joinDays;
       }
 
 
@@ -51730,20 +51730,20 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
 void SOALRCHVISION_refreshDateTabs () {
   if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || (CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
-    if (STUDY.PerDays == 1) { 
-      STUDY.PerDays = int(365 / float(STUDY.j_End - STUDY.j_Start));
+    if (STUDY.perDays == 1) { 
+      STUDY.perDays = int(365 / float(STUDY.j_End - STUDY.j_Start));
     } else {
-      STUDY.PerDays = 1;
+      STUDY.perDays = 1;
     }
   } 
   if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    STUDY.PerDays = 1;
+    STUDY.perDays = 1;
   }           
   if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
-    if (STUDY.PerDays == 1) { 
-      STUDY.PerDays = int(ENSEMBLE_OBSERVED_maxDays / float(STUDY.j_End - STUDY.j_Start));
+    if (STUDY.perDays == 1) { 
+      STUDY.perDays = int(ENSEMBLE_OBSERVED_maxDays / float(STUDY.j_End - STUDY.j_Start));
     } else {
-      STUDY.PerDays = 1;
+      STUDY.perDays = 1;
     }
   }
 }  
@@ -51930,8 +51930,8 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
   
     parent.setInt("STUDY.j_Start", STUDY.j_Start);
     parent.setInt("STUDY.j_End", STUDY.j_End);
-    parent.setFloat("STUDY.PerDays", STUDY.PerDays);
-    parent.setInt("STUDY.JoinDays", STUDY.JoinDays);
+    parent.setFloat("STUDY.perDays", STUDY.perDays);
+    parent.setInt("STUDY.joinDays", STUDY.joinDays);
     parent.setInt("CLIMATE_TMYEPW_start", CLIMATE_TMYEPW_start);
     parent.setInt("CLIMATE_TMYEPW_end", CLIMATE_TMYEPW_end);
     parent.setInt("CLIMATE_CWEEDS_start", CLIMATE_CWEEDS_start);
@@ -52072,26 +52072,26 @@ void SOLARCHVISION_save_project (String myFile, boolean explore_output) {
     parent.setString("Display_SolarRotation", Boolean.toString(Display_SolarRotation));
     parent.setString("Display_SUN_Path", Boolean.toString(Display_SUN_Path));
     parent.setString("Display_SUN_Pattern", Boolean.toString(Display_SUN_Pattern));
-    parent.setString("Sky3D.Display_Surface", Boolean.toString(Sky3D.Display_Surface));
-    parent.setString("Star3D.Display_Surface", Boolean.toString(Star3D.Display_Surface));
-    parent.setString("Star3D.Display_Texture", Boolean.toString(Star3D.Display_Texture));
-    parent.setString("Moon3D.Display_Surface", Boolean.toString(Moon3D.Display_Surface));
-    parent.setString("Moon3D.Display_Texture", Boolean.toString(Moon3D.Display_Texture));
-    parent.setString("Tropo3D.Display_Surface", Boolean.toString(Tropo3D.Display_Surface));
-    parent.setString("Tropo3D.Display_Texture", Boolean.toString(Tropo3D.Display_Texture));
-    parent.setString("Earth3D.Display_Surface", Boolean.toString(Earth3D.Display_Surface));
-    parent.setString("Earth3D.Display_Texture", Boolean.toString(Earth3D.Display_Texture));
+    parent.setString("Sky3D.displaySurface", Boolean.toString(Sky3D.displaySurface));
+    parent.setString("Star3D.displaySurface", Boolean.toString(Star3D.displaySurface));
+    parent.setString("Star3D.displayTexture", Boolean.toString(Star3D.displayTexture));
+    parent.setString("Moon3D.displaySurface", Boolean.toString(Moon3D.displaySurface));
+    parent.setString("Moon3D.displayTexture", Boolean.toString(Moon3D.displayTexture));
+    parent.setString("Tropo3D.displaySurface", Boolean.toString(Tropo3D.displaySurface));
+    parent.setString("Tropo3D.displayTexture", Boolean.toString(Tropo3D.displayTexture));
+    parent.setString("Earth3D.displaySurface", Boolean.toString(Earth3D.displaySurface));
+    parent.setString("Earth3D.displayTexture", Boolean.toString(Earth3D.displayTexture));
   
   
            
 
     parent.setString("Display_WindFlow", Boolean.toString(Display_WindFlow));
     //parent.setInt("Camera_Variation", Camera_Variation);
-    parent.setString("STUDY.DisplayRaws", Boolean.toString(STUDY.DisplayRaws));
-    parent.setString("STUDY.DisplaySorted", Boolean.toString(STUDY.DisplaySorted));
-    parent.setString("STUDY.DisplayNormals", Boolean.toString(STUDY.DisplayNormals));
-    parent.setString("STUDY.DisplayProbs", Boolean.toString(STUDY.DisplayProbs));
-    parent.setInt("STUDY.SumInterval", STUDY.SumInterval);
+    parent.setString("STUDY.displayRaws", Boolean.toString(STUDY.displayRaws));
+    parent.setString("STUDY.displaySorted", Boolean.toString(STUDY.displaySorted));
+    parent.setString("STUDY.displayNormals", Boolean.toString(STUDY.displayNormals));
+    parent.setString("STUDY.displayProbs", Boolean.toString(STUDY.displayProbs));
+    parent.setInt("STUDY.sumInterval", STUDY.sumInterval);
     parent.setFloat("STUDY.LevelPix", STUDY.LevelPix);
     parent.setFloat("STUDY.Pix", STUDY.Pix);
     parent.setInt("STUDY.plotSetup", STUDY.plotSetup);
@@ -52308,8 +52308,8 @@ void SOLARCHVISION_load_project (String myFile) {
       STUDY.i_End = parent.getInt("STUDY.i_End");
       //STUDY.j_Start = parent.getInt("STUDY.j_Start");
       STUDY.j_End = parent.getInt("STUDY.j_End");
-      STUDY.PerDays = parent.getFloat("STUDY.PerDays");
-      STUDY.JoinDays = parent.getInt("STUDY.JoinDays");
+      STUDY.perDays = parent.getFloat("STUDY.perDays");
+      STUDY.joinDays = parent.getInt("STUDY.joinDays");
       CLIMATE_TMYEPW_start = parent.getInt("CLIMATE_TMYEPW_start");
       CLIMATE_TMYEPW_end = parent.getInt("CLIMATE_TMYEPW_end");
       CLIMATE_CWEEDS_start = parent.getInt("CLIMATE_CWEEDS_start");
@@ -52452,25 +52452,26 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_SolarRotation = Boolean.parseBoolean(parent.getString("Display_SolarRotation"));      
       Display_SUN_Path = Boolean.parseBoolean(parent.getString("Display_SUN_Path"));
       Display_SUN_Pattern = Boolean.parseBoolean(parent.getString("Display_SUN_Pattern"));
-      Sky3D.Display_Surface = Boolean.parseBoolean(parent.getString("Sky3D.Display_Surface"));
-      Star3D.Display_Surface = Boolean.parseBoolean(parent.getString("Star3D.Display_Surface"));
-      Star3D.Display_Texture = Boolean.parseBoolean(parent.getString("Star3D.Display_Texture"));            
-      Moon3D.Display_Surface = Boolean.parseBoolean(parent.getString("Moon3D.Display_Surface"));
-      Moon3D.Display_Texture = Boolean.parseBoolean(parent.getString("Moon3D.Display_Texture"));
-      Tropo3D.Display_Surface = Boolean.parseBoolean(parent.getString("Tropo3D.Display_Surface"));
-      Tropo3D.Display_Texture = Boolean.parseBoolean(parent.getString("Tropo3D.Display_Texture"));
-      Earth3D.Display_Surface = Boolean.parseBoolean(parent.getString("Earth3D.Display_Surface"));
-      Earth3D.Display_Texture = Boolean.parseBoolean(parent.getString("Earth3D.Display_Texture"));
+      
+      Sky3D.displaySurface = Boolean.parseBoolean(parent.getString("Sky3D.displaySurface"));
+      Star3D.displaySurface = Boolean.parseBoolean(parent.getString("Star3D.displaySurface"));
+      Star3D.displayTexture = Boolean.parseBoolean(parent.getString("Star3D.displayTexture"));            
+      Moon3D.displaySurface = Boolean.parseBoolean(parent.getString("Moon3D.displaySurface"));
+      Moon3D.displayTexture = Boolean.parseBoolean(parent.getString("Moon3D.displayTexture"));
+      Tropo3D.displaySurface = Boolean.parseBoolean(parent.getString("Tropo3D.displaySurface"));
+      Tropo3D.displayTexture = Boolean.parseBoolean(parent.getString("Tropo3D.displayTexture"));
+      Earth3D.displaySurface = Boolean.parseBoolean(parent.getString("Earth3D.displaySurface"));
+      Earth3D.displayTexture = Boolean.parseBoolean(parent.getString("Earth3D.displayTexture"));
   
 
 
       Display_WindFlow = Boolean.parseBoolean(parent.getString("Display_WindFlow"));
       Camera_Variation = parent.getInt("Camera_Variation");
-      STUDY.DisplayRaws = Boolean.parseBoolean(parent.getString("STUDY.DisplayRaws"));
-      STUDY.DisplaySorted = Boolean.parseBoolean(parent.getString("STUDY.DisplaySorted"));
-      STUDY.DisplayNormals = Boolean.parseBoolean(parent.getString("STUDY.DisplayNormals"));
-      STUDY.DisplayProbs = Boolean.parseBoolean(parent.getString("STUDY.DisplayProbs"));
-      STUDY.SumInterval = parent.getInt("STUDY.SumInterval");
+      STUDY.displayRaws = Boolean.parseBoolean(parent.getString("STUDY.displayRaws"));
+      STUDY.displaySorted = Boolean.parseBoolean(parent.getString("STUDY.displaySorted"));
+      STUDY.displayNormals = Boolean.parseBoolean(parent.getString("STUDY.displayNormals"));
+      STUDY.displayProbs = Boolean.parseBoolean(parent.getString("STUDY.displayProbs"));
+      STUDY.sumInterval = parent.getInt("STUDY.sumInterval");
       STUDY.LevelPix = parent.getFloat("STUDY.LevelPix");
       STUDY.Pix = parent.getFloat("STUDY.Pix");
       STUDY.plotSetup = parent.getInt("STUDY.plotSetup");
@@ -54868,7 +54869,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (Command_CAPITAL.equals("SHADE.WIRE")) {
     WIN3D.FacesShade = SHADE.Surface_Wire;
-    allFaces.Edges = true; //<<<<<<<<<<<<<<<
+    allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
     WIN3D.update = true;  
   }       
   else if (Command_CAPITAL.equals("SHADE.BASE")) {
@@ -55945,12 +55946,12 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
   CurrentDataSource = desired_DataSource;  
   
-  float keep_STUDY_PerDays = STUDY.PerDays;
-  int keep_STUDY_JoinDays = STUDY.JoinDays;
+  float keep_STUDY_perDays = STUDY.perDays;
+  int keep_STUDY_joinDays = STUDY.joinDays;
   
   if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-    STUDY.PerDays = 1;
-    STUDY.JoinDays = 1;
+    STUDY.perDays = 1;
+    STUDY.joinDays = 1;
   }
 
   int DATA_start = getStart_CurrentDataSource();
@@ -55971,13 +55972,13 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
     }
   
     for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) { 
-      for (int j_ADD = 0; j_ADD < STUDY.JoinDays; j_ADD++) {
+      for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {
         for (int k = 0; k < count_k; k++) {
           for (int i = 0; i < 24; i++) {
   
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * STUDY.PerDays + (j_ADD - int(roundTo(0.5 * STUDY.JoinDays, 1))) + TIME_BeginDay + 365) % 365;
+            int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
   
             if (now_j >= 365) {
               now_j = now_j % 365;
@@ -56423,7 +56424,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 for (int l = i + 1 - 24; l <= i; l++) {
                   setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, _valuesSUM[now_k]);
                 }
-                //STUDY.SumInterval = 24;
+                //STUDY.sumInterval = 24;
                 LAYER_developed.V_scale = 10;
                 LAYER_developed.V_offset = 0;
                 LAYER_developed.V_belowLine = 0;
@@ -56436,7 +56437,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 for (int l = i + 1 - 12; l <= i; l++) {
                   setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, _valuesSUM[now_k]);
                 }
-                //STUDY.SumInterval = 12;
+                //STUDY.sumInterval = 12;
                 LAYER_developed.V_scale = 10;
                 LAYER_developed.V_offset = 0;
                 LAYER_developed.V_belowLine = 0;
@@ -56449,7 +56450,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                 for (int l = i + 1 - 6; l <= i; l++) {
                   setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, _valuesSUM[now_k]);
                 }
-                //STUDY.SumInterval = 6;
+                //STUDY.sumInterval = 6;
                 LAYER_developed.V_scale = 10;
                 LAYER_developed.V_offset = 0;
                 LAYER_developed.V_belowLine = 0;
@@ -56468,8 +56469,8 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
   DevelopData_update = false;  
 
-  STUDY.PerDays = keep_STUDY_PerDays;
-  STUDY.JoinDays = keep_STUDY_JoinDays;
+  STUDY.perDays = keep_STUDY_perDays;
+  STUDY.joinDays = keep_STUDY_joinDays;
  
   CurrentDataSource = keep_CurrentDataSource; 
 }
