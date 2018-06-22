@@ -4,6 +4,18 @@
 //    allModel2Ds.add_onLand(2); // 2 = 2D trees
 
 
+int TIME_ModelRun = 0; //12; 
+
+int TIME_Hour = TIME_ModelRun; //hour(); 
+int TIME_Year = year(); 
+int TIME_Month = 1; //month();
+int TIME_Day = 15; //day(); 
+
+int TIME_BeginDay;
+float TIME_Date;
+
+
+
 
 
 // please define station elevation data for CWEEDS points!
@@ -188,6 +200,44 @@ class solarchvision_LAYER {
     this.id = numberOfLayers;
     numberOfLayers++; 
   }
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setInt("id", this.id);
+    
+    parent.setString("unit", this.unit);
+    parent.setString("name", this.name);
+    parent.setString("description_FR", this.descriptions[Language_EN]);
+    parent.setString("description_EN", this.descriptions[Language_FR]);
+    
+    parent.setFloat("V_scale", this.V_scale);
+    parent.setFloat("V_offset", this.V_offset);
+    parent.setFloat("V_belowLine", this.V_belowLine);
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+
+    this.id = parent.getInt("id");
+    
+    this.unit = parent.getString("unit");
+    this.name = parent.getString("name");
+    this.descriptions[Language_EN] = parent.getString("description_EN");
+    this.descriptions[Language_FR] = parent.getString("description_FR");
+    
+    this.V_scale = parent.getFloat("V_scale");
+    this.V_offset = parent.getFloat("V_offset");
+    this.V_belowLine = parent.getFloat("V_belowLine");
+  }      
+  
   
 }
 
@@ -2232,13 +2282,13 @@ class solarchvision_SHADE {
     float Alpha = asin_ang(W[2]);
     float Beta = atan2_ang(W[1], W[0]) + 90;       
   
-    int a = int((Alpha + 90) / SOLARCHVISION_GLOBE_stp_slp);
-    int b = int(Beta / SOLARCHVISION_GLOBE_stp_dir);
+    int a = int((Alpha + 90) / Sky3D.stp_slp);
+    int b = int(Beta / Sky3D.stp_dir);
   
-    if (a < 0) a += int(180 / SOLARCHVISION_GLOBE_stp_slp);
-    if (b < 0) b += int(360 / SOLARCHVISION_GLOBE_stp_dir);
-    if (a > int(180 / SOLARCHVISION_GLOBE_stp_slp)) a -= int(180 / SOLARCHVISION_GLOBE_stp_slp);
-    if (b > int(360 / SOLARCHVISION_GLOBE_stp_dir)) b -= int(360 / SOLARCHVISION_GLOBE_stp_dir);
+    if (a < 0) a += int(180 / Sky3D.stp_slp);
+    if (b < 0) b += int(360 / Sky3D.stp_dir);
+    if (a > int(180 / Sky3D.stp_slp)) a -= int(180 / Sky3D.stp_slp);
+    if (b > int(360 / Sky3D.stp_dir)) b -= int(360 / Sky3D.stp_dir);
   
     float _valuesSUM = GlobalSolar[Impact_TYPE][IMPACTS_DisplayDay][a][b];
   
@@ -4722,7 +4772,7 @@ class solarchvision_STUDY {
   int j_End = 8; //6; //2; //16; // Variable  
 
   float perDays = 45; //61; //1; //45; //61; //30.5;
-  int joinDays = 1; //30;//perDays; // it should be set up to 1 in order to plot only one day  
+  int joinDays = 15; //1; //30;//perDays; // it should be set up to 1 in order to plot only one day  
   
   boolean PrintTtitle = true;
   
@@ -7718,10 +7768,7 @@ int rebuild_GlobalSolar_array = 1;
 int rebuild_SolarImpactImage_array = 1;
 int rebuild_WindRoseImage_array = 1; 
 
-float SOLARCHVISION_GLOBE_stp_slp;
-float SOLARCHVISION_GLOBE_stp_dir;
-int SOLARCHVISION_GLOBE_n_slp;  
-int SOLARCHVISION_GLOBE_n_dir;
+
 
 float[][][][] GlobalSolar;
 
@@ -8098,15 +8145,7 @@ int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 
 
-int TIME_ModelRun = 0; //12; 
 
-int TIME_Hour = TIME_ModelRun; //hour(); 
-int TIME_Year = year(); 
-int TIME_Month = month();
-int TIME_Day = day(); 
-
-int TIME_BeginDay;
-float TIME_Date;
 
 void SOLARCHVISION_RecordFrame () {
 
@@ -17768,13 +17807,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     //for (int p = 0; p < 1; p++) { 
     //int l = 3 * int(STUDY.ImpactLayer / 3) + 1; //STUDY.ImpactLayer;    
 
-      float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
-      float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
-      float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
-      int[][] TOTAL_valuesNUM = new int [1 + int(90 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
+      float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+      float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+      float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+      int[][] TOTAL_valuesNUM = new int [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
 
-      for (int a = 0; a <= int (90 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
-        for (int b = 0; b < int (360 / SOLARCHVISION_GLOBE_stp_dir); b++) {
+      for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) { 
+        for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
           TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
           TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
           TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
@@ -17807,10 +17846,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             int k = int(nk / STUDY.joinDays);
             int j_ADD = nk % STUDY.joinDays; 
 
-            for (int a = 0; a <= int (90 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
-              float Alpha = a * SOLARCHVISION_GLOBE_stp_slp;
-              for (int b = 0; b < int (360 / SOLARCHVISION_GLOBE_stp_dir); b++) {
-                float Beta = b * SOLARCHVISION_GLOBE_stp_dir;
+            for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) { 
+              float Alpha = a * Sky3D.stp_slp;
+              for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+                float Beta = b * Sky3D.stp_dir;
 
                 float _valuesSUM_RAD = 0;
                 float _valuesSUM_EFF_P = 0;
@@ -17939,15 +17978,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                   STUDY.graphics.strokeWeight(0);
 
-                  float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y1 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y2 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+                  float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
-                  float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y3 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
-                  float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-                  float y4 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+                  float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+                  float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
                   STUDY.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
                 }
@@ -17974,10 +18013,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         int j = -1; // << to put the summary graph before the daily graphs
 
-        for (int a = 0; a <= int (90 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
-          float Alpha = a * SOLARCHVISION_GLOBE_stp_slp;
-          for (int b = 0; b < int (360 / SOLARCHVISION_GLOBE_stp_dir); b++) {
-            float Beta = b * SOLARCHVISION_GLOBE_stp_dir;
+        for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) { 
+          float Alpha = a * Sky3D.stp_slp;
+          for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+            float Beta = b * Sky3D.stp_dir;
 
             if (TOTAL_valuesNUM[a][b] != 0) {
               TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
@@ -18022,15 +18061,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
               STUDY.graphics.strokeWeight(0);
 
-              float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y1 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y2 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+              float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
-              float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y3 = (                         -(90 - Alpha + 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
-              float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot;
-              float y4 = (                         -(90 - Alpha - 0.5 * SOLARCHVISION_GLOBE_stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * SOLARCHVISION_GLOBE_stp_dir))) * sx_Plot; 
+              float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+              float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
               STUDY.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
             }
@@ -22460,6 +22499,11 @@ class solarchvision_Sky3D {
   int Pallet_PASSIVE_DIR = -1;  
   float Pallet_PASSIVE_MLT = 1; //2;
 
+  float stp_slp;
+  float stp_dir;
+  int num_slp;  
+  int num_dir;
+
   
   void draw () {
   
@@ -22567,6 +22611,12 @@ class solarchvision_Sky3D {
     parent.setInt("Pallet_PASSIVE_CLR", this.Pallet_PASSIVE_CLR);
     parent.setInt("Pallet_PASSIVE_DIR", this.Pallet_PASSIVE_DIR);
     parent.setFloat("Pallet_PASSIVE_MLT", this.Pallet_PASSIVE_MLT);
+    
+    parent.setFloat("stp_slp", this.stp_slp);
+    parent.setFloat("stp_dir", this.stp_dir);
+    parent.setInt("num_slp", this.num_slp);
+    parent.setInt("num_dir", this.num_dir);
+    
   }
   
   
@@ -22585,6 +22635,11 @@ class solarchvision_Sky3D {
     this.Pallet_PASSIVE_CLR = parent.getInt("Pallet_PASSIVE_CLR");
     this.Pallet_PASSIVE_DIR = parent.getInt("Pallet_PASSIVE_DIR");
     this.Pallet_PASSIVE_MLT = parent.getFloat("Pallet_PASSIVE_MLT");
+    
+    this.stp_slp = parent.getFloat("stp_slp");
+    this.stp_dir = parent.getFloat("stp_dir");
+    this.num_slp = parent.getInt("num_slp");
+    this.num_dir = parent.getInt("num_dir");   
   }   
 }
 
@@ -38062,18 +38117,18 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
 
 void SOLARCHVISION_resize_GlobalSolar_array () {
 
-  SOLARCHVISION_GLOBE_stp_slp = GLOBE_calculatedResolution;
-  SOLARCHVISION_GLOBE_stp_dir = GLOBE_calculatedResolution;
-  SOLARCHVISION_GLOBE_n_slp = int(roundTo(180.0 / (1.0 * SOLARCHVISION_GLOBE_stp_slp), 1)) + 1;  
-  SOLARCHVISION_GLOBE_n_dir = int(roundTo(360.0 / (1.0 * SOLARCHVISION_GLOBE_stp_dir), 1));
+  Sky3D.stp_slp = GLOBE_calculatedResolution;
+  Sky3D.stp_dir = GLOBE_calculatedResolution;
+  Sky3D.num_slp = int(roundTo(180.0 / (1.0 * Sky3D.stp_slp), 1)) + 1;  
+  Sky3D.num_dir = int(roundTo(360.0 / (1.0 * Sky3D.stp_dir), 1));
 
-  GlobalSolar = new float [2][(1 + STUDY.j_End - STUDY.j_Start)][SOLARCHVISION_GLOBE_n_slp][SOLARCHVISION_GLOBE_n_dir];
+  GlobalSolar = new float [2][(1 + STUDY.j_End - STUDY.j_Start)][Sky3D.num_slp][Sky3D.num_dir];
 
   for (int i = 0; i < GlobalSolar.length; i++) {
     for (int j = 0; j < GlobalSolar[i].length; j++) {
   
-      for (int a = 0; a < SOLARCHVISION_GLOBE_n_slp; a++) {
-        for (int b = 0; b < SOLARCHVISION_GLOBE_n_dir; b++) {  
+      for (int a = 0; a < Sky3D.num_slp; a++) {
+        for (int b = 0; b < Sky3D.num_dir; b++) {  
           GlobalSolar[i][j][a][b] = FLOAT_undefined;
         }
       }
@@ -38128,13 +38183,13 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   int l = STUDY.ImpactLayer;
 
-  float[][] TOTAL_valuesSUM_RAD = new float [1 + int(180 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
-  float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(180 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
-  float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(180 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
-  int[][] TOTAL_valuesNUM = new int [1 + int(180 / SOLARCHVISION_GLOBE_stp_slp)][1 + int(360 / SOLARCHVISION_GLOBE_stp_dir)];
+  float[][] TOTAL_valuesSUM_RAD = new float [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+  float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+  float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+  int[][] TOTAL_valuesNUM = new int [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
 
-  for (int a = 0; a <= int (180 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
-    for (int b = 0; b < int (360 / SOLARCHVISION_GLOBE_stp_dir); b++) {
+  for (int a = 0; a <= int (180 / Sky3D.stp_slp); a++) { 
+    for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
       TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
       TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
       TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
@@ -38167,10 +38222,10 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
         int k = int(nk / STUDY.joinDays);
         int j_ADD = nk % STUDY.joinDays; 
 
-        for (int a = 0; a <= int (180 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
-          float Alpha = a * SOLARCHVISION_GLOBE_stp_slp - 90;
-          for (int b = 0; b < int (360 / SOLARCHVISION_GLOBE_stp_dir); b++) {
-            float Beta = b * SOLARCHVISION_GLOBE_stp_dir;
+        for (int a = 0; a <= int (180 / Sky3D.stp_slp); a++) { 
+          float Alpha = a * Sky3D.stp_slp - 90;
+          for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+            float Beta = b * Sky3D.stp_dir;
 
             float _valuesSUM_RAD = 0;
             float _valuesSUM_EFF_P = 0;
@@ -38287,10 +38342,10 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
 
 
-  for (int a = 0; a <= int (180 / SOLARCHVISION_GLOBE_stp_slp); a++) { 
-    float Alpha = a * SOLARCHVISION_GLOBE_stp_slp - 90;
-    for (int b = 0; b < int (360 / SOLARCHVISION_GLOBE_stp_dir); b++) {
-      float Beta = b * SOLARCHVISION_GLOBE_stp_dir;
+  for (int a = 0; a <= int (180 / Sky3D.stp_slp); a++) { 
+    float Alpha = a * Sky3D.stp_slp - 90;
+    for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+      float Beta = b * Sky3D.stp_dir;
 
       if (TOTAL_valuesNUM[a][b] != 0) {
         TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
@@ -52417,10 +52472,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("SolarImpact_RES2", SolarImpact_RES2);
     parent.setFloat("SolarImpact_Elevation", SolarImpact_Elevation);
   
-    parent.setFloat("SOLARCHVISION_GLOBE_stp_slp", SOLARCHVISION_GLOBE_stp_slp);
-    parent.setFloat("SOLARCHVISION_GLOBE_stp_dir", SOLARCHVISION_GLOBE_stp_dir);
-    parent.setInt("SOLARCHVISION_GLOBE_n_slp", SOLARCHVISION_GLOBE_n_slp);
-    parent.setInt("SOLARCHVISION_GLOBE_n_dir", SOLARCHVISION_GLOBE_n_dir);
+
   
   
 
@@ -52730,10 +52782,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SolarImpact_RES2 = parent.getInt("SolarImpact_RES2");
       SolarImpact_Elevation = parent.getFloat("SolarImpact_Elevation");
   
-      SOLARCHVISION_GLOBE_stp_slp = parent.getFloat("SOLARCHVISION_GLOBE_stp_slp");
-      SOLARCHVISION_GLOBE_stp_dir = parent.getFloat("SOLARCHVISION_GLOBE_stp_dir");
-      SOLARCHVISION_GLOBE_n_slp = parent.getInt("SOLARCHVISION_GLOBE_n_slp");
-      SOLARCHVISION_GLOBE_n_dir = parent.getInt("SOLARCHVISION_GLOBE_n_dir");
+
 
 
 
