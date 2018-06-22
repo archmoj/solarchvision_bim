@@ -67,6 +67,8 @@ String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(
 String ProjectName = "Revision_" + RunStamp;
 String HoldStamp = ""; 
 
+String export_MapsSubfolder = "maps/";
+
 void SOLARCHVISION_update_folders () {
   
   ProjectFolder = BaseFolder + "/Projects/Roodbar";    
@@ -4825,9 +4827,9 @@ class solarchvision_STUDY {
   int TrendJoinHours = 24; //48;
   int TrendJoinType = -1; // -1: increasing weights, +1: equal weights
   
-  boolean Export_info_node = false;
-  boolean Export_info_norm = false;
-  boolean Export_info_prob = false;
+  boolean export_info_node = false;
+  boolean export_info_norm = false;
+  boolean export_info_prob = false;
   
   int Pallet_SORT_CLR = -1;
   int Pallet_SORT_DIR = -1;
@@ -5645,13 +5647,13 @@ class solarchvision_STUDY {
             }   
             this.graphics.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix) - 0.05 * txt_max_height);
   
-            if ((this.Export_info_prob) && (this.displayProbs)) {
+            if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
             }
           }
         }  
   
-        if ((this.Export_info_prob) && (this.displayProbs)) {
+        if ((this.export_info_prob) && (this.displayProbs)) {
           FILE_outputProbs[(j - this.j_Start)].println("");
         }
       }
@@ -5933,12 +5935,12 @@ class solarchvision_STUDY {
         this.graphics.line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, (j + ((i + 0.5 + TIME_Interval) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot);
       } 
   
-      if ((this.Export_info_norm) && (this.displayNormals)) {
+      if ((this.export_info_norm) && (this.displayNormals)) {
         if (is_undefined_FLOAT(NormalsA[l]) == false) FILE_outputNorms[(j - this.j_Start)].print(nfs(NormalsA[l] - this.V_offset, 5, 5) + "\t"); 
         else FILE_outputNorms[(j - this.j_Start)].print("[undefined]\t");
       }
     }
-    if ((this.Export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].println();
+    if ((this.export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].println();
   }  
 
 
@@ -6039,7 +6041,7 @@ class solarchvision_STUDY {
       if (this.joinDays > 1) {
         _FilenamesAdd = ("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
       }
-      if ((this.Export_info_node) && (this.displayRaws)) {
+      if ((this.export_info_node) && (this.displayRaws)) {
         FILE_outputRaw[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
         FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
   
@@ -6049,7 +6051,7 @@ class solarchvision_STUDY {
         }
         FILE_outputRaw[(j - this.j_Start)].println("");
       }
-      if ((this.Export_info_norm) && (this.displayNormals)) {
+      if ((this.export_info_norm) && (this.displayNormals)) {
         FILE_outputNorms[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
         FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
         FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
@@ -6058,7 +6060,7 @@ class solarchvision_STUDY {
         }
         FILE_outputNorms[(j - this.j_Start)].println("");
       }
-      if ((this.Export_info_prob) && (this.displayProbs)) {
+      if ((this.export_info_prob) && (this.displayProbs)) {
         FILE_outputProbs[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
         FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME_BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
   
@@ -6067,9 +6069,9 @@ class solarchvision_STUDY {
       }
   
       for (int i = 0; i < 24; i++) {
-        if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print(nf(i, 2) + "\t");
-        if ((this.Export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].print(nf(i, 2) + "\t");
-        if ((this.Export_info_prob) && (this.displayProbs)) FILE_outputProbs[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if ((this.export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if ((this.export_info_prob) && (this.displayProbs)) FILE_outputProbs[(j - this.j_Start)].print(nf(i, 2) + "\t");
   
         for (int k = 0; k < count_k; k++) {   
           for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
@@ -6113,7 +6115,7 @@ class solarchvision_STUDY {
             if (is_undefined_FLOAT(Pa)) {
               _valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
   
-              if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
+              if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
             } else {
               int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
   
@@ -6124,7 +6126,7 @@ class solarchvision_STUDY {
                 _valuesSUM[(k * this.joinDays + j_ADD)] += _valuesA[(k * this.joinDays + j_ADD)];
                 _valuesNUM[(k * this.joinDays + j_ADD)] += 1;
   
-                if ((this.Export_info_node) && (this.displayRaws)) {
+                if ((this.export_info_node) && (this.displayRaws)) {
                   if (is_undefined_FLOAT(_valuesA[(k * this.joinDays + j_ADD)]) == false) FILE_outputRaw[(j - this.j_Start)].print(nfs(_valuesA[(k * this.joinDays + j_ADD)] - this.V_offset, 5, 5) + "\t"); 
                   else FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
                 }
@@ -6153,14 +6155,14 @@ class solarchvision_STUDY {
                   }
                 }
               } else {
-                if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("not_the_case\t");
+                if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("not_the_case\t");
               }
             }
           }
         }
         
   
-        if ((this.Export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
+        if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
   
   
         _interval += 1; 
@@ -6198,17 +6200,17 @@ class solarchvision_STUDY {
         }
       }
       
-      if ((this.Export_info_node) && (this.displayRaws)) {
+      if ((this.export_info_node) && (this.displayRaws)) {
         FILE_outputRaw[(j - this.j_Start)].flush(); 
         FILE_outputRaw[(j - this.j_Start)].close();
       }
   
-      if ((this.Export_info_norm) && (this.displayNormals)) {
+      if ((this.export_info_norm) && (this.displayNormals)) {
         FILE_outputNorms[(j - this.j_Start)].flush(); 
         FILE_outputNorms[(j - this.j_Start)].close();
       }
   
-      if ((this.Export_info_prob) && (this.displayProbs)) {
+      if ((this.export_info_prob) && (this.displayProbs)) {
         FILE_outputProbs[(j - this.j_Start)].flush(); 
         FILE_outputProbs[(j - this.j_Start)].close();
       }
@@ -6770,9 +6772,9 @@ class solarchvision_STUDY {
       if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;
     }
   
-    this.Export_info_node = false;
-    this.Export_info_norm = false;
-    this.Export_info_prob = false;
+    this.export_info_node = false;
+    this.export_info_norm = false;
+    this.export_info_prob = false;
   
     cursor(ARROW);
   }
@@ -6796,9 +6798,9 @@ class solarchvision_STUDY {
     parent.setInt("filter", this.filter);
     parent.setInt("TrendJoinHours", this.TrendJoinHours);
     parent.setInt("TrendJoinType", this.TrendJoinType);
-    parent.setString("Export_info_node", Boolean.toString(this.Export_info_node));
-    parent.setString("Export_info_norm", Boolean.toString(this.Export_info_norm));
-    parent.setString("Export_info_prob", Boolean.toString(this.Export_info_prob));
+    parent.setString("export_info_node", Boolean.toString(this.export_info_node));
+    parent.setString("export_info_norm", Boolean.toString(this.export_info_norm));
+    parent.setString("export_info_prob", Boolean.toString(this.export_info_prob));
     parent.setInt("Pallet_SORT_CLR", this.Pallet_SORT_CLR);
     parent.setInt("Pallet_SORT_DIR", this.Pallet_SORT_DIR);
     parent.setFloat("Pallet_SORT_MLT", this.Pallet_SORT_MLT);
@@ -6852,9 +6854,9 @@ class solarchvision_STUDY {
     this.filter = parent.getInt("filter");
     this.TrendJoinHours = parent.getInt("TrendJoinHours");
     this.TrendJoinType = parent.getInt("TrendJoinType");
-    this.Export_info_node = Boolean.parseBoolean(parent.getString("Export_info_node"));
-    this.Export_info_norm = Boolean.parseBoolean(parent.getString("Export_info_norm"));
-    this.Export_info_prob = Boolean.parseBoolean(parent.getString("Export_info_prob"));
+    this.export_info_node = Boolean.parseBoolean(parent.getString("export_info_node"));
+    this.export_info_norm = Boolean.parseBoolean(parent.getString("export_info_norm"));
+    this.export_info_prob = Boolean.parseBoolean(parent.getString("export_info_prob"));
     this.Pallet_SORT_CLR = parent.getInt("Pallet_SORT_CLR");
     this.Pallet_SORT_DIR = parent.getInt("Pallet_SORT_DIR");
     this.Pallet_SORT_MLT = parent.getFloat("Pallet_SORT_MLT");
@@ -7643,21 +7645,21 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 1) { // Data
   
-        //STUDY.Export_info_node = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.Export_info_node, 0, 1, 1), 1));
-        //STUDY.Export_info_norm = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.Export_info_norm, 0, 1, 1), 1));
-        //STUDY.Export_info_prob = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.Export_info_prob, 0, 1, 1), 1));
+        //STUDY.export_info_node = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
+        //STUDY.export_info_norm = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
+        //STUDY.export_info_prob = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob, 0, 1, 1), 1));
   
   
-        Export_Scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_Scale", Export_Scale, .001, 1000, -0.1);
-        Export_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_FlipZYaxis", Export_FlipZYaxis, 0, 1, 1), 1));
+        USER.export_Scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_Scale", USER.export_Scale, .001, 1000, -0.1);
+        USER.export_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_FlipZYaxis", USER.export_FlipZYaxis, 0, 1, 1), 1));
   
-        Export_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PrecisionVertex", Export_PrecisionVertex, 0, 6, 1), 1));
-        Export_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PrecisionVtexture", Export_PrecisionVtexture, 0, 6, 1), 1));
-        Export_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PolyToPoly", Export_PolyToPoly, 0, 1, 1), 1));
+        USER.export_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_PrecisionVertex", USER.export_PrecisionVertex, 0, 6, 1), 1));
+        USER.export_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_PrecisionVtexture", USER.export_PrecisionVtexture, 0, 6, 1), 1));
+        USER.export_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_PolyToPoly", USER.export_PolyToPoly, 0, 1, 1), 1));
   
-        //Export_MaterialLibrary = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_MaterialLibrary", Export_MaterialLibrary, 0, 1, 1), 1));
-        //Export_BackSides = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_BackSides", Export_BackSides, 0, 1, 1), 1));
-        //Export_PalletResolution = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Export_PalletResolution", Export_PalletResolution, 32, 2048, -2), 1));
+        //USER.export_MaterialLibrary = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_MaterialLibrary", USER.export_MaterialLibrary, 0, 1, 1), 1));
+        //USER.export_BackSides = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_BackSides", USER.export_BackSides, 0, 1, 1), 1));
+        //USER.export_PalletResolution = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "USER.export_PalletResolution", USER.export_PalletResolution, 32, 2048, -2), 1));
   
   
         //displayOutput_inExplorer = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
@@ -8001,16 +8003,7 @@ float GlobalAlbedo = 0; // 0-100
 
 float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
-float Export_Scale = 1.0; //0.001; // 0.001: 1km --> 1
-int Export_FlipZYaxis = 1; //1; // 1: to fit in Unity3D
 
-int Export_PrecisionVertex = 6; 
-int Export_PrecisionVtexture = 4;
-int Export_PolyToPoly = 1; // 0: Exports each group3D to different individual faces, 1: Exports group3D to group3D 
-
-boolean Export_MaterialLibrary = true; 
-boolean Export_BackSides = true; 
-int Export_PalletResolution = 256;
 
 
 
@@ -8781,7 +8774,7 @@ class solarchvision_Faces {
     
         if (Create_Face_Texture == 0) {
     
-          if (Export_MaterialLibrary) {
+          if (USER.export_MaterialLibrary) {
     
             int[] Materials_Used = new int [Materials_Number];
     
@@ -8825,14 +8818,14 @@ class solarchvision_Faces {
     
             if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
     
-              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+              for (int back_or_front = 1 - int(USER.export_BackSides); back_or_front <= 1; back_or_front++) {
     
                 num_vertices_added = 0;
     
                 for (int _turn = 1; _turn < 4; _turn++) {
     
                   if (_turn == 3) {
-                    if (Export_PolyToPoly == 1) {
+                    if (USER.export_PolyToPoly == 1) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                     }
@@ -8843,7 +8836,7 @@ class solarchvision_Faces {
                   for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
     
                     if (_turn == 3) {
-                      if (Export_MaterialLibrary) {
+                      if (USER.export_MaterialLibrary) {
                         int mt = this.getMaterial(f);
                         if (prev_mt != mt) {
                           objOutput.println("usemtl SurfaceMaterial" + nf(mt, 0));
@@ -8895,7 +8888,7 @@ class solarchvision_Faces {
     
                         num_vertices_added += subFace.length;
     
-                        if (Export_PolyToPoly == 0) {
+                        if (USER.export_PolyToPoly == 0) {
                           obj_lastGroupNumber += 1;
                           objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                         }                    
@@ -8942,16 +8935,16 @@ class solarchvision_Faces {
           String the_filename = "";
           String TEXTURE_path = "";
     
-          if (Export_MaterialLibrary) {
+          if (USER.export_MaterialLibrary) {
     
             the_filename = "shadePallet.bmp";
     
-            TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+            TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
-            int RES1 = Export_PalletResolution; 
-            int RES2 = Export_PalletResolution / 16;      
+            int RES1 = USER.export_PalletResolution; 
+            int RES2 = USER.export_PalletResolution / 16;      
     
             PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
     
@@ -8993,8 +8986,8 @@ class solarchvision_Faces {
             mtlOutput.println("\tTr 1.000"); //  0-1 transparency
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-            //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+            //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
          
           }
     
@@ -9003,7 +8996,7 @@ class solarchvision_Faces {
     
             if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
     
-              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+              for (int back_or_front = 1 - int(USER.export_BackSides); back_or_front <= 1; back_or_front++) {
     
                 num_vertices_added = 0;
     
@@ -9013,12 +9006,12 @@ class solarchvision_Faces {
     
                   if (_turn == 3) {
     
-                    if (Export_PolyToPoly == 1) {
+                    if (USER.export_PolyToPoly == 1) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                     }
     
-                    if (Export_MaterialLibrary) {
+                    if (USER.export_MaterialLibrary) {
     
                       objOutput.println("usemtl " +  the_filename.replace('.', '_'));
     
@@ -9068,7 +9061,7 @@ class solarchvision_Faces {
     
                       if (_turn == 1) {   
     
-                        if (Export_MaterialLibrary) {
+                        if (USER.export_MaterialLibrary) {
     
                           for (int s = 0; s < subFace.length; s++) {
     
@@ -9162,7 +9155,7 @@ class solarchvision_Faces {
     
                         num_vertices_added += 4;
     
-                        if (Export_PolyToPoly == 0) {
+                        if (USER.export_PolyToPoly == 0) {
                           obj_lastGroupNumber += 1;
                           objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                         }
@@ -9211,7 +9204,7 @@ class solarchvision_Faces {
         String the_filename = "";
         String TEXTURE_path = "";        
     
-        if (Export_MaterialLibrary) {
+        if (USER.export_MaterialLibrary) {
           
           if (Create_Face_Texture == 0) {
             
@@ -9246,16 +9239,16 @@ class solarchvision_Faces {
             
             the_filename = "shadePallet.bmp";
             
-            TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+            TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
             
             htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
             htmlOutput.println("\t\t\t\t</Appearance>");
     
             println("Saving texture:", TEXTURE_path);
     
-            int RES1 = Export_PalletResolution; 
-            int RES2 = Export_PalletResolution / 16;      
+            int RES1 = USER.export_PalletResolution; 
+            int RES2 = USER.export_PalletResolution / 16;      
     
             PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
     
@@ -9319,7 +9312,7 @@ class solarchvision_Faces {
         
                   float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
                   
-                  for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+                  for (int back_or_front = 1 - int(USER.export_BackSides); back_or_front <= 1; back_or_front++) {
         
                     htmlOutput.println("\t\t\t\t\t<shape>");
         
@@ -9352,7 +9345,7 @@ class solarchvision_Faces {
                         s = subFace.length - 1 - q;
                       }
                       
-                      htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                      htmlOutput.print(nf(subFace[s][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][2], 0, USER.export_PrecisionVertex));
                     }                
                     htmlOutput.println("'></Coordinate>");
         
@@ -9464,7 +9457,7 @@ class solarchvision_Faces {
             radOutput.println("void plastic " + "SurfaceMaterial" + nf(mt, 0));
             radOutput.println("0");
             radOutput.println("0");
-            radOutput.println("5 " + nf(r, 0, Export_PrecisionVtexture) + " " + nf(g, 0, Export_PrecisionVtexture) + " " + nf(b, 0, Export_PrecisionVtexture) + " 0 0");
+            radOutput.println("5 " + nf(r, 0, USER.export_PrecisionVtexture) + " " + nf(g, 0, USER.export_PrecisionVtexture) + " " + nf(b, 0, USER.export_PrecisionVtexture) + " 0 0");
     
           }
         }
@@ -9500,7 +9493,7 @@ class solarchvision_Faces {
     
               float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
               
-              for (int back_or_front = 1 - int(Export_BackSides); back_or_front <= 1; back_or_front++) {
+              for (int back_or_front = 1 - int(USER.export_BackSides); back_or_front <= 1; back_or_front++) {
     
                 if (back_or_front == 1) {
     
@@ -9509,9 +9502,9 @@ class solarchvision_Faces {
                   radOutput.println("0");
                   radOutput.println("9");      
                   
-                  radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-                  radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, USER.export_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[1][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[1][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[1][2], 0, USER.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[2][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, USER.export_PrecisionVertex));
                   
                   if (subFace.length == 4) {
     
@@ -9520,9 +9513,9 @@ class solarchvision_Faces {
                     radOutput.println("0");
                     radOutput.println("9");      
                     
-                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, USER.export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[3][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[3][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[3][2], 0, USER.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, USER.export_PrecisionVertex));
                   }
                   
                   
@@ -9533,9 +9526,9 @@ class solarchvision_Faces {
                   radOutput.println("0");
                   radOutput.println("9");    
                   
-                  radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-                  radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, USER.export_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[2][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, USER.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[1][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[1][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[1][2], 0, USER.export_PrecisionVertex));
                   
                   if (subFace.length == 4) { 
                     
@@ -9544,9 +9537,9 @@ class solarchvision_Faces {
                     radOutput.println("0");
                     radOutput.println("9");                   
                     
-                    radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, USER.export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[0][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, USER.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[3][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[3][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[3][2], 0, USER.export_PrecisionVertex));
                   }
                 }
               }
@@ -18885,16 +18878,16 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
     num_vertices_added = 0;
 
-    if (Export_MaterialLibrary) {
+    if (USER.export_MaterialLibrary) {
 
       the_filename = "sunPatternPallet.bmp";
 
-      TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+      TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
 
       println("Saving texture:", TEXTURE_path);
 
-      int RES1 = Export_PalletResolution; 
-      int RES2 = Export_PalletResolution / 16;      
+      int RES1 = USER.export_PalletResolution; 
+      int RES2 = USER.export_PalletResolution / 16;      
 
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -18933,8 +18926,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+      //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
     }
   }  
 
@@ -18954,7 +18947,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         obj_lastGroupNumber += 1;
         objOutput.println("g sunPattern");
 
-        if (Export_MaterialLibrary) {      
+        if (USER.export_MaterialLibrary) {      
           objOutput.println("usemtl " +  the_filename.replace('.', '_'));
         }
       }
@@ -20250,7 +20243,7 @@ void SOLARCHVISION_export_objects_SCR () {
         float y = allPoints.getY(allFaces.nodes[f][j]);
         float z = allPoints.getZ(allFaces.nodes[f][j]);
 
-        scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
+        scrOutput.println(nf(x, 0, USER.export_PrecisionVertex) + "," + nf(y, 0, USER.export_PrecisionVertex) + "," + nf(z, 0, USER.export_PrecisionVertex));
       }
       scrOutput.println();
       scrOutput.println();
@@ -20267,7 +20260,7 @@ void SOLARCHVISION_export_objects_SCR () {
       float y = allPoints.getY(allCurves.nodes[f][j]);
       float z = allPoints.getZ(allCurves.nodes[f][j]);
 
-      scrOutput.println(nf(x, 0, Export_PrecisionVertex) + "," + nf(y, 0, Export_PrecisionVertex) + "," + nf(z, 0, Export_PrecisionVertex));
+      scrOutput.println(nf(x, 0, USER.export_PrecisionVertex) + "," + nf(y, 0, USER.export_PrecisionVertex) + "," + nf(z, 0, USER.export_PrecisionVertex));
     }
     
     if (allCurves.getMaterial(f) == 1) {
@@ -20613,7 +20606,7 @@ void SOLARCHVISION_export_objects_OBJ_dateSeries () {
 }
 
 
-String Export_MapsSubfolder = "maps/";
+
 
 PrintWriter mtlOutput;
 PrintWriter objOutput;
@@ -20636,14 +20629,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   String mtlFilename = allModel3DsFolder + "/" + fileBasename + ".mtl";
 
 
-  if (Export_MaterialLibrary) {
+  if (USER.export_MaterialLibrary) {
     mtlOutput = createWriter(mtlFilename);
     mtlOutput.println("#SOLARCHVISION");
   }
 
   objOutput = createWriter(objFilename);
   objOutput.println("#SOLARCHVISION");
-  if (Export_MaterialLibrary) {
+  if (USER.export_MaterialLibrary) {
     objOutput.println("mtllib " + fileBasename + ".mtl");
   }
 
@@ -20678,7 +20671,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   if (allModel1Ds.displayAll) {
 
-    if (Export_MaterialLibrary) {
+    if (USER.export_MaterialLibrary) {
 
       if (allModel1Ds.num != 0) {
 
@@ -20737,7 +20730,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
         num_vertices_added = 0;
 
-        if (Export_PolyToPoly == 1) {
+        if (USER.export_PolyToPoly == 1) {
           obj_lastGroupNumber += 1;
           objOutput.println("g allModel1Ds_" + nf(f, 0));
         }    
@@ -20765,16 +20758,16 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     String the_filename = "";
 
-    if (Export_MaterialLibrary) {
+    if (USER.export_MaterialLibrary) {
 
       the_filename = "WindFlowPallet.bmp";
 
-      String TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+      String TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
 
       println("Saving texture:", TEXTURE_path);
 
-      int RES1 = Export_PalletResolution; 
-      int RES2 = Export_PalletResolution / 16;       
+      int RES1 = USER.export_PalletResolution; 
+      int RES2 = USER.export_PalletResolution / 16;       
 
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -20811,8 +20804,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+      //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
     }    
 
     num_vertices_added = 0;
@@ -20823,7 +20816,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         obj_lastGroupNumber += 1;
         objOutput.println("g WindFlow");
 
-        if (Export_MaterialLibrary) {
+        if (USER.export_MaterialLibrary) {
           objOutput.println("usemtl WindFlow");
         }
       }        
@@ -20960,16 +20953,16 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
       String the_filename = "";
       String TEXTURE_path = "";  
 
-      if (Export_MaterialLibrary) {
+      if (USER.export_MaterialLibrary) {
 
         the_filename = "skyPatternPallet.bmp";
 
-        TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+        TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
 
         println("Saving texture:", TEXTURE_path);
 
-        int RES1 = Export_PalletResolution; 
-        int RES2 = Export_PalletResolution / 16;      
+        int RES1 = USER.export_PalletResolution; 
+        int RES2 = USER.export_PalletResolution / 16;      
 
         PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
 
@@ -21008,14 +21001,14 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-        //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
       }      
 
       obj_lastGroupNumber += 1;
       objOutput.println("g skyPattern");
 
-      if (Export_MaterialLibrary) {      
+      if (USER.export_MaterialLibrary) {      
         objOutput.println("usemtl " +  the_filename.replace('.', '_'));
       }      
 
@@ -21096,7 +21089,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
               String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
 
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);  
-              if (Export_BackSides) {
+              if (USER.export_BackSides) {
                 obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
               }
@@ -21130,7 +21123,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
     SOLARCHVISION_update_date();
   }
 
-  if (Export_MaterialLibrary) {
+  if (USER.export_MaterialLibrary) {
     mtlOutput.flush(); 
     mtlOutput.close();
   }
@@ -21147,16 +21140,16 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
-  float a = x * Export_Scale;
-  float b = y * Export_Scale;
-  float c = z * Export_Scale;
+  float a = x * USER.export_Scale;
+  float b = y * USER.export_Scale;
+  float c = z * USER.export_Scale;
 
-  if (Export_FlipZYaxis == 0) {
+  if (USER.export_FlipZYaxis == 0) {
 
-    objOutput.println("v " + nf(a, 0, Export_PrecisionVertex) + " " +  nf(b, 0, Export_PrecisionVertex) + " " +  nf(c, 0, Export_PrecisionVertex));
+    objOutput.println("v " + nf(a, 0, USER.export_PrecisionVertex) + " " +  nf(b, 0, USER.export_PrecisionVertex) + " " +  nf(c, 0, USER.export_PrecisionVertex));
   } else {
 
-    objOutput.println("v " + nf(-a, 0, Export_PrecisionVertex) + " " +  nf(c, 0, Export_PrecisionVertex) + " " +  nf(b, 0, Export_PrecisionVertex));
+    objOutput.println("v " + nf(-a, 0, USER.export_PrecisionVertex) + " " +  nf(c, 0, USER.export_PrecisionVertex) + " " +  nf(b, 0, USER.export_PrecisionVertex));
   }
 }
 
@@ -21164,13 +21157,13 @@ void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
 void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
 
-  objOutput.println("vt " + nf(u, 0, Export_PrecisionVtexture) + " " + nf(v, 0, Export_PrecisionVtexture) + " " + nf(w, 0, Export_PrecisionVtexture));
+  objOutput.println("vt " + nf(u, 0, USER.export_PrecisionVtexture) + " " + nf(v, 0, USER.export_PrecisionVtexture) + " " + nf(w, 0, USER.export_PrecisionVtexture));
 }  
 
 
 void SOLARCHVISION_HTMLprintVtexture (float u, float v) {
 
-  htmlOutput.print(nf(u, 0, Export_PrecisionVtexture) + " " + nf(v, 0, Export_PrecisionVtexture));
+  htmlOutput.print(nf(u, 0, USER.export_PrecisionVtexture) + " " + nf(v, 0, USER.export_PrecisionVtexture));
 }  
 
 
@@ -22082,7 +22075,7 @@ class solarchvision_Tropo3D {
           
           if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
             
-            if (Export_MaterialLibrary) {
+            if (USER.export_MaterialLibrary) {
       
               if (target_window == TypeWindow.HTML) {
                 htmlOutput.println("\t\t\t\t<Appearance DEF='TropoSphere" + nf(n_Map, 0) + "'>");
@@ -22109,20 +22102,20 @@ class solarchvision_Tropo3D {
       
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
       
-                String new_Texture_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+                String new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
       
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
       
                 if (target_window == TypeWindow.OBJ) {
       
-                  //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-                  mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+                  //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + export_MapsSubfolder + the_filename); // diffuse map
                 }
                 
                 if (target_window == TypeWindow.HTML) {
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
                 }                    
                     
               }
@@ -22134,12 +22127,12 @@ class solarchvision_Tropo3D {
           
             if (target_window == TypeWindow.OBJ) {
           
-              if (Export_PolyToPoly == 1) {
+              if (USER.export_PolyToPoly == 1) {
                 obj_lastGroupNumber += 1;  
                 objOutput.println("g TropoSphere" + nf(n_Map, 0));
               }
         
-              if (Export_MaterialLibrary) {
+              if (USER.export_MaterialLibrary) {
                 objOutput.println("usemtl TropoSphere" + nf(n_Map, 0));
               }     
             }
@@ -22283,7 +22276,7 @@ class solarchvision_Tropo3D {
                         htmlOutput.print(",");
                       }                  
                       
-                      htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                      htmlOutput.print(nf(subFace[s][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][2], 0, USER.export_PrecisionVertex));
                     }                
                     htmlOutput.println("'></Coordinate>");
                     
@@ -22389,7 +22382,7 @@ class solarchvision_Tropo3D {
                     String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
                     String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
         
-                    if (Export_PolyToPoly == 0) {
+                    if (USER.export_PolyToPoly == 0) {
                       if (_turn == 3) {
                         obj_lastGroupNumber += 1;
                         objOutput.println("g TropoSphere" + nf(n_Map, 0) + "_" + nf(f, 0));
@@ -22399,7 +22392,7 @@ class solarchvision_Tropo3D {
                     if (_turn == 3) {
                       obj_lastFaceNumber += 1;            
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                      if (Export_BackSides) {
+                      if (USER.export_BackSides) {
                         obj_lastFaceNumber += 1;
                         objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                       }
@@ -22969,7 +22962,7 @@ class solarchvision_Earth3D {
   
       if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
       
-        if (Export_MaterialLibrary) {
+        if (USER.export_MaterialLibrary) {
   
           if (target_window == TypeWindow.HTML) {
             htmlOutput.println("\t\t\t\t<Appearance DEF='EarthSphere" + nf(n_Map, 0) + "'>");
@@ -22996,20 +22989,20 @@ class solarchvision_Earth3D {
     
             String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-            String new_Texture_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+            String new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
     
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
     
             if (target_window == TypeWindow.OBJ) {
     
-              //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-              mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-              mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+              //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+              mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
+              mtlOutput.println("\tmap_d " + export_MapsSubfolder + the_filename); // diffuse map
             }
             
             if (target_window == TypeWindow.HTML) {
-              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
             }                
   
           }
@@ -23020,12 +23013,12 @@ class solarchvision_Earth3D {
         }              
     
         if (target_window == TypeWindow.OBJ) {
-          if (Export_PolyToPoly == 1) {
+          if (USER.export_PolyToPoly == 1) {
             obj_lastGroupNumber += 1;  
             objOutput.println("g EarthSphere");
           }
       
-          if (Export_MaterialLibrary) {
+          if (USER.export_MaterialLibrary) {
             objOutput.println("usemtl EarthSphere");
           }
         }
@@ -23117,7 +23110,7 @@ class solarchvision_Earth3D {
                   htmlOutput.print(",");
                 }                  
                 
-                htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                htmlOutput.print(nf(subFace[s][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][2], 0, USER.export_PrecisionVertex));
               }                
               htmlOutput.println("'></Coordinate>");
               
@@ -23222,7 +23215,7 @@ class solarchvision_Earth3D {
               String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
               String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
     
-              if (Export_PolyToPoly == 0) {
+              if (USER.export_PolyToPoly == 0) {
                 if (_turn == 3) {
                   obj_lastGroupNumber += 1;
                   objOutput.println("g EarthSphere_" + nf(f, 0));
@@ -23232,7 +23225,7 @@ class solarchvision_Earth3D {
               if (_turn == 3) {
                 obj_lastFaceNumber += 1;            
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                if (Export_BackSides) {
+                if (USER.export_BackSides) {
                   obj_lastFaceNumber += 1;
                   objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                 }
@@ -23657,7 +23650,7 @@ class solarchvision_Land3D
       int PAL_DIR = SHADE.get_PAL_DIR();
       float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
   
-      if (Export_MaterialLibrary) {
+      if (USER.export_MaterialLibrary) {
   
         for (int n_Map = 0; n_Map < this.Textures_num; n_Map++) {
   
@@ -23700,7 +23693,7 @@ class solarchvision_Land3D
     
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                String new_Texture_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+                String new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -23708,13 +23701,13 @@ class solarchvision_Land3D
     
                 if (target_window == TypeWindow.OBJ) {
                     
-                  //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-                  mtlOutput.println("\tmap_d " + Export_MapsSubfolder + the_filename); // diffuse map
+                  //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + export_MapsSubfolder + the_filename); // diffuse map
                 }
                 
                 if (target_window == TypeWindow.HTML) {
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
                 }                 
     
               }
@@ -23874,7 +23867,7 @@ class solarchvision_Land3D
   
                   if (this.displayTexture) {
   
-                    if (Export_MaterialLibrary) {
+                    if (USER.export_MaterialLibrary) {
                       if (n_Map != -1) {    
                         objOutput.println("usemtl LandMap" + nf(n_Map, 0));
                       }
@@ -23908,7 +23901,7 @@ class solarchvision_Land3D
                     htmlOutput.print(",");
                   }                  
                   
-                  htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+                  htmlOutput.print(nf(subFace[s][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][2], 0, USER.export_PrecisionVertex));
                 }                
                 htmlOutput.println("'></Coordinate>");
                 
@@ -23989,18 +23982,18 @@ class solarchvision_Land3D
                       radOutput.println("0");
                       radOutput.println("9");      
                       
-                      radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));                
-                      radOutput.println(" " + nf(subFace[1][0], 0, Export_PrecisionVertex) + " " + nf(subFace[1][1], 0, Export_PrecisionVertex) + " " + nf(subFace[1][2], 0, Export_PrecisionVertex));
-                      radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));
+                      radOutput.println(" " + nf(subFace[0][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, USER.export_PrecisionVertex));                
+                      radOutput.println(" " + nf(subFace[1][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[1][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[1][2], 0, USER.export_PrecisionVertex));
+                      radOutput.println(" " + nf(subFace[2][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, USER.export_PrecisionVertex));
                       
                       radOutput.println("LandMesh_0" + " polygon " + "LAND");
                       radOutput.println("0");
                       radOutput.println("0");
                       radOutput.println("9");      
                       
-                      radOutput.println(" " + nf(subFace[2][0], 0, Export_PrecisionVertex) + " " + nf(subFace[2][1], 0, Export_PrecisionVertex) + " " + nf(subFace[2][2], 0, Export_PrecisionVertex));                
-                      radOutput.println(" " + nf(subFace[3][0], 0, Export_PrecisionVertex) + " " + nf(subFace[3][1], 0, Export_PrecisionVertex) + " " + nf(subFace[3][2], 0, Export_PrecisionVertex));
-                      radOutput.println(" " + nf(subFace[0][0], 0, Export_PrecisionVertex) + " " + nf(subFace[0][1], 0, Export_PrecisionVertex) + " " + nf(subFace[0][2], 0, Export_PrecisionVertex));
+                      radOutput.println(" " + nf(subFace[2][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, USER.export_PrecisionVertex));                
+                      radOutput.println(" " + nf(subFace[3][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[3][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[3][2], 0, USER.export_PrecisionVertex));
+                      radOutput.println(" " + nf(subFace[0][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, USER.export_PrecisionVertex));
   
                     }
                   }
@@ -24111,7 +24104,7 @@ class solarchvision_Land3D
     
                     obj_lastFaceNumber += 1;
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-                    if (Export_BackSides) {
+                    if (USER.export_BackSides) {
                       obj_lastFaceNumber += 1;
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                     }
@@ -24554,7 +24547,7 @@ class solarchvision_Model2Ds {
     
     if (proceed) {  
   
-      if (Export_MaterialLibrary) {
+      if (USER.export_MaterialLibrary) {
       
         if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {  
     
@@ -24588,8 +24581,8 @@ class solarchvision_Model2Ds {
     
                 the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                new_Texture_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
-                opacity_Texture_path = allModel3DsFolder + "/" + Export_MapsSubfolder + "opacity_" + the_filename;
+                new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+                opacity_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + "opacity_" + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -24621,7 +24614,7 @@ class solarchvision_Model2Ds {
                 
                 if (target_window == TypeWindow.HTML) {
                   htmlOutput.println("\t\t\t\t<Appearance DEF='this." + the_filename + "'>");
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
                   htmlOutput.println("\t\t\t\t</Appearance>");
                 }
     
@@ -24639,9 +24632,9 @@ class solarchvision_Model2Ds {
                   mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                   mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
       
-                  //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map        
-                  mtlOutput.println("\tmap_d " + Export_MapsSubfolder + "opacity_" + the_filename); // diffuse map
+                  //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + export_MapsSubfolder + "opacity_" + the_filename); // diffuse map
                 }
               }
             }
@@ -24714,12 +24707,12 @@ class solarchvision_Model2Ds {
   
           if (target_window == TypeWindow.OBJ) { 
   
-            if (Export_PolyToPoly == 1) {
+            if (USER.export_PolyToPoly == 1) {
               obj_lastGroupNumber += 1;  
               objOutput.println("g this." + nf(f, 0) + "_type" + nf(n, 0));
             }
       
-            if (Export_MaterialLibrary) {
+            if (USER.export_MaterialLibrary) {
               objOutput.println("usemtl this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
             }
           }
@@ -24779,14 +24772,14 @@ class solarchvision_Model2Ds {
                     String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
                     String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);      
         
-                    if (Export_PolyToPoly == 0) {
+                    if (USER.export_PolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g this." + nf(f, 0) + "_ver");
                     } 
         
                     obj_lastFaceNumber += 1;            
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    if (Export_BackSides) {
+                    if (USER.export_BackSides) {
                       obj_lastFaceNumber += 1;
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                     }
@@ -24803,10 +24796,10 @@ class solarchvision_Model2Ds {
                   htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
                   
                   htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                  htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf(z, 0, Export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, Export_PrecisionVertex));
+                  htmlOutput.print  (      nf(x1, 0, USER.export_PrecisionVertex) + " " + nf(y1, 0, USER.export_PrecisionVertex) + " " + nf(z, 0, USER.export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, USER.export_PrecisionVertex) + " " + nf(y2, 0, USER.export_PrecisionVertex) + " " + nf(z, 0, USER.export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, USER.export_PrecisionVertex) + " " + nf(y2, 0, USER.export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, USER.export_PrecisionVertex));
+                  htmlOutput.print  ("," + nf(x1, 0, USER.export_PrecisionVertex) + " " + nf(y1, 0, USER.export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, USER.export_PrecisionVertex));
                   htmlOutput.println("'></Coordinate>");          
                   
                   htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
@@ -24926,14 +24919,14 @@ class solarchvision_Model2Ds {
                       String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
                       String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);      
         
-                      if (Export_PolyToPoly == 0) {
+                      if (USER.export_PolyToPoly == 0) {
                         obj_lastGroupNumber += 1;
                         objOutput.println("g this." + nf(f, 0) + "_hor" + nf(q, 0));
                       } 
         
                       obj_lastFaceNumber += 1;            
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                      if (Export_BackSides) {
+                      if (USER.export_BackSides) {
                         obj_lastFaceNumber += 1;
                         objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                       }
@@ -24949,10 +24942,10 @@ class solarchvision_Model2Ds {
                     htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
                     
                     htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                    htmlOutput.print  (      nf(x1, 0, Export_PrecisionVertex) + " " + nf(y1, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                    htmlOutput.print  ("," + nf(x2, 0, Export_PrecisionVertex) + " " + nf(y2, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                    htmlOutput.print  ("," + nf(x3, 0, Export_PrecisionVertex) + " " + nf(y3, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
-                    htmlOutput.print  ("," + nf(x4, 0, Export_PrecisionVertex) + " " + nf(y4, 0, Export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, Export_PrecisionVertex));
+                    htmlOutput.print  (      nf(x1, 0, USER.export_PrecisionVertex) + " " + nf(y1, 0, USER.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, USER.export_PrecisionVertex));
+                    htmlOutput.print  ("," + nf(x2, 0, USER.export_PrecisionVertex) + " " + nf(y2, 0, USER.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, USER.export_PrecisionVertex));
+                    htmlOutput.print  ("," + nf(x3, 0, USER.export_PrecisionVertex) + " " + nf(y3, 0, USER.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, USER.export_PrecisionVertex));
+                    htmlOutput.print  ("," + nf(x4, 0, USER.export_PrecisionVertex) + " " + nf(y4, 0, USER.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, USER.export_PrecisionVertex));
                     htmlOutput.println("'></Coordinate>");          
                     
                     htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
@@ -25969,12 +25962,12 @@ class solarchvision_Model1Ds {
               String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
               String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
   
-              if (Export_PolyToPoly == 0) {
+              if (USER.export_PolyToPoly == 0) {
                 obj_lastGroupNumber += 1;
                 objOutput.println(("g allModel1Ds_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
               }
   
-              if (Export_MaterialLibrary) {
+              if (USER.export_MaterialLibrary) {
                 objOutput.println("usemtl allModel1Ds_Trunk");
               }
   
@@ -26086,18 +26079,18 @@ class solarchvision_Model1Ds {
             String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
             String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);        
   
-            if (Export_PolyToPoly == 0) {
+            if (USER.export_PolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println(("g allModel1Ds_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
             }
   
-            if (Export_MaterialLibrary) {
+            if (USER.export_MaterialLibrary) {
               objOutput.println("usemtl allModel1Ds_Leaf");
             }
   
             obj_lastFaceNumber += 1;
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-            if (Export_BackSides) {
+            if (USER.export_BackSides) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
@@ -27460,43 +27453,21 @@ class solarchvision_USER {
   int default_Visibility = 1; // 1: view 0: hide -1:freeze 
   int default_Weight = 0; 
   int default_Closed = 0; 
-  
   int default_PivotType = 0;
-  
-  float modify_WeldTreshold = 0.1; 
-  
-  int modify_TessellateRows = 6;
-  int modify_TessellateColumns = 30;
-  
-  float modify_OffsetAmount = 1.0; // 1 = 1m
-  
-  float modify_OpenningDepth = 1; // 1 = 1m 
-  float modify_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
-  float modify_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
 
   float create_Length = 10;
   float create_Width = 10;
   float create_Height = 10;
-
   float create_Volume = 0; //3000;
-  
   float create_Orientation = 360; //0; // 360: random
-
   float create_powX = CubePower; 
   float create_powY = CubePower; 
   float create_powZ = CubePower; 
-  
   float create_powAll = 8;
   int create_powRnd = 0;
-  
   int create_SphereDegree = 2; //4;
-  
   int create_CylinderDegree = 24; 
-
   int create_PolyDegree = 6;
-  
-  int create_Snap = 0;
-  
   int create_Parametric_Type = 0;
   int create_Person_Type = 0;
   int create_Plant_Type = 0;
@@ -27506,9 +27477,27 @@ class solarchvision_USER {
   int create_Model1D_Seed = -1; // -1:random, 0-99 choice
   float create_Model1D_TrunkSize = 1; //0.5;
   float create_Model1D_LeafSize = 1; //1; 
-  
   int create_MeshOrSolid = 0; // 0:Mesh 1:Solid
+  int create_Snap = 0;
 
+  int modify_TessellateRows = 6;
+  int modify_TessellateColumns = 30;
+  float modify_OpenningDepth = 1; // 1 = 1m 
+  float modify_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
+  float modify_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
+  float modify_OffsetAmount = 1.0; // 1 = 1m
+  float modify_WeldTreshold = 0.1; 
+
+  float export_Scale = 1.0; //0.001; // 0.001: 1km --> 1
+  int export_FlipZYaxis = 1; //1; // 1: to fit in Unity3D
+  
+  int export_PrecisionVertex = 6; 
+  int export_PrecisionVtexture = 4;
+  int export_PolyToPoly = 1; // 0: Exports each group3D to different individual faces, 1: Exports group3D to group3D 
+  
+  boolean export_MaterialLibrary = true; 
+  boolean export_BackSides = true; 
+  int export_PalletResolution = 256;
   
   public void to_XML (XML xml) {
     
@@ -27524,16 +27513,6 @@ class solarchvision_USER {
     parent.setInt("default_Closed", this.default_Closed);
     parent.setInt("default_PivotType", this.default_PivotType);
   
-    parent.setFloat("modify_WeldTreshold", this.modify_WeldTreshold);
-  
-    parent.setFloat("modify_OffsetAmount", this.modify_OffsetAmount);
-  
-    parent.setInt("modify_TessellateRows", this.modify_TessellateRows);
-    parent.setInt("modify_TessellateColumns", this.modify_TessellateColumns);
-  
-    parent.setFloat("modify_OpenningDepth", this.modify_OpenningDepth);
-    parent.setFloat("modify_OpenningArea", this.modify_OpenningArea);
-    parent.setFloat("modify_OpenningDeviation", this.modify_OpenningDeviation);
     parent.setFloat("create_Length", this.create_Length);
     parent.setFloat("create_Width", this.create_Width);
     parent.setFloat("create_Height", this.create_Height);
@@ -27547,8 +27526,6 @@ class solarchvision_USER {
     parent.setInt("create_SphereDegree", this.create_SphereDegree);
     parent.setInt("create_CylinderDegree", this.create_CylinderDegree);
     parent.setInt("create_PolyDegree", this.create_PolyDegree);
-    parent.setInt("create_Snap", this.create_Snap);
-    
     parent.setInt("create_Parametric_Type", this.create_Parametric_Type);
     parent.setInt("create_Person_Type", this.create_Person_Type);
     parent.setInt("create_Plant_Type", this.create_Plant_Type);
@@ -27559,6 +27536,28 @@ class solarchvision_USER {
     parent.setFloat("create_Model1D_TrunkSize", this.create_Model1D_TrunkSize);
     parent.setFloat("create_Model1D_LeafSize", this.create_Model1D_LeafSize);
     parent.setInt("create_MeshOrSolid", this.create_MeshOrSolid);
+    parent.setInt("create_Snap", this.create_Snap);
+
+    parent.setInt("modify_TessellateRows", this.modify_TessellateRows);
+    parent.setInt("modify_TessellateColumns", this.modify_TessellateColumns);
+    parent.setFloat("modify_OpenningDepth", this.modify_OpenningDepth);
+    parent.setFloat("modify_OpenningArea", this.modify_OpenningArea);
+    parent.setFloat("modify_OpenningDeviation", this.modify_OpenningDeviation);
+    parent.setFloat("modify_WeldTreshold", this.modify_WeldTreshold);
+    parent.setFloat("modify_OffsetAmount", this.modify_OffsetAmount);
+    
+    parent.setFloat("export_Scale", this.export_Scale);
+    parent.setInt("export_FlipZYaxis", this.export_FlipZYaxis);
+    parent.setInt("export_PrecisionVertex", this.export_PrecisionVertex);
+    parent.setInt("export_PrecisionVtexture", this.export_PrecisionVtexture);
+    parent.setInt("export_PolyToPoly", this.export_PolyToPoly);
+    parent.setString("export_MaterialLibrary", Boolean.toString(this.export_MaterialLibrary));
+    parent.setString("export_BackSides", Boolean.toString(this.export_BackSides));
+    parent.setInt("export_PalletResolution", this.export_PalletResolution);
+
+
+
+
   }
   
   
@@ -27576,16 +27575,6 @@ class solarchvision_USER {
     this.default_Closed = parent.getInt("default_Closed");
     this.default_PivotType = parent.getInt("default_PivotType");
 
-    this.modify_WeldTreshold = parent.getFloat("modify_WeldTreshold");
-
-    this.modify_OffsetAmount = parent.getFloat("modify_OffsetAmount");
-
-    this.modify_TessellateRows = parent.getInt("modify_TessellateRows");
-    this.modify_TessellateColumns = parent.getInt("modify_TessellateColumns");
-
-    this.modify_OpenningDepth = parent.getFloat("modify_OpenningDepth");
-    this.modify_OpenningArea = parent.getFloat("modify_OpenningArea");
-    this.modify_OpenningDeviation = parent.getFloat("modify_OpenningDeviation");
     this.create_Length = parent.getFloat("create_Length");
     this.create_Width = parent.getFloat("create_Width");
     this.create_Height = parent.getFloat("create_Height");
@@ -27599,8 +27588,6 @@ class solarchvision_USER {
     this.create_SphereDegree = parent.getInt("create_SphereDegree");
     this.create_CylinderDegree = parent.getInt("create_CylinderDegree");
     this.create_PolyDegree = parent.getInt("create_PolyDegree");
-    this.create_Snap = parent.getInt("create_Snap");
-    
     this.create_Parametric_Type = parent.getInt("create_Parametric_Type");
     this.create_Person_Type = parent.getInt("create_Person_Type");
     this.create_Plant_Type = parent.getInt("create_Plant_Type");
@@ -27611,6 +27598,24 @@ class solarchvision_USER {
     this.create_Model1D_TrunkSize = parent.getFloat("create_Model1D_TrunkSize");
     this.create_Model1D_LeafSize = parent.getFloat("create_Model1D_LeafSize");
     this.create_MeshOrSolid = parent.getInt("create_MeshOrSolid");
+    this.create_Snap = parent.getInt("create_Snap");
+    
+    this.modify_TessellateRows = parent.getInt("modify_TessellateRows");
+    this.modify_TessellateColumns = parent.getInt("modify_TessellateColumns");
+    this.modify_OpenningDepth = parent.getFloat("modify_OpenningDepth");
+    this.modify_OpenningArea = parent.getFloat("modify_OpenningArea");
+    this.modify_OpenningDeviation = parent.getFloat("modify_OpenningDeviation");
+    this.modify_WeldTreshold = parent.getFloat("modify_WeldTreshold");
+    this.modify_OffsetAmount = parent.getFloat("modify_OffsetAmount");
+    
+    this.export_Scale = parent.getFloat("export_Scale");
+    this.export_FlipZYaxis = parent.getInt("export_FlipZYaxis");
+    this.export_PrecisionVertex = parent.getInt("export_PrecisionVertex");
+    this.export_PrecisionVtexture = parent.getInt("export_PrecisionVtexture");
+    this.export_PolyToPoly = parent.getInt("export_PolyToPoly");
+    this.export_MaterialLibrary  = Boolean.parseBoolean(parent.getString("export_MaterialLibrary"));
+    this.export_BackSides = Boolean.parseBoolean(parent.getString("export_BackSides"));
+    this.export_PalletResolution = parent.getInt("export_PalletResolution");    
   }      
   
   
@@ -35784,9 +35789,9 @@ class solarchvision_Sections {
           
           String the_filename = "Impact_" + nf(f, 0) + ".bmp";
           
-          if (Export_MaterialLibrary) {
+          if (USER.export_MaterialLibrary) {
   
-            String TEXTURE_path = allModel3DsFolder + "/" + Export_MapsSubfolder + the_filename;
+            String TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
   
             if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
   
@@ -35800,7 +35805,7 @@ class solarchvision_Sections {
   
               if (target_window == TypeWindow.HTML) {
                 htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
                 htmlOutput.println("\t\t\t\t</Appearance>");
               }
     
@@ -35818,8 +35823,8 @@ class solarchvision_Sections {
                 mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                 mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
       
-                //mtlOutput.println("\tmap_Ka " + Export_MapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + Export_MapsSubfolder + the_filename); // diffuse map
+                //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
               }
             }
           }
@@ -35827,12 +35832,12 @@ class solarchvision_Sections {
   
           if (target_window == TypeWindow.OBJ) {
   
-            if (Export_PolyToPoly == 1) {
+            if (USER.export_PolyToPoly == 1) {
               obj_lastGroupNumber += 1;  
               objOutput.println("g Impact_" + nf(f, 0));
             }
     
-            if (Export_MaterialLibrary) {
+            if (USER.export_MaterialLibrary) {
               objOutput.println("usemtl " + the_filename.replace('.', '_'));
             }
           }
@@ -35929,7 +35934,7 @@ class solarchvision_Sections {
   
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (Export_BackSides) {
+            if (USER.export_BackSides) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
@@ -35952,7 +35957,7 @@ class solarchvision_Sections {
                 htmlOutput.print(",");
               }                  
               
-              htmlOutput.print(nf(subFace[s][0], 0, Export_PrecisionVertex) + " " + nf(subFace[s][1], 0, Export_PrecisionVertex) + " " + nf(subFace[s][2], 0, Export_PrecisionVertex));
+              htmlOutput.print(nf(subFace[s][0], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][1], 0, USER.export_PrecisionVertex) + " " + nf(subFace[s][2], 0, USER.export_PrecisionVertex));
             }                
             htmlOutput.println("'></Coordinate>");          
             
@@ -52553,14 +52558,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("addToLastGroup", addToLastGroup);
   
     parent.setFloat("BIOSPHERE_drawResolution", BIOSPHERE_drawResolution);
-    parent.setFloat("Export_Scale", Export_Scale);
-    parent.setInt("Export_FlipZYaxis", Export_FlipZYaxis);
-    parent.setInt("Export_PrecisionVertex", Export_PrecisionVertex);
-    parent.setInt("Export_PrecisionVtexture", Export_PrecisionVtexture);
-    parent.setInt("Export_PolyToPoly", Export_PolyToPoly);
-    parent.setString("Export_MaterialLibrary", Boolean.toString(Export_MaterialLibrary));
-    parent.setString("Export_BackSides", Boolean.toString(Export_BackSides));
-    parent.setInt("Export_PalletResolution", Export_PalletResolution);
+
   
     parent.setString("Default_Font", Default_Font);
   }
@@ -52809,15 +52807,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
       BIOSPHERE_drawResolution = parent.getFloat("BIOSPHERE_drawResolution");
   
-      Export_Scale = parent.getFloat("Export_Scale");
-      Export_FlipZYaxis = parent.getInt("Export_FlipZYaxis");
-      Export_PrecisionVertex = parent.getInt("Export_PrecisionVertex");
-      Export_PrecisionVtexture = parent.getInt("Export_PrecisionVtexture");
-      Export_PolyToPoly = parent.getInt("Export_PolyToPoly");
-      Export_MaterialLibrary  = Boolean.parseBoolean(parent.getString("Export_MaterialLibrary"));
-      Export_BackSides = Boolean.parseBoolean(parent.getString("Export_BackSides"));
-     
-      Export_PalletResolution = parent.getInt("Export_PalletResolution");
+
     
   
       {
