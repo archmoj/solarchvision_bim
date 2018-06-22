@@ -203,7 +203,7 @@ class solarchvision_LAYER {
   
   public void to_XML (XML xml) {
     
-    println("Saving:" + this.CLASS_STAMP);
+    println("Saving:" + this.CLASS_STAMP + ":" + this.name);
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
@@ -222,7 +222,7 @@ class solarchvision_LAYER {
   
   public void from_XML (XML xml) {
     
-    println("Loading:" + this.CLASS_STAMP);
+    println("Loading:" + this.CLASS_STAMP + ":" + this.name);
   
     XML parent = xml.getChild(this.CLASS_STAMP);
 
@@ -1134,8 +1134,8 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
     SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
     SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
     
-    Display_NAEFS_Points = 1;
-    Display_NAEFS_Nearest = true;     
+    WORLD.displayAll_NAEFS = 1;
+    WORLD.displayNear_NAEFS = true;     
   }
   
   WORLD.update = true;
@@ -1339,8 +1339,8 @@ void load_CLIMATE_CWEEDS (String FileName) {
   SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CWEEDS);
   SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_CWEEDS);
   
-  Display_CWEEDS_Points = 1;
-  Display_CWEEDS_Nearest = true;  
+  WORLD.displayAll_CWEEDS = 1;
+  WORLD.displayNear_CWEEDS = true;  
 
 }
 
@@ -1452,8 +1452,8 @@ void update_CLIMATE_CLMREC () {
     SOLARCHVISION_postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
     SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CLMREC);
     
-    Display_CLMREC_Points = 1;
-    Display_CLMREC_Nearest = true;       
+    WORLD.displayAll_CLMREC = 1;
+    WORLD.displayNear_CLMREC = true;       
   
   }
   
@@ -1570,8 +1570,8 @@ void update_CLIMATE_TMYEPW () {
     if (dir.isFile()) load_CLIMATE_TMYEPW(the_source);
     else println("FILE NOT FOUND:", the_source);
 
-    Display_TMYEPW_Points = 1;
-    Display_TMYEPW_Nearest = true; 
+    WORLD.displayAll_TMYEPW = 1;
+    WORLD.displayNear_TMYEPW = true; 
 
   }
   
@@ -1832,8 +1832,8 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
     SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_OBSERVED);
     SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_OBSERVED);
     
-    Display_SWOB_Points = 1;
-    Display_SWOB_Nearest = true;   
+    WORLD.displayAll_SWOB = 1;
+    WORLD.displayNear_SWOB = true;   
   }
 
   WORLD.update = true;
@@ -4017,6 +4017,18 @@ class solarchvision_WORLD {
   int[] VIEW_GridDisplay;
   String[] VIEW_Filenames;  
   
+  int displayAll_SWOB = 0; // 0-2
+  int displayAll_NAEFS = 0; // 0-2
+  int displayAll_CWEEDS = 0; // 0-2
+  int displayAll_CLMREC = 0; // 0-2
+  int displayAll_TMYEPW = 1; // 0-2
+  
+  boolean displayNear_SWOB = false;
+  boolean displayNear_NAEFS = false;
+  boolean displayNear_CWEEDS = false;
+  boolean displayNear_CLMREC = false;
+  boolean displayNear_TMYEPW = false;
+
   void listAllImages () {
   
     this.VIEW_Filenames = sort(SOLARCHVISION_getfiles(this.ViewFolder));
@@ -4347,7 +4359,7 @@ class solarchvision_WORLD {
         for (int f = 0; f < SWOB_Coordinates.length; f++) {
           boolean draw_info = false;
     
-          if (Display_SWOB_Points != 0) draw_info = true;
+          if (this.displayAll_SWOB != 0) draw_info = true;
     
           float _lat = SWOB_Coordinates[f].getLatitude();
           float _lon = SWOB_Coordinates[f].getLongitude(); 
@@ -4368,7 +4380,7 @@ class solarchvision_WORLD {
             this.graphics.fill(191, 0, 0, 191);      
             this.graphics.ellipse(x_point, y_point, R_station, R_station);
     
-            if (Display_SWOB_Points > 1) {
+            if (this.displayAll_SWOB > 1) {
               this.graphics.strokeWeight(0);
               this.graphics.stroke(0);
               this.graphics.fill(0);      
@@ -4396,7 +4408,7 @@ class solarchvision_WORLD {
           
         }    
   
-        if (Display_SWOB_Nearest) {   
+        if (this.displayNear_SWOB) {   
           int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
     
           float _lat = SWOB_Coordinates[f].getLatitude();
@@ -4425,7 +4437,7 @@ class solarchvision_WORLD {
       for (int f = 0; f < NAEFS_Coordinates.length; f++) {
         boolean draw_info = false;
   
-        if (Display_NAEFS_Points != 0) draw_info = true;
+        if (this.displayAll_NAEFS != 0) draw_info = true;
   
         float _lat = NAEFS_Coordinates[f].getLatitude();
         float _lon = NAEFS_Coordinates[f].getLongitude(); 
@@ -4447,7 +4459,7 @@ class solarchvision_WORLD {
   
           this.graphics.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
   
-          if (Display_NAEFS_Points > 1) {
+          if (this.displayAll_NAEFS > 1) {
             this.graphics.strokeWeight(0);
             this.graphics.stroke(0);
             this.graphics.fill(0);      
@@ -4465,7 +4477,7 @@ class solarchvision_WORLD {
         }
       }
   
-      if (Display_NAEFS_Nearest) {   
+      if (this.displayNear_NAEFS) {   
         int f = nearest_WORLD_NAEFS;
   
         float _lat = NAEFS_Coordinates[f].getLatitude();
@@ -4491,7 +4503,7 @@ class solarchvision_WORLD {
       for (int f = 0; f < CWEEDS_Coordinates.length; f++) {
         boolean draw_info = false;
   
-        if (Display_CWEEDS_Points != 0) draw_info = true;
+        if (this.displayAll_CWEEDS != 0) draw_info = true;
   
         float _lat = CWEEDS_Coordinates[f].getLatitude();
         float _lon = CWEEDS_Coordinates[f].getLongitude(); 
@@ -4512,7 +4524,7 @@ class solarchvision_WORLD {
           this.graphics.noFill();
           this.graphics.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
   
-          if (Display_CWEEDS_Points > 1) {
+          if (this.displayAll_CWEEDS > 1) {
             this.graphics.strokeWeight(0);
             this.graphics.stroke(0);
             this.graphics.fill(0);      
@@ -4530,7 +4542,7 @@ class solarchvision_WORLD {
         }
       } 
   
-      if (Display_CWEEDS_Nearest) {   
+      if (this.displayNear_CWEEDS) {   
         int f = nearest_WORLD_CWEEDS;
   
         float _lat = CWEEDS_Coordinates[f].getLatitude();
@@ -4556,7 +4568,7 @@ class solarchvision_WORLD {
       for (int f = 0; f < CLMREC_Coordinates.length; f++) {
         boolean draw_info = false;
   
-        if (Display_CLMREC_Points != 0) draw_info = true;
+        if (this.displayAll_CLMREC != 0) draw_info = true;
         
         float _lat = CLMREC_Coordinates[f].getLatitude();
         float _lon = CLMREC_Coordinates[f].getLongitude(); 
@@ -4577,7 +4589,7 @@ class solarchvision_WORLD {
           this.graphics.noFill();
           this.graphics.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
   
-          if (Display_CLMREC_Points > 1) {
+          if (this.displayAll_CLMREC > 1) {
             this.graphics.strokeWeight(0);
             this.graphics.stroke(0);
             this.graphics.fill(0);      
@@ -4595,7 +4607,7 @@ class solarchvision_WORLD {
         }
       } 
   
-      if (Display_CLMREC_Nearest) {   
+      if (this.displayNear_CLMREC) {   
         int f = nearest_WORLD_CLMREC;
   
         float _lat = CLMREC_Coordinates[f].getLatitude();
@@ -4620,7 +4632,7 @@ class solarchvision_WORLD {
       for (int f = 0; f < TMYEPW_Coordinates.length; f++) {
         boolean draw_info = false;
   
-        if (Display_TMYEPW_Points != 0) draw_info = true;
+        if (this.displayAll_TMYEPW != 0) draw_info = true;
   
         float _lat = TMYEPW_Coordinates[f].getLatitude();
         float _lon = TMYEPW_Coordinates[f].getLongitude(); 
@@ -4641,7 +4653,7 @@ class solarchvision_WORLD {
           this.graphics.noFill();
           this.graphics.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
   
-          if (Display_TMYEPW_Points > 1) {
+          if (this.displayAll_TMYEPW > 1) {
             this.graphics.strokeWeight(0);
             this.graphics.stroke(0);
             this.graphics.fill(0);      
@@ -4659,7 +4671,7 @@ class solarchvision_WORLD {
         }
       } 
   
-      if (Display_TMYEPW_Nearest) {   
+      if (this.displayNear_TMYEPW) {   
         int f = nearest_WORLD_TMYEPW;
   
         float _lat = TMYEPW_Coordinates[f].getLatitude();
@@ -4728,6 +4740,18 @@ class solarchvision_WORLD {
     XML parent = xml.addChild(this.CLASS_STAMP);
     
     parent.setInt("Viewport_ZOOM", this.Viewport_ZOOM);
+    
+    parent.setInt("displayAll_SWOB", this.displayAll_SWOB);
+    parent.setInt("displayAll_NAEFS", this.displayAll_NAEFS);
+    parent.setInt("displayAll_CWEEDS", this.displayAll_CWEEDS);
+    parent.setInt("displayAll_CLMREC", this.displayAll_CLMREC);
+    parent.setInt("displayAll_TMYEPW", this.displayAll_TMYEPW);
+    
+    parent.setString("displayNear_SWOB", Boolean.toString(this.displayNear_SWOB));
+    parent.setString("displayNear_NAEFS", Boolean.toString(this.displayNear_NAEFS));
+    parent.setString("displayNear_CWEEDS", Boolean.toString(this.displayNear_CWEEDS));
+    parent.setString("displayNear_CLMREC", Boolean.toString(this.displayNear_CLMREC));
+    parent.setString("displayNear_TMYEPW", Boolean.toString(this.displayNear_TMYEPW));
   }
 
   
@@ -4738,6 +4762,18 @@ class solarchvision_WORLD {
     XML parent = xml.getChild(this.CLASS_STAMP);
     
     this.Viewport_ZOOM = parent.getInt("Viewport_ZOOM");
+    
+    this.displayAll_SWOB = parent.getInt("displayAll_SWOB");
+    this.displayAll_NAEFS = parent.getInt("displayAll_NAEFS");
+    this.displayAll_CWEEDS = parent.getInt("displayAll_CWEEDS");
+    this.displayAll_CLMREC = parent.getInt("displayAll_CLMREC");
+    this.displayAll_TMYEPW = parent.getInt("displayAll_TMYEPW");
+
+    this.displayNear_SWOB = Boolean.parseBoolean(parent.getString("displayNear_SWOB"));
+    this.displayNear_NAEFS = Boolean.parseBoolean(parent.getString("displayNear_NAEFS"));
+    this.displayNear_CWEEDS = Boolean.parseBoolean(parent.getString("displayNear_CWEEDS"));
+    this.displayNear_CLMREC = Boolean.parseBoolean(parent.getString("displayNear_CLMREC"));      
+    this.displayNear_TMYEPW = Boolean.parseBoolean(parent.getString("displayNear_TMYEPW"));        
   }    
     
 }
@@ -7178,20 +7214,20 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 2) { // Weather
   
-        Display_TMYEPW_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_TMYEPW_Points", Display_TMYEPW_Points, 0, 2, 1), 1));
-        //Display_TMYEPW_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_TMYEPW_Nearest", Display_TMYEPW_Nearest, 0, 1, 1), 1));
+        WORLD.displayAll_TMYEPW = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
+        //WORLD.displayNear_TMYEPW = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
   
-        Display_CWEEDS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CWEEDS_Points", Display_CWEEDS_Points, 0, 2, 1), 1));
-        //Display_CWEEDS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CWEEDS_Nearest", Display_CWEEDS_Nearest, 0, 1, 1), 1));
+        WORLD.displayAll_CWEEDS = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1), 1));
+        //WORLD.displayNear_CWEEDS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
   
-        Display_CLMREC_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CLMREC_Points", Display_CLMREC_Points, 0, 2, 1), 1));
-        //Display_CLMREC_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_CLMREC_Nearest", Display_CLMREC_Nearest, 0, 1, 1), 1));
+        WORLD.displayAll_CLMREC = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1), 1));
+        //WORLD.displayNear_CLMREC = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
   
-        Display_SWOB_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_SWOB_Points", Display_SWOB_Points, 0, 2, 1), 1));
-        //Display_SWOB_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_SWOB_Nearest", Display_SWOB_Nearest, 0, 1, 1), 1));
+        WORLD.displayAll_SWOB = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1), 1));
+        //WORLD.displayNear_SWOB = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
   
-        Display_NAEFS_Points = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Points", Display_NAEFS_Points, 0, 2, 1), 1));
-        //Display_NAEFS_Nearest = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Display_NAEFS_Nearest", Display_NAEFS_Nearest, 0, 1, 1), 1));
+        WORLD.displayAll_NAEFS = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
+        //WORLD.displayNear_NAEFS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
   
         
         //ENSEMBLE_FORECAST_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
@@ -8100,20 +8136,7 @@ int CreateInput_MeshOrSolid = 0; // 0:Mesh 1:Solid
 
 
 
-int     Display_SWOB_Points = 0; // 0-2
-boolean Display_SWOB_Nearest = false;
 
-int     Display_NAEFS_Points = 0; // 0-2
-boolean Display_NAEFS_Nearest = false;
-
-int     Display_CWEEDS_Points = 0; // 0-2
-boolean Display_CWEEDS_Nearest = false;
-
-int     Display_CLMREC_Points = 0; // 0-2
-boolean Display_CLMREC_Nearest = false;
-
-int     Display_TMYEPW_Points = 1; // 0-2
-boolean Display_TMYEPW_Nearest = false;
 
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_JPG = false;
@@ -41550,8 +41573,8 @@ void mouseClicked () {
               ROLLOUT.update = true;
               UI_BAR_d_update = true;    
 
-              Display_TMYEPW_Points = 1;
-              Display_TMYEPW_Nearest = true;  
+              WORLD.displayAll_TMYEPW = 1;
+              WORLD.displayNear_TMYEPW = true;  
             } 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
@@ -41561,8 +41584,8 @@ void mouseClicked () {
               ROLLOUT.update = true;
               UI_BAR_d_update = true;    
 
-              Display_CWEEDS_Points = 1;
-              Display_CWEEDS_Nearest = true;                
+              WORLD.displayAll_CWEEDS = 1;
+              WORLD.displayNear_CWEEDS = true;                
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Long-term (CLMREC)")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
@@ -41572,8 +41595,8 @@ void mouseClicked () {
               ROLLOUT.update = true;
               UI_BAR_d_update = true; 
 
-              Display_CLMREC_Points = 1;
-              Display_CLMREC_Nearest = true;   
+              WORLD.displayAll_CLMREC = 1;
+              WORLD.displayNear_CLMREC = true;   
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
@@ -41583,8 +41606,8 @@ void mouseClicked () {
               ROLLOUT.update = true;
               UI_BAR_d_update = true;      
   
-              Display_SWOB_Points = 1;
-              Display_SWOB_Nearest = true;             
+              WORLD.displayAll_SWOB = 1;
+              WORLD.displayNear_SWOB = true;             
             }                  
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
@@ -41594,8 +41617,8 @@ void mouseClicked () {
               ROLLOUT.update = true;
               UI_BAR_d_update = true;     
  
-              Display_NAEFS_Points = 1;
-              Display_NAEFS_Nearest = true;                 
+              WORLD.displayAll_NAEFS = 1;
+              WORLD.displayNear_NAEFS = true;                 
             } 
      
             
@@ -41932,61 +41955,61 @@ void mouseClicked () {
             }              
 
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide SWOB points")) {
-              Display_SWOB_Points = (Display_SWOB_Points + 1) % 2;
+              WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
-              Display_SWOB_Nearest = !Display_SWOB_Nearest;
+              WORLD.displayNear_SWOB = !WORLD.displayNear_SWOB;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
-              Display_NAEFS_Points = (Display_NAEFS_Points + 1) % 2;
+              WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
-              Display_NAEFS_Nearest = !Display_NAEFS_Nearest;
+              WORLD.displayNear_NAEFS = !WORLD.displayNear_NAEFS;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
-              Display_CWEEDS_Points = (Display_CWEEDS_Points + 1) % 2;
+              WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
-              Display_CWEEDS_Nearest = !Display_CWEEDS_Nearest;
+              WORLD.displayNear_CWEEDS = !WORLD.displayNear_CWEEDS;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CLMREC points")) {
-              Display_CLMREC_Points = (Display_CLMREC_Points + 1) % 2;
+              WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide CLMREC nearest")) {
-              Display_CLMREC_Nearest = !Display_CLMREC_Nearest;
+              WORLD.displayNear_CLMREC = !WORLD.displayNear_CLMREC;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }            
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide TMYEPW points")) {
-              Display_TMYEPW_Points = (Display_TMYEPW_Points + 1) % 2;
+              WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
             }
             if (UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child].equals("Display/Hide TMYEPW nearest")) {
-              Display_TMYEPW_Nearest = !Display_TMYEPW_Nearest;
+              WORLD.displayNear_TMYEPW = !WORLD.displayNear_TMYEPW;
 
               WORLD.update = true;  
               ROLLOUT.update = true;
@@ -45064,8 +45087,8 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
     SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
     SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
     
-    Display_NAEFS_Points = 1;
-    Display_NAEFS_Nearest = true;     
+    WORLD.displayAll_NAEFS = 1;
+    WORLD.displayNear_NAEFS = true;     
   }
   
   WORLD.update = true;
@@ -50214,61 +50237,61 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide SWOB points")) {
-                if (Display_SWOB_Points == 0) {
+                if (WORLD.displayAll_SWOB == 0) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide SWOB nearest")) {
-                if (Display_SWOB_Nearest == false) {
+                if (WORLD.displayNear_SWOB == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide NAEFS points")) {
-                if (Display_NAEFS_Points == 0) {
+                if (WORLD.displayAll_NAEFS == 0) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide NAEFS nearest")) {
-                if (Display_NAEFS_Nearest == false) {
+                if (WORLD.displayNear_NAEFS == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide CWEEDS points")) {
-                if (Display_CWEEDS_Points == 0) {
+                if (WORLD.displayAll_CWEEDS == 0) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide CWEEDS nearest")) {
-                if (Display_CWEEDS_Nearest == false) {
+                if (WORLD.displayNear_CWEEDS == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide CLMREC points")) {
-                if (Display_CLMREC_Points == 0) {
+                if (WORLD.displayAll_CLMREC == 0) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide CLMREC nearest")) {
-                if (Display_CLMREC_Nearest == false) {
+                if (WORLD.displayNear_CLMREC == false) {
                   stroke(127); 
                   fill(127);
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide TMYEPW points")) {
-                if (Display_TMYEPW_Points == 0) {
+                if (WORLD.displayAll_TMYEPW == 0) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide TMYEPW nearest")) {
-                if (Display_TMYEPW_Nearest == false) {
+                if (WORLD.displayNear_TMYEPW == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -52305,17 +52328,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("CreateInput_MeshOrSolid", CreateInput_MeshOrSolid);
 
   
-    parent.setInt("Display_SWOB_Points", Display_SWOB_Points);
-    parent.setInt("Display_NAEFS_Points", Display_NAEFS_Points);
-    parent.setInt("Display_CWEEDS_Points", Display_CWEEDS_Points);
-    parent.setInt("Display_CLMREC_Points", Display_CLMREC_Points);
-    parent.setInt("Display_TMYEPW_Points", Display_TMYEPW_Points);
-    
-    parent.setString("Display_SWOB_Nearest", Boolean.toString(Display_SWOB_Nearest));
-    parent.setString("Display_NAEFS_Nearest", Boolean.toString(Display_NAEFS_Nearest));
-    parent.setString("Display_CWEEDS_Nearest", Boolean.toString(Display_CWEEDS_Nearest));
-    parent.setString("Display_CLMREC_Nearest", Boolean.toString(Display_CLMREC_Nearest));
-    parent.setString("Display_TMYEPW_Nearest", Boolean.toString(Display_TMYEPW_Nearest));
+
   
   
     parent.setFloat("GlobalAlbedo", GlobalAlbedo);
@@ -52455,10 +52468,6 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("SolarImpact_RES1", SolarImpact_RES1);
     parent.setInt("SolarImpact_RES2", SolarImpact_RES2);
     parent.setFloat("SolarImpact_Elevation", SolarImpact_Elevation);
-  
-
-  
-  
 
   
     parent.setInt("addToLastGroup", addToLastGroup);
@@ -52614,17 +52623,7 @@ void SOLARCHVISION_load_project (String myFile) {
       CreateInput_MeshOrSolid = parent.getInt("CreateInput_MeshOrSolid");
 
   
-      Display_SWOB_Points = parent.getInt("Display_SWOB_Points");
-      Display_NAEFS_Points = parent.getInt("Display_NAEFS_Points");
-      Display_CWEEDS_Points = parent.getInt("Display_CWEEDS_Points");
-      Display_CLMREC_Points = parent.getInt("Display_CLMREC_Points");
-      Display_TMYEPW_Points = parent.getInt("Display_TMYEPW_Points");
-  
-      Display_SWOB_Nearest = Boolean.parseBoolean(parent.getString("Display_SWOB_Nearest"));
-      Display_NAEFS_Nearest = Boolean.parseBoolean(parent.getString("Display_NAEFS_Nearest"));
-      Display_CWEEDS_Nearest = Boolean.parseBoolean(parent.getString("Display_CWEEDS_Nearest"));
-      Display_CLMREC_Nearest = Boolean.parseBoolean(parent.getString("Display_CLMREC_Nearest"));      
-      Display_TMYEPW_Nearest = Boolean.parseBoolean(parent.getString("Display_TMYEPW_Nearest"));
+
   
       GlobalAlbedo = parent.getFloat("GlobalAlbedo");
       Interpolation_Weight = parent.getFloat("Interpolation_Weight");
@@ -52687,23 +52686,6 @@ void SOLARCHVISION_load_project (String myFile) {
       Develop_DayHour = parent.getInt("Develop_DayHour");
       //DevelopData_update = Boolean.parseBoolean(parent.getString("DevelopData_update"));
       numberOfLayers = parent.getInt("numberOfLayers");
-      LAYER_windspd200hPa.id = parent.getInt("LAYER_windspd200hPa.id");
-      LAYER_thicknesses_1000_500.id = parent.getInt("LAYER_thicknesses_1000_500.id");
-      LAYER_heightp500hPa.id = parent.getInt("LAYER_heightp500hPa.id");
-      LAYER_ceilingsky.id = parent.getInt("LAYER_ceilingsky.id");
-      LAYER_cloudcover.id = parent.getInt("LAYER_cloudcover.id");
-      LAYER_winddir.id = parent.getInt("LAYER_winddir.id");
-      LAYER_windspd.id = parent.getInt("LAYER_windspd.id");
-      LAYER_pressure.id = parent.getInt("LAYER_pressure.id");
-      LAYER_drybulb.id = parent.getInt("LAYER_drybulb.id");
-      LAYER_relhum.id = parent.getInt("LAYER_relhum.id");
-      LAYER_dirnorrad.id = parent.getInt("LAYER_dirnorrad.id");
-      LAYER_difhorrad.id = parent.getInt("LAYER_difhorrad.id");
-      LAYER_glohorrad.id = parent.getInt("LAYER_glohorrad.id");
-      LAYER_direffect.id = parent.getInt("LAYER_direffect.id");
-      LAYER_difeffect.id = parent.getInt("LAYER_difeffect.id");
-      LAYER_precipitation.id = parent.getInt("LAYER_precipitation.id");
-      LAYER_developed.id = parent.getInt("LAYER_developed.id");
       Develop_AngleInclination = parent.getFloat("Develop_AngleInclination");
       Develop_AngleOrientation = parent.getFloat("Develop_AngleOrientation");
       
