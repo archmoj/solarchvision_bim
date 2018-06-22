@@ -27555,9 +27555,6 @@ class solarchvision_USER {
     parent.setString("export_BackSides", Boolean.toString(this.export_BackSides));
     parent.setInt("export_PalletResolution", this.export_PalletResolution);
 
-
-
-
   }
   
   
@@ -27616,6 +27613,7 @@ class solarchvision_USER {
     this.export_MaterialLibrary  = Boolean.parseBoolean(parent.getString("export_MaterialLibrary"));
     this.export_BackSides = Boolean.parseBoolean(parent.getString("export_BackSides"));
     this.export_PalletResolution = parent.getInt("export_PalletResolution");    
+    
   }      
   
   
@@ -52563,24 +52561,8 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setString("Default_Font", Default_Font);
   }
 
-  LAYER_windspd200hPa.to_XML(xml);
-  LAYER_thicknesses_1000_500.to_XML(xml);
-  LAYER_heightp500hPa.to_XML(xml);
-  LAYER_ceilingsky.to_XML(xml);
-  LAYER_cloudcover.to_XML(xml);
-  LAYER_winddir.to_XML(xml);
-  LAYER_windspd.to_XML(xml);
-  LAYER_pressure.to_XML(xml);
-  LAYER_drybulb.to_XML(xml);
-  LAYER_relhum.to_XML(xml);
-  LAYER_dirnorrad.to_XML(xml);
-  LAYER_difhorrad.to_XML(xml);
-  LAYER_glohorrad.to_XML(xml);
-  LAYER_direffect.to_XML(xml);
-  LAYER_difeffect.to_XML(xml);
-  LAYER_precipitation.to_XML(xml);
-  LAYER_developed.to_XML(xml);
 
+  STATION.to_XML(xml);
   
   allPoints.to_XML(xml);
 
@@ -52624,7 +52606,23 @@ void SOLARCHVISION_save_project (String myFile) {
   
   USER.to_XML(xml);
   
-  STATION.to_XML(xml);
+  LAYER_windspd200hPa.to_XML(xml);
+  LAYER_thicknesses_1000_500.to_XML(xml);
+  LAYER_heightp500hPa.to_XML(xml);
+  LAYER_ceilingsky.to_XML(xml);
+  LAYER_cloudcover.to_XML(xml);
+  LAYER_winddir.to_XML(xml);
+  LAYER_windspd.to_XML(xml);
+  LAYER_pressure.to_XML(xml);
+  LAYER_drybulb.to_XML(xml);
+  LAYER_relhum.to_XML(xml);
+  LAYER_dirnorrad.to_XML(xml);
+  LAYER_difhorrad.to_XML(xml);
+  LAYER_glohorrad.to_XML(xml);
+  LAYER_direffect.to_XML(xml);
+  LAYER_difeffect.to_XML(xml);
+  LAYER_precipitation.to_XML(xml);
+  LAYER_developed.to_XML(xml);  
 
   saveXML(xml, myFile);    
 
@@ -52820,24 +52818,8 @@ void SOLARCHVISION_load_project (String myFile) {
       } 
     }
   
-    LAYER_windspd200hPa.from_XML(xml);
-    LAYER_thicknesses_1000_500.from_XML(xml);
-    LAYER_heightp500hPa.from_XML(xml);
-    LAYER_ceilingsky.from_XML(xml);
-    LAYER_cloudcover.from_XML(xml);
-    LAYER_winddir.from_XML(xml);
-    LAYER_windspd.from_XML(xml);
-    LAYER_pressure.from_XML(xml);
-    LAYER_drybulb.from_XML(xml);
-    LAYER_relhum.from_XML(xml);
-    LAYER_dirnorrad.from_XML(xml);
-    LAYER_difhorrad.from_XML(xml);
-    LAYER_glohorrad.from_XML(xml);
-    LAYER_direffect.from_XML(xml);
-    LAYER_difeffect.from_XML(xml);
-    LAYER_precipitation.from_XML(xml);
-    LAYER_developed.from_XML(xml);
-    
+
+    STATION.from_XML(xml);
     
     allPoints.from_XML(xml);
     
@@ -52881,10 +52863,23 @@ void SOLARCHVISION_load_project (String myFile) {
     
     USER.from_XML(xml);
     
-    STATION.from_XML(xml);
-    
-    
-
+    LAYER_windspd200hPa.from_XML(xml);
+    LAYER_thicknesses_1000_500.from_XML(xml);
+    LAYER_heightp500hPa.from_XML(xml);
+    LAYER_ceilingsky.from_XML(xml);
+    LAYER_cloudcover.from_XML(xml);
+    LAYER_winddir.from_XML(xml);
+    LAYER_windspd.from_XML(xml);
+    LAYER_pressure.from_XML(xml);
+    LAYER_drybulb.from_XML(xml);
+    LAYER_relhum.from_XML(xml);
+    LAYER_dirnorrad.from_XML(xml);
+    LAYER_difhorrad.from_XML(xml);
+    LAYER_glohorrad.from_XML(xml);
+    LAYER_direffect.from_XML(xml);
+    LAYER_difeffect.from_XML(xml);
+    LAYER_precipitation.from_XML(xml);
+    LAYER_developed.from_XML(xml);
   
     println("End of loading XML.");
   
