@@ -52379,23 +52379,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("Develop_DayHour", Develop_DayHour);
     parent.setString("DevelopData_update", Boolean.toString(DevelopData_update));
     parent.setInt("numberOfLayers", numberOfLayers);
-    parent.setInt("LAYER_windspd200hPa.id", LAYER_windspd200hPa.id);
-    parent.setInt("LAYER_thicknesses_1000_500.id", LAYER_thicknesses_1000_500.id);
-    parent.setInt("LAYER_heightp500hPa.id", LAYER_heightp500hPa.id);
-    parent.setInt("LAYER_ceilingsky.id", LAYER_ceilingsky.id);
-    parent.setInt("LAYER_cloudcover.id", LAYER_cloudcover.id);
-    parent.setInt("LAYER_winddir.id", LAYER_winddir.id);
-    parent.setInt("LAYER_windspd.id", LAYER_windspd.id);
-    parent.setInt("LAYER_pressure.id", LAYER_pressure.id);
-    parent.setInt("LAYER_drybulb.id", LAYER_drybulb.id);
-    parent.setInt("LAYER_relhum.id", LAYER_relhum.id);
-    parent.setInt("LAYER_dirnorrad.id", LAYER_dirnorrad.id);
-    parent.setInt("LAYER_difhorrad.id", LAYER_difhorrad.id);
-    parent.setInt("LAYER_glohorrad.id", LAYER_glohorrad.id);
-    parent.setInt("LAYER_direffect.id", LAYER_direffect.id);
-    parent.setInt("LAYER_difeffect.id", LAYER_difeffect.id);
-    parent.setInt("LAYER_precipitation.id", LAYER_precipitation.id);
-    parent.setInt("LAYER_developed.id", LAYER_developed.id);
+
     parent.setFloat("Develop_AngleInclination", Develop_AngleInclination);
     parent.setFloat("Develop_AngleOrientation", Develop_AngleOrientation);
     parent.setInt("CurrentLayer_id", CurrentLayer_id);
@@ -52492,8 +52476,24 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setString("Default_Font", Default_Font);
   }
 
+  LAYER_windspd200hPa.to_XML(xml);
+  LAYER_thicknesses_1000_500.to_XML(xml);
+  LAYER_heightp500hPa.to_XML(xml);
+  LAYER_ceilingsky.to_XML(xml);
+  LAYER_cloudcover.to_XML(xml);
+  LAYER_winddir.to_XML(xml);
+  LAYER_windspd.to_XML(xml);
+  LAYER_pressure.to_XML(xml);
+  LAYER_drybulb.to_XML(xml);
+  LAYER_relhum.to_XML(xml);
+  LAYER_dirnorrad.to_XML(xml);
+  LAYER_difhorrad.to_XML(xml);
+  LAYER_glohorrad.to_XML(xml);
+  LAYER_direffect.to_XML(xml);
+  LAYER_difeffect.to_XML(xml);
+  LAYER_precipitation.to_XML(xml);
+  LAYER_developed.to_XML(xml);
 
-  
   
   allPoints.to_XML(xml);
 
@@ -52782,11 +52782,6 @@ void SOLARCHVISION_load_project (String myFile) {
       SolarImpact_RES2 = parent.getInt("SolarImpact_RES2");
       SolarImpact_Elevation = parent.getFloat("SolarImpact_Elevation");
   
-
-
-
-
-  
   
       addToLastGroup = parent.getInt("addToLastGroup");      
   
@@ -52813,7 +52808,23 @@ void SOLARCHVISION_load_project (String myFile) {
       } 
     }
   
-
+    LAYER_windspd200hPa.from_XML(xml);
+    LAYER_thicknesses_1000_500.from_XML(xml);
+    LAYER_heightp500hPa.from_XML(xml);
+    LAYER_ceilingsky.from_XML(xml);
+    LAYER_cloudcover.from_XML(xml);
+    LAYER_winddir.from_XML(xml);
+    LAYER_windspd.from_XML(xml);
+    LAYER_pressure.from_XML(xml);
+    LAYER_drybulb.from_XML(xml);
+    LAYER_relhum.from_XML(xml);
+    LAYER_dirnorrad.from_XML(xml);
+    LAYER_difhorrad.from_XML(xml);
+    LAYER_glohorrad.from_XML(xml);
+    LAYER_direffect.from_XML(xml);
+    LAYER_difeffect.from_XML(xml);
+    LAYER_precipitation.from_XML(xml);
+    LAYER_developed.from_XML(xml);
     
     
     allPoints.from_XML(xml);
