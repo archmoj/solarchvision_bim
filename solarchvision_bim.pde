@@ -11641,12 +11641,12 @@ class solarchvision_SolarImpacts {
   
   void resize_Image_array () {
   
-    allSolarImpacts.Image = new PImage [2][(1 + STUDY.j_End - STUDY.j_Start)];
+    this.Image = new PImage [2][(1 + STUDY.j_End - STUDY.j_Start)];
   
-    for (int i = 0; i < allSolarImpacts.Image.length; i++) {
+    for (int i = 0; i < this.Image.length; i++) {
       for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) { // total image at j = -1 
     
-        allSolarImpacts.Image[i][j + 1] = createImage(2, 2, RGB); // empty and small
+        this.Image[i][j + 1] = createImage(2, 2, RGB); // empty and small
       }  
     }
   
@@ -11654,7 +11654,7 @@ class solarchvision_SolarImpacts {
   }
 
   
-  void calculate_solarImpact_CurrentPreBaked () {
+  void calculate_Impact_CurrentPreBaked () {
   
     if (rebuild_SolarImpactImage_array != 0) {
       this.resize_Image_array();
@@ -12136,7 +12136,7 @@ class solarchvision_SolarImpacts {
   
       SceneName = "Section_" + Section_Stamp();
   
-      this.calculate_solarImpact_CurrentPreBaked();
+      this.calculate_Impact_CurrentPreBaked();
       
       
       for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
