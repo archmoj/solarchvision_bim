@@ -15896,6 +15896,1503 @@ class solarchvision_Selections {
   
   
   
+  void selectPick (float[] RxP) {
+    
+    if (addNewSelectionToPreviousSelection == 0) allModel3Ds.deselect_All();
+  
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.LandPoint_ids.length - 1; o >= 0; o--) {
+          if (this.LandPoint_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.LandPoint_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.LandPoint_ids, found_at + 1);
+  
+        this.LandPoint_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.LandPoint_ids = (int[]) concat(this.LandPoint_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
+          if (this.Model1D_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Model1D_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Model1D_ids, found_at + 1);
+  
+        this.Model1D_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
+          if (this.Model2D_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Model2D_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Model2D_ids, found_at + 1);
+  
+        this.Model2D_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Model2D_ids = (int[]) concat(this.Model2D_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+  
+      int f = int(RxP[0]);
+  
+      int OBJ_NUM = 0;
+  
+      for (int i = 0; i < allGroups.num; i++) {
+        if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
+  
+          OBJ_NUM = i;
+  
+          WIN3D.update = true;
+          break;
+        }
+      }
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Group_ids.length - 1; o >= 0; o--) {
+          if (this.Group_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Group_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Group_ids, found_at + 1);
+  
+        this.Group_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Group_ids = (int[]) concat(this.Group_ids, newObject_id);
+      }
+  
+  
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Face_ids.length - 1; o >= 0; o--) {
+          if (this.Face_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Face_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Face_ids, found_at + 1);
+  
+        this.Face_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Face_ids = (int[]) concat(this.Face_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
+          if (this.Curve_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Curve_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Curve_ids, found_at + 1);
+  
+        this.Curve_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Curve_ids = (int[]) concat(this.Curve_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+    
+  
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+  
+      int f = int(RxP[0]);
+  
+      int OBJ_NUM = 0;
+      float min_dist = FLOAT_undefined;  
+  
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
+        int vNo = allFaces.nodes[f][j];
+  
+        float x = allPoints.getX(vNo);
+        float y = allPoints.getY(vNo);          
+        float z = allPoints.getZ(vNo);
+  
+        float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
+  
+        if (min_dist > now_dist) {
+          min_dist = now_dist;
+          OBJ_NUM = vNo;
+        }
+      }
+  
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Vertex_ids.length - 1; o >= 0; o--) {
+          if (this.Vertex_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Vertex_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Vertex_ids, found_at + 1);
+  
+        this.Vertex_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Vertex_ids = (int[]) concat(this.Vertex_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+  
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Solid_ids.length - 1; o >= 0; o--) {
+          if (this.Solid_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Solid_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Solid_ids, found_at + 1);
+  
+        this.Solid_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Solid_ids = (int[]) concat(this.Solid_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+  
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Section_ids.length - 1; o >= 0; o--) {
+          if (this.Section_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Section_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Section_ids, found_at + 1);
+  
+        this.Section_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Section_ids = (int[]) concat(this.Section_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+  
+      int OBJ_NUM = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Camera_ids.length - 1; o >= 0; o--) {
+          if (this.Camera_ids[o] == OBJ_NUM) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Camera_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Camera_ids, found_at + 1);
+  
+        this.Camera_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_NUM
+        };
+  
+        this.Camera_ids = (int[]) concat(this.Camera_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_selection_BoundingBox();
+    }
+  }
+  
+  
+  void selectRect (float corner1x, float corner1y, float corner2x, float corner2y) {
+  
+    if (addNewSelectionToPreviousSelection == 0) allModel3Ds.deselect_All();
+  
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < Land3D.num_rows * Land3D.num_columns; OBJ_NUM++) {
+  
+        int i = OBJ_NUM / Land3D.num_columns;
+        int j = OBJ_NUM % Land3D.num_columns;      
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!  
+  
+          float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
+          float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
+          float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }
+        }        
+  
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.LandPoint_ids.length - 1; o >= 0; o--) {
+              if (this.LandPoint_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.LandPoint_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.LandPoint_ids, found_at + 1);
+  
+            this.LandPoint_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.LandPoint_ids = (int[]) concat(this.LandPoint_ids, newObject_id);
+          }
+        }
+      }
+    }   
+  
+  
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allModel1Ds.Faces.length; OBJ_NUM++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        int f = OBJ_NUM;
+  
+        for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
+  
+          int vNo = allModel1Ds.Faces[f][j];
+  
+          float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                  
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
+              if (this.Model1D_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Model1D_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Model1D_ids, found_at + 1);
+  
+            this.Model1D_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
+          }
+        }
+      }
+    }    
+  
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+  
+          if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+          if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+          for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+            if ((0 <= f) && (f < allFaces.nodes.length)) { 
+  
+              for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                int vNo = allFaces.nodes[f][j];
+  
+                float x = allPoints.getX(vNo) * OBJECTS_scale;
+                float y = allPoints.getY(vNo) * OBJECTS_scale;            
+                float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+  
+                float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                    if (mouseButton == RIGHT) {
+                      include_OBJ_in_newSelection = 1;
+                      break_loops = 1;
+                    }
+                  } else {
+                    if (mouseButton == LEFT) {
+                      include_OBJ_in_newSelection = 0;
+                      break_loops = 1;
+                    }
+                  }
+                } else {
+                  if (mouseButton == LEFT) {
+                    include_OBJ_in_newSelection = 0;
+                    break_loops = 1;
+                  }
+                }                        
+  
+                if (break_loops == 1) break;
+              }
+  
+              if (break_loops == 1) break;
+            }
+          }
+        }
+        
+        if (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1]) {
+  
+          if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+          if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+          for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+            if ((0 <= f) && (f < allCurves.nodes.length)) { 
+  
+              for (int j = 0; j < allCurves.nodes[f].length; j++) {
+                int vNo = allCurves.nodes[f][j];
+  
+                float x = allPoints.getX(vNo) * OBJECTS_scale;
+                float y = allPoints.getY(vNo) * OBJECTS_scale;            
+                float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+  
+                float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                    if (mouseButton == RIGHT) {
+                      include_OBJ_in_newSelection = 1;
+                      break_loops = 1;
+                    }
+                  } else {
+                    if (mouseButton == LEFT) {
+                      include_OBJ_in_newSelection = 0;
+                      break_loops = 1;
+                    }
+                  }
+                } else {
+                  if (mouseButton == LEFT) {
+                    include_OBJ_in_newSelection = 0;
+                    break_loops = 1;
+                  }
+                }                        
+  
+                if (break_loops == 1) break;
+              }
+  
+              if (break_loops == 1) break;
+            }
+          }
+        }      
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Group_ids.length - 1; o >= 0; o--) {
+              if (this.Group_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Group_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Group_ids, found_at + 1);
+  
+            this.Group_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Group_ids = (int[]) concat(this.Group_ids, newObject_id);
+          }
+        }
+      }
+    }
+  
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allFaces.nodes.length; OBJ_NUM++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        for (int j = 0; j < allFaces.nodes[OBJ_NUM].length; j++) {
+          int vNo = allFaces.nodes[OBJ_NUM][j];
+  
+          float x = allPoints.getX(vNo) * OBJECTS_scale;
+          float y = allPoints.getY(vNo) * OBJECTS_scale;            
+          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                        
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Face_ids.length - 1; o >= 0; o--) {
+              if (this.Face_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Face_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Face_ids, found_at + 1);
+  
+            this.Face_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Face_ids = (int[]) concat(this.Face_ids, newObject_id);
+          }
+        }
+      }
+    }                
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allCurves.nodes.length; OBJ_NUM++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        for (int j = 0; j < allCurves.nodes[OBJ_NUM].length; j++) {
+          int vNo = allCurves.nodes[OBJ_NUM][j];
+  
+          float x = allPoints.getX(vNo) * OBJECTS_scale;
+          float y = allPoints.getY(vNo) * OBJECTS_scale;            
+          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                        
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
+              if (this.Curve_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Curve_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Curve_ids, found_at + 1);
+  
+            this.Curve_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Curve_ids = (int[]) concat(this.Curve_ids, newObject_id);
+          }
+        }
+      }
+    }    
+  
+  
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allPoints.getLength(); OBJ_NUM++) {
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        float x = allPoints.getX(OBJ_NUM) * OBJECTS_scale;
+        float y = allPoints.getY(OBJ_NUM) * OBJECTS_scale;            
+        float z = -allPoints.getZ(OBJ_NUM) * OBJECTS_scale;
+  
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (mouseButton == RIGHT) {
+              include_OBJ_in_newSelection = 1;
+            }
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+            }
+          }
+        } else {
+          if (mouseButton == LEFT) {
+            include_OBJ_in_newSelection = 0;
+          }
+        }                        
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Vertex_ids.length - 1; o >= 0; o--) {
+              if (this.Vertex_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Vertex_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Vertex_ids, found_at + 1);
+  
+            this.Vertex_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Vertex_ids = (int[]) concat(this.Vertex_ids, newObject_id);
+          }
+        }
+      }
+    }             
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+  
+      for (int f = 0; f < allModel2Ds.Faces.length; f++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        int OBJ_NUM = f / allModel2Ds.num_visualFaces;
+  
+        //println(f, OBJ_NUM);
+  
+        for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
+  
+          int vNo = allModel2Ds.Faces[f][j];
+  
+          float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                  
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
+              if (this.Model2D_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Model2D_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Model2D_ids, found_at + 1);
+  
+            this.Model2D_ids = (int[]) concat(startList, endList);
+          }
+  
+  
+  
+          if (use_it == 1) {
+            
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Model2D_ids = (int[]) concat(this.Model2D_ids, newObject_id);
+            
+            // skip the same object's drawn faces
+            f += allModel2Ds.num_visualFaces - (f % allModel2Ds.num_visualFaces) - 1;
+          }
+        }
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+  
+      for (int f = 0; f < allSolids.Faces.length; f++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        int OBJ_NUM = f / allSolids.num_visualFaces;
+  
+        //println(f, OBJ_NUM);
+  
+        for (int j = 0; j < allSolids.Faces[f].length; j++) {
+  
+          int vNo = allSolids.Faces[f][j];
+  
+          float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                  
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Solid_ids.length - 1; o >= 0; o--) {
+              if (this.Solid_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Solid_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Solid_ids, found_at + 1);
+  
+            this.Solid_ids = (int[]) concat(startList, endList);
+          }
+  
+  
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Solid_ids = (int[]) concat(this.Solid_ids, newObject_id);
+            
+            // skip the same object's drawn faces
+            f += allSolids.num_visualFaces - (f % allSolids.num_visualFaces) - 1;          
+          }
+        }
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allSections.Faces.length; OBJ_NUM++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        int f = OBJ_NUM;
+  
+        for (int j = 0; j < allSections.Faces[f].length; j++) {
+  
+          int vNo = allSections.Faces[f][j];
+  
+          float x = allSections.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                  
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Section_ids.length - 1; o >= 0; o--) {
+              if (this.Section_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Section_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Section_ids, found_at + 1);
+  
+            this.Section_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Section_ids = (int[]) concat(this.Section_ids, newObject_id);
+          }
+        }
+      }
+    }  
+  
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+  
+      for (int OBJ_NUM = 0; OBJ_NUM < allCameras.Faces.length; OBJ_NUM++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        int f = OBJ_NUM;
+  
+        for (int j = 0; j < allCameras.Faces[f].length; j++) {
+  
+          int vNo = allCameras.Faces[f][j];
+  
+          float x = allCameras.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                  
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Camera_ids.length - 1; o >= 0; o--) {
+              if (this.Camera_ids[o] == OBJ_NUM) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Camera_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Camera_ids, found_at + 1);
+  
+            this.Camera_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_NUM
+            };
+  
+            this.Camera_ids = (int[]) concat(this.Camera_ids, newObject_id);
+          }
+        }
+      }
+    }
+  }
+  
   
   
 
@@ -39265,1502 +40762,10 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
 
 
 
-void SOLARCHVISION_PickSelect (float[] RxP) {
-  
-  if (addNewSelectionToPreviousSelection == 0) allModel3Ds.deselect_All();
 
 
-  if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
 
-    int OBJ_NUM = int(RxP[0]);
 
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.LandPoint_ids.length - 1; o >= 0; o--) {
-        if (userSelections.LandPoint_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.LandPoint_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.LandPoint_ids, found_at + 1);
-
-      userSelections.LandPoint_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.LandPoint_ids = (int[]) concat(userSelections.LandPoint_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-
-  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Model1D_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Model1D_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Model1D_ids, found_at + 1);
-
-      userSelections.Model1D_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Model1D_ids = (int[]) concat(userSelections.Model1D_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-
-  if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Model2D_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Model2D_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Model2D_ids, found_at + 1);
-
-      userSelections.Model2D_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Model2D_ids = (int[]) concat(userSelections.Model2D_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-
-  if (current_ObjectCategory == ObjectCategory.GROUP) {
-
-    int f = int(RxP[0]);
-
-    int OBJ_NUM = 0;
-
-    for (int i = 0; i < allGroups.num; i++) {
-      if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
-
-        OBJ_NUM = i;
-
-        WIN3D.update = true;
-        break;
-      }
-    }
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Group_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Group_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Group_ids, found_at + 1);
-
-      userSelections.Group_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Group_ids = (int[]) concat(userSelections.Group_ids, newObject_id);
-    }
-
-
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-  if (current_ObjectCategory == ObjectCategory.FACE) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Face_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Face_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Face_ids, found_at + 1);
-
-      userSelections.Face_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Face_ids = (int[]) concat(userSelections.Face_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-  if (current_ObjectCategory == ObjectCategory.CURVE) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Curve_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Curve_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Curve_ids, found_at + 1);
-
-      userSelections.Curve_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Curve_ids = (int[]) concat(userSelections.Curve_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-  
-
-  if (current_ObjectCategory == ObjectCategory.VERTEX) {
-
-    int f = int(RxP[0]);
-
-    int OBJ_NUM = 0;
-    float min_dist = FLOAT_undefined;  
-
-    for (int j = 0; j < allFaces.nodes[f].length; j++) {
-      int vNo = allFaces.nodes[f][j];
-
-      float x = allPoints.getX(vNo);
-      float y = allPoints.getY(vNo);          
-      float z = allPoints.getZ(vNo);
-
-      float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
-
-      if (min_dist > now_dist) {
-        min_dist = now_dist;
-        OBJ_NUM = vNo;
-      }
-    }
-
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Vertex_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Vertex_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Vertex_ids, found_at + 1);
-
-      userSelections.Vertex_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Vertex_ids = (int[]) concat(userSelections.Vertex_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-
-
-  if (current_ObjectCategory == ObjectCategory.SOLID) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Solid_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Solid_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Solid_ids, found_at + 1);
-
-      userSelections.Solid_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Solid_ids = (int[]) concat(userSelections.Solid_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-
-
-  if (current_ObjectCategory == ObjectCategory.SECTION) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Section_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Section_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Section_ids, found_at + 1);
-
-      userSelections.Section_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Section_ids = (int[]) concat(userSelections.Section_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-
-  if (current_ObjectCategory == ObjectCategory.CAMERA) {
-
-    int OBJ_NUM = int(RxP[0]);
-
-    int found_at = -1;
-
-    int use_it = 0; // 0:nothing 1:add -1:subtract
-
-    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-    if (addNewSelectionToPreviousSelection != 0) {
-
-      for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
-        if (userSelections.Camera_ids[o] == OBJ_NUM) {
-          found_at = o;
-          if (addNewSelectionToPreviousSelection == 1) {
-            use_it = 0;
-          }
-          if (addNewSelectionToPreviousSelection == -1) {
-            use_it = -1;
-          }
-          break;
-        }
-      }
-    }
-
-    if (use_it == -1) {
-      int[] startList = (int[]) subset(userSelections.Camera_ids, 0, found_at);
-      int[] endList = (int[]) subset(userSelections.Camera_ids, found_at + 1);
-
-      userSelections.Camera_ids = (int[]) concat(startList, endList);
-    }
-
-    if (use_it == 1) {
-      int[] newObject_id = {
-        OBJ_NUM
-      };
-
-      userSelections.Camera_ids = (int[]) concat(userSelections.Camera_ids, newObject_id);
-    }
-
-    WIN3D.update = true;
-
-    userSelections.calculate_selection_BoundingBox();
-  }
-}
-
-
-void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, float corner2y) {
-
-  if (addNewSelectionToPreviousSelection == 0) allModel3Ds.deselect_All();
-
-
-  if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < Land3D.num_rows * Land3D.num_columns; OBJ_NUM++) {
-
-      int i = OBJ_NUM / Land3D.num_columns;
-      int j = OBJ_NUM % Land3D.num_columns;      
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!  
-
-        float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
-        float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
-        float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-
-          if (break_loops == 1) break;
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }
-      }        
-
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.LandPoint_ids.length - 1; o >= 0; o--) {
-            if (userSelections.LandPoint_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.LandPoint_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.LandPoint_ids, found_at + 1);
-
-          userSelections.LandPoint_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.LandPoint_ids = (int[]) concat(userSelections.LandPoint_ids, newObject_id);
-        }
-      }
-    }
-  }   
-
-
-
-  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allModel1Ds.Faces.length; OBJ_NUM++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      int f = OBJ_NUM;
-
-      for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
-
-        int vNo = allModel1Ds.Faces[f][j];
-
-        float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-        float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-
-          if (break_loops == 1) break;
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                  
-
-        if (break_loops == 1) break;
-      }
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Model1D_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Model1D_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Model1D_ids, found_at + 1);
-
-          userSelections.Model1D_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Model1D_ids = (int[]) concat(userSelections.Model1D_ids, newObject_id);
-        }
-      }
-    }
-  }    
-
-
-  if (current_ObjectCategory == ObjectCategory.GROUP) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
-
-        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allFaces.nodes.length)) { 
-
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
-
-              float x = allPoints.getX(vNo) * OBJECTS_scale;
-              float y = allPoints.getY(vNo) * OBJECTS_scale;            
-              float z = -allPoints.getZ(vNo) * OBJECTS_scale;
-
-              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                  if (mouseButton == RIGHT) {
-                    include_OBJ_in_newSelection = 1;
-                    break_loops = 1;
-                  }
-                } else {
-                  if (mouseButton == LEFT) {
-                    include_OBJ_in_newSelection = 0;
-                    break_loops = 1;
-                  }
-                }
-              } else {
-                if (mouseButton == LEFT) {
-                  include_OBJ_in_newSelection = 0;
-                  break_loops = 1;
-                }
-              }                        
-
-              if (break_loops == 1) break;
-            }
-
-            if (break_loops == 1) break;
-          }
-        }
-      }
-      
-      if (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1]) {
-
-        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allCurves.nodes.length)) { 
-
-            for (int j = 0; j < allCurves.nodes[f].length; j++) {
-              int vNo = allCurves.nodes[f][j];
-
-              float x = allPoints.getX(vNo) * OBJECTS_scale;
-              float y = allPoints.getY(vNo) * OBJECTS_scale;            
-              float z = -allPoints.getZ(vNo) * OBJECTS_scale;
-
-              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                  if (mouseButton == RIGHT) {
-                    include_OBJ_in_newSelection = 1;
-                    break_loops = 1;
-                  }
-                } else {
-                  if (mouseButton == LEFT) {
-                    include_OBJ_in_newSelection = 0;
-                    break_loops = 1;
-                  }
-                }
-              } else {
-                if (mouseButton == LEFT) {
-                  include_OBJ_in_newSelection = 0;
-                  break_loops = 1;
-                }
-              }                        
-
-              if (break_loops == 1) break;
-            }
-
-            if (break_loops == 1) break;
-          }
-        }
-      }      
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Group_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Group_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Group_ids, found_at + 1);
-
-          userSelections.Group_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Group_ids = (int[]) concat(userSelections.Group_ids, newObject_id);
-        }
-      }
-    }
-  }
-
-
-  if (current_ObjectCategory == ObjectCategory.FACE) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allFaces.nodes.length; OBJ_NUM++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      for (int j = 0; j < allFaces.nodes[OBJ_NUM].length; j++) {
-        int vNo = allFaces.nodes[OBJ_NUM][j];
-
-        float x = allPoints.getX(vNo) * OBJECTS_scale;
-        float y = allPoints.getY(vNo) * OBJECTS_scale;            
-        float z = -allPoints.getZ(vNo) * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                        
-
-        if (break_loops == 1) break;
-      }
-
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Face_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Face_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Face_ids, found_at + 1);
-
-          userSelections.Face_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Face_ids = (int[]) concat(userSelections.Face_ids, newObject_id);
-        }
-      }
-    }
-  }                
-
-  if (current_ObjectCategory == ObjectCategory.CURVE) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allCurves.nodes.length; OBJ_NUM++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      for (int j = 0; j < allCurves.nodes[OBJ_NUM].length; j++) {
-        int vNo = allCurves.nodes[OBJ_NUM][j];
-
-        float x = allPoints.getX(vNo) * OBJECTS_scale;
-        float y = allPoints.getY(vNo) * OBJECTS_scale;            
-        float z = -allPoints.getZ(vNo) * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                        
-
-        if (break_loops == 1) break;
-      }
-
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Curve_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Curve_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Curve_ids, found_at + 1);
-
-          userSelections.Curve_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Curve_ids = (int[]) concat(userSelections.Curve_ids, newObject_id);
-        }
-      }
-    }
-  }    
-
-
-  if (current_ObjectCategory == ObjectCategory.VERTEX) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allPoints.getLength(); OBJ_NUM++) {
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      float x = allPoints.getX(OBJ_NUM) * OBJECTS_scale;
-      float y = allPoints.getY(OBJ_NUM) * OBJECTS_scale;            
-      float z = -allPoints.getZ(OBJ_NUM) * OBJECTS_scale;
-
-      float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-      if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-        if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-          if (mouseButton == RIGHT) {
-            include_OBJ_in_newSelection = 1;
-          }
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-          }
-        }
-      } else {
-        if (mouseButton == LEFT) {
-          include_OBJ_in_newSelection = 0;
-        }
-      }                        
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Vertex_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Vertex_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Vertex_ids, found_at + 1);
-
-          userSelections.Vertex_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Vertex_ids = (int[]) concat(userSelections.Vertex_ids, newObject_id);
-        }
-      }
-    }
-  }             
-
-  if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-
-    for (int f = 0; f < allModel2Ds.Faces.length; f++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      int OBJ_NUM = f / allModel2Ds.num_visualFaces;
-
-      //println(f, OBJ_NUM);
-
-      for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
-
-        int vNo = allModel2Ds.Faces[f][j];
-
-        float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-        float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-
-          if (break_loops == 1) break;
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                  
-
-        if (break_loops == 1) break;
-      }
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Model2D_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Model2D_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Model2D_ids, found_at + 1);
-
-          userSelections.Model2D_ids = (int[]) concat(startList, endList);
-        }
-
-
-
-        if (use_it == 1) {
-          
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Model2D_ids = (int[]) concat(userSelections.Model2D_ids, newObject_id);
-          
-          // skip the same object's drawn faces
-          f += allModel2Ds.num_visualFaces - (f % allModel2Ds.num_visualFaces) - 1;
-        }
-      }
-    }
-  }
-
-  if (current_ObjectCategory == ObjectCategory.SOLID) {
-
-    for (int f = 0; f < allSolids.Faces.length; f++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      int OBJ_NUM = f / allSolids.num_visualFaces;
-
-      //println(f, OBJ_NUM);
-
-      for (int j = 0; j < allSolids.Faces[f].length; j++) {
-
-        int vNo = allSolids.Faces[f][j];
-
-        float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
-        float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-
-          if (break_loops == 1) break;
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                  
-
-        if (break_loops == 1) break;
-      }
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Solid_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Solid_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Solid_ids, found_at + 1);
-
-          userSelections.Solid_ids = (int[]) concat(startList, endList);
-        }
-
-
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Solid_ids = (int[]) concat(userSelections.Solid_ids, newObject_id);
-          
-          // skip the same object's drawn faces
-          f += allSolids.num_visualFaces - (f % allSolids.num_visualFaces) - 1;          
-        }
-      }
-    }
-  }
-
-  if (current_ObjectCategory == ObjectCategory.SECTION) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allSections.Faces.length; OBJ_NUM++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      int f = OBJ_NUM;
-
-      for (int j = 0; j < allSections.Faces[f].length; j++) {
-
-        int vNo = allSections.Faces[f][j];
-
-        float x = allSections.Vertices[vNo][0] * OBJECTS_scale;
-        float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-
-          if (break_loops == 1) break;
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                  
-
-        if (break_loops == 1) break;
-      }
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Section_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Section_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Section_ids, found_at + 1);
-
-          userSelections.Section_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Section_ids = (int[]) concat(userSelections.Section_ids, newObject_id);
-        }
-      }
-    }
-  }  
-
-
-  if (current_ObjectCategory == ObjectCategory.CAMERA) {
-
-    for (int OBJ_NUM = 0; OBJ_NUM < allCameras.Faces.length; OBJ_NUM++) {
-
-      int break_loops = 0;
-
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
-      int f = OBJ_NUM;
-
-      for (int j = 0; j < allCameras.Faces[f].length; j++) {
-
-        int vNo = allCameras.Faces[f][j];
-
-        float x = allCameras.Vertices[vNo][0] * OBJECTS_scale;
-        float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
-
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }
-
-          if (break_loops == 1) break;
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }
-        }                  
-
-        if (break_loops == 1) break;
-      }
-
-
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
-            if (userSelections.Camera_ids[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
-              }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1;
-              }
-              break;
-            }
-          }
-        }
-
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(userSelections.Camera_ids, 0, found_at);
-          int[] endList = (int[]) subset(userSelections.Camera_ids, found_at + 1);
-
-          userSelections.Camera_ids = (int[]) concat(startList, endList);
-        }
-
-        if (use_it == 1) {
-          int[] newObject_id = {
-            OBJ_NUM
-          };
-
-          userSelections.Camera_ids = (int[]) concat(userSelections.Camera_ids, newObject_id);
-        }
-      }
-    }
-  }
-}
 
 
 
@@ -41367,7 +41372,7 @@ void mouseReleased () {
 
                 popMatrix();            
 
-                SOLARCHVISION_RectSelect(corner1x, corner1y, corner2x, corner2y);
+                userSelections.selectRect(corner1x, corner1y, corner2x, corner2y);
 
                 userSelections.calculate_selection_BoundingBox();
 
@@ -44905,7 +44910,7 @@ void mouseClicked () {
                     ROLLOUT.update = true;
                   } else if ((WIN3D.UI_CurrentTask != UITASK.Create) && (WIN3D.UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
   
-                    SOLARCHVISION_PickSelect(RxP);
+                    userSelections.selectPick(RxP);
                   }
                 }
   
