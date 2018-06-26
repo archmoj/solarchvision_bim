@@ -1,9 +1,5 @@
 
 
-
-
-// rebuild >> make them all boolean!
-
 //    allModel2Ds.add_onLand(1); // 1 = people
 
 //    allModel2Ds.add_onLand(2); // 2 = 2D trees
@@ -19274,7 +19270,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(STUDY.ImpactLayer / 3) + 1; //STUDY.ImpactLayer;    
 
       int target_window = TypeWindow.STUDY;
-      SOLARCHVISION_draw_SunPathCycles(x_Plot, y_Plot - (1 * p * sx_Plot / STUDY.U_scale), z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
+      Sun3D.draw_Cycles(x_Plot, y_Plot - (1 * p * sx_Plot / STUDY.U_scale), z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
 
       STUDY.drawPositionGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
@@ -19402,727 +19398,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
 
-  // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export
-
-  int[] startK_endK = get_startK_endK();
-  int start_k = startK_endK[0]; 
-  int end_k = startK_endK[1];
-  int count_k = 1 + end_k - start_k; 
-  if (count_k < 0) count_k = 0;
-
-
-
-  int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
-
-  if (STUDY.PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
-  else Impact_TYPE = Impact_PASSIVE;
-
-  float Pa1 = FLOAT_undefined;
-  float Pb1 = FLOAT_undefined;
-  float Pc1 = FLOAT_undefined;
-  float Pd1 = FLOAT_undefined;
-
-  float Pa2 = FLOAT_undefined;
-  float Pb2 = FLOAT_undefined;
-  float Pc2 = FLOAT_undefined;
-  float Pd2 = FLOAT_undefined;
-
-  float _values_R_dir;
-  float _values_R_dif;
-  float _values_E_dir;
-  float _values_E_dif;
-
-  int now_k = 0;
-  int now_i1 = 0;
-  int now_i2 = 0;
-  int now_j = 0;
-
-  int PAL_TYPE = 0; 
-  int PAL_DIR = 1;
-
-  float PAL_Multiplier = 1; 
-  if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY.pallet_ACTIVE_MLT;
-  if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY.pallet_PASSIVE_MLT;
-
-  if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
-
-    if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = Sun3D.pallet_ACTIVE_CLR; 
-      PAL_DIR = Sun3D.pallet_ACTIVE_DIR;
-      PAL_Multiplier = Sun3D.pallet_ACTIVE_MLT;
-    }
-    if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Sun3D.pallet_PASSIVE_CLR; 
-      PAL_DIR = Sun3D.pallet_PASSIVE_DIR;
-      PAL_Multiplier = Sun3D.pallet_PASSIVE_MLT;
-    }
-  } else {
-
-    if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = STUDY.pallet_ACTIVE_CLR; 
-      PAL_DIR = STUDY.pallet_ACTIVE_DIR;
-      PAL_Multiplier = STUDY.pallet_ACTIVE_MLT;
-    }
-    if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = STUDY.pallet_PASSIVE_CLR; 
-      PAL_DIR = STUDY.pallet_PASSIVE_DIR;
-      PAL_Multiplier = STUDY.pallet_PASSIVE_MLT;
-    }
-  }  
-
-
-
-
-  String the_filename = "";
-  String TEXTURE_path = "";
-
-  if (target_window == TypeWindow.OBJ) {
-
-    num_vertices_added = 0;
-
-    if (User3D.export_MaterialLibrary) {
-
-      the_filename = "sunPatternPallet.bmp";
-
-      TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
-
-      println("Saving texture:", TEXTURE_path);
-
-      int RES1 = User3D.export_PalletResolution; 
-      int RES2 = User3D.export_PalletResolution / 16;      
-
-      PImage pallet_Texture = createImage(RES1, RES2, ARGB);       
-
-
-      pallet_Texture.loadPixels();
-
-      for (int np = 0; np < (RES1 * RES2); np++) {
-        int Image_X = np % RES1;
-        int Image_Y = np / RES1;
-
-        float _val = (Image_X / (0.5 * RES1)) - 1; 
-
-        float _u = 0.5 + _val;
-
-        if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-
-        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
-
-        pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
-      }
-
-      pallet_Texture.updatePixels();   
-
-      pallet_Texture.save(TEXTURE_path);      
-
-
-      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-      //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
-    }
-  }  
-
-
-
-  num_vertices_added = 0;
-
-  int end_turn = 1;
-  if (target_window == TypeWindow.OBJ) end_turn = 3;
-  for (int _turn = 1; _turn <= end_turn; _turn++) {
-
-
-    if (target_window == TypeWindow.OBJ) {
-
-      if (_turn == 3) {
-
-        obj_lastGroupNumber += 1;
-        objOutput.println("g sunPattern");
-
-        if (User3D.export_MaterialLibrary) {      
-          objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-        }
-      }
-    }    
-
-
-
-    for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
-
-      float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY.perDays / STUDY.joinDays)][3];        
-
-      for (int more_J = 0; more_J < STUDY.perDays; more_J += STUDY.joinDays) {
-
-        now_j = (more_J + j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
-
-        if (now_j >= 365) {
-          now_j = now_j % 365;
-        }
-        if (now_j < 0) {
-          now_j = (now_j + 365) % 365;
-        }
-
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
-
-        int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        {
-          int keep_filter_type = STUDY.filter;
-          STUDY.filter = FILTER_Hourly;
-
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE);
-
-          STUDY.filter = keep_filter_type;
-        }
-
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
-          if (nk != -1) {
-            int k = int(nk / STUDY.joinDays);
-            int j_ADD = nk % STUDY.joinDays; 
-
-            float _valuesSUM_RAD = 0;
-            float _valuesSUM_EFF = 0;
-            int _valuesNUM = 0; 
-
-            for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
-
-              float HOUR_ANGLE = i; 
-              float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-
-              float Alpha = 90 - acos_ang(SunR[3]);
-              float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
-
-              //-------------- to extend graph to the horizon ---------------
-              if (Alpha < 0) {              
-
-                if (SunR[1] > 0) { 
-                  float[] SunR_rise = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunrise);
-
-                  Alpha = 0;
-                  Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);
-                } else {
-                  float[] SunR_set = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunset);
-
-                  Alpha = 0;
-                  Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);
-                }
-              }
-              //-----------------------------------------------------------
-
-              now_k = k + start_k;
-
-              now_i1 = floor(i);
-              now_i2 = (1 + now_i1) % 24;
-              float i_ratio = i - now_i1; 
-
-              now_j = int(more_J + j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
-
-              if (now_j >= 365) {
-                now_j = now_j % 365;
-              }
-              if (now_j < 0) {
-                now_j = (now_j + 365) % 365;
-              }
-
-              Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_dirnorrad.id);
-              Pb1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_difhorrad.id);
-              Pc1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_direffect.id);
-              Pd1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_difeffect.id);
-
-              Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_dirnorrad.id);
-              Pb2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_difhorrad.id);
-              Pc2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect.id);
-              Pd2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_difeffect.id);
-              
-              if ((is_undefined_FLOAT(Pa1)) || (is_undefined_FLOAT(Pb1)) || (is_undefined_FLOAT(Pc1)) || (is_undefined_FLOAT(Pd1))
-                || (is_undefined_FLOAT(Pa2)) || (is_undefined_FLOAT(Pb2)) || (is_undefined_FLOAT(Pc2)) || (is_undefined_FLOAT(Pd2))) {
-                _values_R_dir = FLOAT_undefined;
-                _values_R_dif = FLOAT_undefined;
-                _values_E_dir = FLOAT_undefined;
-                _values_E_dif = FLOAT_undefined;
-              } else {
-
-                int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j, now_k);
-                
-                if (memberCount == 1) {
-                  _values_R_dir = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
-                  _values_R_dif = 0.001 * (Pb1 * (1 - i_ratio) + Pb2 * i_ratio);
-                  _values_E_dir = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
-                  _values_E_dif = 0.001 * (Pd1 * (1 - i_ratio) + Pd2 * i_ratio);
-
-                  if (is_undefined_FLOAT(_valuesSUM_RAD)) {
-                    _valuesSUM_RAD = 0;
-                    _valuesSUM_EFF = 0;
-                    _valuesNUM = 0;
-                  } else {
-                    _valuesSUM_RAD = (_values_R_dir); // direct beam radiation
-                    _valuesSUM_EFF = (_values_E_dir); // direct beam effect
-                    _valuesNUM = 1;
-                  }
-                }
-              }
-
-              float _valuesSUM = FLOAT_undefined;
-              if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
-              if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
-
-              int row_J = more_J / STUDY.joinDays;
-
-              SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
-              SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
-              SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
-            }
-          } else {
-            for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
-
-              float _valuesSUM = FLOAT_undefined; 
-
-              float HOUR_ANGLE = i; 
-              float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-
-              float Alpha = 90 - acos_ang(SunR[3]);
-              float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
-
-              int row_J = more_J / STUDY.joinDays;
-
-              SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
-              SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
-              SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
-            }
-          }
-        }
-      }
-
-
-
-      for (int more_J = 0; more_J < STUDY.perDays - STUDY.joinDays; more_J += STUDY.joinDays) { //count one less!
-
-        now_j = (more_J + j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
-
-        if (now_j >= 365) {
-          now_j = now_j % 365;
-        }
-        if (now_j < 0) {
-          now_j = (now_j + 365) % 365;
-        }
-
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
-
-        for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {  
-          if (STUDY.isInHourlyRange(i) == 1) {
-            if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
-
-              if (target_window == TypeWindow.OBJ) {
-              } else if (target_window == TypeWindow.WIN3D) {
-                WIN3D.graphics.beginShape();
-                WIN3D.graphics.noStroke();
-              } else if (target_window == TypeWindow.WORLD) {
-                WORLD.graphics.beginShape();
-                WORLD.graphics.noStroke();
-              } else if (target_window == TypeWindow.STUDY) {
-                STUDY.graphics.beginShape();
-                STUDY.graphics.noStroke();
-              }  
-
-              for (int s = 0; s < 4; s++) {
-
-                int a = int(i * TES_hour);
-                int b = more_J / STUDY.joinDays;
-
-                if ((s == 1) || (s == 2)) {
-                  a += 1;
-                }
-
-                if ((s == 2) || (s == 3)) {
-                  b += 1;
-                }
-
-                if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
-
-                float Alpha = SunPathMesh[a][b][0];
-                float Beta = SunPathMesh[a][b][1];
-                float _valuesSUM = SunPathMesh[a][b][2];
-
-                if (Alpha >= 0) {
-
-                  if (is_undefined_FLOAT(_valuesSUM) == false) {
-
-                    float _u = 0;
-
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * _valuesSUM);
-
-                    if (PAL_DIR == -1) _u = 1 - _u;
-                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_DIR == 2) _u =  0.5 * _u;
-
-                    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
-
-                    float r = sx_Plot;
-
-                    if (target_window == TypeWindow.OBJ) {
-
-                      float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
-                      float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
-                      float z = sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
-
-                      if (_turn == 1) {
-                        SOLARCHVISION_OBJprintVertex(x, y, z);
-                      }
-
-                      if (_turn == 2) { 
-                        float u1 = 0.5 * (_u + 0.5);
-
-                        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-                          if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
-                        }
-
-                        if (u1 > 0.999) u1 = 0.999;
-                        if (u1 < 0.001) u1 = 0.001;
-
-                        SOLARCHVISION_OBJprintVtexture(u1, 0.5, 0);
-                      }
-
-                      if (_turn == 3) {
-                        num_vertices_added += 1;
-                      }
-                    } else if (target_window == TypeWindow.WIN3D) {
-                      WIN3D.graphics.fill(COL[1], COL[2], COL[3], 127);
-
-                      float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
-                      float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
-                      float z = sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
-
-                      WIN3D.graphics.vertex(x, -y, z);
-                    } else if (target_window == TypeWindow.WORLD) {
-                      // ??????????????????????????
-                    } else if (target_window == TypeWindow.STUDY) {
-
-                      STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-
-                      float x = (90 - Alpha) * (cos_ang(Beta - 90)) * STUDY.rect_scale * r + x_Plot * STUDY.rect_scale;
-                      float y = (90 - Alpha) * (sin_ang(Beta - 90)) * STUDY.rect_scale * r + y_Plot * STUDY.rect_scale;
-
-                      float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-
-                      STUDY.graphics.vertex(ox + x, -y);
-                    }
-                  }
-                }
-              }
-
-              if (target_window == TypeWindow.OBJ) {
-
-                if (_turn == 3) {
-
-                  String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
-                  String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-                  String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-                  String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-
-                  String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
-                  String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
-                  String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
-                  String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
-
-                  obj_lastFaceNumber += 1;
-                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                }
-              } else if (target_window == TypeWindow.WIN3D) {
-                WIN3D.graphics.endShape(CLOSE);
-              } else if (target_window == TypeWindow.WORLD) {
-                WORLD.graphics.endShape(CLOSE);
-              } else if (target_window == TypeWindow.STUDY) {
-                STUDY.graphics.endShape(CLOSE);
-              }
-            }
-          }
-        }
-      }
-    }
-
-
-    if (target_window == TypeWindow.OBJ) {
-      obj_lastVertexNumber += num_vertices_added;
-      obj_lastVtextureNumber += num_vertices_added;
-    }
-  }  
-
-
-
-
-
-  if (target_window == TypeWindow.WIN3D) {
-    WIN3D.graphics.strokeWeight(1);
-    WIN3D.graphics.stroke(127);
-  } else if (target_window == TypeWindow.WORLD) {
-    WORLD.graphics.strokeWeight(1);
-    WORLD.graphics.stroke(127);
-  } else if (target_window == TypeWindow.STUDY) {
-    STUDY.graphics.strokeWeight(1);
-    STUDY.graphics.stroke(127);
-  }
-
-  for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {    
-
-    int max_j_to_draw_grid = STUDY.j_End;
-    if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
-      max_j_to_draw_grid = 1; // draw it just once!
-    }
-    if (j < max_j_to_draw_grid) {
-
-
-      float s_SunPath = sx_Plot;
-
-      for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
-
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), myDATE); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), myDATE);        
-
-        float myHOUR_step = 1.0 / float(TES_hour);
-
-        for (float myHOUR = 0; myHOUR < 24; myHOUR += myHOUR_step) {
-
-
-
-          float HourA = myHOUR;
-          float HourB = myHOUR + myHOUR_step;
-
-          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourA);
-          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourB);
-
-          if ((SunA[3] < 0) && (SunB[3] > 0)) {
-            SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunrise);
-            SunA[3] = 0;
-          }
-          if ((SunA[3] > 0) && (SunB[3] < 0)) {
-            SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunset);
-            SunB[3] = 0;
-          }
-
-
-
-          if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
-
-            if (target_window == TypeWindow.WIN3D) {
-
-              float x1 = SunA[1] * WIN3D.scale * s_SunPath + x_Plot;
-              float y1 = SunA[2] * WIN3D.scale * s_SunPath + y_Plot;
-              float z1 = SunA[3] * WIN3D.scale * s_SunPath + z_Plot;
-
-              float x2 = SunB[1] * WIN3D.scale * s_SunPath + x_Plot;
-              float y2 = SunB[2] * WIN3D.scale * s_SunPath + y_Plot;
-              float z2 = SunB[3] * WIN3D.scale * s_SunPath + z_Plot;
-
-              WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-            } else if (target_window == TypeWindow.WORLD) {
-              // ??????????????????????????
-            } else if (target_window == TypeWindow.STUDY) {
-
-              float Alpha1 = asin_ang(SunA[3]);
-              float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
-
-              float Alpha2 = asin_ang(SunB[3]);
-              float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
-
-              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-
-              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-
-              float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-
-              STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
-            }
-          }
-        }
-      }
-
-      for (float myHOUR = 0; myHOUR < 24; myHOUR++) {
-
-        int myDATE_step = STUDY.joinDays;
-
-        int myDATE_start = 0;
-        int myDATE_end = 360; 
-
-        if (target_window != 3) {
-          if (STUDY.j_End == 2) {
-            if (j == 0) {
-              myDATE_start = 90;
-              myDATE_end = 270;
-            }
-            if (j == 1) {
-              myDATE_start = 270;
-              myDATE_end = 450;
-            }
-          }
-        }
-
-        for (int myDATE = myDATE_start; myDATE <= myDATE_end; myDATE += myDATE_step) {
-          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, myHOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (myDATE + myDATE_step), myHOUR);
-          if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
-
-            if (target_window == TypeWindow.WIN3D) {        
-
-              float x1 = SunA[1] * WIN3D.scale * s_SunPath + x_Plot;
-              float y1 = SunA[2] * WIN3D.scale * s_SunPath + y_Plot;
-              float z1 = SunA[3] * WIN3D.scale * s_SunPath + z_Plot;
-
-              float x2 = SunB[1] * WIN3D.scale * s_SunPath + x_Plot;
-              float y2 = SunB[2] * WIN3D.scale * s_SunPath + y_Plot;
-              float z2 = SunB[3] * WIN3D.scale * s_SunPath + z_Plot;
-
-              float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-
-              WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-            } else if (target_window == TypeWindow.WORLD) {
-              // ??????????????????????????
-            } else if (target_window == TypeWindow.STUDY) {
-
-              float Alpha1 = asin_ang(SunA[3]);
-              float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
-
-              float Alpha2 = asin_ang(SunB[3]);
-              float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
-
-              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-
-              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-
-              float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-
-              STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
-            }
-          }
-        }
-      }
-
-
-
-      if (target_window == TypeWindow.WIN3D) {  
-        WIN3D.graphics.stroke(0);
-        WIN3D.graphics.fill(0);
-        WIN3D.graphics.textAlign(CENTER, CENTER);
-      } else if (target_window == TypeWindow.WORLD) {  
-        WORLD.graphics.stroke(0);
-        WORLD.graphics.fill(0);
-        WORLD.graphics.textAlign(CENTER, CENTER);
-      } else if (target_window == TypeWindow.STUDY) {  
-        STUDY.graphics.stroke(0);
-        STUDY.graphics.fill(0);
-        STUDY.graphics.textAlign(CENTER, CENTER);
-      }      
-
-      for (int i = 0; i < 360; i++) {
-        if (target_window == TypeWindow.WIN3D) {  
-
-          float x1 = s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
-          float y1 = s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
-          float z1 = 0 + z_Plot;
-
-          float x2 = s_SunPath * cos((i + 5) * PI / 180) * WIN3D.scale + x_Plot;
-          float y2 = s_SunPath * sin((i + 5) * PI / 180) * WIN3D.scale + y_Plot;
-          float z2 = 0 + z_Plot;
-
-          WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-        } else if (target_window == TypeWindow.WORLD) {
-          // ??????????????????????????
-        } else if (target_window == TypeWindow.STUDY) {
-          // no nead for a circle here in this case!
-        }
-      }
-
-      for (int i = 0; i < 360; i += 5) {
-        if (target_window == TypeWindow.WIN3D) {  
-
-          float x1 = s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
-          float y1 = s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
-          float z1 = 0 + z_Plot;
-
-          float x2 = 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D.scale + x_Plot;
-          float y2 = 1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D.scale + y_Plot;
-          float z2 = 0 + z_Plot;
-
-          WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-        } else if (target_window == TypeWindow.WORLD) {
-          // ??????????????????????????
-        } else if (target_window == TypeWindow.STUDY) {
-
-          float x1 = 90 * s_SunPath * cos(i * PI / 180) * STUDY.rect_scale + x_Plot * STUDY.rect_scale;
-          float y1 = 90 * s_SunPath * sin(i * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
-
-          float x2 = 90 * 1.05 * s_SunPath * cos((i) * PI / 180) * STUDY.rect_scale + x_Plot * STUDY.rect_scale;
-          float y2 = 90 * 1.05 * s_SunPath * sin((i) * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
-
-          float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-
-          STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
-        }
-      }
-
-/*
-      for (int i = 0; i < 360; i += 15) {
-
-        String txt = nf((90 - i + 360) % 360, 0);
-        if (i == 0) {
-          txt = "E";
-        } else if (i == 90) {
-          txt = "N";
-        } else if (i == 180) {
-          txt = "W";
-        } else if (i == 270) {
-          txt = "S";
-        }
-
-        float txtSize = 0.1;
-        if (txt.length() > 1) txtSize *= 0.75;
-
-        if (target_window == TypeWindow.WIN3D) {
-
-          float x = 1.10 * s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
-          float y = 1.10 * s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
-          float z = 0 + z_Plot;
-
-          WIN3D.graphics.textSize(txtSize * WIN3D.scale * s_SunPath);
-          WIN3D.graphics.text(txt, x, -y, z);
-        } else if (target_window == TypeWindow.WORLD) {
-          // ??????????????????????????
-        } else if (target_window == TypeWindow.STUDY) {
-          float x = 90 * 1.10 * s_SunPath * cos(i * PI / 180) * STUDY.rect_scale+ x_Plot * STUDY.rect_scale;
-          float y = 90 * 1.10 * s_SunPath * sin(i * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
-
-          float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-
-          STUDY.graphics.textSize(txtSize * 0.4 * s_SunPath);
-          STUDY.graphics.text(txt, ox + x, -y);
-        }
-      }
-*/
-    }
-  }
-}
 
 
 
@@ -21025,9 +20301,6 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   Sky3D.draw(TypeWindow.OBJ);
 
-
-
-
   if (Sun3D.displayPattern) {
 
     float keep_STUDY_perDays = STUDY.perDays;
@@ -21039,7 +20312,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME_Date;
 
-    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, 4);
+    Sun3D.draw_Cycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, 4);
 
     STUDY.perDays = keep_STUDY_perDays;
     STUDY.joinDays = keep_STUDY_joinDays; 
@@ -22728,27 +22001,47 @@ class solarchvision_Sun3D {
     }
   }
   
-  void drawPattern (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+
   
-    if (this.displayPattern) {
+ 
   
-      float keep_STUDY_perDays = STUDY.perDays;
-      int keep_STUDY_joinDays = STUDY.joinDays;
-      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-        STUDY.perDays = 1;
-        STUDY.joinDays = 1;
-      }    
   
-      float previous_DATE = TIME_Date;
   
-      SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, 3);
   
-      STUDY.perDays = keep_STUDY_perDays;
-      STUDY.joinDays = keep_STUDY_joinDays; 
-      TIME_Date = previous_DATE;
-      SOLARCHVISION_update_date();
+  void drawGrid (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  
+    if (this.displayGrid) {
+  
+      WIN3D.graphics.pushMatrix();
+      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
+  
+      WIN3D.graphics.strokeWeight(1);
+      WIN3D.graphics.stroke(0);
+  
+      for (int j = 90; j <= 270; j += 30) {
+        float HOUR_step = 1;
+        for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
+          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, (HOUR + HOUR_step));
+          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+        }
+      }
+  
+      for (int HOUR = 0; HOUR <= 24; HOUR++) {
+        float DATE_step = 1;
+        for (int j = 0; j <= 360; j += DATE_step) {
+          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (j + DATE_step), HOUR);
+          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+        }
+      }
+  
+      WIN3D.graphics.popMatrix();
     }
-  }
+  } 
+  
+  
+  
   
   void drawPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
   
@@ -22940,42 +22233,761 @@ class solarchvision_Sun3D {
       TIME_Date = previous_DATE;
       SOLARCHVISION_update_date();
     }
-  } 
+  }
   
+
+
+  void drawPattern (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
   
+    if (this.displayPattern) {
   
+      float keep_STUDY_perDays = STUDY.perDays;
+      int keep_STUDY_joinDays = STUDY.joinDays;
+      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+        STUDY.perDays = 1;
+        STUDY.joinDays = 1;
+      }    
   
-  void drawGrid (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+      float previous_DATE = TIME_Date;
   
-    if (this.displayGrid) {
+      Sun3D.draw_Cycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, 3);
   
-      WIN3D.graphics.pushMatrix();
-      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
-  
-      WIN3D.graphics.strokeWeight(1);
-      WIN3D.graphics.stroke(0);
-  
-      for (int j = 90; j <= 270; j += 30) {
-        float HOUR_step = 1;
-        for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
-          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, (HOUR + HOUR_step));
-          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
-        }
-      }
-  
-      for (int HOUR = 0; HOUR <= 24; HOUR++) {
-        float DATE_step = 1;
-        for (int j = 0; j <= 360; j += DATE_step) {
-          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (j + DATE_step), HOUR);
-          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
-        }
-      }
-  
-      WIN3D.graphics.popMatrix();
+      STUDY.perDays = keep_STUDY_perDays;
+      STUDY.joinDays = keep_STUDY_joinDays; 
+      TIME_Date = previous_DATE;
+      SOLARCHVISION_update_date();
     }
-  } 
+  }  
+  
+  
+  
+  void draw_Cycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
+  
+    // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export
+  
+    int[] startK_endK = get_startK_endK();
+    int start_k = startK_endK[0]; 
+    int end_k = startK_endK[1];
+    int count_k = 1 + end_k - start_k; 
+    if (count_k < 0) count_k = 0;
+  
+  
+  
+    int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
+  
+    if (STUDY.PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
+    else Impact_TYPE = Impact_PASSIVE;
+  
+    float Pa1 = FLOAT_undefined;
+    float Pb1 = FLOAT_undefined;
+    float Pc1 = FLOAT_undefined;
+    float Pd1 = FLOAT_undefined;
+  
+    float Pa2 = FLOAT_undefined;
+    float Pb2 = FLOAT_undefined;
+    float Pc2 = FLOAT_undefined;
+    float Pd2 = FLOAT_undefined;
+  
+    float _values_R_dir;
+    float _values_R_dif;
+    float _values_E_dir;
+    float _values_E_dif;
+  
+    int now_k = 0;
+    int now_i1 = 0;
+    int now_i2 = 0;
+    int now_j = 0;
+  
+    int PAL_TYPE = 0; 
+    int PAL_DIR = 1;
+  
+    float PAL_Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY.pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY.pallet_PASSIVE_MLT;
+  
+    if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
+  
+      if (Impact_TYPE == Impact_ACTIVE) {  
+        PAL_TYPE = this.pallet_ACTIVE_CLR; 
+        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_Multiplier = this.pallet_ACTIVE_MLT;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = this.pallet_PASSIVE_CLR; 
+        PAL_DIR = this.pallet_PASSIVE_DIR;
+        PAL_Multiplier = this.pallet_PASSIVE_MLT;
+      }
+    } else {
+  
+      if (Impact_TYPE == Impact_ACTIVE) {  
+        PAL_TYPE = STUDY.pallet_ACTIVE_CLR; 
+        PAL_DIR = STUDY.pallet_ACTIVE_DIR;
+        PAL_Multiplier = STUDY.pallet_ACTIVE_MLT;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = STUDY.pallet_PASSIVE_CLR; 
+        PAL_DIR = STUDY.pallet_PASSIVE_DIR;
+        PAL_Multiplier = STUDY.pallet_PASSIVE_MLT;
+      }
+    }  
+  
+  
+  
+  
+    String the_filename = "";
+    String TEXTURE_path = "";
+  
+    if (target_window == TypeWindow.OBJ) {
+  
+      num_vertices_added = 0;
+  
+      if (User3D.export_MaterialLibrary) {
+  
+        the_filename = "sunPatternPallet.bmp";
+  
+        TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+  
+        println("Saving texture:", TEXTURE_path);
+  
+        int RES1 = User3D.export_PalletResolution; 
+        int RES2 = User3D.export_PalletResolution / 16;      
+  
+        PImage pallet_Texture = createImage(RES1, RES2, ARGB);       
+  
+  
+        pallet_Texture.loadPixels();
+  
+        for (int np = 0; np < (RES1 * RES2); np++) {
+          int Image_X = np % RES1;
+          int Image_Y = np / RES1;
+  
+          float _val = (Image_X / (0.5 * RES1)) - 1; 
+  
+          float _u = 0.5 + _val;
+  
+          if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+  
+          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+  
+          pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+        }
+  
+        pallet_Texture.updatePixels();   
+  
+        pallet_Texture.save(TEXTURE_path);      
+  
+  
+        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+        //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
+      }
+    }  
+  
+  
+  
+    num_vertices_added = 0;
+  
+    int end_turn = 1;
+    if (target_window == TypeWindow.OBJ) end_turn = 3;
+    for (int _turn = 1; _turn <= end_turn; _turn++) {
+  
+  
+      if (target_window == TypeWindow.OBJ) {
+  
+        if (_turn == 3) {
+  
+          obj_lastGroupNumber += 1;
+          objOutput.println("g sunPattern");
+  
+          if (User3D.export_MaterialLibrary) {      
+            objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+          }
+        }
+      }    
+  
+  
+  
+      for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+  
+        float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY.perDays / STUDY.joinDays)][3];        
+  
+        for (int more_J = 0; more_J < STUDY.perDays; more_J += STUDY.joinDays) {
+  
+          now_j = (more_J + j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
+  
+          if (now_j >= 365) {
+            now_j = now_j % 365;
+          }
+          if (now_j < 0) {
+            now_j = (now_j + 365) % 365;
+          }
+  
+          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+  
+          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+  
+          int[] Normals_COL_N;
+          Normals_COL_N = new int [9];
+          {
+            int keep_filter_type = STUDY.filter;
+            STUDY.filter = FILTER_Hourly;
+  
+            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE);
+  
+            STUDY.filter = keep_filter_type;
+          }
+  
+          for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+            if (nk != -1) {
+              int k = int(nk / STUDY.joinDays);
+              int j_ADD = nk % STUDY.joinDays; 
+  
+              float _valuesSUM_RAD = 0;
+              float _valuesSUM_EFF = 0;
+              int _valuesNUM = 0; 
+  
+              for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
+  
+                float HOUR_ANGLE = i; 
+                float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+  
+                float Alpha = 90 - acos_ang(SunR[3]);
+                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+  
+                //-------------- to extend graph to the horizon ---------------
+                if (Alpha < 0) {              
+  
+                  if (SunR[1] > 0) { 
+                    float[] SunR_rise = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunrise);
+  
+                    Alpha = 0;
+                    Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);
+                  } else {
+                    float[] SunR_set = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunset);
+  
+                    Alpha = 0;
+                    Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);
+                  }
+                }
+                //-----------------------------------------------------------
+  
+                now_k = k + start_k;
+  
+                now_i1 = floor(i);
+                now_i2 = (1 + now_i1) % 24;
+                float i_ratio = i - now_i1; 
+  
+                now_j = int(more_J + j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
+  
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
+                }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }
+  
+                Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_dirnorrad.id);
+                Pb1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_difhorrad.id);
+                Pc1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_direffect.id);
+                Pd1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_difeffect.id);
+  
+                Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_dirnorrad.id);
+                Pb2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_difhorrad.id);
+                Pc2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect.id);
+                Pd2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_difeffect.id);
+                
+                if ((is_undefined_FLOAT(Pa1)) || (is_undefined_FLOAT(Pb1)) || (is_undefined_FLOAT(Pc1)) || (is_undefined_FLOAT(Pd1))
+                  || (is_undefined_FLOAT(Pa2)) || (is_undefined_FLOAT(Pb2)) || (is_undefined_FLOAT(Pc2)) || (is_undefined_FLOAT(Pd2))) {
+                  _values_R_dir = FLOAT_undefined;
+                  _values_R_dif = FLOAT_undefined;
+                  _values_E_dir = FLOAT_undefined;
+                  _values_E_dif = FLOAT_undefined;
+                } else {
+  
+                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j, now_k);
+                  
+                  if (memberCount == 1) {
+                    _values_R_dir = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
+                    _values_R_dif = 0.001 * (Pb1 * (1 - i_ratio) + Pb2 * i_ratio);
+                    _values_E_dir = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
+                    _values_E_dif = 0.001 * (Pd1 * (1 - i_ratio) + Pd2 * i_ratio);
+  
+                    if (is_undefined_FLOAT(_valuesSUM_RAD)) {
+                      _valuesSUM_RAD = 0;
+                      _valuesSUM_EFF = 0;
+                      _valuesNUM = 0;
+                    } else {
+                      _valuesSUM_RAD = (_values_R_dir); // direct beam radiation
+                      _valuesSUM_EFF = (_values_E_dir); // direct beam effect
+                      _valuesNUM = 1;
+                    }
+                  }
+                }
+  
+                float _valuesSUM = FLOAT_undefined;
+                if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
+                if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
+  
+                int row_J = more_J / STUDY.joinDays;
+  
+                SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
+                SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
+                SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
+              }
+            } else {
+              for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
+  
+                float _valuesSUM = FLOAT_undefined; 
+  
+                float HOUR_ANGLE = i; 
+                float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+  
+                float Alpha = 90 - acos_ang(SunR[3]);
+                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+  
+                int row_J = more_J / STUDY.joinDays;
+  
+                SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
+                SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
+                SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
+              }
+            }
+          }
+        }
+  
+  
+  
+        for (int more_J = 0; more_J < STUDY.perDays - STUDY.joinDays; more_J += STUDY.joinDays) { //count one less!
+  
+          now_j = (more_J + j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
+  
+          if (now_j >= 365) {
+            now_j = now_j % 365;
+          }
+          if (now_j < 0) {
+            now_j = (now_j + 365) % 365;
+          }
+  
+          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+  
+          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+  
+          for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {  
+            if (STUDY.isInHourlyRange(i) == 1) {
+              if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
+  
+                if (target_window == TypeWindow.OBJ) {
+                } else if (target_window == TypeWindow.WIN3D) {
+                  WIN3D.graphics.beginShape();
+                  WIN3D.graphics.noStroke();
+                } else if (target_window == TypeWindow.WORLD) {
+                  WORLD.graphics.beginShape();
+                  WORLD.graphics.noStroke();
+                } else if (target_window == TypeWindow.STUDY) {
+                  STUDY.graphics.beginShape();
+                  STUDY.graphics.noStroke();
+                }  
+  
+                for (int s = 0; s < 4; s++) {
+  
+                  int a = int(i * TES_hour);
+                  int b = more_J / STUDY.joinDays;
+  
+                  if ((s == 1) || (s == 2)) {
+                    a += 1;
+                  }
+  
+                  if ((s == 2) || (s == 3)) {
+                    b += 1;
+                  }
+  
+                  if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
+  
+                  float Alpha = SunPathMesh[a][b][0];
+                  float Beta = SunPathMesh[a][b][1];
+                  float _valuesSUM = SunPathMesh[a][b][2];
+  
+                  if (Alpha >= 0) {
+  
+                    if (is_undefined_FLOAT(_valuesSUM) == false) {
+  
+                      float _u = 0;
+  
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * _valuesSUM);
+  
+                      if (PAL_DIR == -1) _u = 1 - _u;
+                      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                      if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+                      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+  
+                      float r = sx_Plot;
+  
+                      if (target_window == TypeWindow.OBJ) {
+  
+                        float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
+                        float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
+                        float z = sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
+  
+                        if (_turn == 1) {
+                          SOLARCHVISION_OBJprintVertex(x, y, z);
+                        }
+  
+                        if (_turn == 2) { 
+                          float u1 = 0.5 * (_u + 0.5);
+  
+                          if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                            if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                          }
+  
+                          if (u1 > 0.999) u1 = 0.999;
+                          if (u1 < 0.001) u1 = 0.001;
+  
+                          SOLARCHVISION_OBJprintVtexture(u1, 0.5, 0);
+                        }
+  
+                        if (_turn == 3) {
+                          num_vertices_added += 1;
+                        }
+                      } else if (target_window == TypeWindow.WIN3D) {
+                        WIN3D.graphics.fill(COL[1], COL[2], COL[3], 127);
+  
+                        float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
+                        float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
+                        float z = sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
+  
+                        WIN3D.graphics.vertex(x, -y, z);
+                      } else if (target_window == TypeWindow.WORLD) {
+                        // ??????????????????????????
+                      } else if (target_window == TypeWindow.STUDY) {
+  
+                        STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+  
+                        float x = (90 - Alpha) * (cos_ang(Beta - 90)) * STUDY.rect_scale * r + x_Plot * STUDY.rect_scale;
+                        float y = (90 - Alpha) * (sin_ang(Beta - 90)) * STUDY.rect_scale * r + y_Plot * STUDY.rect_scale;
+  
+                        float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+  
+                        STUDY.graphics.vertex(ox + x, -y);
+                      }
+                    }
+                  }
+                }
+  
+                if (target_window == TypeWindow.OBJ) {
+  
+                  if (_turn == 3) {
+  
+                    String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
+                    String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+                    String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+                    String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+  
+                    String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
+                    String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
+                    String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
+                    String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+  
+                    obj_lastFaceNumber += 1;
+                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                  }
+                } else if (target_window == TypeWindow.WIN3D) {
+                  WIN3D.graphics.endShape(CLOSE);
+                } else if (target_window == TypeWindow.WORLD) {
+                  WORLD.graphics.endShape(CLOSE);
+                } else if (target_window == TypeWindow.STUDY) {
+                  STUDY.graphics.endShape(CLOSE);
+                }
+              }
+            }
+          }
+        }
+      }
+  
+  
+      if (target_window == TypeWindow.OBJ) {
+        obj_lastVertexNumber += num_vertices_added;
+        obj_lastVtextureNumber += num_vertices_added;
+      }
+    }  
+  
+  
+  
+  
+  
+    if (target_window == TypeWindow.WIN3D) {
+      WIN3D.graphics.strokeWeight(1);
+      WIN3D.graphics.stroke(127);
+    } else if (target_window == TypeWindow.WORLD) {
+      WORLD.graphics.strokeWeight(1);
+      WORLD.graphics.stroke(127);
+    } else if (target_window == TypeWindow.STUDY) {
+      STUDY.graphics.strokeWeight(1);
+      STUDY.graphics.stroke(127);
+    }
+  
+    for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {    
+  
+      int max_j_to_draw_grid = STUDY.j_End;
+      if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
+        max_j_to_draw_grid = 1; // draw it just once!
+      }
+      if (j < max_j_to_draw_grid) {
+  
+  
+        float s_SunPath = sx_Plot;
+  
+        for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
+  
+          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), myDATE); 
+          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), myDATE);        
+  
+          float myHOUR_step = 1.0 / float(TES_hour);
+  
+          for (float myHOUR = 0; myHOUR < 24; myHOUR += myHOUR_step) {
+  
+  
+  
+            float HourA = myHOUR;
+            float HourB = myHOUR + myHOUR_step;
+  
+            float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourA);
+            float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourB);
+  
+            if ((SunA[3] < 0) && (SunB[3] > 0)) {
+              SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunrise);
+              SunA[3] = 0;
+            }
+            if ((SunA[3] > 0) && (SunB[3] < 0)) {
+              SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunset);
+              SunB[3] = 0;
+            }
+  
+  
+  
+            if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
+  
+              if (target_window == TypeWindow.WIN3D) {
+  
+                float x1 = SunA[1] * WIN3D.scale * s_SunPath + x_Plot;
+                float y1 = SunA[2] * WIN3D.scale * s_SunPath + y_Plot;
+                float z1 = SunA[3] * WIN3D.scale * s_SunPath + z_Plot;
+  
+                float x2 = SunB[1] * WIN3D.scale * s_SunPath + x_Plot;
+                float y2 = SunB[2] * WIN3D.scale * s_SunPath + y_Plot;
+                float z2 = SunB[3] * WIN3D.scale * s_SunPath + z_Plot;
+  
+                WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
+              } else if (target_window == TypeWindow.WORLD) {
+                // ??????????????????????????
+              } else if (target_window == TypeWindow.STUDY) {
+  
+                float Alpha1 = asin_ang(SunA[3]);
+                float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
+  
+                float Alpha2 = asin_ang(SunB[3]);
+                float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
+  
+                float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+  
+                float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+  
+                float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+  
+                STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
+              }
+            }
+          }
+        }
+  
+        for (float myHOUR = 0; myHOUR < 24; myHOUR++) {
+  
+          int myDATE_step = STUDY.joinDays;
+  
+          int myDATE_start = 0;
+          int myDATE_end = 360; 
+  
+          if (target_window != 3) {
+            if (STUDY.j_End == 2) {
+              if (j == 0) {
+                myDATE_start = 90;
+                myDATE_end = 270;
+              }
+              if (j == 1) {
+                myDATE_start = 270;
+                myDATE_end = 450;
+              }
+            }
+          }
+  
+          for (int myDATE = myDATE_start; myDATE <= myDATE_end; myDATE += myDATE_step) {
+            float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, myHOUR);
+            float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (myDATE + myDATE_step), myHOUR);
+            if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
+  
+              if (target_window == TypeWindow.WIN3D) {        
+  
+                float x1 = SunA[1] * WIN3D.scale * s_SunPath + x_Plot;
+                float y1 = SunA[2] * WIN3D.scale * s_SunPath + y_Plot;
+                float z1 = SunA[3] * WIN3D.scale * s_SunPath + z_Plot;
+  
+                float x2 = SunB[1] * WIN3D.scale * s_SunPath + x_Plot;
+                float y2 = SunB[2] * WIN3D.scale * s_SunPath + y_Plot;
+                float z2 = SunB[3] * WIN3D.scale * s_SunPath + z_Plot;
+  
+                float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+  
+                WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
+              } else if (target_window == TypeWindow.WORLD) {
+                // ??????????????????????????
+              } else if (target_window == TypeWindow.STUDY) {
+  
+                float Alpha1 = asin_ang(SunA[3]);
+                float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
+  
+                float Alpha2 = asin_ang(SunB[3]);
+                float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
+  
+                float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+  
+                float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+  
+                float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+  
+                STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
+              }
+            }
+          }
+        }
+  
+  
+  
+        if (target_window == TypeWindow.WIN3D) {  
+          WIN3D.graphics.stroke(0);
+          WIN3D.graphics.fill(0);
+          WIN3D.graphics.textAlign(CENTER, CENTER);
+        } else if (target_window == TypeWindow.WORLD) {  
+          WORLD.graphics.stroke(0);
+          WORLD.graphics.fill(0);
+          WORLD.graphics.textAlign(CENTER, CENTER);
+        } else if (target_window == TypeWindow.STUDY) {  
+          STUDY.graphics.stroke(0);
+          STUDY.graphics.fill(0);
+          STUDY.graphics.textAlign(CENTER, CENTER);
+        }      
+  
+        for (int i = 0; i < 360; i++) {
+          if (target_window == TypeWindow.WIN3D) {  
+  
+            float x1 = s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
+            float y1 = s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
+            float z1 = 0 + z_Plot;
+  
+            float x2 = s_SunPath * cos((i + 5) * PI / 180) * WIN3D.scale + x_Plot;
+            float y2 = s_SunPath * sin((i + 5) * PI / 180) * WIN3D.scale + y_Plot;
+            float z2 = 0 + z_Plot;
+  
+            WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
+          } else if (target_window == TypeWindow.WORLD) {
+            // ??????????????????????????
+          } else if (target_window == TypeWindow.STUDY) {
+            // no nead for a circle here in this case!
+          }
+        }
+  
+        for (int i = 0; i < 360; i += 5) {
+          if (target_window == TypeWindow.WIN3D) {  
+  
+            float x1 = s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
+            float y1 = s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
+            float z1 = 0 + z_Plot;
+  
+            float x2 = 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D.scale + x_Plot;
+            float y2 = 1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D.scale + y_Plot;
+            float z2 = 0 + z_Plot;
+  
+            WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
+          } else if (target_window == TypeWindow.WORLD) {
+            // ??????????????????????????
+          } else if (target_window == TypeWindow.STUDY) {
+  
+            float x1 = 90 * s_SunPath * cos(i * PI / 180) * STUDY.rect_scale + x_Plot * STUDY.rect_scale;
+            float y1 = 90 * s_SunPath * sin(i * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
+  
+            float x2 = 90 * 1.05 * s_SunPath * cos((i) * PI / 180) * STUDY.rect_scale + x_Plot * STUDY.rect_scale;
+            float y2 = 90 * 1.05 * s_SunPath * sin((i) * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
+  
+            float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+  
+            STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
+          }
+        }
+  
+  /*
+        for (int i = 0; i < 360; i += 15) {
+  
+          String txt = nf((90 - i + 360) % 360, 0);
+          if (i == 0) {
+            txt = "E";
+          } else if (i == 90) {
+            txt = "N";
+          } else if (i == 180) {
+            txt = "W";
+          } else if (i == 270) {
+            txt = "S";
+          }
+  
+          float txtSize = 0.1;
+          if (txt.length() > 1) txtSize *= 0.75;
+  
+          if (target_window == TypeWindow.WIN3D) {
+  
+            float x = 1.10 * s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
+            float y = 1.10 * s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
+            float z = 0 + z_Plot;
+  
+            WIN3D.graphics.textSize(txtSize * WIN3D.scale * s_SunPath);
+            WIN3D.graphics.text(txt, x, -y, z);
+          } else if (target_window == TypeWindow.WORLD) {
+            // ??????????????????????????
+          } else if (target_window == TypeWindow.STUDY) {
+            float x = 90 * 1.10 * s_SunPath * cos(i * PI / 180) * STUDY.rect_scale+ x_Plot * STUDY.rect_scale;
+            float y = 90 * 1.10 * s_SunPath * sin(i * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
+  
+            float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+  
+            STUDY.graphics.textSize(txtSize * 0.4 * s_SunPath);
+            STUDY.graphics.text(txt, ox + x, -y);
+          }
+        }
+  */
+      }
+    }
+  }  
+  
+  
+  
+  
+  
+  
   
   public void to_XML (XML xml) {
     
