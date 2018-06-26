@@ -2482,13 +2482,13 @@ class solarchvision_WIN3D {
   
       Sky3D.draw();
   
-      SOLARCHVISION_draw_Sun3D_pattern(0, 0, 0, 0.975 * Sky3D.scale);
+      Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
   
-      SOLARCHVISION_draw_Sun3D_path(0, 0, 0, 0.975 * Sky3D.scale);
+      Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
   
-      SOLARCHVISION_draw_Sun3D_grid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
+      Sun3D.drawGrid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
   
-      Star3D.draw();
+      Sun3D.draw();
   
       Moon3D.draw();
       
@@ -7258,8 +7258,8 @@ class solarchvision_ROLLOUT {
         //Moon3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
         //Moon3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
   
-        //Star3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.displaySurface", Star3D.displaySurface, 0, 1, 1), 1));
-        //Star3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Star3D.displayTexture", Star3D.displayTexture, 0, 1, 1), 1));      
+        //Sun3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
+        //Sun3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));      
   
         Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
@@ -7403,8 +7403,8 @@ class solarchvision_ROLLOUT {
   
         //Sky3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
   
-        //Sun3D_displayPath = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_displayPath", Sun3D_displayPath, 0, 1, 1), 1));
-        //Sun3D_displayPattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_displayPattern", Sun3D_displayPattern, 0, 1, 1), 1));
+        //Sun3D.displayPath = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath, 0, 1, 1), 1));
+        //Sun3D.displayPattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern, 0, 1, 1), 1));
       }
   
   
@@ -7566,13 +7566,13 @@ class solarchvision_ROLLOUT {
         Sky3D.pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_DIR", Sky3D.pallet_PASSIVE_DIR, -2, 2, 2), 1));
         Sky3D.pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_MLT", Sky3D.pallet_PASSIVE_MLT, 0.125, 8, -2);
   
-        Sun3D_pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_pallet_ACTIVE_CLR", Sun3D_pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D_pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_pallet_ACTIVE_DIR", Sun3D_pallet_ACTIVE_DIR, -2, 2, 1), 1));
-        Sun3D_pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_pallet_ACTIVE_MLT", Sun3D_pallet_ACTIVE_MLT, 0.125, 8, -2);
+        Sun3D.pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_CLR", Sun3D.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_DIR", Sun3D.pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        Sun3D.pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_MLT", Sun3D.pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        Sun3D_pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_pallet_PASSIVE_CLR", Sun3D_pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D_pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_pallet_PASSIVE_DIR", Sun3D_pallet_PASSIVE_DIR, -2, 2, 2), 1));
-        Sun3D_pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_pallet_PASSIVE_MLT", Sun3D_pallet_PASSIVE_MLT, 0.125, 8, -2);
+        Sun3D.pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_CLR", Sun3D.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_DIR", Sun3D.pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        Sun3D.pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_MLT", Sun3D.pallet_PASSIVE_MLT, 0.125, 8, -2);
       }
   
   
@@ -8177,13 +8177,7 @@ final int TIME_Interval = 1; //dT
 
 
 
-int Sun3D_pallet_ACTIVE_CLR = 15;
-int Sun3D_pallet_ACTIVE_DIR = 1;
-float Sun3D_pallet_ACTIVE_MLT = 1;
 
-int Sun3D_pallet_PASSIVE_CLR = 18; 
-int Sun3D_pallet_PASSIVE_DIR = -1;  
-float Sun3D_pallet_PASSIVE_MLT = 1; //1;
 
 
 
@@ -8333,9 +8327,6 @@ int SOLARCHVISION_Y_click2 = -1;
 
 float WindRose_scale = 400;
 
-
-boolean Sun3D_displayPath = true;
-boolean Sun3D_displayPattern = false;
 
 
 
@@ -15453,7 +15444,7 @@ void setup () {
   
   Earth3D.resize_images();
 
-  Star3D.load_images();
+  Sun3D.load_images();
   Moon3D.load_images();
 
   WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
@@ -19449,14 +19440,14 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
 
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = Sun3D_pallet_ACTIVE_CLR; 
-      PAL_DIR = Sun3D_pallet_ACTIVE_DIR;
-      PAL_Multiplier = Sun3D_pallet_ACTIVE_MLT;
+      PAL_TYPE = Sun3D.pallet_ACTIVE_CLR; 
+      PAL_DIR = Sun3D.pallet_ACTIVE_DIR;
+      PAL_Multiplier = Sun3D.pallet_ACTIVE_MLT;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Sun3D_pallet_PASSIVE_CLR; 
-      PAL_DIR = Sun3D_pallet_PASSIVE_DIR;
-      PAL_Multiplier = Sun3D_pallet_PASSIVE_MLT;
+      PAL_TYPE = Sun3D.pallet_PASSIVE_CLR; 
+      PAL_DIR = Sun3D.pallet_PASSIVE_DIR;
+      PAL_Multiplier = Sun3D.pallet_PASSIVE_MLT;
     }
   } else {
 
@@ -20131,254 +20122,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
 
 
-void SOLARCHVISION_draw_Sun3D_pattern (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
 
-  if (Sun3D_displayPattern) {
-
-    float keep_STUDY_perDays = STUDY.perDays;
-    int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-      STUDY.perDays = 1;
-      STUDY.joinDays = 1;
-    }    
-
-    float previous_DATE = TIME_Date;
-
-    SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, 3);
-
-    STUDY.perDays = keep_STUDY_perDays;
-    STUDY.joinDays = keep_STUDY_joinDays; 
-    TIME_Date = previous_DATE;
-    SOLARCHVISION_update_date();
-  }
-}
-
-void SOLARCHVISION_draw_Sun3D_path (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
-
-  if (Sun3D_displayPath) {
-
-    float keep_STUDY_perDays = STUDY.perDays;
-    int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-      STUDY.perDays = 1;
-      STUDY.joinDays = 1;
-    }    
-
-    float previous_DATE = TIME_Date;
-
-
-
-
-    int TES_hour = 4; // 1 = every 1 hour, 4 = every 15 minutes
-
-    int PAL_TYPE = 0; 
-    int PAL_DIR = 1;
-
-    if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = Sun3D_pallet_ACTIVE_CLR; 
-      PAL_DIR = Sun3D_pallet_ACTIVE_DIR;
-    }
-    if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Sun3D_pallet_PASSIVE_CLR; 
-      PAL_DIR = Sun3D_pallet_PASSIVE_DIR;
-    }             
-
-    float PAL_Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * Sun3D_pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * Sun3D_pallet_PASSIVE_MLT;
-
-
-
-    WIN3D.graphics.pushMatrix();
-    WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
-
-    WIN3D.graphics.strokeWeight(0); 
-    WIN3D.graphics.stroke(0, 0, 0);
-    WIN3D.graphics.fill(0, 0, 0);
-
-    WIN3D.graphics.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
-    WIN3D.graphics.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
-
-    WIN3D.graphics.stroke(255, 255, 0);
-
-
-
-    int[] startK_endK = get_startK_endK();
-    int start_k = startK_endK[0]; 
-    int end_k = startK_endK[1];
-    int count_k = 1 + end_k - start_k; 
-    if (count_k < 0) count_k = 0;
-
-    for (int p = 0; p < 1; p++) { 
-
-      int l = STUDY.ImpactLayer;
-
-      int DATE_step = 1;
-
-      int J_START = STUDY.j_Start;
-      int J_END = STUDY.j_End;
-
-      if (IMPACTS_displayDay > 0) {
-        J_START = IMPACTS_displayDay - 1;
-        J_END = IMPACTS_displayDay;
-      }
-
-      for (int j = J_START; j < J_END; j += DATE_step) {
-
-        int now_k = 0;
-        int now_i1 = 0;
-        int now_i2 = 0;
-        int now_j = 0;
-
-        now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
-
-        if (now_j >= 365) {
-          now_j = now_j % 365;
-        }
-        if (now_j < 0) {
-          now_j = (now_j + 365) % 365;
-        }
-
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-
-        //println(j, now_j, DATE_ANGLE);
-
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
-
-        int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
-
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
-          if (nk != -1) {
-            int k = int(nk / STUDY.joinDays);
-            int j_ADD = nk % STUDY.joinDays; 
-
-            for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
-              if (STUDY.isInHourlyRange(i) == 1) {
-
-                float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-
-                now_k = k + start_k;
-
-                now_i1 = floor(i);
-                now_i2 = (1 + now_i1) % 24;
-                float i_ratio = i - now_i1;
-
-                now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
-
-                if (now_j >= 365) {
-                  now_j = now_j % 365;
-                }
-                if (now_j < 0) {
-                  now_j = (now_j + 365) % 365;
-                }
-
-                float Pa1 = FLOAT_undefined;
-                float Pa2 = FLOAT_undefined;
-
-                if (Impact_TYPE == Impact_ACTIVE) {
-                  
-                  Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_dirnorrad.id);
-                  Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_dirnorrad.id);                  
-
-                } 
-
-                if (Impact_TYPE == Impact_PASSIVE) {
-                  
-                  Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_direffect.id);
-                  Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect.id);  
-                  
-                }                  
-
-                if ((is_undefined_FLOAT(Pa1)) && (is_undefined_FLOAT(Pa2))) {
-                } else {
-
-                  float sun_V = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
-
-                  float _u = 0;
-
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * sun_V);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * sun_V);
-
-                  if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 * _u;
-
-                  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);    
-
-                  WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-                  WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-
-                  WIN3D.graphics.strokeWeight(4);
-
-                  float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE - 0.5 * (1.0 / float(TES_hour)));
-                  float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE + 0.5 * (1.0 / float(TES_hour)));
-
-                  float x1 = SunA[1] * WIN3D.scale * s_SunPath;
-                  float y1 = SunA[2] * WIN3D.scale * s_SunPath;
-                  float z1 = SunA[3] * WIN3D.scale * s_SunPath;
-
-                  float x2 = SunB[1] * WIN3D.scale * s_SunPath;
-                  float y2 = SunB[2] * WIN3D.scale * s_SunPath;
-                  float z2 = SunB[3] * WIN3D.scale * s_SunPath;
-
-                  WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-                }
-              }
-            }
-          }
-        }
-      }
-    }  
-
-    WIN3D.graphics.popMatrix();
-
-
-
-    STUDY.perDays = keep_STUDY_perDays;
-    STUDY.joinDays = keep_STUDY_joinDays; 
-    TIME_Date = previous_DATE;
-    SOLARCHVISION_update_date();
-  }
-} 
-
-
-boolean Sun3D_displayGrid = true;
-
-void SOLARCHVISION_draw_Sun3D_grid (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
-
-  if (Sun3D_displayGrid) {
-
-    WIN3D.graphics.pushMatrix();
-    WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
-
-    WIN3D.graphics.strokeWeight(1);
-    WIN3D.graphics.stroke(0);
-
-    for (int j = 90; j <= 270; j += 30) {
-      float HOUR_step = 1;
-      for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, (HOUR + HOUR_step));
-        WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
-      }
-    }
-
-    for (int HOUR = 0; HOUR <= 24; HOUR++) {
-      float DATE_step = 1;
-      for (int j = 0; j <= 360; j += DATE_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (j + DATE_step), HOUR);
-        WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
-      }
-    }
-
-    WIN3D.graphics.popMatrix();
-  }
-} 
 
 
 
@@ -21708,7 +21452,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
-  if (Sun3D_displayPattern) {
+  if (Sun3D.displayPattern) {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
@@ -23043,7 +22787,7 @@ class solarchvision_Sky3D {
   
   private final static String CLASS_STAMP = "Sky3D";
   
-  boolean displaySurface = true;
+  boolean displaySurface = false;
   int displayTessellation = 3; //3;
   float scale = 1000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
@@ -23208,9 +22952,21 @@ solarchvision_Sky3D Sky3D = new solarchvision_Sky3D();
 
 
 
-class solarchvision_Star3D {
+class solarchvision_Sun3D {
   
-  private final static String CLASS_STAMP = "Star3D";
+  private final static String CLASS_STAMP = "Sun3D";
+  
+  int pallet_ACTIVE_CLR = 15;
+  int pallet_ACTIVE_DIR = 1;
+  float pallet_ACTIVE_MLT = 1;
+  
+  int pallet_PASSIVE_CLR = 18; 
+  int pallet_PASSIVE_DIR = -1;  
+  float pallet_PASSIVE_MLT = 1; //1;
+  
+  boolean displayGrid = true;
+  boolean displayPath = true;
+  boolean displayPattern = false;
   
   boolean displaySurface = false;
   boolean displayTexture = true;
@@ -23224,7 +22980,7 @@ class solarchvision_Star3D {
   }
   
   void draw () {
-    if (Star3D.displaySurface) {
+    if (this.displaySurface) {
   
       WIN3D.graphics.strokeWeight(1);
 
@@ -23268,7 +23024,7 @@ class solarchvision_Star3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Star3D.displayTexture) {
+            if (this.displayTexture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -23304,7 +23060,7 @@ class solarchvision_Star3D {
   
           WIN3D.graphics.noStroke();
   
-          if (Star3D.displayTexture) {
+          if (this.displayTexture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -23320,11 +23076,272 @@ class solarchvision_Star3D {
     }
   }
   
+  void drawPattern (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  
+    if (this.displayPattern) {
+  
+      float keep_STUDY_perDays = STUDY.perDays;
+      int keep_STUDY_joinDays = STUDY.joinDays;
+      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+        STUDY.perDays = 1;
+        STUDY.joinDays = 1;
+      }    
+  
+      float previous_DATE = TIME_Date;
+  
+      SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, 3);
+  
+      STUDY.perDays = keep_STUDY_perDays;
+      STUDY.joinDays = keep_STUDY_joinDays; 
+      TIME_Date = previous_DATE;
+      SOLARCHVISION_update_date();
+    }
+  }
+  
+  void drawPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  
+    if (this.displayPath) {
+  
+      float keep_STUDY_perDays = STUDY.perDays;
+      int keep_STUDY_joinDays = STUDY.joinDays;
+      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+        STUDY.perDays = 1;
+        STUDY.joinDays = 1;
+      }    
+  
+      float previous_DATE = TIME_Date;
+  
+  
+  
+  
+      int TES_hour = 4; // 1 = every 1 hour, 4 = every 15 minutes
+  
+      int PAL_TYPE = 0; 
+      int PAL_DIR = 1;
+  
+      if (Impact_TYPE == Impact_ACTIVE) {  
+        PAL_TYPE = this.pallet_ACTIVE_CLR; 
+        PAL_DIR = this.pallet_ACTIVE_DIR;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = this.pallet_PASSIVE_CLR; 
+        PAL_DIR = this.pallet_PASSIVE_DIR;
+      }             
+  
+      float PAL_Multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
+  
+  
+  
+      WIN3D.graphics.pushMatrix();
+      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
+  
+      WIN3D.graphics.strokeWeight(0); 
+      WIN3D.graphics.stroke(0, 0, 0);
+      WIN3D.graphics.fill(0, 0, 0);
+  
+      WIN3D.graphics.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
+      WIN3D.graphics.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
+  
+      WIN3D.graphics.stroke(255, 255, 0);
+  
+  
+  
+      int[] startK_endK = get_startK_endK();
+      int start_k = startK_endK[0]; 
+      int end_k = startK_endK[1];
+      int count_k = 1 + end_k - start_k; 
+      if (count_k < 0) count_k = 0;
+  
+      for (int p = 0; p < 1; p++) { 
+  
+        int l = STUDY.ImpactLayer;
+  
+        int DATE_step = 1;
+  
+        int J_START = STUDY.j_Start;
+        int J_END = STUDY.j_End;
+  
+        if (IMPACTS_displayDay > 0) {
+          J_START = IMPACTS_displayDay - 1;
+          J_END = IMPACTS_displayDay;
+        }
+  
+        for (int j = J_START; j < J_END; j += DATE_step) {
+  
+          int now_k = 0;
+          int now_i1 = 0;
+          int now_i2 = 0;
+          int now_j = 0;
+  
+          now_j = (j * int(STUDY.perDays) + TIME_BeginDay + 365) % 365;
+  
+          if (now_j >= 365) {
+            now_j = now_j % 365;
+          }
+          if (now_j < 0) {
+            now_j = (now_j + 365) % 365;
+          }
+  
+          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+  
+          //println(j, now_j, DATE_ANGLE);
+  
+          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+  
+          int[] Normals_COL_N;
+          Normals_COL_N = new int [9];
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
+  
+          for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+            if (nk != -1) {
+              int k = int(nk / STUDY.joinDays);
+              int j_ADD = nk % STUDY.joinDays; 
+  
+              for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
+                if (STUDY.isInHourlyRange(i) == 1) {
+  
+                  float HOUR_ANGLE = i; 
+                  float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+  
+                  now_k = k + start_k;
+  
+                  now_i1 = floor(i);
+                  now_i2 = (1 + now_i1) % 24;
+                  float i_ratio = i - now_i1;
+  
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME_BeginDay + 365) % 365;
+  
+                  if (now_j >= 365) {
+                    now_j = now_j % 365;
+                  }
+                  if (now_j < 0) {
+                    now_j = (now_j + 365) % 365;
+                  }
+  
+                  float Pa1 = FLOAT_undefined;
+                  float Pa2 = FLOAT_undefined;
+  
+                  if (Impact_TYPE == Impact_ACTIVE) {
+                    
+                    Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_dirnorrad.id);
+                    Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_dirnorrad.id);                  
+  
+                  } 
+  
+                  if (Impact_TYPE == Impact_PASSIVE) {
+                    
+                    Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_direffect.id);
+                    Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect.id);  
+                    
+                  }                  
+  
+                  if ((is_undefined_FLOAT(Pa1)) && (is_undefined_FLOAT(Pa2))) {
+                  } else {
+  
+                    float sun_V = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
+  
+                    float _u = 0;
+  
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * sun_V);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * sun_V);
+  
+                    if (PAL_DIR == -1) _u = 1 - _u;
+                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                    if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+                    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);    
+  
+                    WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+                    WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+  
+                    WIN3D.graphics.strokeWeight(4);
+  
+                    float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE - 0.5 * (1.0 / float(TES_hour)));
+                    float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE + 0.5 * (1.0 / float(TES_hour)));
+  
+                    float x1 = SunA[1] * WIN3D.scale * s_SunPath;
+                    float y1 = SunA[2] * WIN3D.scale * s_SunPath;
+                    float z1 = SunA[3] * WIN3D.scale * s_SunPath;
+  
+                    float x2 = SunB[1] * WIN3D.scale * s_SunPath;
+                    float y2 = SunB[2] * WIN3D.scale * s_SunPath;
+                    float z2 = SunB[3] * WIN3D.scale * s_SunPath;
+  
+                    WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }  
+  
+      WIN3D.graphics.popMatrix();
+  
+  
+  
+      STUDY.perDays = keep_STUDY_perDays;
+      STUDY.joinDays = keep_STUDY_joinDays; 
+      TIME_Date = previous_DATE;
+      SOLARCHVISION_update_date();
+    }
+  } 
+  
+  
+  
+  
+  void drawGrid (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  
+    if (this.displayGrid) {
+  
+      WIN3D.graphics.pushMatrix();
+      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
+  
+      WIN3D.graphics.strokeWeight(1);
+      WIN3D.graphics.stroke(0);
+  
+      for (int j = 90; j <= 270; j += 30) {
+        float HOUR_step = 1;
+        for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
+          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, (HOUR + HOUR_step));
+          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+        }
+      }
+  
+      for (int HOUR = 0; HOUR <= 24; HOUR++) {
+        float DATE_step = 1;
+        for (int j = 0; j <= 360; j += DATE_step) {
+          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (j + DATE_step), HOUR);
+          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+        }
+      }
+  
+      WIN3D.graphics.popMatrix();
+    }
+  } 
+  
   public void to_XML (XML xml) {
     
     println("Saving:" + this.CLASS_STAMP);
     
     XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setInt("pallet_ACTIVE_CLR", this.pallet_ACTIVE_CLR);
+    parent.setInt("pallet_ACTIVE_DIR", this.pallet_ACTIVE_DIR);
+    parent.setFloat("pallet_ACTIVE_MLT", this.pallet_ACTIVE_MLT);
+    parent.setInt("pallet_PASSIVE_CLR", this.pallet_PASSIVE_CLR);
+    parent.setInt("pallet_PASSIVE_DIR", this.pallet_PASSIVE_DIR);
+    parent.setFloat("pallet_PASSIVE_MLT", this.pallet_PASSIVE_MLT);
+    
+    parent.setString("displayGrid", Boolean.toString(this.displayGrid));
+    parent.setString("displayPath", Boolean.toString(this.displayPath));
+    parent.setString("displayPattern", Boolean.toString(this.displayPattern));
+           
     
     parent.setString("displaySurface", Boolean.toString(this.displaySurface));
     parent.setString("displayTexture", Boolean.toString(this.displayTexture));
@@ -23337,12 +23354,23 @@ class solarchvision_Star3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
+    this.pallet_ACTIVE_CLR = parent.getInt("pallet_ACTIVE_CLR");
+    this.pallet_ACTIVE_DIR = parent.getInt("pallet_ACTIVE_DIR");
+    this.pallet_ACTIVE_MLT = parent.getFloat("pallet_ACTIVE_MLT");
+    this.pallet_PASSIVE_CLR = parent.getInt("pallet_PASSIVE_CLR");
+    this.pallet_PASSIVE_DIR = parent.getInt("pallet_PASSIVE_DIR");
+    this.pallet_PASSIVE_MLT = parent.getFloat("pallet_PASSIVE_MLT");
+    
+    this.displayGrid = Boolean.parseBoolean(parent.getString("displayGrid"));      
+    this.displayPath = Boolean.parseBoolean(parent.getString("displayPath"));
+    this.displayPattern = Boolean.parseBoolean(parent.getString("displayPattern"));      
+    
     this.displaySurface = Boolean.parseBoolean(parent.getString("displaySurface"));
     this.displayTexture = Boolean.parseBoolean(parent.getString("displayTexture"));
   }   
 }
 
-solarchvision_Star3D Star3D = new solarchvision_Star3D();
+solarchvision_Sun3D Sun3D = new solarchvision_Sun3D();
 
 
 class solarchvision_Moon3D {
@@ -23361,7 +23389,7 @@ class solarchvision_Moon3D {
   }  
   
   void draw () {
-    if (Moon3D.displaySurface) {
+    if (this.displaySurface) {
   
       WIN3D.graphics.strokeWeight(1);
   
@@ -23405,7 +23433,7 @@ class solarchvision_Moon3D {
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
   
-            if (Moon3D.displayTexture) {
+            if (this.displayTexture) {
               // calculating u and v
               subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
               subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -23437,7 +23465,7 @@ class solarchvision_Moon3D {
   
           WIN3D.graphics.noStroke();
   
-          if (Moon3D.displayTexture) {
+          if (this.displayTexture) {
   
             WIN3D.graphics.texture(this.Map);
           }
@@ -23536,7 +23564,7 @@ class solarchvision_Earth3D {
   
     boolean proceed = true;
   
-    if ((Earth3D.displaySurface == false) || (Earth3D.displayTexture == false)) {
+    if ((this.displaySurface == false) || (this.displayTexture == false)) {
       proceed = false;
     }
   
@@ -23587,7 +23615,7 @@ class solarchvision_Earth3D {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
           }
     
-          if (Earth3D.displayTexture) {
+          if (this.displayTexture) {
     
             String old_Texture_path = this.Path + "/" + this.Filenames[n_Map];
     
@@ -23663,7 +23691,7 @@ class solarchvision_Earth3D {
               float _lon = b - CEN_lon;
               float _lat = a - CEN_lat;
     
-              if (Earth3D.displayTexture) {
+              if (this.displayTexture) {
                 // calculating u and v
                 subFace[s][3] = (_lon / ScaleX / 360.0 + 0.5); 
                 subFace[s][4] = (-_lat / ScaleY / 180.0 + 0.5);
@@ -23728,7 +23756,7 @@ class solarchvision_Earth3D {
       
               WIN3D.graphics.noStroke();
               
-              if (Earth3D.displayTexture) {
+              if (this.displayTexture) {
       
                 WIN3D.graphics.texture(this.Map[n_Map]);
               }            
@@ -23869,9 +23897,7 @@ solarchvision_Earth3D Earth3D = new solarchvision_Earth3D();
 
 
 
-class solarchvision_Land3D 
-
-{
+class solarchvision_Land3D {
   
   private final static String CLASS_STAMP = "Land3D";
   
@@ -42016,25 +42042,25 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }
             if (menu_option.equals("Display/Hide Sun Grid")) {
-              Sun3D_displayGrid = !Sun3D_displayGrid;
+              Sun3D.displayGrid = !Sun3D.displayGrid;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
             if (menu_option.equals("Display/Hide Sun Path")) {
-              Sun3D_displayPath = !Sun3D_displayPath;
+              Sun3D.displayPath = !Sun3D.displayPath;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
             if (menu_option.equals("Display/Hide Sun Texture")) {
-              Sun3D_displayPattern = !Sun3D_displayPattern;
+              Sun3D.displayPattern = !Sun3D.displayPattern;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }               
             if (menu_option.equals("Display/Hide Star")) {
-              Star3D.displaySurface = !Star3D.displaySurface;
+              Sun3D.displaySurface = !Sun3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -50373,25 +50399,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Grid")) {
-                if (Sun3D_displayGrid == false) {
+                if (Sun3D.displayGrid == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Path")) {
-                if (Sun3D_displayPath == false) {
+                if (Sun3D.displayPath == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Texture")) {
-                if (Sun3D_displayPattern == false) {
+                if (Sun3D.displayPattern == false) {
                   stroke(127); 
                   fill(127);
                 }
               }              
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Star")) {
-                if (Star3D.displaySurface == false) {
+                if (Sun3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -52587,12 +52613,6 @@ void SOLARCHVISION_save_project (String myFile) {
     
 
 
-    parent.setInt("Sun3D_pallet_ACTIVE_CLR", Sun3D_pallet_ACTIVE_CLR);
-    parent.setInt("Sun3D_pallet_ACTIVE_DIR", Sun3D_pallet_ACTIVE_DIR);
-    parent.setFloat("Sun3D_pallet_ACTIVE_MLT", Sun3D_pallet_ACTIVE_MLT);
-    parent.setInt("Sun3D_pallet_PASSIVE_CLR", Sun3D_pallet_PASSIVE_CLR);
-    parent.setInt("Sun3D_pallet_PASSIVE_DIR", Sun3D_pallet_PASSIVE_DIR);
-    parent.setFloat("Sun3D_pallet_PASSIVE_MLT", Sun3D_pallet_PASSIVE_MLT);
 
 
 
@@ -52615,10 +52635,9 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setFloat("WindRose_scale", WindRose_scale);
   
     parent.setFloat("Planetary_Magnification", Planetary_Magnification);
-    parent.setString("Sun3D_displayGrid", Boolean.toString(Sun3D_displayGrid));
-    parent.setString("Sun3D_displayPath", Boolean.toString(Sun3D_displayPath));
-    parent.setString("Sun3D_displayPattern", Boolean.toString(Sun3D_displayPattern));
-           
+    
+    
+
 
     parent.setString("WindFlow_displayVectors", Boolean.toString(WindFlow_displayVectors));
     //parent.setInt("Camera_Variation", Camera_Variation);
@@ -52682,7 +52701,7 @@ void SOLARCHVISION_save_project (String myFile) {
   
   Moon3D.to_XML(xml);
   
-  Star3D.to_XML(xml);
+  Sun3D.to_XML(xml);
   
   User3D.to_XML(xml);
 
@@ -52825,12 +52844,6 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
       
-      Sun3D_pallet_ACTIVE_CLR = parent.getInt("Sun3D_pallet_ACTIVE_CLR");
-      Sun3D_pallet_ACTIVE_DIR = parent.getInt("Sun3D_pallet_ACTIVE_DIR");
-      Sun3D_pallet_ACTIVE_MLT = parent.getFloat("Sun3D_pallet_ACTIVE_MLT");
-      Sun3D_pallet_PASSIVE_CLR = parent.getInt("Sun3D_pallet_PASSIVE_CLR");
-      Sun3D_pallet_PASSIVE_DIR = parent.getInt("Sun3D_pallet_PASSIVE_DIR");
-      Sun3D_pallet_PASSIVE_MLT = parent.getFloat("Sun3D_pallet_PASSIVE_MLT");
 
 
 
@@ -52853,9 +52866,7 @@ void SOLARCHVISION_load_project (String myFile) {
       WindRose_scale = parent.getFloat("WindRose_scale");
   
       Planetary_Magnification = parent.getFloat("Planetary_Magnification");
-      Sun3D_displayGrid = Boolean.parseBoolean(parent.getString("Sun3D_displayGrid"));      
-      Sun3D_displayPath = Boolean.parseBoolean(parent.getString("Sun3D_displayPath"));
-      Sun3D_displayPattern = Boolean.parseBoolean(parent.getString("Sun3D_displayPattern"));
+
       
       WindFlow_displayVectors = Boolean.parseBoolean(parent.getString("WindFlow_displayVectors"));
       Camera_Variation = parent.getInt("Camera_Variation");
@@ -52928,7 +52939,7 @@ void SOLARCHVISION_load_project (String myFile) {
     
     Moon3D.from_XML(xml);
     
-    Star3D.from_XML(xml);
+    Sun3D.from_XML(xml);
     
     User3D.from_XML(xml);
 
