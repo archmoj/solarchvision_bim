@@ -1,4 +1,7 @@
 
+
+
+
 // rebuild >> make them all boolean!
 
 //    allModel2Ds.add_onLand(1); // 1 = people
@@ -2524,7 +2527,9 @@ class solarchvision_WIN3D {
   
       allModel2Ds.draw(TypeWindow.WIN3D);  
   
-      SOLARCHVISION_draw_WindFlow();
+      allWindFlows.draw();
+      
+      
   
   
       this.graphics.sphereDetail(6, 4);
@@ -7461,7 +7466,7 @@ class solarchvision_ROLLOUT {
         //allSolidImpacts.displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
         //allSolidImpacts.displayLines = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
   
-        //WindFlow_displayVectors = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "WindFlow_displayVectors", WindFlow_displayVectors, 0, 1, 1), 1));
+        //allWindFlows.display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.display", allWindFlows.display, 0, 1, 1), 1));
       }
     } else if (this.parent == 2) { // Period & Scenarios
   
@@ -7592,9 +7597,9 @@ class solarchvision_ROLLOUT {
         Land3D.pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_DIR", Land3D.pallet_DIR, -2, 2, 2), 1));
         Land3D.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_MLT", Land3D.pallet_MLT, 0.001, 0.5, -2);   
   
-        WindFlow_pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_pallet_CLR", WindFlow_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        WindFlow_pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_pallet_DIR", WindFlow_pallet_DIR, -2, 2, 2), 1));
-        WindFlow_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindFlow_pallet_MLT", WindFlow_pallet_MLT, 0.01, 1.0, -2);
+        allWindFlows.pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_CLR", allWindFlows.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allWindFlows.pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_DIR", allWindFlows.pallet_DIR, -2, 2, 2), 1));
+        allWindFlows.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_MLT", allWindFlows.pallet_MLT, 0.01, 1.0, -2);
       }      
   
   
@@ -7956,7 +7961,7 @@ boolean pre_allSolidImpacts_displayLines;
 
 int pre_allSolidImpacts_Process_subDivisions;
 
-boolean pre_WindFlow_displayVectors;
+boolean pre_WindFlow_display;
 
 float pre_USER_create_powAll;
 
@@ -8189,9 +8194,7 @@ final int TIME_Interval = 1; //dT
 
 
 
-int WindFlow_pallet_CLR = 18; 
-int WindFlow_pallet_DIR = -1;  
-float WindFlow_pallet_MLT = 1;
+
 
 
 
@@ -8338,7 +8341,7 @@ int SOLARCHVISION_Y_click2 = -1;
 
 
 
-boolean WindFlow_displayVectors = false;
+
 
 
 
@@ -11238,16 +11241,16 @@ class solarchvision_SolidImpacts {
     }
   }
   
-  float[][] WindFlow_Vertices = new float [0][4]; // keeping values at the 4th member
-  int[][] WindFlow_Lines = new int [0][2];
+  float[][] Wind_Vertices = new float [0][4]; // keeping values at the 4th member
+  int[][] Wind_Lines = new int [0][2];
   
   void calculate_WindFlow () {
   
     cursor(WAIT);  
   
-    this.WindFlow_Vertices = new float [0][4];
+    this.Wind_Vertices = new float [0][4];
   
-    this.WindFlow_Lines = new int [0][2];
+    this.Wind_Lines = new int [0][2];
   
   
   
@@ -11357,9 +11360,9 @@ class solarchvision_SolidImpacts {
                     x1, y1, z1, AB
                   }
                 };
-                this.WindFlow_Vertices = (float[][]) concat(this.WindFlow_Vertices, newVertex);
+                this.Wind_Vertices = (float[][]) concat(this.Wind_Vertices, newVertex);
   
-                point_prev = this.WindFlow_Vertices.length - 1;
+                point_prev = this.Wind_Vertices.length - 1;
               }      
   
   
@@ -11369,9 +11372,9 @@ class solarchvision_SolidImpacts {
                     x2, y2, z2, AB
                   }
                 };
-                this.WindFlow_Vertices = (float[][]) concat(this.WindFlow_Vertices, newVertex);
+                this.Wind_Vertices = (float[][]) concat(this.Wind_Vertices, newVertex);
   
-                point_next = this.WindFlow_Vertices.length - 1;
+                point_next = this.Wind_Vertices.length - 1;
               }      
   
               if ((point_prev != 0) && (point_next != 0)) {
@@ -11380,7 +11383,7 @@ class solarchvision_SolidImpacts {
                     point_prev, point_next
                   }
                 };
-                this.WindFlow_Lines = (int[][]) concat(this.WindFlow_Lines, newU1Line);
+                this.Wind_Lines = (int[][]) concat(this.Wind_Lines, newU1Line);
   
                 point_prev = point_next;
               }      
@@ -11397,7 +11400,7 @@ class solarchvision_SolidImpacts {
   
     cursor(ARROW);  
   
-    WindFlow_displayVectors = true;                
+    allWindFlows.display = true;                
     ROLLOUT.update = true;
   }
   
@@ -15827,7 +15830,7 @@ void draw () {
         pre_allSolidImpacts_displayPoints = allSolidImpacts.displayPoints;
         pre_allSolidImpacts_displayLines = allSolidImpacts.displayLines;
 
-        pre_WindFlow_displayVectors = WindFlow_displayVectors;
+        pre_WindFlow_display = allWindFlows.display;
 
 
 
@@ -16277,7 +16280,7 @@ void draw () {
         if (pre_allFaces_displayEdges != allFaces.displayEdges) WIN3D.update = true;
         if (pre_allFaces_displayNormals != allFaces.displayNormals) WIN3D.update = true;
 
-        if (pre_WindFlow_displayVectors != WindFlow_displayVectors) WIN3D.update = true;
+        if (pre_WindFlow_display != allWindFlows.display) WIN3D.update = true;
 
 
         if (STUDY.plotSetup != pre_STUDY_Setup) {
@@ -21104,11 +21107,11 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  if (WindFlow_displayVectors) {  
+  if (allWindFlows.display) {  
 
-    int PAL_TYPE = WindFlow_pallet_CLR; 
-    int PAL_DIR = WindFlow_pallet_DIR; 
-    float PAL_Multiplier = WindFlow_pallet_MLT;
+    int PAL_TYPE = allWindFlows.pallet_CLR; 
+    int PAL_DIR = allWindFlows.pallet_DIR; 
+    float PAL_Multiplier = allWindFlows.pallet_MLT;
 
     String the_filename = "";
 
@@ -21175,21 +21178,21 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
         }
       }        
 
-      for (int q = 0; q < allSolidImpacts.WindFlow_Lines.length; q++) {
+      for (int q = 0; q < allSolidImpacts.Wind_Lines.length; q++) {
 
-        int n1 = allSolidImpacts.WindFlow_Lines[q][0];
-        int n2 = allSolidImpacts.WindFlow_Lines[q][1];
+        int n1 = allSolidImpacts.Wind_Lines[q][0];
+        int n2 = allSolidImpacts.Wind_Lines[q][1];
 
-        float x1 = allSolidImpacts.WindFlow_Vertices[n1][0];
-        float y1 = allSolidImpacts.WindFlow_Vertices[n1][1];
-        float z1 = allSolidImpacts.WindFlow_Vertices[n1][2];
+        float x1 = allSolidImpacts.Wind_Vertices[n1][0];
+        float y1 = allSolidImpacts.Wind_Vertices[n1][1];
+        float z1 = allSolidImpacts.Wind_Vertices[n1][2];
 
-        float x2 = allSolidImpacts.WindFlow_Vertices[n2][0];
-        float y2 = allSolidImpacts.WindFlow_Vertices[n2][1];
-        float z2 = allSolidImpacts.WindFlow_Vertices[n2][2];
+        float x2 = allSolidImpacts.Wind_Vertices[n2][0];
+        float y2 = allSolidImpacts.Wind_Vertices[n2][1];
+        float z2 = allSolidImpacts.Wind_Vertices[n2][2];
 
 
-        float _val = WindFlow_pallet_MLT * allSolidImpacts.WindFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+        float _val = allWindFlows.pallet_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
         float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
         if (PAL_DIR == -1) _u = 1 - _u;
@@ -21869,103 +21872,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
 
 
-void SOLARCHVISION_draw_WindFlow () {
 
-  if (WindFlow_displayVectors) {  
-
-    int PAL_TYPE = WindFlow_pallet_CLR; 
-    int PAL_DIR = WindFlow_pallet_DIR; 
-    float PAL_Multiplier = WindFlow_pallet_MLT;
-
-
-
-    for (int q = 0; q < allSolidImpacts.WindFlow_Lines.length; q++) {
-
-      int n1 = allSolidImpacts.WindFlow_Lines[q][0];
-      int n2 = allSolidImpacts.WindFlow_Lines[q][1];
-
-      float x1 = allSolidImpacts.WindFlow_Vertices[n1][0];
-      float y1 = allSolidImpacts.WindFlow_Vertices[n1][1];
-      float z1 = allSolidImpacts.WindFlow_Vertices[n1][2];
-
-      float x2 = allSolidImpacts.WindFlow_Vertices[n2][0];
-      float y2 = allSolidImpacts.WindFlow_Vertices[n2][1];
-      float z2 = allSolidImpacts.WindFlow_Vertices[n2][2];
-
-
-      float _val = WindFlow_pallet_MLT * allSolidImpacts.WindFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
-
-      float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
-
-      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);      
-
-      /*    
-       WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-       WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-       
-       WIN3D.graphics.strokeWeight(1);
-       WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
-       
-       WIN3D.graphics.strokeWeight(4);      
-       WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D.scale, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D.scale, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D.scale);
-       */
-
-
-      float the_dist = dist(x1, y1, z1, x2, y2, z2);
-
-      float[] W = {
-        x2 - x1, y2 - y1, z2 - z1
-      };
-      W = SOLARCHVISION_fn_normalize(W);
-
-      float Alpha = asin_ang(W[2]);
-      float Beta = atan2_ang(W[1], W[0]) + 90;   
-
-      WIN3D.graphics.fill(COL[1], COL[2], COL[3], 127);
-      WIN3D.graphics.noStroke();
-
-      for (int i = 0; i < 4; i++) {
-
-        WIN3D.graphics.beginShape();
-
-        WIN3D.graphics.vertex(x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);  
-
-        for (int j = 0; j < 2; j++) {
-
-          float px = 0.1 * the_dist * cos((i + j) * HALF_PI);
-          float py = 0;
-          float pz = 0.1 * the_dist * sin((i + j) * HALF_PI); 
-
-          float pz_rot = pz;
-          float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
-          float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
-
-          px = px_rot;
-          py = py_rot;
-          pz = pz_rot;
-
-          px_rot = px;
-          py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
-          pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
-
-          px = px_rot;
-          py = py_rot;
-          pz = pz_rot;          
-
-          WIN3D.graphics.vertex((x1 + px) * OBJECTS_scale * WIN3D.scale, -(y1 + py) * OBJECTS_scale * WIN3D.scale, (z1 + pz) * OBJECTS_scale * WIN3D.scale);
-        }
-
-        WIN3D.graphics.endShape(CLOSE);
-      }
-    }
-
-
-    WIN3D.graphics.strokeWeight(0);
-  }
-}
 
 
 
@@ -37094,6 +37001,147 @@ solarchvision_WindRose allWindRoses = new solarchvision_WindRose();
 
 
 
+class solarchvision_WindFlow {
+  
+  private final static String CLASS_STAMP = "WindFlow";
+  
+  boolean display = false;
+  
+  int pallet_CLR = 18; 
+  int pallet_DIR = -1;  
+  float pallet_MLT = 1;
+
+  void draw () {
+  
+    if (this.display) {  
+  
+      int PAL_TYPE = this.pallet_CLR; 
+      int PAL_DIR = this.pallet_DIR; 
+      float PAL_Multiplier = this.pallet_MLT;
+  
+  
+  
+      for (int q = 0; q < allSolidImpacts.Wind_Lines.length; q++) {
+  
+        int n1 = allSolidImpacts.Wind_Lines[q][0];
+        int n2 = allSolidImpacts.Wind_Lines[q][1];
+  
+        float x1 = allSolidImpacts.Wind_Vertices[n1][0];
+        float y1 = allSolidImpacts.Wind_Vertices[n1][1];
+        float z1 = allSolidImpacts.Wind_Vertices[n1][2];
+  
+        float x2 = allSolidImpacts.Wind_Vertices[n2][0];
+        float y2 = allSolidImpacts.Wind_Vertices[n2][1];
+        float z2 = allSolidImpacts.Wind_Vertices[n2][2];
+  
+  
+        float _val = this.pallet_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+  
+        float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);      
+  
+        /*    
+         WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+         WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+         
+         WIN3D.graphics.strokeWeight(1);
+         WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
+         
+         WIN3D.graphics.strokeWeight(4);      
+         WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D.scale, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D.scale, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D.scale);
+         */
+  
+  
+        float the_dist = dist(x1, y1, z1, x2, y2, z2);
+  
+        float[] W = {
+          x2 - x1, y2 - y1, z2 - z1
+        };
+        W = SOLARCHVISION_fn_normalize(W);
+  
+        float Alpha = asin_ang(W[2]);
+        float Beta = atan2_ang(W[1], W[0]) + 90;   
+  
+        WIN3D.graphics.fill(COL[1], COL[2], COL[3], 127);
+        WIN3D.graphics.noStroke();
+  
+        for (int i = 0; i < 4; i++) {
+  
+          WIN3D.graphics.beginShape();
+  
+          WIN3D.graphics.vertex(x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);  
+  
+          for (int j = 0; j < 2; j++) {
+  
+            float px = 0.1 * the_dist * cos((i + j) * HALF_PI);
+            float py = 0;
+            float pz = 0.1 * the_dist * sin((i + j) * HALF_PI); 
+  
+            float pz_rot = pz;
+            float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
+            float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
+  
+            px = px_rot;
+            py = py_rot;
+            pz = pz_rot;
+  
+            px_rot = px;
+            py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
+            pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
+  
+            px = px_rot;
+            py = py_rot;
+            pz = pz_rot;          
+  
+            WIN3D.graphics.vertex((x1 + px) * OBJECTS_scale * WIN3D.scale, -(y1 + py) * OBJECTS_scale * WIN3D.scale, (z1 + pz) * OBJECTS_scale * WIN3D.scale);
+          }
+  
+          WIN3D.graphics.endShape(CLOSE);
+        }
+      }
+  
+  
+      WIN3D.graphics.strokeWeight(0);
+    }
+  }
+
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+
+    parent.setString("display", Boolean.toString(this.display));
+    
+    parent.setInt("pallet_CLR", this.pallet_CLR);
+    parent.setInt("pallet_DIR", this.pallet_DIR);
+    parent.setFloat("pallet_MLT", this.pallet_MLT);
+
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.display = Boolean.parseBoolean(parent.getString("display"));
+    
+    this.pallet_CLR = parent.getInt("pallet_CLR");
+    this.pallet_DIR = parent.getInt("pallet_DIR");
+    this.pallet_MLT = parent.getFloat("pallet_MLT");
+   
+  }   
+}
+
+solarchvision_WindFlow allWindFlows = new solarchvision_WindFlow();
+
 
 
 
@@ -42249,7 +42297,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }                  
             if (menu_option.equals("Display/Hide Wind Flow")) {
-              WindFlow_displayVectors = !WindFlow_displayVectors;
+              allWindFlows.display = !allWindFlows.display;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -50509,7 +50557,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               } 
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Wind Flow")) {
-                if (WindFlow_displayVectors == false) {
+                if (allWindFlows.display == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -52658,9 +52706,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("FILTER_Hourly", FILTER_Hourly);
     parent.setInt("FILTER_Daily", FILTER_Daily);
 
-    parent.setInt("WindFlow_pallet_CLR", WindFlow_pallet_CLR);
-    parent.setInt("WindFlow_pallet_DIR", WindFlow_pallet_DIR);
-    parent.setFloat("WindFlow_pallet_MLT", WindFlow_pallet_MLT);
+
     parent.setInt("Impact_TYPE", Impact_TYPE);
 
     parent.setInt("COLOR_STYLE_Current", COLOR_STYLE_Current);
@@ -52673,7 +52719,7 @@ void SOLARCHVISION_save_project (String myFile) {
   
     parent.setFloat("Planetary_Magnification", Planetary_Magnification);
 
-    parent.setString("WindFlow_displayVectors", Boolean.toString(WindFlow_displayVectors));
+    
     //parent.setInt("Camera_Variation", Camera_Variation);
 
     parent.setInt("Materials_Selection", Materials_Selection);
@@ -52735,6 +52781,10 @@ void SOLARCHVISION_save_project (String myFile) {
   WORLD.to_XML(xml);
   
   STUDY.to_XML(xml);
+  
+  allWindRoses.to_XML(xml);
+  
+  allWindFlows.to_XML(xml);
   
   allSolidImpacts.to_XML(xml);
   
@@ -52862,9 +52912,7 @@ void SOLARCHVISION_load_project (String myFile) {
       FILTER_Hourly = parent.getInt("FILTER_Hourly");
       FILTER_Daily = parent.getInt("FILTER_Daily");
 
-      WindFlow_pallet_CLR = parent.getInt("WindFlow_pallet_CLR");
-      WindFlow_pallet_DIR = parent.getInt("WindFlow_pallet_DIR");
-      WindFlow_pallet_MLT = parent.getFloat("WindFlow_pallet_MLT");
+
       Impact_TYPE = parent.getInt("Impact_TYPE");
 
       COLOR_STYLE_Current = parent.getInt("COLOR_STYLE_Current");
@@ -52877,7 +52925,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
       Planetary_Magnification = parent.getFloat("Planetary_Magnification");
 
-      WindFlow_displayVectors = Boolean.parseBoolean(parent.getString("WindFlow_displayVectors"));
+      
       Camera_Variation = parent.getInt("Camera_Variation");
 
       Materials_Selection = parent.getInt("Materials_Selection");
@@ -52949,6 +52997,10 @@ void SOLARCHVISION_load_project (String myFile) {
     WORLD.from_XML(xml);
     
     STUDY.from_XML(xml);
+    
+    allWindRoses.from_XML(xml);
+    
+    allWindFlows.from_XML(xml);
     
     allSolidImpacts.from_XML(xml);
     
