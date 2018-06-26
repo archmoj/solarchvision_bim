@@ -3257,8 +3257,8 @@ class solarchvision_WIN3D {
   
   
         case ENTER: 
-          if (this.FacesShade == SHADE.Global_Solar) rebuild_GlobalSolar_array = true;   
-          if (this.FacesShade == SHADE.Vertex_Solar) rebuild_VertexSolar_array = true;
+          if (this.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;   
+          if (this.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
           this.update = true;
           ROLLOUT.update = true;  
           break;                  
@@ -5072,8 +5072,8 @@ class solarchvision_STUDY {
            */
           DevelopData_update = true;
   
-          rebuild_VertexSolar_array = true;
-          rebuild_GlobalSolar_array = true;
+          VertexSolar_rebuild_array = true;
+          GlobalSolar_rebuild_array = true;
           allSolarImpacts.rebuild_Image_array = true;
           allWindRoses.rebuild_Image_array = true;
           allSections.resize_solarImpact_array();
@@ -5097,8 +5097,8 @@ class solarchvision_STUDY {
            */
           DevelopData_update = true;
   
-          rebuild_VertexSolar_array = true; 
-          rebuild_GlobalSolar_array = true;
+          VertexSolar_rebuild_array = true; 
+          GlobalSolar_rebuild_array = true;
           allSolarImpacts.rebuild_Image_array = true;
           allWindRoses.rebuild_Image_array = true;   
           allSections.resize_solarImpact_array();
@@ -7805,8 +7805,8 @@ void launch (String[] s) {
 float[][]   VertexSolar_XYZ; 
 float[][][] VertexSolar_amounts; 
 
-boolean rebuild_VertexSolar_array = true;
-boolean rebuild_GlobalSolar_array = true;
+boolean VertexSolar_rebuild_array = true;
+boolean GlobalSolar_rebuild_array = true;
 
 
 
@@ -15443,8 +15443,8 @@ void setup () {
   SOLARCHVISION_empty_Materials_DirectArea();
   SOLARCHVISION_empty_Materials_DiffuseArea();
 
-  SOLARCHVISION_resize_VertexSolar_array(); 
-  SOLARCHVISION_resize_GlobalSolar_array();
+  VertexSolar_resize_array(); 
+  GlobalSolar_resize_array();
   
   Tropo3D.resize_images();
   
@@ -15503,8 +15503,8 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 1)) {
 
-    rebuild_VertexSolar_array = true;
-    rebuild_GlobalSolar_array = true;
+    VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
     allSolarImpacts.rebuild_Image_array = true;
     allWindRoses.rebuild_Image_array = true;    
 
@@ -15742,8 +15742,8 @@ void draw () {
   } else if (frameCount == 21) {
     
     SOLARCHVISION_build_SkySphere(1); //1 - 3
-    SOLARCHVISION_resize_GlobalSolar_array();    
-    SOLARCHVISION_resize_VertexSolar_array();
+    GlobalSolar_resize_array();    
+    VertexSolar_resize_array();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
@@ -15934,8 +15934,8 @@ void draw () {
         if (pre_STUDY_j_End != STUDY.j_End) {
           UI_BAR_d_update = true;
 
-          rebuild_VertexSolar_array = true;
-          rebuild_GlobalSolar_array = true;
+          VertexSolar_rebuild_array = true;
+          GlobalSolar_rebuild_array = true;
           allSolarImpacts.rebuild_Image_array = true;
           allWindRoses.rebuild_Image_array = true;      
 
@@ -16177,7 +16177,7 @@ void draw () {
         }             
 
         if (pre_allModel3Ds_Tessellation != allFaces.displayTessellation) {
-          //rebuild_VertexSolar_array = true;
+          //VertexSolar_rebuild_array = true;
         }
 
 
@@ -16401,10 +16401,10 @@ void draw () {
 void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
   if (WIN3D.FacesShade == SHADE.Global_Solar) {
-    rebuild_GlobalSolar_array = true;
+    GlobalSolar_rebuild_array = true;
   }
   if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-    rebuild_VertexSolar_array = true;
+    VertexSolar_rebuild_array = true;
   }  
   if (allSolarImpacts.displayImage) {
     allSolarImpacts.rebuild_Image_array = true;
@@ -16418,11 +16418,11 @@ void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
 void SOLARCHVISION_regenerate_desired_bakings () {
   
-  if (rebuild_VertexSolar_array) {
+  if (VertexSolar_rebuild_array) {
     SOLARCHVISION_calculate_VertexSolar_array();
   }
   
-  if (rebuild_GlobalSolar_array) {
+  if (GlobalSolar_rebuild_array) {
     SOLARCHVISION_calculate_GlobalSolar_array();
   }
   
@@ -18312,8 +18312,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((STUDY.PlotImpacts == 2) || (STUDY.PlotImpacts == 3)) {
 
-    if (rebuild_GlobalSolar_array) {
-      SOLARCHVISION_resize_GlobalSolar_array();
+    if (GlobalSolar_rebuild_array) {
+      GlobalSolar_resize_array();
     }
 
     if (STUDY.PlotImpacts == 2) Impact_TYPE = Impact_ACTIVE; 
@@ -37107,12 +37107,12 @@ solarchvision_WindRose allWindRoses = new solarchvision_WindRose();
 
 
 
-void SOLARCHVISION_resize_VertexSolar_array () { // called when STUDY.j_End changes
+void VertexSolar_resize_array () { // called when STUDY.j_End changes
 
   VertexSolar_XYZ     = new float [0][3];
   VertexSolar_amounts = new float [2][1 + STUDY.j_End - STUDY.j_Start][0];
 
-  rebuild_VertexSolar_array = false;
+  VertexSolar_rebuild_array = false;
 }
 
 
@@ -37120,7 +37120,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
   cursor(WAIT);
 
-  SOLARCHVISION_resize_VertexSolar_array();
+  VertexSolar_resize_array();
 
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
@@ -38497,7 +38497,7 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
 
 
 
-void SOLARCHVISION_resize_GlobalSolar_array () {
+void GlobalSolar_resize_array () {
 
   Sky3D.stp_slp = Sky3D.calculatedResolution;
   Sky3D.stp_dir = Sky3D.calculatedResolution;
@@ -38517,7 +38517,7 @@ void SOLARCHVISION_resize_GlobalSolar_array () {
     }
   }
 
-  rebuild_GlobalSolar_array = false;
+  GlobalSolar_rebuild_array = false;
 }
 
 
@@ -38525,8 +38525,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   cursor(WAIT);
 
-  if (rebuild_GlobalSolar_array) {
-    SOLARCHVISION_resize_GlobalSolar_array();
+  if (GlobalSolar_rebuild_array) {
+    GlobalSolar_resize_array();
   }
 
   float keep_STUDY_perDays = STUDY.perDays;
@@ -53005,11 +53005,11 @@ void SOLARCHVISION_load_project (String myFile) {
     allSolarImpacts.rebuild_Image_array = true;
     allWindRoses.rebuild_Image_array = true; 
   
-    //rebuild_VertexSolar_array = true;
-    rebuild_GlobalSolar_array = true;
+    VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
   
-    SOLARCHVISION_resize_VertexSolar_array(); 
-    SOLARCHVISION_resize_GlobalSolar_array();
+    VertexSolar_resize_array(); 
+    GlobalSolar_resize_array();
   
   
     SOLARCHVISION_modify_Viewport_Title();
