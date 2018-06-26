@@ -122,7 +122,6 @@ solarchvision_TIME TIME = new solarchvision_TIME();
 
 
 
-int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
 
 
 
@@ -258,6 +257,8 @@ String[] skyScenario_FileTXT = {
 
 int FILTER_Hourly = 0;
 int FILTER_Daily = 1;
+
+int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
 
 final int numberOfLanguages = 2;
 final int Language_EN = 0;
@@ -52713,9 +52714,6 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("CLIMATIC_SolarForecast", CLIMATIC_SolarForecast);
     parent.setInt("CLIMATIC_WeatherForecast", CLIMATIC_WeatherForecast);
     parent.setInt("SOLARCHVISION_automated", SOLARCHVISION_automated);
-  
-
-  
 
     parent.setInt("CLIMATE_TMYEPW_start", CLIMATE_TMYEPW_start);
     parent.setInt("CLIMATE_TMYEPW_end", CLIMATE_TMYEPW_end);
@@ -52913,7 +52911,6 @@ void SOLARCHVISION_load_project (String myFile) {
       CLIMATIC_WeatherForecast = parent.getInt("CLIMATIC_WeatherForecast");
       SOLARCHVISION_automated = parent.getInt("SOLARCHVISION_automated");
 
-
       CLIMATE_TMYEPW_start = parent.getInt("CLIMATE_TMYEPW_start");
       CLIMATE_TMYEPW_end = parent.getInt("CLIMATE_TMYEPW_end");
       CLIMATE_CWEEDS_start = parent.getInt("CLIMATE_CWEEDS_start");
@@ -52964,8 +52961,6 @@ void SOLARCHVISION_load_project (String myFile) {
       DevelopLayer_id = parent.getInt("DevelopLayer_id");
       
       changeCurrentLayerTo(parent.getInt("CurrentLayer_id"));
-      
-      
 
       FILTER_Hourly = parent.getInt("FILTER_Hourly");
       FILTER_Daily = parent.getInt("FILTER_Daily");
