@@ -813,7 +813,7 @@ class solarchvision_LAYER {
     
     println("Saving:" + this.CLASS_STAMP + ":" + this.name);
     
-    XML parent = xml.addChild(this.CLASS_STAMP);
+    XML parent = xml.addChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
     
     parent.setInt("id", this.id);
     
@@ -832,7 +832,7 @@ class solarchvision_LAYER {
     
     println("Loading:" + this.CLASS_STAMP + ":" + this.name);
   
-    XML parent = xml.getChild(this.CLASS_STAMP);
+    XML parent = xml.getChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
 
     this.id = parent.getInt("id");
     
@@ -8054,7 +8054,7 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 2) { // Create
   
-        addToLastGroup = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
+        //addToLastGroup = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
   
         User3D.default_Material = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Material", User3D.default_Material, -1, 8, 1), 1));
         User3D.default_Tessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Tessellation", User3D.default_Tessellation, 0, 6, 1), 1));
@@ -8778,7 +8778,7 @@ float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
 
 
-float Planetary_Magnification = 10.0; // <<<<<<<<<<
+float Planetary_Magnification = 4.0; // <<<<<<<<<<
 
 
 
@@ -17779,7 +17779,7 @@ int saved_alignZ = userSelections.alignZ;
 
 int addNewSelectionToPreviousSelection = 0; // internal
 
-int addToLastGroup = 0;
+boolean addToLastGroup = false; // internal
 
 
 
@@ -22387,7 +22387,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
     if (parts[0].toLowerCase().equals("g")) {
       if (m == -1) current_Material = 1 + (current_Material % 8);
 
-      if (addToLastGroup == 0) allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      if (addToLastGroup == false) allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
 
     if (parts[0].toLowerCase().equals("v")) {
@@ -31006,8 +31006,8 @@ class solarchvision_Model3Ds {
       }
   
   
-      int pre_addToLastGroup = addToLastGroup;
-      addToLastGroup = 1;
+      boolean pre_addToLastGroup = addToLastGroup;
+      addToLastGroup = true;
   
   
       if (current_ObjectCategory == ObjectCategory.MODEL1D) {
@@ -37690,7 +37690,7 @@ class solarchvision_Model3Ds {
   
     this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
-    addToLastGroup = 0;
+    addToLastGroup = false;
   }
   
 }  
@@ -42587,25 +42587,25 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
-            if (menu_option.equals("Display/Hide Sun Texture")) {
+            if (menu_option.equals("Display/Hide Sun Pattern")) {
               Sun3D.displayPattern = !Sun3D.displayPattern;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }               
-            if (menu_option.equals("Display/Hide Star")) {
+            if (menu_option.equals("Display/Hide Sun Surface")) {
               Sun3D.displaySurface = !Sun3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
-            if (menu_option.equals("Display/Hide Moon")) {
+            if (menu_option.equals("Display/Hide Moon Surface")) {
               Moon3D.displaySurface = !Moon3D.displaySurface;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
-            if (menu_option.equals("Display/Hide Earth")) {
+            if (menu_option.equals("Display/Hide Earth Surface")) {
               Earth3D.displaySurface = !Earth3D.displaySurface;
 
               WIN3D.update = true;  
@@ -44988,7 +44988,7 @@ void mouseClicked () {
                   //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.MODEL2D)) {
                   if (current_ObjectCategory == ObjectCategory.GROUP) {
   
-                    if (addToLastGroup == 0) {
+                    if (addToLastGroup == false) {
   
                       allModel3Ds.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
                     }
@@ -50137,11 +50137,11 @@ String[][] UI_BAR_a_Items = {
     "Display/Hide Sky", 
     "Display/Hide Sun Grid",
     "Display/Hide Sun Path", 
-    "Display/Hide Sun Texture", 
-    "Display/Hide Star", 
-    "Display/Hide Moon", 
+    "Display/Hide Sun Pattern", 
+    "Display/Hide Sun Surface", 
+    "Display/Hide Moon Surface", 
     "Display/Hide Troposphere", 
-    "Display/Hide Earth", 
+    "Display/Hide Earth Surface", 
     "Display/Hide Solar Section", 
     "Display/Hide Solid Section", 
     "Display/Hide Wind Flow", 
@@ -50570,7 +50570,6 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
             stroke(0); 
             fill(0);
-            textSize(1.25 * MessageSize);
           } else {
             stroke(255); 
             fill(255);
@@ -50747,25 +50746,25 @@ void SOLARCHVISION_draw_window_BAR_a () {
                   fill(127);
                 }
               }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Texture")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Pattern")) {
                 if (Sun3D.displayPattern == false) {
                   stroke(127); 
                   fill(127);
                 }
               }              
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Star")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Surface")) {
                 if (Sun3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Moon")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Moon Surface")) {
                 if (Moon3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
                 }
               }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Earth")) {
+              if (UI_BAR_a_Items[i][j].equals("Display/Hide Earth Surface")) {
                 if (Earth3D.displaySurface == false) {
                   stroke(127); 
                   fill(127);
@@ -50886,10 +50885,9 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }              
             }
-
-            textSize(1.25 * MessageSize);
           }
 
+          textSize(1.25 * MessageSize);
           text(UI_BAR_a_Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_A_Pixel);
         }
       }
@@ -52936,8 +52934,6 @@ void SOLARCHVISION_save_project (String myFile) {
   
     parent.setInt("IMPACTS_displayDay", IMPACTS_displayDay);
 
-    parent.setInt("addToLastGroup", addToLastGroup);
-  
     parent.setFloat("BIOSPHERE_drawResolution", BIOSPHERE_drawResolution);
 
     parent.setString("Default_Font", Default_Font);
@@ -52954,19 +52950,19 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allGroups.to_XML(xml);
   
-  userSelections.to_XML(xml);  
-
   allCameras.to_XML(xml);
   
   allSolids.to_XML(xml);
-  
-
 
   allSections.to_XML(xml);
   
   allModel1Ds.to_XML(xml);
   
   allModel2Ds.to_XML(xml);
+  
+  userSelections.to_XML(xml);  
+  
+  User3D.to_XML(xml);
   
   Land3D.to_XML(xml);  
   
@@ -52979,8 +52975,6 @@ void SOLARCHVISION_save_project (String myFile) {
   Moon3D.to_XML(xml);
   
   Sun3D.to_XML(xml);
-  
-  User3D.to_XML(xml);
 
   WIN3D.to_XML(xml);
   
@@ -53134,7 +53128,6 @@ void SOLARCHVISION_load_project (String myFile) {
       
 
   
-      addToLastGroup = parent.getInt("addToLastGroup");      
   
       BIOSPHERE_drawResolution = parent.getFloat("BIOSPHERE_drawResolution");
   
@@ -53162,8 +53155,6 @@ void SOLARCHVISION_load_project (String myFile) {
   
     allGroups.from_XML(xml);
     
-    userSelections.from_XML(xml);
-    
     allCameras.from_XML(xml);
     
     allSolids.from_XML(xml);
@@ -53173,6 +53164,10 @@ void SOLARCHVISION_load_project (String myFile) {
     allModel1Ds.from_XML(xml);
     
     allModel2Ds.from_XML(xml);    
+    
+    userSelections.from_XML(xml);
+    
+    User3D.from_XML(xml);
     
     Land3D.from_XML(xml);  
     
@@ -53185,8 +53180,6 @@ void SOLARCHVISION_load_project (String myFile) {
     Moon3D.from_XML(xml);
     
     Sun3D.from_XML(xml);
-    
-    User3D.from_XML(xml);
 
     WIN3D.from_XML(xml);    
     
@@ -53231,6 +53224,8 @@ void SOLARCHVISION_load_project (String myFile) {
     ///////////////////////////////
   
     addNewSelectionToPreviousSelection = 0;
+    
+    addToLastGroup = false;
   
     UI_set_to_Create_Nothing();
   
