@@ -2482,9 +2482,9 @@ class solarchvision_WIN3D {
   
       Sky3D.draw();
   
-      SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * Sky3D.scale);
+      SOLARCHVISION_draw_Sun3D_pattern(0, 0, 0, 0.975 * Sky3D.scale);
   
-      SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * Sky3D.scale);
+      SOLARCHVISION_draw_Sun3D_path(0, 0, 0, 0.975 * Sky3D.scale);
   
       SOLARCHVISION_draw_Sun3D_grid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
   
@@ -7404,7 +7404,7 @@ class solarchvision_ROLLOUT {
         //Sky3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
   
         //Sun3D_displayPath = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_displayPath", Sun3D_displayPath, 0, 1, 1), 1));
-        //Sun3D_displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_displayTexture", Sun3D_displayTexture, 0, 1, 1), 1));
+        //Sun3D_displayPattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D_displayPattern", Sun3D_displayPattern, 0, 1, 1), 1));
       }
   
   
@@ -8335,7 +8335,7 @@ float WindRose_scale = 400;
 
 
 boolean Sun3D_displayPath = true;
-boolean Sun3D_displayTexture = false;
+boolean Sun3D_displayPattern = false;
 
 
 
@@ -20131,9 +20131,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
 
 
-void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+void SOLARCHVISION_draw_Sun3D_pattern (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
 
-  if (Sun3D_displayTexture) {
+  if (Sun3D_displayPattern) {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
@@ -20153,7 +20153,7 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
   }
 }
 
-void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+void SOLARCHVISION_draw_Sun3D_path (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
 
   if (Sun3D_displayPath) {
 
@@ -21708,7 +21708,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   }
 
 
-  if (Sun3D_displayTexture) {
+  if (Sun3D_displayPattern) {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
@@ -42028,7 +42028,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }   
             if (menu_option.equals("Display/Hide Sun Texture")) {
-              Sun3D_displayTexture = !Sun3D_displayTexture;
+              Sun3D_displayPattern = !Sun3D_displayPattern;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -50385,7 +50385,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 }
               }
               if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Texture")) {
-                if (Sun3D_displayTexture == false) {
+                if (Sun3D_displayPattern == false) {
                   stroke(127); 
                   fill(127);
                 }
@@ -52617,7 +52617,7 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setFloat("Planetary_Magnification", Planetary_Magnification);
     parent.setString("Sun3D_displayGrid", Boolean.toString(Sun3D_displayGrid));
     parent.setString("Sun3D_displayPath", Boolean.toString(Sun3D_displayPath));
-    parent.setString("Sun3D_displayTexture", Boolean.toString(Sun3D_displayTexture));
+    parent.setString("Sun3D_displayPattern", Boolean.toString(Sun3D_displayPattern));
            
 
     parent.setString("WindFlow_displayVectors", Boolean.toString(WindFlow_displayVectors));
@@ -52855,7 +52855,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Planetary_Magnification = parent.getFloat("Planetary_Magnification");
       Sun3D_displayGrid = Boolean.parseBoolean(parent.getString("Sun3D_displayGrid"));      
       Sun3D_displayPath = Boolean.parseBoolean(parent.getString("Sun3D_displayPath"));
-      Sun3D_displayTexture = Boolean.parseBoolean(parent.getString("Sun3D_displayTexture"));
+      Sun3D_displayPattern = Boolean.parseBoolean(parent.getString("Sun3D_displayPattern"));
       
       WindFlow_displayVectors = Boolean.parseBoolean(parent.getString("WindFlow_displayVectors"));
       Camera_Variation = parent.getInt("Camera_Variation");
