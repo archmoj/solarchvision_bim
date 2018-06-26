@@ -6,6 +6,387 @@
 
 
 
+class solarchvision_Functions {
+  
+  private final static String CLASS_STAMP = "Functions";
+
+  String[] getfiles (String _Folder) {
+    
+    //println(_Folder);
+    
+    String[] filenames = new String[0];
+    
+    File dir = new File(_Folder);
+    
+    if (dir.exists() && dir.isDirectory()) {
+      
+      filenames = concat(filenames, dir.list());
+    
+      if (filenames != null) {
+        for (int i = 0; i < filenames.length; i++) {
+          //println(filenames[i]);
+        }
+      }
+    }
+    
+    return filenames;
+  }
+  
+  
+  
+  int getOpacity (float O_scale) {
+    int k = int(O_scale * 0.01 * 256);
+    if (k > 255) k = 255;
+    if (k < 0) k = 0;
+  
+    return k;
+  }
+  
+  
+  float asin_ang (float a) {
+    return ((asin(a)) * 180/PI);
+  }
+  
+  float acos_ang (float a) {
+    return ((acos(a)) * 180/PI);
+  }
+  
+  float atan_ang (float a) {
+    return ((atan(a)) * 180/PI);
+  }
+  
+  float atan2_ang (float a, float b) {
+    return ((atan2(a, b)) * 180/PI);
+  }
+  
+  
+  float sin_ang (float a) {
+    return sin(a * PI / 180);
+  }
+  
+  float cos_ang (float a) {
+    return cos(a * PI / 180);
+  }
+  
+  float tan_ang (float a) {
+    return tan(a * PI / 180);
+  }
+  
+  
+  
+  
+  float roundTo (float a, float b) {
+    float a_floor = (floor (a / (1.0 * b))) * b;
+    float a_ceil =  (ceil (a / (1.0 * b))) * b;
+    float c;
+    if ((a - a_floor) > (a_ceil - a)) {
+      c = a_ceil;
+    } else {
+      c = a_floor;
+    }
+    return c;
+  }
+  
+  float lon_lat_dist (double lon1, double lat1, double lon2, double lat2) {
+  
+    float dLon = (float) (lon2 - lon1); 
+    float dLat = (float) (lat2 - lat1);
+  
+    float a = this.sin_ang(dLon / 2.0);
+    float b = this.sin_ang(dLat / 2.0) * this.sin_ang(dLat / 2.0) + this.cos_ang((float) lat1) * this.cos_ang((float) lat2) * a * a;
+    float d = 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth; 
+  
+    return(d);
+  }
+  
+  float distance (float[] a, float[] b) {
+  
+    float d = 0;
+    for (int i = 0; i < a.length; i++) {
+      d += pow(b[i] - a[i], 2);
+    }
+    d = pow(d, 0.5);
+  
+    return d;
+  }
+  
+  float[] centroid (float[][] a) {
+  
+    float[] b = a[0]; // initializing to the first node
+  
+    // adding other nodes
+    for (int i = 1; i < a.length; i++) {
+      for (int j = 0; j < b.length; j++) {
+        b[j] += a[i][j];
+      }
+    }
+  
+    // dividing to the number of nodes
+    for (int j = 0; j < b.length; j++) {
+      b[j] /= float(a.length);
+    }
+  
+    return b;
+  }
+  
+  float[] normalize (float[] a) {
+    float[] b = a;
+    float d = 0;
+    for (int i = 0; i < a.length; i++) {
+      d += pow(a[i], 2);
+    }
+    d = pow(d, 0.5);
+  
+    for (int i = 0; i < a.length; i++) {
+      if (d != 0) b[i] = a[i]/d;
+      else b[i] = 0;
+    } 
+    return b;
+  }
+  
+  float dot (float[] a, float b[]) {
+    float d = 0;
+    for (int i = 0; i < min (a.length, b.length); i++) {
+      d += a[i] * b[i];
+    }
+    return d;
+  }
+  
+  float dot3x (float[] a, float b[]) {
+    
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  }
+  
+  float[] cross3x (float[] a, float b[]) {
+    
+    float[] c = new float [3];
+    
+    c[0] = a[1] * b[2] - a[2] * b[1];
+    c[1] = a[2] * b[0] - a[0] * b[2];
+    c[2] = a[0] * b[1] - a[1] * b[0];
+    
+    return c;
+    
+  }
+  
+  
+  float[] sub3x (float[] a, float b[]) {
+    
+    float[] c = new float [3];
+    
+    c[0] = a[0] - b[0];
+    c[1] = a[1] - b[1];
+    c[2] = a[2] - b[2];
+    
+    return c;
+    
+  }
+  
+  
+  float[] sum3x (float[] a, float b[]) {
+    
+    float[] c = new float [3];
+    
+    c[0] = a[0] + b[0];
+    c[1] = a[1] + b[1];
+    c[2] = a[2] + b[2];
+    
+    return c;
+    
+  }
+  
+  
+  float bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
+  
+    float f_xy = f_00 * (1 - x) * (1 - y) + f_10 * x * (1 - y) + f_01 * (1 - x) * y + f_11 * x * y;
+  
+    return f_xy;
+  }
+  
+  
+  boolean isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
+  
+    float pX = P[0] - C[0];
+    float pY = P[1] - C[1];
+    float pZ = P[2] - C[2];
+      
+    float aX = A[0] - C[0];
+    float aY = A[1] - C[1];
+    float aZ = A[2] - C[2];
+  
+    float bX = B[0] - C[0];
+    float bY = B[1] - C[1];
+    float bZ = B[2] - C[2];
+  
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    
+    float r = (AA * BB - AB * AB);
+    float u = (BB * AP - AB * BP) / r;
+    float v = (AA * BP - AB * AP) / r;
+    
+    return ((u >= 0) && (v >= 0) && (u + v <= 1));
+  }
+  
+  
+  boolean isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {  
+  
+    float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
+  
+    float pX = P[0] - G[0];
+    float pY = P[1] - G[1];
+    float pZ = P[2] - G[2];
+  
+    float aX = A[0] - G[0];
+    float aY = A[1] - G[1];
+    float aZ = A[2] - G[2];
+  
+    float bX = B[0] - G[0];
+    float bY = B[1] - G[1];
+    float bZ = B[2] - G[2];
+    
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+  
+    float r = (AA * BB - AB * AB);
+    float u = (BB * AP - AB * BP) / r;
+    float v = (AA * BP - AB * AP) / r;
+   
+    boolean result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+    
+    if (result == false) {
+  
+      float cX = C[0] - G[0];
+      float cY = C[1] - G[1];
+      float cZ = C[2] - G[2];
+  
+      float CC = cX * cX + cY * cY + cZ * cZ; // this.dot3x(c, c);
+      float CP = cX * pX + cY * pY + cZ * pZ; // this.dot3x(c, p);
+      float BC = bX * cX + bY * cY + bZ * cZ; // this.dot3x(b, c);
+    
+      r = (BB * CC - BC * BC);
+      u = (CC * BP - BC * CP) / r;
+      v = (BB * CP - BC * BP) / r;  
+      
+      result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+      
+      if (result == false) {
+  
+        float dX = D[0] - G[0];
+        float dY = D[1] - G[1];
+        float dZ = D[2] - G[2];
+        
+        float CD = cX * dX + cY * dY + cZ * dZ; // this.dot3x(c, d);
+        float DD = dX * dX + dY * dY + dZ * dZ; // this.dot3x(d, d);
+        float DP = dX * pX + dY * pY + dZ * pZ; // this.dot3x(d, p);
+      
+        r = (CC * DD - CD * CD);
+        u = (DD * CP - CD * DP) / r;
+        v = (CC * DP - CD * CP) / r;
+        
+        result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+        
+        if (result == false) {
+          
+          float DA = dX * aX + dY * aY + dZ * aZ; // this.dot3x(d, a);  
+          
+          r = (DD * AA - DA * DA);
+          u = (AA * DP - DA * AP) / r;
+          v = (DD * AP - DA * DP) / r;
+          
+          result = ((u >= 0) && (v >= 0) && (u + v <= 1));
+        }  
+      }
+    }
+    
+    return result;
+  }
+  
+  boolean isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting allModel2Ds, etc.  
+  
+    float pX = P[0] - O[0];
+    float pY = P[1] - O[1];
+    float pZ = P[2] - O[2];
+      
+    float aX = A[0] - O[0];
+    float aY = A[1] - O[1];
+    float aZ = A[2] - O[2];
+  
+    float bX = B[0] - O[0];
+    float bY = B[1] - O[1];
+    float bZ = B[2] - O[2];
+  
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    
+    float r = (AA * BB - AB * AB);
+    float u = (BB * AP - AB * BP) / r;
+    float v = (AA * BP - AB * AP) / r;
+    
+    return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
+  }
+  
+  float[] uvInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // copy of the function above but it returns u and v
+  
+    float pX = P[0] - O[0];
+    float pY = P[1] - O[1];
+    float pZ = P[2] - O[2];
+      
+    float aX = A[0] - O[0];
+    float aY = A[1] - O[1];
+    float aZ = A[2] - O[2];
+  
+    float bX = B[0] - O[0];
+    float bY = B[1] - O[1];
+    float bZ = B[2] - O[2];
+  
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    
+    float r = (AA * BB - AB * AB);
+    float u = (BB * AP - AB * BP) / r;
+    float v = (AA * BP - AB * AP) / r;
+    
+    float[] result = {u, v};
+    
+    return result;
+  }
+  
+  
+}
+
+solarchvision_Functions funcs = new solarchvision_Functions(); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class solarchvision_TIME {
@@ -192,12 +573,12 @@ void SOLARCHVISION_update_folders () {
   CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
   CLIMATE_CWEEDS_directory = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
   
-  CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
-  CLIMATE_TMYEPW_Files = SOLARCHVISION_getfiles(CLIMATE_TMYEPW_directory);
-  CLIMATE_CWEEDS_Files = SOLARCHVISION_getfiles(CLIMATE_CWEEDS_directory);
+  CLIMATE_CLMREC_Files = funcs.getfiles(CLIMATE_CLMREC_directory);
+  CLIMATE_TMYEPW_Files = funcs.getfiles(CLIMATE_TMYEPW_directory);
+  CLIMATE_CWEEDS_Files = funcs.getfiles(CLIMATE_CWEEDS_directory);
   
-  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
-  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
+  ENSEMBLE_OBSERVED_Files = funcs.getfiles(ENSEMBLE_OBSERVED_directory);
+  ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory);  
 
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   CoordinateFolder      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
@@ -216,7 +597,7 @@ void SOLARCHVISION_update_folders () {
   ViewsFromSkyFolder    = ExportFolder + "/ViewsFromSky" + "/" + RunStamp;
   ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + RunStamp;
 
-  String[] filenames = SOLARCHVISION_getfiles(ScreenShotFolder);
+  String[] filenames = funcs.getfiles(ScreenShotFolder);
   if (filenames != null) SavedScreenShots = filenames.length;
   
 }
@@ -988,7 +1369,7 @@ void inputCoordinates_CWEEDS () {
     CWEEDS_Coordinates[f].setCountry("CA");
     CWEEDS_Coordinates[f].setLatitude(latitude);
     CWEEDS_Coordinates[f].setLongitude(longitude);
-    CWEEDS_Coordinates[f].setTimelong(roundTo(longitude, 15));
+    CWEEDS_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
     CWEEDS_Coordinates[f].setElevation(0); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ??
     CWEEDS_Coordinates[f].setFilename_CWEEDS(lineSTR);
   }
@@ -1026,7 +1407,7 @@ void inputCoordinates_CLMREC () {
     CLMREC_Coordinates[f].setCountry("CA");
     CLMREC_Coordinates[f].setLatitude(latitude);
     CLMREC_Coordinates[f].setLongitude(longitude);
-    CLMREC_Coordinates[f].setTimelong(roundTo(longitude, 15));
+    CLMREC_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
     CLMREC_Coordinates[f].setElevation(float(parts[10]));
     //CLMREC_Coordinates[f].setFilename_CLMREC(?);
   }
@@ -1067,7 +1448,7 @@ void inputCoordinates_SWOB () {
     SWOB_Coordinates[f].setCountry("CA");
     SWOB_Coordinates[f].setLatitude(latitude);
     SWOB_Coordinates[f].setLongitude(longitude);
-    SWOB_Coordinates[f].setTimelong(roundTo(longitude, 15));
+    SWOB_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
     SWOB_Coordinates[f].setElevation(float(parts[7]));
     //SWOB_Coordinates[f].setFilename_SWOB(?);
     
@@ -1139,7 +1520,7 @@ void inputCoordinates_NAEFS () {
     NAEFS_Coordinates[f].setCountry(country);
     NAEFS_Coordinates[f].setLatitude(latitude);
     NAEFS_Coordinates[f].setLongitude(longitude);
-    NAEFS_Coordinates[f].setTimelong(roundTo(longitude, 15));
+    NAEFS_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
     NAEFS_Coordinates[f].setElevation(elevation);
     NAEFS_Coordinates[f].setFilename_NAEFS(filename);
   }
@@ -1193,7 +1574,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       launch(Command1 + " & " + Command2);
     }
     
-    ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory);  
+    ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory);  
     
     ENSEMBLE_FORECAST_load = true;
     update_ENSEMBLE_FORECAST(TIME.Year, TIME.Month, TIME.Day, TIME.Hour);    
@@ -1203,7 +1584,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
 void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  ENSEMBLE_FORECAST_Files = SOLARCHVISION_getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
+  ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
   ENSEMBLE_FORECAST_values = new float [24][365][numberOfLayers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
   ENSEMBLE_FORECAST_flags = new boolean [24][365][numberOfLayers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -1492,7 +1873,7 @@ void download_CLIMATE_CLMREC () {
       }
     }
     
-    CLIMATE_CLMREC_Files = SOLARCHVISION_getfiles(CLIMATE_CLMREC_directory);
+    CLIMATE_CLMREC_Files = funcs.getfiles(CLIMATE_CLMREC_directory);
     
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
@@ -1530,7 +1911,7 @@ void update_CLIMATE_CLMREC () {
         float _lon = CLMREC_Coordinates[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!
   
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_Station_CLMREC_dist > d) {
   
@@ -1853,7 +2234,7 @@ void download_ENSEMBLE_OBSERVED () {
   }
   
 
-  ENSEMBLE_OBSERVED_Files = SOLARCHVISION_getfiles(ENSEMBLE_OBSERVED_directory);
+  ENSEMBLE_OBSERVED_Files = funcs.getfiles(ENSEMBLE_OBSERVED_directory);
   
   ENSEMBLE_OBSERVED_load = true; 
   SOLARCHVISION_update_ENSEMBLE_OBSERVED();
@@ -2388,10 +2769,10 @@ class solarchvision_SHADE {
     float[] W = {
       UV.x, UV.y, UV.z
     };
-    W = SOLARCHVISION_fn_normalize(W);
+    W = funcs.normalize(W);
   
-    float Alpha = asin_ang(W[2]);
-    float Beta = atan2_ang(W[1], W[0]) + 90;       
+    float Alpha = funcs.asin_ang(W[2]);
+    float Beta = funcs.atan2_ang(W[1], W[0]) + 90;       
   
     int a = int((Alpha + 90) / Sky3D.stp_slp);
     int b = int(Beta / Sky3D.stp_dir);
@@ -2691,7 +3072,7 @@ class solarchvision_WIN3D {
         double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
         double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
 
-        float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+        float x = 0.1 * (float) du * funcs.cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
         float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
         float z = _tgl - HeightAboveGround;
 
@@ -2725,7 +3106,7 @@ class solarchvision_WIN3D {
               /*         
                this.graphics.beginShape();
                for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
-               this.graphics.vertex((x + R * cos_ang(teta)) * OBJECTS_scale * this.scale, (y + R * sin_ang(teta)) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+               this.graphics.vertex((x + R * funcs.cos_ang(teta)) * OBJECTS_scale * this.scale, (y + R * funcs.sin_ang(teta)) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
                }
                this.graphics.endShape(CLOSE);
                */
@@ -2757,22 +3138,22 @@ class solarchvision_WIN3D {
               float R = 5.0 * AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
 
               float R_in = 0.0 * R; 
-              float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+              float x1 = (R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta)));
+              float y1 = (R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta)));
+              float x2 = (R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta)));
+              float y2 = (R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta)));                      
 
-              float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+              float x4 = (R * funcs.cos_ang(90 - (teta - 0.5 * D_teta)));
+              float y4 = (R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta)));
+              float x3 = (R * funcs.cos_ang(90 - (teta + 0.5 * D_teta)));
+              float y3 = (R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta)));          
 
-              //float ox = -0.5 * (R * cos_ang(90 - teta));
-              //float oy = -0.5 * (R * -sin_ang(90 - teta));
-              //float ox = -1 * (R * cos_ang(90 - teta));
-              //float oy = -1 * (R * -sin_ang(90 - teta));
-              float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-              float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+              //float ox = -0.5 * (R * funcs.cos_ang(90 - teta));
+              //float oy = -0.5 * (R * -funcs.sin_ang(90 - teta));
+              //float ox = -1 * (R * funcs.cos_ang(90 - teta));
+              //float oy = -1 * (R * -funcs.sin_ang(90 - teta));
+              float ox = -2 * (R * funcs.cos_ang(90 - teta)) / 3.0;
+              float oy = -2 * (R * -funcs.sin_ang(90 - teta)) / 3.0;            
 
               float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
               if (PAL_DIR == -1) _u = 1 - _u;
@@ -3316,12 +3697,12 @@ class solarchvision_WIN3D {
   
   
         case '+' :
-          this.Zoom = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * this.Zoom)); 
+          this.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * this.Zoom)); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '-' :
-          this.Zoom = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * this.Zoom)); 
+          this.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * this.Zoom)); 
           this.update = true; 
           ROLLOUT.update = true; 
           break; 
@@ -3422,7 +3803,7 @@ class solarchvision_WIN3D {
     float zB = P[2] / OBJECTS_scale;  
   
   
-    this.RZ_Coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
+    this.RZ_Coordinate += funcs.atan2_ang((yB - yO), (xB - xO)) - funcs.atan2_ang((yA - yO), (xA - xO));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -3445,7 +3826,7 @@ class solarchvision_WIN3D {
     float yB = P[1] / OBJECTS_scale;
     float zB = P[2] / OBJECTS_scale;  
   
-    this.RX_Coordinate += atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
+    this.RX_Coordinate += funcs.atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - funcs.atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -3475,7 +3856,7 @@ class solarchvision_WIN3D {
     float zB = P[2];  
   
   
-    this.RZ_Coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
+    this.RZ_Coordinate += funcs.atan2_ang((yB - yO), (xB - xO)) - funcs.atan2_ang((yA - yO), (xA - xO));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -3498,7 +3879,7 @@ class solarchvision_WIN3D {
     float yB = P[1];
     float zB = P[2];  
   
-    this.RX_Coordinate += atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
+    this.RX_Coordinate += funcs.atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - funcs.atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -3585,20 +3966,20 @@ class solarchvision_WIN3D {
   
     // rotate to make it on yz plane
   
-    float xC = xB * cos_ang(-this.RZ_Coordinate) - yB * sin_ang(-this.RZ_Coordinate); 
-    float yC = xB * sin_ang(-this.RZ_Coordinate) + yB * cos_ang(-this.RZ_Coordinate);
+    float xC = xB * funcs.cos_ang(-this.RZ_Coordinate) - yB * funcs.sin_ang(-this.RZ_Coordinate); 
+    float yC = xB * funcs.sin_ang(-this.RZ_Coordinate) + yB * funcs.cos_ang(-this.RZ_Coordinate);
     float zC = zB;
   
     // rotate it on yz plane
   
     float xD = xC;
-    float yD = yC * cos_ang(t) - zC * sin_ang(t);
-    float zD = yC * sin_ang(t) + zC * cos_ang(t);
+    float yD = yC * funcs.cos_ang(t) - zC * funcs.sin_ang(t);
+    float zD = yC * funcs.sin_ang(t) + zC * funcs.cos_ang(t);
   
     // rotate to back from yz plane
   
-    float xE = xD * cos_ang(this.RZ_Coordinate) - yD * sin_ang(this.RZ_Coordinate); 
-    float yE = xD * sin_ang(this.RZ_Coordinate) + yD * cos_ang(this.RZ_Coordinate);
+    float xE = xD * funcs.cos_ang(this.RZ_Coordinate) - yD * funcs.sin_ang(this.RZ_Coordinate); 
+    float yE = xD * funcs.sin_ang(this.RZ_Coordinate) + yD * funcs.cos_ang(this.RZ_Coordinate);
     float zE = zD;
   
     float xF = xE + xO;
@@ -3630,8 +4011,8 @@ class solarchvision_WIN3D {
     float dx = xA - xO;
     float dy = yA - yO;
   
-    float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
-    float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
+    float xB = xO + dx * funcs.cos_ang(t) - dy * funcs.sin_ang(t); 
+    float yB = yO + dx * funcs.sin_ang(t) + dy * funcs.cos_ang(t);
     float zB = zA;
   
     this.CAM_x = xB * OBJECTS_scale;           
@@ -3697,8 +4078,8 @@ class solarchvision_WIN3D {
     
       this.RZ_Coordinate += t;
     
-      float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
-      float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
+      float xB = xO + dx * funcs.cos_ang(t) - dy * funcs.sin_ang(t); 
+      float yB = yO + dx * funcs.sin_ang(t) + dy * funcs.cos_ang(t);
       float zB = zA;
     
       this.CAM_x = xB * OBJECTS_scale;           
@@ -3721,16 +4102,16 @@ class solarchvision_WIN3D {
     float CAM_x1, CAM_y1, CAM_z1;
   
     CAM_z1 = pz;
-    CAM_x1 = px * cos_ang(-this.RZ_Coordinate) - py * sin_ang(-this.RZ_Coordinate);
-    CAM_y1 = px * sin_ang(-this.RZ_Coordinate) + py * cos_ang(-this.RZ_Coordinate);  
+    CAM_x1 = px * funcs.cos_ang(-this.RZ_Coordinate) - py * funcs.sin_ang(-this.RZ_Coordinate);
+    CAM_y1 = px * funcs.sin_ang(-this.RZ_Coordinate) + py * funcs.cos_ang(-this.RZ_Coordinate);  
   
     px = CAM_x1;
     py = CAM_y1;
     pz = CAM_z1;  
   
     CAM_x1 = px;
-    CAM_y1 = py * cos_ang(-this.RX_Coordinate) - pz * sin_ang(-this.RX_Coordinate);
-    CAM_z1 = py * sin_ang(-this.RX_Coordinate) + pz * cos_ang(-this.RX_Coordinate);    
+    CAM_y1 = py * funcs.cos_ang(-this.RX_Coordinate) - pz * funcs.sin_ang(-this.RX_Coordinate);
+    CAM_z1 = py * funcs.sin_ang(-this.RX_Coordinate) + pz * funcs.cos_ang(-this.RX_Coordinate);    
   
   
     float CAM_x2, CAM_y2, CAM_z2;
@@ -3806,16 +4187,16 @@ class solarchvision_WIN3D {
     float px, py, pz;
   
     px = this.CAM_x;
-    py = this.CAM_y * cos_ang(this.RX_Coordinate) - this.CAM_z * sin_ang(this.RX_Coordinate);
-    pz = this.CAM_y * sin_ang(this.RX_Coordinate) + this.CAM_z * cos_ang(this.RX_Coordinate);
+    py = this.CAM_y * funcs.cos_ang(this.RX_Coordinate) - this.CAM_z * funcs.sin_ang(this.RX_Coordinate);
+    pz = this.CAM_y * funcs.sin_ang(this.RX_Coordinate) + this.CAM_z * funcs.cos_ang(this.RX_Coordinate);
   
     this.CAM_x = px;
     this.CAM_y = py;
     this.CAM_z = pz;
   
     pz = this.CAM_z;
-    px = this.CAM_x * cos_ang(this.RZ_Coordinate) - this.CAM_y * sin_ang(this.RZ_Coordinate);
-    py = this.CAM_x * sin_ang(this.RZ_Coordinate) + this.CAM_y * cos_ang(this.RZ_Coordinate);
+    px = this.CAM_x * funcs.cos_ang(this.RZ_Coordinate) - this.CAM_y * funcs.sin_ang(this.RZ_Coordinate);
+    py = this.CAM_x * funcs.sin_ang(this.RZ_Coordinate) + this.CAM_y * funcs.cos_ang(this.RZ_Coordinate);
   
     this.CAM_x = px;
     this.CAM_y = py;
@@ -3991,16 +4372,16 @@ class solarchvision_WIN3D {
         this.graphics.textAlign(CENTER, CENTER);
   
         if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
-          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
   
         if (this.FacesShade == SHADE.Vertex_Elevation) {
-          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
   
         if (this.FacesShade == SHADE.Vertex_Solid) {
-          this.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
       }
   
@@ -4147,7 +4528,7 @@ class solarchvision_WORLD {
 
   void listAllImages () {
   
-    this.VIEW_Filenames = sort(SOLARCHVISION_getfiles(this.ViewFolder));
+    this.VIEW_Filenames = sort(funcs.getfiles(this.ViewFolder));
   
     this.Viewports_num = this.VIEW_Filenames.length;
   
@@ -4359,7 +4740,7 @@ class solarchvision_WORLD {
                       this.graphics.fill(255);
                       this.graphics.strokeWeight(2 * this.ImageScale);
                     }              
-                    if (is_undefined_FLOAT(_val) == false) this.graphics.text(nf(int(roundTo(_val, 1)), 0), 0, 0);
+                    if (is_undefined_FLOAT(_val) == false) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
                   }
                 }
               }
@@ -4387,22 +4768,22 @@ class solarchvision_WORLD {
                   float R = 0.25 * R_station * AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
   
                   float R_in = 0.0 * R; 
-                  float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
-                  float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;                      
+                  float x1 = (R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
+                  float y1 = (R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
+                  float x2 = (R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
+                  float y2 = (R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;                      
   
-                  float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
-                  float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;          
+                  float x4 = (R * funcs.cos_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
+                  float y4 = (R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
+                  float x3 = (R * funcs.cos_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
+                  float y3 = (R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;          
   
-                  //float ox = -0.5 * (R * cos_ang(90 - teta)) * this.ImageScale;
-                  //float oy = -0.5 * (R * -sin_ang(90 - teta)) * this.ImageScale;
-                  //float ox = -1 * (R * cos_ang(90 - teta)) * this.ImageScale;
-                  //float oy = -1 * (R * -sin_ang(90 - teta)) * this.ImageScale;
-                  float ox = -2 * (R * cos_ang(90 - teta)) / 3.0 * this.ImageScale;
-                  float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0 * this.ImageScale;            
+                  //float ox = -0.5 * (R * funcs.cos_ang(90 - teta)) * this.ImageScale;
+                  //float oy = -0.5 * (R * -funcs.sin_ang(90 - teta)) * this.ImageScale;
+                  //float ox = -1 * (R * funcs.cos_ang(90 - teta)) * this.ImageScale;
+                  //float oy = -1 * (R * -funcs.sin_ang(90 - teta)) * this.ImageScale;
+                  float ox = -2 * (R * funcs.cos_ang(90 - teta)) / 3.0 * this.ImageScale;
+                  float oy = -2 * (R * -funcs.sin_ang(90 - teta)) / 3.0 * this.ImageScale;            
   
                   float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
                   if (PAL_DIR == -1) _u = 1 - _u;
@@ -4435,7 +4816,7 @@ class solarchvision_WORLD {
                       this.graphics.fill(255);
                       this.graphics.strokeWeight(2 * this.ImageScale);
                     }              
-                    if (is_undefined_FLOAT(_val) == false) this.graphics.text(nf(int(roundTo(_val, 1)), 0), 0, 0);
+                    if (is_undefined_FLOAT(_val) == false) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
                   }
                 }
               }
@@ -4506,7 +4887,7 @@ class solarchvision_WORLD {
             }
           }
     
-          float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+          float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
     
           if (nearest_Station_ENSEMBLE_OBSERVED_dist[q] > d) {
   
@@ -4585,7 +4966,7 @@ class solarchvision_WORLD {
           }
         }
   
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_WORLD_NAEFS_dist > d) {
           nearest_WORLD_NAEFS_dist = d;
@@ -4650,7 +5031,7 @@ class solarchvision_WORLD {
           }
         }
   
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_WORLD_CWEEDS_dist > d) {
           nearest_WORLD_CWEEDS_dist = d;
@@ -4715,7 +5096,7 @@ class solarchvision_WORLD {
           }
         }
   
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_WORLD_CLMREC_dist > d) {
           nearest_WORLD_CLMREC_dist = d;
@@ -4779,7 +5160,7 @@ class solarchvision_WORLD {
           }
         }
   
-        float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
         if (nearest_WORLD_TMYEPW_dist > d) {
           nearest_WORLD_TMYEPW_dist = d;
@@ -5462,7 +5843,7 @@ class solarchvision_STUDY {
     if (this.V_belowLine != 0) Shift_DOWN = -100;
   
     for (int i = 100; i >= Shift_DOWN; i -= 25) {
-      if (-this.V_offset + roundTo(i / this.V_scale, 0.1) != 0) {
+      if (-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1) != 0) {
         this.graphics.stroke(0, 63);
         this.graphics.fill(0, 63);
       } else {
@@ -5476,8 +5857,8 @@ class solarchvision_STUDY {
         this.graphics.fill(0);
         this.graphics.textSize(sx_Plot * 0.200 / this.U_scale);
         this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.text(((nf(-this.V_offset + roundTo(i / this.V_scale, 0.1), 0, 1)) + CurrentLayer_unit), -5, -i * this.S_View);
-        //this.graphics.text(((String.valueOf(int(-this.V_offset + roundTo(i / this.V_scale, 0.1)))) + CurrentLayer_unit), -5, -i * this.S_View);
+        this.graphics.text(((nf(-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1), 0, 1)) + CurrentLayer_unit), -5, -i * this.S_View);
+        //this.graphics.text(((String.valueOf(int(-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1)))) + CurrentLayer_unit), -5, -i * this.S_View);
       }
     }
   
@@ -5538,7 +5919,7 @@ class solarchvision_STUDY {
         int r = 0;
         if ((t % 45) != 0) r = 15;
   
-        this.graphics.line((i + this.rect_offset_x + r * this.rect_scale * (cos_ang(t))) * sx_Plot, -(r * this.rect_scale * (sin_ang(t))) * sx_Plot, (i + this.rect_offset_x + 90 * this.rect_scale * (cos_ang(t))) * sx_Plot, -(90 * this.rect_scale * (sin_ang(t))) * sx_Plot); 
+        this.graphics.line((i + this.rect_offset_x + r * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(r * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot, (i + this.rect_offset_x + 90 * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(90 * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot); 
   
         if (((t + 45) % 90) == 0) {
           this.graphics.stroke(0, 127);
@@ -5574,8 +5955,8 @@ class solarchvision_STUDY {
             break;
           }
   
-          this.graphics.text(ORI, (i + this.rect_offset_x + 110 * this.rect_scale * (cos_ang(t))) * sx_Plot, -(110 * this.rect_scale * (sin_ang(t))) * sx_Plot);
-          //this.graphics.text(String.valueOf((360 + 90 - t) % 360), (i + this.rect_offset_x + 110 * this.rect_scale * (cos_ang(t))) * sx_Plot, -(110 * this.rect_scale * (sin_ang(t))) * sx_Plot);
+          this.graphics.text(ORI, (i + this.rect_offset_x + 110 * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(110 * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot);
+          //this.graphics.text(String.valueOf((360 + 90 - t) % 360), (i + this.rect_offset_x + 110 * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(110 * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot);
         }
       }
   
@@ -5599,7 +5980,7 @@ class solarchvision_STUDY {
           this.graphics.fill(0, 127);
           this.graphics.textSize(sx_Plot * 0.200 / this.U_scale);
           this.graphics.textAlign(CENTER, CENTER);
-          this.graphics.text(nf(int(r / impact_scale), 1), (i + this.rect_offset_x + r * this.rect_scale * (cos_ang(t))) * sx_Plot, -(r * this.rect_scale * (sin_ang(t))) * sx_Plot);
+          this.graphics.text(nf(int(r / impact_scale), 1), (i + this.rect_offset_x + r * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(r * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot);
         }
       }
     }
@@ -5670,8 +6051,8 @@ class solarchvision_STUDY {
     //this.graphics.fill(this.color_data_raws);
     //this.graphics.strokeWeight(this.T_scale * 1);
   
-    this.graphics.stroke(0, SOLARCHVISION_getOpacity(this.O_scale));
-    this.graphics.fill(0, SOLARCHVISION_getOpacity(this.O_scale));
+    this.graphics.stroke(0, funcs.getOpacity(this.O_scale));
+    this.graphics.fill(0, funcs.getOpacity(this.O_scale));
     this.graphics.strokeWeight(this.T_scale * 0.5);
   
     for (int i = 0; i < Ax_LINES.length; i++) {
@@ -5695,8 +6076,8 @@ class solarchvision_STUDY {
   
     this.graphics.strokeWeight(this.T_scale * 0);
   
-    float min_v = tan_ang(89.99);
-    float max_v = tan_ang(-89.99);
+    float min_v = funcs.tan_ang(89.99);
+    float max_v = funcs.tan_ang(-89.99);
   
     for (int k = 0; k < _valuesSUM.length; k++) {
       if (is_undefined_FLOAT(_valuesSUM[k]) == false) {
@@ -5705,9 +6086,9 @@ class solarchvision_STUDY {
       }
     } 
   
-    if ((min_v != tan_ang(89.99)) && (max_v != tan_ang(-89.99))) {    
-      min_v = roundTo((min_v * abs(sy_Plot)), this.Pix) / this.Pix;
-      max_v = roundTo((max_v * abs(sy_Plot)), this.Pix) / this.Pix;
+    if ((min_v != funcs.tan_ang(89.99)) && (max_v != funcs.tan_ang(-89.99))) {    
+      min_v = funcs.roundTo((min_v * abs(sy_Plot)), this.Pix) / this.Pix;
+      max_v = funcs.roundTo((max_v * abs(sy_Plot)), this.Pix) / this.Pix;
   
       if (CurrentLayer_id == LAYER_winddir.id) min_v = 0;
   
@@ -5721,10 +6102,10 @@ class solarchvision_STUDY {
           float the_value = _valuesSUM[k];
   
           if (CurrentLayer_id == LAYER_winddir.id) {
-            if (roundTo((the_value * abs(sy_Plot)), this.Pix) >= (360 * abs(sy_Plot))) the_value -= 360;
+            if (funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) >= (360 * abs(sy_Plot))) the_value -= 360;
           }
   
-          int h = int(roundTo((roundTo((the_value * abs(sy_Plot)), this.Pix) / this.Pix) - min_v, 1));
+          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) / this.Pix) - min_v, 1));
           _probs[h] += 1;
           total_probs += 1;
         }
@@ -5734,7 +6115,7 @@ class solarchvision_STUDY {
         for (int n = 0; n < _probs.length; n++) {
           float prob_V = 1.0 * _probs[n] / total_probs;
   
-          //if (int(roundTo(100 * prob_V, 1)) > 0) {
+          //if (int(funcs.roundTo(100 * prob_V, 1)) > 0) {
           if ((100 * prob_V) > 0) {
   
             float _u = PAL_Multiplier * prob_V;
@@ -5759,7 +6140,7 @@ class solarchvision_STUDY {
               this.graphics.fill(255);
               this.graphics.strokeWeight(2);
             }   
-            this.graphics.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix) - 0.05 * txt_max_height);
+            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix) - 0.05 * txt_max_height);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
@@ -5806,8 +6187,8 @@ class solarchvision_STUDY {
   
       this.graphics.textSize(15.0 * this.S_View);
       this.graphics.textAlign(CENTER, CENTER);
-      //this.graphics.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 125 - 0.05 * 20) * this.S_View);
-      this.graphics.text((String.valueOf(int(roundTo(100 * prob_V, 1)))), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, Y_OFFSET + (10 - 0.05 * 20) * this.S_View);
+      //this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 125 - 0.05 * 20) * this.S_View);
+      this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, Y_OFFSET + (10 - 0.05 * 20) * this.S_View);
     }
   }
   
@@ -5926,8 +6307,8 @@ class solarchvision_STUDY {
   
       for (int l = 0; l < _valuesA.length; l++) {
         if (is_undefined_FLOAT(_valuesA[l]) == false) {
-          X_valuesA[l] = cos_ang(90 - _valuesA[l]); 
-          Y_valuesA[l] = sin_ang(90 - _valuesA[l]);
+          X_valuesA[l] = funcs.cos_ang(90 - _valuesA[l]); 
+          Y_valuesA[l] = funcs.sin_ang(90 - _valuesA[l]);
         } else {
           X_valuesA[l] = FLOAT_undefined; 
           Y_valuesA[l] = FLOAT_undefined;
@@ -5939,7 +6320,7 @@ class solarchvision_STUDY {
   
       for (int l = 0; l < NormalsA.length; l++) {
         if (is_undefined_FLOAT(NormalsA[l]) == false) {
-          NormalsA[l] = 90 - atan2_ang(Y_NormalsA[l], X_NormalsA[l]);
+          NormalsA[l] = 90 - funcs.atan2_ang(Y_NormalsA[l], X_NormalsA[l]);
           if (NormalsA[l] < 0) NormalsA[l] += 360;
         }
   
@@ -5955,8 +6336,8 @@ class solarchvision_STUDY {
   
       for (int l = 0; l < _valuesB.length; l++) {
         if (is_undefined_FLOAT(_valuesB[l]) == false) {
-          X_valuesB[l] = cos_ang(90 - _valuesB[l]); 
-          Y_valuesB[l] = sin_ang(90 - _valuesB[l]);
+          X_valuesB[l] = funcs.cos_ang(90 - _valuesB[l]); 
+          Y_valuesB[l] = funcs.sin_ang(90 - _valuesB[l]);
         } else {
           X_valuesB[l] = FLOAT_undefined; 
           Y_valuesB[l] = FLOAT_undefined;
@@ -5968,7 +6349,7 @@ class solarchvision_STUDY {
   
       for (int l = 0; l < NormalsB.length; l++) {
         if (is_undefined_FLOAT(NormalsB[l]) == false) {
-          NormalsB[l] = 90 - atan2_ang(Y_NormalsB[l], X_NormalsB[l]);
+          NormalsB[l] = 90 - funcs.atan2_ang(Y_NormalsB[l], X_NormalsB[l]);
           if (NormalsB[l] < 0) NormalsB[l] += 360;
         }
   
@@ -6070,7 +6451,7 @@ class solarchvision_STUDY {
     this.graphics.pushMatrix();
     this.graphics.translate(x_Plot, y_Plot);
   
-    this.color_data_raws = color(0, 0, 63, SOLARCHVISION_getOpacity(this.O_scale));
+    this.color_data_raws = color(0, 0, 63, funcs.getOpacity(this.O_scale));
   
     this.drawTimeGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   
@@ -6202,7 +6583,7 @@ class solarchvision_STUDY {
   
             int now_k = k + start_k;
             int now_i = i;
-            int now_j = int(j * this.perDays + (j_ADD - int(roundTo(0.5 * this.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+            int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.BeginDay + 365) % 365;
   
   
             if (now_j >= 365) {
@@ -7045,7 +7426,7 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
   cx = x + o + 0.25 * (h + 2 * o);
   cy = y - (h / 2) - o + 0.25 * (h + 2 * o);
   cr = 0.25 * (h + 2 * o);
-  triangle(cx + cr * cos_ang(270), cy + 0.75 * cr * sin_ang(270), cx + 0.75 * cr * cos_ang(30), cy + 0.75 * cr * sin_ang(30), cx + 0.75 * cr * cos_ang(150), cy + 0.75 * cr * sin_ang(150));
+  triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
 
   if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
     if (mouseButton == LEFT) {
@@ -7062,7 +7443,7 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
   }
 
   cy += 2 * cr;
-  triangle(cx + cr * cos_ang(90), cy + 0.75 * cr * sin_ang(90), cx + 0.75 * cr * cos_ang(210), cy + 0.75 * cr * sin_ang(210), cx + 0.75 * cr * cos_ang(330), cy + 0.75 * cr * sin_ang(330));
+  triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
 
   if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
 
@@ -7315,8 +7696,8 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 1) { // Point
   
-        //WORLD.AutoView = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.AutoView, 0, 1, 1), 1));
-        //WORLD.VIEW_id = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.Viewports_num - 1, 1), 1));
+        //WORLD.AutoView = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.AutoView, 0, 1, 1), 1));
+        //WORLD.VIEW_id = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.Viewports_num - 1, 1), 1));
   
         LocationLAT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
         LocationLON = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
@@ -7330,50 +7711,50 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 2) { // Weather
   
-        WORLD.displayAll_TMYEPW = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
-        //WORLD.displayNear_TMYEPW = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
+        WORLD.displayAll_TMYEPW = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
+        //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
   
-        WORLD.displayAll_CWEEDS = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1), 1));
-        //WORLD.displayNear_CWEEDS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
+        WORLD.displayAll_CWEEDS = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1), 1));
+        //WORLD.displayNear_CWEEDS = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
   
-        WORLD.displayAll_CLMREC = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1), 1));
-        //WORLD.displayNear_CLMREC = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
+        WORLD.displayAll_CLMREC = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1), 1));
+        //WORLD.displayNear_CLMREC = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
   
-        WORLD.displayAll_SWOB = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1), 1));
-        //WORLD.displayNear_SWOB = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
+        WORLD.displayAll_SWOB = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1), 1));
+        //WORLD.displayNear_SWOB = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
   
-        WORLD.displayAll_NAEFS = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
-        //WORLD.displayNear_NAEFS = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
+        WORLD.displayAll_NAEFS = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
+        //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
   
         
-        //ENSEMBLE_FORECAST_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
-        //ENSEMBLE_OBSERVED_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
-        //CLIMATE_CLMREC_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load, 0, 1, 1), 1));
-        //CLIMATE_CWEEDS_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load, 0, 1, 1), 1));
-        //CLIMATE_TMYEPW_load = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load, 0, 1, 1), 1));
+        //ENSEMBLE_FORECAST_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
+        //ENSEMBLE_OBSERVED_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
+        //CLIMATE_CLMREC_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load, 0, 1, 1), 1));
+        //CLIMATE_CWEEDS_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load, 0, 1, 1), 1));
+        //CLIMATE_TMYEPW_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load, 0, 1, 1), 1));
   
-        GRIB2_Hour_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
-        GRIB2_Hour_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
-        GRIB2_Hour_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
+        GRIB2_Hour_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
+        GRIB2_Hour_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
+        GRIB2_Hour_Step = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
   
-        GRIB2_Layer_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, numberOfLayers, 1), 1));
-        GRIB2_Layer_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, numberOfLayers, 1), 1));
-        GRIB2_Layer_Step = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
+        GRIB2_Layer_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, numberOfLayers, 1), 1));
+        GRIB2_Layer_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, numberOfLayers, 1), 1));
+        GRIB2_Layer_Step = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
       }
   
       if (this.child == 3) { // Space
   
-        //Tropo3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
-        //Tropo3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));      
+        //Tropo3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
+        //Tropo3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));      
   
-        //Earth3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
-        //Earth3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
+        //Earth3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
+        //Earth3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
   
-        //Moon3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
-        //Moon3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
+        //Moon3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
+        //Moon3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
   
-        //Sun3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
-        //Sun3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));      
+        //Sun3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
+        //Sun3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));      
   
         Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
@@ -7381,46 +7762,46 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 1) { // General
   
-        User3D.create_MeshOrSolid = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
+        User3D.create_MeshOrSolid = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
   
-        allFaces.displayTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
+        allFaces.displayTessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
   
-        Land3D.displayTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
+        Land3D.displayTessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
   
-        Sky3D.displayTessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));   
+        Sky3D.displayTessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));   
         Sky3D.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.scale", Sky3D.scale, 0.0000001, 1000000, -2);
   
-        BIOSPHERE_drawResolution = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
+        BIOSPHERE_drawResolution = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
   
         OBJECTS_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
   
-        Load_DefaultModels = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, allModel3Ds.maximum_default_models, 1), 1));
+        Load_DefaultModels = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, allModel3Ds.maximum_default_models, 1), 1));
       }
   
   
   
       if (this.child == 2) { // Create
   
-        addToLastGroup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
+        addToLastGroup = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
   
-        User3D.default_Material = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Material", User3D.default_Material, -1, 8, 1), 1));
-        User3D.default_Tessellation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Tessellation", User3D.default_Tessellation, 0, 6, 1), 1));
-        User3D.default_Layer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Layer", User3D.default_Layer, 0, 16, 1), 1));
-        User3D.default_Visibility = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Visibility", User3D.default_Visibility, -1, 1, 1), 1));
-        User3D.default_Weight = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Weight" , User3D.default_Weight, -20, 20, 1), 1));
-        User3D.default_Closed = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Closed" , User3D.default_Closed, 0, 1, 1), 1));
+        User3D.default_Material = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Material", User3D.default_Material, -1, 8, 1), 1));
+        User3D.default_Tessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Tessellation", User3D.default_Tessellation, 0, 6, 1), 1));
+        User3D.default_Layer = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Layer", User3D.default_Layer, 0, 16, 1), 1));
+        User3D.default_Visibility = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Visibility", User3D.default_Visibility, -1, 1, 1), 1));
+        User3D.default_Weight = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Weight" , User3D.default_Weight, -20, 20, 1), 1));
+        User3D.default_Closed = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Closed" , User3D.default_Closed, 0, 1, 1), 1));
   
-        User3D.default_PivotType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_PivotType", User3D.default_PivotType, 0, 4, 1), 1));
+        User3D.default_PivotType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_PivotType", User3D.default_PivotType, 0, 4, 1), 1));
   
         User3D.create_Orientation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Orientation", User3D.create_Orientation, 0, 360, 15);
   
-        User3D.create_Length = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Length", User3D.create_Length, -50, 150, -2), 0.5); 
-        User3D.create_Width = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Width", User3D.create_Width, -50, 150, -2), 0.5); 
-        User3D.create_Height = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Height", User3D.create_Height, -50, 150, -2), 0.5);     
+        User3D.create_Length = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Length", User3D.create_Length, -50, 150, -2), 0.5); 
+        User3D.create_Width = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Width", User3D.create_Width, -50, 150, -2), 0.5); 
+        User3D.create_Height = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Height", User3D.create_Height, -50, 150, -2), 0.5);     
   
         User3D.create_Volume = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Volume", User3D.create_Volume, 0, 25000, 1000);
         
-        User3D.create_Snap = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Snap", User3D.create_Snap, 0, 1, 1), 1));
+        User3D.create_Snap = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Snap", User3D.create_Snap, 0, 1, 1), 1));
       }    
   
       if (this.child == 3) { // Modify
@@ -7429,8 +7810,8 @@ class solarchvision_ROLLOUT {
         User3D.modify_OpenningArea = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
         User3D.modify_OpenningDeviation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningDeviation", User3D.modify_OpenningDeviation, 0, 1, 0.05);
   
-        User3D.modify_TessellateRows = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
-        User3D.modify_TessellateColumns = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
+        User3D.modify_TessellateRows = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
+        User3D.modify_TessellateColumns = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
   
         User3D.modify_OffsetAmount = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OffsetAmount", User3D.modify_OffsetAmount, 0, 25, 0.001);
   
@@ -7439,22 +7820,22 @@ class solarchvision_ROLLOUT {
         allSelections.softPower = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.softPower", allSelections.softPower, 0.125, 8, -2);
         allSelections.softRadius = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.softRadius", allSelections.softRadius, 0.01, 100, -2);
   
-        allSelections.posVector = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.posVector", allSelections.posVector, 0, 3, 1), 1));
-        allSelections.rotVector =  int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.rotVector", allSelections.rotVector, 0, 2, 1), 1));
-        allSelections.scaleVector =  int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.scaleVector", allSelections.scaleVector, 0, 3, 1), 1));
+        allSelections.posVector = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.posVector", allSelections.posVector, 0, 3, 1), 1));
+        allSelections.rotVector =  int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.rotVector", allSelections.rotVector, 0, 2, 1), 1));
+        allSelections.scaleVector =  int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.scaleVector", allSelections.scaleVector, 0, 3, 1), 1));
   
-        allSelections.posValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.posValue", allSelections.posValue, -50, 50, 1), 1));
-        allSelections.rotValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.rotValue", allSelections.rotValue, -180, 180, 5), 5)); 
-        allSelections.scaleValue = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.scaleValue", allSelections.scaleValue, -8, 8, 0.5), 0.5)); 
+        allSelections.posValue = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.posValue", allSelections.posValue, -50, 50, 1), 1));
+        allSelections.rotValue = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.rotValue", allSelections.rotValue, -180, 180, 5), 5)); 
+        allSelections.scaleValue = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.scaleValue", allSelections.scaleValue, -8, 8, 0.5), 0.5)); 
   
-        allSelections.alignX = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.alignX", allSelections.alignX, -1, 1, 1), 1));
-        allSelections.alignY = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.alignY", allSelections.alignY, -1, 1, 1), 1));
-        allSelections.alignZ = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.alignZ", allSelections.alignZ, -1, 1, 1), 1));
+        allSelections.alignX = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.alignX", allSelections.alignX, -1, 1, 1), 1));
+        allSelections.alignY = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.alignY", allSelections.alignY, -1, 1, 1), 1));
+        allSelections.alignZ = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.alignZ", allSelections.alignZ, -1, 1, 1), 1));
       }
   
       if (this.child == 4) { // Solid
   
-        //User3D.create_powRnd = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.create_powRnd" , User3D.create_powRnd, 0, 1, 1), 1));    
+        //User3D.create_powRnd = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.create_powRnd" , User3D.create_powRnd, 0, 1, 1), 1));    
         User3D.create_powAll = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powAll", User3D.create_powAll, 0.5, CubePower, -2);
         User3D.create_powX = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powX", User3D.create_powX, 0.5, CubePower, -2); 
         User3D.create_powY = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powY", User3D.create_powY, 0.5, CubePower, -2); 
@@ -7463,91 +7844,91 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 5) { // Surface
   
-        User3D.create_SphereDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));      
+        User3D.create_SphereDegree = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));      
   
-        User3D.create_CylinderDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));    
+        User3D.create_CylinderDegree = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));    
   
-        User3D.create_PolyDegree = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
+        User3D.create_PolyDegree = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
   
-        User3D.create_Parametric_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
-        User3D.create_Person_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
-        User3D.create_Plant_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
+        User3D.create_Parametric_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
+        User3D.create_Person_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
+        User3D.create_Plant_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
       }
   
       if (this.child == 6) { // allModel2Ds
   
-        User3D.create_Model1D_Type = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
-        User3D.create_Model1D_DegreeMin = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMin", User3D.create_Model1D_DegreeMin, 1, 9, 1), 1));
-        User3D.create_Model1D_DegreeMax = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMax", User3D.create_Model1D_DegreeMax, 1, 9, 1), 1));
-        User3D.create_Model1D_Seed = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
-        User3D.create_Model1D_TrunkSize = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
-        User3D.create_Model1D_LeafSize = roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_LeafSize", User3D.create_Model1D_LeafSize, 0, 10, 0.1), 0.1);
+        User3D.create_Model1D_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
+        User3D.create_Model1D_DegreeMin = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMin", User3D.create_Model1D_DegreeMin, 1, 9, 1), 1));
+        User3D.create_Model1D_DegreeMax = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMax", User3D.create_Model1D_DegreeMax, 1, 9, 1), 1));
+        User3D.create_Model1D_Seed = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
+        User3D.create_Model1D_TrunkSize = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
+        User3D.create_Model1D_LeafSize = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_LeafSize", User3D.create_Model1D_LeafSize, 0, 10, 0.1), 0.1);
       }    
   
       if (this.child == 7) { // Environment
   
-        //Land3D.loadTextures = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
-        //Land3D.loadMesh = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
-        //Land3D.Surface_SkipStart = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.num_rows - 1, 1), 1));
-        //Land3D.Surface_SkipEnd = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.num_rows - 1, 1), 1));
-        //Land3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
-        //Land3D.displayTexture = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
-        //Land3D.displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
-        //Land3D.displayDepth = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
+        //Land3D.loadTextures = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
+        //Land3D.loadMesh = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
+        //Land3D.Surface_SkipStart = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipStart", Land3D.Surface_SkipStart, 0, Land3D.num_rows - 1, 1), 1));
+        //Land3D.Surface_SkipEnd = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.Surface_SkipEnd", Land3D.Surface_SkipEnd, 0, Land3D.num_rows - 1, 1), 1));
+        //Land3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
+        //Land3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
+        //Land3D.displayPoints = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
+        //Land3D.displayDepth = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
   
-        //allModel2Ds.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayLeaves = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
-        //allCurves.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
-        //allFaces.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
+        //allModel2Ds.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
+        //allModel1Ds.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
+        //allModel1Ds.displayLeaves = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
+        //allCurves.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
+        //allFaces.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
   
-        //allSolids.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
+        //allSolids.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
   
-        //allSections.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.displayAll", allSections.displayAll, 0, 1, 1), 1));
-  
-  
+        //allSections.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.displayAll", allSections.displayAll, 0, 1, 1), 1));
   
   
-        //allWindRoses.displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.displayImage", allWindRoses.displayImage, 0, 1, 1), 1));
+  
+  
+        //allWindRoses.displayImage = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.displayImage", allWindRoses.displayImage, 0, 1, 1), 1));
   
         allWindRoses.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.scale", allWindRoses.scale, 50, 3200, -2);
         allWindRoses.RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.resolution", allWindRoses.RES, 200, 600, 100));
   
   
   
-        //Sky3D.displaySurface = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
+        //Sky3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
   
-        //Sun3D.displayPath = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath, 0, 1, 1), 1));
-        //Sun3D.displayPattern = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern, 0, 1, 1), 1));
+        //Sun3D.displayPath = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath, 0, 1, 1), 1));
+        //Sun3D.displayPattern = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern, 0, 1, 1), 1));
       }
   
   
       if (this.child == 8) { // Viewport
   
-        WIN3D.CurrentCamera = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CurrentCamera", WIN3D.CurrentCamera, 0, allCameras.num, 1), 1));
+        WIN3D.CurrentCamera = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CurrentCamera", WIN3D.CurrentCamera, 0, allCameras.num, 1), 1));
   
         WIN3D.CAM_clipNear = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
         WIN3D.CAM_clipFar = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
   
-        //WIN3D.FacesShade = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
+        //WIN3D.FacesShade = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
-        //allPoints.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
-        //allFaces.displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
-        //allFaces.displayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
+        //allPoints.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
+        //allFaces.displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
+        //allFaces.displayNormals = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Model3Ds.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
   
-        //allCameras.displayAll = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
+        //allCameras.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
       }    
   
   
       if (this.child == 9) { // Simulation
   
-        IMPACTS_displayDay = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
+        IMPACTS_displayDay = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
   
-        //allSolarImpacts.displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.displayImage", allSolarImpacts.displayImage, 0, 1, 1), 1));
-        //allSolidImpacts.displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.displayImage", allSolidImpacts.displayImage, 0, 1, 1), 1));
+        //allSolarImpacts.displayImage = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.displayImage", allSolarImpacts.displayImage, 0, 1, 1), 1));
+        //allSolidImpacts.displayImage = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.displayImage", allSolidImpacts.displayImage, 0, 1, 1), 1));
   
-        allSolarImpacts.sectionType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1), 1));      
-        allSolidImpacts.sectionType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1), 1));
+        allSolarImpacts.sectionType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1), 1));      
+        allSolidImpacts.sectionType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1), 1));
   
   
         allSolidImpacts.Grade = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
@@ -7566,12 +7947,12 @@ class solarchvision_ROLLOUT {
         allSolidImpacts.WindDirection = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
   
   
-        allSolidImpacts.Process_subDivisions = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1), 1));
+        allSolidImpacts.Process_subDivisions = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1), 1));
   
-        //allSolidImpacts.displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
-        //allSolidImpacts.displayLines = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
+        //allSolidImpacts.displayPoints = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
+        //allSolidImpacts.displayLines = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
   
-        //allWindFlows.display = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.display", allWindFlows.display, 0, 1, 1), 1));
+        //allWindFlows.display = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.display", allWindFlows.display, 0, 1, 1), 1));
       }
     } else if (this.parent == 2) { // Period & Scenarios
   
@@ -7580,83 +7961,83 @@ class solarchvision_ROLLOUT {
         //TIME.Date = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME.Date, 0, 364.5, 0.5);
         TIME.Date = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME.Date, 0, 364, 1));
   
-        TIME.Day = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME.Day, 1, 31, 1), 1));
-        TIME.Month = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.Month, 1, 12, 1), 1));
-        TIME.Year = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.Year, 1953, 2100, 1), 1));
+        TIME.Day = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME.Day, 1, 31, 1), 1));
+        TIME.Month = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.Month, 1, 12, 1), 1));
+        TIME.Year = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.Year, 1953, 2100, 1), 1));
   
-        TIME.BeginDay = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.BeginDay, 0, 364, 1), 1));
+        TIME.BeginDay = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.BeginDay, 0, 364, 1), 1));
   
-        STUDY.j_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
+        STUDY.j_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
   
-        ENSEMBLE_OBSERVED_maxDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
+        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
             
       }
   
       if (this.child == 2) { // Ranges
-        STUDY.i_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
-        STUDY.i_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
+        STUDY.i_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
+        STUDY.i_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
   
-        STUDY.joinDays = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.joinDays", STUDY.joinDays, 1, 64, -2), 1));
+        STUDY.joinDays = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.joinDays", STUDY.joinDays, 1, 64, -2), 1));
         
   //??????
-        SampleYear_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-        SampleYear_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
   //??????
   
-        SampleMember_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
-        SampleMember_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
+        SampleMember_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
+        SampleMember_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
   
-        SampleStation_Start = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
-        SampleStation_End = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
+        SampleStation_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
+        SampleStation_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
   
   
       }
   
       if (this.child == 3) { // Filters
       
-        STUDY.skyScenario = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
-        STUDY.filter = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
+        STUDY.skyScenario = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
+        STUDY.filter = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
       }
     } else if (this.parent == 3) { // Display Options
   
       if (this.child == 1) { // 2D-Layers
   
-        FrameVariation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
+        FrameVariation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
   
-        STUDY.plotSetup = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 14, 1), 1));
+        STUDY.plotSetup = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 14, 1), 1));
   
-        //STUDY.update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
+        //STUDY.update = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
   
-        changeCurrentLayerTo(int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
+        changeCurrentLayerTo(int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
         
         STUDY.V_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
   
-        //STUDY.displayRaws = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
-        //STUDY.displaySorted = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
-        //STUDY.displayNormals = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
-        //STUDY.displayProbs = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
-        STUDY.sumInterval = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1), 1));
-        STUDY.LevelPix = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
+        //STUDY.displayRaws = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
+        //STUDY.displaySorted = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
+        //STUDY.displayNormals = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
+        //STUDY.displayProbs = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
+        STUDY.sumInterval = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1), 1));
+        STUDY.LevelPix = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
       }
   
       if (this.child == 2) { // 2D-Colors
   
-        //COLOR_STYLE_Current = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        //COLOR_STYLE_Current = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
   
-        STUDY.pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_ACTIVE_CLR", STUDY.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_ACTIVE_DIR", STUDY.pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        STUDY.pallet_ACTIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_ACTIVE_CLR", STUDY.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.pallet_ACTIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_ACTIVE_DIR", STUDY.pallet_ACTIVE_DIR, -2, 2, 1), 1));
         STUDY.pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_ACTIVE_MLT", STUDY.pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        STUDY.pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PASSIVE_CLR", STUDY.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PASSIVE_DIR", STUDY.pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        STUDY.pallet_PASSIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PASSIVE_CLR", STUDY.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.pallet_PASSIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PASSIVE_DIR", STUDY.pallet_PASSIVE_DIR, -2, 2, 2), 1));
         STUDY.pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PASSIVE_MLT", STUDY.pallet_PASSIVE_MLT, 0.125, 8, -2);       
   
-        STUDY.pallet_SORT_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_CLR", STUDY.pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_SORT_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_DIR", STUDY.pallet_SORT_DIR, -2, 2, 2), 1));
+        STUDY.pallet_SORT_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_CLR", STUDY.pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.pallet_SORT_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_DIR", STUDY.pallet_SORT_DIR, -2, 2, 2), 1));
         STUDY.pallet_SORT_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_MLT", STUDY.pallet_SORT_MLT, 0.125, 8, -2);
   
-        STUDY.pallet_PROB_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_CLR", STUDY.pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_PROB_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_DIR", STUDY.pallet_PROB_DIR, -2, 2, 2), 1));
+        STUDY.pallet_PROB_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_CLR", STUDY.pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.pallet_PROB_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_DIR", STUDY.pallet_PROB_DIR, -2, 2, 2), 1));
         STUDY.pallet_PROB_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_MLT", STUDY.pallet_PROB_MLT, 0.125, 8, -2);
   
         STUDY.O_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
@@ -7664,28 +8045,28 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 3) { // 3D-Solar 
   
-        allFaces.pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_ACTIVE_CLR", allFaces.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_ACTIVE_DIR", allFaces.pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        allFaces.pallet_ACTIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_ACTIVE_CLR", allFaces.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allFaces.pallet_ACTIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_ACTIVE_DIR", allFaces.pallet_ACTIVE_DIR, -2, 2, 1), 1));
         allFaces.pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_ACTIVE_MLT", allFaces.pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        allFaces.pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_PASSIVE_CLR", allFaces.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_PASSIVE_DIR", allFaces.pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        allFaces.pallet_PASSIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_PASSIVE_CLR", allFaces.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allFaces.pallet_PASSIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_PASSIVE_DIR", allFaces.pallet_PASSIVE_DIR, -2, 2, 2), 1));
         allFaces.pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.pallet_PASSIVE_MLT", allFaces.pallet_PASSIVE_MLT, 0.125, 8, -2);
   
-        Sky3D.pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_ACTIVE_CLR", Sky3D.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_ACTIVE_DIR", Sky3D.pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        Sky3D.pallet_ACTIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_ACTIVE_CLR", Sky3D.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.pallet_ACTIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_ACTIVE_DIR", Sky3D.pallet_ACTIVE_DIR, -2, 2, 1), 1));
         Sky3D.pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_ACTIVE_MLT", Sky3D.pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        Sky3D.pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_CLR", Sky3D.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_DIR", Sky3D.pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        Sky3D.pallet_PASSIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_CLR", Sky3D.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.pallet_PASSIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_DIR", Sky3D.pallet_PASSIVE_DIR, -2, 2, 2), 1));
         Sky3D.pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.pallet_PASSIVE_MLT", Sky3D.pallet_PASSIVE_MLT, 0.125, 8, -2);
   
-        Sun3D.pallet_ACTIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_CLR", Sun3D.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.pallet_ACTIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_DIR", Sun3D.pallet_ACTIVE_DIR, -2, 2, 1), 1));
+        Sun3D.pallet_ACTIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_CLR", Sun3D.pallet_ACTIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.pallet_ACTIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_DIR", Sun3D.pallet_ACTIVE_DIR, -2, 2, 1), 1));
         Sun3D.pallet_ACTIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_ACTIVE_MLT", Sun3D.pallet_ACTIVE_MLT, 0.125, 8, -2);
   
-        Sun3D.pallet_PASSIVE_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_CLR", Sun3D.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.pallet_PASSIVE_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_DIR", Sun3D.pallet_PASSIVE_DIR, -2, 2, 2), 1));
+        Sun3D.pallet_PASSIVE_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_CLR", Sun3D.pallet_PASSIVE_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.pallet_PASSIVE_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_DIR", Sun3D.pallet_PASSIVE_DIR, -2, 2, 2), 1));
         Sun3D.pallet_PASSIVE_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.pallet_PASSIVE_MLT", Sun3D.pallet_PASSIVE_MLT, 0.125, 8, -2);
       }
   
@@ -7694,97 +8075,97 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 4) { // 3D-Solid   
   
-        allSolids.pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_CLR", allSolids.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allSolids.pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_DIR", allSolids.pallet_DIR, -2, 2, 2), 1));
+        allSolids.pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_CLR", allSolids.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allSolids.pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_DIR", allSolids.pallet_DIR, -2, 2, 2), 1));
         allSolids.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_MLT", allSolids.pallet_MLT, 0.0001, 64, -2);      
   
-        Land3D.pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_CLR", Land3D.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Land3D.pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_DIR", Land3D.pallet_DIR, -2, 2, 2), 1));
+        Land3D.pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_CLR", Land3D.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Land3D.pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_DIR", Land3D.pallet_DIR, -2, 2, 2), 1));
         Land3D.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_MLT", Land3D.pallet_MLT, 0.001, 0.5, -2);   
   
-        allWindFlows.pallet_CLR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_CLR", allWindFlows.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allWindFlows.pallet_DIR = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_DIR", allWindFlows.pallet_DIR, -2, 2, 2), 1));
+        allWindFlows.pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_CLR", allWindFlows.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allWindFlows.pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_DIR", allWindFlows.pallet_DIR, -2, 2, 2), 1));
         allWindFlows.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_MLT", allWindFlows.pallet_MLT, 0.01, 1.0, -2);
       }      
   
   
       if (this.child == 5) { // Selection
   
-        //allSelections.Group_displayPivot = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Group_displayPivot", allSelections.Group_displayPivot, 0, 1, 1), 1));
-        //allSelections.displayReferencePivot = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.displayReferencePivot", allSelections.displayReferencePivot, 0, 1, 1), 1));
-        //allSelections.Group_displayBox = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Group_displayBox", allSelections.Group_displayBox, 0, 1, 1), 1));
-        //allSelections.Group_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Group_displayEdges", allSelections.Group_displayEdges, 0, 1, 1), 1));
+        //allSelections.Group_displayPivot = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Group_displayPivot", allSelections.Group_displayPivot, 0, 1, 1), 1));
+        //allSelections.displayReferencePivot = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.displayReferencePivot", allSelections.displayReferencePivot, 0, 1, 1), 1));
+        //allSelections.Group_displayBox = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Group_displayBox", allSelections.Group_displayBox, 0, 1, 1), 1));
+        //allSelections.Group_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Group_displayEdges", allSelections.Group_displayEdges, 0, 1, 1), 1));
   
-        //allSelections.Face_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Face_displayEdges", allSelections.Face_displayEdges, 0, 1, 1), 1));
-        //allSelections.Face_displayVertexCount = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Face_displayVertexCount", allSelections.Face_displayVertexCount, 0, 1, 1), 1));
-        //allSelections.Curve_displayVertexCount = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Curve_displayVertexCount", allSelections.Curve_displayVertexCount, 0, 1, 1), 1));
-        //allSelections.Vertex_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Vertex_displayVertices", allSelections.Vertex_displayVertices, 0, 1, 1), 1));
-        //allSelections.Curve_displayVertices = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Curve_displayVertices", allSelections.Curve_displayVertices, 0, 1, 1), 1));
+        //allSelections.Face_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Face_displayEdges", allSelections.Face_displayEdges, 0, 1, 1), 1));
+        //allSelections.Face_displayVertexCount = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Face_displayVertexCount", allSelections.Face_displayVertexCount, 0, 1, 1), 1));
+        //allSelections.Curve_displayVertexCount = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Curve_displayVertexCount", allSelections.Curve_displayVertexCount, 0, 1, 1), 1));
+        //allSelections.Vertex_displayVertices = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Vertex_displayVertices", allSelections.Vertex_displayVertices, 0, 1, 1), 1));
+        //allSelections.Curve_displayVertices = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Curve_displayVertices", allSelections.Curve_displayVertices, 0, 1, 1), 1));
   
-        //allSelections.Model2D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Model2D_displayEdges", allSelections.Model2D_displayEdges, 0, 1, 1), 1));
-        //allSelections.Model1D_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Model1D_displayEdges", allSelections.Model1D_displayEdges, 0, 1, 1), 1));
+        //allSelections.Model2D_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Model2D_displayEdges", allSelections.Model2D_displayEdges, 0, 1, 1), 1));
+        //allSelections.Model1D_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Model1D_displayEdges", allSelections.Model1D_displayEdges, 0, 1, 1), 1));
   
-        //allSelections.Solid_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Solid_displayEdges", allSelections.Solid_displayEdges, 0, 1, 1), 1));
+        //allSelections.Solid_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Solid_displayEdges", allSelections.Solid_displayEdges, 0, 1, 1), 1));
   
-        //allSelections.Section_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Section_displayEdges", allSelections.Section_displayEdges, 0, 1, 1), 1));
+        //allSelections.Section_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Section_displayEdges", allSelections.Section_displayEdges, 0, 1, 1), 1));
   
-        //allSelections.Camera_displayEdges = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Camera_displayEdges", allSelections.Camera_displayEdges, 0, 1, 1), 1));
+        //allSelections.Camera_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.Camera_displayEdges", allSelections.Camera_displayEdges, 0, 1, 1), 1));
   
-        //allSelections.LandPoint_displayPoints = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.LandPoint_displayPoints", allSelections.LandPoint_displayPoints, 0, 1, 1), 1));
+        //allSelections.LandPoint_displayPoints = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSelections.LandPoint_displayPoints", allSelections.LandPoint_displayPoints, 0, 1, 1), 1));
       }
     } else if (this.parent == 4) { // Post-Processing
   
       if (this.child == 1) { // Interpolation
   
         Interpolation_Weight = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
-        CLIMATIC_SolarForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
-        CLIMATIC_WeatherForecast = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
+        CLIMATIC_SolarForecast = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
+        CLIMATIC_WeatherForecast = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
       } 
       if (this.child == 2) { // Developed
-        Develop_Option = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
-        Develop_DayHour = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
+        Develop_Option = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
+        Develop_DayHour = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
   
-        STUDY.TrendJoinHours = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
-        STUDY.TrendJoinType = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
+        STUDY.TrendJoinHours = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
+        STUDY.TrendJoinType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
   
-        Develop_AngleInclination = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
-        Develop_AngleOrientation = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
+        Develop_AngleInclination = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
+        Develop_AngleOrientation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
       }
       if (this.child == 3) { // Impacts
-        CurrentDataSource = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
-        STUDY.ImpactLayer = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
-        //STUDY.Impacts_update = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
+        CurrentDataSource = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
+        STUDY.ImpactLayer = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
+        //STUDY.Impacts_update = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
       }
     } else if (this.parent == 5) { // Export Products
   
       if (this.child == 1) { // Data
   
-        //STUDY.export_info_node = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
-        //STUDY.export_info_norm = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
-        //STUDY.export_info_prob = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob, 0, 1, 1), 1));
+        //STUDY.export_info_node = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
+        //STUDY.export_info_norm = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
+        //STUDY.export_info_prob = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob, 0, 1, 1), 1));
   
   
         User3D.export_Scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_Scale", User3D.export_Scale, .001, 1000, -0.1);
-        User3D.export_FlipZYaxis = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_FlipZYaxis", User3D.export_FlipZYaxis, 0, 1, 1), 1));
+        User3D.export_FlipZYaxis = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_FlipZYaxis", User3D.export_FlipZYaxis, 0, 1, 1), 1));
   
-        User3D.export_PrecisionVertex = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVertex", User3D.export_PrecisionVertex, 0, 6, 1), 1));
-        User3D.export_PrecisionVtexture = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1), 1));
-        User3D.export_PolyToPoly = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1), 1));
+        User3D.export_PrecisionVertex = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVertex", User3D.export_PrecisionVertex, 0, 6, 1), 1));
+        User3D.export_PrecisionVtexture = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1), 1));
+        User3D.export_PolyToPoly = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1), 1));
   
-        //User3D.export_MaterialLibrary = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
-        //User3D.export_BackSides = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_BackSides", User3D.export_BackSides, 0, 1, 1), 1));
-        //User3D.export_PalletResolution = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PalletResolution", User3D.export_PalletResolution, 32, 2048, -2), 1));
+        //User3D.export_MaterialLibrary = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
+        //User3D.export_BackSides = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_BackSides", User3D.export_BackSides, 0, 1, 1), 1));
+        //User3D.export_PalletResolution = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PalletResolution", User3D.export_PalletResolution, 32, 2048, -2), 1));
   
   
-        //displayOutput_inExplorer = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
+        //displayOutput_inExplorer = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
       }  
   
       if (this.child == 2) { // Media
   
-        allSolidImpacts.record_JPG = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_JPG, 0, 1, 1), 1));
-        allSolidImpacts.record_PDF = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1), 1));
+        allSolidImpacts.record_JPG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_JPG, 0, 1, 1), 1));
+        allSolidImpacts.record_PDF = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1), 1));
   
-        allSolarImpacts.record_JPG = int(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_JPG, 0, 1, 1), 1));
+        allSolarImpacts.record_JPG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_JPG, 0, 1, 1), 1));
       }
   
     }    
@@ -8250,12 +8631,12 @@ String MAKE_MainName () {
 
 String getFilename_SolidImpact () {
 
-  return graphicsFolder + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpacts" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+  return graphicsFolder + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpacts" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
 }
 
 String getFilename_SolarImpact () {
 
-  return graphicsFolder + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpacts" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(roundTo(allSolarImpacts.rotation, 1)), 3);
+  return graphicsFolder + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpacts" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.rotation, 1)), 3);
 }
 
 
@@ -8723,7 +9104,7 @@ class solarchvision_Faces {
                 float[] W = {
                   UV.x, UV.y, UV.z
                 };
-                W = SOLARCHVISION_fn_normalize(W);
+                W = funcs.normalize(W);
     
                 float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
                 float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
@@ -8798,7 +9179,7 @@ class solarchvision_Faces {
               if (this.getMaterial(f) == 0) {
                 Tessellation += this.displayTessellation;
               }
-              if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+              if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
     
               float[][] base_Vertices = new float [this.nodes[f].length][3];
               for (int j = 0; j < this.nodes[f].length; j++) {
@@ -8956,7 +9337,7 @@ class solarchvision_Faces {
                       Tessellation += this.displayTessellation;
                     }
     
-                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
     
                     float[][] base_Vertices = new float [this.nodes[f].length][3];
                     for (int j = 0; j < this.nodes[f].length; j++) {
@@ -9131,7 +9512,7 @@ class solarchvision_Faces {
                       Tessellation += this.displayTessellation;
                     }
     
-                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
     
                     float x1 = 0;
                     float y1 = 0;
@@ -9402,7 +9783,7 @@ class solarchvision_Faces {
                   Tessellation += this.displayTessellation;
                 }
         
-                if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
         
                 float[][] base_Vertices = new float [this.nodes[f].length][3];
                 for (int j = 0; j < this.nodes[f].length; j++) {
@@ -9583,7 +9964,7 @@ class solarchvision_Faces {
               Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
             }
     
-            if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
     
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
@@ -9904,10 +10285,10 @@ class solarchvision_Curves {
                   }
                   
                   if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-                    ANG_start = SOLARCHVISION_fn_normalize(ANG_start);
+                    ANG_start = funcs.normalize(ANG_start);
                   }
                   if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-                    ANG_end = SOLARCHVISION_fn_normalize(ANG_end);
+                    ANG_end = funcs.normalize(ANG_end);
                   }
                 
                 
@@ -10392,8 +10773,8 @@ class solarchvision_SolidImpacts {
   
   float calculate_Impact_atXYZ_complex (float x, float y, float z) {
   
-    float deltaX = this.WindSpeed * cos_ang(this.WindDirection);
-    float deltaY = this.WindSpeed * sin_ang(this.WindDirection);
+    float deltaX = this.WindSpeed * funcs.cos_ang(this.WindDirection);
+    float deltaY = this.WindSpeed * funcs.sin_ang(this.WindDirection);
   
     float[] val = {
       1, 1
@@ -10491,34 +10872,34 @@ class solarchvision_SolidImpacts {
   
     float r = epsilon;
   
-    float t = atan2_ang(dy, dx);
+    float t = funcs.atan2_ang(dy, dx);
   
     //for (int test_t = -180; test_t < 180; test_t += 5) { 
     for (int test_t = -150; test_t <= 150; test_t += 5) { // <<<<
   
-      float a = r * cos_ang(t + test_t);
-      float b = r * sin_ang(t + test_t);
+      float a = r * funcs.cos_ang(t + test_t);
+      float b = r * funcs.sin_ang(t + test_t);
       float c = 0;
   
       if (this.sectionType == 1) {
-        float Qx = a * cos_ang(-this.rotation[this.sectionType]) - b * sin_ang(-this.rotation[this.sectionType]);
-        float Qy = -(a * sin_ang(-this.rotation[this.sectionType]) + b * cos_ang(-this.rotation[this.sectionType]));
+        float Qx = a * funcs.cos_ang(-this.rotation[this.sectionType]) - b * funcs.sin_ang(-this.rotation[this.sectionType]);
+        float Qy = -(a * funcs.sin_ang(-this.rotation[this.sectionType]) + b * funcs.cos_ang(-this.rotation[this.sectionType]));
         float Qz = c;
   
         a = Qx; 
         b = Qy; 
         c = Qz;
       } else if (this.sectionType == 2) {
-        float Qx = a * cos_ang(this.rotation[this.sectionType]) - c * sin_ang(this.rotation[this.sectionType]);
-        float Qy = -(a * sin_ang(this.rotation[this.sectionType]) + c * cos_ang(this.rotation[this.sectionType]));
+        float Qx = a * funcs.cos_ang(this.rotation[this.sectionType]) - c * funcs.sin_ang(this.rotation[this.sectionType]);
+        float Qy = -(a * funcs.sin_ang(this.rotation[this.sectionType]) + c * funcs.cos_ang(this.rotation[this.sectionType]));
         float Qz = -b; 
   
         a = Qx; 
         b = Qy; 
         c = Qz;
       } else if (this.sectionType == 3) {
-        float Qx = a * cos_ang(90 - this.rotation[this.sectionType]) - c * sin_ang(90 - this.rotation[this.sectionType]);
-        float Qy = -(a * sin_ang(90 - this.rotation[this.sectionType]) + c * cos_ang(90 - this.rotation[this.sectionType]));
+        float Qx = a * funcs.cos_ang(90 - this.rotation[this.sectionType]) - c * funcs.sin_ang(90 - this.rotation[this.sectionType]);
+        float Qy = -(a * funcs.sin_ang(90 - this.rotation[this.sectionType]) + c * funcs.cos_ang(90 - this.rotation[this.sectionType]));
         float Qz = -b; 
   
         a = Qx; 
@@ -10547,9 +10928,9 @@ class solarchvision_SolidImpacts {
         z_max = test_z;
       }
   
-      //if (((abs(test_v - v) < min_dist) && (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ)))  {
+      //if (((abs(test_v - v) < min_dist) && (funcs.dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ)))  {
       if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ))) {
-        //if (SOLARCHVISION_fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
+        //if (funcs.dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
   
         min_dist = abs(test_v - v);
   
@@ -10585,7 +10966,7 @@ class solarchvision_SolidImpacts {
     }
   
     float[] return_array = {
-      the_X, the_Y, the_Z, cos_ang(t + the_T), sin_ang(t + the_T), 0
+      the_X, the_Y, the_Z, funcs.cos_ang(t + the_T), funcs.sin_ang(t + the_T), 0
     };
   
     return return_array;
@@ -10625,12 +11006,12 @@ class solarchvision_SolidImpacts {
     for (int test_tz = -90; test_tz <= 90; test_tz += 30) { // in the space 
       //for (int test_tz = 0; test_tz <= 0; test_tz += 30) { // on the surface! 
   
-      float c = r * sin_ang(test_tz);
+      float c = r * funcs.sin_ang(test_tz);
   
       for (int test_txy = -180; test_txy < 180; test_txy += 15) { 
   
-        float a = r * cos_ang(test_tz) * cos_ang(test_txy);
-        float b = r * cos_ang(test_tz) * sin_ang(test_txy);
+        float a = r * funcs.cos_ang(test_tz) * funcs.cos_ang(test_txy);
+        float b = r * funcs.cos_ang(test_tz) * funcs.sin_ang(test_txy);
   
   
         float test_x = x + a;
@@ -10790,15 +11171,15 @@ class solarchvision_SolidImpacts {
       for (int i = 0; i < this.RES1; i++) {
         for (int j = 0; j < this.RES2; j++) {
   
-          float x = SOLARCHVISION_Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.RES1), 1 - j / float(this.RES2));
-          float y = SOLARCHVISION_Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
-          float z = SOLARCHVISION_Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
+          float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.RES1), 1 - j / float(this.RES2));
+          float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
+          float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
   
           this.Type = 0;
           float val = this.get_Impact_atXYZ(x, y, z);     
   
-          float g =      roundTo(this.Grade * val, this.deltaStep) - 0.5 * this.deltaStep;
-          float g_line = roundTo(this.Grade * val, this.deltaLines);
+          float g =      funcs.roundTo(this.Grade * val, this.deltaStep) - 0.5 * this.deltaStep;
+          float g_line = funcs.roundTo(this.Grade * val, this.deltaLines);
   
           float _u = PAL_Multiplier * val + 0.5;
   
@@ -10860,8 +11241,8 @@ class solarchvision_SolidImpacts {
          
          float val = this.Contours_U1Vertices[k][3]; //this.get_Impact_atXYZ(x, y, z);
          
-         float g =      roundTo(this.Grade * val, this.deltaStep) - 0.5 * this.deltaStep;
-         float g_line = roundTo(this.Grade * val, this.deltaLines);
+         float g =      funcs.roundTo(this.Grade * val, this.deltaStep) - 0.5 * this.deltaStep;
+         float g_line = funcs.roundTo(this.Grade * val, this.deltaLines);
          
          float dx = 1;
          float dy = 0;
@@ -10972,8 +11353,8 @@ class solarchvision_SolidImpacts {
                     r = -this.rotation[this.sectionType];
                   }     
   
-                  float x = x0 * cos_ang(r) - y0 * sin_ang(r);
-                  float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+                  float x = x0 * funcs.cos_ang(r) - y0 * funcs.sin_ang(r);
+                  float y = x0 * funcs.sin_ang(r) + y0 * funcs.cos_ang(r);
                   float z = z0;
   
                   float a = 0;
@@ -11021,8 +11402,8 @@ class solarchvision_SolidImpacts {
                 r = -this.rotation[this.sectionType];
               }     
   
-              float x = x0 * cos_ang(r) - y0 * sin_ang(r);
-              float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+              float x = x0 * funcs.cos_ang(r) - y0 * funcs.sin_ang(r);
+              float y = x0 * funcs.sin_ang(r) + y0 * funcs.cos_ang(r);
               float z = z0;
   
               float a = 0;
@@ -11293,8 +11674,8 @@ class solarchvision_SolidImpacts {
         this.Contours_V1Lines = (int[][]) concat(this.Contours_V1Lines, newV1Line);
   
         float val_new = this.get_Impact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
-        float g_new =      roundTo(this.Grade * val_new, this.deltaStep) - 0.5 * this.deltaStep;
-        float g_line_new = roundTo(this.Grade * val_new, this.deltaLines);
+        float g_new =      funcs.roundTo(this.Grade * val_new, this.deltaStep) - 0.5 * this.deltaStep;
+        float g_line_new = funcs.roundTo(this.Grade * val_new, this.deltaLines);
   
         if (g_line - g_line_new >= this.deltaStep) {
   
@@ -11358,8 +11739,8 @@ class solarchvision_SolidImpacts {
   
   
   
-    float deltaX = -this.WindSpeed * cos_ang(this.WindDirection);
-    float deltaY = -this.WindSpeed * sin_ang(this.WindDirection);
+    float deltaX = -this.WindSpeed * funcs.cos_ang(this.WindDirection);
+    float deltaY = -this.WindSpeed * funcs.sin_ang(this.WindDirection);
     float deltaZ = 0;   
   
     /* 
@@ -11385,9 +11766,9 @@ class solarchvision_SolidImpacts {
      for (int i = 0; i < this.RES1; i += 10) {
      for (int j = 0; j < this.RES2; j += 10) {
      
-     float x = SOLARCHVISION_Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.RES1), 1 - j / float(this.RES2));
-     float y = SOLARCHVISION_Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
-     float z = SOLARCHVISION_Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
+     float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.RES1), 1 - j / float(this.RES2));
+     float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
+     float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
      
      */
   
@@ -11885,7 +12266,7 @@ class solarchvision_SolarImpacts {
   
                     now_k = k + start_k;
                     now_i = i;
-                    now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                    now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
   
                     if (now_j >= 365) {
                       now_j = now_j % 365;
@@ -11936,7 +12317,7 @@ class solarchvision_SolarImpacts {
                             String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
   
                             if (RAD_TYPE == 0) {
-                              File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+                              File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
                             } else {
                               File_Name += "DIF_" + STR_SHD[SHD];
                             }
@@ -11997,7 +12378,7 @@ class solarchvision_SolarImpacts {
               if (_valuesNUM != 0) {
                 //_valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
                 //_valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
-                _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                _valuesMUL = funcs.roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
               }
   
   
@@ -12511,7 +12892,7 @@ class solarchvision_Selections {
     
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
     
-    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+    float[] ray_normal = funcs.normalize(ray_dir);   
   
     float[][] hitPoint = new float [this.Face_ids.length][7];
   
@@ -12555,20 +12936,20 @@ class solarchvision_Selections {
               float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
               float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
               
-              float[] AC = SOLARCHVISION_3xSub(A, C);
-              float[] BD = SOLARCHVISION_3xSub(B, D);
+              float[] AC = funcs.sub3x(A, C);
+              float[] BD = funcs.sub3x(B, D);
               
-              face_norm = SOLARCHVISION_3xCross(AC, BD);
+              face_norm = funcs.cross3x(AC, BD);
               
               float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
             
-              float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+              float R = -funcs.dot3x(ray_dir, face_norm);
         
               if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
                 dist2intersect = FLOAT_huge;
               }
               else {
-                dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+                dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
         
                 //if (dist2intersect > 0) {
                 if (dist2intersect > FLOAT_tiny) {
@@ -12579,8 +12960,8 @@ class solarchvision_Selections {
                   
                   float[] P = {X_intersect, Y_intersect, Z_intersect};
                   
-                  if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
-                  else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+                  if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
+                  else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
     
                 }
               }
@@ -12614,20 +12995,20 @@ class solarchvision_Selections {
                   allPoints.getZ(allFaces.nodes[f][j_next])
                 };                
       
-                float[] AG = SOLARCHVISION_3xSub(A, G);
-                float[] BG = SOLARCHVISION_3xSub(B, G);
+                float[] AG = funcs.sub3x(A, G);
+                float[] BG = funcs.sub3x(B, G);
                 
-                face_norm = SOLARCHVISION_3xCross(AG, BG);
+                face_norm = funcs.cross3x(AG, BG);
                   
                 float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
                 
-                float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+                float R = -funcs.dot3x(ray_dir, face_norm);
           
                 if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
                   dist2intersect = FLOAT_huge;
                 }
                 else {
-                  dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+                  dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
           
                   //if (dist2intersect > 0) {
                   if (dist2intersect > FLOAT_tiny) {
@@ -12638,7 +13019,7 @@ class solarchvision_Selections {
                     
                     float[] P = {X_intersect, Y_intersect, Z_intersect};
       
-                    InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, G); 
+                    InPoly = funcs.isInside_Triangle(P, A, B, G); 
                     
                   }
                 }
@@ -13768,7 +14149,7 @@ class solarchvision_Selections {
     float v = 0;
   
     if (d_min < this.softRadius) {
-      v = pow(cos_ang(90 * d_min / this.softRadius), this.softPower);
+      v = pow(funcs.cos_ang(90 * d_min / this.softRadius), this.softPower);
     }
   
     return v;
@@ -16535,359 +16916,6 @@ void SOLARCHVISION_regenerate_desired_bakings () {
 }
 
 
-String[] SOLARCHVISION_getfiles (String _Folder) {
-  
-  //println(_Folder);
-  
-  String[] filenames = new String[0];
-  
-  File dir = new File(_Folder);
-  
-  if (dir.exists() && dir.isDirectory()) {
-    
-    filenames = concat(filenames, dir.list());
-  
-    if (filenames != null) {
-      for (int i = 0; i < filenames.length; i++) {
-        //println(filenames[i]);
-      }
-    }
-  }
-  
-  return filenames;
-}
-
-
-
-int SOLARCHVISION_getOpacity (float O_scale) {
-  int k = int(O_scale * 0.01 * 256);
-  if (k > 255) k = 255;
-  if (k < 0) k = 0;
-
-  return k;
-}
-
-
-float asin_ang (float a) {
-  return ((asin(a)) * 180/PI);
-}
-
-float acos_ang (float a) {
-  return ((acos(a)) * 180/PI);
-}
-
-float atan_ang (float a) {
-  return ((atan(a)) * 180/PI);
-}
-
-float atan2_ang (float a, float b) {
-  return ((atan2(a, b)) * 180/PI);
-}
-
-
-float sin_ang (float a) {
-  return sin(a * PI / 180);
-}
-
-float cos_ang (float a) {
-  return cos(a * PI / 180);
-}
-
-float tan_ang (float a) {
-  return tan(a * PI / 180);
-}
-
-
-
-
-float roundTo (float a, float b) {
-  float a_floor = (floor (a / (1.0 * b))) * b;
-  float a_ceil =  (ceil (a / (1.0 * b))) * b;
-  float c;
-  if ((a - a_floor) > (a_ceil - a)) {
-    c = a_ceil;
-  } else {
-    c = a_floor;
-  }
-  return c;
-}
-
-float dist_lon_lat (double lon1, double lat1, double lon2, double lat2) {
-
-  float dLon = (float) (lon2 - lon1); 
-  float dLat = (float) (lat2 - lat1);
-
-  float a = sin_ang(dLon / 2.0);
-  float b = sin_ang(dLat / 2.0) * sin_ang(dLat / 2.0) + cos_ang((float) lat1) * cos_ang((float) lat2) * a * a;
-  float d = 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth; 
-
-  return(d);
-}
-
-float SOLARCHVISION_fn_dist (float[] a, float[] b) {
-
-  float d = 0;
-  for (int i = 0; i < a.length; i++) {
-    d += pow(b[i] - a[i], 2);
-  }
-  d = pow(d, 0.5);
-
-  return d;
-}
-
-float[] SOLARCHVISION_fn_G (float[][] a) {
-
-  float[] b = a[0]; // initializing to the first node
-
-  // adding other nodes
-  for (int i = 1; i < a.length; i++) {
-    for (int j = 0; j < b.length; j++) {
-      b[j] += a[i][j];
-    }
-  }
-
-  // dividing to the number of nodes
-  for (int j = 0; j < b.length; j++) {
-    b[j] /= float(a.length);
-  }
-
-  return b;
-}
-
-float[] SOLARCHVISION_fn_normalize (float[] a) {
-  float[] b = a;
-  float d = 0;
-  for (int i = 0; i < a.length; i++) {
-    d += pow(a[i], 2);
-  }
-  d = pow(d, 0.5);
-
-  for (int i = 0; i < a.length; i++) {
-    if (d != 0) b[i] = a[i]/d;
-    else b[i] = 0;
-  } 
-  return b;
-}
-
-float SOLARCHVISION_fn_dot (float[] a, float b[]) {
-  float d = 0;
-  for (int i = 0; i < min (a.length, b.length); i++) {
-    d += a[i] * b[i];
-  }
-  return d;
-}
-
-float SOLARCHVISION_3xDot (float[] a, float b[]) {
-  
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-
-float[] SOLARCHVISION_3xCross (float[] a, float b[]) {
-  
-  float[] c = new float [3];
-  
-  c[0] = a[1] * b[2] - a[2] * b[1];
-  c[1] = a[2] * b[0] - a[0] * b[2];
-  c[2] = a[0] * b[1] - a[1] * b[0];
-  
-  return c;
-  
-}
-
-
-float[] SOLARCHVISION_3xSub (float[] a, float b[]) {
-  
-  float[] c = new float [3];
-  
-  c[0] = a[0] - b[0];
-  c[1] = a[1] - b[1];
-  c[2] = a[2] - b[2];
-  
-  return c;
-  
-}
-
-
-float[] SOLARCHVISION_3xSum (float[] a, float b[]) {
-  
-  float[] c = new float [3];
-  
-  c[0] = a[0] + b[0];
-  c[1] = a[1] + b[1];
-  c[2] = a[2] + b[2];
-  
-  return c;
-  
-}
-
-
-float SOLARCHVISION_Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
-
-  float f_xy = f_00 * (1 - x) * (1 - y) + f_10 * x * (1 - y) + f_01 * (1 - x) * y + f_11 * x * y;
-
-  return f_xy;
-}
-
-
-boolean SOLARCHVISION_isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
-
-  float pX = P[0] - C[0];
-  float pY = P[1] - C[1];
-  float pZ = P[2] - C[2];
-    
-  float aX = A[0] - C[0];
-  float aY = A[1] - C[1];
-  float aZ = A[2] - C[2];
-
-  float bX = B[0] - C[0];
-  float bY = B[1] - C[1];
-  float bZ = B[2] - C[2];
-
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  return ((u >= 0) && (v >= 0) && (u + v <= 1));
-}
-
-
-boolean SOLARCHVISION_isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {  
-
-  float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
-
-  float pX = P[0] - G[0];
-  float pY = P[1] - G[1];
-  float pZ = P[2] - G[2];
-
-  float aX = A[0] - G[0];
-  float aY = A[1] - G[1];
-  float aZ = A[2] - G[2];
-
-  float bX = B[0] - G[0];
-  float bY = B[1] - G[1];
-  float bZ = B[2] - G[2];
-  
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
- 
-  boolean result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-  
-  if (result == false) {
-
-    float cX = C[0] - G[0];
-    float cY = C[1] - G[1];
-    float cZ = C[2] - G[2];
-
-    float CC = cX * cX + cY * cY + cZ * cZ; // SOLARCHVISION_3xDot(c, c);
-    float CP = cX * pX + cY * pY + cZ * pZ; // SOLARCHVISION_3xDot(c, p);
-    float BC = bX * cX + bY * cY + bZ * cZ; // SOLARCHVISION_3xDot(b, c);
-  
-    r = (BB * CC - BC * BC);
-    u = (CC * BP - BC * CP) / r;
-    v = (BB * CP - BC * BP) / r;  
-    
-    result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-    
-    if (result == false) {
-
-      float dX = D[0] - G[0];
-      float dY = D[1] - G[1];
-      float dZ = D[2] - G[2];
-      
-      float CD = cX * dX + cY * dY + cZ * dZ; // SOLARCHVISION_3xDot(c, d);
-      float DD = dX * dX + dY * dY + dZ * dZ; // SOLARCHVISION_3xDot(d, d);
-      float DP = dX * pX + dY * pY + dZ * pZ; // SOLARCHVISION_3xDot(d, p);
-    
-      r = (CC * DD - CD * CD);
-      u = (DD * CP - CD * DP) / r;
-      v = (CC * DP - CD * CP) / r;
-      
-      result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-      
-      if (result == false) {
-        
-        float DA = dX * aX + dY * aY + dZ * aZ; // SOLARCHVISION_3xDot(d, a);  
-        
-        r = (DD * AA - DA * DA);
-        u = (AA * DP - DA * AP) / r;
-        v = (DD * AP - DA * DP) / r;
-        
-        result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-      }  
-    }
-  }
-  
-  return result;
-}
-
-boolean SOLARCHVISION_isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting allModel2Ds, etc.  
-
-  float pX = P[0] - O[0];
-  float pY = P[1] - O[1];
-  float pZ = P[2] - O[2];
-    
-  float aX = A[0] - O[0];
-  float aY = A[1] - O[1];
-  float aZ = A[2] - O[2];
-
-  float bX = B[0] - O[0];
-  float bY = B[1] - O[1];
-  float bZ = B[2] - O[2];
-
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  return ((u >= 0) && (v >= 0) && (u <= 1) && (v <= 1));
-}
-
-float[] SOLARCHVISION_uvInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // copy of the function above but it returns u and v
-
-  float pX = P[0] - O[0];
-  float pY = P[1] - O[1];
-  float pZ = P[2] - O[2];
-    
-  float aX = A[0] - O[0];
-  float aY = A[1] - O[1];
-  float aZ = A[2] - O[2];
-
-  float bX = B[0] - O[0];
-  float bY = B[1] - O[1];
-  float bZ = B[2] - O[2];
-
-  float AA = aX * aX + aY * aY + aZ * aZ; // SOLARCHVISION_3xDot(a, a);
-  float AB = aX * bX + aY * bY + aZ * bZ; // SOLARCHVISION_3xDot(a, b);
-  float AP = aX * pX + aY * pY + aZ * pZ; // SOLARCHVISION_3xDot(a, p);
-  float BB = bX * bX + bY * bY + bZ * bZ; // SOLARCHVISION_3xDot(b, b);
-  float BP = bX * pX + bY * pY + bZ * pZ; // SOLARCHVISION_3xDot(b, p);
-  
-  float r = (AA * BB - AB * AB);
-  float u = (BB * AP - AB * BP) / r;
-  float v = (AA * BP - AB * AP) / r;
-  
-  float[] result = {u, v};
-  
-  return result;
-}
 
 
 
@@ -17352,7 +17380,7 @@ class solarchvision_PAINT {
     };
   
     if (COLOR_STYLE_Current == 0) {
-      c[0] = SOLARCHVISION_getOpacity(STUDY.O_scale);
+      c[0] = funcs.getOpacity(STUDY.O_scale);
       c[1] = 0;
       c[2] = 0;
       c[3] = 0;
@@ -17588,11 +17616,11 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
 
     int q;
 
-    q = int(roundTo((NV * 0.75), 1));
+    q = int(funcs.roundTo((NV * 0.75), 1));
     if (q > NV - 1) q = NV - 1;
     return_array[STAT_N_M75] = _values[q];
 
-    q = int(roundTo((NV * 0.25), 1));
+    q = int(funcs.roundTo((NV * 0.25), 1));
     if (q < 0) q = 0;
     return_array[STAT_N_M25] = _values[q];
   } else {
@@ -17719,7 +17747,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
 
         int now_k = k + start_k;
         int now_i = i;
-        int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+        int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -17854,7 +17882,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                 int now_k = k + start_k;
                 int now_i = i;
-                int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -17888,15 +17916,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     float R = (0.5 * RES) * (LAYER_windspd.V_scale / 2.0) * (_values_w_spd[k] / 50.0);
 
                     float R_in = 0; //0.75 * R; 
-                    float x1 = R_in * cos_ang(90 - (teta - 0.5 * D_teta));
-                    float y1 = R_in * -sin_ang(90 - (teta - 0.5 * D_teta));
-                    float x2 = R_in * cos_ang(90 - (teta + 0.5 * D_teta));
-                    float y2 = R_in * -sin_ang(90 - (teta + 0.5 * D_teta)); 
+                    float x1 = R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y1 = R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x2 = R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y2 = R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta)); 
 
-                    float x4 = R * cos_ang(90 - (teta - 0.5 * D_teta));
-                    float y4 = R * -sin_ang(90 - (teta - 0.5 * D_teta));
-                    float x3 = R * cos_ang(90 - (teta + 0.5 * D_teta));
-                    float y3 = R * -sin_ang(90 - (teta + 0.5 * D_teta));
+                    float x4 = R * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y4 = R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x3 = R * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y3 = R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
 
                     float _u = 0;
 
@@ -17967,7 +17995,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                 int now_k = k + start_k;
                 int now_i = i;
-                int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -18001,15 +18029,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     float R = (0.5 * RES) * (LAYER_windspd.V_scale / 2.0) * (_values_w_spd[k] / 50.0);
 
                     float R_in = 0; //0.75 * R; 
-                    float x1 = R_in * cos_ang(90 - (teta - 0.5 * D_teta));
-                    float y1 = R_in * -sin_ang(90 - (teta - 0.5 * D_teta));
-                    float x2 = R_in * cos_ang(90 - (teta + 0.5 * D_teta));
-                    float y2 = R_in * -sin_ang(90 - (teta + 0.5 * D_teta)); 
+                    float x1 = R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y1 = R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x2 = R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y2 = R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta)); 
 
-                    float x4 = R * cos_ang(90 - (teta - 0.5 * D_teta));
-                    float y4 = R * -sin_ang(90 - (teta - 0.5 * D_teta));
-                    float x3 = R * cos_ang(90 - (teta + 0.5 * D_teta));
-                    float y3 = R * -sin_ang(90 - (teta + 0.5 * D_teta));
+                    float x4 = R * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y4 = R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x3 = R * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y3 = R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
 
                     float _u = 0;
 
@@ -18323,8 +18351,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         STUDY.graphics.textSize(15.0 * STUDY.S_View);
         STUDY.graphics.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
-        if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
+        if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
+        if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
       }
 
       if (STUDY.PrintTtitle) {
@@ -18473,7 +18501,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                       now_k = k + start_k;
                       now_i = i;
-                      now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                      now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
                       if (now_j >= 365) {
                         now_j = now_j % 365;
@@ -18529,7 +18557,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (_valuesNUM != 0) {
                   //float _valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
                   //float _valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
-                  float _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                  float _valuesMUL = funcs.roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
 
                   _valuesSUM_RAD *= _valuesMUL;
                   _valuesSUM_EFF_P *= _valuesMUL;
@@ -18578,22 +18606,22 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (PAL_DIR == 2) _u =  0.5 * _u;
 
                   //float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
-                  float[] COL = PAINT.getColorStyle(PAL_TYPE, roundTo(_u, 0.1));
+                  float[] COL = PAINT.getColorStyle(PAL_TYPE, funcs.roundTo(_u, 0.1));
                   STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                   STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
 
 
                   STUDY.graphics.strokeWeight(0);
 
-                  float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+                  float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
-                  float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
-                  float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+                  float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+                  float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                  float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
                   STUDY.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
                 }
@@ -18662,21 +18690,21 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               if (PAL_DIR == 2) _u =  0.5 * _u;
 
               //float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
-              float[] COL = PAINT.getColorStyle(PAL_TYPE, roundTo(_u, 0.1));
+              float[] COL = PAINT.getColorStyle(PAL_TYPE, funcs.roundTo(_u, 0.1));
               STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
               STUDY.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);               
 
               STUDY.graphics.strokeWeight(0);
 
-              float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+              float x1 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float x2 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
-              float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
-              float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+              float x3 = (j + STUDY.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
+              float x4 = (j + STUDY.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+              float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot; 
 
               STUDY.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
             }
@@ -18760,8 +18788,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       STUDY.graphics.textSize(15.0 * STUDY.S_View);
       STUDY.graphics.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
+      if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
     }
 
 
@@ -18880,12 +18908,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   float HOUR_ANGLE = i; 
                   float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
-                  float Alpha = 90 - acos_ang(SunR[3]);
-                  float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+                  float Alpha = 90 - funcs.acos_ang(SunR[3]);
+                  float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
 
                   now_k = k + start_k;
                   now_i = i;
-                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
                   if (now_j >= 365) {
                     now_j = now_j % 365;
@@ -18947,7 +18975,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                     STUDY.graphics.strokeWeight(0);
 
-                    STUDY.graphics.ellipse((j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
+                    STUDY.graphics.ellipse((j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
 
                     if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
                       STUDY.graphics.stroke(127);
@@ -18962,8 +18990,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     STUDY.graphics.textSize(STUDY.S_View * 4.0 * STUDY.U_scale);
 
                     STUDY.graphics.textAlign(CENTER, CENTER);
-                    if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf(_valuesSUM, 1, 1), (j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (sin_ang(Beta - 90))) * sx_Plot);
-                    if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(_valuesSUM), 1), (j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (sin_ang(Beta - 90))) * sx_Plot);
+                    if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf(_valuesSUM, 1, 1), (j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+                    if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(_valuesSUM), 1), (j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
                   }
                 }
               }
@@ -19036,7 +19064,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY.graphics.textAlign(CENTER, CENTER);
 
       if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 + 175 - 0.05 * 20) * STUDY.S_View);
     } 
 
 
@@ -19135,8 +19163,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float HOUR_ANGLE = i; 
         float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
-        float Alpha = 90 - acos_ang(SunR[3]);
-        float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+        float Alpha = 90 - funcs.acos_ang(SunR[3]);
+        float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
 
         now_i = i;
         now_j = int(j * STUDY.perDays + TIME.BeginDay + 365) % 365;
@@ -19165,7 +19193,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
           STUDY.graphics.imageMode(CENTER); 
-          STUDY.graphics.image(Image_RGBA, (j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
+          STUDY.graphics.image(Image_RGBA, (j + STUDY.rect_offset_x + (90 - Alpha) * STUDY.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * STUDY.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
           STUDY.graphics.imageMode(CORNER);
           /*
           if (Materials_DirectArea_Flags[now_i][now_j] == -1) {
@@ -19231,8 +19259,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
              
              for (int vNo = 0; vNo < skyVertices.length; vNo++) {
                
-               float skyAngle_Alpha = asin_ang(skyVertices[vNo][2]);
-               float skyAngle_Beta = atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
+               float skyAngle_Alpha = funcs.asin_ang(skyVertices[vNo][2]);
+               float skyAngle_Beta = funcs.atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
                
                if (skyAngle_Alpha >= 0) {
                  
@@ -19241,7 +19269,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                  PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
                  
                  //STUDY.graphics.imageMode(CENTER); 
-                 //STUDY.graphics.image(Image_RGBA, (j + STUDY.rect_offset_x + (90 - skyAngle_Alpha) * STUDY.rect_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * STUDY.rect_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
+                 //STUDY.graphics.image(Image_RGBA, (j + STUDY.rect_offset_x + (90 - skyAngle_Alpha) * STUDY.rect_scale * (funcs.cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * STUDY.rect_scale * (funcs.sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
                  //STUDY.graphics.imageMode(CORNER);
                  
                  for (int np = 0; np < (RES1 * RES2); np++) {
@@ -19402,7 +19430,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY.graphics.textSize(15.0 * STUDY.S_View);
       STUDY.graphics.textAlign(CENTER, CENTER);
       if (Impact_TYPE == Impact_ACTIVE) STUDY.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY.S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY.S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY.S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY.S_View);
     } 
 
 
@@ -19739,7 +19767,7 @@ void keyReleased () {
 float EquationOfTime (float DateAngle) {
   float b = DateAngle;
 
-  return 0.01  * (9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
+  return 0.01  * (9.87 * funcs.sin_ang(2 * b) - 7.53 * funcs.cos_ang(b) - 1.5 * funcs.sin_ang(b));
 }
 
 float FLOAT_e = 2.7182818284;
@@ -19747,24 +19775,24 @@ float FLOAT_e = 2.7182818284;
 float[] SOLARCHVISION_SunPositionRadiation (float DateAngle, float HourAngleOrigin, float CloudCover) {
   float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle); 
 
-  float Declination = 23.45 * sin_ang(DateAngle - 180.0);
+  float Declination = 23.45 * funcs.sin_ang(DateAngle - 180.0);
 
-  float a = sin_ang(Declination);
-  float b = cos_ang(Declination) * -cos_ang(15.0 * HourAngleOrigin);
-  float c = cos_ang(Declination) *  sin_ang(15.0 * HourAngleOrigin);
+  float a = funcs.sin_ang(Declination);
+  float b = funcs.cos_ang(Declination) * -funcs.cos_ang(15.0 * HourAngleOrigin);
+  float c = funcs.cos_ang(Declination) *  funcs.sin_ang(15.0 * HourAngleOrigin);
 
   float x = c; 
-  float y = -(a * cos_ang(STATION.getLatitude()) + b * sin_ang(STATION.getLatitude()));
-  float z = -a * sin_ang(STATION.getLatitude()) + b * cos_ang(STATION.getLatitude());
+  float y = -(a * funcs.cos_ang(STATION.getLatitude()) + b * funcs.sin_ang(STATION.getLatitude()));
+  float z = -a * funcs.sin_ang(STATION.getLatitude()) + b * funcs.cos_ang(STATION.getLatitude());
 
   float Io = 1367.0; // W/m²
-  Io = Io * (1.0 - (0.0334 * sin_ang(DateAngle)));
+  Io = Io * (1.0 - (0.0334 * funcs.sin_ang(DateAngle)));
 
-  float ALT_ = (asin_ang(z)) * PI / 180; 
+  float ALT_ = (funcs.asin_ang(z)) * PI / 180; 
   float ALT_true = ALT_ + 0.061359 * (0.1594 + 1.1230 * ALT_ + 0.065656 * ALT_ * ALT_) / (1 + 28.9344 * ALT_ + 277.3971 * ALT_ * ALT_);
 
   float PPo = pow(FLOAT_e, (-STATION.getElevation() / 8435.2));
-  float Bb = ((sin_ang (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_true + 6.07995), -1.6364)));
+  float Bb = ((funcs.sin_ang (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_true + 6.07995), -1.6364)));
   float m = PPo / Bb;
 
   float StationTurbidity;
@@ -19790,15 +19818,15 @@ float[] SOLARCHVISION_SunPositionRadiation (float DateAngle, float HourAngleOrig
 float[] SOLARCHVISION_SunPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
   float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle);
 
-  float Declination = 23.45 * sin_ang(DateAngle - 180.0);
+  float Declination = 23.45 * funcs.sin_ang(DateAngle - 180.0);
 
-  float a = sin_ang(Declination);
-  float b = cos_ang(Declination) * -cos_ang(15.0 * HourAngle);
-  float c = cos_ang(Declination) *  sin_ang(15.0 * HourAngle);
+  float a = funcs.sin_ang(Declination);
+  float b = funcs.cos_ang(Declination) * -funcs.cos_ang(15.0 * HourAngle);
+  float c = funcs.cos_ang(Declination) *  funcs.sin_ang(15.0 * HourAngle);
 
   float x = c; 
-  float y = -(a * cos_ang(Latitude) + b * sin_ang(Latitude));
-  float z = -a * sin_ang(Latitude) + b * cos_ang(Latitude);
+  float y = -(a * funcs.cos_ang(Latitude) + b * funcs.sin_ang(Latitude));
+  float z = -a * funcs.sin_ang(Latitude) + b * funcs.cos_ang(Latitude);
 
   float[] return_array = {
     0, x, y, z
@@ -19810,14 +19838,14 @@ float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
 
   float a = 0;
 
-  float Declination = 23.5 * sin_ang(DateAngle - 180.0);
+  float Declination = 23.5 * funcs.sin_ang(DateAngle - 180.0);
 
-  float q = -(tan_ang(Declination) * tan_ang(Latitude));
+  float q = -(funcs.tan_ang(Declination) * funcs.tan_ang(Latitude));
   if (q > 1.0) {
     a = 0.0;
   } else if (q < -1.0) {
     a = 24.0;
-  } else a = acos_ang(q) / 15.0;
+  } else a = funcs.acos_ang(q) / 15.0;
 
   //return (a - EquationOfTime(DateAngle));
   return a;
@@ -19827,14 +19855,14 @@ float SOLARCHVISION_Sunset (float Latitude, float DateAngle) {
 
   float a = 0;
 
-  float Declination = 23.5 * sin_ang(DateAngle - 180.0);
+  float Declination = 23.5 * funcs.sin_ang(DateAngle - 180.0);
 
-  float q = -(tan_ang(Declination) * tan_ang(Latitude));
+  float q = -(funcs.tan_ang(Declination) * funcs.tan_ang(Latitude));
   if (q > 1.0) {
     a = 0.0;
   } else if (q < -1.0) {
     a = 24.0;
-  } else a = acos_ang(q) / 15.0;
+  } else a = funcs.acos_ang(q) / 15.0;
 
 
   //return ((24 - a) - EquationOfTime(DateAngle));
@@ -20022,13 +20050,13 @@ void SOLARCHVISION_export_objects_RAD () {
   //Command2 += " -vts"; //stereographic 
   
   Command2 += " -vv " + nf(WIN3D.Zoom, 0, 0);
-  Command2 += " -vh " + nf(2 * atan_ang((WIN3D.dX / float(WIN3D.dY)) * tan_ang(0.5 * WIN3D.Zoom)), 0, 0);  
+  Command2 += " -vh " + nf(2 * funcs.atan_ang((WIN3D.dX / float(WIN3D.dY)) * funcs.tan_ang(0.5 * WIN3D.Zoom)), 0, 0);  
 
   Command2 += " -vp " + nf(WIN3D.CAM_x / OBJECTS_scale, 0, 0) + " " + nf(WIN3D.CAM_y / OBJECTS_scale, 0, 0) + " " + nf(WIN3D.CAM_z / OBJECTS_scale, 0, 0);
 
-  float dx = cos_ang(90 - WIN3D.RX_Coordinate) * cos_ang(90 - WIN3D.RZ_Coordinate);
-  float dy = cos_ang(90 - WIN3D.RX_Coordinate) * sin_ang(90 - WIN3D.RZ_Coordinate);
-  float dz = sin_ang(90 - WIN3D.RX_Coordinate);
+  float dx = funcs.cos_ang(90 - WIN3D.RX_Coordinate) * funcs.cos_ang(90 - WIN3D.RZ_Coordinate);
+  float dy = funcs.cos_ang(90 - WIN3D.RX_Coordinate) * funcs.sin_ang(90 - WIN3D.RZ_Coordinate);
+  float dz = funcs.sin_ang(90 - WIN3D.RX_Coordinate);
   
   Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
 
@@ -20036,8 +20064,8 @@ void SOLARCHVISION_export_objects_RAD () {
   float uy = 0;
   float uz = 1;
   if (abs(dz) > 0.99) {
-    ux = cos_ang(90 + WIN3D.RZ_Coordinate);
-    uy = sin_ang(90 + WIN3D.RZ_Coordinate);
+    ux = funcs.cos_ang(90 + WIN3D.RZ_Coordinate);
+    uy = funcs.sin_ang(90 + WIN3D.RZ_Coordinate);
     uz = 0; 
   }
   Command2 += " -vu " + nf(ux, 0, 0) + " " + nf(uy, 0, 0) + " " + nf(uz, 0, 0);
@@ -20090,12 +20118,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM00'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
 
-  float c1 = cos_ang(WIN3D.RX_Coordinate * 0.5);
-  float s1 = sin_ang(WIN3D.RX_Coordinate * 0.5);
-  float c2 = cos_ang(WIN3D.RY_Coordinate * 0.5);
-  float s2 = sin_ang(WIN3D.RY_Coordinate * 0.5);
-  float c3 = cos_ang(WIN3D.RZ_Coordinate * 0.5);
-  float s3 = sin_ang(WIN3D.RZ_Coordinate * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.RX_Coordinate * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.RX_Coordinate * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.RY_Coordinate * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.RY_Coordinate * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.RZ_Coordinate * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.RZ_Coordinate * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -20111,12 +20139,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM01'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = cos_ang(WIN3D.RY_Coordinate * 0.5);
-  float s1 = sin_ang(WIN3D.RY_Coordinate * 0.5);
-  float c2 = cos_ang(WIN3D.RZ_Coordinate * 0.5);
-  float s2 = sin_ang(WIN3D.RZ_Coordinate * 0.5);
-  float c3 = cos_ang(WIN3D.RX_Coordinate * 0.5);
-  float s3 = sin_ang(WIN3D.RX_Coordinate * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.RY_Coordinate * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.RY_Coordinate * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.RZ_Coordinate * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.RZ_Coordinate * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.RX_Coordinate * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.RX_Coordinate * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -20131,12 +20159,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM02'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = cos_ang(WIN3D.RZ_Coordinate * 0.5);
-  float s1 = sin_ang(WIN3D.RZ_Coordinate * 0.5);
-  float c2 = cos_ang(WIN3D.RX_Coordinate * 0.5);
-  float s2 = sin_ang(WIN3D.RX_Coordinate * 0.5);
-  float c3 = cos_ang(WIN3D.RY_Coordinate * 0.5);
-  float s3 = sin_ang(WIN3D.RY_Coordinate * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.RZ_Coordinate * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.RZ_Coordinate * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.RX_Coordinate * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.RX_Coordinate * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.RY_Coordinate * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.RY_Coordinate * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -20152,12 +20180,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM03'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = cos_ang(WIN3D.RZ_Coordinate * 0.5);
-  float s1 = sin_ang(WIN3D.RZ_Coordinate * 0.5);
-  float c2 = cos_ang(WIN3D.RY_Coordinate * 0.5);
-  float s2 = sin_ang(WIN3D.RY_Coordinate * 0.5);
-  float c3 = cos_ang(WIN3D.RX_Coordinate * 0.5);
-  float s3 = sin_ang(WIN3D.RX_Coordinate * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.RZ_Coordinate * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.RZ_Coordinate * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.RY_Coordinate * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.RY_Coordinate * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.RX_Coordinate * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.RX_Coordinate * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -20173,12 +20201,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM04'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = cos_ang(WIN3D.RX_Coordinate * 0.5);
-  float s1 = sin_ang(WIN3D.RX_Coordinate * 0.5);
-  float c2 = cos_ang(WIN3D.RZ_Coordinate * 0.5);
-  float s2 = sin_ang(WIN3D.RZ_Coordinate * 0.5);
-  float c3 = cos_ang(WIN3D.RY_Coordinate * 0.5);
-  float s3 = sin_ang(WIN3D.RY_Coordinate * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.RX_Coordinate * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.RX_Coordinate * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.RZ_Coordinate * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.RZ_Coordinate * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.RY_Coordinate * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.RY_Coordinate * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -20193,12 +20221,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM05'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = cos_ang(WIN3D.RY_Coordinate * 0.5);
-  float s1 = sin_ang(WIN3D.RY_Coordinate * 0.5);
-  float c2 = cos_ang(WIN3D.RX_Coordinate * 0.5);
-  float s2 = sin_ang(WIN3D.RX_Coordinate * 0.5);
-  float c3 = cos_ang(WIN3D.RZ_Coordinate * 0.5);
-  float s3 = sin_ang(WIN3D.RZ_Coordinate * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.RY_Coordinate * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.RY_Coordinate * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.RX_Coordinate * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.RX_Coordinate * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.RZ_Coordinate * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.RZ_Coordinate * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -20591,15 +20619,15 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
     }
   }  
 
-  float T_out = atan2_ang(Y_out, X_out);
+  float T_out = funcs.atan2_ang(Y_out, X_out);
 
   X_out = 0;
   Y_out = 0;
   Z_out = 0;
 
   for (int vNo = 1; vNo < importVertices.length; vNo++) {
-    float x = (importVertices[vNo][0] - cen_X) * cos_ang(-T_out) - (importVertices[vNo][1] - cen_Y) * sin_ang(-T_out);
-    float y = (importVertices[vNo][0] - cen_X) * sin_ang(-T_out) + (importVertices[vNo][1] - cen_Y) * cos_ang(-T_out);
+    float x = (importVertices[vNo][0] - cen_X) * funcs.cos_ang(-T_out) - (importVertices[vNo][1] - cen_Y) * funcs.sin_ang(-T_out);
+    float y = (importVertices[vNo][0] - cen_X) * funcs.sin_ang(-T_out) + (importVertices[vNo][1] - cen_Y) * funcs.cos_ang(-T_out);
     float z = importVertices[vNo][2];
 
     if (X_out < abs(x)) X_out = abs(x);
@@ -20722,7 +20750,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
       if (allFaces.getMaterial(f) == 0) {
         Tessellation += allFaces.displayTessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -20773,7 +20801,7 @@ void ViewFromTheSky (float SKY2D_X_Coordinate, float SKY2D_Y_Coordinate, float S
 
 
 int getLoactationTimeZone () {
-  return int(roundTo(STATION.getLongitude() / 15, 15)); 
+  return int(funcs.roundTo(STATION.getLongitude() / 15, 15)); 
 }
 
 
@@ -20876,7 +20904,7 @@ class solarchvision_Tropo3D {
   
   void load_images () {
     
-    String[] allFilenames = sort(SOLARCHVISION_getfiles(GEOMET_directory));
+    String[] allFilenames = sort(funcs.getfiles(GEOMET_directory));
     
   
     
@@ -21072,8 +21100,8 @@ class solarchvision_Tropo3D {
       
       this.BoundariesX[i][0] = STATION.getLongitude() - 15;
       this.BoundariesX[i][1] = STATION.getLongitude() + 15;
-      this.BoundariesY[i][0] = STATION.getLatitude() - 15 * cos_ang(STATION.getLatitude());
-      this.BoundariesY[i][1] = STATION.getLatitude() + 15 * cos_ang(STATION.getLatitude());
+      this.BoundariesY[i][0] = STATION.getLatitude() - 15 * funcs.cos_ang(STATION.getLatitude());
+      this.BoundariesY[i][1] = STATION.getLatitude() + 15 * funcs.cos_ang(STATION.getLatitude());
   
       
       
@@ -21105,10 +21133,10 @@ class solarchvision_Tropo3D {
       
       //String FN = nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2) + "_";
       String FN = nf((CurrentHour + LoactationTimeZone) % 24, 2) + "_";
-      FN += nf(int(roundTo(-1000 * this.BoundariesX[i][0], 1)), 6) + "_";
-      FN += nf(int(roundTo( 1000 * this.BoundariesY[i][0], 1)), 6) + "_";
-      FN += nf(int(roundTo(-1000 * this.BoundariesX[i][1], 1)), 6) + "_";
-      FN += nf(int(roundTo( 1000 * this.BoundariesY[i][1], 1)), 6) + "_";
+      FN += nf(int(funcs.roundTo(-1000 * this.BoundariesX[i][0], 1)), 6) + "_";
+      FN += nf(int(funcs.roundTo( 1000 * this.BoundariesY[i][0], 1)), 6) + "_";
+      FN += nf(int(funcs.roundTo(-1000 * this.BoundariesX[i][1], 1)), 6) + "_";
+      FN += nf(int(funcs.roundTo( 1000 * this.BoundariesY[i][1], 1)), 6) + "_";
       FN += ".png";
   
       String the_target = GEOMET_directory + "/" + FN;
@@ -21336,9 +21364,9 @@ class solarchvision_Tropo3D {
                     b += delta_Beta;
                   }
       
-                  float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-                  float y0 = r * sin_ang(b - 90) * cos_ang(a);
-                  float z0 = r * sin_ang(a);
+                  float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a); 
+                  float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+                  float z0 = r * funcs.sin_ang(a);
       
                   float _lon = b - CEN_lon;
                   float _lat = a - CEN_lat;
@@ -21351,14 +21379,14 @@ class solarchvision_Tropo3D {
       
                   // rotating to location coordinates 
                   float tb = -STATION.getLongitude();
-                  float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-                  float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+                  float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+                  float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
                   float z1 = z0;
       
                   float ta = 90 - STATION.getLatitude();
                   float x2 = x1;
-                  float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-                  float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+                  float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+                  float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
       
                   // move it down!
                   z2 -= FLOAT_r_Earth;
@@ -21721,7 +21749,7 @@ class solarchvision_Sky3D {
     
               int TotalSubNo = 1;  
               Tessellation = Sky3D.displayTessellation;
-              if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+              if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
     
               float[][] base_Vertices = new float [skyFaces[f].length][3];
               for (int j = 0; j < skyFaces[f].length; j++) {
@@ -21736,7 +21764,7 @@ class solarchvision_Sky3D {
                 float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
     
                 for (int j = 0; j < subFace.length; j++) {
-                  subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
+                  subFace[j] = funcs.normalize(subFace[j]);
                 }
     
     
@@ -21812,7 +21840,7 @@ class solarchvision_Sky3D {
       
             int TotalSubNo = 1;  
             Tessellation = this.displayTessellation;
-            if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
       
             float[][] base_Vertices = new float [skyFaces[f].length][3];
             for (int j = 0; j < skyFaces[f].length; j++) {
@@ -21827,7 +21855,7 @@ class solarchvision_Sky3D {
               float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
       
               for (int j = 0; j < subFace.length; j++) {
-                subFace[j] = SOLARCHVISION_fn_normalize(subFace[j]);
+                subFace[j] = funcs.normalize(subFace[j]);
               }
       
               WIN3D.graphics.beginShape();
@@ -21996,9 +22024,9 @@ class solarchvision_Sun3D {
               b += delta_Beta;
             }
   
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
+            float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a); 
+            float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+            float z0 = r * funcs.sin_ang(a);
   
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
@@ -22012,14 +22040,14 @@ class solarchvision_Sun3D {
             // rotating to location coordinates
   
             float tb = 0;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+            float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
             float z1 = z0;
   
             float ta = -90 - STATION.getLatitude();
             float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+            float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+            float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
   
             // scale it here!
             x2 *= 1000000.0;
@@ -22027,8 +22055,8 @@ class solarchvision_Sun3D {
             z2 *= 1000000.0;
   
             // move it to scale here!
-            y2 += 1000000.0 * d * sin_ang(-STATION.getLatitude());      
-            z2 += 1000000.0 * d * cos_ang(-STATION.getLatitude());
+            y2 += 1000000.0 * d * funcs.sin_ang(-STATION.getLatitude());      
+            z2 += 1000000.0 * d * funcs.cos_ang(-STATION.getLatitude());
   
             subFace[s][0] = x2;
             subFace[s][1] = y2;
@@ -22211,7 +22239,7 @@ class solarchvision_Sun3D {
                   now_i2 = (1 + now_i1) % 24;
                   float i_ratio = i - now_i1;
   
-                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
   
                   if (now_j >= 365) {
                     now_j = now_j % 365;
@@ -22517,8 +22545,8 @@ class solarchvision_Sun3D {
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
   
-                float Alpha = 90 - acos_ang(SunR[3]);
-                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+                float Alpha = 90 - funcs.acos_ang(SunR[3]);
+                float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
   
                 //-------------- to extend graph to the horizon ---------------
                 if (Alpha < 0) {              
@@ -22527,12 +22555,12 @@ class solarchvision_Sun3D {
                     float[] SunR_rise = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunrise);
   
                     Alpha = 0;
-                    Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);
+                    Beta = 180 - funcs.atan2_ang(SunR_rise[1], SunR_rise[2]);
                   } else {
                     float[] SunR_set = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunset);
   
                     Alpha = 0;
-                    Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);
+                    Beta = 180 - funcs.atan2_ang(SunR_set[1], SunR_set[2]);
                   }
                 }
                 //-----------------------------------------------------------
@@ -22543,7 +22571,7 @@ class solarchvision_Sun3D {
                 now_i2 = (1 + now_i1) % 24;
                 float i_ratio = i - now_i1; 
   
-                now_j = int(more_J + j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                now_j = int(more_J + j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
   
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -22608,8 +22636,8 @@ class solarchvision_Sun3D {
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
   
-                float Alpha = 90 - acos_ang(SunR[3]);
-                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+                float Alpha = 90 - funcs.acos_ang(SunR[3]);
+                float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
   
                 int row_J = more_J / STUDY.joinDays;
   
@@ -22693,9 +22721,9 @@ class solarchvision_Sun3D {
   
                       if (target_window == TypeWindow.OBJ) {
   
-                        float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
-                        float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
-                        float z = sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
+                        float x = funcs.cos_ang(Alpha) * (funcs.cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
+                        float y = funcs.cos_ang(Alpha) * (funcs.sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
+                        float z = funcs.sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
   
                         if (_turn == 1) {
                           SOLARCHVISION_OBJprintVertex(x, y, z);
@@ -22720,9 +22748,9 @@ class solarchvision_Sun3D {
                       } else if (target_window == TypeWindow.WIN3D) {
                         WIN3D.graphics.fill(COL[1], COL[2], COL[3], 127);
   
-                        float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
-                        float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
-                        float z = sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
+                        float x = funcs.cos_ang(Alpha) * (funcs.cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
+                        float y = funcs.cos_ang(Alpha) * (funcs.sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
+                        float z = funcs.sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
   
                         WIN3D.graphics.vertex(x, -y, z);
                       } else if (target_window == TypeWindow.WORLD) {
@@ -22731,8 +22759,8 @@ class solarchvision_Sun3D {
   
                         STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
   
-                        float x = (90 - Alpha) * (cos_ang(Beta - 90)) * STUDY.rect_scale * r + x_Plot * STUDY.rect_scale;
-                        float y = (90 - Alpha) * (sin_ang(Beta - 90)) * STUDY.rect_scale * r + y_Plot * STUDY.rect_scale;
+                        float x = (90 - Alpha) * (funcs.cos_ang(Beta - 90)) * STUDY.rect_scale * r + x_Plot * STUDY.rect_scale;
+                        float y = (90 - Alpha) * (funcs.sin_ang(Beta - 90)) * STUDY.rect_scale * r + y_Plot * STUDY.rect_scale;
   
                         float ox = (j + STUDY.rect_offset_x) * sx_Plot;
   
@@ -22850,17 +22878,17 @@ class solarchvision_Sun3D {
                 // ??????????????????????????
               } else if (target_window == TypeWindow.STUDY) {
   
-                float Alpha1 = asin_ang(SunA[3]);
-                float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
+                float Alpha1 = funcs.asin_ang(SunA[3]);
+                float Beta1 = funcs.atan2_ang(SunA[2], SunA[1]) + 90;          
   
-                float Alpha2 = asin_ang(SunB[3]);
-                float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
+                float Alpha2 = funcs.asin_ang(SunB[3]);
+                float Beta2 = funcs.atan2_ang(SunB[2], SunB[1]) + 90;          
   
-                float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+                float x1 = (90 - Alpha1) * (funcs.cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y1 = (90 - Alpha1) * (funcs.sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
   
-                float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+                float x2 = (90 - Alpha2) * (funcs.cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y2 = (90 - Alpha2) * (funcs.sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
   
                 float ox = (j + STUDY.rect_offset_x) * sx_Plot;
   
@@ -22912,17 +22940,17 @@ class solarchvision_Sun3D {
                 // ??????????????????????????
               } else if (target_window == TypeWindow.STUDY) {
   
-                float Alpha1 = asin_ang(SunA[3]);
-                float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
+                float Alpha1 = funcs.asin_ang(SunA[3]);
+                float Beta1 = funcs.atan2_ang(SunA[2], SunA[1]) + 90;          
   
-                float Alpha2 = asin_ang(SunB[3]);
-                float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
+                float Alpha2 = funcs.asin_ang(SunB[3]);
+                float Beta2 = funcs.atan2_ang(SunB[2], SunB[1]) + 90;          
   
-                float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+                float x1 = (90 - Alpha1) * (funcs.cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y1 = (90 - Alpha1) * (funcs.sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
   
-                float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
+                float x2 = (90 - Alpha2) * (funcs.cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
+                float y2 = (90 - Alpha2) * (funcs.sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
   
                 float ox = (j + STUDY.rect_offset_x) * sx_Plot;
   
@@ -23144,9 +23172,9 @@ class solarchvision_Moon3D {
               b += delta_Beta;
             }
   
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
+            float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a); 
+            float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+            float z0 = r * funcs.sin_ang(a);
   
             float _lon = b - CEN_lon;
             float _lat = a - CEN_lat;
@@ -23161,18 +23189,18 @@ class solarchvision_Moon3D {
   
   
             float tb = 0;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+            float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
             float z1 = z0;
   
             float ta = -90 - STATION.getLatitude();
             float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+            float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+            float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
   
             // move it up here!
-            y2 += d * sin_ang(-STATION.getLatitude());      
-            z2 += d * cos_ang(-STATION.getLatitude());
+            y2 += d * funcs.sin_ang(-STATION.getLatitude());      
+            z2 += d * funcs.cos_ang(-STATION.getLatitude());
   
             subFace[s][0] = x2;
             subFace[s][1] = y2;
@@ -23242,7 +23270,7 @@ class solarchvision_Earth3D {
   
   String Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/EarthSurface";
   
-  String[] Filenames = sort(SOLARCHVISION_getfiles(this.Path));
+  String[] Filenames = sort(funcs.getfiles(this.Path));
   
   
   void resize_images () {
@@ -23402,9 +23430,9 @@ class solarchvision_Earth3D {
                 b += delta_Beta;
               }
     
-              float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-              float y0 = r * sin_ang(b - 90) * cos_ang(a);
-              float z0 = r * sin_ang(a);
+              float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a); 
+              float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+              float z0 = r * funcs.sin_ang(a);
     
               float _lon = b - CEN_lon;
               float _lat = a - CEN_lat;
@@ -23417,14 +23445,14 @@ class solarchvision_Earth3D {
     
               // rotating to location coordinates 
               float tb = -STATION.getLongitude();
-              float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-              float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+              float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+              float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
               float z1 = z0;
     
               float ta = 90 - STATION.getLatitude();
               float x2 = x1;
-              float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-              float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+              float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+              float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
     
               // move it down!
               z2 -= FLOAT_r_Earth;
@@ -23664,7 +23692,7 @@ class solarchvision_Land3D {
   
       try {     
     
-        String[] filenames = sort(SOLARCHVISION_getfiles(LandFolder)); // important to sort
+        String[] filenames = sort(funcs.getfiles(LandFolder)); // important to sort
     
         if (filenames != null) {
           for (int i = 0; i < filenames.length; i++) {
@@ -24117,7 +24145,7 @@ class solarchvision_Land3D {
         }
   
         int TotalSubNo = 1;  
-        if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+        if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
         int i_start = this.Surface_SkipStart;
         int i_end = this.num_rows - 1 - this.Surface_SkipEnd;
@@ -24839,8 +24867,8 @@ class solarchvision_Model2Ds {
     this.ImagePath = new String [1];
     this.ImagePath[0] = "";
   
-    this.Filenames_PEOPLE = sort(SOLARCHVISION_getfiles(allModel2DsFolder_PEOPLE));
-    this.Filenames_TREES = sort(SOLARCHVISION_getfiles(allModel2DsFolder_TREES));  
+    this.Filenames_PEOPLE = sort(funcs.getfiles(allModel2DsFolder_PEOPLE));
+    this.Filenames_TREES = sort(funcs.getfiles(allModel2DsFolder_TREES));  
   
     this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
     this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
@@ -25382,7 +25410,7 @@ class solarchvision_Model2Ds {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+    float[] ray_normal = funcs.normalize(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][6];
   
@@ -25412,20 +25440,20 @@ class solarchvision_Model2Ds {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = SOLARCHVISION_3xSub(A, C);
-      float[] BD = SOLARCHVISION_3xSub(B, D);
+      float[] AC = funcs.sub3x(A, C);
+      float[] BD = funcs.sub3x(B, D);
       
-      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+      float[] face_norm = funcs.cross3x(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      float R = -funcs.dot3x(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -25436,7 +25464,7 @@ class solarchvision_Model2Ds {
           
           float[] P = {X_intersect, Y_intersect, Z_intersect};
           
-          UV = SOLARCHVISION_uvInside_Rectangle(P, A, B, C);
+          UV = funcs.uvInside_Rectangle(P, A, B, C);
         }
       }
       
@@ -25524,7 +25552,7 @@ class solarchvision_Model2Ds {
     }
   
     int TotalSubNo = 1;  
-    if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+    if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
   
   
@@ -25591,9 +25619,9 @@ class solarchvision_Model2Ds {
                 float di = random(1);
                 float dj = random(1);
   
-                float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-                float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-                float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+                float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+                float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+                float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
   
                 float u = (x / Land3D.Textures_U_scale[n_Map] + 0.5);
                 float v = (-y / Land3D.Textures_V_scale[n_Map] + 0.5);
@@ -25697,9 +25725,9 @@ class solarchvision_Model2Ds {
               float di = random(1);
               float dj = random(1);
   
-              float x = SOLARCHVISION_Bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-              float y = SOLARCHVISION_Bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-              float z = SOLARCHVISION_Bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+              float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+              float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+              float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
   
               if (z + STATION.getElevation() > 0) { // i.e. above sea level 
   
@@ -25728,8 +25756,8 @@ class solarchvision_Model2Ds {
       float a = random(360);
       float b = pow(random(pow(r1, 2), pow(r2, 2)), 0.5); // to make it uniform on the surface
   
-      float x = x0 + b * cos_ang(a);
-      float y = y0 + b * sin_ang(a);
+      float x = x0 + b * funcs.cos_ang(a);
+      float y = y0 + b * funcs.sin_ang(a);
       float z = z0;
   
       if (people_or_trees == 1) {
@@ -25753,8 +25781,8 @@ class solarchvision_Model2Ds {
       float a = random(1-rx, rx-1);  
       float b = random(1-ry, ry-1);
   
-      float x = a * cos_ang(rot) - b * sin_ang(rot);
-      float y = a * sin_ang(rot) + b * cos_ang(rot);
+      float x = a * funcs.cos_ang(rot) - b * funcs.sin_ang(rot);
+      float y = a * funcs.sin_ang(rot) + b * funcs.cos_ang(rot);
       float z = 0;
   
       x += x0;
@@ -26765,9 +26793,9 @@ class solarchvision_Model1Ds {
               float b = -subFace_Rotated[s][1];
               float c = subFace_Rotated[s][2];
   
-              subFace_Rotated[s][0] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);     
+              subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);     
               subFace_Rotated[s][1] = c;    
-              subFace_Rotated[s][2] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+              subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
             } else if (allSolarImpacts.sectionType == 3) {
             }
           }  
@@ -26786,8 +26814,8 @@ class solarchvision_Model1Ds {
                 float px = x;
                 float py = y;
   
-                x = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                y = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                x = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                y = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
               } 
   
               SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
@@ -26809,8 +26837,8 @@ class solarchvision_Model1Ds {
                   float px = x_trim;
                   float py = y_trim;
   
-                  x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                  y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                  x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                  y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                 } 
   
                 SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
@@ -26830,8 +26858,8 @@ class solarchvision_Model1Ds {
                   float px = x_trim;
                   float py = y_trim;
   
-                  x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                  y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                  x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                  y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                 } 
   
                 SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
@@ -26862,9 +26890,9 @@ class solarchvision_Model1Ds {
           float b = -y0;
           float c = z0;
   
-          x0_Rotated = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);     
+          x0_Rotated = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);     
           y0_Rotated = c;    
-          z0_Rotated= a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+          z0_Rotated= a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
         } else if (allSolarImpacts.sectionType == 3) {
         }
   
@@ -26879,8 +26907,8 @@ class solarchvision_Model1Ds {
             float px = x;
             float py = y;
   
-            x = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-            y = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+            x = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+            y = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
           } 
   
   
@@ -26893,7 +26921,7 @@ class solarchvision_Model1Ds {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+    float[] ray_normal = funcs.normalize(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -26920,20 +26948,20 @@ class solarchvision_Model1Ds {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = SOLARCHVISION_3xSub(A, C);
-      float[] BD = SOLARCHVISION_3xSub(B, D);
+      float[] AC = funcs.sub3x(A, C);
+      float[] BD = funcs.sub3x(B, D);
       
-      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+      float[] face_norm = funcs.cross3x(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      float R = -funcs.dot3x(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -26944,7 +26972,7 @@ class solarchvision_Model1Ds {
           
           float[] P = {X_intersect, Y_intersect, Z_intersect};
           
-          InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
+          InPoly = funcs.isInside_Rectangle(P, A, B, C);
         }
       }
             
@@ -27349,16 +27377,16 @@ class solarchvision_Solids {
   
     ///////////////////////// NOT SURE START!    
   
-    float y1 = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
-    float z1 = b * sin_ang(-rotX) + c * cos_ang(-rotX);
+    float y1 = b * funcs.cos_ang(-rotX) - c * funcs.sin_ang(-rotX); 
+    float z1 = b * funcs.sin_ang(-rotX) + c * funcs.cos_ang(-rotX);
     float x1 = a;
   
     a = x1;
     b = y1;
     c = z1;  
   
-    float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
-    float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
+    float z2 = c * funcs.cos_ang(-rotY) - a * funcs.sin_ang(-rotY);
+    float x2 = c * funcs.sin_ang(-rotY) + a * funcs.cos_ang(-rotY);
     float y2 = b; 
   
     a = x2;
@@ -27366,8 +27394,8 @@ class solarchvision_Solids {
     c = z2;      
     ///////////////////////// NOT SURE END!
   
-    float x = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
-    float y = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
+    float x = a * funcs.cos_ang(-rotZ) - b * funcs.sin_ang(-rotZ);
+    float y = a * funcs.sin_ang(-rotZ) + b * funcs.cos_ang(-rotZ); 
     float z = c;    
   
     x += posX;
@@ -27479,18 +27507,18 @@ class solarchvision_Solids {
   
       if (q != 0) {
         if (plane_type == 0) {
-          qx = cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
-          qy = sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qx = funcs.cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qy = funcs.sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
         }
   
         if (plane_type == 1) {
-          qy = cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
-          qz = sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qy = funcs.cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qz = funcs.sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
         }
   
         if (plane_type == 2) {
-          qz = cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
-          qx = sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qz = funcs.cos_ang(q * 360.0 / float(this.numdisplayAllDegree));
+          qx = funcs.sin_ang(q * 360.0 / float(this.numdisplayAllDegree));
         }
       }
   
@@ -27512,16 +27540,16 @@ class solarchvision_Solids {
   
       ///////////////////////// NOT SURE START!    
   
-      float y1 = b * cos_ang(Solid_rotX) - c * sin_ang(Solid_rotX); 
-      float z1 = b * sin_ang(Solid_rotX) + c * cos_ang(Solid_rotX);
+      float y1 = b * funcs.cos_ang(Solid_rotX) - c * funcs.sin_ang(Solid_rotX); 
+      float z1 = b * funcs.sin_ang(Solid_rotX) + c * funcs.cos_ang(Solid_rotX);
       float x1 = a;
   
       a = x1;
       b = y1;
       c = z1;  
   
-      float z2 = c * cos_ang(Solid_rotY) - a * sin_ang(Solid_rotY);
-      float x2 = c * sin_ang(Solid_rotY) + a * cos_ang(Solid_rotY);
+      float z2 = c * funcs.cos_ang(Solid_rotY) - a * funcs.sin_ang(Solid_rotY);
+      float x2 = c * funcs.sin_ang(Solid_rotY) + a * funcs.cos_ang(Solid_rotY);
       float y2 = b; 
   
       a = x2;
@@ -27529,8 +27557,8 @@ class solarchvision_Solids {
       c = z2;      
       ///////////////////////// NOT SURE END!
   
-      float x = a * cos_ang(Solid_rotZ) - b * sin_ang(Solid_rotZ);
-      float y = a * sin_ang(Solid_rotZ) + b * cos_ang(Solid_rotZ);
+      float x = a * funcs.cos_ang(Solid_rotZ) - b * funcs.sin_ang(Solid_rotZ);
+      float y = a * funcs.sin_ang(Solid_rotZ) + b * funcs.cos_ang(Solid_rotZ);
       float z = c;         
   
   
@@ -27548,7 +27576,7 @@ class solarchvision_Solids {
 
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+    float[] ray_normal = funcs.normalize(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -27568,22 +27596,22 @@ class solarchvision_Solids {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = SOLARCHVISION_3xSub(A, C);
-      float[] BD = SOLARCHVISION_3xSub(B, D);
+      float[] AC = funcs.sub3x(A, C);
+      float[] BD = funcs.sub3x(B, D);
       
-      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+      float[] face_norm = funcs.cross3x(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
       
       float dist2intersect = FLOAT_undefined;
     
-      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      float R = -funcs.dot3x(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -27600,7 +27628,7 @@ class solarchvision_Solids {
             float[] vect1 = {this.Vertices[this.Faces[f][i]][0] - X_intersect, this.Vertices[this.Faces[f][i]][1] - Y_intersect, this.Vertices[this.Faces[f][i]][2] - Z_intersect};
             float[] vect2 = {this.Vertices[this.Faces[f][next_i]][0] - X_intersect, this.Vertices[this.Faces[f][next_i]][1] - Y_intersect, this.Vertices[this.Faces[f][next_i]][2] - Z_intersect};
     
-            float t = acos_ang(SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(vect1), SOLARCHVISION_fn_normalize(vect2)));
+            float t = funcs.acos_ang(funcs.dot(funcs.normalize(vect1), funcs.normalize(vect2)));
     
             AnglesAll += t;
           }
@@ -28197,12 +28225,12 @@ class solarchvision_Model3Ds {
   
   
     int[] newCurve = {
-      this.add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
+      this.add_Vertex(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
     };
     for (int i = 1; i <= EndOfLoop; i++) {
       float t = i * AngleStep + rot;
       int[] f = {
-        this.add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
+        this.add_Vertex(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
       };
       newCurve = concat(newCurve, f);
     } 
@@ -31336,7 +31364,7 @@ class solarchvision_Model3Ds {
                       float u = i / float(User3D.modify_TessellateColumns);
                       float v = j / float(User3D.modify_TessellateRows);
   
-                      new_EdgeVertices[s][k] = SOLARCHVISION_Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
+                      new_EdgeVertices[s][k] = funcs.bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
                     }
                   }
                 }
@@ -32060,7 +32088,7 @@ class solarchvision_Model3Ds {
               float[] W = {
                 UV.x, UV.y, UV.z
               };
-              W = SOLARCHVISION_fn_normalize(W);
+              W = funcs.normalize(W);
   
               top_Vertices[s][0] += W[0] * User3D.modify_OpenningDepth;
               top_Vertices[s][1] += W[1] * User3D.modify_OpenningDepth;
@@ -32202,7 +32230,7 @@ class solarchvision_Model3Ds {
               float[] W = {
                 UV.x, UV.y, UV.z
               };
-              W = SOLARCHVISION_fn_normalize(W);
+              W = funcs.normalize(W);
   
               top_Vertices[s][0] += W[0] * User3D.modify_OpenningDepth;
               top_Vertices[s][1] += W[1] * User3D.modify_OpenningDepth;
@@ -32348,7 +32376,7 @@ class solarchvision_Model3Ds {
                 float[] W = {
                   UV.x, UV.y, UV.z
                 };
-                W = SOLARCHVISION_fn_normalize(W);
+                W = funcs.normalize(W);
   
                 Vertex_offsetValues[o][0] += W[0] * _amount;
                 Vertex_offsetValues[o][1] += W[1] * _amount;
@@ -32389,7 +32417,7 @@ class solarchvision_Model3Ds {
                 float[] W = {
                   UV.x, UV.y, UV.z
                 };
-                W = SOLARCHVISION_fn_normalize(W);
+                W = funcs.normalize(W);
   
                 Vertex_offsetValues[o][0] += W[0] * _amount;
                 Vertex_offsetValues[o][1] += W[1] * _amount;
@@ -34179,12 +34207,12 @@ class solarchvision_Model3Ds {
       current_Weight = wgt;
       current_Closed = clz;
     
-      float rx = 0.5 * d * cos_ang(Beta);
-      float ry = 0.5 * d * sin_ang(Beta);
+      float rx = 0.5 * d * funcs.cos_ang(Beta);
+      float ry = 0.5 * d * funcs.sin_ang(Beta);
     
-      float wx = w * cos_ang(Beta - 90) * cos_ang(Alpha);
-      float wy = w * sin_ang(Beta - 90) * cos_ang(Alpha);
-      float wz = w * sin_ang(Alpha);
+      float wx = w * funcs.cos_ang(Beta - 90) * funcs.cos_ang(Alpha);
+      float wy = w * funcs.sin_ang(Beta - 90) * funcs.cos_ang(Alpha);
+      float wz = w * funcs.sin_ang(Alpha);
     
       float x1 = x0 + rx;
       float y1 = y0 + ry;
@@ -34229,8 +34257,8 @@ class solarchvision_Model3Ds {
       current_Weight = wgt;
       current_Closed = clz;
     
-      float dx = d * cos_ang(t + t0 - 90);
-      float dy = d * sin_ang(t + t0 - 90);
+      float dx = d * funcs.cos_ang(t + t0 - 90);
+      float dy = d * funcs.sin_ang(t + t0 - 90);
     
       float x1 = x0;
       float y1 = y0;
@@ -34501,12 +34529,12 @@ class solarchvision_Model3Ds {
       current_Closed = clz;
     
       int[] newFace = {
-        this.add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)
+        this.add_Vertex(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h)
       };
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n);
         int[] f = {
-          this.add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
+          this.add_Vertex(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
         };
         newFace = concat(newFace, f);
       } 
@@ -34529,12 +34557,12 @@ class solarchvision_Model3Ds {
       current_Closed = clz;
     
       int[] newFace = {
-        this.add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)
+        this.add_Vertex(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
       };
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n) + rot;
         int[] f = {
-          this.add_Vertex(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)
+          this.add_Vertex(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
         };
         newFace = concat(newFace, f);
       } 
@@ -34559,8 +34587,8 @@ class solarchvision_Model3Ds {
       int[] vT = new int [n];
       int[] vB = new int [n];
     
-      vT[0] = this.add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + 0.5 * h);
-      vB[0] = this.add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h);
+      vT[0] = this.add_Vertex(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz + 0.5 * h);
+      vB[0] = this.add_Vertex(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h);
     
       int[] newFaceT = {
         vT[0]
@@ -34571,8 +34599,8 @@ class solarchvision_Model3Ds {
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n);
     
-        vT[i] = this.add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + 0.5 * h);
-        vB[i] = this.add_Vertex(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz - 0.5 * h);
+        vT[i] = this.add_Vertex(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + 0.5 * h);
+        vB[i] = this.add_Vertex(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz - 0.5 * h);
         int[] fT = {
           vT[i]
         };
@@ -34632,8 +34660,8 @@ class solarchvision_Model3Ds {
         float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
         float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
     
-        vT[i] = this.add_Vertex(cx + R_in * cos_ang(t + rot), cy + R_in * sin_ang(t + rot), cz + H_in);
-        vB[i] = this.add_Vertex(cx + R_in * cos_ang(t + 36 + rot), cy + R_in * sin_ang(t + 36 + rot), cz - H_in);
+        vT[i] = this.add_Vertex(cx + R_in * funcs.cos_ang(t + rot), cy + R_in * funcs.sin_ang(t + rot), cz + H_in);
+        vB[i] = this.add_Vertex(cx + R_in * funcs.cos_ang(t + 36 + rot), cy + R_in * funcs.sin_ang(t + 36 + rot), cz - H_in);
       } 
     
     
@@ -34716,13 +34744,13 @@ class solarchvision_Model3Ds {
           }
         };
     
-        G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
+        G = funcs.normalize(funcs.centroid(the_points));
         M = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
         G[0] = (allPoints.getX(C) - cx) + (allPoints.getX(D) - cx) - (allPoints.getX(M) - cx);
         G[1] = (allPoints.getY(C) - cy) + (allPoints.getY(D) - cy) - (allPoints.getY(M) - cy);
         G[2] = (allPoints.getZ(C) - cz) + (allPoints.getZ(D) - cz) - (allPoints.getZ(M) - cz);
-        G = SOLARCHVISION_fn_normalize(G);
+        G = funcs.normalize(G);
         MM = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }   
     
@@ -34740,14 +34768,14 @@ class solarchvision_Model3Ds {
           }
         };
     
-        G = SOLARCHVISION_fn_normalize(SOLARCHVISION_fn_G(the_points));
+        G = funcs.normalize(funcs.centroid(the_points));
         N = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
     
         G[0] = (allPoints.getX(A) - cx) + (allPoints.getX(B) - cx) - (allPoints.getX(N) - cx);
         G[1] = (allPoints.getY(A) - cy) + (allPoints.getY(B) - cy) - (allPoints.getY(N) - cy);
         G[2] = (allPoints.getZ(A) - cz) + (allPoints.getZ(B) - cz) - (allPoints.getZ(N) - cz);
-        G = SOLARCHVISION_fn_normalize(G);    
+        G = funcs.normalize(G);    
         NN = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }
     
@@ -34946,8 +34974,8 @@ class solarchvision_Model3Ds {
       float R_in = pow(5.0, 0.5) * 2.0 / 5.0;  
       float H_in = pow(5.0, 0.5) * 1.0 / 5.0;
   
-      vT[i] = this.addToTempObjectVertices(R_in * cos_ang(q), R_in * sin_ang(q), H_in);
-      vB[i] = this.addToTempObjectVertices(R_in * cos_ang(q + 36), R_in * sin_ang(q + 36), -H_in);
+      vT[i] = this.addToTempObjectVertices(R_in * funcs.cos_ang(q), R_in * funcs.sin_ang(q), H_in);
+      vB[i] = this.addToTempObjectVertices(R_in * funcs.cos_ang(q + 36), R_in * funcs.sin_ang(q + 36), -H_in);
     } 
   
   
@@ -35130,8 +35158,8 @@ class solarchvision_Model3Ds {
     for (int i = 1; i < n; i++) {
       float rot = i * 360.0 / float(n);
   
-      vT[i] = this.addToTempObjectVertices(cos_ang(rot), sin_ang(rot), 1);
-      vB[i] = this.addToTempObjectVertices(cos_ang(rot), sin_ang(rot), -1);
+      vT[i] = this.addToTempObjectVertices(funcs.cos_ang(rot), funcs.sin_ang(rot), 1);
+      vB[i] = this.addToTempObjectVertices(funcs.cos_ang(rot), funcs.sin_ang(rot), -1);
       int[] fT = {
         vT[i]
       };
@@ -35200,7 +35228,7 @@ class solarchvision_Model3Ds {
   
     for (int i = 0; i < POINTER_TempObjectVertices; i++) {
   
-      float the_dist = SOLARCHVISION_fn_dist(newVertex[0], TempObjectVertices[i]);
+      float the_dist = funcs.distance(newVertex[0], TempObjectVertices[i]);
   
       if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for allModel1Ds spheres!
   
@@ -35254,7 +35282,7 @@ class solarchvision_Model3Ds {
   
                 //print("q=", q, "; k=" );
   
-                total_distances += SOLARCHVISION_fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
+                total_distances += funcs.distance(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
               }
   
               if (total_distances < 0.0001) { // avoid creating duplicate faces
@@ -35315,8 +35343,8 @@ class solarchvision_Model3Ds {
         float y0 = TempObjectVertices[TempObjectFaces[i][j]][1] * sy;
         float z0 = TempObjectVertices[TempObjectFaces[i][j]][2] * sz;
   
-        float x = x0 * cos_ang(t) - y0 * sin_ang(t);
-        float y = x0 * sin_ang(t) + y0 * cos_ang(t);
+        float x = x0 * funcs.cos_ang(t) - y0 * funcs.sin_ang(t);
+        float y = x0 * funcs.sin_ang(t) + y0 * funcs.cos_ang(t);
         float z = z0;
   
         new_Vertex_ids[j] = this.add_Vertex(x + cx, y + cy, z + cz);
@@ -35384,8 +35412,8 @@ class solarchvision_Model3Ds {
         (x3 + x2 + x4) / 3.0, (y3 + y2 + y4) / 3.0, (z3 + z2 + z4) / 3.0
       };
   
-      M = SOLARCHVISION_fn_normalize(M);
-      N = SOLARCHVISION_fn_normalize(N);
+      M = funcs.normalize(M);
+      N = funcs.normalize(N);
   
       SOLARCHVISION_createLozenge(x2, y2, z2, N[0], N[1], N[2], x4, y4, z4, M[0], M[1], M[2], Tessellation, BuildFaces);     
   
@@ -35407,7 +35435,7 @@ class solarchvision_Model3Ds {
           P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z
         };
   
-        Q = SOLARCHVISION_fn_normalize(Q);
+        Q = funcs.normalize(Q);
   
         SOLARCHVISION_createLozenge(x2, y2, z2, P[0], P[1], P[2], x1, y1, z1, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
       }
@@ -35430,7 +35458,7 @@ class solarchvision_Model3Ds {
           P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z
         };
   
-        Q = SOLARCHVISION_fn_normalize(Q);
+        Q = funcs.normalize(Q);
   
         SOLARCHVISION_createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
       }
@@ -35889,9 +35917,9 @@ class solarchvision_Cameras {
   
     float r = Camera_S * 5; // <<<<<<
   
-    float rx = r * sin_ang(0.5 * Camera_ZOOM) /  WIN3D.R_View;
-    float ry = r * sin_ang(0.5 * Camera_ZOOM);  
-    float rz = r * cos_ang(0.5 * Camera_ZOOM);  
+    float rx = r * funcs.sin_ang(0.5 * Camera_ZOOM) /  WIN3D.R_View;
+    float ry = r * funcs.sin_ang(0.5 * Camera_ZOOM);  
+    float rz = r * funcs.cos_ang(0.5 * Camera_ZOOM);  
   
     for (int q = 0; q < 5; q++) {  
   
@@ -35951,11 +35979,11 @@ class solarchvision_Cameras {
         float z1 = rz * qz;
   
         float x2 = x1;
-        float y2 = y1 * cos_ang(Camera_RX) - z1 * sin_ang(Camera_RX);
-        float z2 = y1 * sin_ang(Camera_RX) + z1 * cos_ang(Camera_RX);
+        float y2 = y1 * funcs.cos_ang(Camera_RX) - z1 * funcs.sin_ang(Camera_RX);
+        float z2 = y1 * funcs.sin_ang(Camera_RX) + z1 * funcs.cos_ang(Camera_RX);
   
-        float x3 = x2 * cos_ang(Camera_RZ) - y2 * sin_ang(Camera_RZ);
-        float y3 = x2 * sin_ang(Camera_RZ) + y2 * cos_ang(Camera_RZ);
+        float x3 = x2 * funcs.cos_ang(Camera_RZ) - y2 * funcs.sin_ang(Camera_RZ);
+        float y3 = x2 * funcs.sin_ang(Camera_RZ) + y2 * funcs.cos_ang(Camera_RZ);
         float z3 = z2;
   
         x = WIN3D.CAM_x + x3;
@@ -35985,7 +36013,7 @@ class solarchvision_Cameras {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+    float[] ray_normal = funcs.normalize(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -36012,20 +36040,20 @@ class solarchvision_Cameras {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = SOLARCHVISION_3xSub(A, C);
-      float[] BD = SOLARCHVISION_3xSub(B, D);
+      float[] AC = funcs.sub3x(A, C);
+      float[] BD = funcs.sub3x(B, D);
       
-      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+      float[] face_norm = funcs.cross3x(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      float R = -funcs.dot3x(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -36036,7 +36064,7 @@ class solarchvision_Cameras {
           
           float[] P = {X_intersect, Y_intersect, Z_intersect};
           
-          InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
+          InPoly = funcs.isInside_Rectangle(P, A, B, C);
         }
       }
             
@@ -36456,16 +36484,16 @@ class solarchvision_Sections {
       float x = 0, y = 0, z = 0;
   
       if (Section_Type == 1) {
-        x = a * cos_ang(Section_rotation) - b * sin_ang(Section_rotation);
-        y = a * sin_ang(Section_rotation) + b * cos_ang(Section_rotation);
+        x = a * funcs.cos_ang(Section_rotation) - b * funcs.sin_ang(Section_rotation);
+        y = a * funcs.sin_ang(Section_rotation) + b * funcs.cos_ang(Section_rotation);
         z = c;
       } else if (Section_Type == 2) {
-        x = a * cos_ang(Section_rotation) - c * sin_ang(Section_rotation);
-        y = -(a * sin_ang(Section_rotation) + c * cos_ang(Section_rotation));
+        x = a * funcs.cos_ang(Section_rotation) - c * funcs.sin_ang(Section_rotation);
+        y = -(a * funcs.sin_ang(Section_rotation) + c * funcs.cos_ang(Section_rotation));
         z = b;
       } else if (Section_Type == 3) {
-        x = a * cos_ang(90 - Section_rotation) - c * sin_ang(90 - Section_rotation); // ????????????
-        y = -(a * sin_ang(90 - Section_rotation) + c * cos_ang(90 - Section_rotation)); // ????????????
+        x = a * funcs.cos_ang(90 - Section_rotation) - c * funcs.sin_ang(90 - Section_rotation); // ????????????
+        y = -(a * funcs.sin_ang(90 - Section_rotation) + c * funcs.cos_ang(90 - Section_rotation)); // ????????????
         z = b;
       }      
   
@@ -36481,7 +36509,7 @@ class solarchvision_Sections {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+    float[] ray_normal = funcs.normalize(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -36508,20 +36536,20 @@ class solarchvision_Sections {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = SOLARCHVISION_3xSub(A, C);
-      float[] BD = SOLARCHVISION_3xSub(B, D);
+      float[] AC = funcs.sub3x(A, C);
+      float[] BD = funcs.sub3x(B, D);
       
-      float[] face_norm = SOLARCHVISION_3xCross(AC, BD);
+      float[] face_norm = funcs.cross3x(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      float R = -funcs.dot3x(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -36532,7 +36560,7 @@ class solarchvision_Sections {
           
           float[] P = {X_intersect, Y_intersect, Z_intersect};
           
-          InPoly = SOLARCHVISION_isInside_Rectangle(P, A, B, C);
+          InPoly = funcs.isInside_Rectangle(P, A, B, C);
         }
       }
             
@@ -37003,10 +37031,10 @@ class solarchvision_WindFlow {
             float[] W = {
               x2 - x1, y2 - y1, z2 - z1
             };
-            W = SOLARCHVISION_fn_normalize(W);
+            W = funcs.normalize(W);
     
-            float Alpha = asin_ang(W[2]);
-            float Beta = atan2_ang(W[1], W[0]) + 90;   
+            float Alpha = funcs.asin_ang(W[2]);
+            float Beta = funcs.atan2_ang(W[1], W[0]) + 90;   
     
     
             if (_turn == 1) {
@@ -37021,16 +37049,16 @@ class solarchvision_WindFlow {
                 float pz = 0.1 * the_dist * sin(i * HALF_PI); 
     
                 float pz_rot = pz;
-                float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
-                float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
+                float px_rot = px * funcs.cos_ang(Beta) - py * funcs.sin_ang(Beta);
+                float py_rot = px * funcs.sin_ang(Beta) + py * funcs.cos_ang(Beta);  
     
                 px = px_rot;
                 py = py_rot;
                 pz = pz_rot;
     
                 px_rot = px;
-                py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
-                pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
+                py_rot = py * funcs.cos_ang(Alpha) - pz * funcs.sin_ang(Alpha);
+                pz_rot = py * funcs.sin_ang(Alpha) + pz * funcs.cos_ang(Alpha);
     
                 px = px_rot;
                 py = py_rot;
@@ -37130,10 +37158,10 @@ class solarchvision_WindFlow {
           float[] W = {
             x2 - x1, y2 - y1, z2 - z1
           };
-          W = SOLARCHVISION_fn_normalize(W);
+          W = funcs.normalize(W);
     
-          float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(W[1], W[0]) + 90;   
+          float Alpha = funcs.asin_ang(W[2]);
+          float Beta = funcs.atan2_ang(W[1], W[0]) + 90;   
     
           WIN3D.graphics.fill(COL[1], COL[2], COL[3], 127);
           WIN3D.graphics.noStroke();
@@ -37151,16 +37179,16 @@ class solarchvision_WindFlow {
               float pz = 0.1 * the_dist * sin((i + j) * HALF_PI); 
     
               float pz_rot = pz;
-              float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
-              float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
+              float px_rot = px * funcs.cos_ang(Beta) - py * funcs.sin_ang(Beta);
+              float py_rot = px * funcs.sin_ang(Beta) + py * funcs.cos_ang(Beta);  
     
               px = px_rot;
               py = py_rot;
               pz = pz_rot;
     
               px_rot = px;
-              py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
-              pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
+              py_rot = py * funcs.cos_ang(Alpha) - pz * funcs.sin_ang(Alpha);
+              pz_rot = py * funcs.sin_ang(Alpha) + pz * funcs.cos_ang(Alpha);
     
               px = px_rot;
               py = py_rot;
@@ -37296,7 +37324,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
       if (allFaces.getMaterial(f) == 0) {
         Tessellation += allFaces.displayTessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -37325,10 +37353,10 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
             float[] W = {
               UV.x, UV.y, UV.z
             };
-            W = SOLARCHVISION_fn_normalize(W);
+            W = funcs.normalize(W);
   
-            float Alpha = asin_ang(W[2]);
-            float Beta = atan2_ang(W[1], W[0]) + 90; 
+            float Alpha = funcs.asin_ang(W[2]);
+            float Beta = funcs.atan2_ang(W[1], W[0]) + 90; 
   
             float[] VECT = {
               0, 0, 0
@@ -37343,12 +37371,12 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               VECT[1] = 0;
               VECT[2] = -1;
             } else {
-              VECT[0] = sin_ang(Beta);
-              VECT[1] = -cos_ang(Beta);
-              VECT[2] = tan_ang(Alpha);
+              VECT[0] = funcs.sin_ang(Beta);
+              VECT[1] = -funcs.cos_ang(Beta);
+              VECT[2] = funcs.tan_ang(Alpha);
             }  
   
-            VECT = SOLARCHVISION_fn_normalize(VECT);
+            VECT = funcs.normalize(VECT);
             
             
             float SkyMask = 0;
@@ -37358,7 +37386,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
               };
   
-              float tmp = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SkyV), SOLARCHVISION_fn_normalize(VECT));
+              float tmp = funcs.dot(funcs.normalize(SkyV), funcs.normalize(VECT));
               if (tmp <= 0) tmp = 0; // removes backing faces
            
               SkyMask += tmp / float(DiffuseVectors.length);
@@ -37432,7 +37460,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
                       now_k = k + start_k;
                       now_i = i;
-                      now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                      now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
   
                       if (now_j >= 365) {
                         now_j = now_j % 365;
@@ -37474,7 +37502,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                               SunR[1], SunR[2], SunR[3]
                             };
   
-                            float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+                            float SunMask = funcs.dot(funcs.normalize(SunV), funcs.normalize(VECT));
                             if (SunMask <= 0) SunMask = 0; // removes backing faces 
   
   
@@ -37484,7 +37512,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                               SunR[1], SunR[2], SunR[3]
                             }; 
   
-                            if (SOLARCHVISION_fn_dot(W, ray_direction) > 0) { // removes backing faces
+                            if (funcs.dot(W, ray_direction) > 0) { // removes backing faces
   
                               if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
                                 if (_values_E_dir < 0) {
@@ -37519,7 +37547,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               if (_valuesNUM != 0) {
                 //float _valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
                 //float _valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
-                float _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                float _valuesMUL = funcs.roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
   
                 _valuesSUM_RAD *= _valuesMUL;
                 _valuesSUM_EFF_P *= _valuesMUL;
@@ -37645,7 +37673,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
       if (allFaces.getMaterial(f) == 0) {
         Tessellation += allFaces.displayTessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -37688,7 +37716,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
 int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
   
-  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+  float[] ray_normal = funcs.normalize(ray_dir);   
 
   int hit = 0;
 
@@ -37721,20 +37749,20 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
             float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
             float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
             
-            float[] AC = SOLARCHVISION_3xSub(A, C);
-            float[] BD = SOLARCHVISION_3xSub(B, D);
+            float[] AC = funcs.sub3x(A, C);
+            float[] BD = funcs.sub3x(B, D);
             
-            face_norm = SOLARCHVISION_3xCross(AC, BD);
+            face_norm = funcs.cross3x(AC, BD);
             
             float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
           
-            float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+            float R = -funcs.dot3x(ray_dir, face_norm);
       
             if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
               dist2intersect = FLOAT_huge;
             }
             else {
-              dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+              dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
       
               //if (dist2intersect > 0) {
               if (dist2intersect > FLOAT_tiny) {
@@ -37745,8 +37773,8 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                 
                 float[] P = {X_intersect, Y_intersect, Z_intersect};
                 
-                if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
-                else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+                if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
+                else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
   
               }
             }
@@ -37780,20 +37808,20 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                 allPoints.getZ(allFaces.nodes[f][j_next])
               };                
     
-              float[] AG = SOLARCHVISION_3xSub(A, G);
-              float[] BG = SOLARCHVISION_3xSub(B, G);
+              float[] AG = funcs.sub3x(A, G);
+              float[] BG = funcs.sub3x(B, G);
               
-              face_norm = SOLARCHVISION_3xCross(AG, BG);
+              face_norm = funcs.cross3x(AG, BG);
                 
               float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
               
-              float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+              float R = -funcs.dot3x(ray_dir, face_norm);
         
               if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
                 dist2intersect = FLOAT_huge;
               }
               else {
-                dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+                dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
         
                 //if (dist2intersect > 0) {
                 if (dist2intersect > FLOAT_tiny) {
@@ -37804,7 +37832,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                   
                   float[] P = {X_intersect, Y_intersect, Z_intersect};
     
-                  InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, G); 
+                  InPoly = funcs.isInside_Triangle(P, A, B, G); 
                   
                 }
               }
@@ -37833,7 +37861,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
 
 float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
-  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+  float[] ray_normal = funcs.normalize(ray_dir);   
 
   float[][] hitPoint = new float [allFaces.nodes.length][7];
 
@@ -37872,20 +37900,20 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
           float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
           float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
           
-          float[] AC = SOLARCHVISION_3xSub(A, C);
-          float[] BD = SOLARCHVISION_3xSub(B, D);
+          float[] AC = funcs.sub3x(A, C);
+          float[] BD = funcs.sub3x(B, D);
           
-          face_norm = SOLARCHVISION_3xCross(AC, BD);
+          face_norm = funcs.cross3x(AC, BD);
           
           float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
         
-          float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+          float R = -funcs.dot3x(ray_dir, face_norm);
     
           if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
             dist2intersect = FLOAT_huge;
           }
           else {
-            dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+            dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
     
             //if (dist2intersect > 0) {
             if (dist2intersect > FLOAT_tiny) {
@@ -37896,8 +37924,8 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               
               float[] P = {X_intersect, Y_intersect, Z_intersect};
               
-              if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
-              else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+              if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
+              else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
 
             }
           }
@@ -37931,20 +37959,20 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               allPoints.getZ(allFaces.nodes[f][j_next])
             };                
   
-            float[] AG = SOLARCHVISION_3xSub(A, G);
-            float[] BG = SOLARCHVISION_3xSub(B, G);
+            float[] AG = funcs.sub3x(A, G);
+            float[] BG = funcs.sub3x(B, G);
             
-            face_norm = SOLARCHVISION_3xCross(AG, BG);
+            face_norm = funcs.cross3x(AG, BG);
               
             float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
             
-            float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+            float R = -funcs.dot3x(ray_dir, face_norm);
       
             if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
               dist2intersect = FLOAT_huge;
             }
             else {
-              dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+              dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
       
               //if (dist2intersect > 0) {
               if (dist2intersect > FLOAT_tiny) {
@@ -37955,7 +37983,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
                 
                 float[] P = {X_intersect, Y_intersect, Z_intersect};
   
-                InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, G); 
+                InPoly = funcs.isInside_Triangle(P, A, B, G); 
                 
               }
             }
@@ -38012,7 +38040,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
 float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
-  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+  float[] ray_normal = funcs.normalize(ray_dir);   
 
   float[][] hitPoint = new float [allCurves.nodes.length][7];
 
@@ -38051,20 +38079,20 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
           float[] C = allPoints.getPosition(allCurves.nodes[f][n - 2]);
           float[] D = allPoints.getPosition(allCurves.nodes[f][n - 1]);
           
-          float[] AC = SOLARCHVISION_3xSub(A, C);
-          float[] BD = SOLARCHVISION_3xSub(B, D);
+          float[] AC = funcs.sub3x(A, C);
+          float[] BD = funcs.sub3x(B, D);
           
-          face_norm = SOLARCHVISION_3xCross(AC, BD);
+          face_norm = funcs.cross3x(AC, BD);
           
           float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
         
-          float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+          float R = -funcs.dot3x(ray_dir, face_norm);
     
           if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
             dist2intersect = FLOAT_huge;
           }
           else {
-            dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+            dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
     
             //if (dist2intersect > 0) {
             if (dist2intersect > FLOAT_tiny) {
@@ -38075,8 +38103,8 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
               
               float[] P = {X_intersect, Y_intersect, Z_intersect};
               
-              if (n == 4) InPoly = SOLARCHVISION_isInside_Quadrangle(P, A, B, C, D);
-              else InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+              if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
+              else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
 
             }
           }
@@ -38110,20 +38138,20 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
               allPoints.getZ(allCurves.nodes[f][j_next])
             };                
   
-            float[] AG = SOLARCHVISION_3xSub(A, G);
-            float[] BG = SOLARCHVISION_3xSub(B, G);
+            float[] AG = funcs.sub3x(A, G);
+            float[] BG = funcs.sub3x(B, G);
             
-            face_norm = SOLARCHVISION_3xCross(AG, BG);
+            face_norm = funcs.cross3x(AG, BG);
               
             float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
             
-            float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+            float R = -funcs.dot3x(ray_dir, face_norm);
       
             if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
               dist2intersect = FLOAT_huge;
             }
             else {
-              dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+              dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
       
               //if (dist2intersect > 0) {
               if (dist2intersect > FLOAT_tiny) {
@@ -38134,7 +38162,7 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
                 
                 float[] P = {X_intersect, Y_intersect, Z_intersect};
   
-                InPoly = SOLARCHVISION_isInside_Triangle(P, A, B, G); 
+                InPoly = funcs.isInside_Triangle(P, A, B, G); 
                 
               }
             }
@@ -38214,7 +38242,7 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
 float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
-  float[] ray_normal = SOLARCHVISION_fn_normalize(ray_dir);   
+  float[] ray_normal = funcs.normalize(ray_dir);   
 
   float[][] hitPoint = new float [(Land3D.num_rows - 1) * (Land3D.num_columns - 1)][4];
 
@@ -38262,20 +38290,20 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
         N = A;
       }       
     
-      float[] NG = SOLARCHVISION_3xSub(N, G);
-      float[] GM = SOLARCHVISION_3xSub(G, M);
+      float[] NG = funcs.sub3x(N, G);
+      float[] GM = funcs.sub3x(G, M);
       
-      float[] face_norm = SOLARCHVISION_3xCross(NG, GM);
+      float[] face_norm = funcs.cross3x(NG, GM);
       
       float face_offset = ((G[0] + M[0] + N[0]) * face_norm[0] + (G[1] + M[1] + N[1]) * face_norm[1] + (G[2] + M[2] + N[2]) * face_norm[2]) / 3.0;  
     
-      float R = -SOLARCHVISION_3xDot(ray_dir, face_norm);
+      float R = -funcs.dot3x(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (SOLARCHVISION_3xDot(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -38286,7 +38314,7 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
           float[] P = {X_intersect, Y_intersect, Z_intersect};
 
-          InPoly = SOLARCHVISION_isInside_Triangle(P, M, N, G); 
+          InPoly = funcs.isInside_Triangle(P, M, N, G); 
           
         }
       }
@@ -38334,7 +38362,7 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
   };
 
   int TotalSubNo = 1;
-  if (Tessellation > 0) TotalSubNo = base_Vertices.length * int(roundTo(pow(4, Tessellation - 1), 1));   
+  if (Tessellation > 0) TotalSubNo = base_Vertices.length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));   
 
   if ((Tessellation <= 0) || (n < 0) || (n >= TotalSubNo)) {
     return_vertices = new float [base_Vertices.length][3];
@@ -38383,7 +38411,7 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
     } else {
 
       int section = n / div;
-      int res = int(roundTo(pow(2, Tessellation - 1), 1));
+      int res = int(funcs.roundTo(pow(2, Tessellation - 1), 1));
       int u = section / res;
       int v = section % res;
 
@@ -38406,10 +38434,10 @@ float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
       };
 
       for (int i = 0; i < 3; i++) {
-        P0[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y1); 
-        P1[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y1); 
-        P2[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x2, y2); 
-        P3[i] = SOLARCHVISION_Bilinear(A[i], B[i], C[i], D[i], x1, y2);
+        P0[i] = funcs.bilinear(A[i], B[i], C[i], D[i], x1, y1); 
+        P1[i] = funcs.bilinear(A[i], B[i], C[i], D[i], x2, y1); 
+        P2[i] = funcs.bilinear(A[i], B[i], C[i], D[i], x2, y2); 
+        P3[i] = funcs.bilinear(A[i], B[i], C[i], D[i], x1, y2);
       }      
 
       //return_vertices[0] = P0; 
@@ -38453,7 +38481,7 @@ double[] getLandGrid (int i, int j) {
 
   double stp_lat = 1.0 / 2224.5968; // equals to 50m 
 
-  double stp_lon = stp_lat / cos_ang(STATION.getLatitude());   
+  double stp_lon = stp_lat / funcs.cos_ang(STATION.getLatitude());   
   
   //float q = 2;
   float q = pow(2, 0.5);
@@ -38465,8 +38493,8 @@ double[] getLandGrid (int i, int j) {
   float r = 0;
   if (i > 0) r = pow(q, i - 1);
 
-  double _lon = STATION.getLongitude() + stp_lon * r * cos_ang(t);
-  double _lat = STATION.getLatitude() + stp_lat * r * sin_ang(t);
+  double _lon = STATION.getLongitude() + stp_lon * r * funcs.cos_ang(t);
+  double _lat = STATION.getLatitude() + stp_lat * r * funcs.sin_ang(t);
   
   double[] LON_LAT = {_lon, _lat};
   
@@ -38479,7 +38507,7 @@ float[] convert_lonlat2XY (double _lon, double _lat) {
   double du = ((_lon - STATION.getLongitude()) / 180.0) * (PI * DOUBLE_r_Earth);
   double dv = ((_lat - STATION.getLatitude()) / 180.0) * (PI * DOUBLE_r_Earth);
 
-  float x = (float) du * cos_ang((float) _lat);
+  float x = (float) du * funcs.cos_ang((float) _lat);
   float y = (float) dv;   
   
   float[] XY = {x, y};
@@ -38571,19 +38599,19 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
       VECT[1] = 0;
       VECT[2] = -1;
     } else {
-      VECT[0] = sin_ang(Beta);
-      VECT[1] = -cos_ang(Beta);
-      VECT[2] = tan_ang(Alpha);
+      VECT[0] = funcs.sin_ang(Beta);
+      VECT[1] = -funcs.cos_ang(Beta);
+      VECT[2] = funcs.tan_ang(Alpha);
     }   
 
-    VECT = SOLARCHVISION_fn_normalize(VECT);
+    VECT = funcs.normalize(VECT);
 
 
     float[] SunV = {
       SunR1, SunR2, SunR3
     };
 
-    float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+    float SunMask = funcs.dot(funcs.normalize(SunV), funcs.normalize(VECT));
     if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
     float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -38594,7 +38622,7 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
     /*
     float[] REF_SunV = {SunR1, SunR2, -SunR3};
      
-     float REF_SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(REF_SunV), SOLARCHVISION_fn_normalize(VECT));
+     float REF_SunMask = funcs.dot(funcs.normalize(REF_SunV), funcs.normalize(VECT));
      if (REF_SunMask <= 0) REF_SunMask = 0; // removes backing faces 
      
      float REF_SkyMask = 1 - (0.5 * (1.0 + (Alpha / 90.0)));      
@@ -38621,8 +38649,8 @@ void GlobalSolar_resize_array () {
 
   Sky3D.stp_slp = Sky3D.calculatedResolution;
   Sky3D.stp_dir = Sky3D.calculatedResolution;
-  Sky3D.num_slp = int(roundTo(180.0 / (1.0 * Sky3D.stp_slp), 1)) + 1;  
-  Sky3D.num_dir = int(roundTo(360.0 / (1.0 * Sky3D.stp_dir), 1));
+  Sky3D.num_slp = int(funcs.roundTo(180.0 / (1.0 * Sky3D.stp_slp), 1)) + 1;  
+  Sky3D.num_dir = int(funcs.roundTo(360.0 / (1.0 * Sky3D.stp_dir), 1));
 
   GlobalSolar = new float [2][(1 + STUDY.j_End - STUDY.j_Start)][Sky3D.num_slp][Sky3D.num_dir];
 
@@ -38744,7 +38772,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
                   now_k = k + start_k;
                   now_i = i;
-                  now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+                  now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
                   if (now_j >= 365) {
                     now_j = now_j % 365;
@@ -38800,7 +38828,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             if (_valuesNUM != 0) {
               //float _valuesMUL = SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * _valuesNUM);  
               //float _valuesMUL = int(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * _valuesNUM);
-              float _valuesMUL = roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+              float _valuesMUL = funcs.roundTo(SOLARCHVISION_DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * _valuesNUM);
 
               _valuesSUM_RAD *= _valuesMUL;
               _valuesSUM_EFF_P *= _valuesMUL;
@@ -40842,8 +40870,8 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.Pan_Height) { // viewport:elevation
 
-                if (Wheel_Value > 0) WIN3D.Zoom = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D.Zoom)); 
-                if (Wheel_Value < 0) WIN3D.Zoom = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D.Zoom));
+                if (Wheel_Value > 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.Zoom)); 
+                if (Wheel_Value < 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.Zoom));
 
                 WIN3D.update = true;
               }  
@@ -41179,8 +41207,8 @@ void mouseReleased () {
                 float dy = y2 - y1;
                 float dz = z2 - z1;
 
-                float dx_rot = dx * cos_ang(-WIN3D.RZ_Coordinate) - dy * sin_ang(-WIN3D.RZ_Coordinate);
-                float dy_rot = dx * sin_ang(-WIN3D.RZ_Coordinate) + dy * cos_ang(-WIN3D.RZ_Coordinate);
+                float dx_rot = dx * funcs.cos_ang(-WIN3D.RZ_Coordinate) - dy * funcs.sin_ang(-WIN3D.RZ_Coordinate);
+                float dy_rot = dx * funcs.sin_ang(-WIN3D.RZ_Coordinate) + dy * funcs.cos_ang(-WIN3D.RZ_Coordinate);
                 float dz_rot = dz;
 
                 if (WIN3D.UI_TaskModifyParameter == 0) {
@@ -41202,7 +41230,7 @@ void mouseReleased () {
                   User3D.create_Width = abs(dy_rot);
                 }
                 if (WIN3D.UI_TaskModifyParameter == 5) {
-                  User3D.create_Orientation = atan2_ang(y2 - y1, x2 - x1) + 90;
+                  User3D.create_Orientation = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
                 }
 
                 ROLLOUT.update = true;
@@ -43898,7 +43926,7 @@ void mouseClicked () {
                 float _lon = NAEFS_Coordinates[f].getLongitude(); 
                 if (_lon > 180) _lon -= 360; // << important!
 
-                float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
                 if (nearest_WORLD_NAEFS_dist > d) {
                   nearest_WORLD_NAEFS_dist = d;
@@ -43952,7 +43980,7 @@ void mouseClicked () {
                 float _lon = CWEEDS_Coordinates[f].getLongitude(); 
                 if (_lon > 180) _lon -= 360; // << important!
 
-                float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
                 if (nearest_WORLD_CWEEDS_dist > d) {
                   nearest_WORLD_CWEEDS_dist = d;
@@ -43982,7 +44010,7 @@ void mouseClicked () {
                     //STATION.setLatitude(CWEEDS_Coordinates[f].getLatitude());
                     //STATION.setLongitude(CWEEDS_Coordinates[f].getLongitude());
                     STATION.setElevation(CWEEDS_Coordinates[f].getElevation());
-                    STATION.setTimelong(roundTo(STATION.getLongitude(), 15));   
+                    STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));   
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;
@@ -44008,7 +44036,7 @@ void mouseClicked () {
                   float _lon = CLMREC_Coordinates[f].getLongitude(); 
                   if (_lon > 180) _lon -= 360; // << important!
   
-                  float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+                  float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
   
                   if (nearest_WORLD_CLMREC_dist > d) {
                     nearest_WORLD_CLMREC_dist = d;
@@ -44063,7 +44091,7 @@ void mouseClicked () {
                 float _lon = TMYEPW_Coordinates[f].getLongitude(); 
                 if (_lon > 180) _lon -= 360; // << important!
 
-                float d = dist_lon_lat(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
                 if (nearest_WORLD_TMYEPW_dist > d) {
                   nearest_WORLD_TMYEPW_dist = d;
@@ -44954,8 +44982,8 @@ void mouseClicked () {
                             float z2 = allPoints.getZ(allFaces.nodes[f][j_next]);                        
       
       
-                            //float Alpha = asin_ang(z2 - z1);
-                            float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
+                            //float Alpha = funcs.asin_ang(z2 - z1);
+                            float Beta = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
       
                             //if (min_Alpha > Alpha) min_Alpha = Alpha;                      
                             if (min_Beta > Beta) min_Beta = Beta;
@@ -44972,8 +45000,8 @@ void mouseClicked () {
                             float y1 = allPoints.getY(allFaces.nodes[f][j]);
                             float z1 = allPoints.getZ(allFaces.nodes[f][j]);
       
-                            float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
-                            float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
+                            float x2 = x1 * funcs.cos_ang(-min_Beta) - y1 * funcs.sin_ang(-min_Beta);
+                            float y2 = x1 * funcs.sin_ang(-min_Beta) + y1 * funcs.cos_ang(-min_Beta);
                             float z2 = z1;
       
                             tmpVertices[j][0] = x2;
@@ -45379,7 +45407,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
 
 
     float stp_lat = 20.0 / 2224.5968; // equals to 1km <<<<<<<<
-    float stp_lon = stp_lat / cos_ang(AERIAL_Center_Latitude); 
+    float stp_lon = stp_lat / funcs.cos_ang(AERIAL_Center_Latitude); 
 
 
     float r1 = float(GRIB2_Domains[GRIB2_DomainSelection][5]);
@@ -45408,8 +45436,8 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
 
     if (_tgl == 0) _tgl = 10; // <<<<<<  
 
-    AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * cos_ang(t);
-    AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * sin_ang(t);
+    AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * funcs.cos_ang(t);
+    AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * funcs.sin_ang(t);
     AERIAL_Locations[n][2] = _tgl;
 
     GRIB2_TGL_Selected[p] = 1;
@@ -45455,7 +45483,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
               };
   
               for (int n = 0; n < AERIAL_num; n++) {
-                int p = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
+                int p = int(funcs.roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
   
                 if (p == h) {
   
@@ -45475,7 +45503,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
               int nPoint = 0;
   
               for (int n = 0; n < AERIAL_num; n++) {
-                int p = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
+                int p = int(funcs.roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
   
                 if (p == h) {
   
@@ -45615,16 +45643,16 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
   z += WIN3D.CAM_z;
 
   pz = z;
-  px = x * cos_ang(-WIN3D.RZ_Coordinate) - y * sin_ang(-WIN3D.RZ_Coordinate);
-  py = x * sin_ang(-WIN3D.RZ_Coordinate) + y * cos_ang(-WIN3D.RZ_Coordinate);
+  px = x * funcs.cos_ang(-WIN3D.RZ_Coordinate) - y * funcs.sin_ang(-WIN3D.RZ_Coordinate);
+  py = x * funcs.sin_ang(-WIN3D.RZ_Coordinate) + y * funcs.cos_ang(-WIN3D.RZ_Coordinate);
 
   x = px;
   y = py;
   z = pz;    
 
   px = x;
-  py = y * cos_ang(WIN3D.RX_Coordinate) - z * sin_ang(WIN3D.RX_Coordinate);
-  pz = y * sin_ang(WIN3D.RX_Coordinate) + z * cos_ang(WIN3D.RX_Coordinate);
+  py = y * funcs.cos_ang(WIN3D.RX_Coordinate) - z * funcs.sin_ang(WIN3D.RX_Coordinate);
+  pz = y * funcs.sin_ang(WIN3D.RX_Coordinate) + z * funcs.cos_ang(WIN3D.RX_Coordinate);
 
   x = px;
   y = py;
@@ -45964,7 +45992,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         if (allFaces.getMaterial(f) == 0) {
           Tessellation += allFaces.displayTessellation;
         }
-        if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+        if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
 
         float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -46205,7 +46233,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             if (allFaces.getMaterial(f) == 0) {
               Tessellation += allFaces.displayTessellation;
             }
-            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
 
             float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
             for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -46757,16 +46785,16 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   float px, py, pz;
 
   px = PNT_x;
-  py = PNT_y * cos_ang(-WIN3D.RX_Coordinate) - PNT_z * sin_ang(-WIN3D.RX_Coordinate);
-  pz = PNT_y * sin_ang(-WIN3D.RX_Coordinate) + PNT_z * cos_ang(-WIN3D.RX_Coordinate);
+  py = PNT_y * funcs.cos_ang(-WIN3D.RX_Coordinate) - PNT_z * funcs.sin_ang(-WIN3D.RX_Coordinate);
+  pz = PNT_y * funcs.sin_ang(-WIN3D.RX_Coordinate) + PNT_z * funcs.cos_ang(-WIN3D.RX_Coordinate);
 
   PNT_x = px;
   PNT_y = py;
   PNT_z = pz;
 
   pz = PNT_z;
-  px = PNT_x * cos_ang(WIN3D.RZ_Coordinate) - PNT_y * sin_ang(WIN3D.RZ_Coordinate);
-  py = PNT_x * sin_ang(WIN3D.RZ_Coordinate) + PNT_y * cos_ang(WIN3D.RZ_Coordinate);
+  px = PNT_x * funcs.cos_ang(WIN3D.RZ_Coordinate) - PNT_y * funcs.sin_ang(WIN3D.RZ_Coordinate);
+  py = PNT_x * funcs.sin_ang(WIN3D.RZ_Coordinate) + PNT_y * funcs.cos_ang(WIN3D.RZ_Coordinate);
 
   PNT_x = px;
   PNT_y = py;
@@ -46791,7 +46819,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
 String NearLatitude_Stamp () {
 
-  int Round_Latitude = int(roundTo(STATION.getLatitude(), 5));
+  int Round_Latitude = int(funcs.roundTo(STATION.getLatitude(), 5));
   if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
   if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
 
@@ -46896,9 +46924,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);
+          SunR_Rotated[1] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);
           SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+          SunR_Rotated[3] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
 
           SunR_Rotated_check = 2;
         } else if (allSolarImpacts.sectionType == 3) {
@@ -46911,7 +46939,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           };
           String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
-          File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+          File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
 
           File_Name += "_Camera00";
 
@@ -47008,9 +47036,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float b = -TY[q];
                           float c = TZ[q];
 
-                          TX[q] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);
+                          TX[q] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);
                           TY[q] = c;
-                          TZ[q] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                          TZ[q] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                         }
                       } 
                       { // now that we rotated 2D we could rotate x,y,z
@@ -47018,9 +47046,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                         float b = -y;
                         float c = z;
 
-                        x = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);
+                        x = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);
                         y = c;
-                        z = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                        z = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                       }
                     } else if (allSolarImpacts.sectionType == 3) {
                     }
@@ -47056,8 +47084,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float px = TX[q];
                           float py = TY[q];
 
-                          TX[q] = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                          TY[q] = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                          TX[q] = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                          TY[q] = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                         }                          
 
                         TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
@@ -47134,8 +47162,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                               float px = TX[q];
                               float py = TY[q];
 
-                              TX[q] = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                              TY[q] = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                              TX[q] = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                              TY[q] = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                             }                            
 
                             TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
@@ -47197,7 +47225,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                     if (allFaces.getMaterial(f) == 0) {
                       Tessellation += allFaces.displayTessellation;
                     }
-                    if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                    if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
   
                     float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
                     for (int g = 0; g < allFaces.nodes[f].length; g++) {
@@ -47218,9 +47246,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float b = -subFace_Rotated[s][1];
                           float c = subFace_Rotated[s][2];
   
-                          subFace_Rotated[s][0] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);     
+                          subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);     
                           subFace_Rotated[s][1] = c;    
-                          subFace_Rotated[s][2] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                          subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                         } else if (allSolarImpacts.sectionType == 3) {
                         }
                       }  
@@ -47241,8 +47269,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                             float px = x;
                             float py = y;
   
-                            x = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                            y = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                            x = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                            y = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                           } 
   
                           SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
@@ -47264,8 +47292,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                               float px = x_trim;
                               float py = y_trim;
   
-                              x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                              y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                              x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                              y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                             } 
   
                             SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -47285,8 +47313,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                               float px = x_trim;
                               float py = y_trim;
   
-                              x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                              y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                              x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                              y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                             } 
   
                             SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -47310,7 +47338,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               }
         
               int TotalSubNo = 1;  
-              if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+              if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
         
         
               for (int Li = Land3D.Surface_SkipStart; Li < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; Li++) {
@@ -47345,9 +47373,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                         float b = -subFace_Rotated[s][1];
                         float c = subFace_Rotated[s][2];
 
-                        subFace_Rotated[s][0] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);     
+                        subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);     
                         subFace_Rotated[s][1] = c;    
-                        subFace_Rotated[s][2] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                        subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                       } else if (allSolarImpacts.sectionType == 3) {
                       }
                     }  
@@ -47368,8 +47396,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float px = x;
                           float py = y;
 
-                          x = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                          y = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                          x = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                          y = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                         } 
 
                         SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
@@ -47391,8 +47419,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                             float px = x_trim;
                             float py = y_trim;
 
-                            x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                            y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                            x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                            y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                           } 
 
                           SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -47412,8 +47440,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                             float px = x_trim;
                             float py = y_trim;
 
-                            x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                            y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                            x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                            y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                           } 
 
                           SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -47522,9 +47550,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);
+          SunR_Rotated[1] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);
           SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+          SunR_Rotated[3] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
 
           SunR_Rotated_check = 2;
         } else if (allSolarImpacts.sectionType == 3) {
@@ -47627,9 +47655,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                         float b = -TY[q];
                         float c = TZ[q];
 
-                        TX[q] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);
+                        TX[q] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);
                         TY[q] = c;
-                        TZ[q] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                        TZ[q] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                       }
                     } 
                     { // now that we rotated 2D we could rotate x,y,z
@@ -47637,9 +47665,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                       float b = -y;
                       float c = z;
 
-                      x = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);
+                      x = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);
                       y = c;
-                      z = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                      z = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                     }
                   } else if (allSolarImpacts.sectionType == 3) {
                   }
@@ -47675,8 +47703,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                         float px = TX[q];
                         float py = TY[q];
 
-                        TX[q] = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                        TY[q] = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                        TX[q] = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                        TY[q] = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                       }                          
 
                       TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
@@ -47748,8 +47776,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                             float px = TX[q];
                             float py = TY[q];
 
-                            TX[q] = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                            TY[q] = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                            TX[q] = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                            TY[q] = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                           }      
 
                           TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
@@ -47812,7 +47840,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                   if (allFaces.getMaterial(f) == 0) {
                     Tessellation += allFaces.displayTessellation;
                   }
-                  if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+                  if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
   
                   float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
                   for (int g = 0; g < allFaces.nodes[f].length; g++) {
@@ -47833,9 +47861,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                         float b = -subFace_Rotated[s][1];
                         float c = subFace_Rotated[s][2];
   
-                        subFace_Rotated[s][0] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);     
+                        subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);     
                         subFace_Rotated[s][1] = c;      
-                        subFace_Rotated[s][2] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                        subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                       } else if (allSolarImpacts.sectionType == 3) {
                       }
                     }                
@@ -47854,8 +47882,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float px = x;
                           float py = y;
   
-                          x = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                          y = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                          x = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                          y = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                         }                   
   
                         SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
@@ -47877,8 +47905,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                             float px = x_trim;
                             float py = y_trim;
   
-                            x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                            y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                            x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                            y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                           }                     
   
                           SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -47898,8 +47926,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                             float px = x_trim;
                             float py = y_trim;
   
-                            x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                            y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                            x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                            y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                           }                     
   
                           SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -47923,7 +47951,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             }
       
             int TotalSubNo = 1;  
-            if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+            if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
       
       
             for (int Li = Land3D.Surface_SkipStart; Li < Land3D.num_rows - 1 - Land3D.Surface_SkipEnd; Li++) {
@@ -47958,9 +47986,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                       float b = -subFace_Rotated[s][1];
                       float c = subFace_Rotated[s][2];
 
-                      subFace_Rotated[s][0] = a * cos_ang(-allSolarImpacts.rotation) - b * sin_ang(-allSolarImpacts.rotation);     
+                      subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.rotation) - b * funcs.sin_ang(-allSolarImpacts.rotation);     
                       subFace_Rotated[s][1] = c;    
-                      subFace_Rotated[s][2] = a * sin_ang(-allSolarImpacts.rotation) + b * cos_ang(-allSolarImpacts.rotation);
+                      subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.rotation) + b * funcs.cos_ang(-allSolarImpacts.rotation);
                     } else if (allSolarImpacts.sectionType == 3) {
                     }
                   }  
@@ -47981,8 +48009,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                         float px = x;
                         float py = y;
 
-                        x = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                        y = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                        x = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                        y = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                       } 
 
                       SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
@@ -48004,8 +48032,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float px = x_trim;
                           float py = y_trim;
 
-                          x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                          y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                          x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                          y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                         } 
 
                         SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -48025,8 +48053,8 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                           float px = x_trim;
                           float py = y_trim;
 
-                          x_trim = px * cos_ang(-allSolarImpacts.rotation) - py * sin_ang(-allSolarImpacts.rotation); 
-                          y_trim = px * sin_ang(-allSolarImpacts.rotation) + py * cos_ang(-allSolarImpacts.rotation);
+                          x_trim = px * funcs.cos_ang(-allSolarImpacts.rotation) - py * funcs.sin_ang(-allSolarImpacts.rotation); 
+                          y_trim = px * funcs.sin_ang(-allSolarImpacts.rotation) + py * funcs.cos_ang(-allSolarImpacts.rotation);
                         } 
 
                         SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
@@ -48359,9 +48387,9 @@ void UI_dessin_Drop (int _type, float x, float y, float r) {
   if ((_type == 2) || (_type == 3)) {
     beginShape();
     vertex(0, 0.5 * d);
-    vertex(cos_ang(30) * d, 0);
+    vertex(funcs.cos_ang(30) * d, 0);
     vertex(0, -0.5 * d);
-    vertex(-cos_ang(30) * d, 0);
+    vertex(-funcs.cos_ang(30) * d, 0);
     endShape(CLOSE);
   } 
 
@@ -48416,23 +48444,23 @@ void UI_dessin_GetLength (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, 0);
-  vertex(cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   vertex(0, -d);
-  vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   endShape(CLOSE);
 
   beginShape();
-  vertex(cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   vertex(0, 0);
   vertex(0, d);
-  vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+  vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
   endShape(CLOSE);
 
   beginShape();
-  vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   vertex(0, 0);
   vertex(0, d);
-  vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+  vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
   endShape(CLOSE);
 
 
@@ -48441,42 +48469,42 @@ void UI_dessin_GetLength (int _type, float x, float y, float r) {
   fill(0);
 
   if (_type == 1) {
-    line(0, 0, cos_ang(30) * d, -sin_ang(30) * d);
+    line(0, 0, funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   }
   if (_type == 2) {
-    line(0, 0, cos_ang(30) * d, -sin_ang(30) * d);
+    line(0, 0, funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   }    
   if (_type == 3) {
-    line(0, 0, -cos_ang(30) * d, -sin_ang(30) * d);
+    line(0, 0, -funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
   }      
   if (_type == 4) {
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);  
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
   }     
   if (_type == 5) {
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
   }    
   if (_type == 6) {
@@ -48783,9 +48811,9 @@ void UI_dessin_Layer (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, d);
-  vertex(cos_ang(30) * d, 0.5 * d);
+  vertex(funcs.cos_ang(30) * d, 0.5 * d);
   vertex(0, 0);
-  vertex(-cos_ang(30) * d, 0.5 * d);
+  vertex(-funcs.cos_ang(30) * d, 0.5 * d);
   endShape(CLOSE); 
 
   strokeWeight(2);
@@ -48794,9 +48822,9 @@ void UI_dessin_Layer (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, 0.5 * d);
-  vertex(cos_ang(30) * d, 0);
+  vertex(funcs.cos_ang(30) * d, 0);
   vertex(0, -0.5 * d);
-  vertex(-cos_ang(30) * d, 0);
+  vertex(-funcs.cos_ang(30) * d, 0);
   endShape(CLOSE);
 
   stroke(0, 127, 255);
@@ -48834,9 +48862,9 @@ void UI_dessin_Visibility (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, d);
-  vertex(cos_ang(30) * d, 0.5 * d);
+  vertex(funcs.cos_ang(30) * d, 0.5 * d);
   vertex(0, 0);
-  vertex(-cos_ang(30) * d, 0.5 * d);
+  vertex(-funcs.cos_ang(30) * d, 0.5 * d);
   endShape(CLOSE); 
 
   strokeWeight(0);
@@ -48845,9 +48873,9 @@ void UI_dessin_Visibility (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, 0.5 * d);
-  vertex(cos_ang(30) * d, 0);
+  vertex(funcs.cos_ang(30) * d, 0);
   vertex(0, -0.5 * d);
-  vertex(-cos_ang(30) * d, 0);
+  vertex(-funcs.cos_ang(30) * d, 0);
   endShape(CLOSE);
 
   stroke(0, 127, 255);
@@ -48932,9 +48960,9 @@ void UI_dessin_Normal (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, 0.5 * d);
-  vertex(cos_ang(30) * d, 0);
+  vertex(funcs.cos_ang(30) * d, 0);
   vertex(0, -0.5 * d);
-  vertex(-cos_ang(30) * d, 0);
+  vertex(-funcs.cos_ang(30) * d, 0);
   endShape(CLOSE);
 
   if (_type == 1) {
@@ -48982,9 +49010,9 @@ void UI_dessin_FirstVertex (int _type, float x, float y, float r) {
 
   beginShape();
   vertex(0, d);
-  vertex(cos_ang(30) * d, 0.5 * d);
+  vertex(funcs.cos_ang(30) * d, 0.5 * d);
   vertex(0, 0);
-  vertex(-cos_ang(30) * d, 0.5 * d);
+  vertex(-funcs.cos_ang(30) * d, 0.5 * d);
   endShape(CLOSE);
 
   stroke(255, 0, 0);
@@ -49049,23 +49077,23 @@ void UI_dessin_ProjectionType (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
   }  
 
@@ -49073,23 +49101,23 @@ void UI_dessin_ProjectionType (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0.75 * sin_ang(0) * d, 0.75 * -cos_ang(0) * d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    vertex(0.75 * funcs.sin_ang(0) * d, 0.75 * -funcs.cos_ang(0) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(0.75 * sin_ang(120) * d, 0.75 * -cos_ang(120) * d);
+    vertex(0.75 * funcs.sin_ang(120) * d, 0.75 * -funcs.cos_ang(120) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(0.75 * sin_ang(240) * d, 0.75 * -cos_ang(240) * d);
+    vertex(0.75 * funcs.sin_ang(240) * d, 0.75 * -funcs.cos_ang(240) * d);
     endShape(CLOSE);
   }
 
@@ -49117,12 +49145,12 @@ void UI_dessin_Truck (int _type, float x, float y, float r) {
   float a = 0;
   float b = 0;
   if (_type == 1) {
-    a = cos_ang(30) * d; 
-    b = -sin_ang(30) * d;
+    a = funcs.cos_ang(30) * d; 
+    b = -funcs.sin_ang(30) * d;
   }
   if (_type == 2) {
-    a = -cos_ang(30) * d; 
-    b = -sin_ang(30) * d;
+    a = -funcs.cos_ang(30) * d; 
+    b = -funcs.sin_ang(30) * d;
   }
   if (_type == 3) {
     a = 0; 
@@ -49136,23 +49164,23 @@ void UI_dessin_Truck (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     popMatrix();
@@ -49168,23 +49196,23 @@ void UI_dessin_Truck (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     popMatrix();
@@ -49455,9 +49483,9 @@ void UI_dessin_LookAtOrigin (int _type, float x, float y, float r) {
   {
     float d = 0.8 * r;
 
-    line(0, 0, cos_ang(90) * d, -sin_ang(90) * d);
-    line(0, 0, cos_ang(210) * d, -sin_ang(210) * d);
-    line(0, 0, cos_ang(330) * d, -sin_ang(330) * d);
+    line(0, 0, funcs.cos_ang(90) * d, -funcs.sin_ang(90) * d);
+    line(0, 0, funcs.cos_ang(210) * d, -funcs.sin_ang(210) * d);
+    line(0, 0, funcs.cos_ang(330) * d, -funcs.sin_ang(330) * d);
   }
 
   strokeWeight(0);
@@ -49504,9 +49532,9 @@ void UI_dessin_LookAtSelection (int _type, float x, float y, float r) {
   {
     float d = 0.8 * r;
 
-    line(0, 0, cos_ang(90) * d, -sin_ang(90) * d);
-    line(0, 0, cos_ang(210) * d, -sin_ang(210) * d);
-    line(0, 0, cos_ang(330) * d, -sin_ang(330) * d);
+    line(0, 0, funcs.cos_ang(90) * d, -funcs.sin_ang(90) * d);
+    line(0, 0, funcs.cos_ang(210) * d, -funcs.sin_ang(210) * d);
+    line(0, 0, funcs.cos_ang(330) * d, -funcs.sin_ang(330) * d);
   }
 
   {
@@ -49515,23 +49543,23 @@ void UI_dessin_LookAtSelection (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
   }    
 
@@ -49567,23 +49595,23 @@ void UI_dessin_CameraRoll (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
   }  
 
@@ -49742,23 +49770,23 @@ void UI_dessin_CameraDistance (int _type, float x, float y, float r) {
 
     beginShape();
     vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, -d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
     vertex(0, 0);
     vertex(0, d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
     endShape(CLOSE);
   }  
 
@@ -52154,7 +52182,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
 
           if (mouseButton == LEFT) {
-            STUDY.i_Start = int(roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            STUDY.i_Start = int(funcs.roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
             ROLLOUT.update = true;
             STUDY.update = true;
@@ -52165,7 +52193,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
 
           if (mouseButton == RIGHT) {
-            STUDY.i_End = int(roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            STUDY.i_End = int(funcs.roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
             ROLLOUT.update = true;
             STUDY.update = true;
@@ -52205,7 +52233,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
           if (mouseButton == LEFT) {
             float keep_TIME_Date = TIME.Date;
-            TIME.Date = (int(roundTo(365.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
+            TIME.Date = (int(funcs.roundTo(365.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
             TIME.updateDate(); 
             TIME.BeginDay = int(TIME.BeginDay + (TIME.Date - keep_TIME_Date) + 365) % 365;
             update_ENSEMBLE_FORECAST(TIME.Year, TIME.Month, TIME.Day, TIME.Hour);
@@ -52219,11 +52247,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
           if (mouseButton == RIGHT) {
 
-            float _DATE2 = (int(roundTo(365.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
+            float _DATE2 = (int(funcs.roundTo(365.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
 
             if (TIME.Date > _DATE2) _DATE2 += 365;
 
-            STUDY.perDays = int(roundTo((_DATE2 - TIME.Date) / float(STUDY.j_End - STUDY.j_Start - 1), 1));
+            STUDY.perDays = int(funcs.roundTo((_DATE2 - TIME.Date) / float(STUDY.j_End - STUDY.j_Start - 1), 1));
 
             if (STUDY.perDays < 0) STUDY.perDays = 1;
 
@@ -52246,7 +52274,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
           for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {    
 
-            int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+            int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
 
             if (now_j >= 365) {
               now_j = now_j % 365;
@@ -52316,7 +52344,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
           if (mouseButton == LEFT) {
 
-            int V_selection = n1 + int(roundTo((n2 - n1 + 1) * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            int V_selection = n1 + int(funcs.roundTo((n2 - n1 + 1) * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
             if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
               SampleYear_Start = V_selection;
@@ -52371,7 +52399,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
           if (mouseButton == RIGHT) {
 
-            int V_selection = n1 + int(roundTo((n2 - n1 + 1) * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            int V_selection = n1 + int(funcs.roundTo((n2 - n1 + 1) * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
             if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
               SampleYear_End = V_selection;
@@ -53152,24 +53180,24 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
   float rotY = allSelections.BoundingBox[1 + allSelections.alignY][7];
   float rotZ = allSelections.BoundingBox[1 + allSelections.alignZ][8];
 
-  float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
-  float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
+  float y1 = b * funcs.cos_ang(rotX) - c * funcs.sin_ang(rotX); 
+  float z1 = b * funcs.sin_ang(rotX) + c * funcs.cos_ang(rotX);
   float x1 = a;
 
   a = x1;
   b = y1;
   c = z1;  
 
-  float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
-  float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
+  float z2 = c * funcs.cos_ang(rotY) - a * funcs.sin_ang(rotY);
+  float x2 = c * funcs.sin_ang(rotY) + a * funcs.cos_ang(rotY);
   float y2 = b; 
 
   a = x2;
   b = y2;
   c = z2;      
 
-  float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-  float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
+  float x = a * funcs.cos_ang(rotZ) - b * funcs.sin_ang(rotZ);
+  float y = a * funcs.sin_ang(rotZ) + b * funcs.cos_ang(rotZ); 
   float z = c;      
 
   x *= allSelections.BoundingBox[1 + allSelections.alignX][3];
@@ -53205,24 +53233,24 @@ float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c
   float rotY = allSelections.BoundingBox[1 + allSelections.alignY][7];
   float rotZ = allSelections.BoundingBox[1 + allSelections.alignZ][8];
 
-  float x1 = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
-  float y1 = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
+  float x1 = a * funcs.cos_ang(-rotZ) - b * funcs.sin_ang(-rotZ);
+  float y1 = a * funcs.sin_ang(-rotZ) + b * funcs.cos_ang(-rotZ); 
   float z1 = c;      
 
   a = x1;
   b = y1;
   c = z1;  
 
-  float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
-  float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
+  float z2 = c * funcs.cos_ang(-rotY) - a * funcs.sin_ang(-rotY);
+  float x2 = c * funcs.sin_ang(-rotY) + a * funcs.cos_ang(-rotY);
   float y2 = b; 
 
   a = x2;
   b = y2;
   c = z2;      
 
-  float y = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
-  float z = b * sin_ang(-rotX) + c * cos_ang(-rotX);
+  float y = b * funcs.cos_ang(-rotX) - c * funcs.sin_ang(-rotX); 
+  float z = b * funcs.sin_ang(-rotX) + c * funcs.cos_ang(-rotX);
   float x = a;  
 
 
@@ -55567,16 +55595,16 @@ void SOLARCHVISION_PreBakeViewport () {
       };
       
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-      face_norm = SOLARCHVISION_fn_normalize(face_norm);
+      face_norm = funcs.normalize(face_norm);
       
-      if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // to render backing faces 
+      if (funcs.dot(face_norm, ray_direction) > 0) { // to render backing faces 
         face_norm[0] *= -1;
         face_norm[1] *= -1;
         face_norm[2] *= -1;
       }
       
-      float Alpha = 90 - acos_ang(face_norm[2]);
-      float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+      float Alpha = 90 - funcs.acos_ang(face_norm[2]);
+      float Beta = 180 - funcs.atan2_ang(face_norm[0], face_norm[1]);
 
       float[] VECT = {
         0, 0, 0
@@ -55591,12 +55619,12 @@ void SOLARCHVISION_PreBakeViewport () {
         VECT[1] = 0;
         VECT[2] = -1;
       } else {
-        VECT[0] = sin_ang(Beta);
-        VECT[1] = -cos_ang(Beta);
-        VECT[2] = tan_ang(Alpha);
+        VECT[0] = funcs.sin_ang(Beta);
+        VECT[1] = -funcs.cos_ang(Beta);
+        VECT[2] = funcs.tan_ang(Alpha);
       }   
       
-      VECT = SOLARCHVISION_fn_normalize(VECT);
+      VECT = funcs.normalize(VECT);
       
       {
         
@@ -55611,7 +55639,7 @@ void SOLARCHVISION_PreBakeViewport () {
           ray_direction[1] = DiffuseVectors[n_Ray][1];
           ray_direction[2] = DiffuseVectors[n_Ray][2];
     
-          float SkyMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(DiffuseVectors[n_Ray]), SOLARCHVISION_fn_normalize(VECT));
+          float SkyMask = funcs.dot(funcs.normalize(DiffuseVectors[n_Ray]), funcs.normalize(VECT));
           //if (SkyMask <= 0) SkyMask = 0; // removes backing faces
          
           // when SHD = 0;
@@ -55651,7 +55679,7 @@ void SOLARCHVISION_PreBakeViewport () {
           ray_direction[1] = DirectVector[1];
           ray_direction[2] = DirectVector[2];
 
-          float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(DirectVector), SOLARCHVISION_fn_normalize(VECT));
+          float SunMask = funcs.dot(funcs.normalize(DirectVector), funcs.normalize(VECT));
           //if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
           // when SHD = 0;
@@ -55711,7 +55739,7 @@ void SOLARCHVISION_PreBakeViewport () {
         };
         String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
   
-        File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+        File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
   
         File_Name += "_Camera" + nf(Camera_Variation, 2);
   
@@ -55869,17 +55897,17 @@ void SOLARCHVISION_RenderViewport () {
       };
       
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-      face_norm = SOLARCHVISION_fn_normalize(face_norm);
+      face_norm = funcs.normalize(face_norm);
       
-      if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) { // to render backing faces 
+      if (funcs.dot(face_norm, ray_direction) > 0) { // to render backing faces 
         face_norm[0] *= -1;
         face_norm[1] *= -1;
         face_norm[2] *= -1;
       }
 
       
-      float Alpha = 90 - acos_ang(face_norm[2]);
-      float Beta = 180 - atan2_ang(face_norm[0], face_norm[1]);
+      float Alpha = 90 - funcs.acos_ang(face_norm[2]);
+      float Beta = 180 - funcs.atan2_ang(face_norm[0], face_norm[1]);
 
 float _valuesSUM_RAD = 0;
 float _valuesSUM_EFF_P = 0;
@@ -55907,19 +55935,19 @@ if (abs(Alpha) > 89.99) {
   VECT[1] = 0;
   VECT[2] = -1;
 } else {
-  VECT[0] = sin_ang(Beta);
-  VECT[1] = -cos_ang(Beta);
-  VECT[2] = tan_ang(Alpha);
+  VECT[0] = funcs.sin_ang(Beta);
+  VECT[1] = -funcs.cos_ang(Beta);
+  VECT[2] = funcs.tan_ang(Alpha);
 }   
 
-VECT = SOLARCHVISION_fn_normalize(VECT);
+VECT = funcs.normalize(VECT);
 
 
 float[] SunV = {
   SunR[1], SunR[2], SunR[3]
 };
 
-float SunMask = SOLARCHVISION_fn_dot(SOLARCHVISION_fn_normalize(SunV), SOLARCHVISION_fn_normalize(VECT));
+float SunMask = funcs.dot(funcs.normalize(SunV), funcs.normalize(VECT));
 if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
 float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -55934,7 +55962,7 @@ ray_direction[0] = SunV[0];
 ray_direction[1] = SunV[1];
 ray_direction[2] = SunV[2];
 
-//if (SOLARCHVISION_fn_dot(face_norm, ray_direction) > 0) 
+//if (funcs.dot(face_norm, ray_direction) > 0) 
 { // removes backing faces
 
   if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
@@ -56473,7 +56501,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * STUDY.perDays + (j_ADD - int(roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
+            int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.BeginDay + 365) % 365;
   
             if (now_j >= 365) {
               now_j = now_j % 365;
@@ -56636,8 +56664,8 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             } 
   
             if (Develop_Option == DEV_OP_03) {
-              float Alpha = asin_ang(SunR[3]);
-              float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
+              float Alpha = funcs.asin_ang(SunR[3]);
+              float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
   
               if ((is_undefined_FLOAT(R_dir) == false) && (is_undefined_FLOAT(R_dif) == false)) { 
   
@@ -56655,8 +56683,8 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             }         
   
             if (Develop_Option == DEV_OP_04) {
-              float Alpha = asin_ang(SunR[3]);
-              float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
+              float Alpha = funcs.asin_ang(SunR[3]);
+              float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
   
               if ((is_undefined_FLOAT(R_dir) == false) && (is_undefined_FLOAT(R_dif) == false)) { 
   
@@ -56969,4 +56997,8 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
  
   CurrentDataSource = keep_CurrentDataSource; 
 }
+
+
+
+
 
