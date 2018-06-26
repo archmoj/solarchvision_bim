@@ -1,4 +1,6 @@
 
+// rebuild >> make them all boolean!
+
 //    allModel2Ds.add_onLand(1); // 1 = people
 
 //    allModel2Ds.add_onLand(2); // 2 = 2D trees
@@ -15,6 +17,8 @@ int TIME_BeginDay;
 float TIME_Date;
 
 
+
+int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
 
 
 
@@ -2506,7 +2510,7 @@ class solarchvision_WIN3D {
   
       allModel1Ds.draw();
   
-      SOLARCHVISION_draw_WindRoseImage();
+      WindRose.draw();
   
       allSections.draw(TypeWindow.WIN3D);
   
@@ -2657,7 +2661,7 @@ class solarchvision_WIN3D {
       this.graphics.endDraw();
   
       if ((this.record_JPG) || (this.record_AUTO)) {
-        String myFile = MAKE_Filename(CreateStamp(1) + "this.") + ".jpg";
+        String myFile = MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".jpg";
         this.graphics.save(myFile);
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
@@ -3253,8 +3257,8 @@ class solarchvision_WIN3D {
   
   
         case ENTER: 
-          if (this.FacesShade == SHADE.Global_Solar) rebuild_GlobalSolar_array = 1;   
-          if (this.FacesShade == SHADE.Vertex_Solar) rebuild_VertexSolar_array = 1;
+          if (this.FacesShade == SHADE.Global_Solar) rebuild_GlobalSolar_array = true;   
+          if (this.FacesShade == SHADE.Vertex_Solar) rebuild_VertexSolar_array = true;
           this.update = true;
           ROLLOUT.update = true;  
           break;                  
@@ -4145,7 +4149,7 @@ class solarchvision_WORLD {
   
       if (this.record_PDF) {
         println("PDF:begin");
-        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + "this.") + ".pdf");
+        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".pdf");
         beginRecord(this.graphics);
       } else if (this.ImageScale != 1) {
         println("IMG:high-res");
@@ -4699,14 +4703,14 @@ class solarchvision_WORLD {
       if (this.record_PDF) {
         endRecord();
   
-        String myFile = MAKE_Filename(CreateStamp(0) + "this.") + ".pdf";
+        String myFile = MAKE_Filename(CreateStamp(0) + CLASS_STAMP) + ".pdf";
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       } else {
         this.graphics.endDraw();
   
         if ((this.record_JPG) || (this.record_AUTO)) {
-          String myFile = MAKE_Filename(CreateStamp(1) + "this.") + ".jpg";
+          String myFile = MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".jpg";
           this.graphics.save(myFile);
           SOLARCHVISION_explore_output(myFile);
           println("File created:" + myFile);
@@ -5068,10 +5072,10 @@ class solarchvision_STUDY {
            */
           DevelopData_update = true;
   
-          rebuild_VertexSolar_array = 1;
-          rebuild_GlobalSolar_array = 1;
-          rebuild_SolarImpactImage_array = 1;
-          rebuild_WindRoseImage_array = 1;
+          rebuild_VertexSolar_array = true;
+          rebuild_GlobalSolar_array = true;
+          rebuild_SolarImpactImage_array = true;
+          WindRose.rebuild_Image_array = true;
           allSections.resize_solarImpact_array();
   
           UI_BAR_d_update = true;
@@ -5093,10 +5097,10 @@ class solarchvision_STUDY {
            */
           DevelopData_update = true;
   
-          rebuild_VertexSolar_array = 1; 
-          rebuild_GlobalSolar_array = 1;
-          rebuild_SolarImpactImage_array = 1;
-          rebuild_WindRoseImage_array = 1;   
+          rebuild_VertexSolar_array = true; 
+          rebuild_GlobalSolar_array = true;
+          rebuild_SolarImpactImage_array = true;
+          WindRose.rebuild_Image_array = true;   
           allSections.resize_solarImpact_array();
   
           UI_BAR_d_update = true; 
@@ -5283,7 +5287,7 @@ class solarchvision_STUDY {
           if (this.sumInterval > 6) this.sumInterval -= 6; 
           else if (this.sumInterval > 1) this.sumInterval -= 1;
           if (this.sumInterval == 5) this.sumInterval = 4;
-          println("this.sumInterval =", this.sumInterval);
+          println(CLASS_STAMP + ".sumInterval =", this.sumInterval);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
@@ -5292,7 +5296,7 @@ class solarchvision_STUDY {
           else if (this.sumInterval < 24) this.sumInterval += 6;
           else this.sumInterval += 24;
           if (this.sumInterval == 5) this.sumInterval = 6;
-          println("this.sumInterval =", this.sumInterval);
+          println(CLASS_STAMP + ".sumInterval =", this.sumInterval);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
@@ -6668,7 +6672,7 @@ class solarchvision_STUDY {
   
       if (this.record_PDF) {
         println("PDF:begin");
-        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + "this.") + ".pdf");
+        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".pdf");
         beginRecord(this.graphics);
       } else if (this.ImageScale != 1) {
         println("IMG:high-res");
@@ -6738,14 +6742,14 @@ class solarchvision_STUDY {
       if (this.record_PDF) {
         endRecord();
   
-        String myFile = MAKE_Filename(CreateStamp(0) + "this.") + ".pdf";
+        String myFile = MAKE_Filename(CreateStamp(0) + CLASS_STAMP) + ".pdf";
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       } else {
         this.graphics.endDraw();
   
         if ((this.record_JPG) || (this.record_AUTO)) {
-          String myFile = MAKE_Filename(CreateStamp(1) + "this.") + ".jpg";
+          String myFile = MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".jpg";
           this.graphics.save(myFile);
           SOLARCHVISION_explore_output(myFile);
           println("File created:" + myFile);
@@ -7394,10 +7398,10 @@ class solarchvision_ROLLOUT {
   
   
   
-        //WindRose_displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_displayImage", WindRose_displayImage, 0, 1, 1), 1));
+        //WindRose.displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose.displayImage", WindRose.displayImage, 0, 1, 1), 1));
   
-        WindRose_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_scale", WindRose_scale, 50, 3200, -2);
-        WindRose_RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose_resolution", WindRose_RES, 200, 600, 100));
+        WindRose.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose.scale", WindRose.scale, 50, 3200, -2);
+        WindRose.RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose.resolution", WindRose.RES, 200, 600, 100));
   
   
   
@@ -7801,10 +7805,10 @@ void launch (String[] s) {
 float[][]   VertexSolar_XYZ; 
 float[][][] VertexSolar_amounts; 
 
-int rebuild_VertexSolar_array = 1;
-int rebuild_GlobalSolar_array = 1;
-int rebuild_SolarImpactImage_array = 1;
-int rebuild_WindRoseImage_array = 1; 
+boolean rebuild_VertexSolar_array = true;
+boolean rebuild_GlobalSolar_array = true;
+boolean rebuild_SolarImpactImage_array = true;
+
 
 
 
@@ -8325,7 +8329,7 @@ int SOLARCHVISION_Y_click2 = -1;
 
 
 
-float WindRose_scale = 400;
+
 
 
 
@@ -10322,7 +10326,7 @@ class solarchvision_SolidImpacts {
 
   void calculate_Impact_selectedSections () {
   
-    println("this.calculate_Impact_selectedSections");
+    println(CLASS_STAMP + ".calculate_Impact_selectedSections");
   
     for (int o = allSelections.Section_ids.length - 1; o >= 0; o--) {
   
@@ -11641,13 +11645,13 @@ class solarchvision_SolarImpacts {
       }  
     }
   
-    rebuild_SolarImpactImage_array = 0;
+    rebuild_SolarImpactImage_array = false;
   }
 
   
   void calculate_Impact_CurrentPreBaked () {
   
-    if (rebuild_SolarImpactImage_array != 0) {
+    if (rebuild_SolarImpactImage_array) {
       this.resize_Image_array();
     }
     
@@ -15497,10 +15501,10 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 1)) {
 
-    rebuild_VertexSolar_array = 1;
-    rebuild_GlobalSolar_array = 1;
-    rebuild_SolarImpactImage_array = 1;
-    rebuild_WindRoseImage_array = 1;    
+    rebuild_VertexSolar_array = true;
+    rebuild_GlobalSolar_array = true;
+    rebuild_SolarImpactImage_array = true;
+    WindRose.rebuild_Image_array = true;    
 
     WORLD.update = true;
     WIN3D.update = true; 
@@ -15928,10 +15932,10 @@ void draw () {
         if (pre_STUDY_j_End != STUDY.j_End) {
           UI_BAR_d_update = true;
 
-          rebuild_VertexSolar_array = 1;
-          rebuild_GlobalSolar_array = 1;
-          rebuild_SolarImpactImage_array = 1;
-          rebuild_WindRoseImage_array = 1;      
+          rebuild_VertexSolar_array = true;
+          rebuild_GlobalSolar_array = true;
+          rebuild_SolarImpactImage_array = true;
+          WindRose.rebuild_Image_array = true;      
 
           allSections.resize_solarImpact_array();
         }
@@ -16171,7 +16175,7 @@ void draw () {
         }             
 
         if (pre_allModel3Ds_Tessellation != allFaces.displayTessellation) {
-          //rebuild_VertexSolar_array = 1;
+          //rebuild_VertexSolar_array = true;
         }
 
 
@@ -16395,16 +16399,16 @@ void draw () {
 void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
   if (WIN3D.FacesShade == SHADE.Global_Solar) {
-    rebuild_GlobalSolar_array = 1;
+    rebuild_GlobalSolar_array = true;
   }
   if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-    rebuild_VertexSolar_array = 1;
+    rebuild_VertexSolar_array = true;
   }  
   if (allSolarImpacts.displayImage) {
-    rebuild_SolarImpactImage_array = 1;
+    rebuild_SolarImpactImage_array = true;
   }     
-  if (WindRose_displayImage) {
-    rebuild_WindRoseImage_array = 1;
+  if (WindRose.displayImage) {
+    WindRose.rebuild_Image_array = true;
   }      
 }  
 
@@ -16412,11 +16416,11 @@ void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
 void SOLARCHVISION_regenerate_desired_bakings () {
   
-  if (rebuild_VertexSolar_array != 0) {
+  if (rebuild_VertexSolar_array) {
     SOLARCHVISION_calculate_VertexSolar_array();
   }
   
-  if (rebuild_GlobalSolar_array != 0) {
+  if (rebuild_GlobalSolar_array) {
     SOLARCHVISION_calculate_GlobalSolar_array();
   }
   
@@ -17729,11 +17733,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((STUDY.PlotImpacts == -2) || (STUDY.PlotImpacts == -1)) {
 
-    SOLARCHVISION_resize_WindRose_Image_array(); 
+    WindRose.resize_Image_array(); 
 
-    int RES = WindRose_RES;
+    int RES = WindRose.RES;
 
-    WindRose_renderedRES = RES;
+    WindRose.renderedRES = RES;
 
     if (STUDY.PlotImpacts == -2) Impact_TYPE = Impact_ACTIVE; 
     if (STUDY.PlotImpacts == -1) Impact_TYPE = Impact_PASSIVE;
@@ -17880,7 +17884,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
       WIND_graphics.endDraw();
-      WindRose_Image[j + 1] = WIND_graphics;
+      WindRose.Image[j + 1] = WIND_graphics;
     }
 
 
@@ -17993,7 +17997,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
     total_WIND_graphics.endDraw();
-    WindRose_Image[0] = total_WIND_graphics;          
+    WindRose.Image[0] = total_WIND_graphics;          
 
     for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
       if ((j != -1) || (STUDY.impact_summary)) {
@@ -18008,7 +18012,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY.graphics.rect((j + STUDY.rect_offset_x - 100 * STUDY.rect_scale) * sx_Plot, (-100 * STUDY.rect_scale) * sx_Plot, (200 * STUDY.rect_scale) * sx_Plot, (200 * STUDY.rect_scale) * sx_Plot);
 
         STUDY.graphics.imageMode(CENTER); 
-        STUDY.graphics.image(WindRose_Image[j + 1], (j + 100 * STUDY.rect_scale) * sx_Plot, 0, int((180 * STUDY.rect_scale) * sx_Plot), int((180 * STUDY.rect_scale) * sx_Plot));
+        STUDY.graphics.image(WindRose.Image[j + 1], (j + 100 * STUDY.rect_scale) * sx_Plot, 0, int((180 * STUDY.rect_scale) * sx_Plot), int((180 * STUDY.rect_scale) * sx_Plot));
       }
     }   
 
@@ -18092,7 +18096,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
 
-    if (WindRose_displayImage) WIN3D.update = true;
+    if (WindRose.displayImage) WIN3D.update = true;
   } 
 
 
@@ -18306,7 +18310,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((STUDY.PlotImpacts == 2) || (STUDY.PlotImpacts == 3)) {
 
-    if (rebuild_GlobalSolar_array != 0) {
+    if (rebuild_GlobalSolar_array) {
       SOLARCHVISION_resize_GlobalSolar_array();
     }
 
@@ -25250,7 +25254,7 @@ class solarchvision_Model2Ds {
     
                 if (target_window == TypeWindow.OBJ) { 
       
-                  mtlOutput.println("newmtl " + "this." + the_filename);
+                  mtlOutput.println("newmtl " + CLASS_STAMP + the_filename);
                   mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
                   mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
                   mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -25790,7 +25794,7 @@ class solarchvision_Model2Ds {
 
   void add_onLand (int people_or_trees) {
 
-    println("this.add_onLand");
+    println(CLASS_STAMP + ".add_onLand");
   
     randomSeed(0);
   
@@ -36949,6 +36953,153 @@ solarchvision_Sections allSections = new solarchvision_Sections();
 
 
 
+class solarchvision_WindRose {
+  
+  private final static String CLASS_STAMP = "WindRose";
+  
+  boolean rebuild_Image_array = true;   
+  
+  PImage[] Image;
+  
+  boolean displayImage = false; 
+  
+  int renderedRES = 1;
+  int RES = 400;
+  
+  float scale = 400;
+  
+  
+  void resize_Image_array () {
+  
+    this.Image = new PImage [(1 + STUDY.j_End - STUDY.j_Start)];
+  
+    for (int j = STUDY.j_Start; j < STUDY.j_End; j++) { 
+  
+      this.Image[j + 1] = createImage(2, 2, RGB); // empty and small
+    }  
+  
+    this.rebuild_Image_array = false;
+  }
+  
+
+  void draw () 
+{
+  
+    if (this.displayImage) {
+  
+      if (this.rebuild_Image_array) {
+        this.resize_Image_array();
+      }    
+  
+      WIN3D.graphics.stroke(0);
+      WIN3D.graphics.fill(127, 127, 127);    
+  
+      WIN3D.graphics.beginShape();
+  
+      float elevation = 0.0 + allSolidImpacts.elevation[1];
+      float scale_U = this.scale; 
+      float scale_V = this.scale;
+  
+      float minU = 0;
+      float maxU = this.renderedRES;
+      float minV = 0;
+      float maxV = this.renderedRES;
+  
+      //float c = HeightAboveGround * OBJECTS_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
+      float c = elevation * OBJECTS_scale; 
+  
+      c += 1; // put this.Image it at level 1m. // <<<<<<<<<<<
+  
+      WIN3D.graphics.beginShape();
+  
+      WIN3D.graphics.texture(this.Image[IMPACTS_displayDay]);  
+      WIN3D.graphics.stroke(255, 255, 255, 0);
+      WIN3D.graphics.fill(255, 255, 255, 0);  
+  
+      for (int q = 0; q < 4; q++) {
+  
+        float qx = 0, qy = 0, u = 0, v = 0;
+  
+        if (q == 0) {
+          qx = -1; 
+          qy = -1; 
+          u = minU; 
+          v = maxV;
+        } else if (q == 1) {
+          qx = 1; 
+          qy = -1; 
+          u = maxU; 
+          v = maxV;
+        } else if (q == 2) {
+          qx = 1; 
+          qy = 1; 
+          u = maxU; 
+          v = minV;
+        } else if (q == 3) {
+          qx = -1; 
+          qy = 1; 
+          u = minU; 
+          v = minV;
+        }    
+  
+        float a = qx * 0.5;
+        float b = qy * 0.5;    
+  
+        float x = 0, y = 0, z = 0;
+  
+        x = a;
+        y = b;
+        z = c;         
+  
+        WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * scale_U, v * scale_V);
+      }   
+  
+      WIN3D.graphics.endShape(CLOSE);
+    }
+  }
+
+
+
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+      
+    parent.setString("displayImage", Boolean.toString(this.displayImage));
+    parent.setInt("RES", this.RES);
+    parent.setInt("renderedRES", this.renderedRES);
+    parent.setFloat("scale", this.scale);    
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.displayImage = Boolean.parseBoolean(parent.getString("displayImage"));
+    this.RES = parent.getInt("RES");
+    this.renderedRES = parent.getInt("renderedRES");
+    this.scale = parent.getFloat("scale");      
+  }   
+}
+
+solarchvision_WindRose WindRose = new solarchvision_WindRose();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -36959,7 +37110,7 @@ void SOLARCHVISION_resize_VertexSolar_array () { // called when STUDY.j_End chan
   VertexSolar_XYZ     = new float [0][3];
   VertexSolar_amounts = new float [2][1 + STUDY.j_End - STUDY.j_Start][0];
 
-  rebuild_VertexSolar_array = 0;
+  rebuild_VertexSolar_array = false;
 }
 
 
@@ -38242,30 +38393,6 @@ float[] convert_lonlat2XY (double _lon, double _lat) {
 
 
 
-void SOLARCHVISION_resize_WindRose_Image_array () {
-
-  WindRose_Image = new PImage [(1 + STUDY.j_End - STUDY.j_Start)];
-
-  for (int j = STUDY.j_Start; j < STUDY.j_End; j++) { 
-
-    WindRose_Image[j + 1] = createImage(2, 2, RGB); // empty and small
-  }  
-
-  rebuild_WindRoseImage_array = 0;
-}
-
-int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
-
-PImage[] WindRose_Image;
-
-boolean WindRose_displayImage = false; 
-
-int WindRose_renderedRES = 1;
-int WindRose_RES = 400;
-
-
-
-
 
 
 
@@ -38388,7 +38515,7 @@ void SOLARCHVISION_resize_GlobalSolar_array () {
     }
   }
 
-  rebuild_GlobalSolar_array = 0;
+  rebuild_GlobalSolar_array = false;
 }
 
 
@@ -38396,7 +38523,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   cursor(WAIT);
 
-  if (rebuild_GlobalSolar_array != 0) {
+  if (rebuild_GlobalSolar_array) {
     SOLARCHVISION_resize_GlobalSolar_array();
   }
 
@@ -41464,84 +41591,84 @@ void mouseClicked () {
               STUDY.PlotImpacts = -2;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = true;
+              WindRose.displayImage = true;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Wind pattern (passive)")) {
               STUDY.PlotImpacts = -1;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = true;
+              WindRose.displayImage = true;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Urban solar potential (active)")) {
               STUDY.PlotImpacts = 0;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Urban solar potential (passive)")) {
               STUDY.PlotImpacts = 1;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Orientation potential (active)")) {
               STUDY.PlotImpacts = 2;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Orientation potential (passive)")) {
               STUDY.PlotImpacts = 3;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Hourly sun position (active)")) {
               STUDY.PlotImpacts = 4;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Hourly sun position (passive)")) {
               STUDY.PlotImpacts = 5;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("View from sun & sky (active)")) {
               STUDY.PlotImpacts = 6;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("View from sun & sky (passive)")) {
               STUDY.PlotImpacts = 7;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Annual cycle sun path (active)")) {
               STUDY.PlotImpacts = 8;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Annual cycle sun path (passive)")) {
               STUDY.PlotImpacts = 9;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose_displayImage = false;
+              WindRose.displayImage = false;
               ROLLOUT.update = true;
             }  
 
@@ -47905,80 +48032,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
 
 
-void SOLARCHVISION_draw_WindRoseImage () {
 
-  if (WindRose_displayImage) {
-
-    if (rebuild_WindRoseImage_array != 0) {
-      SOLARCHVISION_resize_WindRose_Image_array();
-    }    
-
-    WIN3D.graphics.stroke(0);
-    WIN3D.graphics.fill(127, 127, 127);    
-
-    WIN3D.graphics.beginShape();
-
-    float WindRose_elevation = 0.0 + allSolidImpacts.elevation[1];
-    float WindRose_scale_U = WindRose_scale; 
-    float WindRose_scale_V = WindRose_scale;
-
-    float minU = 0;
-    float maxU = WindRose_renderedRES;
-    float minV = 0;
-    float maxV = WindRose_renderedRES;
-
-    //float c = HeightAboveGround * OBJECTS_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
-    float c = WindRose_elevation * OBJECTS_scale; 
-
-    c += 1; // put WindRose_Image it at level 1m. // <<<<<<<<<<<
-
-    WIN3D.graphics.beginShape();
-
-    WIN3D.graphics.texture(WindRose_Image[IMPACTS_displayDay]);  
-    WIN3D.graphics.stroke(255, 255, 255, 0);
-    WIN3D.graphics.fill(255, 255, 255, 0);  
-
-    for (int q = 0; q < 4; q++) {
-
-      float qx = 0, qy = 0, u = 0, v = 0;
-
-      if (q == 0) {
-        qx = -1; 
-        qy = -1; 
-        u = minU; 
-        v = maxV;
-      } else if (q == 1) {
-        qx = 1; 
-        qy = -1; 
-        u = maxU; 
-        v = maxV;
-      } else if (q == 2) {
-        qx = 1; 
-        qy = 1; 
-        u = maxU; 
-        v = minV;
-      } else if (q == 3) {
-        qx = -1; 
-        qy = 1; 
-        u = minU; 
-        v = minV;
-      }    
-
-      float a = qx * 0.5;
-      float b = qy * 0.5;    
-
-      float x = 0, y = 0, z = 0;
-
-      x = a;
-      y = b;
-      z = c;         
-
-      WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * WindRose_scale_U, v * WindRose_scale_V);
-    }   
-
-    WIN3D.graphics.endShape(CLOSE);
-  }
-}
 
 
 
@@ -52529,16 +52583,8 @@ void SOLARCHVISION_save_project (String myFile) {
     XML parent = xml.addChild("SOLARCHVISION_variables");
   
     parent.setString("displayOutput_inExplorer", Boolean.toString(displayOutput_inExplorer));
-    
-
-  
-    
-  
-
 
     parent.setInt("current_ObjectCategory", current_ObjectCategory);
-
-  
   
     parent.setFloat("GlobalAlbedo", GlobalAlbedo);
     parent.setFloat("Interpolation_Weight", Interpolation_Weight);
@@ -52607,14 +52653,8 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("CurrentLayer_id", CurrentLayer_id);
     parent.setInt("DevelopLayer_id", DevelopLayer_id);
 
-
     parent.setInt("FILTER_Hourly", FILTER_Hourly);
     parent.setInt("FILTER_Daily", FILTER_Daily);
-    
-
-
-
-
 
     parent.setInt("WindFlow_pallet_CLR", WindFlow_pallet_CLR);
     parent.setInt("WindFlow_pallet_DIR", WindFlow_pallet_DIR);
@@ -52624,20 +52664,12 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("COLOR_STYLE_Current", COLOR_STYLE_Current);
     parent.setInt("COLOR_STYLE_Number", COLOR_STYLE_Number);
     
-
-    
     parent.setInt("CurrentDataSource", CurrentDataSource);
     parent.setInt("DrawnFrame", DrawnFrame);
-  
-  
-    
 
-    parent.setFloat("WindRose_scale", WindRose_scale);
+
   
     parent.setFloat("Planetary_Magnification", Planetary_Magnification);
-    
-    
-
 
     parent.setString("WindFlow_displayVectors", Boolean.toString(WindFlow_displayVectors));
     //parent.setInt("Camera_Variation", Camera_Variation);
@@ -52645,24 +52677,15 @@ void SOLARCHVISION_save_project (String myFile) {
     parent.setInt("Materials_Selection", Materials_Selection);
     parent.setFloat("OBJECTS_scale", OBJECTS_scale);
 
-  
-  
-
     parent.setInt("FrameVariation", FrameVariation);
     parent.setInt("Language_Active", Language_Active);
   
     parent.setInt("IMPACTS_displayDay", IMPACTS_displayDay);
-    parent.setString("WindRose_displayImage", Boolean.toString(WindRose_displayImage));
-    parent.setInt("WindRose_RES", WindRose_RES);
-    parent.setInt("WindRose_renderedRES", WindRose_renderedRES);
 
-
-  
     parent.setInt("addToLastGroup", addToLastGroup);
   
     parent.setFloat("BIOSPHERE_drawResolution", BIOSPHERE_drawResolution);
 
-  
     parent.setString("Default_Font", Default_Font);
   }
 
@@ -52764,12 +52787,8 @@ void SOLARCHVISION_load_project (String myFile) {
       
       displayOutput_inExplorer = Boolean.parseBoolean(parent.getString("displayOutput_inExplorer"));
 
-
-
       current_ObjectCategory = parent.getInt("current_ObjectCategory");
-  
 
-  
       GlobalAlbedo = parent.getFloat("GlobalAlbedo");
       Interpolation_Weight = parent.getFloat("Interpolation_Weight");
       
@@ -52784,7 +52803,6 @@ void SOLARCHVISION_load_project (String myFile) {
       TIME_Hour = parent.getInt("TIME_Hour"); 
       TIME_BeginDay = parent.getInt("TIME_BeginDay");
       TIME_Date = parent.getFloat("TIME_Date");
-  
 
       CLIMATE_TMYEPW_start = parent.getInt("CLIMATE_TMYEPW_start");
       CLIMATE_TMYEPW_end = parent.getInt("CLIMATE_TMYEPW_end");
@@ -52840,12 +52858,6 @@ void SOLARCHVISION_load_project (String myFile) {
 
       FILTER_Hourly = parent.getInt("FILTER_Hourly");
       FILTER_Daily = parent.getInt("FILTER_Daily");
-      
-
-
-      
-
-
 
       WindFlow_pallet_CLR = parent.getInt("WindFlow_pallet_CLR");
       WindFlow_pallet_DIR = parent.getInt("WindFlow_pallet_DIR");
@@ -52855,37 +52867,23 @@ void SOLARCHVISION_load_project (String myFile) {
       COLOR_STYLE_Current = parent.getInt("COLOR_STYLE_Current");
       COLOR_STYLE_Number = parent.getInt("COLOR_STYLE_Number");
       
-
-      
       CurrentDataSource = parent.getInt("CurrentDataSource");
       DrawnFrame = parent.getInt("DrawnFrame");
-  
-  
-      
 
-      WindRose_scale = parent.getFloat("WindRose_scale");
+
   
       Planetary_Magnification = parent.getFloat("Planetary_Magnification");
 
-      
       WindFlow_displayVectors = Boolean.parseBoolean(parent.getString("WindFlow_displayVectors"));
       Camera_Variation = parent.getInt("Camera_Variation");
 
       Materials_Selection = parent.getInt("Materials_Selection");
       OBJECTS_scale = parent.getFloat("OBJECTS_scale");
       
-
-  
-  
-  
-      
       FrameVariation = parent.getInt("FrameVariation");
       Language_Active = parent.getInt("Language_Active");
   
       IMPACTS_displayDay = parent.getInt("IMPACTS_displayDay");
-      WindRose_displayImage = Boolean.parseBoolean(parent.getString("WindRose_displayImage"));
-      WindRose_RES = parent.getInt("WindRose_RES");
-      WindRose_renderedRES = parent.getInt("WindRose_renderedRES");
       
 
   
@@ -53001,11 +52999,11 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
   
-    rebuild_SolarImpactImage_array = 1;
-    rebuild_WindRoseImage_array = 1; 
+    rebuild_SolarImpactImage_array = true;
+    WindRose.rebuild_Image_array = true; 
   
-    //rebuild_VertexSolar_array = 1;
-    rebuild_GlobalSolar_array = 1;
+    //rebuild_VertexSolar_array = true;
+    rebuild_GlobalSolar_array = true;
   
     SOLARCHVISION_resize_VertexSolar_array(); 
     SOLARCHVISION_resize_GlobalSolar_array();
