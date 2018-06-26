@@ -1,4 +1,4 @@
-// SOLARCHVISION_draw_referencePivot
+// WIN3D.draw_referencePivot
 
 //    allModel2Ds.add_onLand(1); // 1 = people
 
@@ -3016,7 +3016,7 @@ class solarchvision_WIN3D {
 
       this.graphics.hint(DISABLE_DEPTH_TEST);
   
-      SOLARCHVISION_draw_referencePivot();
+      WIN3D.draw_referencePivot();
   
       this.graphics.popMatrix();
   
@@ -3054,6 +3054,32 @@ class solarchvision_WIN3D {
       }
     }
   }
+  
+  
+  
+  void draw_referencePivot () {
+  
+  
+    this.graphics.strokeWeight(3);
+    this.graphics.stroke(127, 0, 255, 127);
+    this.graphics.fill(127, 0, 255, 127);  
+  
+    float[] P = userSelections.getPivot();
+  
+    float x = P[0];
+    float y = P[1];
+    float z = P[2];
+  
+  
+    this.graphics.pushMatrix(); 
+    this.graphics.translate(x * this.scale, -y * this.scale, z * this.scale);
+  
+    this.graphics.sphere(1); // <<<<<< size
+  
+    this.graphics.popMatrix();
+  
+    this.graphics.strokeWeight(0);
+  }   
   
   
   
@@ -10037,6 +10063,8 @@ class solarchvision_Faces {
     }
   }
  
+ 
+
  
   
   public void to_XML (XML xml) {
@@ -48323,29 +48351,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
 
 
-void SOLARCHVISION_draw_referencePivot () {
 
-
-  WIN3D.graphics.strokeWeight(3);
-  WIN3D.graphics.stroke(127, 0, 255, 127);
-  WIN3D.graphics.fill(127, 0, 255, 127);  
-
-  float[] P = userSelections.getPivot();
-
-  float x = P[0];
-  float y = P[1];
-  float z = P[2];
-
-
-  WIN3D.graphics.pushMatrix(); 
-  WIN3D.graphics.translate(x * WIN3D.scale, -y * WIN3D.scale, z * WIN3D.scale);
-
-  WIN3D.graphics.sphere(1); // <<<<<< size
-
-  WIN3D.graphics.popMatrix();
-
-  WIN3D.graphics.strokeWeight(0);
-}
 
 
 
