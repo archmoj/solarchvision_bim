@@ -3817,12 +3817,12 @@ class solarchvision_WIN3D {
     float yO = this.CAM_y / OBJECTS_scale;
     float zO = this.CAM_z / OBJECTS_scale;
   
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+    float[] ray_end = WIN3D.calculate_Click3D(0, 0);  
     float xA = ray_end[0] / OBJECTS_scale;
     float yA = ray_end[1] / OBJECTS_scale;
     float zA = ray_end[2] / OBJECTS_scale;
   
-    float[] P = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
+    float[] P = WIN3D.calculate_Click3D(Image_X, Image_Y);  
   
     float xB = P[0] / OBJECTS_scale;
     float yB = P[1] / OBJECTS_scale;
@@ -3841,12 +3841,12 @@ class solarchvision_WIN3D {
     float yO = this.CAM_y / OBJECTS_scale;
     float zO = this.CAM_z / OBJECTS_scale;
   
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+    float[] ray_end = WIN3D.calculate_Click3D(0, 0);  
     float xA = ray_end[0] / OBJECTS_scale;
     float yA = ray_end[1] / OBJECTS_scale;
     float zA = ray_end[2] / OBJECTS_scale;
   
-    float[] P = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
+    float[] P = WIN3D.calculate_Click3D(Image_X, Image_Y);  
   
     float xB = P[0] / OBJECTS_scale;
     float yB = P[1] / OBJECTS_scale;
@@ -3870,7 +3870,7 @@ class solarchvision_WIN3D {
     float yO = this.CAM_y / OBJECTS_scale;
     float zO = this.CAM_z / OBJECTS_scale;
   
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+    float[] ray_end = WIN3D.calculate_Click3D(0, 0);  
     float xA = ray_end[0] / OBJECTS_scale;
     float yA = ray_end[1] / OBJECTS_scale;
     float zA = ray_end[2] / OBJECTS_scale;
@@ -3894,7 +3894,7 @@ class solarchvision_WIN3D {
     float yO = this.CAM_y / OBJECTS_scale;
     float zO = this.CAM_z / OBJECTS_scale;
   
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+    float[] ray_end = WIN3D.calculate_Click3D(0, 0);  
     float xA = ray_end[0] / OBJECTS_scale;
     float yA = ray_end[1] / OBJECTS_scale;
     float zA = ray_end[2] / OBJECTS_scale;
@@ -3919,7 +3919,7 @@ class solarchvision_WIN3D {
     float Image_X = mouseX - (this.cX + 0.5 * this.dX);
     float Image_Y = mouseY - (this.cY + 0.5 * this.dY);
   
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
+    float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);  
     float xO = ray_end[0] / OBJECTS_scale;
     float yO = ray_end[1] / OBJECTS_scale;
     float zO = ray_end[2] / OBJECTS_scale;
@@ -4060,7 +4060,7 @@ class solarchvision_WIN3D {
       this.CAM_x, this.CAM_y, this.CAM_z
     };
   
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+    float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
   
     ray_start[0] /= OBJECTS_scale;
     ray_start[1] /= OBJECTS_scale;
@@ -4071,7 +4071,7 @@ class solarchvision_WIN3D {
     ray_end[2] /= OBJECTS_scale;
   
     if (this.ViewType == 0) {
-      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+      float[] ray_center = WIN3D.calculate_Click3D(0, 0);
   
       ray_center[0] /= OBJECTS_scale;
       ray_center[1] /= OBJECTS_scale;
@@ -4418,6 +4418,115 @@ class solarchvision_WIN3D {
       this.graphics.popMatrix();
     }
   }  
+  
+  
+  float[] calculate_Click3D (float Image_X, float Image_Y) {
+  
+    float PNT_x = FLOAT_undefined;
+    float PNT_y = FLOAT_undefined;
+    float PNT_z = FLOAT_undefined;
+  
+    if (this.ViewType == 1) {
+  
+      PNT_z = 0.5/ tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
+  
+      PNT_x = PNT_z * Image_X / ((0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale);
+      PNT_y = PNT_z * -Image_Y / ((0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale);
+    } else {
+      float ZOOM = this.Orthographic_ZOOM();
+  
+      PNT_z = (0.5 * this.refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
+  
+      PNT_x = ZOOM * Image_X / (0.5 * this.scale);
+      PNT_y = ZOOM * -Image_Y / (0.5 * this.scale);
+    }
+  
+    float px, py, pz;
+  
+    px = PNT_x;
+    py = PNT_y * funcs.cos_ang(-this.RX_Coordinate) - PNT_z * funcs.sin_ang(-this.RX_Coordinate);
+    pz = PNT_y * funcs.sin_ang(-this.RX_Coordinate) + PNT_z * funcs.cos_ang(-this.RX_Coordinate);
+  
+    PNT_x = px;
+    PNT_y = py;
+    PNT_z = pz;
+  
+    pz = PNT_z;
+    px = PNT_x * funcs.cos_ang(this.RZ_Coordinate) - PNT_y * funcs.sin_ang(this.RZ_Coordinate);
+    py = PNT_x * funcs.sin_ang(this.RZ_Coordinate) + PNT_y * funcs.cos_ang(this.RZ_Coordinate);
+  
+    PNT_x = px;
+    PNT_y = py;
+    PNT_z = pz;    
+  
+    PNT_x += this.CAM_x;
+    PNT_y += this.CAM_y;
+    PNT_z -= this.CAM_z;  
+  
+    float[] return_array = {
+      PNT_x, PNT_y, -PNT_z
+    };
+  
+    return return_array;
+  }
+  
+  
+  
+  
+  float[] calculate_Perspective_Internally (float x, float y, float z) {
+  
+    float Image_X = FLOAT_undefined;
+    float Image_Y = FLOAT_undefined;
+    float Image_Z = -FLOAT_undefined; // negative so that it automatically illuminated by Draw function 
+  
+  
+    float px, py, pz;
+  
+    x -= this.CAM_x;
+    y -= this.CAM_y;
+    z += this.CAM_z;
+  
+    pz = z;
+    px = x * funcs.cos_ang(-this.RZ_Coordinate) - y * funcs.sin_ang(-this.RZ_Coordinate);
+    py = x * funcs.sin_ang(-this.RZ_Coordinate) + y * funcs.cos_ang(-this.RZ_Coordinate);
+  
+    x = px;
+    y = py;
+    z = pz;    
+  
+    px = x;
+    py = y * funcs.cos_ang(this.RX_Coordinate) - z * funcs.sin_ang(this.RX_Coordinate);
+    pz = y * funcs.sin_ang(this.RX_Coordinate) + z * funcs.cos_ang(this.RX_Coordinate);
+  
+    x = px;
+    y = py;
+    z = pz;
+  
+  
+    if (z > 0) {
+      if (this.ViewType == 1) {
+  
+        Image_X = (x / z) * (0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale;
+        Image_Y = -(y / z) * (0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale;
+        Image_Z = z;
+      } else {
+  
+        float ZOOM = this.Orthographic_ZOOM();
+  
+        Image_X = (x / ZOOM) * (0.5 * this.scale);
+        Image_Y = -(y / ZOOM) * (0.5 * this.scale);
+        Image_Z = z;
+      }
+    }
+  
+    float[] theValues = {
+      Image_X, Image_Y, Image_Z
+    };
+  
+    return theValues;
+  }
+  
+  
 
   
   public void to_XML (XML xml) {
@@ -5568,7 +5677,7 @@ class solarchvision_STUDY {
           break;
   
         case '?' :
-          SOALRCHVISION_refreshDateTabs();                   
+          STUDY.refreshDateTabs();                   
           DevelopData_update = true;
           UI_BAR_d_update = true; 
           this.update = true; 
@@ -7299,6 +7408,27 @@ class solarchvision_STUDY {
   
     cursor(ARROW);
   }
+  
+  
+  void refreshDateTabs () {
+    if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || (CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
+      if (this.perDays == 1) { 
+        this.perDays = int(365 / float(this.j_End - this.j_Start));
+      } else {
+        this.perDays = 1;
+      }
+    } 
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+      this.perDays = 1;
+    }           
+    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+      if (this.perDays == 1) { 
+        this.perDays = int(ENSEMBLE_OBSERVED_maxDays / float(this.j_End - this.j_Start));
+      } else {
+        this.perDays = 1;
+      }
+    }
+  }    
 
 
   public void to_XML (XML xml) {
@@ -39725,7 +39855,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
         float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -39818,7 +39948,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
         float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -39913,7 +40043,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
               float y = allPoints.getY(vNo) * OBJECTS_scale;            
               float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -39957,7 +40087,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
               float y = allPoints.getY(vNo) * OBJECTS_scale;            
               float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40049,7 +40179,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allPoints.getY(vNo) * OBJECTS_scale;            
         float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40137,7 +40267,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allPoints.getY(vNo) * OBJECTS_scale;            
         float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40221,7 +40351,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       float y = allPoints.getY(OBJ_NUM) * OBJECTS_scale;            
       float z = -allPoints.getZ(OBJ_NUM) * OBJECTS_scale;
 
-      float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+      float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
       if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
         if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40307,7 +40437,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
         float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40408,7 +40538,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
         float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40506,7 +40636,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
         float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -40599,7 +40729,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
         float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
@@ -41316,7 +41446,7 @@ void mouseReleased () {
                     WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
                   };
 
-                  float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+                  float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
 
                   ray_start[0] /= OBJECTS_scale;
                   ray_start[1] /= OBJECTS_scale;
@@ -41327,7 +41457,7 @@ void mouseReleased () {
                   ray_end[2] /= OBJECTS_scale;
 
                   if (WIN3D.ViewType == 0) {
-                    float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+                    float[] ray_center = WIN3D.calculate_Click3D(0, 0);
 
                     ray_center[0] /= OBJECTS_scale;
                     ray_center[1] /= OBJECTS_scale;
@@ -42378,7 +42508,7 @@ void mouseClicked () {
             }     
             if (menu_option.equals("PreBake Viewport")) {
               
-              SOLARCHVISION_PreBakeViewport();            
+              SOLARCHVISION_preBakeViewport();            
             }           
             
 
@@ -44324,7 +44454,7 @@ void mouseClicked () {
                 WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
               };
   
-              float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+              float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
   
               ray_start[0] /= OBJECTS_scale;
               ray_start[1] /= OBJECTS_scale;
@@ -44335,7 +44465,7 @@ void mouseClicked () {
               ray_end[2] /= OBJECTS_scale;
   
               if (WIN3D.ViewType == 0) {
-                float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+                float[] ray_center = WIN3D.calculate_Click3D(0, 0);
   
                 ray_center[0] /= OBJECTS_scale;
                 ray_center[1] /= OBJECTS_scale;
@@ -45790,59 +45920,6 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
 
 
 
-float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float z) {
-
-  float Image_X = FLOAT_undefined;
-  float Image_Y = FLOAT_undefined;
-  float Image_Z = -FLOAT_undefined; // negative so that it automatically illuminated by Draw function 
-
-
-  float px, py, pz;
-
-  x -= WIN3D.CAM_x;
-  y -= WIN3D.CAM_y;
-  z += WIN3D.CAM_z;
-
-  pz = z;
-  px = x * funcs.cos_ang(-WIN3D.RZ_Coordinate) - y * funcs.sin_ang(-WIN3D.RZ_Coordinate);
-  py = x * funcs.sin_ang(-WIN3D.RZ_Coordinate) + y * funcs.cos_ang(-WIN3D.RZ_Coordinate);
-
-  x = px;
-  y = py;
-  z = pz;    
-
-  px = x;
-  py = y * funcs.cos_ang(WIN3D.RX_Coordinate) - z * funcs.sin_ang(WIN3D.RX_Coordinate);
-  pz = y * funcs.sin_ang(WIN3D.RX_Coordinate) + z * funcs.cos_ang(WIN3D.RX_Coordinate);
-
-  x = px;
-  y = py;
-  z = pz;
-
-
-  if (z > 0) {
-    if (WIN3D.ViewType == 1) {
-
-      Image_X = (x / z) * (0.5 * WIN3D.scale / tan(0.5 * WIN3D.CAM_fov)) * WIN3D.refScale;
-      Image_Y = -(y / z) * (0.5 * WIN3D.scale / tan(0.5 * WIN3D.CAM_fov)) * WIN3D.refScale;
-      Image_Z = z;
-    } else {
-
-      float ZOOM = WIN3D.Orthographic_ZOOM();
-
-      Image_X = (x / ZOOM) * (0.5 * WIN3D.scale);
-      Image_Y = -(y / ZOOM) * (0.5 * WIN3D.scale);
-      Image_Z = z;
-    }
-  }
-
-  float[] theValues = {
-    Image_X, Image_Y, Image_Z
-  };
-
-  return theValues;
-}
-
 
 
 
@@ -45878,7 +45955,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
         float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
@@ -45920,7 +45997,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
             float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
 
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+            float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
               if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -45965,7 +46042,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
             float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
 
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+            float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
               if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46014,7 +46091,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46066,7 +46143,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46112,7 +46189,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
             float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+            float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
               if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46175,7 +46252,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float y = subFace[s][1] * OBJECTS_scale;            
             float z = -subFace[s][2] * OBJECTS_scale;
 
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+            float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
               if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46218,7 +46295,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float y = allPoints.getY(vNo) * OBJECTS_scale;            
           float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
             if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
@@ -46262,7 +46339,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float y = allPoints.getY(vNo) * OBJECTS_scale;            
           float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
             if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
@@ -46305,7 +46382,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float y = allPoints.getY(vNo) * OBJECTS_scale;
         float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
@@ -46344,7 +46421,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float y = allPoints.getY(vNo) * OBJECTS_scale;
         float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) {
@@ -46416,7 +46493,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 float y = subFace[s][1] * OBJECTS_scale;            
                 float z = -subFace[s][2] * OBJECTS_scale;
 
-                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+                float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
                 if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                   if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46440,7 +46517,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float y = allPoints.getY(vNo) * OBJECTS_scale;            
               float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46466,7 +46543,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46492,7 +46569,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                 if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46523,7 +46600,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                   float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
                   float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
-                  float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+                  float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                     if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46662,7 +46739,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;            
           float z = -BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x, y, z);            
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
             if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
@@ -46789,8 +46866,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;            
           float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
 
-          float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1, y1, z1);            
-          float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2, y2, z2);
+          float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);            
+          float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
           if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
             if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
@@ -46899,8 +46976,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;            
       float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
 
-      float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1, y1, z1);            
-      float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2, y2, z2);
+      float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);            
+      float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
       if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
         if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
@@ -46922,55 +46999,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
 
-float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
-
-  float PNT_x = FLOAT_undefined;
-  float PNT_y = FLOAT_undefined;
-  float PNT_z = FLOAT_undefined;
-
-  if (WIN3D.ViewType == 1) {
-
-    PNT_z = 0.5/ tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
-
-    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D.scale / tan(0.5 * WIN3D.CAM_fov)) * WIN3D.refScale);
-    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D.scale / tan(0.5 * WIN3D.CAM_fov)) * WIN3D.refScale);
-  } else {
-    float ZOOM = WIN3D.Orthographic_ZOOM();
-
-    PNT_z = (0.5 * WIN3D.refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
-
-    PNT_x = ZOOM * Image_X / (0.5 * WIN3D.scale);
-    PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D.scale);
-  }
-
-  float px, py, pz;
-
-  px = PNT_x;
-  py = PNT_y * funcs.cos_ang(-WIN3D.RX_Coordinate) - PNT_z * funcs.sin_ang(-WIN3D.RX_Coordinate);
-  pz = PNT_y * funcs.sin_ang(-WIN3D.RX_Coordinate) + PNT_z * funcs.cos_ang(-WIN3D.RX_Coordinate);
-
-  PNT_x = px;
-  PNT_y = py;
-  PNT_z = pz;
-
-  pz = PNT_z;
-  px = PNT_x * funcs.cos_ang(WIN3D.RZ_Coordinate) - PNT_y * funcs.sin_ang(WIN3D.RZ_Coordinate);
-  py = PNT_x * funcs.sin_ang(WIN3D.RZ_Coordinate) + PNT_y * funcs.cos_ang(WIN3D.RZ_Coordinate);
-
-  PNT_x = px;
-  PNT_y = py;
-  PNT_z = pz;    
-
-  PNT_x += WIN3D.CAM_x;
-  PNT_y += WIN3D.CAM_y;
-  PNT_z -= WIN3D.CAM_z;  
-
-  float[] return_array = {
-    PNT_x, PNT_y, -PNT_z
-  };
-
-  return return_array;
-}
 
 
 
@@ -52753,25 +52781,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
 
 
-void SOALRCHVISION_refreshDateTabs () {
-  if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || (CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
-    if (STUDY.perDays == 1) { 
-      STUDY.perDays = int(365 / float(STUDY.j_End - STUDY.j_Start));
-    } else {
-      STUDY.perDays = 1;
-    }
-  } 
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    STUDY.perDays = 1;
-  }           
-  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
-    if (STUDY.perDays == 1) { 
-      STUDY.perDays = int(ENSEMBLE_OBSERVED_maxDays / float(STUDY.j_End - STUDY.j_Start));
-    } else {
-      STUDY.perDays = 1;
-    }
-  }
-}  
+
 
 
 
@@ -55437,7 +55447,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     SOLARCHVISION_RenderViewport();            
   }     
   else if (Command_CAPITAL.equals("PREBAKE.VIEWPORT")) {
-    SOLARCHVISION_PreBakeViewport();            
+    SOLARCHVISION_preBakeViewport();            
   }             
 
 
@@ -55460,7 +55470,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 
-void SOLARCHVISION_PreBakeViewport () {
+void SOLARCHVISION_preBakeViewport () {
 
   cursor(WAIT);  
   
@@ -55565,7 +55575,7 @@ void SOLARCHVISION_PreBakeViewport () {
       WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
     };
 
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X * ScaleToFit, Image_Y * ScaleToFit);
+    float[] ray_end = WIN3D.calculate_Click3D(Image_X * ScaleToFit, Image_Y * ScaleToFit);
 
     ray_start[0] /= OBJECTS_scale;
     ray_start[1] /= OBJECTS_scale;
@@ -55576,7 +55586,7 @@ void SOLARCHVISION_PreBakeViewport () {
     ray_end[2] /= OBJECTS_scale;
 
     if (WIN3D.ViewType == 0) {
-      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+      float[] ray_center = WIN3D.calculate_Click3D(0, 0);
 
       ray_center[0] /= OBJECTS_scale;
       ray_center[1] /= OBJECTS_scale;
@@ -55863,7 +55873,7 @@ void SOLARCHVISION_RenderViewport () {
       WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
     };
 
-    float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+    float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
 
     ray_start[0] /= OBJECTS_scale;
     ray_start[1] /= OBJECTS_scale;
@@ -55874,7 +55884,7 @@ void SOLARCHVISION_RenderViewport () {
     ray_end[2] /= OBJECTS_scale;
 
     if (WIN3D.ViewType == 0) {
-      float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+      float[] ray_center = WIN3D.calculate_Click3D(0, 0);
 
       ray_center[0] /= OBJECTS_scale;
       ray_center[1] /= OBJECTS_scale;
