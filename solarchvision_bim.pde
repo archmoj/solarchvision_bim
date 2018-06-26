@@ -87,6 +87,21 @@ class solarchvision_Functions {
     return c;
   }
   
+  
+  float[] convert_lonlat2XY (double lon0, double lat0, double lon, double lat) {
+  
+    double du = ((lon - lon0) / 180.0) * (PI * DOUBLE_r_Earth);
+    double dv = ((lat - lat0) / 180.0) * (PI * DOUBLE_r_Earth);
+  
+    float x = (float) du * funcs.cos_ang((float) lat);
+    float y = (float) dv;   
+    
+    float[] XY = {x, y};
+    
+    return XY;
+  }  
+  
+  
   float lon_lat_dist (double lon1, double lat1, double lon2, double lat2) {
   
     float dLon = (float) (lon2 - lon1); 
@@ -481,6 +496,8 @@ class solarchvision_Functions {
   
   
   
+  
+  
 }
 
 solarchvision_Functions funcs = new solarchvision_Functions(); 
@@ -624,31 +641,30 @@ solarchvision_TIME TIME = new solarchvision_TIME();
 
 // please define station elevation data for CWEEDS points!
 
-String SOLARCHVISION_version = "2017"; 
-String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
+
 
 String SceneName = "Complex";
 
 
-String CLIMATE_TMYEPW_directory;
-String CLIMATE_CWEEDS_directory;
-String CLIMATE_CLMREC_directory;
-String ENSEMBLE_OBSERVED_directory;
-String ENSEMBLE_FORECAST_directory;
-String GRIB2_directory;
-String GEOMET_directory;
 
-String[] CLIMATE_TMYEPW_Files;
-String[] CLIMATE_CWEEDS_Files;
-String[] CLIMATE_CLMREC_Files;
-String[] ENSEMBLE_OBSERVED_Files;
-String[] ENSEMBLE_FORECAST_Files;
+
+String[] Files_CLIMATE_TMYEPW;
+String[] Files_CLIMATE_CWEEDS;
+String[] Files_CLIMATE_CLMREC;
+String[] Files_ENSEMBLE_OBSERVED;
+String[] Files_ENSEMBLE_FORECAST;
 
 
 
+String Folder_CLIMATE_TMYEPW;
+String Folder_CLIMATE_CWEEDS;
+String Folder_CLIMATE_CLMREC;
+String Folder_ENSEMBLE_OBSERVED;
+String Folder_ENSEMBLE_FORECAST;
+String Folder_GRIB2;
+String Folder_GEOMET;
 
-
-String Wgrib2TempFolder;
+String Folder_Wgrib2Temp;
 
 String Folder_Backgrounds;
 String Folder_Coordinates;
@@ -665,36 +681,37 @@ String Folder_ViewsFromSky;
 String Folder_ScreenShots;
 String Folder_Shadings;
 
-
+String SOLARCHVISION_version = "2017"; 
+String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
 
 String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
 String ProjectName = "Revision_" + RunStamp;
 String HoldStamp = ""; 
 
-String export_MapsSubfolder = "maps/";
+String Subfolder_exportMaps = "maps/";
 
 void SOLARCHVISION_update_folders () {
   
   Folder_Project = BaseFolder + "/Projects/Roodbar";    
   
-  Wgrib2TempFolder = Folder_Project + "/Temp";
+  Folder_Wgrib2Temp = Folder_Project + "/Temp";
 
-  GEOMET_directory = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
-  GRIB2_directory = Folder_Project + "/Data/GRIB2";
+  Folder_GEOMET = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
+  Folder_GRIB2 = Folder_Project + "/Data/GRIB2";
   
-  ENSEMBLE_FORECAST_directory = Folder_Project + "/Data/FORECAST_NAEFS";
-  ENSEMBLE_OBSERVED_directory = Folder_Project + "/Data/OBSERVATION_SWOB";
+  Folder_ENSEMBLE_FORECAST = Folder_Project + "/Data/FORECAST_NAEFS";
+  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/Data/OBSERVATION_SWOB";
 
-  CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
-  CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
-  CLIMATE_CWEEDS_directory = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
+  Folder_CLIMATE_CLMREC = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
+  Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
+  Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
   
-  CLIMATE_CLMREC_Files = funcs.getfiles(CLIMATE_CLMREC_directory);
-  CLIMATE_TMYEPW_Files = funcs.getfiles(CLIMATE_TMYEPW_directory);
-  CLIMATE_CWEEDS_Files = funcs.getfiles(CLIMATE_CWEEDS_directory);
+  Files_CLIMATE_CLMREC = funcs.getfiles(Folder_CLIMATE_CLMREC);
+  Files_CLIMATE_TMYEPW = funcs.getfiles(Folder_CLIMATE_TMYEPW);
+  Files_CLIMATE_CWEEDS = funcs.getfiles(Folder_CLIMATE_CWEEDS);
   
-  ENSEMBLE_OBSERVED_Files = funcs.getfiles(ENSEMBLE_OBSERVED_directory);
-  ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory);  
+  Files_ENSEMBLE_OBSERVED = funcs.getfiles(Folder_ENSEMBLE_OBSERVED);
+  Files_ENSEMBLE_FORECAST = funcs.getfiles(Folder_ENSEMBLE_FORECAST);  
 
   Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
@@ -1653,7 +1670,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
     } else {
       String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + allLayers[f].name + "_000-384.xml";
       
-      String the_target = ENSEMBLE_FORECAST_directory + "/" + FN;
+      String the_target = Folder_ENSEMBLE_FORECAST + "/" + FN;
       
       File dir = new File(the_target);
       if (!dir.isFile()) {
@@ -1680,7 +1697,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
   if (new_files_downloaded) {
     
-    String folder_inout = ENSEMBLE_FORECAST_directory.replace('/', char(92));
+    String folder_inout = Folder_ENSEMBLE_FORECAST.replace('/', char(92));
     
     {
       String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
@@ -1690,7 +1707,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       launch(Command1 + " & " + Command2);
     }
     
-    ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory);  
+    Files_ENSEMBLE_FORECAST = funcs.getfiles(Folder_ENSEMBLE_FORECAST);  
     
     ENSEMBLE_FORECAST_load = true;
     update_ENSEMBLE_FORECAST(TIME.Year, TIME.Month, TIME.Day, TIME.Hour);    
@@ -1700,7 +1717,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
 void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
+  Files_ENSEMBLE_FORECAST = funcs.getfiles(Folder_ENSEMBLE_FORECAST); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
   ENSEMBLE_FORECAST_values = new float [24][365][numberOfLayers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
   ENSEMBLE_FORECAST_flags = new boolean [24][365][numberOfLayers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -1723,7 +1740,7 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
       } else {
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + allLayers[f].name + "_000-384.xml";
 
-        String the_source = ENSEMBLE_FORECAST_directory + "/" + FN;
+        String the_source = Folder_ENSEMBLE_FORECAST + "/" + FN;
 
         File dir = new File(the_source);
         if (dir.isFile()) load_ENSEMBLE_FORECAST(the_source, f);
@@ -1857,7 +1874,7 @@ void update_CLIMATE_CWEEDS () {
 
     String FN = STATION.getFilename_CWEEDS() + ".wy2";
     
-    String the_source = CLIMATE_CWEEDS_directory + "/" + FN;
+    String the_source = Folder_CLIMATE_CWEEDS + "/" + FN;
 
     File dir = new File(the_source);
     if (dir.isFile()) load_CLIMATE_CWEEDS(the_source);
@@ -1970,7 +1987,7 @@ void download_CLIMATE_CLMREC () {
     
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
           
-        String the_target = CLIMATE_CLMREC_directory + "/" + FN;
+        String the_target = Folder_CLIMATE_CLMREC + "/" + FN;
           
         File dir = new File(the_target);
         if (!dir.isFile()) {          
@@ -1989,7 +2006,7 @@ void download_CLIMATE_CLMREC () {
       }
     }
     
-    CLIMATE_CLMREC_Files = funcs.getfiles(CLIMATE_CLMREC_directory);
+    Files_CLIMATE_CLMREC = funcs.getfiles(Folder_CLIMATE_CLMREC);
     
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
@@ -2046,7 +2063,7 @@ void update_CLIMATE_CLMREC () {
     
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
         
-        String the_source = CLIMATE_CLMREC_directory + "/" + FN;
+        String the_source = Folder_CLIMATE_CLMREC + "/" + FN;
         
         File dir = new File(the_source);
         if (dir.isFile()) load_CLIMATE_CLMREC(the_source);
@@ -2172,7 +2189,7 @@ void update_CLIMATE_TMYEPW () {
 
     String FN = STATION.getFilename_TMYEPW() + ".epw";
 
-    String the_source = CLIMATE_TMYEPW_directory + "/" + FN;
+    String the_source = Folder_CLIMATE_TMYEPW + "/" + FN;
 
     File dir = new File(the_source);
     if (dir.isFile()) load_CLIMATE_TMYEPW(the_source);
@@ -2316,7 +2333,7 @@ void download_ENSEMBLE_OBSERVED () {
 
         String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
 
-        String the_target = ENSEMBLE_OBSERVED_directory + "/" + FN;
+        String the_target = Folder_ENSEMBLE_OBSERVED + "/" + FN;
 
         File dir = new File(the_target);
         if (!dir.isFile()) {       
@@ -2350,7 +2367,7 @@ void download_ENSEMBLE_OBSERVED () {
   }
   
 
-  ENSEMBLE_OBSERVED_Files = funcs.getfiles(ENSEMBLE_OBSERVED_directory);
+  Files_ENSEMBLE_OBSERVED = funcs.getfiles(Folder_ENSEMBLE_OBSERVED);
   
   ENSEMBLE_OBSERVED_load = true; 
   SOLARCHVISION_update_ENSEMBLE_OBSERVED();
@@ -2412,7 +2429,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
           String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
 
-          String the_source = ENSEMBLE_OBSERVED_directory + "/" + FN;
+          String the_source = Folder_ENSEMBLE_OBSERVED + "/" + FN;
       
           File dir = new File(the_source);
           if (dir.isFile()) load_ENSEMBLE_OBSERVED(the_source, q);
@@ -9698,7 +9715,7 @@ class solarchvision_Faces {
     
             the_filename = "shadePallet.bmp";
     
-            TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+            TEXTURE_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
@@ -9745,8 +9762,8 @@ class solarchvision_Faces {
             mtlOutput.println("\tTr 1.000"); //  0-1 transparency
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-            //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
+            //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
          
           }
     
@@ -9998,10 +10015,10 @@ class solarchvision_Faces {
             
             the_filename = "shadePallet.bmp";
             
-            TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+            TEXTURE_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
             
             htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+            htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
             htmlOutput.println("\t\t\t\t</Appearance>");
     
             println("Saving texture:", TEXTURE_path);
@@ -22810,7 +22827,7 @@ class solarchvision_Tropo3D {
   
   void load_images () {
     
-    String[] allFilenames = sort(funcs.getfiles(GEOMET_directory));
+    String[] allFilenames = sort(funcs.getfiles(Folder_GEOMET));
     
   
     
@@ -22858,9 +22875,9 @@ class solarchvision_Tropo3D {
           this.BoundariesX[i][1] = -float(Parts[3]) * 0.001;
           this.BoundariesY[i][1] =  float(Parts[4]) * 0.001;
           
-          println("Loading:", GEOMET_directory + "/" + this.Filenames[i]);
+          println("Loading:", Folder_GEOMET + "/" + this.Filenames[i]);
   
-          this.Map[i] = loadImage(GEOMET_directory + "/" + this.Filenames[i]);
+          this.Map[i] = loadImage(Folder_GEOMET + "/" + this.Filenames[i]);
   
           break;        
         }
@@ -23045,7 +23062,7 @@ class solarchvision_Tropo3D {
       FN += nf(int(funcs.roundTo( 1000 * this.BoundariesY[i][1], 1)), 6) + "_";
       FN += ".png";
   
-      String the_target = GEOMET_directory + "/" + FN;
+      String the_target = Folder_GEOMET + "/" + FN;
   
       File dir = new File(the_target);
       if (!dir.isFile()) {
@@ -23187,24 +23204,24 @@ class solarchvision_Tropo3D {
   
               if (Tropo3D.displayTexture) {
       
-                String old_Texture_path = GEOMET_directory + "/" + this.Filenames[n_Map];
+                String old_Texture_path = Folder_GEOMET + "/" + this.Filenames[n_Map];
       
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
       
-                String new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+                String new_Texture_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
       
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
       
                 if (target_window == TypeWindow.OBJ) {
       
-                  //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
-                  mtlOutput.println("\tmap_d " + export_MapsSubfolder + the_filename); // diffuse map
+                  //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + Subfolder_exportMaps + the_filename); // diffuse map
                 }
                 
                 if (target_window == TypeWindow.HTML) {
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
                 }                    
                     
               }
@@ -23590,7 +23607,7 @@ class solarchvision_Sky3D {
     
             the_filename = "skyPatternPallet.bmp";
     
-            TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+            TEXTURE_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
@@ -23634,8 +23651,8 @@ class solarchvision_Sky3D {
             mtlOutput.println("\tTr 1.000"); //  0-1 transparency
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-            //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
+            //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
           }      
     
           obj_lastGroupNumber += 1;
@@ -24333,7 +24350,7 @@ class solarchvision_Sun3D {
   
         the_filename = "sunPatternPallet.bmp";
   
-        TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+        TEXTURE_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
   
         println("Saving texture:", TEXTURE_path);
   
@@ -24377,8 +24394,8 @@ class solarchvision_Sun3D {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
   
-        //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
       }
     }  
   
@@ -25273,20 +25290,20 @@ class solarchvision_Earth3D {
     
             String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-            String new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+            String new_Texture_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
     
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
     
             if (target_window == TypeWindow.OBJ) {
     
-              //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-              mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
-              mtlOutput.println("\tmap_d " + export_MapsSubfolder + the_filename); // diffuse map
+              //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+              mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
+              mtlOutput.println("\tmap_d " + Subfolder_exportMaps + the_filename); // diffuse map
             }
             
             if (target_window == TypeWindow.HTML) {
-              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+              htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
             }                
   
           }
@@ -25729,7 +25746,7 @@ class solarchvision_Land3D {
             double _lon = Double.parseDouble(txt_longitude); 
             double _lat = Double.parseDouble(txt_latitude); 
   
-            float[] XY = convert_lonlat2XY(_lon, _lat);
+            float[] XY = funcs.convert_lonlat2XY(STATION.getLongitude(), STATION.getLatitude(), _lon, _lat);
   
             float x = XY[0];
             float y = XY[1]; 
@@ -25798,7 +25815,7 @@ class solarchvision_Land3D {
         double _lon = LON_LAT[0];
         double _lat = LON_LAT[1]; 
   
-        float[] XY = convert_lonlat2XY(_lon, _lat);
+        float[] XY = funcs.convert_lonlat2XY(STATION.getLongitude(), STATION.getLatitude(), _lon, _lat);
   
         this.Mesh[i][j][0] = XY[0];      
         this.Mesh[i][j][1] = XY[1];      
@@ -25975,7 +25992,7 @@ class solarchvision_Land3D {
     
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                String new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+                String new_Texture_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -25983,13 +26000,13 @@ class solarchvision_Land3D {
     
                 if (target_window == TypeWindow.OBJ) {
                     
-                  //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
-                  mtlOutput.println("\tmap_d " + export_MapsSubfolder + the_filename); // diffuse map
+                  //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + Subfolder_exportMaps + the_filename); // diffuse map
                 }
                 
                 if (target_window == TypeWindow.HTML) {
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
                 }                 
     
               }
@@ -26863,8 +26880,8 @@ class solarchvision_Model2Ds {
     
                 the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
-                opacity_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + "opacity_" + the_filename;
+                new_Texture_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
+                opacity_Texture_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -26896,7 +26913,7 @@ class solarchvision_Model2Ds {
                 
                 if (target_window == TypeWindow.HTML) {
                   htmlOutput.println("\t\t\t\t<Appearance DEF='this." + the_filename + "'>");
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
                   htmlOutput.println("\t\t\t\t</Appearance>");
                 }
     
@@ -26914,9 +26931,9 @@ class solarchvision_Model2Ds {
                   mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                   mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
       
-                  //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map        
-                  mtlOutput.println("\tmap_d " + export_MapsSubfolder + "opacity_" + the_filename); // diffuse map
+                  //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+                  mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
+                  mtlOutput.println("\tmap_d " + Subfolder_exportMaps + "opacity_" + the_filename); // diffuse map
                 }
               }
             }
@@ -38141,7 +38158,7 @@ class solarchvision_Sections {
           
           if (User3D.export_MaterialLibrary) {
   
-            String TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+            String TEXTURE_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
   
             if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
   
@@ -38155,7 +38172,7 @@ class solarchvision_Sections {
   
               if (target_window == TypeWindow.HTML) {
                 htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
-                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
+                htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
                 htmlOutput.println("\t\t\t\t</Appearance>");
               }
     
@@ -38173,8 +38190,8 @@ class solarchvision_Sections {
                 mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                 mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
       
-                //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
+                //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
               }
             }
           }
@@ -38852,7 +38869,7 @@ class solarchvision_WindFlow {
     
           the_filename = "WindFlowPallet.bmp";
     
-          String TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+          String TEXTURE_path = Folder_Model3Ds + "/" + Subfolder_exportMaps + the_filename;
     
           println("Saving texture:", TEXTURE_path);
     
@@ -38894,8 +38911,8 @@ class solarchvision_WindFlow {
           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-          //mtlOutput.println("\tmap_Ka " + export_MapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + export_MapsSubfolder + the_filename); // diffuse map
+          //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
         }    
     
         num_vertices_added = 0;
@@ -40298,18 +40315,7 @@ double[] getLandGrid (int i, int j) {
   
 }
 
-float[] convert_lonlat2XY (double _lon, double _lat) {
 
-  double du = ((_lon - STATION.getLongitude()) / 180.0) * (PI * DOUBLE_r_Earth);
-  double dv = ((_lat - STATION.getLatitude()) / 180.0) * (PI * DOUBLE_r_Earth);
-
-  float x = (float) du * funcs.cos_ang((float) _lat);
-  float y = (float) dv;   
-  
-  float[] XY = {x, y};
-  
-  return XY;
-}
 
 
 
@@ -45712,7 +45718,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
       String[] tmpMessage = {
         nf(GRIB2_Year, 4), nf(GRIB2_Month, 2), nf(GRIB2_Day, 2), nf(GRIB2_ModelRun, 2)
       };
-      saveStrings(Wgrib2TempFolder + "/TempEmpty.txt", tmpMessage);
+      saveStrings(Folder_Wgrib2Temp + "/TempEmpty.txt", tmpMessage);
     }
   
   
