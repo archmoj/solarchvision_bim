@@ -2511,7 +2511,7 @@ class solarchvision_WIN3D {
   
       allPoints.draw();
   
-      allModel1Ds.draw();
+      allModel1Ds.draw(TypeWindow.WIN3D);
   
       allWindRoses.draw();
   
@@ -21015,6 +21015,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   
   allSections.draw(TypeWindow.OBJ);
   
+  allModel1Ds.draw(TypeWindow.OBJ);
+  
   allModel2Ds.draw(TypeWindow.OBJ);
   
   allFaces.draw(TypeWindow.OBJ);
@@ -21024,86 +21026,6 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-
-
-  if (allModel1Ds.displayAll) {
-
-    if (User3D.export_MaterialLibrary) {
-
-      if (allModel1Ds.num != 0) {
-
-        mtlOutput.println("newmtl " + "Model1Ds_Trunk");
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
-        mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-
-        mtlOutput.println("newmtl " + "Model1Ds_Leaf");
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
-        mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-      }
-    }
-
-
-    for (int f = 0; f < allModel1Ds.num; f++) {
-
-      float x = allModel1Ds.getX(f);
-      float y = allModel1Ds.getY(f);
-      float z = allModel1Ds.getZ(f);
-
-      float r = allModel1Ds.getS(f) * 0.5;
-      float rot = allModel1Ds.getR(f);
-
-      int n = allModel1Ds.getType(f);
-
-      int dMin = allModel1Ds.getDegreeMin(f);
-
-      int dMax = allModel1Ds.getDegreeMax(f);
-
-      int s = allModel1Ds.getSeed(f);
-
-      float TrunkSize = allModel1Ds.getTrunkSize(f);
-
-      float LeafSize = allModel1Ds.getLeafSize(f);
-
-      randomSeed(s);
-
-      if (n == 0) {
-
-        num_vertices_added = 0;
-
-        if (User3D.export_PolyToPoly == 1) {
-          obj_lastGroupNumber += 1;
-          objOutput.println("g allModel1Ds_" + nf(f, 0));
-        }    
-
-        float Alpha = 0;
-        float Beta = rot; 
-
-        for (int _turn = 1; _turn < 4; _turn++) {
-          allModel1Ds.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
-        }
-
-        obj_lastVertexNumber += num_vertices_added;
-        obj_lastVtextureNumber += num_vertices_added;
-      }
-    }
-  }  
 
 
 
@@ -26336,14 +26258,61 @@ class solarchvision_Model1Ds {
   float[][] Vertices;
   int[][] Faces;
   
-  
-  void draw () {
+
+
+  void draw (int target_window) {
   
     this.Faces = new int [this.num][4];
   
     this.Vertices = new float [4 * this.num][3];
   
-    if (this.displayAll) {
+    boolean proceed = true;
+  
+    if (this.displayAll == false) {
+      proceed = false;
+    }
+  
+    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+      proceed = false;
+    }
+
+    
+    if (proceed) {  
+      
+      if (target_window == TypeWindow.OBJ) {
+        if (User3D.export_MaterialLibrary) {
+    
+          if (allModel1Ds.num != 0) {
+    
+            mtlOutput.println("newmtl " + "Model1Ds_Trunk");
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
+            mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+    
+            mtlOutput.println("newmtl " + "Model1Ds_Leaf");
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
+            mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+          }
+        }
+      }      
+      
+      
   
       for (int f = 0; f < this.num; f++) {
   
@@ -26368,44 +26337,69 @@ class solarchvision_Model1Ds {
   
         randomSeed(s);
   
+  
+
         if (n == 0) {
+          
+          if (target_window == TypeWindow.OBJ) {
+          
+            num_vertices_added = 0;
+    
+            if (User3D.export_PolyToPoly == 1) {
+              obj_lastGroupNumber += 1;
+              objOutput.println("g allModel1Ds_" + nf(f, 0));
+            }    
+          }
   
           float Alpha = 0;
           float Beta = rot; 
   
-          this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
   
-          // ----------------
-          x *= OBJECTS_scale;
-          y *= OBJECTS_scale;
-          z *= OBJECTS_scale;
-          r *= OBJECTS_scale;
-          // ----------------        
+          if (target_window == TypeWindow.OBJ) {
+            for (int _turn = 1; _turn < 4; _turn++) {
+              allModel1Ds.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+            }
+    
+            obj_lastVertexNumber += num_vertices_added;
+            obj_lastVtextureNumber += num_vertices_added;  
+          }
+          
+          if (target_window == TypeWindow.WIN3D) {
   
-          float t = PI + WIN3D.RZ_Coordinate * PI / 180.0;
-          if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
-  
-  
-          this.Vertices[f * 4 + 0][0] = (x - r * cos(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 0][1] = (y - r * sin(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
-  
-          this.Vertices[f * 4 + 1][0] = (x + r * cos(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 1][1] = (y + r * sin(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
-  
-          this.Vertices[f * 4 + 2][0] = (x + r * cos(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 2][1] = (y + r * sin(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 2][2] = (z + 2 * r) / OBJECTS_scale;
-  
-          this.Vertices[f * 4 + 3][0] = (x - r * cos(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 3][1] = (y - r * sin(t)) / OBJECTS_scale;
-          this.Vertices[f * 4 + 3][2] = (z + 2 * r) / OBJECTS_scale;
-  
-          this.Faces[f][0] = f * 4 + 0;
-          this.Faces[f][1] = f * 4 + 1;
-          this.Faces[f][2] = f * 4 + 2;
-          this.Faces[f][3] = f * 4 + 3;
+            this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+    
+            // ----------------
+            x *= OBJECTS_scale;
+            y *= OBJECTS_scale;
+            z *= OBJECTS_scale;
+            r *= OBJECTS_scale;
+            // ----------------        
+    
+            float t = PI + WIN3D.RZ_Coordinate * PI / 180.0;
+            if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
+    
+    
+            this.Vertices[f * 4 + 0][0] = (x - r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
+    
+            this.Vertices[f * 4 + 1][0] = (x + r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
+    
+            this.Vertices[f * 4 + 2][0] = (x + r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][2] = (z + 2 * r) / OBJECTS_scale;
+    
+            this.Vertices[f * 4 + 3][0] = (x - r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][2] = (z + 2 * r) / OBJECTS_scale;
+    
+            this.Faces[f][0] = f * 4 + 0;
+            this.Faces[f][1] = f * 4 + 1;
+            this.Faces[f][2] = f * 4 + 2;
+            this.Faces[f][3] = f * 4 + 3;
+          }
   
         }
       }
