@@ -811,7 +811,7 @@ class solarchvision_LAYER {
   
   public void to_XML (XML xml) {
     
-    println("Saving:" + this.CLASS_STAMP + ":" + this.name);
+    println("Saving:" + this.CLASS_STAMP + "_" + nf(this.id, 0));
     
     XML parent = xml.addChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
     
@@ -819,8 +819,8 @@ class solarchvision_LAYER {
     
     parent.setString("unit", this.unit);
     parent.setString("name", this.name);
-    parent.setString("description_FR", this.descriptions[Language_EN]);
-    parent.setString("description_EN", this.descriptions[Language_FR]);
+    parent.setString("description_EN", this.descriptions[Language_EN]);
+    parent.setString("description_FR", this.descriptions[Language_FR]);
     
     parent.setFloat("V_scale", this.V_scale);
     parent.setFloat("V_offset", this.V_offset);
@@ -830,7 +830,7 @@ class solarchvision_LAYER {
   
   public void from_XML (XML xml) {
     
-    println("Loading:" + this.CLASS_STAMP + ":" + this.name);
+    println("Loading:" + this.CLASS_STAMP + "_" + nf(this.id, 0));
   
     XML parent = xml.getChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
 
@@ -5634,16 +5634,16 @@ class solarchvision_STUDY {
   
   
   
-  int isInHourlyRange (float i) {
-    int q = -1;
-    if (i_Start <= i_End) {
-      q = 0;
-      if ((i_Start <= i) && (i <= (i_End + 24) % 24)) q = 1;
+  boolean isInHourlyRange (float i) {
+    boolean result = true;
+    if (this.i_Start <= this.i_End) {
+      result = false;
+      if ((this.i_Start <= i) && (i <= (this.i_End + 24) % 24)) result = true;
     } else {
-      q = 1;
-      if ((i_Start > i) && (i > (i_End + 24) % 24)) q = 0;
+      result = true;
+      if ((this.i_Start > i) && (i > (this.i_End + 24) % 24)) result = false;
     }
-    return q;
+    return result;
   }  
   
   
@@ -7552,7 +7552,9 @@ class solarchvision_STUDY {
     println("Saving:" + this.CLASS_STAMP);
     
     XML parent = xml.addChild(this.CLASS_STAMP);
-    
+
+    parent.setInt("i_Start", this.i_Start);
+    parent.setInt("i_End", this.i_End);    
     parent.setInt("j_Start", this.j_Start);
     parent.setInt("j_End", this.j_End);
     parent.setFloat("perDays", this.perDays);
@@ -7610,7 +7612,7 @@ class solarchvision_STUDY {
     
     this.i_Start = parent.getInt("i_Start");
     this.i_End = parent.getInt("i_End");
-    //this.j_Start = parent.getInt("j_Start");
+    this.j_Start = parent.getInt("j_Start");
     this.j_End = parent.getInt("j_End");
     this.perDays = parent.getFloat("perDays");
     this.joinDays = parent.getInt("joinDays");
@@ -12531,7 +12533,7 @@ class solarchvision_SolarImpacts {
               int _valuesNUM = 0;  
   
               for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
-                if (STUDY.isInHourlyRange(i) == 1) {
+                if (STUDY.isInHourlyRange(i)) {
   
                   float HOUR_ANGLE = i; 
                   float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
@@ -19772,7 +19774,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {    
         for (int i = 0; i < 24; i++) {
-          if (STUDY.isInHourlyRange(i) == 1) {
+          if (STUDY.isInHourlyRange(i)) {
 
             for (int k = 0; k < count_k; k++) {
 
@@ -19885,7 +19887,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     for (int j = STUDY.j_Start; j < STUDY.j_End; j++) { 
       for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {    
         for (int i = 0; i < 24; i++) {
-          if (STUDY.isInHourlyRange(i) == 1) {
+          if (STUDY.isInHourlyRange(i)) {
 
             for (int k = 0; k < count_k; k++) {
 
@@ -20397,7 +20399,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
                 for (int i = 0; i < 24; i++) {
-                  if (STUDY.isInHourlyRange(i) == 1) {              
+                  if (STUDY.isInHourlyRange(i)) {              
                     float HOUR_ANGLE = i; 
                     float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
@@ -20806,7 +20808,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             int _valuesNUM = 0; 
 
             for (int i = 0; i < 24; i++) {
-              if (STUDY.isInHourlyRange(i) == 1) {
+              if (STUDY.isInHourlyRange(i)) {
                 if ((i > _sunrise) && (i < _sunset)) {
 
                   float HOUR_ANGLE = i; 
@@ -24032,7 +24034,7 @@ class solarchvision_Sun3D {
   void drawPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
   
     if (this.displayPath) {
-  
+      
       float keep_STUDY_perDays = STUDY.perDays;
       int keep_STUDY_joinDays = STUDY.joinDays;
       if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
@@ -24132,8 +24134,8 @@ class solarchvision_Sun3D {
               int j_ADD = nk % STUDY.joinDays; 
   
               for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
-                if (STUDY.isInHourlyRange(i) == 1) {
-  
+                if (STUDY.isInHourlyRange(i)) {
+
                   float HOUR_ANGLE = i; 
                   float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
   
@@ -24572,7 +24574,7 @@ class solarchvision_Sun3D {
           float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
   
           for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {  
-            if (STUDY.isInHourlyRange(i) == 1) {
+            if (STUDY.isInHourlyRange(i)) {
               if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
   
                 if (target_window == TypeWindow.OBJ) {
@@ -39355,7 +39357,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
                 for (int i = 0; i < 24; i++) {
   
-                  if (STUDY.isInHourlyRange(i) == 1) {
+                  if (STUDY.isInHourlyRange(i)) {
   
                     float HOUR_ANGLE = i; 
                     float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
@@ -40512,7 +40514,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             int _valuesNUM = 0; 
 
             for (int i = 0; i < 24; i++) {
-              if (STUDY.isInHourlyRange(i) == 1) {
+              if (STUDY.isInHourlyRange(i)) {
 
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
