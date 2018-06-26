@@ -2525,131 +2525,8 @@ class solarchvision_WIN3D {
   
       allWindFlows.draw(TypeWindow.WIN3D);
       
-      
-  
-  
-      this.graphics.sphereDetail(6, 4);
-  
-      for (int n = 0; n < AERIAL_num; n++) {
-  
-        if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
-  
-          float _tgl = AERIAL_Locations[n][2];
-          float _lat = AERIAL_Locations[n][1];
-          float _lon = AERIAL_Locations[n][0]; 
-          if (_lon > 180) _lon -= 360; // << important!
-  
-          double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
-          double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
-  
-          float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
-          float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
-          float z = _tgl - HeightAboveGround;
-  
-          if (AERIAL_graphOption == 0) {
-            //-----------------------------
-            int PAL_TYPE = 6; //12; 
-            int PAL_DIR = -1;
-            float PAL_Multiplier = 1.0 / 30.0;
-            //-----------------------------
-  
-            for (int o = 0; o < GRIB2_maxScenarios; o++) {
-  
-              float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
-  
-              if (is_undefined_FLOAT(_val) == false) {
-  
-                float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-                if (PAL_DIR == -1) _u = 1 - _u;
-                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-                float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
-  
-                this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-                this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
-                //this.graphics.noFill();
-  
-                this.graphics.strokeWeight(0); // 2; <<<<<<<<<
-  
-                float R = 5;
-                /*         
-                 this.graphics.beginShape();
-                 for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
-                 this.graphics.vertex((x + R * cos_ang(teta)) * OBJECTS_scale * this.scale, (y + R * sin_ang(teta)) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-                 }
-                 this.graphics.endShape(CLOSE);
-                 */
-                this.graphics.pushMatrix();
-                this.graphics.translate(x * OBJECTS_scale * this.scale, y * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-                this.graphics.sphere(R);
-                this.graphics.popMatrix();
-              }
-            }
-          }
-  
-          if (AERIAL_graphOption == 1) {
-  
-            //-----------------------------
-            int PAL_TYPE = 1;//12; 
-            int PAL_DIR = 1;//-1;
-            float PAL_Multiplier = 0.1;//1.0 / 30.0;
-            //-----------------------------
-  
-            for (int o = 0; o < GRIB2_maxScenarios; o++) {
-  
-              //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
-              float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
-  
-              if (is_undefined_FLOAT(_val) == false) {
-  
-                float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir.id][n][o];
-                float D_teta = 15; 
-                float R = 5.0 * AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
-  
-                float R_in = 0.0 * R; 
-                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
-  
-                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
-  
-                //float ox = -0.5 * (R * cos_ang(90 - teta));
-                //float oy = -0.5 * (R * -sin_ang(90 - teta));
-                //float ox = -1 * (R * cos_ang(90 - teta));
-                //float oy = -1 * (R * -sin_ang(90 - teta));
-                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
-  
-                float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-                if (PAL_DIR == -1) _u = 1 - _u;
-                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-                float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
-  
-                this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-                //this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
-                this.graphics.noFill();
-  
-                this.graphics.strokeWeight(2); // 0; <<<<<<<<<
-  
-                this.graphics.beginShape();
-                this.graphics.vertex((x + x1 + ox) * OBJECTS_scale * this.scale, (y + y1 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-                this.graphics.vertex((x + x2 + ox) * OBJECTS_scale * this.scale, (y + y2 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-                this.graphics.vertex((x + x3 + ox) * OBJECTS_scale * this.scale, (y + y3 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-                this.graphics.vertex((x + x4 + ox) * OBJECTS_scale * this.scale, (y + y4 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-                this.graphics.endShape(CLOSE);
-              }
-            }
-          }
-        }
-      }   
-  
+      WIN3D.draw_AERIAL();
+
       this.graphics.hint(DISABLE_DEPTH_TEST);
   
       SOLARCHVISION_draw_referencePivot();
@@ -2690,6 +2567,132 @@ class solarchvision_WIN3D {
       }
     }
   }
+  
+  
+  
+
+  void draw_AERIAL () {
+    this.graphics.sphereDetail(6, 4);
+
+    if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
+      for (int n = 0; n < AERIAL_num; n++) {
+
+        float _tgl = AERIAL_Locations[n][2];
+        float _lat = AERIAL_Locations[n][1];
+        float _lon = AERIAL_Locations[n][0]; 
+        if (_lon > 180) _lon -= 360; // << important!
+
+        double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
+        double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
+
+        float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+        float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+        float z = _tgl - HeightAboveGround;
+
+        if (AERIAL_graphOption == 0) {
+          //-----------------------------
+          int PAL_TYPE = 6; //12; 
+          int PAL_DIR = -1;
+          float PAL_Multiplier = 1.0 / 30.0;
+          //-----------------------------
+
+          for (int o = 0; o < GRIB2_maxScenarios; o++) {
+
+            float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
+
+            if (is_undefined_FLOAT(_val) == false) {
+
+              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+              if (PAL_DIR == -1) _u = 1 - _u;
+              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_DIR == 2) _u =  0.5 * _u;
+
+              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
+
+              this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+              this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
+              //this.graphics.noFill();
+
+              this.graphics.strokeWeight(0); // 2; <<<<<<<<<
+
+              float R = 5;
+              /*         
+               this.graphics.beginShape();
+               for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
+               this.graphics.vertex((x + R * cos_ang(teta)) * OBJECTS_scale * this.scale, (y + R * sin_ang(teta)) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+               }
+               this.graphics.endShape(CLOSE);
+               */
+              this.graphics.pushMatrix();
+              this.graphics.translate(x * OBJECTS_scale * this.scale, y * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+              this.graphics.sphere(R);
+              this.graphics.popMatrix();
+            }
+          }
+        }
+
+        if (AERIAL_graphOption == 1) {
+
+          //-----------------------------
+          int PAL_TYPE = 1;//12; 
+          int PAL_DIR = 1;//-1;
+          float PAL_Multiplier = 0.1;//1.0 / 30.0;
+          //-----------------------------
+
+          for (int o = 0; o < GRIB2_maxScenarios; o++) {
+
+            //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
+            float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
+
+            if (is_undefined_FLOAT(_val) == false) {
+
+              float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir.id][n][o];
+              float D_teta = 15; 
+              float R = 5.0 * AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
+
+              float R_in = 0.0 * R; 
+              float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+              float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+              float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+              float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+
+              float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+              float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+              float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+              float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+
+              //float ox = -0.5 * (R * cos_ang(90 - teta));
+              //float oy = -0.5 * (R * -sin_ang(90 - teta));
+              //float ox = -1 * (R * cos_ang(90 - teta));
+              //float oy = -1 * (R * -sin_ang(90 - teta));
+              float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+              float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+
+              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+              if (PAL_DIR == -1) _u = 1 - _u;
+              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_DIR == 2) _u =  0.5 * _u;
+
+              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
+
+              this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+              //this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
+              this.graphics.noFill();
+
+              this.graphics.strokeWeight(2); // 0; <<<<<<<<<
+
+              this.graphics.beginShape();
+              this.graphics.vertex((x + x1 + ox) * OBJECTS_scale * this.scale, (y + y1 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+              this.graphics.vertex((x + x2 + ox) * OBJECTS_scale * this.scale, (y + y2 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+              this.graphics.vertex((x + x3 + ox) * OBJECTS_scale * this.scale, (y + y3 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+              this.graphics.vertex((x + x4 + ox) * OBJECTS_scale * this.scale, (y + y4 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
+              this.graphics.endShape(CLOSE);
+            }
+          }
+        }
+      }
+    }   
+  }  
   
   
 
