@@ -650,20 +650,20 @@ String[] ENSEMBLE_FORECAST_Files;
 
 String Wgrib2TempFolder;
 
-String BackgroundFolder;
-String CoordinateFolder;
+String Folder_Backgrounds;
+String Folder_Coordinates;
 
 
-String LandFolder;
-String allModel2DsFolder_PEOPLE;
-String allModel2DsFolder_TREES;
-String ExportFolder;
-String ProjectFolder;
-String graphicsFolder;
-String allModel3DsFolder;
-String ViewsFromSkyFolder;
-String ScreenShotFolder;
-String ShadingFolder;
+String Folder_Land;
+String Folder_People;
+String Folder_Trees;
+String Folder_Export;
+String Folder_Project;
+String Folder_Graphics;
+String Folder_Model3Ds;
+String Folder_ViewsFromSky;
+String Folder_ScreenShots;
+String Folder_Shadings;
 
 
 
@@ -675,15 +675,15 @@ String export_MapsSubfolder = "maps/";
 
 void SOLARCHVISION_update_folders () {
   
-  ProjectFolder = BaseFolder + "/Projects/Roodbar";    
+  Folder_Project = BaseFolder + "/Projects/Roodbar";    
   
-  Wgrib2TempFolder = ProjectFolder + "/Temp";
+  Wgrib2TempFolder = Folder_Project + "/Temp";
 
-  GEOMET_directory = ProjectFolder + "/Data/GEOMET" + "/" + RunStamp;
-  GRIB2_directory = ProjectFolder + "/Data/GRIB2";
+  GEOMET_directory = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
+  GRIB2_directory = Folder_Project + "/Data/GRIB2";
   
-  ENSEMBLE_FORECAST_directory = ProjectFolder + "/Data/FORECAST_NAEFS";
-  ENSEMBLE_OBSERVED_directory = ProjectFolder + "/Data/OBSERVATION_SWOB";
+  ENSEMBLE_FORECAST_directory = Folder_Project + "/Data/FORECAST_NAEFS";
+  ENSEMBLE_OBSERVED_directory = Folder_Project + "/Data/OBSERVATION_SWOB";
 
   CLIMATE_CLMREC_directory = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
   CLIMATE_TMYEPW_directory = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
@@ -696,24 +696,24 @@ void SOLARCHVISION_update_folders () {
   ENSEMBLE_OBSERVED_Files = funcs.getfiles(ENSEMBLE_OBSERVED_directory);
   ENSEMBLE_FORECAST_Files = funcs.getfiles(ENSEMBLE_FORECAST_directory);  
 
-  BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  CoordinateFolder      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
+  Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
   
-  allModel2DsFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
-  allModel2DsFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  Folder_People = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Folder_Trees  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
   
-  ShadingFolder = ProjectFolder + "/ShadingAnalysis";
+  Folder_Shadings = Folder_Project + "/ShadingAnalysis";
   
-  LandFolder            = ProjectFolder + "/Land/USE";
+  Folder_Land         = Folder_Project + "/Land/USE";
   
-  ExportFolder          = ProjectFolder + "/Export";
-  graphicsFolder        = ExportFolder + "/graphics" + "/" + RunStamp;
-  allModel3DsFolder     = ExportFolder + "/allModel3Ds" + "/" + RunStamp;
-  ViewsFromSkyFolder    = ExportFolder + "/ViewsFromSky" + "/" + RunStamp;
-  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + RunStamp;
+  Folder_Export       = Folder_Project + "/Export";
+  Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
+  Folder_Model3Ds      = Folder_Export + "/allModel3Ds" + "/" + RunStamp;
+  Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
+  Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
 
-  String[] filenames = funcs.getfiles(ScreenShotFolder);
+  String[] filenames = funcs.getfiles(Folder_ScreenShots);
   if (filenames != null) SavedScreenShots = filenames.length;
   
 }
@@ -1429,7 +1429,7 @@ solarchvision_STATION[] TMYEPW_Coordinates;
 
 void inputCoordinates_TMYEPW () {
 
-  String[] FileALL = loadStrings(CoordinateFolder + "/EPW_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/EPW_UTF8.txt");
 
   String lineSTR;
 
@@ -1462,7 +1462,7 @@ solarchvision_STATION[] CWEEDS_Coordinates;
 
 void inputCoordinates_CWEEDS () {
 
-  String[] FileALL = loadStrings(CoordinateFolder + "/CWEEDS_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/CWEEDS_UTF8.txt");
 
   String lineSTR;
 
@@ -1500,7 +1500,7 @@ solarchvision_STATION[] CLMREC_Coordinates;
 
 void inputCoordinates_CLMREC () {
 
-  String[] FileALL = loadStrings(CoordinateFolder + "/CLMREC_UTF8_EN.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/CLMREC_UTF8_EN.txt");
 
   String lineSTR;
 
@@ -1536,7 +1536,7 @@ solarchvision_STATION[] SWOB_Coordinates;
 
 void inputCoordinates_SWOB () {
 
-  String[] FileALL = loadStrings(CoordinateFolder + "/SWOB_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/SWOB_UTF8.txt");
 
   String lineSTR;
 
@@ -1582,7 +1582,7 @@ solarchvision_STATION[] NAEFS_Coordinates;
 
 void inputCoordinates_NAEFS () {
 
-  String[] FileALL = loadStrings(CoordinateFolder + "/NAEFS_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/NAEFS_UTF8.txt");
 
   String lineSTR;
 
@@ -6788,7 +6788,7 @@ class solarchvision_STUDY {
         _FilenamesAdd = ("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
       }
       if ((this.export_info_node) && (this.displayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
         FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
   
         FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
@@ -6798,7 +6798,7 @@ class solarchvision_STUDY {
         FILE_outputRaw[(j - this.j_Start)].println("");
       }
       if ((this.export_info_norm) && (this.displayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
         FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
         FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
         for (int l = 0; l < 9; l++) {
@@ -6807,7 +6807,7 @@ class solarchvision_STUDY {
         FILE_outputNorms[(j - this.j_Start)].println("");
       }
       if ((this.export_info_prob) && (this.displayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)] = createWriter(ExportFolder + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
         FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
   
         FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
@@ -8867,7 +8867,7 @@ int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 void SOLARCHVISION_RecordFrame () {
 
-  saveFrame(ScreenShotFolder + "/" + CreateStamp(1) + "Screen.jpg");
+  saveFrame(Folder_ScreenShots + "/" + CreateStamp(1) + "Screen.jpg");
 }
 
 String CreateStamp (int _add) {
@@ -8885,7 +8885,7 @@ String CreateStamp (int _add) {
 
 String MAKE_Filename (String beginName) {
 
-  String My_Filenames = ScreenShotFolder + "/" + beginName;  
+  String My_Filenames = Folder_ScreenShots + "/" + beginName;  
 
   return My_Filenames;
 }
@@ -8903,12 +8903,12 @@ String MAKE_MainName () {
 
 String getFilename_SolidImpact () {
 
-  return graphicsFolder + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpacts" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+  return Folder_Graphics + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpacts" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
 }
 
 String getFilename_SolarImpact () {
 
-  return graphicsFolder + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpacts" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.rotation, 1)), 3);
+  return Folder_Graphics + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpacts" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.rotation, 1)), 3);
 }
 
 
@@ -9696,7 +9696,7 @@ class solarchvision_Faces {
     
             the_filename = "shadePallet.bmp";
     
-            TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+            TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
@@ -9996,7 +9996,7 @@ class solarchvision_Faces {
             
             the_filename = "shadePallet.bmp";
             
-            TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+            TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
             
             htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
             htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ export_MapsSubfolder + the_filename + "'><ImageTexture/>");
@@ -12588,7 +12588,7 @@ class solarchvision_SolarImpacts {
                             String[] STR_SHD = {
                               "F", "T"
                             };
-                            String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
+                            String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
   
                             if (RAD_TYPE == 0) {
                               File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
@@ -17958,7 +17958,7 @@ void draw () {
     float cr;
 
     cr = SOLARCHVISION_W_Pixel / 4.0;
-    PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
+    PImage SOLARCHVISION_logo = loadImage(Folder_Backgrounds + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MessageSize - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
     imageMode(CORNER);
@@ -21093,7 +21093,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY.graphics.beginDraw();
 
           
-          Image_RGBA.save(ViewsFromSkyFolder + "/" + "Direct" + nf(j,2) + nf(i,2) + ".png");
+          Image_RGBA.save(Folder_ViewsFromSky + "/" + "Direct" + nf(j,2) + nf(i,2) + ".png");
 
 
           STUDY.graphics.imageMode(CENTER); 
@@ -21844,7 +21844,7 @@ void SOLARCHVISION_export_objects_SCR () {
   
   String fileBasename = ProjectName;
 
-  String scrFilename = allModel3DsFolder + "/" + fileBasename + ".scr";  
+  String scrFilename = Folder_Model3Ds + "/" + fileBasename + ".scr";  
 
   PrintWriter scrOutput = createWriter(scrFilename);
 
@@ -21908,7 +21908,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
   String fileBasename = ProjectName;
 
-  String radFilename = allModel3DsFolder + "/" + fileBasename + ".rad";  
+  String radFilename = Folder_Model3Ds + "/" + fileBasename + ".rad";  
 
   radOutput = createWriter(radFilename);
 
@@ -22002,7 +22002,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
   String fileBasename = ProjectName;
 
-  String htmlFilename = allModel3DsFolder + "/" + fileBasename + ".html";  
+  String htmlFilename = Folder_Model3Ds + "/" + fileBasename + ".html";  
 
   htmlOutput = createWriter(htmlFilename);
 
@@ -22244,8 +22244,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   String fileBasename = ProjectName + suffix;
 
-  String objFilename = allModel3DsFolder + "/" + fileBasename + ".obj";
-  String mtlFilename = allModel3DsFolder + "/" + fileBasename + ".mtl";
+  String objFilename = Folder_Model3Ds + "/" + fileBasename + ".obj";
+  String mtlFilename = Folder_Model3Ds + "/" + fileBasename + ".mtl";
 
 
   if (User3D.export_MaterialLibrary) {
@@ -23189,7 +23189,7 @@ class solarchvision_Tropo3D {
       
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
       
-                String new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+                String new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
       
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -23588,7 +23588,7 @@ class solarchvision_Sky3D {
     
             the_filename = "skyPatternPallet.bmp";
     
-            TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+            TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
@@ -24331,7 +24331,7 @@ class solarchvision_Sun3D {
   
         the_filename = "sunPatternPallet.bmp";
   
-        TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+        TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
   
         println("Saving texture:", TEXTURE_path);
   
@@ -25271,7 +25271,7 @@ class solarchvision_Earth3D {
     
             String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-            String new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+            String new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
     
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -25596,7 +25596,7 @@ class solarchvision_Land3D {
   
       try {     
     
-        String[] filenames = sort(funcs.getfiles(LandFolder)); // important to sort
+        String[] filenames = sort(funcs.getfiles(Folder_Land)); // important to sort
     
         if (filenames != null) {
           for (int i = 0; i < filenames.length; i++) {
@@ -25613,7 +25613,7 @@ class solarchvision_Land3D {
     
                 if (Parts.length > 1) {
     
-                  String dir = LandFolder + "/" + filenames[i];
+                  String dir = Folder_Land + "/" + filenames[i];
     
                   {
                     String[] new_item = {
@@ -25709,7 +25709,7 @@ class solarchvision_Land3D {
         
         for (int i = 0; i < this.num_rows; i++) {
   
-          XML FileALL = loadXML(LandFolder + "/" + nf(i, 0) + ".xml");
+          XML FileALL = loadXML(Folder_Land + "/" + nf(i, 0) + ".xml");
   
           XML[] children0 = FileALL.getChildren("result");
   
@@ -25817,7 +25817,7 @@ class solarchvision_Land3D {
   
     for (int i = 0; i < this.num_rows; i++) {
       
-      String the_target = LandFolder + "/" + nf(i, 0) + ".xml";
+      String the_target = Folder_Land + "/" + nf(i, 0) + ".xml";
       
       File dir = new File(the_target);
       if (!dir.isFile()) {
@@ -25882,7 +25882,7 @@ class solarchvision_Land3D {
     
     for (int i = 0; i <= 15; i++) {
   
-      String the_target = LandFolder + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
+      String the_target = Folder_Land + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
       
       File dir = new File(the_target);
       if (!dir.isFile()) {    
@@ -25973,7 +25973,7 @@ class solarchvision_Land3D {
     
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                String new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+                String new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -26771,8 +26771,8 @@ class solarchvision_Model2Ds {
     this.ImagePath = new String [1];
     this.ImagePath[0] = "";
   
-    this.Filenames_PEOPLE = sort(funcs.getfiles(allModel2DsFolder_PEOPLE));
-    this.Filenames_TREES = sort(funcs.getfiles(allModel2DsFolder_TREES));  
+    this.Filenames_PEOPLE = sort(funcs.getfiles(Folder_People));
+    this.Filenames_TREES = sort(funcs.getfiles(Folder_Trees));  
   
     this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
     this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
@@ -26789,9 +26789,9 @@ class solarchvision_Model2Ds {
     for (int i = 1; i < n; i++) { // leaving [0] null  
   
       if (i <= this.num_files_PEOPLE) {
-        this.ImagePath[i] = allModel2DsFolder_PEOPLE + "/" + this.ImagePath[i];
+        this.ImagePath[i] = Folder_People + "/" + this.ImagePath[i];
       } else {
-        this.ImagePath[i] = allModel2DsFolder_TREES + "/" + this.ImagePath[i];
+        this.ImagePath[i] = Folder_Trees + "/" + this.ImagePath[i];
       }
     }
   
@@ -26861,8 +26861,8 @@ class solarchvision_Model2Ds {
     
                 the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                new_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
-                opacity_Texture_path = allModel3DsFolder + "/" + export_MapsSubfolder + "opacity_" + the_filename;
+                new_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
+                opacity_Texture_path = Folder_Model3Ds + "/" + export_MapsSubfolder + "opacity_" + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -38139,7 +38139,7 @@ class solarchvision_Sections {
           
           if (User3D.export_MaterialLibrary) {
   
-            String TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+            String TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
   
             if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
   
@@ -38538,7 +38538,7 @@ class solarchvision_Sections {
   
         String the_filename = "SolidImpact_" + nf(i, 0) + ".bmp";
   
-        String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
+        String TEXTURE_path = Folder_Project + "/Textures/" + the_filename;
   
         println("Saving texture:", TEXTURE_path);
         this.SolidImpact[i].save(TEXTURE_path);
@@ -38571,7 +38571,7 @@ class solarchvision_Sections {
   
             String the_filename = "allSolarImpacts." + nf((i * nj + j) * nk + k, 0) + ".bmp";
     
-            String TEXTURE_path = ProjectFolder + "/Textures/" + the_filename;
+            String TEXTURE_path = Folder_Project + "/Textures/" + the_filename;
     
             println("Saving texture:", TEXTURE_path);
             this.SolarImpact[i][j][k].save(TEXTURE_path);
@@ -38850,7 +38850,7 @@ class solarchvision_WindFlow {
     
           the_filename = "WindFlowPallet.bmp";
     
-          String TEXTURE_path = allModel3DsFolder + "/" + export_MapsSubfolder + the_filename;
+          String TEXTURE_path = Folder_Model3Ds + "/" + export_MapsSubfolder + the_filename;
     
           println("Saving texture:", TEXTURE_path);
     
@@ -41769,10 +41769,10 @@ void mouseDragged () {
 void SOLARCHVISION_update_project_info (File selectedFile) {
 
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", "").replace(".Xml", ""); // should work most of the times!
-  ProjectFolder =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
+  Folder_Project =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
 
   println("New ProjectName:", ProjectName);
-  println("New ProjectFolder:", ProjectFolder);
+  println("New Folder_Project:", Folder_Project);
 }
 
 void SOLARCHVISION_fileSelected_New (File selectedFile) {
@@ -41931,7 +41931,7 @@ void mouseClicked () {
             }  
 
             if (menu_option.equals("Save")) { 
-              SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml");
+              SOLARCHVISION_save_project(Folder_Project + "/" + ProjectName + ".xml");
             }
 
             if (menu_option.equals("Hold")) {
@@ -47092,7 +47092,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           String[] STR_SHD = {
             "F", "T"
           };
-          String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
+          String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
 
@@ -47687,7 +47687,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
       String[] STR_SHD = {
         "F", "T"
       };
-      String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
+      String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
       File_Name += "DIF_" + STR_SHD[SHD];
 
@@ -53269,12 +53269,12 @@ void SOLARCHVISION_hold_project () {
 
   HoldStamp = nf(millis(), 0);
 
-  SOLARCHVISION_save_project(ProjectFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");  
+  SOLARCHVISION_save_project(Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");  
 }
 
 void SOLARCHVISION_fetch_project () {
   try {
-    SOLARCHVISION_load_project(ProjectFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
+    SOLARCHVISION_load_project(Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
   }
   catch (Exception e) {
     println("Cannot find hold file!");
@@ -53592,7 +53592,7 @@ void SOLARCHVISION_preBakeViewport () {
         String[] STR_SHD = {
           "F", "T"
         };
-        String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
+        String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
   
         File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
   
@@ -53614,7 +53614,7 @@ void SOLARCHVISION_preBakeViewport () {
     String[] STR_SHD = {
       "F", "T"
     };
-    String File_Name = ShadingFolder + "/" + NearLatitude_Stamp() + "/" + SceneName;
+    String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
     File_Name += "DIF_" + STR_SHD[SHD];
     
@@ -53869,7 +53869,7 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   Image_RGBA.updatePixels();
  
-  String myFile = ScreenShotFolder + "/" + CreateStamp(1) + "Render.png";
+  String myFile = Folder_ScreenShots + "/" + CreateStamp(1) + "Render.png";
   Image_RGBA.save(myFile);
   SOLARCHVISION_explore_output(myFile);
   println("File created:" + myFile);
@@ -55032,7 +55032,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }
 
   else if (Command_CAPITAL.equals("SAVE")) {
-    SOLARCHVISION_save_project(ProjectFolder + "/" + ProjectName + ".xml");
+    SOLARCHVISION_save_project(Folder_Project + "/" + ProjectName + ".xml");
   }    
 
   else if (Command_CAPITAL.equals("HOLD")) {
