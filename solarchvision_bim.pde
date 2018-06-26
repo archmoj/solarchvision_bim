@@ -2510,7 +2510,7 @@ class solarchvision_WIN3D {
   
       allModel1Ds.draw();
   
-      WindRose.draw();
+      allWindRoses.draw();
   
       allSections.draw(TypeWindow.WIN3D);
   
@@ -5074,8 +5074,8 @@ class solarchvision_STUDY {
   
           rebuild_VertexSolar_array = true;
           rebuild_GlobalSolar_array = true;
-          rebuild_SolarImpactImage_array = true;
-          WindRose.rebuild_Image_array = true;
+          allSolarImpacts.rebuild_Image_array = true;
+          allWindRoses.rebuild_Image_array = true;
           allSections.resize_solarImpact_array();
   
           UI_BAR_d_update = true;
@@ -5099,8 +5099,8 @@ class solarchvision_STUDY {
   
           rebuild_VertexSolar_array = true; 
           rebuild_GlobalSolar_array = true;
-          rebuild_SolarImpactImage_array = true;
-          WindRose.rebuild_Image_array = true;   
+          allSolarImpacts.rebuild_Image_array = true;
+          allWindRoses.rebuild_Image_array = true;   
           allSections.resize_solarImpact_array();
   
           UI_BAR_d_update = true; 
@@ -7398,10 +7398,10 @@ class solarchvision_ROLLOUT {
   
   
   
-        //WindRose.displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose.displayImage", WindRose.displayImage, 0, 1, 1), 1));
+        //allWindRoses.displayImage = boolean(roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.displayImage", allWindRoses.displayImage, 0, 1, 1), 1));
   
-        WindRose.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose.scale", WindRose.scale, 50, 3200, -2);
-        WindRose.RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WindRose.resolution", WindRose.RES, 200, 600, 100));
+        allWindRoses.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.scale", allWindRoses.scale, 50, 3200, -2);
+        allWindRoses.RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.resolution", allWindRoses.RES, 200, 600, 100));
   
   
   
@@ -7807,7 +7807,7 @@ float[][][] VertexSolar_amounts;
 
 boolean rebuild_VertexSolar_array = true;
 boolean rebuild_GlobalSolar_array = true;
-boolean rebuild_SolarImpactImage_array = true;
+
 
 
 
@@ -8140,12 +8140,12 @@ String MAKE_MainName () {
 
 String getFilename_SolidImpact () {
 
-  return graphicsFolder + "/" + nf(TIME_Year, 2) + "-" + nf(TIME_Month, 2) + "-" + nf(TIME_Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpact" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+  return graphicsFolder + "/" + nf(TIME_Year, 2) + "-" + nf(TIME_Month, 2) + "-" + nf(TIME_Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpacts" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
 }
 
 String getFilename_SolarImpact () {
 
-  return graphicsFolder + "/" + nf(TIME_Year, 2) + "-" + nf(TIME_Month, 2) + "-" + nf(TIME_Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpact" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(roundTo(allSolarImpacts.rotation, 1)), 3);
+  return graphicsFolder + "/" + nf(TIME_Year, 2) + "-" + nf(TIME_Month, 2) + "-" + nf(TIME_Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpacts" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(roundTo(allSolarImpacts.rotation, 1)), 3);
 }
 
 
@@ -11614,6 +11614,8 @@ class solarchvision_SolarImpacts {
   
   private final static String CLASS_STAMP = "SolarImpacts";  
   
+  boolean rebuild_Image_array = true;
+  
   PImage[][] Image;
   
   boolean displayImage = false;
@@ -11645,13 +11647,13 @@ class solarchvision_SolarImpacts {
       }  
     }
   
-    rebuild_SolarImpactImage_array = false;
+    allSolarImpacts.rebuild_Image_array = false;
   }
 
   
   void calculate_Impact_CurrentPreBaked () {
   
-    if (rebuild_SolarImpactImage_array) {
+    if (allSolarImpacts.rebuild_Image_array) {
       this.resize_Image_array();
     }
     
@@ -15503,8 +15505,8 @@ void SOLARCHVISION_update_station (int Step) {
 
     rebuild_VertexSolar_array = true;
     rebuild_GlobalSolar_array = true;
-    rebuild_SolarImpactImage_array = true;
-    WindRose.rebuild_Image_array = true;    
+    allSolarImpacts.rebuild_Image_array = true;
+    allWindRoses.rebuild_Image_array = true;    
 
     WORLD.update = true;
     WIN3D.update = true; 
@@ -15934,8 +15936,8 @@ void draw () {
 
           rebuild_VertexSolar_array = true;
           rebuild_GlobalSolar_array = true;
-          rebuild_SolarImpactImage_array = true;
-          WindRose.rebuild_Image_array = true;      
+          allSolarImpacts.rebuild_Image_array = true;
+          allWindRoses.rebuild_Image_array = true;      
 
           allSections.resize_solarImpact_array();
         }
@@ -16405,10 +16407,10 @@ void SOLARCHVISION_find_which_bakings_to_regenerate () {
     rebuild_VertexSolar_array = true;
   }  
   if (allSolarImpacts.displayImage) {
-    rebuild_SolarImpactImage_array = true;
+    allSolarImpacts.rebuild_Image_array = true;
   }     
-  if (WindRose.displayImage) {
-    WindRose.rebuild_Image_array = true;
+  if (allWindRoses.displayImage) {
+    allWindRoses.rebuild_Image_array = true;
   }      
 }  
 
@@ -17733,11 +17735,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((STUDY.PlotImpacts == -2) || (STUDY.PlotImpacts == -1)) {
 
-    WindRose.resize_Image_array(); 
+    allWindRoses.resize_Image_array(); 
 
-    int RES = WindRose.RES;
+    int RES = allWindRoses.RES;
 
-    WindRose.renderedRES = RES;
+    allWindRoses.renderedRES = RES;
 
     if (STUDY.PlotImpacts == -2) Impact_TYPE = Impact_ACTIVE; 
     if (STUDY.PlotImpacts == -1) Impact_TYPE = Impact_PASSIVE;
@@ -17884,7 +17886,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
       WIND_graphics.endDraw();
-      WindRose.Image[j + 1] = WIND_graphics;
+      allWindRoses.Image[j + 1] = WIND_graphics;
     }
 
 
@@ -17997,7 +17999,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
     total_WIND_graphics.endDraw();
-    WindRose.Image[0] = total_WIND_graphics;          
+    allWindRoses.Image[0] = total_WIND_graphics;          
 
     for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
       if ((j != -1) || (STUDY.impact_summary)) {
@@ -18012,7 +18014,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY.graphics.rect((j + STUDY.rect_offset_x - 100 * STUDY.rect_scale) * sx_Plot, (-100 * STUDY.rect_scale) * sx_Plot, (200 * STUDY.rect_scale) * sx_Plot, (200 * STUDY.rect_scale) * sx_Plot);
 
         STUDY.graphics.imageMode(CENTER); 
-        STUDY.graphics.image(WindRose.Image[j + 1], (j + 100 * STUDY.rect_scale) * sx_Plot, 0, int((180 * STUDY.rect_scale) * sx_Plot), int((180 * STUDY.rect_scale) * sx_Plot));
+        STUDY.graphics.image(allWindRoses.Image[j + 1], (j + 100 * STUDY.rect_scale) * sx_Plot, 0, int((180 * STUDY.rect_scale) * sx_Plot), int((180 * STUDY.rect_scale) * sx_Plot));
       }
     }   
 
@@ -18096,7 +18098,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
 
-    if (WindRose.displayImage) WIN3D.update = true;
+    if (allWindRoses.displayImage) WIN3D.update = true;
   } 
 
 
@@ -36832,7 +36834,7 @@ class solarchvision_Sections {
     }
 
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".SolarImpact");
+      XML parent = xml.addChild(this.CLASS_STAMP + ".SolarImpacts");
       int ni = 0, nj = 0, nk = 0;
       
       ni = this.SolarImpact.length;
@@ -36921,7 +36923,7 @@ class solarchvision_Sections {
     }
   
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".SolarImpact");
+      XML parent = xml.getChild(this.CLASS_STAMP + ".SolarImpacts");
     
       int ni = parent.getInt("ni");
       int nj = parent.getInt("nj");
@@ -37087,7 +37089,7 @@ class solarchvision_WindRose {
   }   
 }
 
-solarchvision_WindRose WindRose = new solarchvision_WindRose();
+solarchvision_WindRose allWindRoses = new solarchvision_WindRose();
 
 
 
@@ -41591,84 +41593,84 @@ void mouseClicked () {
               STUDY.PlotImpacts = -2;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = true;
+              allWindRoses.displayImage = true;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Wind pattern (passive)")) {
               STUDY.PlotImpacts = -1;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = true;
+              allWindRoses.displayImage = true;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Urban solar potential (active)")) {
               STUDY.PlotImpacts = 0;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Urban solar potential (passive)")) {
               STUDY.PlotImpacts = 1;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Orientation potential (active)")) {
               STUDY.PlotImpacts = 2;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Orientation potential (passive)")) {
               STUDY.PlotImpacts = 3;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Hourly sun position (active)")) {
               STUDY.PlotImpacts = 4;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Hourly sun position (passive)")) {
               STUDY.PlotImpacts = 5;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("View from sun & sky (active)")) {
               STUDY.PlotImpacts = 6;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("View from sun & sky (passive)")) {
               STUDY.PlotImpacts = 7;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Annual cycle sun path (active)")) {
               STUDY.PlotImpacts = 8;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Annual cycle sun path (passive)")) {
               STUDY.PlotImpacts = 9;
               STUDY.plotSetup = 14; // <<<<<<<<
               STUDY.update = true;
-              WindRose.displayImage = false;
+              allWindRoses.displayImage = false;
               ROLLOUT.update = true;
             }  
 
@@ -52650,8 +52652,8 @@ void SOLARCHVISION_save_project (String myFile) {
 
     parent.setFloat("Develop_AngleInclination", Develop_AngleInclination);
     parent.setFloat("Develop_AngleOrientation", Develop_AngleOrientation);
-    parent.setInt("CurrentLayer_id", CurrentLayer_id);
     parent.setInt("DevelopLayer_id", DevelopLayer_id);
+    parent.setInt("CurrentLayer_id", CurrentLayer_id);
 
     parent.setInt("FILTER_Hourly", FILTER_Hourly);
     parent.setInt("FILTER_Daily", FILTER_Daily);
@@ -52851,10 +52853,11 @@ void SOLARCHVISION_load_project (String myFile) {
       numberOfLayers = parent.getInt("numberOfLayers");
       Develop_AngleInclination = parent.getFloat("Develop_AngleInclination");
       Develop_AngleOrientation = parent.getFloat("Develop_AngleOrientation");
+      DevelopLayer_id = parent.getInt("DevelopLayer_id");
       
       changeCurrentLayerTo(parent.getInt("CurrentLayer_id"));
       
-      DevelopLayer_id = parent.getInt("DevelopLayer_id");
+      
 
       FILTER_Hourly = parent.getInt("FILTER_Hourly");
       FILTER_Daily = parent.getInt("FILTER_Daily");
@@ -52999,8 +53002,8 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
   
-    rebuild_SolarImpactImage_array = true;
-    WindRose.rebuild_Image_array = true; 
+    allSolarImpacts.rebuild_Image_array = true;
+    allWindRoses.rebuild_Image_array = true; 
   
     //rebuild_VertexSolar_array = true;
     rebuild_GlobalSolar_array = true;
