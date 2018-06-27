@@ -18166,7 +18166,7 @@ void draw () {
     
     UI_BAR_a.update = true;
     UI_BAR_b.update = true;
-    UI_BAR_c_update = true;
+    UI_BAR_c.update = true;
     UI_BAR_d_update = true;
 
     InitializationStep = frameCount; 
@@ -18770,15 +18770,15 @@ void draw () {
         }
 
         if (UI_BAR_a.update) {
-          UI_BAR_a.drawAll();
+          UI_BAR_a.draw();
         }
 
         if (UI_BAR_b.update) {
-          UI_BAR_b.drawAll();
+          UI_BAR_b.draw();
         }
 
-        if (UI_BAR_c_update) {
-          SOLARCHVISION_draw_window_BAR_c();
+        if (UI_BAR_c.update) {
+          UI_BAR_c.draw();
         }  
 
         if (UI_BAR_d_update) {
@@ -21520,7 +21520,7 @@ void keyPressed (KeyEvent e) {
 
       if (typeUserCommand == 0) {
 
-        UI_BAR_c_update = false;
+        UI_BAR_c.update = false;
         
         STUDY.keyPressed(e);
   
@@ -21528,7 +21528,7 @@ void keyPressed (KeyEvent e) {
       }
       else {
         
-        UI_BAR_c_update = true;
+        UI_BAR_c.update = true;
         
         COMIN_keyPressed(e);
       }
@@ -21669,7 +21669,7 @@ void keyPressed (KeyEvent e) {
 
             case TAB: 
               typeUserCommand = (typeUserCommand + 1) % 2;
-              UI_BAR_c_update = true;
+              UI_BAR_c.update = true;
               break; 
           }
 
@@ -44148,7 +44148,7 @@ void mouseClicked () {
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel) == 1) {
-          UI_BAR_c_update = true;
+          UI_BAR_c.update = true;
           typeUserCommand = 1;
         }  
 
@@ -51824,58 +51824,12 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
 int typeUserCommand = 0;
 
-boolean UI_BAR_c_update = true;
+
 
 String[] allCommands = {"SOLARCHVISION Command Input:", ""};
 String[] allMessages = {"SOLARCHVISION Command Output:", ""};
 
-void SOLARCHVISION_draw_window_BAR_c () {
-  if (UI_BAR_c_update) {
-    
-    UI_BAR_c_update = false;
-    
-    int maxDisplayLines = 2;
 
-    if (typeUserCommand == 1) {
-      fill(0);
-    }
-    else {
-      fill(63);
-    }
-    noStroke();
-    rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_C_Pixel);
-
-    noStroke();
-    
-    textSize(1.5 * MessageSize);
-    
-
-    pushMatrix();
-    translate(0, 0.333 * MessageSize + SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel);
-
-    for (int q = 0; q < maxDisplayLines; q++) {
-      
-      int n = allCommands.length + q - maxDisplayLines;
-      
-      if ((0 <= n) && (n < allCommands.length)) {
-        
-        textAlign(RIGHT, CENTER);
-        fill(255,127,0);
-        text(allMessages[n], width - 0.5 * MessageSize, q * 1.5 * MessageSize);
-        
-        textAlign(LEFT, CENTER);
-        fill(255);
-        text(allCommands[n], 0.5 * MessageSize, q * 1.5 * MessageSize);
-
-      }
-    }
-    
-    popMatrix();
-
-    SOLARCHVISION_X_clicked = -1;
-    SOLARCHVISION_Y_clicked = -1;
-  }  
-}
 
 
 
@@ -54460,7 +54414,7 @@ class solarchvision_UI_BAR_a {
   }
 
   
-  void drawAll () {
+  void draw () {
     
     if (this.update) {
   
@@ -55095,7 +55049,7 @@ class solarchvision_UI_BAR_b {
   }
   
   
-  void drawAll () {
+  void draw () {
   
     if (this.update) {
   
@@ -57027,3 +56981,66 @@ class solarchvision_UI_BAR_b {
 }
 
 solarchvision_UI_BAR_b UI_BAR_b = new solarchvision_UI_BAR_b(); 
+
+
+
+
+
+
+class solarchvision_UI_BAR_c {
+  
+  private final static String CLASS_STAMP = "UI_BAR_c";
+
+  boolean update = true;
+  
+  void draw () {
+    if (this.update) {
+      
+      this.update = false;
+      
+      int maxDisplayLines = 2;
+  
+      if (typeUserCommand == 1) {
+        fill(0);
+      }
+      else {
+        fill(63);
+      }
+      noStroke();
+      rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_C_Pixel);
+  
+      noStroke();
+      
+      textSize(1.5 * MessageSize);
+      
+  
+      pushMatrix();
+      translate(0, 0.333 * MessageSize + SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel);
+  
+      for (int q = 0; q < maxDisplayLines; q++) {
+        
+        int n = allCommands.length + q - maxDisplayLines;
+        
+        if ((0 <= n) && (n < allCommands.length)) {
+          
+          textAlign(RIGHT, CENTER);
+          fill(255,127,0);
+          text(allMessages[n], width - 0.5 * MessageSize, q * 1.5 * MessageSize);
+          
+          textAlign(LEFT, CENTER);
+          fill(255);
+          text(allCommands[n], 0.5 * MessageSize, q * 1.5 * MessageSize);
+  
+        }
+      }
+      
+      popMatrix();
+  
+      SOLARCHVISION_X_clicked = -1;
+      SOLARCHVISION_Y_clicked = -1;
+    }  
+  }
+
+}
+
+solarchvision_UI_BAR_c UI_BAR_c = new solarchvision_UI_BAR_c(); 
