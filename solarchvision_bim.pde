@@ -118,7 +118,7 @@ class solarchvision_Functions {
     return(d);
   }
   
-  float[] difference (float[] a, float[] b) {
+  float[] vec_diff (float[] a, float[] b) {
   
     float[] d = new float[a.length];
     for (int i = 0; i < a.length; i++) {
@@ -128,7 +128,14 @@ class solarchvision_Functions {
     return d;
   }
   
-  float distance (float[] a, float[] b) {
+  float[] vec3_diff (float[] a, float[] b) {
+  
+    float[] d = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
+    
+    return d; 
+  }
+  
+  float vec_dist (float[] a, float[] b) {
   
     float d = 0;
     for (int i = 0; i < a.length; i++) {
@@ -138,6 +145,11 @@ class solarchvision_Functions {
   
     return d;
   }  
+  
+  float vec3_dist (float[] a, float[] b) {
+  
+    return this.vec3_mag(this.vec3_diff(a, b));
+  }    
 
   
   float vec_mag (float[] a) {
@@ -150,6 +162,11 @@ class solarchvision_Functions {
   
     return d;
   }  
+  
+  float vec3_mag (float[] a) {
+  
+    return pow(a[0] * a[0] + a[1] * a[1] + a[2] * a[2], 0.5);   
+  }    
   
   float[] centroid (float[][] a) {
   
@@ -170,20 +187,29 @@ class solarchvision_Functions {
     return b;
   }
   
-  float[] normalize (float[] a) {
-    float[] b = a;
-    float d = 0;
-    for (int i = 0; i < a.length; i++) {
-      d += pow(a[i], 2);
-    }
-    d = pow(d, 0.5);
-  
+  float[] vec_unit (float[] a) {
+    
+    float d = this.vec_mag(a);
+
+    float[] b = new float[a.length];
     for (int i = 0; i < a.length; i++) {
       if (d != 0) b[i] = a[i] / d;
       else b[i] = 0;
     } 
     return b;
   }
+  
+  float[] vec3_unit (float[] a) {
+
+    float d = this.vec3_mag(a);
+  
+    float[] b = new float[3];
+    for (int i = 0; i < 3; i++) {
+      if (d != 0) b[i] = a[i] / d;
+      else b[i] = 0;
+    } 
+    return b;
+  }  
   
   float vec_dot (float[] a, float b[]) {
     float d = 0;
@@ -529,20 +555,20 @@ class solarchvision_Functions {
   }
   
   boolean arePointsClose(float[] pPoint1, float[] pPoint2) {
-    return this.is_zero(this.vec_mag(this.difference(pPoint1, pPoint2)), this.EPSILON_POSITION);
+    return this.is_zero(this.vec_mag(this.vec_diff(pPoint1, pPoint2)), this.EPSILON_POSITION);
   }  
   
   boolean are3PointsIn1Line(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
     
     return this.is_zero(1.0 - abs(this.vec3_dot(
-                                  this.normalize(this.difference(pPoint1, pPoint2)), 
-                                  this.normalize(this.difference(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
+                                  this.vec3_unit(this.vec_diff(pPoint1, pPoint2)), 
+                                  this.vec3_unit(this.vec_diff(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
   }
     
   float[] calculateTriangleNormal(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
-    return this.normalize(this.vec3_cross(
-                          this.difference(pPoint1, pPoint2), 
-                          this.difference(pPoint2, pPoint3))); 
+    return this.vec3_unit(this.vec3_cross(
+                          this.vec_diff(pPoint1, pPoint2), 
+                          this.vec_diff(pPoint2, pPoint3))); 
   }  
   
   
@@ -582,7 +608,7 @@ class solarchvision_Functions {
     // fisrt check at each vertex, if equal to any we return ture
     for (i = 0; i < pPolygon_vertices.length; i++) {
       
-      if (true == this.is_zero(this.vec_mag(this.difference(pPoint, pPolygon_vertices[i])))) {
+      if (true == this.is_zero(this.vec_mag(this.vec_diff(pPoint, pPolygon_vertices[i])))) {
         return true;
       }
     }
@@ -591,8 +617,8 @@ class solarchvision_Functions {
     for (i = 0; i < pPolygon_vertices.length; i++) {
       next_i = (i + 1) % pPolygon_vertices.length;
       
-      float[] lAM = this.difference(pPoint, pPolygon_vertices[i]);
-      float[] lBM = this.difference(pPoint, pPolygon_vertices[next_i]);
+      float[] lAM = this.vec_diff(pPoint, pPolygon_vertices[i]);
+      float[] lBM = this.vec_diff(pPoint, pPolygon_vertices[next_i]);
       
       float lDiv = this.vec_mag(lAM) * this.vec_mag(lBM);
       if (lDiv > 0.0) {
@@ -627,7 +653,7 @@ class solarchvision_Functions {
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
 
-      if (false == this.is_zero(this.vec_mag(this.difference(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
+      if (false == this.is_zero(this.vec_mag(this.vec_diff(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
         
         float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
         lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
@@ -3091,7 +3117,7 @@ class solarchvision_SHADE {
     float[] W = {
       UV.x, UV.y, UV.z
     };
-    W = funcs.normalize(W);
+    W = funcs.vec3_unit(W);
   
     float Alpha = funcs.asin_ang(W[2]);
     float Beta = funcs.atan2_ang(W[1], W[0]) + 90;       
@@ -9584,7 +9610,7 @@ class solarchvision_Faces {
                 float[] W = {
                   UV.x, UV.y, UV.z
                 };
-                W = funcs.normalize(W);
+                W = funcs.vec3_unit(W);
     
                 float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
                 float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
@@ -10767,10 +10793,10 @@ class solarchvision_Curves {
                   }
                   
                   if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-                    ANG_start = funcs.normalize(ANG_start);
+                    ANG_start = funcs.vec3_unit(ANG_start);
                   }
                   if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-                    ANG_end = funcs.normalize(ANG_end);
+                    ANG_end = funcs.vec3_unit(ANG_end);
                   }
                 
                 
@@ -13374,7 +13400,7 @@ class solarchvision_Selections {
     
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
     
-    float[] ray_normal = funcs.normalize(ray_dir);   
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
   
     float[][] hitPoint = new float [this.Face_ids.length][7];
   
@@ -23876,7 +23902,7 @@ class solarchvision_Sky3D {
                 float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
     
                 for (int j = 0; j < subFace.length; j++) {
-                  subFace[j] = funcs.normalize(subFace[j]);
+                  subFace[j] = funcs.vec3_unit(subFace[j]);
                 }
     
     
@@ -23967,7 +23993,7 @@ class solarchvision_Sky3D {
               float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
       
               for (int j = 0; j < subFace.length; j++) {
-                subFace[j] = funcs.normalize(subFace[j]);
+                subFace[j] = funcs.vec3_unit(subFace[j]);
               }
       
               WIN3D.graphics.beginShape();
@@ -27522,7 +27548,7 @@ class solarchvision_Model2Ds {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = funcs.normalize(ray_dir);   
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][6];
   
@@ -29033,7 +29059,7 @@ class solarchvision_Model1Ds {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = funcs.normalize(ray_dir);   
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -29688,7 +29714,7 @@ class solarchvision_Solids {
 
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = funcs.normalize(ray_dir);   
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -29740,7 +29766,7 @@ class solarchvision_Solids {
             float[] vect1 = {this.Vertices[this.Faces[f][i]][0] - X_intersect, this.Vertices[this.Faces[f][i]][1] - Y_intersect, this.Vertices[this.Faces[f][i]][2] - Z_intersect};
             float[] vect2 = {this.Vertices[this.Faces[f][next_i]][0] - X_intersect, this.Vertices[this.Faces[f][next_i]][1] - Y_intersect, this.Vertices[this.Faces[f][next_i]][2] - Z_intersect};
     
-            float t = funcs.acos_ang(funcs.vec_dot(funcs.normalize(vect1), funcs.normalize(vect2)));
+            float t = funcs.acos_ang(funcs.vec_dot(funcs.vec3_unit(vect1), funcs.vec3_unit(vect2)));
     
             AnglesAll += t;
           }
@@ -34200,7 +34226,7 @@ class solarchvision_Model3Ds {
               float[] W = {
                 UV.x, UV.y, UV.z
               };
-              W = funcs.normalize(W);
+              W = funcs.vec3_unit(W);
   
               top_Vertices[s][0] += W[0] * User3D.modify_OpenningDepth;
               top_Vertices[s][1] += W[1] * User3D.modify_OpenningDepth;
@@ -34342,7 +34368,7 @@ class solarchvision_Model3Ds {
               float[] W = {
                 UV.x, UV.y, UV.z
               };
-              W = funcs.normalize(W);
+              W = funcs.vec3_unit(W);
   
               top_Vertices[s][0] += W[0] * User3D.modify_OpenningDepth;
               top_Vertices[s][1] += W[1] * User3D.modify_OpenningDepth;
@@ -34488,7 +34514,7 @@ class solarchvision_Model3Ds {
                 float[] W = {
                   UV.x, UV.y, UV.z
                 };
-                W = funcs.normalize(W);
+                W = funcs.vec3_unit(W);
   
                 Vertex_offsetValues[o][0] += W[0] * _amount;
                 Vertex_offsetValues[o][1] += W[1] * _amount;
@@ -34529,7 +34555,7 @@ class solarchvision_Model3Ds {
                 float[] W = {
                   UV.x, UV.y, UV.z
                 };
-                W = funcs.normalize(W);
+                W = funcs.vec3_unit(W);
   
                 Vertex_offsetValues[o][0] += W[0] * _amount;
                 Vertex_offsetValues[o][1] += W[1] * _amount;
@@ -36856,13 +36882,13 @@ class solarchvision_Model3Ds {
           }
         };
     
-        G = funcs.normalize(funcs.centroid(the_points));
+        G = funcs.vec3_unit(funcs.centroid(the_points));
         M = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
         G[0] = (allPoints.getX(C) - cx) + (allPoints.getX(D) - cx) - (allPoints.getX(M) - cx);
         G[1] = (allPoints.getY(C) - cy) + (allPoints.getY(D) - cy) - (allPoints.getY(M) - cy);
         G[2] = (allPoints.getZ(C) - cz) + (allPoints.getZ(D) - cz) - (allPoints.getZ(M) - cz);
-        G = funcs.normalize(G);
+        G = funcs.vec3_unit(G);
         MM = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }   
     
@@ -36880,14 +36906,14 @@ class solarchvision_Model3Ds {
           }
         };
     
-        G = funcs.normalize(funcs.centroid(the_points));
+        G = funcs.vec3_unit(funcs.centroid(the_points));
         N = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
     
         G[0] = (allPoints.getX(A) - cx) + (allPoints.getX(B) - cx) - (allPoints.getX(N) - cx);
         G[1] = (allPoints.getY(A) - cy) + (allPoints.getY(B) - cy) - (allPoints.getY(N) - cy);
         G[2] = (allPoints.getZ(A) - cz) + (allPoints.getZ(B) - cz) - (allPoints.getZ(N) - cz);
-        G = funcs.normalize(G);    
+        G = funcs.vec3_unit(G);    
         NN = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }
     
@@ -37340,7 +37366,7 @@ class solarchvision_Model3Ds {
   
     for (int i = 0; i < POINTER_TempObjectVertices; i++) {
   
-      float the_dist = funcs.distance(newVertex[0], TempObjectVertices[i]);
+      float the_dist = funcs.vec_dist(newVertex[0], TempObjectVertices[i]);
   
       if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for allModel1Ds spheres!
   
@@ -37394,7 +37420,7 @@ class solarchvision_Model3Ds {
   
                 //print("q=", q, "; k=" );
   
-                total_distances += funcs.distance(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
+                total_distances += funcs.vec_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
               }
   
               if (total_distances < 0.0001) { // avoid creating duplicate faces
@@ -37524,8 +37550,8 @@ class solarchvision_Model3Ds {
         (x3 + x2 + x4) / 3.0, (y3 + y2 + y4) / 3.0, (z3 + z2 + z4) / 3.0
       };
   
-      M = funcs.normalize(M);
-      N = funcs.normalize(N);
+      M = funcs.vec3_unit(M);
+      N = funcs.vec3_unit(N);
   
       SOLARCHVISION_createLozenge(x2, y2, z2, N[0], N[1], N[2], x4, y4, z4, M[0], M[1], M[2], Tessellation, BuildFaces);     
   
@@ -37547,7 +37573,7 @@ class solarchvision_Model3Ds {
           P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z
         };
   
-        Q = funcs.normalize(Q);
+        Q = funcs.vec3_unit(Q);
   
         SOLARCHVISION_createLozenge(x2, y2, z2, P[0], P[1], P[2], x1, y1, z1, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
       }
@@ -37570,7 +37596,7 @@ class solarchvision_Model3Ds {
           P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z
         };
   
-        Q = funcs.normalize(Q);
+        Q = funcs.vec3_unit(Q);
   
         SOLARCHVISION_createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
       }
@@ -38125,7 +38151,7 @@ class solarchvision_Cameras {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = funcs.normalize(ray_dir);   
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -38621,7 +38647,7 @@ class solarchvision_Sections {
   
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
   
-    float[] ray_normal = funcs.normalize(ray_dir);   
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
   
     float[][] hitPoint = new float [this.Faces.length][4];
   
@@ -39143,7 +39169,7 @@ class solarchvision_WindFlow {
             float[] W = {
               x2 - x1, y2 - y1, z2 - z1
             };
-            W = funcs.normalize(W);
+            W = funcs.vec3_unit(W);
     
             float Alpha = funcs.asin_ang(W[2]);
             float Beta = funcs.atan2_ang(W[1], W[0]) + 90;   
@@ -39270,7 +39296,7 @@ class solarchvision_WindFlow {
           float[] W = {
             x2 - x1, y2 - y1, z2 - z1
           };
-          W = funcs.normalize(W);
+          W = funcs.vec3_unit(W);
     
           float Alpha = funcs.asin_ang(W[2]);
           float Beta = funcs.atan2_ang(W[1], W[0]) + 90;   
@@ -39465,7 +39491,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
             float[] W = {
               UV.x, UV.y, UV.z
             };
-            W = funcs.normalize(W);
+            W = funcs.vec3_unit(W);
   
             float Alpha = funcs.asin_ang(W[2]);
             float Beta = funcs.atan2_ang(W[1], W[0]) + 90; 
@@ -39488,7 +39514,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               VECT[2] = funcs.tan_ang(Alpha);
             }  
   
-            VECT = funcs.normalize(VECT);
+            VECT = funcs.vec3_unit(VECT);
             
             
             float SkyMask = 0;
@@ -39498,7 +39524,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
               };
   
-              float tmp = funcs.vec_dot(funcs.normalize(SkyV), funcs.normalize(VECT));
+              float tmp = funcs.vec_dot(funcs.vec3_unit(SkyV), funcs.vec3_unit(VECT));
               if (tmp <= 0) tmp = 0; // removes backing faces
            
               SkyMask += tmp / float(DiffuseVectors.length);
@@ -39614,7 +39640,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                               SunR[1], SunR[2], SunR[3]
                             };
   
-                            float SunMask = funcs.vec_dot(funcs.normalize(SunV), funcs.normalize(VECT));
+                            float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(VECT));
                             if (SunMask <= 0) SunMask = 0; // removes backing faces 
   
   
@@ -39828,7 +39854,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
 int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
   
-  float[] ray_normal = funcs.normalize(ray_dir);   
+  float[] ray_normal = funcs.vec3_unit(ray_dir);   
 
   int hit = 0;
 
@@ -39973,7 +39999,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
 
 float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
-  float[] ray_normal = funcs.normalize(ray_dir);   
+  float[] ray_normal = funcs.vec3_unit(ray_dir);   
 
   float[][] hitPoint = new float [allFaces.nodes.length][7];
 
@@ -40152,7 +40178,7 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
 
 float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
-  float[] ray_normal = funcs.normalize(ray_dir);   
+  float[] ray_normal = funcs.vec3_unit(ray_dir);   
 
   float[][] hitPoint = new float [allCurves.nodes.length][7];
 
@@ -40354,7 +40380,7 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
 
 float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
 
-  float[] ray_normal = funcs.normalize(ray_dir);   
+  float[] ray_normal = funcs.vec3_unit(ray_dir);   
 
   float[][] hitPoint = new float [(Land3D.num_rows - 1) * (Land3D.num_columns - 1)][4];
 
@@ -40550,14 +40576,14 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
       VECT[2] = funcs.tan_ang(Alpha);
     }   
 
-    VECT = funcs.normalize(VECT);
+    VECT = funcs.vec3_unit(VECT);
 
 
     float[] SunV = {
       SunR1, SunR2, SunR3
     };
 
-    float SunMask = funcs.vec_dot(funcs.normalize(SunV), funcs.normalize(VECT));
+    float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(VECT));
     if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
     float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -40568,7 +40594,7 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
     /*
     float[] REF_SunV = {SunR1, SunR2, -SunR3};
      
-     float REF_SunMask = funcs.vec_dot(funcs.normalize(REF_SunV), funcs.normalize(VECT));
+     float REF_SunMask = funcs.vec_dot(funcs.vec3_unit(REF_SunV), funcs.vec3_unit(VECT));
      if (REF_SunMask <= 0) REF_SunMask = 0; // removes backing faces 
      
      float REF_SkyMask = 1 - (0.5 * (1.0 + (Alpha / 90.0)));      
@@ -50102,7 +50128,7 @@ void SOLARCHVISION_preBakeViewport () {
       };
       
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-      face_norm = funcs.normalize(face_norm);
+      face_norm = funcs.vec3_unit(face_norm);
       
       if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces 
         face_norm[0] *= -1;
@@ -50131,7 +50157,7 @@ void SOLARCHVISION_preBakeViewport () {
         VECT[2] = funcs.tan_ang(Alpha);
       }   
       
-      VECT = funcs.normalize(VECT);
+      VECT = funcs.vec3_unit(VECT);
       
       {
         
@@ -50146,7 +50172,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DiffuseVectors[n_Ray][1];
           ray_direction[2] = DiffuseVectors[n_Ray][2];
     
-          float SkyMask = funcs.vec_dot(funcs.normalize(DiffuseVectors[n_Ray]), funcs.normalize(VECT));
+          float SkyMask = funcs.vec_dot(funcs.vec3_unit(DiffuseVectors[n_Ray]), funcs.vec3_unit(VECT));
           //if (SkyMask <= 0) SkyMask = 0; // removes backing faces
          
           // when SHD = 0;
@@ -50186,7 +50212,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DirectVector[1];
           ray_direction[2] = DirectVector[2];
 
-          float SunMask = funcs.vec_dot(funcs.normalize(DirectVector), funcs.normalize(VECT));
+          float SunMask = funcs.vec_dot(funcs.vec3_unit(DirectVector), funcs.vec3_unit(VECT));
           //if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
           // when SHD = 0;
@@ -50404,7 +50430,7 @@ void SOLARCHVISION_RenderViewport () {
       };
       
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-      face_norm = funcs.normalize(face_norm);
+      face_norm = funcs.vec3_unit(face_norm);
       
       if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces 
         face_norm[0] *= -1;
@@ -50447,14 +50473,14 @@ if (abs(Alpha) > 89.99) {
   VECT[2] = funcs.tan_ang(Alpha);
 }   
 
-VECT = funcs.normalize(VECT);
+VECT = funcs.vec3_unit(VECT);
 
 
 float[] SunV = {
   SunR[1], SunR[2], SunR[3]
 };
 
-float SunMask = funcs.vec_dot(funcs.normalize(SunV), funcs.normalize(VECT));
+float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(VECT));
 if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
 float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
