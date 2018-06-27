@@ -153,7 +153,7 @@ class solarchvision_Functions {
     return d; 
   }  
   
-  float[] vec_sub (float[] a, float[] b) {
+  float[] vec_diff (float[] a, float[] b) {
   
     float[] d = new float[a.length];
     for (int i = a.length - 1; i > -1; --i) {
@@ -163,7 +163,7 @@ class solarchvision_Functions {
     return d;
   }
   
-  float[] vec3_sub (float[] a, float[] b) {
+  float[] vec3_diff (float[] a, float[] b) {
   
     float[] d = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
     
@@ -172,12 +172,12 @@ class solarchvision_Functions {
   
   float vec_dist (float[] a, float[] b) {
   
-    return this.vec_mag(this.vec_sub(a, b));
+    return this.vec_mag(this.vec_diff(a, b));
   }  
   
   float vec3_dist (float[] a, float[] b) {
   
-    return this.vec3_mag(this.vec3_sub(a, b));
+    return this.vec3_mag(this.vec3_diff(a, b));
   }    
 
   
@@ -558,20 +558,20 @@ class solarchvision_Functions {
   }
   
   boolean arePointsClose(float[] pPoint1, float[] pPoint2) {
-    return this.is_zero(this.vec3_mag(this.vec3_sub(pPoint1, pPoint2)), this.EPSILON_POSITION);
+    return this.is_zero(this.vec3_mag(this.vec3_diff(pPoint1, pPoint2)), this.EPSILON_POSITION);
   }  
   
   boolean are3PointsIn1Line(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
     
     return this.is_zero(1.0 - abs(this.vec3_dot(
-                                  this.vec3_unit(this.vec3_sub(pPoint1, pPoint2)), 
-                                  this.vec3_unit(this.vec3_sub(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
+                                  this.vec3_unit(this.vec3_diff(pPoint1, pPoint2)), 
+                                  this.vec3_unit(this.vec3_diff(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
   }
     
   float[] calculateTriangleNormal(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
     return this.vec3_unit(this.vec3_cross(
-                          this.vec3_sub(pPoint1, pPoint2), 
-                          this.vec3_sub(pPoint2, pPoint3))); 
+                          this.vec3_diff(pPoint1, pPoint2), 
+                          this.vec3_diff(pPoint2, pPoint3))); 
   }  
   
   
@@ -611,7 +611,7 @@ class solarchvision_Functions {
     // fisrt check at each vertex, if equal to any we return ture
     for (i = 0; i < pPolygon_vertices.length; i++) {
       
-      if (true == this.is_zero(this.vec3_mag(this.vec3_sub(pPoint, pPolygon_vertices[i])))) {
+      if (true == this.is_zero(this.vec3_mag(this.vec3_diff(pPoint, pPolygon_vertices[i])))) {
         return true;
       }
     }
@@ -620,8 +620,8 @@ class solarchvision_Functions {
     for (i = 0; i < pPolygon_vertices.length; i++) {
       next_i = (i + 1) % pPolygon_vertices.length;
       
-      float[] lAM = this.vec3_sub(pPoint, pPolygon_vertices[i]);
-      float[] lBM = this.vec3_sub(pPoint, pPolygon_vertices[next_i]);
+      float[] lAM = this.vec3_diff(pPoint, pPolygon_vertices[i]);
+      float[] lBM = this.vec3_diff(pPoint, pPolygon_vertices[next_i]);
       
       float lDiv = this.vec3_mag(lAM) * this.vec3_mag(lBM);
       if (lDiv > 0.0) {
@@ -656,7 +656,7 @@ class solarchvision_Functions {
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
 
-      if (false == this.is_zero(this.vec3_mag(this.vec3_sub(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
+      if (false == this.is_zero(this.vec3_mag(this.vec3_diff(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
         
         float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
         lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
@@ -719,9 +719,9 @@ class solarchvision_Functions {
   
   boolean isPointOnSegment(float[] pPoint, float[] pStart, float[] pEnd) {
     
-    float L1 = this.vec3_mag(this.vec3_sub(pStart, pPoint));
-    float L2 = this.vec3_mag(this.vec3_sub(pPoint, pEnd));
-    float L3 = this.vec3_mag(this.vec3_sub(pStart, pEnd));
+    float L1 = this.vec3_mag(this.vec3_diff(pStart, pPoint));
+    float L2 = this.vec3_mag(this.vec3_diff(pPoint, pEnd));
+    float L3 = this.vec3_mag(this.vec3_diff(pStart, pEnd));
 
     return this.is_zero(L3-(L2+L1), this.EPSILON_POSITION);
   }   
@@ -746,8 +746,8 @@ class solarchvision_Functions {
     if (isPointOnSegment(B1, A1, A2)) return B1;
     if (isPointOnSegment(B2, A1, A2)) return B2;
       
-    float[] Axis_A = this.vec3_unit(this.vec3_sub(A1, A2));
-    float[] Axis_B = this.vec3_unit(this.vec3_sub(B1, B2));
+    float[] Axis_A = this.vec3_unit(this.vec3_diff(A1, A2));
+    float[] Axis_B = this.vec3_unit(this.vec3_diff(B1, B2));
 
     if (true == this.is_zero(1 - Math.abs(this.vec3_dot(this.vec3_unit(Axis_A), this.vec3_unit(Axis_B))), this.EPSILON_DIRECTION)) {
 
@@ -762,15 +762,15 @@ class solarchvision_Functions {
       return nullPoint;
     }
     
-    float lT_A = this.vec3_dot(this.vec3_cross(this.vec3_sub(B1, A1), Axis_B), lCross) / (lCrossLen * lCrossLen);
-    float lT_B = this.vec3_dot(this.vec3_cross(this.vec3_sub(B1, A1), Axis_A), lCross) / (lCrossLen * lCrossLen);
+    float lT_A = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_B), lCross) / (lCrossLen * lCrossLen);
+    float lT_B = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_A), lCross) / (lCrossLen * lCrossLen);
     
     float[] result_A = this.vec3_sum(A1, this.vec3_scale(Axis_A, lT_A));
     float[] result_B = this.vec3_sum(B1, this.vec3_scale(Axis_B, lT_B));
 
     
     
-    if (false == this.is_zero(this.vec3_mag(this.vec3_sub(result_A, result_B)), this.EPSILON_POSITION)) {
+    if (false == this.is_zero(this.vec3_mag(this.vec3_diff(result_A, result_B)), this.EPSILON_POSITION)) {
       
       return nullPoint;
     }
@@ -846,7 +846,7 @@ class solarchvision_Functions {
           
           if (false == lDiagonalRejected) {
             
-            float lDist = this.vec3_mag(this.vec3_sub(A, B));
+            float lDist = this.vec3_mag(this.vec3_diff(A, B));
             
             int[][] newDiagonal = {{i, j}};
             lAllDiagonals = (int[][]) concat(lAllDiagonals, newDiagonal);
@@ -861,19 +861,17 @@ class solarchvision_Functions {
     }
     
     // ascending sort:
-    float t_float;
-    int t_int;
     for (k = 0; k < lAllDiagonals.length; k++) { 
       for (q = k + 1; q < lAllDiagonals.length; q++) {
         if (lAllDiagonals_dist[k] > lAllDiagonals_dist[q]) {
-          t_float = lAllDiagonals_dist[k];
+          float tmp_float = lAllDiagonals_dist[k];
           lAllDiagonals_dist[k] = lAllDiagonals_dist[q];
-          lAllDiagonals_dist[q] = t_float;
+          lAllDiagonals_dist[q] = tmp_float;
           
           for (j = 0; k < 2; j++) {
-            t_int = lAllDiagonals[k][j];
+            int tmp_int = lAllDiagonals[k][j];
             lAllDiagonals[k][j] = lAllDiagonals[q][j];
-            lAllDiagonals[q][j] = t_int;
+            lAllDiagonals[q][j] = tmp_int;
           }          
           
         }
@@ -13703,8 +13701,8 @@ class solarchvision_Selections {
               float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
               float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
               
-              float[] AC = funcs.vec3_sub(A, C);
-              float[] BD = funcs.vec3_sub(B, D);
+              float[] AC = funcs.vec3_diff(A, C);
+              float[] BD = funcs.vec3_diff(B, D);
               
               face_norm = funcs.vec3_cross(AC, BD);
               
@@ -13762,8 +13760,8 @@ class solarchvision_Selections {
                   allPoints.getZ(allFaces.nodes[f][j_next])
                 };                
       
-                float[] AG = funcs.vec3_sub(A, G);
-                float[] BG = funcs.vec3_sub(B, G);
+                float[] AG = funcs.vec3_diff(A, G);
+                float[] BG = funcs.vec3_diff(B, G);
                 
                 face_norm = funcs.vec3_cross(AG, BG);
                   
@@ -27837,8 +27835,8 @@ class solarchvision_Model2Ds {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.vec3_sub(A, C);
-      float[] BD = funcs.vec3_sub(B, D);
+      float[] AC = funcs.vec3_diff(A, C);
+      float[] BD = funcs.vec3_diff(B, D);
       
       float[] face_norm = funcs.vec3_cross(AC, BD);
       
@@ -29345,8 +29343,8 @@ class solarchvision_Model1Ds {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.vec3_sub(A, C);
-      float[] BD = funcs.vec3_sub(B, D);
+      float[] AC = funcs.vec3_diff(A, C);
+      float[] BD = funcs.vec3_diff(B, D);
       
       float[] face_norm = funcs.vec3_cross(AC, BD);
       
@@ -29993,8 +29991,8 @@ class solarchvision_Solids {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.vec3_sub(A, C);
-      float[] BD = funcs.vec3_sub(B, D);
+      float[] AC = funcs.vec3_diff(A, C);
+      float[] BD = funcs.vec3_diff(B, D);
       
       float[] face_norm = funcs.vec3_cross(AC, BD);
       
@@ -38437,8 +38435,8 @@ class solarchvision_Cameras {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.vec3_sub(A, C);
-      float[] BD = funcs.vec3_sub(B, D);
+      float[] AC = funcs.vec3_diff(A, C);
+      float[] BD = funcs.vec3_diff(B, D);
       
       float[] face_norm = funcs.vec3_cross(AC, BD);
       
@@ -38933,8 +38931,8 @@ class solarchvision_Sections {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.vec3_sub(A, C);
-      float[] BD = funcs.vec3_sub(B, D);
+      float[] AC = funcs.vec3_diff(A, C);
+      float[] BD = funcs.vec3_diff(B, D);
       
       float[] face_norm = funcs.vec3_cross(AC, BD);
       
@@ -40146,8 +40144,8 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
             float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
             float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
             
-            float[] AC = funcs.vec3_sub(A, C);
-            float[] BD = funcs.vec3_sub(B, D);
+            float[] AC = funcs.vec3_diff(A, C);
+            float[] BD = funcs.vec3_diff(B, D);
             
             face_norm = funcs.vec3_cross(AC, BD);
             
@@ -40205,8 +40203,8 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                 allPoints.getZ(allFaces.nodes[f][j_next])
               };                
     
-              float[] AG = funcs.vec3_sub(A, G);
-              float[] BG = funcs.vec3_sub(B, G);
+              float[] AG = funcs.vec3_diff(A, G);
+              float[] BG = funcs.vec3_diff(B, G);
               
               face_norm = funcs.vec3_cross(AG, BG);
                 
@@ -40297,8 +40295,8 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
           float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
           float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
           
-          float[] AC = funcs.vec3_sub(A, C);
-          float[] BD = funcs.vec3_sub(B, D);
+          float[] AC = funcs.vec3_diff(A, C);
+          float[] BD = funcs.vec3_diff(B, D);
           
           face_norm = funcs.vec3_cross(AC, BD);
           
@@ -40356,8 +40354,8 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               allPoints.getZ(allFaces.nodes[f][j_next])
             };                
   
-            float[] AG = funcs.vec3_sub(A, G);
-            float[] BG = funcs.vec3_sub(B, G);
+            float[] AG = funcs.vec3_diff(A, G);
+            float[] BG = funcs.vec3_diff(B, G);
             
             face_norm = funcs.vec3_cross(AG, BG);
               
@@ -40476,8 +40474,8 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
           float[] C = allPoints.getPosition(allCurves.nodes[f][n - 2]);
           float[] D = allPoints.getPosition(allCurves.nodes[f][n - 1]);
           
-          float[] AC = funcs.vec3_sub(A, C);
-          float[] BD = funcs.vec3_sub(B, D);
+          float[] AC = funcs.vec3_diff(A, C);
+          float[] BD = funcs.vec3_diff(B, D);
           
           face_norm = funcs.vec3_cross(AC, BD);
           
@@ -40535,8 +40533,8 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
               allPoints.getZ(allCurves.nodes[f][j_next])
             };                
   
-            float[] AG = funcs.vec3_sub(A, G);
-            float[] BG = funcs.vec3_sub(B, G);
+            float[] AG = funcs.vec3_diff(A, G);
+            float[] BG = funcs.vec3_diff(B, G);
             
             face_norm = funcs.vec3_cross(AG, BG);
               
@@ -40687,8 +40685,8 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
         N = A;
       }       
     
-      float[] NG = funcs.vec3_sub(N, G);
-      float[] GM = funcs.vec3_sub(G, M);
+      float[] NG = funcs.vec3_diff(N, G);
+      float[] GM = funcs.vec3_diff(G, M);
       
       float[] face_norm = funcs.vec3_cross(NG, GM);
       
