@@ -6,6 +6,7 @@
 
 
 
+
 class solarchvision_Functions {
   
   private final static String CLASS_STAMP = "Functions";
@@ -118,6 +119,23 @@ class solarchvision_Functions {
     return(d);
   }
   
+  float[] vec_scale (float[] a, float b) {
+  
+    float[] d = new float[a.length];
+    for (int i = a.length - 1; i > -1; --i) {
+      d[i] = b * a[i];
+    }
+  
+    return d;
+  }  
+  
+  float[] vec3_scale (float[] a, float b) {
+  
+    float[] d = {b * a[0], b * a[1], b * a[2]};
+    
+    return d; 
+  }    
+  
   float[] vec_sum (float[] a, float[] b) {
   
     float[] d = new float[a.length];
@@ -130,7 +148,7 @@ class solarchvision_Functions {
   
   float[] vec3_sum (float[] a, float[] b) {
   
-    float[] d = {a[0] + b[0], a[1] + b[1], a[2] + b[2]};
+    float[] d = {b[0] + a[0], b[1] + a[1], b[2] + a[2]};
     
     return d; 
   }  
@@ -147,7 +165,7 @@ class solarchvision_Functions {
   
   float[] vec3_sub (float[] a, float[] b) {
   
-    float[] d = {a[0] - b[0], a[1] - b[1], a[2] - b[2]};
+    float[] d = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
     
     return d; 
   }
@@ -178,25 +196,6 @@ class solarchvision_Functions {
   
     return pow(a[0] * a[0] + a[1] * a[1] + a[2] * a[2], 0.5);   
   }    
-  
-  float[] centroid (float[][] a) {
-  
-    float[] b = a[0]; // initializing to the first node
-  
-    // adding other nodes
-    for (int i = a.length - 1; i > 0; --i) {
-      for (int j = b.length - 1; j > -1; --j) {
-        b[j] += a[i][j];
-      }
-    }
-  
-    // dividing to the number of nodes
-    for (int j = b.length - 1; j > -1; --j) {
-      b[j] /= float(a.length);
-    }
-  
-    return b;
-  }
   
   float[] vec_unit (float[] a) {
     
@@ -250,7 +249,24 @@ class solarchvision_Functions {
     return c;
   }
   
+  float[] centroid (float[][] a) {
   
+    float[] b = a[0]; // initializing to the first node
+  
+    // adding other nodes
+    for (int i = a.length - 1; i > 0; --i) { // not the first one!
+      for (int j = b.length - 1; j > -1; --j) {
+        b[j] += a[i][j];
+      }
+    }
+  
+    // dividing to the number of nodes
+    for (int j = b.length - 1; j > -1; --j) {
+      b[j] /= float(a.length);
+    }
+  
+    return b;
+  }  
 
   
   float bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
@@ -699,6 +715,262 @@ class solarchvision_Functions {
     
     return 0.5 * this.vec3_mag(lSumVect); // unit m2
   }  
+  
+  
+  boolean isPointOnSegment(float[] pPoint, float[] pStart, float[] pEnd) {
+    
+    float L1 = this.vec3_mag(this.vec3_sub(pStart, pPoint));
+    float L2 = this.vec3_mag(this.vec3_sub(pPoint, pEnd));
+    float L3 = this.vec3_mag(this.vec3_sub(pStart, pEnd));
+
+    return this.is_zero(L3-(L2+L1), this.EPSILON_POSITION);
+  }   
+
+ 
+  float[] getBetween(float[] pPoint1, float[] pPoint2, float pRatio) {
+    
+    return this.vec3_sum(this.vec3_scale(pPoint1, pRatio), this.vec3_scale(pPoint2, 1.0 - pRatio));
+  }   
+  
+  float[] intersect_segmentXsegment (float[] A1, float[] A2, float[] B1, float[] B2) {
+    
+    float[] nullPoint = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+    
+    if (arePointsClose(A1, B1)) return getBetween(A1, B1, 0.5);
+    if (arePointsClose(A1, B2)) return getBetween(A1, B2, 0.5);
+    if (arePointsClose(A2, B1)) return getBetween(A2, B1, 0.5);
+    if (arePointsClose(A2, B2)) return getBetween(A2, B2, 0.5);
+    
+    if (isPointOnSegment(A1, B1, B2)) return A1;
+    if (isPointOnSegment(A2, B1, B2)) return A2;
+    if (isPointOnSegment(B1, A1, A2)) return B1;
+    if (isPointOnSegment(B2, A1, A2)) return B2;
+      
+    float[] Axis_A = this.vec3_unit(this.vec3_sub(A1, A2));
+    float[] Axis_B = this.vec3_unit(this.vec3_sub(B1, B2));
+
+    if (true == this.is_zero(1 - Math.abs(this.vec3_dot(this.vec3_unit(Axis_A), this.vec3_unit(Axis_B))), this.EPSILON_DIRECTION)) {
+
+      return nullPoint;
+    } 
+    
+    float[] lCross = this.vec3_cross(Axis_A, Axis_B);
+    float lCrossLen = this.vec3_mag(lCross);
+    
+    if (this.is_zero(lCrossLen)) {
+
+      return nullPoint;
+    }
+    
+    float lT_A = this.vec3_dot(this.vec3_cross(this.vec3_sub(B1, A1), Axis_B), lCross) / (lCrossLen * lCrossLen);
+    float lT_B = this.vec3_dot(this.vec3_cross(this.vec3_sub(B1, A1), Axis_A), lCross) / (lCrossLen * lCrossLen);
+    
+    float[] result_A = this.vec3_sum(A1, this.vec3_scale(Axis_A, lT_A));
+    float[] result_B = this.vec3_sum(B1, this.vec3_scale(Axis_B, lT_B));
+
+    
+    
+    if (false == this.is_zero(this.vec3_mag(this.vec3_sub(result_A, result_B)), this.EPSILON_POSITION)) {
+      
+      return nullPoint;
+    }
+    
+    float[] result_AxB = getBetween(result_A , result_B, 0.5);
+    
+    if (false == isPointOnSegment(result_AxB, A1, A2)) return nullPoint;
+    if (false == isPointOnSegment(result_AxB, B1, B2)) return nullPoint;
+    
+    return result_AxB;
+  }
+  
+
+
+
+
+  
+
+
+  int[][] tessellatePolygon (float[][] pPolygon_vertices) {
+    
+    int lMaximumDegree = 3;
+    
+    int[][] lAllDiagonals = new int[0][2]; // start, end
+    float[] lAllDiagonals_dist = new float[0];
+    float[] lIntersectionPoint;
+    
+    int i, j, k, q;
+    int i2, j2;
+    float[] A, B, A2, B2;
+    
+    int n = pPolygon_vertices.length;
+    
+    for (i = 0; i < n; i++) {
+      
+      int next_i = (i + 1) % n;
+      int prev_i = (i - 1 + n) % n;
+      
+      for (j = i + 1; j < n; j++) {
+        
+        if ((j != prev_i) && (j != next_i)) {
+        
+          A = pPolygon_vertices[i];
+          B = pPolygon_vertices[j];
+          
+          boolean lDiagonalRejected = false;
+          
+          float[] lEdgeMiddle = this.vec3_scale(this.vec_sum(A, B), 0.5);          
+          if (false == isPointInPolygon(lEdgeMiddle, pPolygon_vertices)) {
+            lDiagonalRejected = true;
+          }
+          else {
+          
+            for (k = 0; k < n; k++) {
+              
+              int next_k = (k + 1) % n;
+              
+              if ((i != k) && (i != next_k) &&
+                  (j != k) && (j != next_k)) {
+                    
+                A2 = pPolygon_vertices[k];
+                B2 = pPolygon_vertices[next_k];
+            
+                lIntersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
+                
+                if (false == is_undefined_FLOAT(lIntersectionPoint[0])) {
+                  lDiagonalRejected = true;
+                  break;
+                }
+              }
+            }
+          }
+          
+          if (false == lDiagonalRejected) {
+            
+            float lDist = this.vec3_mag(this.vec3_sub(A, B));
+            
+            int[][] newDiagonal = {{i, j}};
+            lAllDiagonals = (int[][]) concat(lAllDiagonals, newDiagonal);
+            
+            float[] newDiagonal_dist = {lDist};
+            lAllDiagonals_dist = (float[]) concat(lAllDiagonals_dist, newDiagonal_dist);
+            
+          }
+          
+        }
+      }
+    }
+    
+    // ascending sort:
+    float t_float;
+    int t_int;
+    for (k = 0; k < lAllDiagonals.length; k++) { 
+      for (q = k + 1; q < lAllDiagonals.length; q++) {
+        if (lAllDiagonals_dist[k] > lAllDiagonals_dist[q]) {
+          t_float = lAllDiagonals_dist[k];
+          lAllDiagonals_dist[k] = lAllDiagonals_dist[q];
+          lAllDiagonals_dist[q] = t_float;
+          
+          for (j = 0; k < 2; j++) {
+            t_int = lAllDiagonals[k][j];
+            lAllDiagonals[k][j] = lAllDiagonals[q][j];
+            lAllDiagonals[q][j] = t_int;
+          }          
+          
+        }
+      }
+    }
+
+    
+    for (k = 0; k < lAllDiagonals.length; k++) { 
+    
+      i = lAllDiagonals[k][0]; // start
+      j = lAllDiagonals[k][1]; // end
+      A = pPolygon_vertices[i];
+      B = pPolygon_vertices[j];
+    
+      for (q = lAllDiagonals.length - 1 ; q > k; q--) { // reversed loop required.
+        
+        i2 = lAllDiagonals[q][0]; // start
+        j2 = lAllDiagonals[q][1]; // end
+        A2 = pPolygon_vertices[i2];
+        B2 = pPolygon_vertices[j2];
+        
+        if ((i != i2) && (i != j2) &&
+            (j != i2) && (j != j2)) {
+          
+          lIntersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
+          
+          if (false == is_undefined_FLOAT(lIntersectionPoint[0])) {
+            int[][] startList = (int[][]) subset(lAllDiagonals, 0, q);
+            int[][] endList = (int[][]) subset(lAllDiagonals, q + 1);
+            lAllDiagonals = (int[][]) concat(startList, endList); // remove this diagonal
+          }
+        }
+        
+      }
+    }
+    
+    
+    int[][] lFaces = new int[0][n];
+    for (k = 0; k < n; k++) {
+      lFaces[0][n] = k;
+    }
+    
+    int vertexID;
+    
+    for (k = 0; k < lAllDiagonals.length; k++) { 
+      int v1 = lAllDiagonals[k][0]; // start
+      int v2 = lAllDiagonals[k][1]; // end
+      
+      int ID_1st = -1;
+      int ID_2nd = -1;
+      for (i = 0; i < lFaces.length; i++) {
+        
+        if (lFaces[i].length > lMaximumDegree) { 
+        
+          for (j = 0; j < lFaces[i].length; j++) {
+            vertexID = lFaces[i][j];
+                 if (v1 == vertexID) ID_1st = j;
+            else if (v2 == vertexID) ID_2nd = j;
+          }
+          
+          if ((-1 != ID_1st) && (-1 != ID_2nd)) { 
+            // we found the face to devide by the diagonal
+
+            int[][] lNewFace1 = new int[0][0];
+            int[][] lNewFace2 = new int[0][0]; 
+            
+            for (j = 0; j < lFaces[i].length; j++) {
+              vertexID = lFaces[i][j];
+              
+              int[][] newItem = {{vertexID}};
+              
+              if ((j <= ID_1st) || (j >= ID_2nd)) {
+                lNewFace1 = (int[][]) concat(lNewFace1, newItem); // pushing vertexID
+              }
+              
+              if ((j >= ID_1st) && (j <= ID_2nd)) {
+                lNewFace2 = (int[][]) concat(lNewFace2, newItem); // pushing vertexID
+              }
+
+            }
+            
+            int[][] startList = (int[][]) subset(lFaces, 0, i);
+            int[][] endList = (int[][]) subset(lFaces, i + 1);
+            lFaces = (int[][]) concat(startList, endList); // remove this face
+            
+            lFaces = (int[][]) concat(lFaces, lNewFace1); // pushing 1st new face
+            lFaces = (int[][]) concat(lFaces, lNewFace2); // pushing 2st new face
+            i--; // since we added 2 faces and removed one
+            break; 
+          }
+        }
+      }
+    }
+      
+    return lFaces;
+  }
+
   
 }
 
