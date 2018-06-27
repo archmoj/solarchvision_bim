@@ -138,8 +138,9 @@ class solarchvision_Functions {
   
     return d;
   }  
+
   
-  float magnitude (float[] a) {
+  float vec_mag (float[] a) {
   
     float d = 0;
     for (int i = 0; i < a.length; i++) {
@@ -184,7 +185,7 @@ class solarchvision_Functions {
     return b;
   }
   
-  float dot (float[] a, float b[]) {
+  float vec_dot (float[] a, float b[]) {
     float d = 0;
     for (int i = 0; i < a.length; i++) {
       d += a[i] * b[i];
@@ -192,16 +193,16 @@ class solarchvision_Functions {
     return d;
   }
   
-  float dot2x (float x1, float y1, float x2, float y2) {
+  float vec2_dot (float x1, float y1, float x2, float y2) {
     return x1 * x2 + y1 * y2;
   }  
   
-  float dot3x (float[] a, float b[]) {
+  float vec3_dot (float[] a, float b[]) {
     
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
   }
   
-  float[] cross3x (float[] a, float b[]) {
+  float[] vec3_cross (float[] a, float b[]) {
     
     float[] c = new float [3];
     
@@ -210,11 +211,10 @@ class solarchvision_Functions {
     c[2] = a[0] * b[1] - a[1] * b[0];
     
     return c;
-    
   }
   
   
-  float[] sub3x (float[] a, float b[]) {
+  float[] vec3_sub (float[] a, float b[]) {
     
     float[] c = new float [3];
     
@@ -227,7 +227,7 @@ class solarchvision_Functions {
   }
   
   
-  float[] sum3x (float[] a, float b[]) {
+  float[] vec3_sum (float[] a, float b[]) {
     
     float[] c = new float [3];
     
@@ -262,11 +262,11 @@ class solarchvision_Functions {
     float bY = B[1] - C[1];
     float bZ = B[2] - C[2];
   
-    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
-    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
-    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
-    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
-    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.vec3_dot(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.vec3_dot(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.vec3_dot(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
     float r = (AA * BB - AB * AB);
     float u = (BB * AP - AB * BP) / r;
@@ -292,11 +292,11 @@ class solarchvision_Functions {
     float bY = B[1] - G[1];
     float bZ = B[2] - G[2];
     
-    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
-    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
-    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
-    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
-    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.vec3_dot(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.vec3_dot(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.vec3_dot(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
   
     float r = (AA * BB - AB * AB);
     float u = (BB * AP - AB * BP) / r;
@@ -310,9 +310,9 @@ class solarchvision_Functions {
       float cY = C[1] - G[1];
       float cZ = C[2] - G[2];
   
-      float CC = cX * cX + cY * cY + cZ * cZ; // this.dot3x(c, c);
-      float CP = cX * pX + cY * pY + cZ * pZ; // this.dot3x(c, p);
-      float BC = bX * cX + bY * cY + bZ * cZ; // this.dot3x(b, c);
+      float CC = cX * cX + cY * cY + cZ * cZ; // this.vec3_dot(c, c);
+      float CP = cX * pX + cY * pY + cZ * pZ; // this.vec3_dot(c, p);
+      float BC = bX * cX + bY * cY + bZ * cZ; // this.vec3_dot(b, c);
     
       r = (BB * CC - BC * BC);
       u = (CC * BP - BC * CP) / r;
@@ -326,9 +326,9 @@ class solarchvision_Functions {
         float dY = D[1] - G[1];
         float dZ = D[2] - G[2];
         
-        float CD = cX * dX + cY * dY + cZ * dZ; // this.dot3x(c, d);
-        float DD = dX * dX + dY * dY + dZ * dZ; // this.dot3x(d, d);
-        float DP = dX * pX + dY * pY + dZ * pZ; // this.dot3x(d, p);
+        float CD = cX * dX + cY * dY + cZ * dZ; // this.vec3_dot(c, d);
+        float DD = dX * dX + dY * dY + dZ * dZ; // this.vec3_dot(d, d);
+        float DP = dX * pX + dY * pY + dZ * pZ; // this.vec3_dot(d, p);
       
         r = (CC * DD - CD * CD);
         u = (DD * CP - CD * DP) / r;
@@ -338,7 +338,7 @@ class solarchvision_Functions {
         
         if (result == false) {
           
-          float DA = dX * aX + dY * aY + dZ * aZ; // this.dot3x(d, a);  
+          float DA = dX * aX + dY * aY + dZ * aZ; // this.vec3_dot(d, a);  
           
           r = (DD * AA - DA * DA);
           u = (AA * DP - DA * AP) / r;
@@ -366,11 +366,11 @@ class solarchvision_Functions {
     float bY = B[1] - O[1];
     float bZ = B[2] - O[2];
   
-    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
-    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
-    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
-    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
-    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.vec3_dot(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.vec3_dot(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.vec3_dot(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
     float r = (AA * BB - AB * AB);
     float u = (BB * AP - AB * BP) / r;
@@ -393,11 +393,11 @@ class solarchvision_Functions {
     float bY = B[1] - O[1];
     float bZ = B[2] - O[2];
   
-    float AA = aX * aX + aY * aY + aZ * aZ; // this.dot3x(a, a);
-    float AB = aX * bX + aY * bY + aZ * bZ; // this.dot3x(a, b);
-    float AP = aX * pX + aY * pY + aZ * pZ; // this.dot3x(a, p);
-    float BB = bX * bX + bY * bY + bZ * bZ; // this.dot3x(b, b);
-    float BP = bX * pX + bY * pY + bZ * pZ; // this.dot3x(b, p);
+    float AA = aX * aX + aY * aY + aZ * aZ; // this.vec3_dot(a, a);
+    float AB = aX * bX + aY * bY + aZ * bZ; // this.vec3_dot(a, b);
+    float AP = aX * pX + aY * pY + aZ * pZ; // this.vec3_dot(a, p);
+    float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
+    float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
     float r = (AA * BB - AB * AB);
     float u = (BB * AP - AB * BP) / r;
@@ -529,18 +529,18 @@ class solarchvision_Functions {
   }
   
   boolean arePointsClose(float[] pPoint1, float[] pPoint2) {
-    return this.is_zero(this.magnitude(this.difference(pPoint1, pPoint2)), this.EPSILON_POSITION);
+    return this.is_zero(this.vec_mag(this.difference(pPoint1, pPoint2)), this.EPSILON_POSITION);
   }  
   
   boolean are3PointsIn1Line(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
     
-    return this.is_zero(1.0 - abs(this.dot3x(
+    return this.is_zero(1.0 - abs(this.vec3_dot(
                                   this.normalize(this.difference(pPoint1, pPoint2)), 
                                   this.normalize(this.difference(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
   }
     
   float[] calculateTriangleNormal(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
-    return this.normalize(this.cross3x(
+    return this.normalize(this.vec3_cross(
                           this.difference(pPoint1, pPoint2), 
                           this.difference(pPoint2, pPoint3))); 
   }  
@@ -582,7 +582,7 @@ class solarchvision_Functions {
     // fisrt check at each vertex, if equal to any we return ture
     for (i = 0; i < pPolygon_vertices.length; i++) {
       
-      if (true == this.is_zero(this.magnitude(this.difference(pPoint, pPolygon_vertices[i])))) {
+      if (true == this.is_zero(this.vec_mag(this.difference(pPoint, pPolygon_vertices[i])))) {
         return true;
       }
     }
@@ -594,16 +594,16 @@ class solarchvision_Functions {
       float[] lAM = this.difference(pPoint, pPolygon_vertices[i]);
       float[] lBM = this.difference(pPoint, pPolygon_vertices[next_i]);
       
-      float lDiv = this.magnitude(lAM) * this.magnitude(lBM);
+      float lDiv = this.vec_mag(lAM) * this.vec_mag(lBM);
       if (lDiv > 0.0) {
         
-        float lAcosine = this.dot3x(lAM, lBM) / lDiv;
+        float lAcosine = this.vec3_dot(lAM, lBM) / lDiv;
         if (lAcosine < -1.0) lAcosine = -1.0;
         else if (lAcosine > 1.0) lAcosine = 1.0;
         
         float lAngle = acos(lAcosine); // returns between 0 and PI
         if (false == Float.isNaN(lAngle)){
-          if (this.dot3x(this.cross3x(lAM, lBM), lPolygon_normal) < 0) {
+          if (this.vec3_dot(this.vec3_cross(lAM, lBM), lPolygon_normal) < 0) {
             lAngle = -lAngle;
           }
           lSumAngles += lAngle;
@@ -627,7 +627,7 @@ class solarchvision_Functions {
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
 
-      if (false == this.is_zero(this.magnitude(this.difference(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
+      if (false == this.is_zero(this.vec_mag(this.difference(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
         
         float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
         lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
@@ -678,13 +678,13 @@ class solarchvision_Functions {
     for (int i = 0; i < pPolygonVertices.length; i++) {
       int next_i = (i + 1) % pPolygonVertices.length;
       
-      float[] A = this.cross3x(pPolygonVertices[i], pPolygonVertices[next_i]);
+      float[] A = this.vec3_cross(pPolygonVertices[i], pPolygonVertices[next_i]);
       float[] B = lSumVect;
       
-      lSumVect = this.sum3x(A, B);
+      lSumVect = this.vec3_sum(A, B);
     }
     
-    return 0.5 * this.magnitude(lSumVect); // unit m2
+    return 0.5 * this.vec_mag(lSumVect); // unit m2
   }  
   
 }
@@ -11410,9 +11410,9 @@ class solarchvision_SolidImpacts {
         z_max = test_z;
       }
   
-      //if (((abs(test_v - v) < min_dist) && (funcs.dot2x(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ)))  {
+      //if (((abs(test_v - v) < min_dist) && (funcs.vec2_dot(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ)))  {
       if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ))) {
-        //if (funcs.dot2x(test_x - x, test_y - y, dx, dy) >= 0) {
+        //if (funcs.vec2_dot(test_x - x, test_y - y, dx, dy) >= 0) {
   
         min_dist = abs(test_v - v);
   
@@ -13418,20 +13418,20 @@ class solarchvision_Selections {
               float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
               float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
               
-              float[] AC = funcs.sub3x(A, C);
-              float[] BD = funcs.sub3x(B, D);
+              float[] AC = funcs.vec3_sub(A, C);
+              float[] BD = funcs.vec3_sub(B, D);
               
-              face_norm = funcs.cross3x(AC, BD);
+              face_norm = funcs.vec3_cross(AC, BD);
               
               float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
             
-              float R = -funcs.dot3x(ray_dir, face_norm);
+              float R = -funcs.vec3_dot(ray_dir, face_norm);
         
               if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
                 dist2intersect = FLOAT_huge;
               }
               else {
-                dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+                dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
         
                 //if (dist2intersect > 0) {
                 if (dist2intersect > FLOAT_tiny) {
@@ -13477,20 +13477,20 @@ class solarchvision_Selections {
                   allPoints.getZ(allFaces.nodes[f][j_next])
                 };                
       
-                float[] AG = funcs.sub3x(A, G);
-                float[] BG = funcs.sub3x(B, G);
+                float[] AG = funcs.vec3_sub(A, G);
+                float[] BG = funcs.vec3_sub(B, G);
                 
-                face_norm = funcs.cross3x(AG, BG);
+                face_norm = funcs.vec3_cross(AG, BG);
                   
                 float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
                 
-                float R = -funcs.dot3x(ray_dir, face_norm);
+                float R = -funcs.vec3_dot(ray_dir, face_norm);
           
                 if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
                   dist2intersect = FLOAT_huge;
                 }
                 else {
-                  dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+                  dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
           
                   //if (dist2intersect > 0) {
                   if (dist2intersect > FLOAT_tiny) {
@@ -27552,20 +27552,20 @@ class solarchvision_Model2Ds {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.sub3x(A, C);
-      float[] BD = funcs.sub3x(B, D);
+      float[] AC = funcs.vec3_sub(A, C);
+      float[] BD = funcs.vec3_sub(B, D);
       
-      float[] face_norm = funcs.cross3x(AC, BD);
+      float[] face_norm = funcs.vec3_cross(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -funcs.dot3x(ray_dir, face_norm);
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -29060,20 +29060,20 @@ class solarchvision_Model1Ds {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.sub3x(A, C);
-      float[] BD = funcs.sub3x(B, D);
+      float[] AC = funcs.vec3_sub(A, C);
+      float[] BD = funcs.vec3_sub(B, D);
       
-      float[] face_norm = funcs.cross3x(AC, BD);
+      float[] face_norm = funcs.vec3_cross(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -funcs.dot3x(ray_dir, face_norm);
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -29708,22 +29708,22 @@ class solarchvision_Solids {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.sub3x(A, C);
-      float[] BD = funcs.sub3x(B, D);
+      float[] AC = funcs.vec3_sub(A, C);
+      float[] BD = funcs.vec3_sub(B, D);
       
-      float[] face_norm = funcs.cross3x(AC, BD);
+      float[] face_norm = funcs.vec3_cross(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
       
       float dist2intersect = FLOAT_undefined;
     
-      float R = -funcs.dot3x(ray_dir, face_norm);
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -29740,7 +29740,7 @@ class solarchvision_Solids {
             float[] vect1 = {this.Vertices[this.Faces[f][i]][0] - X_intersect, this.Vertices[this.Faces[f][i]][1] - Y_intersect, this.Vertices[this.Faces[f][i]][2] - Z_intersect};
             float[] vect2 = {this.Vertices[this.Faces[f][next_i]][0] - X_intersect, this.Vertices[this.Faces[f][next_i]][1] - Y_intersect, this.Vertices[this.Faces[f][next_i]][2] - Z_intersect};
     
-            float t = funcs.acos_ang(funcs.dot(funcs.normalize(vect1), funcs.normalize(vect2)));
+            float t = funcs.acos_ang(funcs.vec_dot(funcs.normalize(vect1), funcs.normalize(vect2)));
     
             AnglesAll += t;
           }
@@ -38152,20 +38152,20 @@ class solarchvision_Cameras {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.sub3x(A, C);
-      float[] BD = funcs.sub3x(B, D);
+      float[] AC = funcs.vec3_sub(A, C);
+      float[] BD = funcs.vec3_sub(B, D);
       
-      float[] face_norm = funcs.cross3x(AC, BD);
+      float[] face_norm = funcs.vec3_cross(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -funcs.dot3x(ray_dir, face_norm);
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -38648,20 +38648,20 @@ class solarchvision_Sections {
       float[] C = this.Vertices[this.Faces[f][n - 2]];
       float[] D = this.Vertices[this.Faces[f][n - 1]];
       
-      float[] AC = funcs.sub3x(A, C);
-      float[] BD = funcs.sub3x(B, D);
+      float[] AC = funcs.vec3_sub(A, C);
+      float[] BD = funcs.vec3_sub(B, D);
       
-      float[] face_norm = funcs.cross3x(AC, BD);
+      float[] face_norm = funcs.vec3_cross(AC, BD);
       
       float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
     
-      float R = -funcs.dot3x(ray_dir, face_norm);
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -39498,7 +39498,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
               };
   
-              float tmp = funcs.dot(funcs.normalize(SkyV), funcs.normalize(VECT));
+              float tmp = funcs.vec_dot(funcs.normalize(SkyV), funcs.normalize(VECT));
               if (tmp <= 0) tmp = 0; // removes backing faces
            
               SkyMask += tmp / float(DiffuseVectors.length);
@@ -39614,7 +39614,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                               SunR[1], SunR[2], SunR[3]
                             };
   
-                            float SunMask = funcs.dot(funcs.normalize(SunV), funcs.normalize(VECT));
+                            float SunMask = funcs.vec_dot(funcs.normalize(SunV), funcs.normalize(VECT));
                             if (SunMask <= 0) SunMask = 0; // removes backing faces 
   
   
@@ -39624,7 +39624,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                               SunR[1], SunR[2], SunR[3]
                             }; 
   
-                            if (funcs.dot(W, ray_direction) > 0) { // removes backing faces
+                            if (funcs.vec_dot(W, ray_direction) > 0) { // removes backing faces
   
                               if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
                                 if (_values_E_dir < 0) {
@@ -39861,20 +39861,20 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
             float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
             float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
             
-            float[] AC = funcs.sub3x(A, C);
-            float[] BD = funcs.sub3x(B, D);
+            float[] AC = funcs.vec3_sub(A, C);
+            float[] BD = funcs.vec3_sub(B, D);
             
-            face_norm = funcs.cross3x(AC, BD);
+            face_norm = funcs.vec3_cross(AC, BD);
             
             float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
           
-            float R = -funcs.dot3x(ray_dir, face_norm);
+            float R = -funcs.vec3_dot(ray_dir, face_norm);
       
             if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
               dist2intersect = FLOAT_huge;
             }
             else {
-              dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
       
               //if (dist2intersect > 0) {
               if (dist2intersect > FLOAT_tiny) {
@@ -39920,20 +39920,20 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
                 allPoints.getZ(allFaces.nodes[f][j_next])
               };                
     
-              float[] AG = funcs.sub3x(A, G);
-              float[] BG = funcs.sub3x(B, G);
+              float[] AG = funcs.vec3_sub(A, G);
+              float[] BG = funcs.vec3_sub(B, G);
               
-              face_norm = funcs.cross3x(AG, BG);
+              face_norm = funcs.vec3_cross(AG, BG);
                 
               float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
               
-              float R = -funcs.dot3x(ray_dir, face_norm);
+              float R = -funcs.vec3_dot(ray_dir, face_norm);
         
               if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
                 dist2intersect = FLOAT_huge;
               }
               else {
-                dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+                dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
         
                 //if (dist2intersect > 0) {
                 if (dist2intersect > FLOAT_tiny) {
@@ -40012,20 +40012,20 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
           float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
           float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
           
-          float[] AC = funcs.sub3x(A, C);
-          float[] BD = funcs.sub3x(B, D);
+          float[] AC = funcs.vec3_sub(A, C);
+          float[] BD = funcs.vec3_sub(B, D);
           
-          face_norm = funcs.cross3x(AC, BD);
+          face_norm = funcs.vec3_cross(AC, BD);
           
           float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
         
-          float R = -funcs.dot3x(ray_dir, face_norm);
+          float R = -funcs.vec3_dot(ray_dir, face_norm);
     
           if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
             dist2intersect = FLOAT_huge;
           }
           else {
-            dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+            dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
     
             //if (dist2intersect > 0) {
             if (dist2intersect > FLOAT_tiny) {
@@ -40071,20 +40071,20 @@ float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
               allPoints.getZ(allFaces.nodes[f][j_next])
             };                
   
-            float[] AG = funcs.sub3x(A, G);
-            float[] BG = funcs.sub3x(B, G);
+            float[] AG = funcs.vec3_sub(A, G);
+            float[] BG = funcs.vec3_sub(B, G);
             
-            face_norm = funcs.cross3x(AG, BG);
+            face_norm = funcs.vec3_cross(AG, BG);
               
             float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
             
-            float R = -funcs.dot3x(ray_dir, face_norm);
+            float R = -funcs.vec3_dot(ray_dir, face_norm);
       
             if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
               dist2intersect = FLOAT_huge;
             }
             else {
-              dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
       
               //if (dist2intersect > 0) {
               if (dist2intersect > FLOAT_tiny) {
@@ -40191,20 +40191,20 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
           float[] C = allPoints.getPosition(allCurves.nodes[f][n - 2]);
           float[] D = allPoints.getPosition(allCurves.nodes[f][n - 1]);
           
-          float[] AC = funcs.sub3x(A, C);
-          float[] BD = funcs.sub3x(B, D);
+          float[] AC = funcs.vec3_sub(A, C);
+          float[] BD = funcs.vec3_sub(B, D);
           
-          face_norm = funcs.cross3x(AC, BD);
+          face_norm = funcs.vec3_cross(AC, BD);
           
           float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
         
-          float R = -funcs.dot3x(ray_dir, face_norm);
+          float R = -funcs.vec3_dot(ray_dir, face_norm);
     
           if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
             dist2intersect = FLOAT_huge;
           }
           else {
-            dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+            dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
     
             //if (dist2intersect > 0) {
             if (dist2intersect > FLOAT_tiny) {
@@ -40250,20 +40250,20 @@ float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
               allPoints.getZ(allCurves.nodes[f][j_next])
             };                
   
-            float[] AG = funcs.sub3x(A, G);
-            float[] BG = funcs.sub3x(B, G);
+            float[] AG = funcs.vec3_sub(A, G);
+            float[] BG = funcs.vec3_sub(B, G);
             
-            face_norm = funcs.cross3x(AG, BG);
+            face_norm = funcs.vec3_cross(AG, BG);
               
             float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
             
-            float R = -funcs.dot3x(ray_dir, face_norm);
+            float R = -funcs.vec3_dot(ray_dir, face_norm);
       
             if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
               dist2intersect = FLOAT_huge;
             }
             else {
-              dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
       
               //if (dist2intersect > 0) {
               if (dist2intersect > FLOAT_tiny) {
@@ -40402,20 +40402,20 @@ float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
         N = A;
       }       
     
-      float[] NG = funcs.sub3x(N, G);
-      float[] GM = funcs.sub3x(G, M);
+      float[] NG = funcs.vec3_sub(N, G);
+      float[] GM = funcs.vec3_sub(G, M);
       
-      float[] face_norm = funcs.cross3x(NG, GM);
+      float[] face_norm = funcs.vec3_cross(NG, GM);
       
       float face_offset = ((G[0] + M[0] + N[0]) * face_norm[0] + (G[1] + M[1] + N[1]) * face_norm[1] + (G[2] + M[2] + N[2]) * face_norm[2]) / 3.0;  
     
-      float R = -funcs.dot3x(ray_dir, face_norm);
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
   
       if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
         dist2intersect = FLOAT_huge;
       }
       else {
-        dist2intersect = (funcs.dot3x(ray_pnt, face_norm) - face_offset) / R;
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
   
         //if (dist2intersect > 0) {
         if (dist2intersect > FLOAT_tiny) {
@@ -40557,7 +40557,7 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
       SunR1, SunR2, SunR3
     };
 
-    float SunMask = funcs.dot(funcs.normalize(SunV), funcs.normalize(VECT));
+    float SunMask = funcs.vec_dot(funcs.normalize(SunV), funcs.normalize(VECT));
     if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
     float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -40568,7 +40568,7 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
     /*
     float[] REF_SunV = {SunR1, SunR2, -SunR3};
      
-     float REF_SunMask = funcs.dot(funcs.normalize(REF_SunV), funcs.normalize(VECT));
+     float REF_SunMask = funcs.vec_dot(funcs.normalize(REF_SunV), funcs.normalize(VECT));
      if (REF_SunMask <= 0) REF_SunMask = 0; // removes backing faces 
      
      float REF_SkyMask = 1 - (0.5 * (1.0 + (Alpha / 90.0)));      
@@ -50104,7 +50104,7 @@ void SOLARCHVISION_preBakeViewport () {
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
       face_norm = funcs.normalize(face_norm);
       
-      if (funcs.dot(face_norm, ray_direction) > 0) { // to render backing faces 
+      if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces 
         face_norm[0] *= -1;
         face_norm[1] *= -1;
         face_norm[2] *= -1;
@@ -50146,7 +50146,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DiffuseVectors[n_Ray][1];
           ray_direction[2] = DiffuseVectors[n_Ray][2];
     
-          float SkyMask = funcs.dot(funcs.normalize(DiffuseVectors[n_Ray]), funcs.normalize(VECT));
+          float SkyMask = funcs.vec_dot(funcs.normalize(DiffuseVectors[n_Ray]), funcs.normalize(VECT));
           //if (SkyMask <= 0) SkyMask = 0; // removes backing faces
          
           // when SHD = 0;
@@ -50186,7 +50186,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DirectVector[1];
           ray_direction[2] = DirectVector[2];
 
-          float SunMask = funcs.dot(funcs.normalize(DirectVector), funcs.normalize(VECT));
+          float SunMask = funcs.vec_dot(funcs.normalize(DirectVector), funcs.normalize(VECT));
           //if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
           // when SHD = 0;
@@ -50406,7 +50406,7 @@ void SOLARCHVISION_RenderViewport () {
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
       face_norm = funcs.normalize(face_norm);
       
-      if (funcs.dot(face_norm, ray_direction) > 0) { // to render backing faces 
+      if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces 
         face_norm[0] *= -1;
         face_norm[1] *= -1;
         face_norm[2] *= -1;
@@ -50454,7 +50454,7 @@ float[] SunV = {
   SunR[1], SunR[2], SunR[3]
 };
 
-float SunMask = funcs.dot(funcs.normalize(SunV), funcs.normalize(VECT));
+float SunMask = funcs.vec_dot(funcs.normalize(SunV), funcs.normalize(VECT));
 if (SunMask <= 0) SunMask = 0; // removes backing faces 
 
 float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
@@ -50469,7 +50469,7 @@ ray_direction[0] = SunV[0];
 ray_direction[1] = SunV[1];
 ray_direction[2] = SunV[2];
 
-//if (funcs.dot(face_norm, ray_direction) > 0) 
+//if (funcs.vec_dot(face_norm, ray_direction) > 0) 
 { // removes backing faces
 
   if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) { 
