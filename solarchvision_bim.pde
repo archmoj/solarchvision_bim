@@ -520,6 +520,9 @@ class solarchvision_Functions {
   }
 
 
+  boolean is_zero (float val) { 
+    return (abs(val) < this.EPSILON_POSITION); 
+  }
 
   boolean is_zero (float val, float tolerance) { 
     return (abs(val) < tolerance); 
@@ -541,6 +544,80 @@ class solarchvision_Functions {
                           this.difference(pPoint1, pPoint2), 
                           this.difference(pPoint2, pPoint3))); 
   }  
+  
+  
+  float[] calculatePolygonNormal(float[][] pPolygonVertices) {
+    
+    float[] lPolygonNormal = {0, 0, 0};
+    
+    int n = pPolygonVertices.length;
+    
+    for (int i = 0; i < n; i++) {
+      int i1 = (i + 1) % n;
+      int i2 = (i + 2) % n;
+      
+      if (false == are3PointsIn1Line(pPolygonVertices[i], 
+                                     pPolygonVertices[i1],
+                                     pPolygonVertices[i2])) {
+        
+        lPolygonNormal = calculateTriangleNormal(pPolygonVertices[i], 
+                                                 pPolygonVertices[i1],
+                                                 pPolygonVertices[i2]);
+  
+        break;
+      }
+    }
+                                                  
+    return lPolygonNormal;
+  }  
+  
+  
+  boolean isPointInPolygon(float[] pPoint, float[][] pPolygon_vertices) { 
+
+    float[] lPolygon_normal = calculatePolygonNormal(pPolygon_vertices);
+    
+ 
+    int i, next_i;
+    
+    // fisrt check at each vertex, if equal to any we return ture
+    for (i = 0; i < pPolygon_vertices.length; i++) {
+      
+      if (true == this.is_zero(this.magnitude(this.difference(pPoint, pPolygon_vertices[i])))) {
+        return true;
+      }
+    }
+
+    float lSumAngles = 0.0;
+    for (i = 0; i < pPolygon_vertices.length; i++) {
+      next_i = (i + 1) % pPolygon_vertices.length;
+      
+      float[] lAM = this.difference(pPoint, pPolygon_vertices[i]);
+      float[] lBM = this.difference(pPoint, pPolygon_vertices[next_i]);
+      
+      float lDiv = this.magnitude(lAM) * this.magnitude(lBM);
+      if (lDiv > 0.0) {
+        
+        float lAcosine = this.dot3x(lAM, lBM) / lDiv;
+        if (lAcosine < -1.0) lAcosine = -1.0;
+        else if (lAcosine > 1.0) lAcosine = 1.0;
+        
+        float lAngle = acos(lAcosine); // returns between 0 and PI
+        if (false == Float.isNaN(lAngle)){
+          if (this.dot3x(this.cross3x(lAM, lBM), lPolygon_normal) < 0) {
+            lAngle = -lAngle;
+          }
+          lSumAngles += lAngle;
+        }
+      }
+    }
+    
+    float lRemainder = (abs(lSumAngles) / (2.0 * PI)) % 2.0;
+    if (lRemainder < 0.9999 || lRemainder > 1.0001) {
+      return false;
+    }
+    return true;
+  }  
+  
   
   
   float[][] cleanShape_removeDuplicateVertices (float[][] pVertices_IN) {
