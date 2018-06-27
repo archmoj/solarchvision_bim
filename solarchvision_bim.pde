@@ -3562,7 +3562,7 @@ class solarchvision_WIN3D {
           Land3D.displaySurface = !Land3D.displaySurface;
           if (Land3D.displaySurface) {
             current_ObjectCategory = ObjectCategory.LANDPOINT;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           }
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3572,7 +3572,7 @@ class solarchvision_WIN3D {
           allModel1Ds.displayAll = !allModel1Ds.displayAll;
           if (allModel1Ds.displayAll) {
             current_ObjectCategory = ObjectCategory.MODEL1D;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           }
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3582,7 +3582,7 @@ class solarchvision_WIN3D {
           allModel2Ds.displayAll = !allModel2Ds.displayAll;
           if (allModel2Ds.displayAll) {
             current_ObjectCategory = ObjectCategory.MODEL2D;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           }
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3592,7 +3592,7 @@ class solarchvision_WIN3D {
           allFaces.displayAll = !allFaces.displayAll;
           if (allFaces.displayAll) {
             current_ObjectCategory = ObjectCategory.GROUP;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3602,7 +3602,7 @@ class solarchvision_WIN3D {
           allFaces.displayAll = !allFaces.displayAll;
           if (allFaces.displayAll) {
             current_ObjectCategory = ObjectCategory.FACE;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3612,7 +3612,7 @@ class solarchvision_WIN3D {
           allFaces.displayAll = !allFaces.displayAll;
           if (allFaces.displayAll) {
             current_ObjectCategory = ObjectCategory.VERTEX;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3622,7 +3622,7 @@ class solarchvision_WIN3D {
           allCurves.displayAll = !allCurves.displayAll;
           if (allFaces.displayAll) {
             current_ObjectCategory = ObjectCategory.CURVE;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3632,7 +3632,7 @@ class solarchvision_WIN3D {
           allSolids.displayAll = !allSolids.displayAll;
           if (allSolids.displayAll) {
             current_ObjectCategory = ObjectCategory.SOLID;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3642,7 +3642,7 @@ class solarchvision_WIN3D {
           allSections.displayAll = !allSections.displayAll;
           if (allSections.displayAll) {
             current_ObjectCategory = ObjectCategory.SECTION;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -3652,7 +3652,7 @@ class solarchvision_WIN3D {
           allCameras.displayAll = !allCameras.displayAll;
           if (allCameras.displayAll) {
             current_ObjectCategory = ObjectCategory.CAMERA;
-            UI_BAR_b_update = true;
+            UI_BAR_b.update = true;
           } 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -18165,7 +18165,7 @@ void draw () {
     SOLARCHVISION_Y_clicked = -1;
     
     UI_BAR_a_update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
     UI_BAR_c_update = true;
     UI_BAR_d_update = true;
 
@@ -18709,7 +18709,7 @@ void draw () {
       if (WIN3D.update) FRAME_record_JPG = true;
       if (WORLD.update) FRAME_record_JPG = true;
       //if (UI_BAR_a_update) FRAME_record_JPG = true;
-      //if (UI_BAR_b_update) FRAME_record_JPG = true;
+      //if (UI_BAR_b.update) FRAME_record_JPG = true;
       //if (UI_BAR_d_update) FRAME_record_JPG = true;
     }
 
@@ -18773,8 +18773,8 @@ void draw () {
           SOLARCHVISION_draw_window_BAR_a();
         }
 
-        if (UI_BAR_b_update) {
-          SOLARCHVISION_draw_window_BAR_b();
+        if (UI_BAR_b.update) {
+          UI_BAR_b.drawAll();
         }
 
         if (UI_BAR_c_update) {
@@ -31244,7 +31244,7 @@ class solarchvision_Model3Ds {
   
   
       current_ObjectCategory = ObjectCategory.GROUP;
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
     }
@@ -32114,7 +32114,7 @@ class solarchvision_Model3Ds {
     } 
   
     current_ObjectCategory = ObjectCategory.VERTEX; 
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   
     userSelections.calculate_selection_BoundingBox();
   }
@@ -32642,7 +32642,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -32839,7 +32839,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33016,7 +33016,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33187,7 +33187,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33381,7 +33381,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33552,7 +33552,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33706,7 +33706,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33864,7 +33864,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -33938,7 +33938,7 @@ class solarchvision_Model3Ds {
       }
   
       current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -34226,7 +34226,7 @@ class solarchvision_Model3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
       
       current_ObjectCategory = ObjectCategory.FACE;
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
   
@@ -41348,7 +41348,7 @@ void mouseReleased () {
           STUDY.update = true;
           ROLLOUT.update = true;
           UI_BAR_a_update = true;
-          UI_BAR_b_update = true;
+          UI_BAR_b.update = true;
           UI_BAR_d_update = true;          
 
           FRAME_drag_JPG = false;
@@ -41891,7 +41891,7 @@ void mouseClicked () {
 
         SOLARCHVISION_RecordFrame();
 
-        UI_dessin_Mouse(1, mouseX, mouseY, 2 * MessageSize);        
+        UI_BAR_b.drawMouse(1, mouseX, mouseY, 2 * MessageSize);        
 
         SOLARCHVISION_RecordFrame();
         /*        
@@ -41900,7 +41900,7 @@ void mouseClicked () {
          STUDY.update = true;
          ROLLOUT.update = true;
          UI_BAR_a_update = true;
-         UI_BAR_b_update = true;
+         UI_BAR_b.update = true;
          UI_BAR_d_update = true;          
          
          FRAME_click_JPG = 0;
@@ -42797,160 +42797,160 @@ void mouseClicked () {
 
             if (menu_option.equals("Model1Ds")) {
               UI_set_to_Create_allModel1Ds();
-              SOLARCHVISION_highlight_in_BAR_b("Model1Ds");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Model1Ds");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Tree")) {
               UI_set_to_Create_Tree();
-              SOLARCHVISION_highlight_in_BAR_b("Tree");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Tree");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Person")) {
               UI_set_to_Create_Person();
-              SOLARCHVISION_highlight_in_BAR_b("Person");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Person");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Point")) {
               UI_set_to_Create_Vertex();
-              SOLARCHVISION_highlight_in_BAR_b("Point");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Point");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Spline")) {
               UI_set_to_Create_Curve();
-              SOLARCHVISION_highlight_in_BAR_b("Spline");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Spline");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Surface")) {
               UI_set_to_Create_Face();
-              SOLARCHVISION_highlight_in_BAR_b("Surface");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Surface");
+              UI_BAR_b.update = true;
             }
 
             
             if (menu_option.equals("Parametric 1")) {
               UI_set_to_Create_Parametric(1);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Parametric 2")) {
               UI_set_to_Create_Parametric(2);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Parametric 3")) {
               UI_set_to_Create_Parametric(3);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Parametric 4")) {
               UI_set_to_Create_Parametric(4);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Parametric 5")) {
               UI_set_to_Create_Parametric(5);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Parametric 6")) {
               UI_set_to_Create_Parametric(6);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Parametric 7")) {
               UI_set_to_Create_Parametric(7);
-              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Tri")) {
               UI_set_to_Create_Tri();
-              SOLARCHVISION_highlight_in_BAR_b("Tri");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Tri");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Plane")) {
               UI_set_to_Create_Plane();
-              SOLARCHVISION_highlight_in_BAR_b("Plane");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Plane");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Poly")) {
               UI_set_to_Create_Poly();
-              SOLARCHVISION_highlight_in_BAR_b("Poly");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Poly");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Extrude")) {
               UI_set_to_Create_Extrude();
-              SOLARCHVISION_highlight_in_BAR_b("Extrude");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Extrude");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Hyper")) {
               UI_set_to_Create_Hyper();
-              SOLARCHVISION_highlight_in_BAR_b("Hyper");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Hyper");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("House1")) {
               UI_set_to_Create_House1();
-              SOLARCHVISION_highlight_in_BAR_b("House1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("House1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("House2")) {
               UI_set_to_Create_House2();
-              SOLARCHVISION_highlight_in_BAR_b("House2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("House2");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Box")) {
               UI_set_to_Create_Box();
-              SOLARCHVISION_highlight_in_BAR_b("Box");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Box");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Icosahedron")) {
               UI_set_to_Create_Icosahedron();
-              SOLARCHVISION_highlight_in_BAR_b("Icosahedron");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Icosahedron");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Octahedron")) {
               UI_set_to_Create_Octahedron();
-              SOLARCHVISION_highlight_in_BAR_b("Octahedron");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Octahedron");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Sphere")) {
               UI_set_to_Create_Sphere();
-              SOLARCHVISION_highlight_in_BAR_b("Sphere");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Sphere");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Cylinder")) {
               UI_set_to_Create_Cylinder();
-              SOLARCHVISION_highlight_in_BAR_b("Cylinder");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Cylinder");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Cushion")) {
               UI_set_to_Create_Cushion();
-              SOLARCHVISION_highlight_in_BAR_b("Cushion");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Cushion");
+              UI_BAR_b.update = true;
             }
 
 
 
             if (menu_option.equals("Drop on LandSurface")) {
               UI_set_to_Modify_Drop(0);
-              SOLARCHVISION_highlight_in_BAR_b("DrL±");
-              UI_BAR_b_update = true;  
+              UI_BAR_b.hghlight("DrL±");
+              UI_BAR_b.update = true;  
 
               userSelections.drop_Selection();
               WIN3D.update = true;
             }
             if (menu_option.equals("Drop on ModelSurface (Down)")) {
               UI_set_to_Modify_Drop(1);
-              SOLARCHVISION_highlight_in_BAR_b("DrM-");
-              UI_BAR_b_update = true;  
+              UI_BAR_b.hghlight("DrM-");
+              UI_BAR_b.update = true;  
 
               userSelections.drop_Selection(); 
               WIN3D.update = true;
             }                      
             if (menu_option.equals("Drop on ModelSurface (Up)")) {
               UI_set_to_Modify_Drop(2);
-              SOLARCHVISION_highlight_in_BAR_b("DrM+");
-              UI_BAR_b_update = true;  
+              UI_BAR_b.hghlight("DrM+");
+              UI_BAR_b.update = true;  
 
               userSelections.drop_Selection();
               WIN3D.update = true;
@@ -42960,158 +42960,158 @@ void mouseClicked () {
 
             if (menu_option.equals("Get dX")) {
               UI_set_to_Modify_GetLength(0);
-              SOLARCHVISION_highlight_in_BAR_b("GLx");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("GLx");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Get dY")) {
               UI_set_to_Modify_GetLength(1);
-              SOLARCHVISION_highlight_in_BAR_b("GLy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("GLy");
+              UI_BAR_b.update = true;
             }              
             if (menu_option.equals("Get dZ")) {
               UI_set_to_Modify_GetLength(2);
-              SOLARCHVISION_highlight_in_BAR_b("GLz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("GLz");
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Get dXYZ")) {
               UI_set_to_Modify_GetLength(3);
-              SOLARCHVISION_highlight_in_BAR_b("GL³");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("GL³");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Get dXY")) {
               UI_set_to_Modify_GetLength(4);
-              SOLARCHVISION_highlight_in_BAR_b("GL²");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("GL²");
+              UI_BAR_b.update = true;
             }      
             if (menu_option.equals("Get Angle")) {
               UI_set_to_Modify_GetLength(5);
-              SOLARCHVISION_highlight_in_BAR_b("GLa");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("GLa");
+              UI_BAR_b.update = true;
             }               
 
 
             if (menu_option.equals("MoveX")) {
               UI_set_to_Modify_Move(0);
-              SOLARCHVISION_highlight_in_BAR_b("MVx");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("MVx");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("MoveY")) {
               UI_set_to_Modify_Move(1);
-              SOLARCHVISION_highlight_in_BAR_b("MVy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("MVy");
+              UI_BAR_b.update = true;
             }              
             if (menu_option.equals("MoveZ")) {
               UI_set_to_Modify_Move(2);
-              SOLARCHVISION_highlight_in_BAR_b("MVz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("MVz");
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Move")) {
               UI_set_to_Modify_Move(3);
-              SOLARCHVISION_highlight_in_BAR_b("MV³");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("MV³");
+              UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("ScaleX")) {
               UI_set_to_Modify_Scale(0);
-              SOLARCHVISION_highlight_in_BAR_b("SCx");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SCx");
+              UI_BAR_b.update = true;
             }          
             if (menu_option.equals("ScaleY")) {
               UI_set_to_Modify_Scale(1);
-              SOLARCHVISION_highlight_in_BAR_b("SCy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SCy");
+              UI_BAR_b.update = true;
             }      
             if (menu_option.equals("ScaleZ")) {
               UI_set_to_Modify_Scale(2);
-              SOLARCHVISION_highlight_in_BAR_b("SCz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SCz");
+              UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Scale")) {
               UI_set_to_Modify_Scale(3);
-              SOLARCHVISION_highlight_in_BAR_b("SC³");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SC³");
+              UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("PowerX")) {
               UI_set_to_Modify_Power(0);
-              SOLARCHVISION_highlight_in_BAR_b("PWx");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("PWx");
+              UI_BAR_b.update = true;
             }          
             if (menu_option.equals("PowerY")) {
               UI_set_to_Modify_Power(1);
-              SOLARCHVISION_highlight_in_BAR_b("PWy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("PWy");
+              UI_BAR_b.update = true;
             }      
             if (menu_option.equals("PowerZ")) {
               UI_set_to_Modify_Power(2);
-              SOLARCHVISION_highlight_in_BAR_b("PWz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("PWz");
+              UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Power")) {
               UI_set_to_Modify_Power(3);
-              SOLARCHVISION_highlight_in_BAR_b("PW³");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("PW³");
+              UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("RotateX")) {
               UI_set_to_Modify_Rotate(0);
-              SOLARCHVISION_highlight_in_BAR_b("RTx");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("RTx");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("RotateY")) {
               UI_set_to_Modify_Rotate(1);
-              SOLARCHVISION_highlight_in_BAR_b("RTy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("RTy");
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("RotateZ")) {
               UI_set_to_Modify_Rotate(2);
-              SOLARCHVISION_highlight_in_BAR_b("RTz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("RTz");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Rotate")) {
               UI_set_to_Modify_Rotate(2);
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Pivot")) {
               UI_set_to_Modify_Pivot(0);
-              SOLARCHVISION_highlight_in_BAR_b("SPvt0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SPvt0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick Pivot")) {
               UI_set_to_Modify_Pivot(1);
-              SOLARCHVISION_highlight_in_BAR_b("SPvt1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SPvt1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign Pivot")) {
               UI_set_to_Modify_Pivot(2);
-              SOLARCHVISION_highlight_in_BAR_b("SPvt2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SPvt2");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Save Current ReferenceBox")) {
               userSelections.save_current_BoundingBox();
-              SOLARCHVISION_highlight_in_BAR_b("<pvt>");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("<pvt>");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Reset Saved ReferenceBox")) {
               userSelections.apply_saved_BoundingBox();
-              SOLARCHVISION_highlight_in_BAR_b(">pvt<");
-              UI_BAR_b_update = true;  
+              UI_BAR_b.hghlight(">pvt<");
+              UI_BAR_b.update = true;  
               WIN3D.update = true;
             }
             if (menu_option.equals("Use Selection ReferenceBox")) {
               userSelections.calculate_selection_BoundingBox();
-              SOLARCHVISION_highlight_in_BAR_b("|pvt|");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("|pvt|");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Use Origin ReferenceBox")) {
               userSelections.apply_origin_ReferenceBox();
-              SOLARCHVISION_highlight_in_BAR_b(".pvt.");
-              UI_BAR_b_update = true;  
+              UI_BAR_b.hghlight(".pvt.");
+              UI_BAR_b.update = true;  
               WIN3D.update = true;
             }
 
@@ -43139,20 +43139,20 @@ void mouseClicked () {
 
             if (menu_option.equals("Solid")) {
               UI_set_to_Create_Solid();
-              SOLARCHVISION_highlight_in_BAR_b("SLD");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SLD");
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Section")) {
               UI_set_to_Create_Section();
-              SOLARCHVISION_highlight_in_BAR_b("SEC");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("SEC");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Camera")) {
               UI_set_to_Create_Camera();
-              SOLARCHVISION_highlight_in_BAR_b("CAM");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("CAM");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Viewport >> Camera")) {
@@ -43175,7 +43175,7 @@ void mouseClicked () {
               SOLARCHVISION_modify_Viewport_Title();
 
               WIN3D.update = true;   
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Camera >> Viewport")) {
@@ -43195,7 +43195,7 @@ void mouseClicked () {
               SOLARCHVISION_modify_Viewport_Title();
 
               WIN3D.update = true;   
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }  
 
             if (menu_option.equals("GoTo Selected Camera")) {
@@ -43205,7 +43205,7 @@ void mouseClicked () {
                 SOLARCHVISION_modify_Viewport_Title();
   
                 WIN3D.update = true;   
-                UI_BAR_b_update = true;
+                UI_BAR_b.update = true;
               }
             }
             
@@ -43225,204 +43225,204 @@ void mouseClicked () {
 
             if (menu_option.equals("Change Seed/Material")) {
               UI_set_to_Modify_Seed(0);
-              SOLARCHVISION_highlight_in_BAR_b("Mat0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Mat0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick Seed/Material")) {
               UI_set_to_Modify_Seed(1);
-              SOLARCHVISION_highlight_in_BAR_b("Mat1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Mat1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign Seed/Material")) {
               UI_set_to_Modify_Seed(2);
-              SOLARCHVISION_highlight_in_BAR_b("Mat2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Mat2");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change Tessellation")) {
               UI_set_to_Modify_Tessellation(0);
-              SOLARCHVISION_highlight_in_BAR_b("Tes0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Tes0");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Tessellation")) {
               UI_set_to_Modify_Tessellation(1);
-              SOLARCHVISION_highlight_in_BAR_b("Tes1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Tes1");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Tessellation")) {
               UI_set_to_Modify_Tessellation(2);
-              SOLARCHVISION_highlight_in_BAR_b("Tes2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Tes2");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change Layer")) {
               UI_set_to_Modify_Layer(0);
-              SOLARCHVISION_highlight_in_BAR_b("Lyr0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Lyr0");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Layer")) {
               UI_set_to_Modify_Layer(1);
-              SOLARCHVISION_highlight_in_BAR_b("Lyr1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Lyr1");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Layer")) {
               UI_set_to_Modify_Layer(2);
-              SOLARCHVISION_highlight_in_BAR_b("Lyr2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Lyr2");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change Visibility")) {
               UI_set_to_Modify_Visibility(0);
-              SOLARCHVISION_highlight_in_BAR_b("Vsb0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Vsb0");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Visibility")) {
               UI_set_to_Modify_Visibility(1);
-              SOLARCHVISION_highlight_in_BAR_b("Vsb1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Vsb1");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Visibility")) {
               UI_set_to_Modify_Visibility(2);
-              SOLARCHVISION_highlight_in_BAR_b("Vsb2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Vsb2");
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Change Weight")) {
               UI_set_to_Modify_Weight(0);
-              SOLARCHVISION_highlight_in_BAR_b("Wgt0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Wgt0");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Weight")) {
               UI_set_to_Modify_Weight(1);
-              SOLARCHVISION_highlight_in_BAR_b("Wgt1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Wgt1");
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Weight")) {
               UI_set_to_Modify_Weight(2);
-              SOLARCHVISION_highlight_in_BAR_b("Wgt2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Wgt2");
+              UI_BAR_b.update = true;
             } 
 
             if (menu_option.equals("Flip Normal")) {
               UI_set_to_Modify_Normal(1);
-              SOLARCHVISION_highlight_in_BAR_b("Norm1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Norm1");
+              UI_BAR_b.update = true;
             }                
 
             if (menu_option.equals("Set-Out Normal")) {
               UI_set_to_Modify_Normal(2);
-              SOLARCHVISION_highlight_in_BAR_b("Norm2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Norm2");
+              UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Set-In Normal")) {
               UI_set_to_Modify_Normal(3);
-              SOLARCHVISION_highlight_in_BAR_b("Norm3");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Norm3");
+              UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Get FirstVertex")) {
               UI_set_to_Modify_FirstVertex(1);
-              SOLARCHVISION_highlight_in_BAR_b("1stV");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("1stV");
+              UI_BAR_b.update = true;
             }     
             
 
 
             if (menu_option.equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
-              SOLARCHVISION_highlight_in_BAR_b("dgMax0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgMax0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick DegreeMax")) {
               UI_set_to_Modify_DegreeMax(1);
-              SOLARCHVISION_highlight_in_BAR_b("dgMax1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgMax1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign DegreeMax")) {
               UI_set_to_Modify_DegreeMax(2);
-              SOLARCHVISION_highlight_in_BAR_b("dgMax2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgMax2");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change DegreeDif")) {
               UI_set_to_Modify_DegreeDif(0);
-              SOLARCHVISION_highlight_in_BAR_b("dgDif0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgDif0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick DegreeDif")) {
               UI_set_to_Modify_DegreeDif(1);
-              SOLARCHVISION_highlight_in_BAR_b("dgDif1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgDif1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign DegreeDif")) {
               UI_set_to_Modify_DegreeDif(2);
-              SOLARCHVISION_highlight_in_BAR_b("dgDif2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgDif2");
+              UI_BAR_b.update = true;
             }                 
 
             if (menu_option.equals("Change DegreeMin")) {
               UI_set_to_Modify_DegreeMin(0);
-              SOLARCHVISION_highlight_in_BAR_b("dgMin0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgMin0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick DegreeMin")) {
               UI_set_to_Modify_DegreeMin(1);
-              SOLARCHVISION_highlight_in_BAR_b("dgMin1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgMin1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign DegreeMin")) {
               UI_set_to_Modify_DegreeMin(2);
-              SOLARCHVISION_highlight_in_BAR_b("dgMin2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("dgMin2");
+              UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
-              SOLARCHVISION_highlight_in_BAR_b("trSz0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("trSz0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick TrunkSize")) {
               UI_set_to_Modify_TrunkSize(1);
-              SOLARCHVISION_highlight_in_BAR_b("trSz1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("trSz1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign TrunkSize")) {
               UI_set_to_Modify_TrunkSize(2);
-              SOLARCHVISION_highlight_in_BAR_b("trSz2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("trSz2");
+              UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Change LeafSize")) {
               UI_set_to_Modify_LeafSize(0);
-              SOLARCHVISION_highlight_in_BAR_b("lfSz0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("lfSz0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick LeafSize")) {
               UI_set_to_Modify_LeafSize(1);
-              SOLARCHVISION_highlight_in_BAR_b("lfSz1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("lfSz1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign LeafSize")) {
               UI_set_to_Modify_LeafSize(2);
-              SOLARCHVISION_highlight_in_BAR_b("lfSz2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("lfSz2");
+              UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("AllallModel1DsProps")) {
               UI_set_to_Modify_AllallModel1DsProps(0);
-              SOLARCHVISION_highlight_in_BAR_b("allFP0");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("allFP0");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick AllallModel1DsProps")) {
               UI_set_to_Modify_AllallModel1DsProps(1);
-              SOLARCHVISION_highlight_in_BAR_b("allFP1");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("allFP1");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign AllallModel1DsProps")) {
               UI_set_to_Modify_AllallModel1DsProps(2);
-              SOLARCHVISION_highlight_in_BAR_b("allFP2");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("allFP2");
+              UI_BAR_b.update = true;
             }                 
 
             if (menu_option.equals("Change DegreeMax")) {
@@ -43444,13 +43444,13 @@ void mouseClicked () {
 
             if (menu_option.equals("Orthographic")) {
               UI_set_to_View_ProjectionType(0);
-              SOLARCHVISION_highlight_in_BAR_b("P<>");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("P<>");
+              UI_BAR_b.update = true;
             }           
             if (menu_option.equals("Perspective")) {
               UI_set_to_View_ProjectionType(1);
-              SOLARCHVISION_highlight_in_BAR_b("P><");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("P><");
+              UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Reverse Selection")) {
@@ -43468,187 +43468,187 @@ void mouseClicked () {
             if (menu_option.equals("Select Solid")) {
               current_ObjectCategory = ObjectCategory.SOLID;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }                 
             if (menu_option.equals("Select Section")) {
               current_ObjectCategory = ObjectCategory.SECTION;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }       
             if (menu_option.equals("Select Camera")) {
               current_ObjectCategory = ObjectCategory.CAMERA;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }  
             if (menu_option.equals("Select LandPoint")) {
               current_ObjectCategory = ObjectCategory.LANDPOINT;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }              
             if (menu_option.equals("Select allModel1Ds")) {
               current_ObjectCategory = ObjectCategory.MODEL1D;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }  
             if (menu_option.equals("Select allModel2Ds")) {
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Select Group")) {
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Select Face")) {
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Select Curve")) {
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Select Vertex")) {
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Soft Selection")) {
               allModel3Ds.convert_Vertex_to_softSelection();
 
               current_ObjectCategory = ObjectCategory.SOFTVERTEX;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }                 
             if (menu_option.equals("Vertex >> Group")) {
               allModel3Ds.convert_Vertices_to_allGroups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Face >> Group")) {
               allModel3Ds.convert_Faces_to_allGroups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Face")) {
               allModel3Ds.convert_allGroups_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Curve >> Group")) {
               allModel3Ds.convert_Curves_to_allGroups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Curve")) {
               allModel3Ds.convert_allGroups_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Curve >> Vertex")) {
               allModel3Ds.convert_Curves_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Vertex >> Curve")) {
               allModel3Ds.convert_Vertices_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }               
             if (menu_option.equals("Group >> Vertex")) {
               allModel3Ds.convert_allGroups_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }  
             if (menu_option.equals("Face >> Vertex")) {
               allModel3Ds.convert_Faces_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Vertex >> Face")) {
               allModel3Ds.convert_Vertices_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Solid >> Group")) {
               allModel3Ds.convert_allSolids_to_allGroups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Solid")) {
               allModel3Ds.convert_allGroups_to_allSolids();
               current_ObjectCategory = ObjectCategory.SOLID;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }                
             if (menu_option.equals("Model2Ds >> Group")) {
               allModel3Ds.convert_allModel2Ds_to_allGroups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> allModel2Ds")) {
               allModel3Ds.convert_allGroups_to_allModel2Ds();
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Model1Ds >> Group")) {
               allModel3Ds.convert_allModel1Ds_to_allGroups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> allModel1Ds")) {
               allModel3Ds.convert_allGroups_to_allModel1Ds();
               current_ObjectCategory = ObjectCategory.MODEL1D;
               WIN3D.update = true;
-              UI_BAR_b_update = true;
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Click Select")) {
               UI_set_to_View_ClickSelect(0);
-              SOLARCHVISION_highlight_in_BAR_b("±CS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±CS");
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Click Select+")) {
               UI_set_to_View_ClickSelect(1);
-              SOLARCHVISION_highlight_in_BAR_b("+CS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("+CS");
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Click Select-")) {
               UI_set_to_View_ClickSelect(2);
-              SOLARCHVISION_highlight_in_BAR_b("-CS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("-CS");
+              UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Window Select")) {
               UI_set_to_View_WindowSelect(0);
-              SOLARCHVISION_highlight_in_BAR_b("±WS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±WS");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Window Select+")) {
               UI_set_to_View_WindowSelect(1);
-              SOLARCHVISION_highlight_in_BAR_b("+WS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("+WS");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Window Select-")) {
               UI_set_to_View_WindowSelect(2);
-              SOLARCHVISION_highlight_in_BAR_b("-WS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("-WS");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Select Near Vertices Selection")) {
@@ -43860,269 +43860,269 @@ void mouseClicked () {
         
             if (menu_option.equals("TargetRoll")) {
               UI_set_to_View_TargetRoll(0);
-              SOLARCHVISION_highlight_in_BAR_b("TRL");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("TRL");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("TargetRollZ")) {
               UI_set_to_View_TargetRoll(1);
-              SOLARCHVISION_highlight_in_BAR_b("TRLz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("TRLz");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("TargetRollXY")) {
               UI_set_to_View_TargetRoll(2);
-              SOLARCHVISION_highlight_in_BAR_b("TRLxy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("TRLxy");
+              UI_BAR_b.update = true;
             }          
             if (menu_option.equals("CameraRoll")) {
               UI_set_to_View_CameraRoll(0);
-              SOLARCHVISION_highlight_in_BAR_b("CRL");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("CRL");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("CameraRollZ")) {
               UI_set_to_View_CameraRoll(1);
-              SOLARCHVISION_highlight_in_BAR_b("CRLz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("CRLz");
+              UI_BAR_b.update = true;
             }                
             if (menu_option.equals("CameraRollXY")) {
               UI_set_to_View_CameraRoll(2);
-              SOLARCHVISION_highlight_in_BAR_b("CRLxy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("CRLxy");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Orbit")) {
               UI_set_to_View_Orbit(0);
-              SOLARCHVISION_highlight_in_BAR_b("OR");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("OR");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("OrbitZ")) {
               UI_set_to_View_Orbit(1);
-              SOLARCHVISION_highlight_in_BAR_b("ORz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("ORz");
+              UI_BAR_b.update = true;
             }           
             if (menu_option.equals("OrbitXY")) {
               UI_set_to_View_Orbit(2);
-              SOLARCHVISION_highlight_in_BAR_b("ORxy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("ORxy");
+              UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("LandOrbit")) {
               UI_set_to_View_LandOrbit(0);
-              SOLARCHVISION_highlight_in_BAR_b("LNOR");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("LNOR");
+              UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Pan")) {
               UI_set_to_View_Pan(0);
-              SOLARCHVISION_highlight_in_BAR_b("Pan");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Pan");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PanX")) {
               UI_set_to_View_Pan(1);
-              SOLARCHVISION_highlight_in_BAR_b("PanX");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("PanX");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PanY")) {
               UI_set_to_View_Pan(2);
-              SOLARCHVISION_highlight_in_BAR_b("PanY");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("PanY");
+              UI_BAR_b.update = true;
             }          
 
             if (menu_option.equals("Zoom")) {
               UI_set_to_View_ZOOM(0);
-              SOLARCHVISION_highlight_in_BAR_b("±ZM");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±ZM");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Zoom as default")) {
               UI_set_to_View_ZOOM(1);
-              SOLARCHVISION_highlight_in_BAR_b("0ZM");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("0ZM");
+              UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("TruckX")) {
               UI_set_to_View_Truck(1);
-              SOLARCHVISION_highlight_in_BAR_b("DIx");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("DIx");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("TruckY")) {
               UI_set_to_View_Truck(2);
-              SOLARCHVISION_highlight_in_BAR_b("DIy");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("DIy");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("TruckZ")) {
               UI_set_to_View_Truck(0);
-              SOLARCHVISION_highlight_in_BAR_b("DIz");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("DIz");
+              UI_BAR_b.update = true;
             }          
             if (menu_option.equals("DistZ")) {
               UI_set_to_View_Truck(0);
-              SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±CDZ");
+              UI_BAR_b.update = true;
             }     
             if (menu_option.equals("CameraDistance")) {
               UI_set_to_View_CameraDistance(0);
-              SOLARCHVISION_highlight_in_BAR_b("±CDS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±CDS");
+              UI_BAR_b.update = true;
             }   
             if (menu_option.equals("DistMouseXY")) {
               UI_set_to_View_DistMouseXY(0);
-              SOLARCHVISION_highlight_in_BAR_b("±CDM");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±CDM");
+              UI_BAR_b.update = true;
             }  
 
             if (menu_option.equals("Look at origin")) {
               UI_set_to_View_LookAtOrigin(0);
-              SOLARCHVISION_highlight_in_BAR_b("LAO");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("LAO");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Look at direction")) {
               UI_set_to_View_LookAtDirection(0);
-              SOLARCHVISION_highlight_in_BAR_b("LAD");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("LAD");
+              UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Look at selection")) {
               UI_set_to_View_LookAtSelection(0);
-              SOLARCHVISION_highlight_in_BAR_b("LAS");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("LAS");
+              UI_BAR_b.update = true;
             }          
  
             
             if (menu_option.equals("3DModelSize")) {
               UI_set_to_View_3DModelSize();
-              SOLARCHVISION_highlight_in_BAR_b("±SZ");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±SZ");
+              UI_BAR_b.update = true;
             }          
 
             if (menu_option.equals("SkydomeSize")) {
               UI_set_to_View_SkydomeSize();
-              SOLARCHVISION_highlight_in_BAR_b("±SK");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±SK");
+              UI_BAR_b.update = true;
             }       
 
             if (menu_option.equals("AllModelSize")) {
               UI_set_to_View_AllModelSize();
-              SOLARCHVISION_highlight_in_BAR_b("±SA");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("±SA");
+              UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Display All Viewports")) {
               UI_set_to_Viewport(0);
-              SOLARCHVISION_highlight_in_BAR_b("AllViewports");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("AllViewports");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Enlarge 3D Viewport")) {
               UI_set_to_Viewport(1);
-              SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Expand3DView");
+              UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Enlarge Time Viewport")) {
               UI_set_to_Viewport(2);
-              SOLARCHVISION_highlight_in_BAR_b("ExpandTimeView");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("ExpandTimeView");
+              UI_BAR_b.update = true;
             }              
             if (menu_option.equals("Enlarge Map Viewport")) {
               UI_set_to_Viewport(3);
-              SOLARCHVISION_highlight_in_BAR_b("ExpandMapView");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("ExpandMapView");
+              UI_BAR_b.update = true;
             }             
 
             if (menu_option.equals("Top")) {
               UI_set_to_View_3DViewPoint(0);
-              SOLARCHVISION_highlight_in_BAR_b("Top");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Top");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Front")) {
               UI_set_to_View_3DViewPoint(1);
-              SOLARCHVISION_highlight_in_BAR_b("Front");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Front");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Left")) {
               UI_set_to_View_3DViewPoint(2);
-              SOLARCHVISION_highlight_in_BAR_b("Left");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Left");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Back")) {
               UI_set_to_View_3DViewPoint(3);
-              SOLARCHVISION_highlight_in_BAR_b("Back");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Back");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Right")) {
               UI_set_to_View_3DViewPoint(4);
-              SOLARCHVISION_highlight_in_BAR_b("Right");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Right");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("Bottom")) {
               UI_set_to_View_3DViewPoint(5);
-              SOLARCHVISION_highlight_in_BAR_b("Bottom");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Bottom");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("S.W.")) {
               UI_set_to_View_3DViewPoint(6);
-              SOLARCHVISION_highlight_in_BAR_b("S.W.");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("S.W.");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("S.E.")) {
               UI_set_to_View_3DViewPoint(7);
-              SOLARCHVISION_highlight_in_BAR_b("S.E.");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("S.E.");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("N.E.")) {
               UI_set_to_View_3DViewPoint(8);
-              SOLARCHVISION_highlight_in_BAR_b("N.E.");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("N.E.");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("N.W.")) {
               UI_set_to_View_3DViewPoint(9);
-              SOLARCHVISION_highlight_in_BAR_b("N.W.");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("N.W.");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("PivotX:Minimum")) {
               UI_set_to_View_PivotX(-1);
-              SOLARCHVISION_highlight_in_BAR_b("X<");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("X<");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotX:Center")) {
               UI_set_to_View_PivotX(0);
-              SOLARCHVISION_highlight_in_BAR_b("X|");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("X|");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotX:Maximum")) {
               UI_set_to_View_PivotX(1);
-              SOLARCHVISION_highlight_in_BAR_b("X>");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("X>");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("PivotY:Minimum")) {
               UI_set_to_View_PivotY(-1);
-              SOLARCHVISION_highlight_in_BAR_b("Y<");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Y<");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotY:Center")) {
               UI_set_to_View_PivotY(0);
-              SOLARCHVISION_highlight_in_BAR_b("Y|");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Y|");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotY:Maximum")) {
               UI_set_to_View_PivotY(1);
-              SOLARCHVISION_highlight_in_BAR_b("Y>");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Y>");
+              UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("PivotZ:Minimum")) {
               UI_set_to_View_PivotZ(-1);
-              SOLARCHVISION_highlight_in_BAR_b("Z<");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Z<");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotZ:Center")) {
               UI_set_to_View_PivotZ(0);
-              SOLARCHVISION_highlight_in_BAR_b("Z|");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Z|");
+              UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotZ:Maximum")) {
               UI_set_to_View_PivotZ(1);
-              SOLARCHVISION_highlight_in_BAR_b("Z>");
-              UI_BAR_b_update = true;
+              UI_BAR_b.hghlight("Z>");
+              UI_BAR_b.update = true;
             }
           }
         }
@@ -44144,7 +44144,7 @@ void mouseClicked () {
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel) == 1) {
-          UI_BAR_b_update = true;
+          UI_BAR_b.update = true;
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel) == 1) {
@@ -48395,1573 +48395,6 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
 
 
-void UI_dessin_Mouse (int _type, float x, float y, float r) {
-
-  float d = 0.4 * r;
-
-  for (int i = 0; i < 3; i++) { 
-
-    float dx = 0;
-    float dy = 0;
-
-    if (i == 0) {
-      dx = 0.5 * d;
-      dy = 0.5 * d;
-      strokeWeight(1);
-      stroke(63); 
-      fill(63);
-    } else if (i == 1) {
-      strokeWeight(3);
-      stroke(0); 
-      fill(0);
-    } else {
-      strokeWeight(1);
-      stroke(1);
-      stroke(255); 
-      fill(255);
-    }          
-
-    pushMatrix();
-    translate(x + d + dx, y + d + dy);
-
-    triangle(-d, -d, -d, d, d, -d); 
-
-    if (i == 1) {
-      strokeWeight(2 + d);
-    } else { 
-      strokeWeight(d);
-    }
-
-    line(0, 0, d, d);
-
-    popMatrix();
-  }
-
-  strokeWeight(0);
-}
-
-void UI_dessin_ClickSelect (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(255);  
-
-  float d = 0.3 * r;
-  triangle(-d, -d, -d, d, d, -d); 
-
-  strokeWeight(5);
-  line(0, 0, d, d);
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_WindowSelect (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(63);  
-  rect(-0.5 * r, -0.5 * r, 1.25 * r, 1.25 * r);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(255);  
-
-  float d = 0.3 * r;
-  triangle(-d, -d, -d, d, d, -d); 
-
-  strokeWeight(5);
-  line(0, 0, d, d);
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Drop (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(0);
-
-  float d = 0.8 * r;
-
-  if (_type == 1) {
-    ellipse(0, 0, 2 * d, d);
-  } 
-  if ((_type == 2) || (_type == 3)) {
-    beginShape();
-    vertex(0, 0.5 * d);
-    vertex(funcs.cos_ang(30) * d, 0);
-    vertex(0, -0.5 * d);
-    vertex(-funcs.cos_ang(30) * d, 0);
-    endShape(CLOSE);
-  } 
-
-
-
-
-  strokeWeight(2);
-  stroke(255); 
-  fill(0);
-
-  if (_type == 1) {
-    line(0, 0, 0, -d);  
-    line(0, 0, 0 - 0.25 * d, 0.25 * -d);
-    line(0, 0, 0 + 0.25 * d, 0.25 * -d);
-
-    line(0, 0, 0, d);  
-    line(0, 0, 0 - 0.25 * d, 0.25 * d);
-    line(0, 0, 0 + 0.25 * d, 0.25 * d);
-  }
-
-  if (_type == 2) {
-    line(0, 0.25 * d, 0, -d);  
-    line(0, 0.25 * d, 0 - 0.25 * d, 0);
-    line(0, 0.25 * d, 0 + 0.25 * d, 0);
-  }
-
-  if (_type == 3) {
-    line(0, 0.25 * -d, 0, d);  
-    line(0, 0.25 * -d, 0 - 0.25 * d, 0);
-    line(0, 0.25 * -d, 0 + 0.25 * d, 0);
-  }  
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_GetLength (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();
-
-
-  float d = 0.8 * r;
-
-  beginShape();
-  vertex(0, 0);
-  vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  vertex(0, -d);
-  vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  endShape(CLOSE);
-
-  beginShape();
-  vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  vertex(0, 0);
-  vertex(0, d);
-  vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-  endShape(CLOSE);
-
-  beginShape();
-  vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  vertex(0, 0);
-  vertex(0, d);
-  vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-  endShape(CLOSE);
-
-
-  strokeWeight(2);
-  stroke(0, 127, 255); 
-  fill(0);
-
-  if (_type == 1) {
-    line(0, 0, funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  }
-  if (_type == 2) {
-    line(0, 0, funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  }    
-  if (_type == 3) {
-    line(0, 0, -funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-  }      
-  if (_type == 4) {
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);  
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-  }     
-  if (_type == 5) {
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-  }    
-  if (_type == 6) {
-    line(0, 0, 0, -d);
-  }      
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Move (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(0, 0, 0.8 * r, 0); 
-  line(0, 0, 0, -0.8 * r); 
-  line(0, 0, -0.4 * r, 0.4 * r); 
-
-  strokeWeight(3);
-  stroke(255); 
-  noFill();  
-
-  if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
-  if (_type == 2) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);  
-  if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
-  if (_type == 4) line(-0.4 * r, -0.4 * r, 0.4 * r, 0.4 * r);
-
-  noStroke();
-  fill(255, 0, 0);
-  float d = 5;
-  if (_type == 1) {
-    ellipse(-0.8 * r, 0, d, d); 
-    ellipse(0.8 * r, 0, d, d);
-  }
-  if (_type == 2) {
-    ellipse(0.4 * r, -0.4 * r, d, d); 
-    ellipse(-0.4 * r, 0.4 * r, d, d);
-  }    
-  if (_type == 3) {
-    ellipse(0, 0.8 * r, d, d); 
-    ellipse(0, -0.8 * r, d, d);
-  }
-  if (_type == 4) {
-    ellipse(-0.4 * r, -0.4 * r, d, d); 
-    ellipse(0.4 * r, 0.4 * r, d, d);
-  }  
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-void UI_dessin_Scale (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(0, 0, 0.8 * r, 0); 
-  line(0, 0, 0, -0.8 * r); 
-  line(0, 0, -0.4 * r, 0.4 * r); 
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(-0.8 * r, 0, 0.8 * r, 0);
-  line(0, 0.8 * r, 0, -0.8 * r);
-  line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
-
-  strokeWeight(5);
-  stroke(0, 255, 0); 
-  noFill();  
-
-  if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
-  if (_type == 2) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);  
-  if (_type == 3) line(0, 0.4 * r, 0, -0.4 * r);
-  if (_type == 4) {
-    line(-0.4 * r, 0, 0.4 * r, 0);
-    line(0, 0.4 * r, 0, -0.4 * r);
-    line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
-  }  
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Power (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(0, 0, 0.8 * r, 0); 
-  line(0, 0, 0, -0.8 * r); 
-  line(0, 0, -0.4 * r, 0.4 * r); 
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(-0.8 * r, 0, 0.8 * r, 0);
-  line(0, 0.8 * r, 0, -0.8 * r);
-  line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
-
-  strokeWeight(3);
-  stroke(0, 127, 255); 
-  noFill();  
-
-  if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
-  if (_type == 2) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);  
-  if (_type == 3) line(0, 0.4 * r, 0, -0.4 * r);
-  if (_type == 4) {
-    line(-0.4 * r, 0, 0.4 * r, 0);
-    line(0, 0.4 * r, 0, -0.4 * r);
-    line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
-  }  
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Rotate (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(0, 0, 0.8 * r, 0); 
-  line(0, 0, 0, -0.8 * r); 
-  line(0, 0, -0.4 * r, 0.4 * r); 
-
-  strokeWeight(3);
-  stroke(255); 
-  noFill();  
-
-  if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
-  if (_type == 2) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
-  if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
-
-  strokeWeight(2);
-  stroke(0, 127, 255);
-  noFill();
-  float d = 0.85 * r;
-  if (_type == 1) {
-    arc(0, 0, d, d, 0.25 * PI, 1.75 * PI);
-  }
-  if (_type == 2) {
-    arc(0, 0, d, d, (0.25 + 0.75) * PI, (1.75 + 0.75) * PI);
-  }
-  if (_type == 3) {
-    arc(0, 0, d, d, (0.25 - 0.5) * PI, (1.75 - 0.5) * PI);
-  }
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-
-
-void UI_dessin_Seed (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(0, 0, 0.8 * r, 0); 
-  line(0, 0, 0, -0.8 * r); 
-  line(0, 0, -0.4 * r, 0.4 * r); 
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-
-  line(-0.8 * r, 0, 0.8 * r, 0);
-  line(0, 0.8 * r, 0, -0.8 * r);
-  line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
-
-  strokeWeight(1);
-  stroke(255, 255, 0); 
-  noFill();  
-
-  for (int i = 0; i < 360; i += 30) {
-    float d = random(0.25, 0.75);
-
-    line(0, 0, 0.8 * r * d * cos(i), 0.8 * r * d * sin(i));
-  }  
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
-  }
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 4) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
-    line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_Tessellation (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 1.25 * r;
-
-  strokeWeight(2);
-  stroke(255); 
-  fill(63);  
-  rect(-0.5 * d, -0.5 * d, d, d);
-
-  strokeWeight(1);
-  stroke(191); 
-  fill(191);  
-
-  for (int i = 1; i < 4; i++) {
-    float w = (0.25 * i - 0.5) * d;
-    line(-0.5 * d, w, 0.5 * d, w);  
-    line(w, -0.5 * d, w, 0.5 * d);
-  }
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
-  }
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 4) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
-    line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Layer (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 0.8 * r;
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(0);
-
-  beginShape();
-  vertex(0, d);
-  vertex(funcs.cos_ang(30) * d, 0.5 * d);
-  vertex(0, 0);
-  vertex(-funcs.cos_ang(30) * d, 0.5 * d);
-  endShape(CLOSE); 
-
-  strokeWeight(2);
-  stroke(255); 
-  fill(0, 127, 255);
-
-  beginShape();
-  vertex(0, 0.5 * d);
-  vertex(funcs.cos_ang(30) * d, 0);
-  vertex(0, -0.5 * d);
-  vertex(-funcs.cos_ang(30) * d, 0);
-  endShape(CLOSE);
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
-  }
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 4) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
-    line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Visibility (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 0.8 * r;
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(0);
-
-  beginShape();
-  vertex(0, d);
-  vertex(funcs.cos_ang(30) * d, 0.5 * d);
-  vertex(0, 0);
-  vertex(-funcs.cos_ang(30) * d, 0.5 * d);
-  endShape(CLOSE); 
-
-  strokeWeight(0);
-  stroke(255); 
-  fill(127, 127);
-
-  beginShape();
-  vertex(0, 0.5 * d);
-  vertex(funcs.cos_ang(30) * d, 0);
-  vertex(0, -0.5 * d);
-  vertex(-funcs.cos_ang(30) * d, 0);
-  endShape(CLOSE);
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
-  }
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 4) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
-    line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Weight (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(63);  
-  //rect(-0.5 * r, -0.5 * r, r, r);
-  
-  float d = r * pow(2, 0.5);
-  
-  strokeWeight(1);
-  noFill();  
-  ellipse(0, 0, d, d);
-
-  strokeWeight(1);
-  noFill();  
-  arc(0, -r, d, d, 0.25 * PI, 0.75 * PI);
-  arc(r, 0, d, d, 0.75 * PI, 1.25 * PI);
-  arc(0, r, d, d, 1.25 * PI, 1.75 * PI);
-  arc(-r, 0, d, d, 1.75 * PI, 2.25 * PI);
-
-
-  stroke(0, 127, 255);
-  strokeWeight(3);
-  if (_type == 2) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
-  }
-  if (_type == 3) {
-    line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
-    line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
-  } 
-  if (_type == 4) {
-    line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
-    line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Normal (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 0.8 * r;
-
-  strokeWeight(2);
-  stroke(255); 
-  fill(0);
-
-  beginShape();
-  vertex(0, 0.5 * d);
-  vertex(funcs.cos_ang(30) * d, 0);
-  vertex(0, -0.5 * d);
-  vertex(-funcs.cos_ang(30) * d, 0);
-  endShape(CLOSE);
-
-  if (_type == 1) {
-    line(0, 0, 0, -d);  
-    line(0 - 0.25 * d, -d + 0.25 * d, 0, -d);
-    line(0 + 0.25 * d, -d + 0.25 * d, 0, -d);
-
-    line(0, 0.5 * d, 0, d);  
-    line(0 - 0.25 * d, d - 0.25 * d, 0, d);
-    line(0 + 0.25 * d, d - 0.25 * d, 0, d);
-  }
-
-  if (_type == 2) {
-    line(0, 0, 0, -d);  
-    line(0 - 0.25 * d, -d + 0.25 * d, 0, -d);
-    line(0 + 0.25 * d, -d + 0.25 * d, 0, -d);
-  }
-
-
-  if (_type == 3) {
-    line(0, 0, 0, d);  
-    line(0 - 0.25 * d, d - 0.25 * d, 0, d);
-    line(0 + 0.25 * d, d - 0.25 * d, 0, d);
-  }  
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_FirstVertex (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 0.8 * r;
-
-  strokeWeight(2);
-  stroke(255); 
-  fill(0);
-
-  beginShape();
-  vertex(0, d);
-  vertex(funcs.cos_ang(30) * d, 0.5 * d);
-  vertex(0, 0);
-  vertex(-funcs.cos_ang(30) * d, 0.5 * d);
-  endShape(CLOSE);
-
-  stroke(255, 0, 0);
-  ellipse(0, 0, 0.25 * d, 0.25 * d);
-
-  fill(255);
-  textSize(d);
-  textAlign(CENTER, BOTTOM);
-  text("1st", 0, 0);
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_3DViewSpace (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(2);
-  stroke(255); 
-  noFill();
-
-  strokeWeight(1);
-  stroke(255); 
-  if (_type == 1) fill(63);  
-  if (_type == 2) fill(191);
-  rect(-0.75 * r, -0.75 * r, 1.5 * r, 1.5 * r);
-
-  if (_type == 1) fill(191);  
-  if (_type == 2) fill(63);
-  rect(-0.75 * r, -0.75 * r, 0.75 * r, 0.75 * r);
-
-  strokeWeight(2);
-  line(0, 0, 0.75 * r, 0.75 * r);
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-void UI_dessin_ProjectionType (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(2);
-  stroke(255); 
-  fill(0);
-
-
-  float d = 0.8 * r;
-
-  if (_type == 1) {
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-  }  
-
-  if (_type == 2) {
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0.75 * funcs.sin_ang(0) * d, 0.75 * -funcs.cos_ang(0) * d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(0.75 * funcs.sin_ang(120) * d, 0.75 * -funcs.cos_ang(120) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(0.75 * funcs.sin_ang(240) * d, 0.75 * -funcs.cos_ang(240) * d);
-    endShape(CLOSE);
-  }
-
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Truck (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-
-  stroke(255); 
-  fill(0);
-
-  float d = 0.625 * r;
-
-  float a = 0;
-  float b = 0;
-  if (_type == 1) {
-    a = funcs.cos_ang(30) * d; 
-    b = -funcs.sin_ang(30) * d;
-  }
-  if (_type == 2) {
-    a = -funcs.cos_ang(30) * d; 
-    b = -funcs.sin_ang(30) * d;
-  }
-  if (_type == 3) {
-    a = 0; 
-    b = d;
-  }
-
-  strokeWeight(1);
-  {
-    pushMatrix();
-    translate(0.5 * a, 0.5 * b);
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    popMatrix();
-  }
-
-
-
-
-  strokeWeight(2);
-  {
-    pushMatrix();
-    translate(-0.5 * a, -0.5 * b);
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    popMatrix();
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-
-void UI_dessin_ZOOM (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  {
-    pushMatrix();
-    translate(0.25 * r, 0.25 * r);
-
-    stroke(255); 
-
-    fill(0);
-    strokeWeight(1);
-    ellipse(-0.4 * r, -0.4 * r, 0.8 * r, 0.8 * r); 
-
-    noFill();  
-    strokeWeight(4);
-    line(-0.1 * r, -0.1 * r, 0.3 * r, 0.3 * r);
-
-    strokeWeight(2);
-    stroke(255, 255, 0);
-    if (_type == 1) {
-      line(-0.6 * r, -0.4 * r, -0.2 * r, -0.4 * r); 
-      line(-0.4 * r, -0.6 * r, -0.4 * r, -0.2 * r);
-    } 
-    if (_type == 2) {
-      line(-0.6 * r, -0.4 * r, -0.2 * r, -0.4 * r);
-    }
-
-    popMatrix();
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_3DModelSize (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  stroke(255); 
-  fill(0);
-  strokeWeight(2);
-  ellipse(0, 0, r, r);
-  noFill();
-  strokeWeight(1);
-  ellipse(0, 0, 1.5 * r, 1.5 * r); 
-
-  strokeWeight(1);
-  line(-0.75 * r, 0, -0.5 * r, 0);
-  line(0, -0.75 * r, 0, -0.5 * r);
-  line(0.75 * r, 0, 0.5 * r, 0);
-  line(0, 0.75 * r, 0, 0.5 * r);
-
-
-  strokeWeight(2);
-  stroke(255, 255, 0);
-  line(-0.2 * r, 0, 0.2 * r, 0);
-  line(0, -0.2 * r, 0, 0.2 * r); 
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-
-
-void UI_dessin_AllModelSize (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 0.75 * r;
-
-  stroke(255); 
-  fill(0); 
-  strokeWeight(1);
-  ellipse(0, 0, d, d);
-  noFill();
-  strokeWeight(1);
-  ellipse(0, 0, 2 * d, 2 * d); 
-
-  strokeWeight(1);
-  line(-1 * d, 0, -0.5 * d, 0);
-  line(0, -1 * d, 0, -0.5 * d);
-  line(1 * d, 0, 0.5 * d, 0);
-  line(0, 1 * d, 0, 0.5 * d);
-
-
-  strokeWeight(2);
-  stroke(255, 255, 0);
-  line(-0.2 * r, 0, 0.2 * r, 0);
-  line(0, -0.2 * r, 0, 0.2 * r); 
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_SkydomeSize (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  {
-    pushMatrix();
-    translate(0, 0.125 * r);
-
-    float d = 1.0 * r;
-
-    strokeWeight(1);
-    stroke(255); 
-    fill(0);
-    arc(0, 0, d, d, PI, 2 * PI); 
-    arc(0, 0, d, 0.333 * d, 0, PI);
-
-    d = 1.5 * r;
-
-    strokeWeight(2);
-    stroke(255); 
-    noFill();  
-    arc(0, 0, d, d, PI, 2 * PI);
-    arc(0, 0, d, 0.333 * d, 0, PI);
-
-    popMatrix();
-  }
-
-  strokeWeight(2);
-  stroke(255, 255, 0);
-  line(-0.2 * r, 0, 0.2 * r, 0);
-  line(0, -0.2 * r, 0, 0.2 * r); 
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_LandOrbit (int _type, float x, float y, float r) {
-
-  {
-    pushMatrix();
-    translate(x, y);
-    translate(-0.333 * r, -0.333 * r); // <<<<<<
-  
-    float d = 1.0 * r;
-  
-    strokeWeight(1);
-    stroke(255); 
-    fill(0); 
-    ellipse(0, 0, d, d); 
-  
-    strokeWeight(2);
-    stroke(255); 
-    noFill();  
-  
-    if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
-    if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
-    if (_type == 1) {
-      arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
-      arc(0, 0, d, 0.333 * d, 0, PI);
-    }
-  
-    strokeWeight(0);
-  
-    popMatrix();
-  }
-  
-  {  
-    pushMatrix();
-    translate(x, y);
-    translate(0.333 * r, 0.333 * r); // <<<<<<
-  
-    float d = 0.75 * r;
-  
-    strokeWeight(1);
-    stroke(255); 
-    noFill();  
-    arc(0, 0, d, d, 0, PI); 
-  
-    stroke(255); 
-    noFill();  
-  
-    for (float i = -1.5; i <= 1.5; i++) { 
-      line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
-  
-      if (i < 1.5) arc(i * 0.25 * d, -0.5 * d, 0.25 * d, 0.25 * d, PI, 2*PI);
-    }
-    
-    strokeWeight(0);
-
-    popMatrix();      
-  }
-
-  UI_BAR_b_displayText = false;
-}
-
-void UI_dessin_Orbit (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  float d = 1.5 * r;
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(0); 
-  ellipse(0, 0, d, d); 
-
-  strokeWeight(2);
-  stroke(255); 
-  noFill();  
-
-  if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
-  if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
-  if (_type == 1) {
-    arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
-    arc(0, 0, d, 0.333 * d, 0, PI);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_LookAtOrigin (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(2);
-  stroke(255);
-  fill(127, 63, 0); 
-
-  {
-    float d = 0.8 * r;
-
-    line(0, 0, funcs.cos_ang(90) * d, -funcs.sin_ang(90) * d);
-    line(0, 0, funcs.cos_ang(210) * d, -funcs.sin_ang(210) * d);
-    line(0, 0, funcs.cos_ang(330) * d, -funcs.sin_ang(330) * d);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_LookAtDirection (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(2);
-  stroke(255);
-  fill(127, 63, 0); 
-
-  {
-    float d = 0.8 * r;
-
-    line(-d,d/2,d,d/2);
-    line(d/2,-d,d/2,d);
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_LookAtSelection (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(2);
-  stroke(255);
-  fill(127, 63, 0); 
-
-  {
-    float d = 0.8 * r;
-
-    line(0, 0, funcs.cos_ang(90) * d, -funcs.sin_ang(90) * d);
-    line(0, 0, funcs.cos_ang(210) * d, -funcs.sin_ang(210) * d);
-    line(0, 0, funcs.cos_ang(330) * d, -funcs.sin_ang(330) * d);
-  }
-
-  {
-    //float d = 0.625 * r;
-    float d = 0.5 * r;
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-  }    
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_CameraRoll (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  {
-    float d = 1.5 * r;
-
-    strokeWeight(1);
-    stroke(255); 
-    fill(0);
-    ellipse(0, 0, d, d);
-  }
-
-
-  strokeWeight(1);
-  stroke(255);
-  fill(127, 63, 0); 
-  {
-    //float d = 0.625 * r;
-    float d = 0.5 * r;
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-  }  
-
-
-
-  {
-    float d = 1.5 * r;
-
-    strokeWeight(2);
-    stroke(255); 
-    noFill();  
-
-    if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
-    if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
-    if (_type == 1) {
-      arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
-      arc(0, 0, d, 0.333 * d, 0, PI);
-    }
-  }  
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_TargetRoll (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  {  
-
-    float d = 1.5 * r;
-
-    strokeWeight(1);
-    stroke(255); 
-    fill(0);  
-    rect(-d/2, -d/2, d, d);   
-
-    strokeWeight(2);
-    stroke(255); 
-    noFill();  
-
-    if (_type == 3) arc(0, 0, d, 0.333 * d, PI, 2 * PI); 
-    if (_type == 2) arc(0, 0, 0.333 * d, d, -0.5 * PI, 0.5 * PI); 
-    if (_type == 1) {
-      arc(0, 0, 0.333 * d, d, -0.5 * PI, 0.5 * PI); 
-      arc(0, 0, d, 0.333 * d, PI, 2 * PI);
-    }
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-void UI_dessin_Pan (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  {
-    float d = 1.0 * r;
-
-    strokeWeight(1);
-    stroke(255); 
-    noFill();  
-    arc(0, 0, d, d, 0, PI); 
-
-    stroke(255); 
-    noFill();  
-
-    for (float i = -1.5; i <= 1.5; i++) { 
-      line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
-
-      if (i < 1.5) arc(i * 0.25 * d, -0.5 * d, 0.25 * d, 0.25 * d, PI, 2*PI);
-    }
-  }
-
-  strokeWeight(2);
-  stroke(255); 
-  noFill();  
-  {
-    float d = 0.75 * r;
-
-    if (_type == 2) {
-      line(-1 * d, 0, -0.5 * d, 0);
-      line(1 * d, 0, 0.5 * d, 0);
-    }
-    if (_type == 3) {
-      line(0, -1 * d, 0, -0.5 * d);
-      line(0, 1 * d, 0, 0.5 * d);
-    }
-  }
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_DistMouseXY (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  line(-r, -0.5 * r, r, -0.5 * r);
-  strokeWeight(2);
-  line(-0.5 * r, -0.5 * r, r, 0);
-  line(-0.5 * r, -0.5 * r, -r, 0);
-  strokeWeight(2);
-  line(-0.5 * r, -0.5 * r, 0, r);
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_CameraDistance (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  line(-r, 0, r, 0);
-  strokeWeight(2);
-  line(0, 0, r, 0.5 * r);
-  line(0, 0, -r, 0.5 * r);
-  strokeWeight(2);
-  line(0, 0, 0, r);
-
-  strokeWeight(1);
-  stroke(255);
-  fill(127, 63, 0); 
-  {
-    //float d = 0.625 * r;
-    float d = 0.5 * r;
-
-    beginShape();
-    vertex(0, 0);
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, -d);
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0, d);
-    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
-    endShape(CLOSE);
-  }  
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
-
-
-
-void UI_dessin_DistZ (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  line(-r, 0, r, 0);
-  strokeWeight(2);
-  line(0, 0, r, 0.5 * r);
-  line(0, 0, -r, 0.5 * r);
-  strokeWeight(2);
-  line(0, 0, 0, r);
-
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  UI_BAR_b_displayText = false;
-}
 
 
 
@@ -50912,585 +49345,12 @@ void SOLARCHVISION_modify_Viewport_Title () {
 
   String s = "Cam" + nf(WIN3D.CurrentCamera, 2);
 
-  UI_BAR_b_Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b 
-  SOLARCHVISION_highlight_in_BAR_b(s);
+  UI_BAR_b.Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b 
+  UI_BAR_b.hghlight(s);
 
-  UI_BAR_b_update = true;
+  UI_BAR_b.update = true;
 }  
 
-
-
-boolean UI_BAR_b_update = true;
-
-float UI_BAR_b_tab = SOLARCHVISION_B_Pixel;
-
-String[][] UI_BAR_b_Items = {
-  {
-    "11", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "3DViewPoint", "2.0"
-  }
-  , 
-  {
-    "2", "AllViewports", "Expand3DView", "ExpandTimeView", "ExpandMapView", "3DViewSpace", "1"
-  }
-  , 
-
-  {
-    "2", "P<>", "P><", "ProjectionType", "1.0"
-  }
-  , 
-  {
-    "1", "LAO", "LookAtOrigin", "1.0"
-  }
-  , 
-  {
-    "1", "LAD", "LookAtDirection", "1.0"
-  }  
-  , 
-  {
-    "1", "LAS", "LookAtSelection", "1.0"
-  }
-  , 
-  {
-    "3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"
-  }
-  , 
-  {
-    "1", "±CDS", "CameraDistance", "1.0"
-  }
-  , 
-  {
-    "1", "±CDM", "DistMouseXY", "1.0"
-  }
-  , 
-  {
-    "1", "±CDZ", "DistZ", "1.0"
-  }
-  , 
-  {
-    "3", "DIz", "DIx", "DIy", "Truck", "1.0"
-  }
-  ,
-  {
-    "1", "LNOR", "LandOrbit", "1.0"
-  }
-  ,  
-  {
-    "1", "OR", "ORxy", "ORz", "Orbit", "1.0"
-  }
-  ,   
-  {
-    "1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"
-  }
-  , 
-  {
-    "1", "Pan", "PanX", "PanY", "Pan", "1.0"
-  }
-  , 
-  {
-    "1", "±ZM", "0ZM", "Zoom", "1.0"
-  }
-  , 
-  {
-    "1", "±SA", "AllModelSize", "1.0"
-  }
-  , 
-  {
-    "1", "±SZ", "3DModelSize", "1.0"
-  }
-  , 
-  {
-    "1", "±SK", "SkydomeSize", "1.0"
-  }
-  , 
-
-  {
-    "2", "Model1Ds", "Tree", "Person", "Model2DsType", "1.5"
-  }
-  , 
-  {
-    "1", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
-  }
-  , 
-  {
-    "1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"
-  }
-  , 
-
-  {
-    "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
-  }
-  , 
-  {
-    "1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"
-  }
-  , 
-  {
-    "1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"
-  }
-  , 
-  {
-    "2", "X<", "X|", "X>", "PivotX", "1.0"
-  }
-  , 
-  {
-    "2", "Y<", "Y|", "Y>", "PivotY", "1.0"
-  }
-  , 
-  {
-    "2", "Z<", "Z|", "Z>", "PivotZ", "1.0"
-  }
-  , 
-  //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
-  {
-    "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "GetLength", "1.0"
-  }
-  , 
-  {
-    "3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"
-  }
-  , 
-  {
-    "3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"
-  }
-  , 
-  {
-    "3", "RTx", "RTy", "RTz", "Rotate", "1.0"
-  }
-  , 
-  //{"3", "PWx", "PWy", "PWz", "PW³", "Power", "1.0"},
-  {
-    "1", "Mat0", "Mat1", "Mat2", "Mat3", "Change Seed/Material", "1.0"
-  }
-  , 
-  {
-    "1", "Tes0", "Tes1", "Tes2", "Tes3", "Change Tessellation", "1.0"
-  }
-  , 
-  {
-    "1", "Lyr0", "Lyr1", "Lyr2", "Lyr3", "Change Layer", "1.0"
-  }
-  , 
-  {
-    "1", "Vsb0", "Vsb1", "Vsb2", "Vsb3", "Change Visibility", "1.0"
-  }
-  , 
-  {
-    "1", "Wgt0", "Wgt1", "Wgt2", "Wgt3", "Change Weight", "1.0"
-  }
-  ,   
-  {
-    "1", "Norm1", "Norm2", "Norm3", "Normal", "1.0"
-  }
-  , 
-  {
-    "1", "1stV", "FirstVertex", "1.0"
-  }
-  , 
-
-
-  //{"1", "<pvt>", ">pvt<", "|pvt|", ".pvt.", "Get/Set Pivot", "1.0"},
-
-  //{"1", "SPvt0", "SPvt1", "SPvt2", "Pivot", "1.0"},
-
-  //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
-  //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
-  //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
-  //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
-  //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
-  //{"1", "allFP0", "allFP1", "allFP2", "AllallModel1DsProps", "1.0"},
-
-  //{"1", "SEC", "Section", "1.0"},
-  //{"1", "SLD", "Solid", "1.0"},
-  //{"1", "CAM", "Pick Study Camera", "1.0"},
-};         
-
-
-
-int UI_Bar_b_Selection = -1;                        
-
-
-boolean UI_BAR_b_displayText; 
-
-
-void SOLARCHVISION_highlight_in_BAR_b (String s) {
-
-  int break_loops = 0;
-
-  for (int i = 0; i < UI_BAR_b_Items.length; i++) {
-    for (int j = 1; j < UI_BAR_b_Items[i].length - 2; j++) {
-      if (UI_BAR_b_Items[i][j].equals(s)) {
-
-        UI_BAR_b_Items[i][0] = nf(j, 0);
-
-        break_loops = 1;
-      }
-
-      if (break_loops == 1) break;
-    }
-    if (break_loops == 1) break;
-  }
-}
-
-
-void SOLARCHVISION_draw_window_BAR_b () {
-
-  if (UI_BAR_b_update) {
-
-    UI_BAR_b_update = false;
-
-    fill(0);
-    noStroke();
-    rect(0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_B_Pixel);
-
-    STUDY.X_control = 0; //0.25 * MessageSize;
-    STUDY.Y_control = SOLARCHVISION_A_Pixel + 0.5 * SOLARCHVISION_B_Pixel;
-
-    float cx = STUDY.X_control;
-    float cy = STUDY.Y_control;
-    float cr = 0.5 * SOLARCHVISION_B_Pixel;   
-
-    for (int i = 0; i < UI_BAR_b_Items.length; i++) {
-
-      {
-        String Bar_Switch = UI_BAR_b_Items[i][UI_BAR_b_Items[i].length - 2];
-
-        if (Bar_Switch.equals("LayerType")) {
-          UI_BAR_b_Items[i][0] = nf(current_ObjectCategory + 1, 0);
-        }
-      }
-
-
-
-      int j = int(UI_BAR_b_Items[i][0]);
-
-      float Item_width = UI_BAR_b_tab * float(UI_BAR_b_Items[i][UI_BAR_b_Items[i].length - 1]);
-
-      noFill();
-      stroke(255);
-      strokeWeight(1);
-      rect(cx, cy - cr, Item_width, SOLARCHVISION_B_Pixel);
-      strokeWeight(0);
-
-
-
-
-      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
-
-        if (mouseButton == RIGHT) {       
-
-          if (UI_Bar_b_Selection != i) {
-            UI_Bar_b_Selection = i;
-          } else {
-
-            int n = int(UI_BAR_b_Items[i][0]);
-
-            n -= 1;
-
-            if (n <= 0) n = UI_BAR_b_Items[i].length - 3;
-
-            UI_BAR_b_Items[i][0] = nf(n, 0);
-
-            j = n;
-          }
-        }
-
-        if (mouseButton == LEFT) {
-
-          if (UI_Bar_b_Selection != i) {
-            UI_Bar_b_Selection = i;
-          } else {
-
-            int n = int(UI_BAR_b_Items[i][0]);
-
-            n += 1;
-
-            if (n >= UI_BAR_b_Items[i].length - 2) n = 1;
-
-            UI_BAR_b_Items[i][0] = nf(n, 0);
-
-            j = n;
-          }
-        }               
-
-
-        fill(255, 127, 0);
-        noStroke();
-        rect(cx, cy - cr, Item_width, SOLARCHVISION_B_Pixel);     
-
-        String Bar_Switch = UI_BAR_b_Items[i][UI_BAR_b_Items[i].length - 2];
-
-
-        if (Bar_Switch.equals("LayerType")) {
-          current_ObjectCategory = j - 1;
-
-          if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-            allModel3Ds.convert_Vertex_to_softSelection();
-          }
-
-          ROLLOUT.update = true;   
-          WIN3D.update = true;
-        }
-
-        if (Bar_Switch.equals("Mesh|Solid")) {
-          User3D.create_MeshOrSolid = j - 1;
-
-          ROLLOUT.update = true;
-        }        
-
-        if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
-          if ((UI_BAR_b_Items[i][j]).equals("Model1Ds")) UI_set_to_Create_allModel1Ds();
-          else if ((UI_BAR_b_Items[i][j]).equals("Tree")) UI_set_to_Create_Tree();
-          else if ((UI_BAR_b_Items[i][j]).equals("Person")) UI_set_to_Create_Person();
-          else if ((UI_BAR_b_Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
-          else if ((UI_BAR_b_Items[i][j]).equals("Spline")) UI_set_to_Create_Curve();
-          else if ((UI_BAR_b_Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
-          else if ((UI_BAR_b_Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
-          else if ((UI_BAR_b_Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
-          else if ((UI_BAR_b_Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
-          else if ((UI_BAR_b_Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
-          else if ((UI_BAR_b_Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
-          else if ((UI_BAR_b_Items[i][j]).equals("House1")) UI_set_to_Create_House1();
-          else if ((UI_BAR_b_Items[i][j]).equals("House2")) UI_set_to_Create_House2();
-          else if ((UI_BAR_b_Items[i][j]).equals("Box")) UI_set_to_Create_Box();
-          else if ((UI_BAR_b_Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
-          else if ((UI_BAR_b_Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
-          else if ((UI_BAR_b_Items[i][j]).equals("Sphere")) UI_set_to_Create_Sphere();
-          else if ((UI_BAR_b_Items[i][j]).equals("Cylinder")) UI_set_to_Create_Cylinder();
-          else if ((UI_BAR_b_Items[i][j]).equals("Cushion")) UI_set_to_Create_Cushion();
-          else if ((UI_BAR_b_Items[i][j]).equals("Parametric")) UI_set_to_Create_Parametric(User3D.create_Parametric_Type);
-        }
-
-        if (Bar_Switch.equals("Change Seed/Material")) {
-          if ((UI_BAR_b_Items[i][j]).equals("Mat0")) UI_set_to_Modify_Seed(0);
-          if ((UI_BAR_b_Items[i][j]).equals("Mat1")) UI_set_to_Modify_Seed(1);
-          if ((UI_BAR_b_Items[i][j]).equals("Mat2")) UI_set_to_Modify_Seed(2);
-          if ((UI_BAR_b_Items[i][j]).equals("Mat3")) UI_set_to_Modify_Seed(3);
-        }
-
-        if (Bar_Switch.equals("Change Tessellation")) {
-          if ((UI_BAR_b_Items[i][j]).equals("Tes0")) UI_set_to_Modify_Tessellation(0);
-          if ((UI_BAR_b_Items[i][j]).equals("Tes1")) UI_set_to_Modify_Tessellation(1);
-          if ((UI_BAR_b_Items[i][j]).equals("Tes2")) UI_set_to_Modify_Tessellation(2);
-          if ((UI_BAR_b_Items[i][j]).equals("Tes3")) UI_set_to_Modify_Tessellation(3);
-        }
-
-        if (Bar_Switch.equals("Change Layer")) {
-          if ((UI_BAR_b_Items[i][j]).equals("Lyr0")) UI_set_to_Modify_Layer(0);
-          if ((UI_BAR_b_Items[i][j]).equals("Lyr1")) UI_set_to_Modify_Layer(1);
-          if ((UI_BAR_b_Items[i][j]).equals("Lyr2")) UI_set_to_Modify_Layer(2);
-          if ((UI_BAR_b_Items[i][j]).equals("Lyr3")) UI_set_to_Modify_Layer(3);
-        }
-
-        if (Bar_Switch.equals("Change Visibility")) {
-          if ((UI_BAR_b_Items[i][j]).equals("Vsb0")) UI_set_to_Modify_Visibility(0);
-          if ((UI_BAR_b_Items[i][j]).equals("Vsb1")) UI_set_to_Modify_Visibility(1);
-          if ((UI_BAR_b_Items[i][j]).equals("Vsb2")) UI_set_to_Modify_Visibility(2);
-          if ((UI_BAR_b_Items[i][j]).equals("Vsb3")) UI_set_to_Modify_Visibility(3);
-        }    
-    
-        if (Bar_Switch.equals("Change Weight")) {
-          if ((UI_BAR_b_Items[i][j]).equals("Wgt0")) UI_set_to_Modify_Weight(0);
-          if ((UI_BAR_b_Items[i][j]).equals("Wgt1")) UI_set_to_Modify_Weight(1);
-          if ((UI_BAR_b_Items[i][j]).equals("Wgt2")) UI_set_to_Modify_Weight(2);
-          if ((UI_BAR_b_Items[i][j]).equals("Wgt3")) UI_set_to_Modify_Weight(3);
-        }           
-
-        if (Bar_Switch.equals("Normal")) {
-          if ((UI_BAR_b_Items[i][j]).equals("Norm1")) UI_set_to_Modify_Normal(1);
-          if ((UI_BAR_b_Items[i][j]).equals("Norm2")) UI_set_to_Modify_Normal(2);
-          if ((UI_BAR_b_Items[i][j]).equals("Norm3")) UI_set_to_Modify_Normal(3);
-        }
-
-        if (Bar_Switch.equals("FirstVertex")) {
-          if ((UI_BAR_b_Items[i][j]).equals("1stV")) UI_set_to_Modify_FirstVertex(1);
-        }        
-
-
-
-        if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
-        if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);        
-        if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
-        if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
-        if (Bar_Switch.equals("GetLength")) UI_set_to_Modify_GetLength(j - 1);
-        if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
-
-        if (Bar_Switch.equals("ProjectionType")) UI_set_to_View_ProjectionType(j - 1);
-
-        if (Bar_Switch.equals("ClickSelect")) UI_set_to_View_ClickSelect(j - 1);
-        if (Bar_Switch.equals("WindowSelect")) UI_set_to_View_WindowSelect(j - 1);
-
-        if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
-        if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
-        if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
-
-        if (Bar_Switch.equals("LandOrbit")) UI_set_to_View_LandOrbit(0);
-        
-        if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
-        if (Bar_Switch.equals("CameraRoll")) UI_set_to_View_CameraRoll(j - 1);
-        if (Bar_Switch.equals("TargetRoll")) UI_set_to_View_TargetRoll(j - 1);
-
-        if (Bar_Switch.equals("LookAtOrigin")) UI_set_to_View_LookAtOrigin(j - 1);
-        if (Bar_Switch.equals("LookAtDirection")) UI_set_to_View_LookAtDirection(j - 1);
-        if (Bar_Switch.equals("LookAtSelection")) UI_set_to_View_LookAtSelection(j - 1);
-
-        if (Bar_Switch.equals("Pan")) {
-
-          UI_set_to_View_Pan(j - 1);
-        }  
-
-        if (Bar_Switch.equals("Zoom")) {
-          UI_set_to_View_ZOOM(j - 1);
-
-          UI_BAR_b_Items[i][0] = "1"; // << set it to default choice next time
-        }     
-
-        if (Bar_Switch.equals("CameraDistance")) UI_set_to_View_CameraDistance(0);
-
-        if (Bar_Switch.equals("DistMouseXY")) UI_set_to_View_DistMouseXY(0);
-
-        if (Bar_Switch.equals("DistZ")) UI_set_to_View_Truck(0);
-        if (Bar_Switch.equals("Truck")) UI_set_to_View_Truck(j - 1);
-
-        if (Bar_Switch.equals("3DModelSize")) UI_set_to_View_3DModelSize();
-
-        if (Bar_Switch.equals("SkydomeSize")) UI_set_to_View_SkydomeSize();
-
-        if (Bar_Switch.equals("AllModelSize")) UI_set_to_View_AllModelSize();
-
-        if (Bar_Switch.equals("3DViewSpace")) UI_set_to_Viewport(j - 1);
-
-        if (Bar_Switch.equals("3DViewPoint")) UI_set_to_View_3DViewPoint(j - 1);
-      }
-
-
-      UI_BAR_b_displayText = true;  
-
-      { // drawing the icons where available
-
-        String Bar_Switch = UI_BAR_b_Items[i][UI_BAR_b_Items[i].length - 2];
-
-        if (Bar_Switch.equals("Drop")) {
-          UI_dessin_Drop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("GetLength")) {
-          UI_dessin_GetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }        
-        if (Bar_Switch.equals("Move")) {
-          UI_dessin_Move(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("Scale")) {
-          UI_dessin_Scale(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }    
-        if (Bar_Switch.equals("Power")) {
-          UI_dessin_Power(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }            
-        if (Bar_Switch.equals("Rotate")) {
-          UI_dessin_Rotate(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }    
-        if (Bar_Switch.equals("Change Seed/Material")) {
-          UI_dessin_Seed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("Change Tessellation")) {
-          UI_dessin_Tessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("Change Layer")) {
-          UI_dessin_Layer(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("Change Visibility")) {
-          UI_dessin_Visibility(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }       
-        if (Bar_Switch.equals("Change Weight")) {
-          UI_dessin_Weight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }          
-        if (Bar_Switch.equals("Normal")) {
-          UI_dessin_Normal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }           
-        if (Bar_Switch.equals("FirstVertex")) {
-          UI_dessin_FirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }            
-
-        if (Bar_Switch.equals("ClickSelect")) {
-          UI_dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }       
-        if (Bar_Switch.equals("WindowSelect")) {
-          UI_dessin_WindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }   
-        if (Bar_Switch.equals("ProjectionType")) {
-          UI_dessin_ProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }          
-        if (Bar_Switch.equals("Zoom")) {
-          UI_dessin_ZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("LandOrbit")) {
-          UI_dessin_LandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }             
-        if (Bar_Switch.equals("Orbit")) {
-          UI_dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }     
-        if (Bar_Switch.equals("CameraRoll")) {
-          UI_dessin_CameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }             
-        if (Bar_Switch.equals("TargetRoll")) {
-          UI_dessin_TargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }      
-        if (Bar_Switch.equals("CameraDistance")) {
-          UI_dessin_CameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }           
-        if (Bar_Switch.equals("LookAtOrigin")) {
-          UI_dessin_LookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }  
-        if (Bar_Switch.equals("LookAtDirection")) {
-          UI_dessin_LookAtDirection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }              
-        if (Bar_Switch.equals("LookAtSelection")) {
-          UI_dessin_LookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }                
-        if (Bar_Switch.equals("Pan")) {
-          UI_dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("DistMouseXY")) {
-          UI_dessin_DistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }          
-        if (Bar_Switch.equals("DistZ")) {
-          UI_dessin_DistZ(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }        
-        if (Bar_Switch.equals("Truck")) {
-          UI_dessin_Truck(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("3DModelSize")) {
-          UI_dessin_3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }      
-        if (Bar_Switch.equals("SkydomeSize")) {
-          UI_dessin_SkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-        if (Bar_Switch.equals("AllModelSize")) {
-          UI_dessin_AllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }  
-
-        if (Bar_Switch.equals("3DViewSpace")) {
-          UI_dessin_3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
-        }
-      }
-
-      if (UI_BAR_b_displayText) { // writing titles where the icon is not available
-
-        textAlign(CENTER, CENTER);   
-        stroke(255); 
-        fill(255);
-        textSize(0.45 * SOLARCHVISION_B_Pixel);
-
-        text(UI_BAR_b_Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MessageSize);
-      }
-
-
-      cx += Item_width;
-    }
-
-
-    SOLARCHVISION_X_clicked = -1;
-    SOLARCHVISION_Y_clicked = -1;
-  }
-}   
 
 
 
@@ -52082,8 +49942,8 @@ void UI_set_to_View_LookAtSelection (int n) {
 
   { // automatically set another choice of ineterest
     UI_set_to_View_CameraDistance(0);
-    SOLARCHVISION_highlight_in_BAR_b("±CDS");
-    UI_BAR_b_update = true;
+    UI_BAR_b.hghlight("±CDS");
+    UI_BAR_b.update = true;
   }
 
   WIN3D.update = true;
@@ -52110,8 +49970,8 @@ void UI_set_to_View_LookAtOrigin (int n) {
     // automatically set another choice of ineterest
 
     UI_set_to_View_Truck(0);
-    SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-    UI_BAR_b_update = true;
+    UI_BAR_b.hghlight("±CDZ");
+    UI_BAR_b.update = true;
   }
 
   WIN3D.update = true;
@@ -52242,7 +50102,7 @@ void UI_set_to_View_3DViewPoint (int n) {
   }
 
 
-  UI_BAR_b_update = true;
+  UI_BAR_b.update = true;
 
   WIN3D.update = true;   
 
@@ -53248,7 +51108,7 @@ void SOLARCHVISION_load_project (String myFile) {
     WIN3D.update = true; 
     STUDY.update = true;     
     UI_BAR_a_update = true; 
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
     UI_BAR_d_update = true;
   
   
@@ -55106,8 +52966,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "Move dx=? dy=? dz=?";
       
-      SOLARCHVISION_highlight_in_BAR_b("MV³");
-      UI_BAR_b_update = true;
+      UI_BAR_b.hghlight("MV³");
+      UI_BAR_b.update = true;
     }
   }  
   
@@ -55141,7 +53001,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
   
       UI_set_to_Modify_Rotate(2);
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
     }    
   }    
   
@@ -55179,8 +53039,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
       
-      SOLARCHVISION_highlight_in_BAR_b("SC³");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("SC³");
+      UI_BAR_b.update = true;      
     }        
   }    
   
@@ -55244,16 +53104,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("group3ds")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("Model1Ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("solids")) {current_ObjectCategory = ObjectCategory.SOLID; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("sections")) {current_ObjectCategory = ObjectCategory.SECTION; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("cameras")) {current_ObjectCategory = ObjectCategory.CAMERA; UI_BAR_b_update = true;}
-        else if (parts[q].toLowerCase().equals("landpoints")) {current_ObjectCategory = ObjectCategory.LANDPOINT; UI_BAR_b_update = true;}
+             if (parts[q].toLowerCase().equals("group3ds")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("object2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("Model1Ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("solids")) {current_ObjectCategory = ObjectCategory.SOLID; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("sections")) {current_ObjectCategory = ObjectCategory.SECTION; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("cameras")) {current_ObjectCategory = ObjectCategory.CAMERA; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("landpoints")) {current_ObjectCategory = ObjectCategory.LANDPOINT; UI_BAR_b.update = true;}
       }
       
       for (int q = 1; q < parts.length; q++) {
@@ -55292,15 +53152,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       allModel2Ds.add_single(t, m, x, y, z, 2.5);
       WIN3D.update = true;  
       current_ObjectCategory = ObjectCategory.MODEL2D; 
-      UI_BAR_b_update = true;
+      UI_BAR_b.update = true;
       //allModel3Ds.select_Last();
     }
     else {
       return_message = "2Dman m=? x=? y=? z=?";
 
       UI_set_to_Create_Person();
-      SOLARCHVISION_highlight_in_BAR_b("Person");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Person");
+      UI_BAR_b.update = true;      
     }  
   }
      
@@ -55326,7 +53186,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel2Ds.add_single(t, m, x, y, z, h);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL2D; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55334,8 +53194,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "2Dtree m=? x=? y=? z=? h=?";
       
       UI_set_to_Create_Tree();
-      SOLARCHVISION_highlight_in_BAR_b("Tree");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Tree");
+      UI_BAR_b.update = true;      
     }  
   }    
  
@@ -55373,7 +53233,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel1Ds.add_single(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL1D; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55381,8 +53241,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
       
       UI_set_to_Create_allModel1Ds();
-      SOLARCHVISION_highlight_in_BAR_b("Model1Ds");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Model1Ds");
+      UI_BAR_b.update = true;      
     }  
   }     
 
@@ -55419,7 +53279,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55427,8 +53287,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
 
       UI_set_to_Create_Box();
-      SOLARCHVISION_highlight_in_BAR_b("Box");
-      UI_BAR_b_update = true;            
+      UI_BAR_b.hghlight("Box");
+      UI_BAR_b.update = true;            
     }  
   }  
   
@@ -55467,7 +53327,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55475,8 +53335,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
 
       UI_set_to_Create_Box();
-      SOLARCHVISION_highlight_in_BAR_b("Box");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Box");
+      UI_BAR_b.update = true;      
     }  
   }     
 
@@ -55517,7 +53377,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55525,8 +53385,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House1();
-      SOLARCHVISION_highlight_in_BAR_b("House1");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("House1");
+      UI_BAR_b.update = true;      
     }  
   }     
   
@@ -55567,7 +53427,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55575,8 +53435,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House1();
-      SOLARCHVISION_highlight_in_BAR_b("House2");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("House2");
+      UI_BAR_b.update = true;      
     }  
   }       
 
@@ -55615,7 +53475,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55623,8 +53483,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
       
       UI_set_to_Create_Cylinder();
-      SOLARCHVISION_highlight_in_BAR_b("Cylinder");
-      UI_BAR_b_update = true;            
+      UI_BAR_b.hghlight("Cylinder");
+      UI_BAR_b.update = true;            
     }  
   }   
 
@@ -55661,7 +53521,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55669,8 +53529,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
       
       UI_set_to_Create_Sphere();
-      SOLARCHVISION_highlight_in_BAR_b("Sphere");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Sphere");
+      UI_BAR_b.update = true;      
     }  
   }   
 
@@ -55718,7 +53578,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55726,8 +53586,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
       
       UI_set_to_Create_Sphere();
-      SOLARCHVISION_highlight_in_BAR_b("Sphere");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Sphere");
+      UI_BAR_b.update = true;      
     }  
   }   
 
@@ -55768,7 +53628,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55776,8 +53636,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
       
       UI_set_to_Create_Cushion();
-      SOLARCHVISION_highlight_in_BAR_b("Cushion");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Cushion");
+      UI_BAR_b.update = true;      
     }  
   }   
           
@@ -55817,7 +53677,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55825,8 +53685,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
       
       UI_set_to_Create_Octahedron();
-      SOLARCHVISION_highlight_in_BAR_b("Octahedron");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Octahedron");
+      UI_BAR_b.update = true;      
     }  
   }  
 
@@ -55861,7 +53721,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55869,8 +53729,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
       
       UI_set_to_Create_Icosahedron();
-      SOLARCHVISION_highlight_in_BAR_b("Icosahedron");
-      UI_BAR_b_update = true;            
+      UI_BAR_b.hghlight("Icosahedron");
+      UI_BAR_b.update = true;            
     }  
   } 
   
@@ -55909,7 +53769,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55917,8 +53777,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
       
       UI_set_to_Create_Extrude();
-      SOLARCHVISION_highlight_in_BAR_b("Extrude");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Extrude");
+      UI_BAR_b.update = true;      
     }  
   }       
 
@@ -55957,7 +53817,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -55965,8 +53825,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
       
       UI_set_to_Create_Hyper();
-      SOLARCHVISION_highlight_in_BAR_b("Hyper");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Hyper");
+      UI_BAR_b.update = true;      
     }  
   }       
 
@@ -56003,7 +53863,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56011,8 +53871,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
       
       UI_set_to_Create_Plane();
-      SOLARCHVISION_highlight_in_BAR_b("Poly");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("Poly");
+      UI_BAR_b.update = true;      
     }  
   }  
 
@@ -56050,7 +53910,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56099,7 +53959,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56154,7 +54014,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56215,7 +54075,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56282,7 +54142,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56327,7 +54187,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56372,7 +54232,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56418,7 +54278,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Solid(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SOLID; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56426,8 +54286,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
       
       UI_set_to_Create_Solid();
-      SOLARCHVISION_highlight_in_BAR_b("SLD");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("SLD");
+      UI_BAR_b.update = true;      
     }  
   }  
 
@@ -56460,7 +54320,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Section(t, u, v, e, r, w, h, i, j);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SECTION; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56468,8 +54328,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Section t=? i=? j=? w=? h=? u=? v=? e=? r=?";
       
       UI_set_to_Create_Section();
-      SOLARCHVISION_highlight_in_BAR_b("SEC");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("SEC");
+      UI_BAR_b.update = true;      
     }  
   }
 
@@ -56503,7 +54363,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Camera(t, x, y, z, s, rx, ry, rz, a);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CAMERA; 
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56511,8 +54371,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Camera t=? x=? y=? z=? s=? rx=? ry=? rz=? a=?";
       
       UI_set_to_Create_Camera();
-      SOLARCHVISION_highlight_in_BAR_b("CAM");
-      UI_BAR_b_update = true;      
+      UI_BAR_b.hghlight("CAM");
+      UI_BAR_b.update = true;      
     }  
   }  
 
@@ -56547,7 +54407,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Spline(m, tes, lyr, vsb, wgt, clz, points);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CURVE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56555,8 +54415,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Spline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
       
       UI_set_to_Create_Curve();
-      SOLARCHVISION_highlight_in_BAR_b("Curve");
-      UI_BAR_b_update = true;                
+      UI_BAR_b.hghlight("Curve");
+      UI_BAR_b.update = true;                
     }  
   }  
   
@@ -56596,7 +54456,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         allModel3Ds.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CURVE;
-        UI_BAR_b_update = true;
+        UI_BAR_b.update = true;
         //allModel3Ds.select_Last();
       }
     }
@@ -56604,8 +54464,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
 
       UI_set_to_Create_Curve();
-      SOLARCHVISION_highlight_in_BAR_b("Curve");
-      UI_BAR_b_update = true;                      
+      UI_BAR_b.hghlight("Curve");
+      UI_BAR_b.update = true;                      
     }  
   } 
   
@@ -56632,315 +54492,315 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     allModel3Ds.convert_Vertices_to_allGroups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("FACE>GROUP")) {
     allModel3Ds.convert_Faces_to_allGroups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
     allModel3Ds.convert_allGroups_to_Faces();
     current_ObjectCategory = ObjectCategory.FACE;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }    
   else if (Command_CAPITAL.equals("CURVE>GROUP")) {
     allModel3Ds.convert_Curves_to_allGroups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>CURVE")) {
     allModel3Ds.convert_allGroups_to_Curves();
     current_ObjectCategory = ObjectCategory.CURVE;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }            
   else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
     allModel3Ds.convert_Curves_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   } 
   else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
     allModel3Ds.convert_Vertices_to_Curves();
     current_ObjectCategory = ObjectCategory.CURVE;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }               
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
     allModel3Ds.convert_allGroups_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }  
   else if (Command_CAPITAL.equals("FACE>VERTEX")) {
     allModel3Ds.convert_Faces_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   } 
   else if (Command_CAPITAL.equals("VERTEX>FACE")) {
     allModel3Ds.convert_Vertices_to_Faces();
     current_ObjectCategory = ObjectCategory.FACE;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }    
   else if (Command_CAPITAL.equals("SOLID>GROUP")) {
     allModel3Ds.convert_allSolids_to_allGroups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>SOLID")) {
     allModel3Ds.convert_allGroups_to_allSolids();
     current_ObjectCategory = ObjectCategory.SOLID;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }                
   else if (Command_CAPITAL.equals("2D>GROUP")) {
     allModel3Ds.convert_allModel2Ds_to_allGroups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>2D")) {
     allModel3Ds.convert_allGroups_to_allModel2Ds();
     current_ObjectCategory = ObjectCategory.MODEL2D;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("1D>GROUP")) {
     allModel3Ds.convert_allModel1Ds_to_allGroups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>1D")) {
     allModel3Ds.convert_allGroups_to_allModel1Ds();
     current_ObjectCategory = ObjectCategory.MODEL1D;
     WIN3D.update = true;
-    UI_BAR_b_update = true;
+    UI_BAR_b.update = true;
   }              
 
   else if (Command_CAPITAL.equals("DISTZ")) {
     UI_set_to_View_Truck(0);
-    SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±CDZ");
+    UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("DISTC")) {
     UI_set_to_View_CameraDistance(0);
-    SOLARCHVISION_highlight_in_BAR_b("±CDS");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±CDS");
+    UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("DISTP")) {
     UI_set_to_View_DistMouseXY(0);
-    SOLARCHVISION_highlight_in_BAR_b("±CDM");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±CDM");
+    UI_BAR_b.update = true;    
   } 
 
 
   else if (Command_CAPITAL.equals("SIZEALL")) {
     UI_set_to_View_AllModelSize();
-    SOLARCHVISION_highlight_in_BAR_b("±SA");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±SA");
+    UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("SIZESKY")) {
     UI_set_to_View_SkydomeSize();
-    SOLARCHVISION_highlight_in_BAR_b("±SK");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±SK");
+    UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("SIZE3D")) {
     UI_set_to_View_3DModelSize();
-    SOLARCHVISION_highlight_in_BAR_b("±SZ");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±SZ");
+    UI_BAR_b.update = true;    
   } 
 
   else if (Command_CAPITAL.equals("ALLVIEWPORTS")) {
     UI_set_to_Viewport(0);
-    SOLARCHVISION_highlight_in_BAR_b("AllViewports");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("AllViewports");
+    UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("ENLARGE3D")) {
     UI_set_to_Viewport(1);
-    SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Expand3DView");
+    UI_BAR_b.update = true;    
   } 
   
   else if (Command_CAPITAL.equals("LOOKORG")) {
     UI_set_to_View_LookAtOrigin(0);
-    SOLARCHVISION_highlight_in_BAR_b("LAO");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("LAO");
+    UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("LOOKDIR")) {
     UI_set_to_View_LookAtDirection(0);
-    SOLARCHVISION_highlight_in_BAR_b("LAD");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("LAD");
+    UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("LOOKSEL")) {
     UI_set_to_View_LookAtSelection(0);
-    SOLARCHVISION_highlight_in_BAR_b("LAS");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("LAS");
+    UI_BAR_b.update = true;    
   }   
   
   else if (Command_CAPITAL.equals("TRUCKZ")) {
     UI_set_to_View_Truck(0);
-    SOLARCHVISION_highlight_in_BAR_b("DIz");
-    UI_BAR_b_update = true;
+    UI_BAR_b.hghlight("DIz");
+    UI_BAR_b.update = true;
   }   
   else if (Command_CAPITAL.equals("TRUCKX")) {
     UI_set_to_View_Truck(1);
-    SOLARCHVISION_highlight_in_BAR_b("DIx");
-    UI_BAR_b_update = true;
+    UI_BAR_b.hghlight("DIx");
+    UI_BAR_b.update = true;
   }   
   else if (Command_CAPITAL.equals("TRUCKY")) {
     UI_set_to_View_Truck(2);
-    SOLARCHVISION_highlight_in_BAR_b("DIy");
-    UI_BAR_b_update = true;
+    UI_BAR_b.hghlight("DIy");
+    UI_BAR_b.update = true;
   }   
 
   else if (Command_CAPITAL.equals("TROLL")) {
     UI_set_to_View_TargetRoll(0);
-    SOLARCHVISION_highlight_in_BAR_b("TRL");
-    UI_BAR_b_update = true;
+    UI_BAR_b.hghlight("TRL");
+    UI_BAR_b.update = true;
   }   
   else if (Command_CAPITAL.equals("TROLLZ")) {
     UI_set_to_View_TargetRoll(1);
-    SOLARCHVISION_highlight_in_BAR_b("TRLz");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("TRLz");
+    UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("TROLLXY")) {
     UI_set_to_View_TargetRoll(2);
-    SOLARCHVISION_highlight_in_BAR_b("TRLxy");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("TRLxy");
+    UI_BAR_b.update = true;    
   }     
   
   else if (Command_CAPITAL.equals("CROLL")) {
     UI_set_to_View_CameraRoll(0);
-    SOLARCHVISION_highlight_in_BAR_b("CRL");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("CRL");
+    UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("CROLLZ")) {
     UI_set_to_View_CameraRoll(1);
-    SOLARCHVISION_highlight_in_BAR_b("CRLz");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("CRLz");
+    UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("CROLLXY")) {
     UI_set_to_View_CameraRoll(2);
-    SOLARCHVISION_highlight_in_BAR_b("CRLxy");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("CRLxy");
+    UI_BAR_b.update = true;   
   }   
   
   
   else if (Command_CAPITAL.equals("ORBIT")) {
     UI_set_to_View_Orbit(0);
-    SOLARCHVISION_highlight_in_BAR_b("OR");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("OR");
+    UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("ORBITZ")) {
     UI_set_to_View_Orbit(1);
-    SOLARCHVISION_highlight_in_BAR_b("ORz");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("ORz");
+    UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("ORBITXY")) {
     UI_set_to_View_Orbit(2);
-    SOLARCHVISION_highlight_in_BAR_b("ORxy");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("ORxy");
+    UI_BAR_b.update = true;   
   }
   
   else if (Command_CAPITAL.equals("LANDORBIT")) {
     UI_set_to_View_LandOrbit(0);
-    SOLARCHVISION_highlight_in_BAR_b("LNOR");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("LNOR");
+    UI_BAR_b.update = true;   
   }    
   
   else if (Command_CAPITAL.equals("PAN")) {
     UI_set_to_View_Pan(0);
-    SOLARCHVISION_highlight_in_BAR_b("Pan");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("Pan");
+    UI_BAR_b.update = true;   
   }  
   else if (Command_CAPITAL.equals("PANX")) {
     UI_set_to_View_Pan(1);
-    SOLARCHVISION_highlight_in_BAR_b("PanX");
-    UI_BAR_b_update = true;   
+    UI_BAR_b.hghlight("PanX");
+    UI_BAR_b.update = true;   
   }  
   else if (Command_CAPITAL.equals("PANY")) {
     UI_set_to_View_Pan(2);
-    SOLARCHVISION_highlight_in_BAR_b("PanY");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("PanY");
+    UI_BAR_b.update = true;    
   }  
 
   else if (Command_CAPITAL.equals("ZOOM")) {
     UI_set_to_View_ZOOM(0);
-    SOLARCHVISION_highlight_in_BAR_b("±ZM");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("±ZM");
+    UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("NORMALZOOM")) {
     UI_set_to_View_ZOOM(1);
-    SOLARCHVISION_highlight_in_BAR_b("0ZM");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("0ZM");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("ORTHOGRAPHIC")) {
     UI_set_to_View_ProjectionType(0);
-    SOLARCHVISION_highlight_in_BAR_b("P<>");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("P<>");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("PERSPECTIVE")) {
     UI_set_to_View_ProjectionType(1);
-    SOLARCHVISION_highlight_in_BAR_b("P><");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("P><");
+    UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("TOP")) {
     UI_set_to_View_3DViewPoint(0);
-    SOLARCHVISION_highlight_in_BAR_b("Top");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Top");
+    UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("FRONT")) {
     UI_set_to_View_3DViewPoint(1);
-    SOLARCHVISION_highlight_in_BAR_b("Front");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Front");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("LEFT")) {
     UI_set_to_View_3DViewPoint(2);
-    SOLARCHVISION_highlight_in_BAR_b("Left");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Left");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("BACK")) {
     UI_set_to_View_3DViewPoint(3);
-    SOLARCHVISION_highlight_in_BAR_b("Back");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Back");
+    UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("RIGHT")) {
     UI_set_to_View_3DViewPoint(4);
-    SOLARCHVISION_highlight_in_BAR_b("Right");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Right");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("BOTTOM")) {
     UI_set_to_View_3DViewPoint(5);
-    SOLARCHVISION_highlight_in_BAR_b("Bottom");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("Bottom");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("S.W.")) {
     UI_set_to_View_3DViewPoint(6);
-    SOLARCHVISION_highlight_in_BAR_b("S.W.");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("S.W.");
+    UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("S.E.")) {
     UI_set_to_View_3DViewPoint(7);
-    SOLARCHVISION_highlight_in_BAR_b("S.E.");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("S.E.");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("N.E.")) {
     UI_set_to_View_3DViewPoint(8);
-    SOLARCHVISION_highlight_in_BAR_b("N.E.");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("N.E.");
+    UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("N.W.")) {
     UI_set_to_View_3DViewPoint(9);
-    SOLARCHVISION_highlight_in_BAR_b("N.W.");
-    UI_BAR_b_update = true;    
+    UI_BAR_b.hghlight("N.W.");
+    UI_BAR_b.update = true;    
   }    
   
 
@@ -57001,3 +54861,2157 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   
   return return_message;
 }
+
+
+
+
+
+
+class solarchvision_UI_BAR_b {
+  
+  private final static String CLASS_STAMP = "UI_BAR_b";
+
+  boolean update = true;
+  
+  float tab = SOLARCHVISION_B_Pixel;
+  
+  String[][] Items = {
+    {
+      "11", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "3DViewPoint", "2.0"
+    }
+    , 
+    {
+      "2", "AllViewports", "Expand3DView", "ExpandTimeView", "ExpandMapView", "3DViewSpace", "1"
+    }
+    , 
+  
+    {
+      "2", "P<>", "P><", "ProjectionType", "1.0"
+    }
+    , 
+    {
+      "1", "LAO", "LookAtOrigin", "1.0"
+    }
+    , 
+    {
+      "1", "LAD", "LookAtDirection", "1.0"
+    }  
+    , 
+    {
+      "1", "LAS", "LookAtSelection", "1.0"
+    }
+    , 
+    {
+      "3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"
+    }
+    , 
+    {
+      "1", "±CDS", "CameraDistance", "1.0"
+    }
+    , 
+    {
+      "1", "±CDM", "DistMouseXY", "1.0"
+    }
+    , 
+    {
+      "1", "±CDZ", "DistZ", "1.0"
+    }
+    , 
+    {
+      "3", "DIz", "DIx", "DIy", "Truck", "1.0"
+    }
+    ,
+    {
+      "1", "LNOR", "LandOrbit", "1.0"
+    }
+    ,  
+    {
+      "1", "OR", "ORxy", "ORz", "Orbit", "1.0"
+    }
+    ,   
+    {
+      "1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"
+    }
+    , 
+    {
+      "1", "Pan", "PanX", "PanY", "Pan", "1.0"
+    }
+    , 
+    {
+      "1", "±ZM", "0ZM", "Zoom", "1.0"
+    }
+    , 
+    {
+      "1", "±SA", "AllModelSize", "1.0"
+    }
+    , 
+    {
+      "1", "±SZ", "3DModelSize", "1.0"
+    }
+    , 
+    {
+      "1", "±SK", "SkydomeSize", "1.0"
+    }
+    , 
+  
+    {
+      "2", "Model1Ds", "Tree", "Person", "Model2DsType", "1.5"
+    }
+    , 
+    {
+      "1", "House1", "House2", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
+    }
+    , 
+    {
+      "1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"
+    }
+    , 
+  
+    {
+      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
+    }
+    , 
+    {
+      "1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"
+    }
+    , 
+    {
+      "1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"
+    }
+    , 
+    {
+      "2", "X<", "X|", "X>", "PivotX", "1.0"
+    }
+    , 
+    {
+      "2", "Y<", "Y|", "Y>", "PivotY", "1.0"
+    }
+    , 
+    {
+      "2", "Z<", "Z|", "Z>", "PivotZ", "1.0"
+    }
+    , 
+    //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
+    {
+      "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "GetLength", "1.0"
+    }
+    , 
+    {
+      "3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"
+    }
+    , 
+    {
+      "3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"
+    }
+    , 
+    {
+      "3", "RTx", "RTy", "RTz", "Rotate", "1.0"
+    }
+    , 
+    //{"3", "PWx", "PWy", "PWz", "PW³", "Power", "1.0"},
+    {
+      "1", "Mat0", "Mat1", "Mat2", "Mat3", "Change Seed/Material", "1.0"
+    }
+    , 
+    {
+      "1", "Tes0", "Tes1", "Tes2", "Tes3", "Change Tessellation", "1.0"
+    }
+    , 
+    {
+      "1", "Lyr0", "Lyr1", "Lyr2", "Lyr3", "Change Layer", "1.0"
+    }
+    , 
+    {
+      "1", "Vsb0", "Vsb1", "Vsb2", "Vsb3", "Change Visibility", "1.0"
+    }
+    , 
+    {
+      "1", "Wgt0", "Wgt1", "Wgt2", "Wgt3", "Change Weight", "1.0"
+    }
+    ,   
+    {
+      "1", "Norm1", "Norm2", "Norm3", "Normal", "1.0"
+    }
+    , 
+    {
+      "1", "1stV", "FirstVertex", "1.0"
+    }
+    , 
+  
+  
+    //{"1", "<pvt>", ">pvt<", "|pvt|", ".pvt.", "Get/Set Pivot", "1.0"},
+  
+    //{"1", "SPvt0", "SPvt1", "SPvt2", "Pivot", "1.0"},
+  
+    //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
+    //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
+    //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
+    //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
+    //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
+    //{"1", "allFP0", "allFP1", "allFP2", "AllallModel1DsProps", "1.0"},
+  
+    //{"1", "SEC", "Section", "1.0"},
+    //{"1", "SLD", "Solid", "1.0"},
+    //{"1", "CAM", "Pick Study Camera", "1.0"},
+  };         
+  
+  
+  
+  int Selection = -1;                        
+  
+  
+  boolean displayText; 
+  
+  
+  void hghlight (String s) {
+  
+    int break_loops = 0;
+  
+    for (int i = 0; i < this.Items.length; i++) {
+      for (int j = 1; j < this.Items[i].length - 2; j++) {
+        if (this.Items[i][j].equals(s)) {
+  
+          this.Items[i][0] = nf(j, 0);
+  
+          break_loops = 1;
+        }
+  
+        if (break_loops == 1) break;
+      }
+      if (break_loops == 1) break;
+    }
+  }
+  
+  
+  void drawAll () {
+  
+    if (this.update) {
+  
+      this.update = false;
+  
+      fill(0);
+      noStroke();
+      rect(0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_B_Pixel);
+  
+      STUDY.X_control = 0; //0.25 * MessageSize;
+      STUDY.Y_control = SOLARCHVISION_A_Pixel + 0.5 * SOLARCHVISION_B_Pixel;
+  
+      float cx = STUDY.X_control;
+      float cy = STUDY.Y_control;
+      float cr = 0.5 * SOLARCHVISION_B_Pixel;   
+  
+      for (int i = 0; i < this.Items.length; i++) {
+  
+        {
+          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
+  
+          if (Bar_Switch.equals("LayerType")) {
+            this.Items[i][0] = nf(current_ObjectCategory + 1, 0);
+          }
+        }
+  
+  
+  
+        int j = int(this.Items[i][0]);
+  
+        float Item_width = this.tab * float(this.Items[i][this.Items[i].length - 1]);
+  
+        noFill();
+        stroke(255);
+        strokeWeight(1);
+        rect(cx, cy - cr, Item_width, SOLARCHVISION_B_Pixel);
+        strokeWeight(0);
+  
+  
+  
+  
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
+  
+          if (mouseButton == RIGHT) {       
+  
+            if (this.Selection != i) {
+              this.Selection = i;
+            } else {
+  
+              int n = int(this.Items[i][0]);
+  
+              n -= 1;
+  
+              if (n <= 0) n = this.Items[i].length - 3;
+  
+              this.Items[i][0] = nf(n, 0);
+  
+              j = n;
+            }
+          }
+  
+          if (mouseButton == LEFT) {
+  
+            if (this.Selection != i) {
+              this.Selection = i;
+            } else {
+  
+              int n = int(this.Items[i][0]);
+  
+              n += 1;
+  
+              if (n >= this.Items[i].length - 2) n = 1;
+  
+              this.Items[i][0] = nf(n, 0);
+  
+              j = n;
+            }
+          }               
+  
+  
+          fill(255, 127, 0);
+          noStroke();
+          rect(cx, cy - cr, Item_width, SOLARCHVISION_B_Pixel);     
+  
+          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
+  
+  
+          if (Bar_Switch.equals("LayerType")) {
+            current_ObjectCategory = j - 1;
+  
+            if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+              allModel3Ds.convert_Vertex_to_softSelection();
+            }
+  
+            ROLLOUT.update = true;   
+            WIN3D.update = true;
+          }
+  
+          if (Bar_Switch.equals("Mesh|Solid")) {
+            User3D.create_MeshOrSolid = j - 1;
+  
+            ROLLOUT.update = true;
+          }        
+  
+          if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
+            if ((this.Items[i][j]).equals("Model1Ds")) UI_set_to_Create_allModel1Ds();
+            else if ((this.Items[i][j]).equals("Tree")) UI_set_to_Create_Tree();
+            else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
+            else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
+            else if ((this.Items[i][j]).equals("Spline")) UI_set_to_Create_Curve();
+            else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
+            else if ((this.Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
+            else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
+            else if ((this.Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
+            else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
+            else if ((this.Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
+            else if ((this.Items[i][j]).equals("House1")) UI_set_to_Create_House1();
+            else if ((this.Items[i][j]).equals("House2")) UI_set_to_Create_House2();
+            else if ((this.Items[i][j]).equals("Box")) UI_set_to_Create_Box();
+            else if ((this.Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
+            else if ((this.Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
+            else if ((this.Items[i][j]).equals("Sphere")) UI_set_to_Create_Sphere();
+            else if ((this.Items[i][j]).equals("Cylinder")) UI_set_to_Create_Cylinder();
+            else if ((this.Items[i][j]).equals("Cushion")) UI_set_to_Create_Cushion();
+            else if ((this.Items[i][j]).equals("Parametric")) UI_set_to_Create_Parametric(User3D.create_Parametric_Type);
+          }
+  
+          if (Bar_Switch.equals("Change Seed/Material")) {
+            if ((this.Items[i][j]).equals("Mat0")) UI_set_to_Modify_Seed(0);
+            if ((this.Items[i][j]).equals("Mat1")) UI_set_to_Modify_Seed(1);
+            if ((this.Items[i][j]).equals("Mat2")) UI_set_to_Modify_Seed(2);
+            if ((this.Items[i][j]).equals("Mat3")) UI_set_to_Modify_Seed(3);
+          }
+  
+          if (Bar_Switch.equals("Change Tessellation")) {
+            if ((this.Items[i][j]).equals("Tes0")) UI_set_to_Modify_Tessellation(0);
+            if ((this.Items[i][j]).equals("Tes1")) UI_set_to_Modify_Tessellation(1);
+            if ((this.Items[i][j]).equals("Tes2")) UI_set_to_Modify_Tessellation(2);
+            if ((this.Items[i][j]).equals("Tes3")) UI_set_to_Modify_Tessellation(3);
+          }
+  
+          if (Bar_Switch.equals("Change Layer")) {
+            if ((this.Items[i][j]).equals("Lyr0")) UI_set_to_Modify_Layer(0);
+            if ((this.Items[i][j]).equals("Lyr1")) UI_set_to_Modify_Layer(1);
+            if ((this.Items[i][j]).equals("Lyr2")) UI_set_to_Modify_Layer(2);
+            if ((this.Items[i][j]).equals("Lyr3")) UI_set_to_Modify_Layer(3);
+          }
+  
+          if (Bar_Switch.equals("Change Visibility")) {
+            if ((this.Items[i][j]).equals("Vsb0")) UI_set_to_Modify_Visibility(0);
+            if ((this.Items[i][j]).equals("Vsb1")) UI_set_to_Modify_Visibility(1);
+            if ((this.Items[i][j]).equals("Vsb2")) UI_set_to_Modify_Visibility(2);
+            if ((this.Items[i][j]).equals("Vsb3")) UI_set_to_Modify_Visibility(3);
+          }    
+      
+          if (Bar_Switch.equals("Change Weight")) {
+            if ((this.Items[i][j]).equals("Wgt0")) UI_set_to_Modify_Weight(0);
+            if ((this.Items[i][j]).equals("Wgt1")) UI_set_to_Modify_Weight(1);
+            if ((this.Items[i][j]).equals("Wgt2")) UI_set_to_Modify_Weight(2);
+            if ((this.Items[i][j]).equals("Wgt3")) UI_set_to_Modify_Weight(3);
+          }           
+  
+          if (Bar_Switch.equals("Normal")) {
+            if ((this.Items[i][j]).equals("Norm1")) UI_set_to_Modify_Normal(1);
+            if ((this.Items[i][j]).equals("Norm2")) UI_set_to_Modify_Normal(2);
+            if ((this.Items[i][j]).equals("Norm3")) UI_set_to_Modify_Normal(3);
+          }
+  
+          if (Bar_Switch.equals("FirstVertex")) {
+            if ((this.Items[i][j]).equals("1stV")) UI_set_to_Modify_FirstVertex(1);
+          }        
+  
+  
+  
+          if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
+          if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);        
+          if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
+          if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
+          if (Bar_Switch.equals("GetLength")) UI_set_to_Modify_GetLength(j - 1);
+          if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
+  
+          if (Bar_Switch.equals("ProjectionType")) UI_set_to_View_ProjectionType(j - 1);
+  
+          if (Bar_Switch.equals("ClickSelect")) UI_set_to_View_ClickSelect(j - 1);
+          if (Bar_Switch.equals("WindowSelect")) UI_set_to_View_WindowSelect(j - 1);
+  
+          if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
+          if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
+          if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
+  
+          if (Bar_Switch.equals("LandOrbit")) UI_set_to_View_LandOrbit(0);
+          
+          if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
+          if (Bar_Switch.equals("CameraRoll")) UI_set_to_View_CameraRoll(j - 1);
+          if (Bar_Switch.equals("TargetRoll")) UI_set_to_View_TargetRoll(j - 1);
+  
+          if (Bar_Switch.equals("LookAtOrigin")) UI_set_to_View_LookAtOrigin(j - 1);
+          if (Bar_Switch.equals("LookAtDirection")) UI_set_to_View_LookAtDirection(j - 1);
+          if (Bar_Switch.equals("LookAtSelection")) UI_set_to_View_LookAtSelection(j - 1);
+  
+          if (Bar_Switch.equals("Pan")) {
+  
+            UI_set_to_View_Pan(j - 1);
+          }  
+  
+          if (Bar_Switch.equals("Zoom")) {
+            UI_set_to_View_ZOOM(j - 1);
+  
+            this.Items[i][0] = "1"; // << set it to default choice next time
+          }     
+  
+          if (Bar_Switch.equals("CameraDistance")) UI_set_to_View_CameraDistance(0);
+  
+          if (Bar_Switch.equals("DistMouseXY")) UI_set_to_View_DistMouseXY(0);
+  
+          if (Bar_Switch.equals("DistZ")) UI_set_to_View_Truck(0);
+          if (Bar_Switch.equals("Truck")) UI_set_to_View_Truck(j - 1);
+  
+          if (Bar_Switch.equals("3DModelSize")) UI_set_to_View_3DModelSize();
+  
+          if (Bar_Switch.equals("SkydomeSize")) UI_set_to_View_SkydomeSize();
+  
+          if (Bar_Switch.equals("AllModelSize")) UI_set_to_View_AllModelSize();
+  
+          if (Bar_Switch.equals("3DViewSpace")) UI_set_to_Viewport(j - 1);
+  
+          if (Bar_Switch.equals("3DViewPoint")) UI_set_to_View_3DViewPoint(j - 1);
+        }
+  
+  
+        this.displayText = true;  
+  
+        { // drawing the icons where available
+  
+          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
+  
+          if (Bar_Switch.equals("Drop")) {
+            UI_BAR_b.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("GetLength")) {
+            UI_BAR_b.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }        
+          if (Bar_Switch.equals("Move")) {
+            UI_BAR_b.drawMove(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("Scale")) {
+            UI_BAR_b.drawScale(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }    
+          if (Bar_Switch.equals("Power")) {
+            UI_BAR_b.drawPower(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }            
+          if (Bar_Switch.equals("Rotate")) {
+            UI_BAR_b.drawRotate(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }    
+          if (Bar_Switch.equals("Change Seed/Material")) {
+            UI_BAR_b.drawSeed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("Change Tessellation")) {
+            UI_BAR_b.drawTessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("Change Layer")) {
+            UI_BAR_b.drawLayer(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("Change Visibility")) {
+            UI_BAR_b.drawVisibility(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }       
+          if (Bar_Switch.equals("Change Weight")) {
+            UI_BAR_b.drawWeight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }          
+          if (Bar_Switch.equals("Normal")) {
+            UI_BAR_b.drawNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }           
+          if (Bar_Switch.equals("FirstVertex")) {
+            UI_BAR_b.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }            
+  
+          if (Bar_Switch.equals("ClickSelect")) {
+            UI_BAR_b.drawClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }       
+          if (Bar_Switch.equals("WindowSelect")) {
+            UI_BAR_b.drawWindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }   
+          if (Bar_Switch.equals("ProjectionType")) {
+            UI_BAR_b.drawProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }          
+          if (Bar_Switch.equals("Zoom")) {
+            UI_BAR_b.drawZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("LandOrbit")) {
+            UI_BAR_b.drawLandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }             
+          if (Bar_Switch.equals("Orbit")) {
+            UI_BAR_b.drawOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }     
+          if (Bar_Switch.equals("CameraRoll")) {
+            UI_BAR_b.drawCameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }             
+          if (Bar_Switch.equals("TargetRoll")) {
+            UI_BAR_b.drawTargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }      
+          if (Bar_Switch.equals("CameraDistance")) {
+            UI_BAR_b.drawCameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }           
+          if (Bar_Switch.equals("LookAtOrigin")) {
+            UI_BAR_b.drawLookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }  
+          if (Bar_Switch.equals("LookAtDirection")) {
+            UI_BAR_b.drawLookAtDirection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }              
+          if (Bar_Switch.equals("LookAtSelection")) {
+            UI_BAR_b.drawLookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }                
+          if (Bar_Switch.equals("Pan")) {
+            UI_BAR_b.drawPan(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("DistMouseXY")) {
+            UI_BAR_b.drawDistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }          
+          if (Bar_Switch.equals("DistZ")) {
+            UI_BAR_b.drawDistZ(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }        
+          if (Bar_Switch.equals("Truck")) {
+            UI_BAR_b.drawTruck(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("3DModelSize")) {
+            UI_BAR_b.draw3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }      
+          if (Bar_Switch.equals("SkydomeSize")) {
+            UI_BAR_b.drawSkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+          if (Bar_Switch.equals("AllModelSize")) {
+            UI_BAR_b.drawAllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }  
+  
+          if (Bar_Switch.equals("3DViewSpace")) {
+            UI_BAR_b.draw3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+          }
+        }
+  
+        if (this.displayText) { // writing titles where the icon is not available
+  
+          textAlign(CENTER, CENTER);   
+          stroke(255); 
+          fill(255);
+          textSize(0.45 * SOLARCHVISION_B_Pixel);
+  
+          text(this.Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MessageSize);
+        }
+  
+  
+        cx += Item_width;
+      }
+  
+  
+      SOLARCHVISION_X_clicked = -1;
+      SOLARCHVISION_Y_clicked = -1;
+    }
+  }   
+  
+  void drawMouse (int _type, float x, float y, float r) {
+  
+    float d = 0.4 * r;
+  
+    for (int i = 0; i < 3; i++) { 
+  
+      float dx = 0;
+      float dy = 0;
+  
+      if (i == 0) {
+        dx = 0.5 * d;
+        dy = 0.5 * d;
+        strokeWeight(1);
+        stroke(63); 
+        fill(63);
+      } else if (i == 1) {
+        strokeWeight(3);
+        stroke(0); 
+        fill(0);
+      } else {
+        strokeWeight(1);
+        stroke(1);
+        stroke(255); 
+        fill(255);
+      }          
+  
+      pushMatrix();
+      translate(x + d + dx, y + d + dy);
+  
+      triangle(-d, -d, -d, d, d, -d); 
+  
+      if (i == 1) {
+        strokeWeight(2 + d);
+      } else { 
+        strokeWeight(d);
+      }
+  
+      line(0, 0, d, d);
+  
+      popMatrix();
+    }
+  
+    strokeWeight(0);
+  }
+  
+  void drawClickSelect (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(255);  
+  
+    float d = 0.3 * r;
+    triangle(-d, -d, -d, d, d, -d); 
+  
+    strokeWeight(5);
+    line(0, 0, d, d);
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawWindowSelect (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(63);  
+    rect(-0.5 * r, -0.5 * r, 1.25 * r, 1.25 * r);
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(255);  
+  
+    float d = 0.3 * r;
+    triangle(-d, -d, -d, d, d, -d); 
+  
+    strokeWeight(5);
+    line(0, 0, d, d);
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawDrop (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(0);
+  
+    float d = 0.8 * r;
+  
+    if (_type == 1) {
+      ellipse(0, 0, 2 * d, d);
+    } 
+    if ((_type == 2) || (_type == 3)) {
+      beginShape();
+      vertex(0, 0.5 * d);
+      vertex(funcs.cos_ang(30) * d, 0);
+      vertex(0, -0.5 * d);
+      vertex(-funcs.cos_ang(30) * d, 0);
+      endShape(CLOSE);
+    } 
+  
+  
+  
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(0);
+  
+    if (_type == 1) {
+      line(0, 0, 0, -d);  
+      line(0, 0, 0 - 0.25 * d, 0.25 * -d);
+      line(0, 0, 0 + 0.25 * d, 0.25 * -d);
+  
+      line(0, 0, 0, d);  
+      line(0, 0, 0 - 0.25 * d, 0.25 * d);
+      line(0, 0, 0 + 0.25 * d, 0.25 * d);
+    }
+  
+    if (_type == 2) {
+      line(0, 0.25 * d, 0, -d);  
+      line(0, 0.25 * d, 0 - 0.25 * d, 0);
+      line(0, 0.25 * d, 0 + 0.25 * d, 0);
+    }
+  
+    if (_type == 3) {
+      line(0, 0.25 * -d, 0, d);  
+      line(0, 0.25 * -d, 0 - 0.25 * d, 0);
+      line(0, 0.25 * -d, 0 + 0.25 * d, 0);
+    }  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawGetLength (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();
+  
+  
+    float d = 0.8 * r;
+  
+    beginShape();
+    vertex(0, 0);
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0, d);
+    vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0, d);
+    vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+  
+    strokeWeight(2);
+    stroke(0, 127, 255); 
+    fill(0);
+  
+    if (_type == 1) {
+      line(0, 0, funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    }
+    if (_type == 2) {
+      line(0, 0, funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    }    
+    if (_type == 3) {
+      line(0, 0, -funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+    }      
+    if (_type == 4) {
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);  
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+    }     
+    if (_type == 5) {
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+    }    
+    if (_type == 6) {
+      line(0, 0, 0, -d);
+    }      
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawMove (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(0, 0, 0.8 * r, 0); 
+    line(0, 0, 0, -0.8 * r); 
+    line(0, 0, -0.4 * r, 0.4 * r); 
+  
+    strokeWeight(3);
+    stroke(255); 
+    noFill();  
+  
+    if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
+    if (_type == 2) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);  
+    if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
+    if (_type == 4) line(-0.4 * r, -0.4 * r, 0.4 * r, 0.4 * r);
+  
+    noStroke();
+    fill(255, 0, 0);
+    float d = 5;
+    if (_type == 1) {
+      ellipse(-0.8 * r, 0, d, d); 
+      ellipse(0.8 * r, 0, d, d);
+    }
+    if (_type == 2) {
+      ellipse(0.4 * r, -0.4 * r, d, d); 
+      ellipse(-0.4 * r, 0.4 * r, d, d);
+    }    
+    if (_type == 3) {
+      ellipse(0, 0.8 * r, d, d); 
+      ellipse(0, -0.8 * r, d, d);
+    }
+    if (_type == 4) {
+      ellipse(-0.4 * r, -0.4 * r, d, d); 
+      ellipse(0.4 * r, 0.4 * r, d, d);
+    }  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  void drawScale (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(0, 0, 0.8 * r, 0); 
+    line(0, 0, 0, -0.8 * r); 
+    line(0, 0, -0.4 * r, 0.4 * r); 
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(-0.8 * r, 0, 0.8 * r, 0);
+    line(0, 0.8 * r, 0, -0.8 * r);
+    line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  
+    strokeWeight(5);
+    stroke(0, 255, 0); 
+    noFill();  
+  
+    if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
+    if (_type == 2) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);  
+    if (_type == 3) line(0, 0.4 * r, 0, -0.4 * r);
+    if (_type == 4) {
+      line(-0.4 * r, 0, 0.4 * r, 0);
+      line(0, 0.4 * r, 0, -0.4 * r);
+      line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
+    }  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawPower (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(0, 0, 0.8 * r, 0); 
+    line(0, 0, 0, -0.8 * r); 
+    line(0, 0, -0.4 * r, 0.4 * r); 
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(-0.8 * r, 0, 0.8 * r, 0);
+    line(0, 0.8 * r, 0, -0.8 * r);
+    line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  
+    strokeWeight(3);
+    stroke(0, 127, 255); 
+    noFill();  
+  
+    if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
+    if (_type == 2) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);  
+    if (_type == 3) line(0, 0.4 * r, 0, -0.4 * r);
+    if (_type == 4) {
+      line(-0.4 * r, 0, 0.4 * r, 0);
+      line(0, 0.4 * r, 0, -0.4 * r);
+      line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
+    }  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawRotate (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(0, 0, 0.8 * r, 0); 
+    line(0, 0, 0, -0.8 * r); 
+    line(0, 0, -0.4 * r, 0.4 * r); 
+  
+    strokeWeight(3);
+    stroke(255); 
+    noFill();  
+  
+    if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
+    if (_type == 2) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+    if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
+  
+    strokeWeight(2);
+    stroke(0, 127, 255);
+    noFill();
+    float d = 0.85 * r;
+    if (_type == 1) {
+      arc(0, 0, d, d, 0.25 * PI, 1.75 * PI);
+    }
+    if (_type == 2) {
+      arc(0, 0, d, d, (0.25 + 0.75) * PI, (1.75 + 0.75) * PI);
+    }
+    if (_type == 3) {
+      arc(0, 0, d, d, (0.25 - 0.5) * PI, (1.75 - 0.5) * PI);
+    }
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  
+  
+  void drawSeed (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(0, 0, 0.8 * r, 0); 
+    line(0, 0, 0, -0.8 * r); 
+    line(0, 0, -0.4 * r, 0.4 * r); 
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+  
+    line(-0.8 * r, 0, 0.8 * r, 0);
+    line(0, 0.8 * r, 0, -0.8 * r);
+    line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  
+    strokeWeight(1);
+    stroke(255, 255, 0); 
+    noFill();  
+  
+    for (int i = 0; i < 360; i += 30) {
+      float d = random(0.25, 0.75);
+  
+      line(0, 0, 0.8 * r * d * cos(i), 0.8 * r * d * sin(i));
+    }  
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
+    }
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 4) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
+      line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void drawTessellation (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 1.25 * r;
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(63);  
+    rect(-0.5 * d, -0.5 * d, d, d);
+  
+    strokeWeight(1);
+    stroke(191); 
+    fill(191);  
+  
+    for (int i = 1; i < 4; i++) {
+      float w = (0.25 * i - 0.5) * d;
+      line(-0.5 * d, w, 0.5 * d, w);  
+      line(w, -0.5 * d, w, 0.5 * d);
+    }
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
+    }
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 4) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
+      line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawLayer (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 0.8 * r;
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(0);
+  
+    beginShape();
+    vertex(0, d);
+    vertex(funcs.cos_ang(30) * d, 0.5 * d);
+    vertex(0, 0);
+    vertex(-funcs.cos_ang(30) * d, 0.5 * d);
+    endShape(CLOSE); 
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(0, 127, 255);
+  
+    beginShape();
+    vertex(0, 0.5 * d);
+    vertex(funcs.cos_ang(30) * d, 0);
+    vertex(0, -0.5 * d);
+    vertex(-funcs.cos_ang(30) * d, 0);
+    endShape(CLOSE);
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
+    }
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 4) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
+      line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawVisibility (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 0.8 * r;
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(0);
+  
+    beginShape();
+    vertex(0, d);
+    vertex(funcs.cos_ang(30) * d, 0.5 * d);
+    vertex(0, 0);
+    vertex(-funcs.cos_ang(30) * d, 0.5 * d);
+    endShape(CLOSE); 
+  
+    strokeWeight(0);
+    stroke(255); 
+    fill(127, 127);
+  
+    beginShape();
+    vertex(0, 0.5 * d);
+    vertex(funcs.cos_ang(30) * d, 0);
+    vertex(0, -0.5 * d);
+    vertex(-funcs.cos_ang(30) * d, 0);
+    endShape(CLOSE);
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
+    }
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 4) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
+      line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawWeight (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(63);  
+    //rect(-0.5 * r, -0.5 * r, r, r);
+    
+    float d = r * pow(2, 0.5);
+    
+    strokeWeight(1);
+    noFill();  
+    ellipse(0, 0, d, d);
+  
+    strokeWeight(1);
+    noFill();  
+    arc(0, -r, d, d, 0.25 * PI, 0.75 * PI);
+    arc(r, 0, d, d, 0.75 * PI, 1.25 * PI);
+    arc(0, r, d, d, 1.25 * PI, 1.75 * PI);
+    arc(-r, 0, d, d, 1.75 * PI, 2.25 * PI);
+  
+  
+    stroke(0, 127, 255);
+    strokeWeight(3);
+    if (_type == 2) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);
+    }
+    if (_type == 3) {
+      line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); 
+      line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);
+    } 
+    if (_type == 4) {
+      line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); 
+      line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawNormal (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 0.8 * r;
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(0);
+  
+    beginShape();
+    vertex(0, 0.5 * d);
+    vertex(funcs.cos_ang(30) * d, 0);
+    vertex(0, -0.5 * d);
+    vertex(-funcs.cos_ang(30) * d, 0);
+    endShape(CLOSE);
+  
+    if (_type == 1) {
+      line(0, 0, 0, -d);  
+      line(0 - 0.25 * d, -d + 0.25 * d, 0, -d);
+      line(0 + 0.25 * d, -d + 0.25 * d, 0, -d);
+  
+      line(0, 0.5 * d, 0, d);  
+      line(0 - 0.25 * d, d - 0.25 * d, 0, d);
+      line(0 + 0.25 * d, d - 0.25 * d, 0, d);
+    }
+  
+    if (_type == 2) {
+      line(0, 0, 0, -d);  
+      line(0 - 0.25 * d, -d + 0.25 * d, 0, -d);
+      line(0 + 0.25 * d, -d + 0.25 * d, 0, -d);
+    }
+  
+  
+    if (_type == 3) {
+      line(0, 0, 0, d);  
+      line(0 - 0.25 * d, d - 0.25 * d, 0, d);
+      line(0 + 0.25 * d, d - 0.25 * d, 0, d);
+    }  
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawFirstVertex (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 0.8 * r;
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(0);
+  
+    beginShape();
+    vertex(0, d);
+    vertex(funcs.cos_ang(30) * d, 0.5 * d);
+    vertex(0, 0);
+    vertex(-funcs.cos_ang(30) * d, 0.5 * d);
+    endShape(CLOSE);
+  
+    stroke(255, 0, 0);
+    ellipse(0, 0, 0.25 * d, 0.25 * d);
+  
+    fill(255);
+    textSize(d);
+    textAlign(CENTER, BOTTOM);
+    text("1st", 0, 0);
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void draw3DViewSpace (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(2);
+    stroke(255); 
+    noFill();
+  
+    strokeWeight(1);
+    stroke(255); 
+    if (_type == 1) fill(63);  
+    if (_type == 2) fill(191);
+    rect(-0.75 * r, -0.75 * r, 1.5 * r, 1.5 * r);
+  
+    if (_type == 1) fill(191);  
+    if (_type == 2) fill(63);
+    rect(-0.75 * r, -0.75 * r, 0.75 * r, 0.75 * r);
+  
+    strokeWeight(2);
+    line(0, 0, 0.75 * r, 0.75 * r);
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  void drawProjectionType (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(0);
+  
+  
+    float d = 0.8 * r;
+  
+    if (_type == 1) {
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+    }  
+  
+    if (_type == 2) {
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0.75 * funcs.sin_ang(0) * d, 0.75 * -funcs.cos_ang(0) * d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(0.75 * funcs.sin_ang(120) * d, 0.75 * -funcs.cos_ang(120) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(0.75 * funcs.sin_ang(240) * d, 0.75 * -funcs.cos_ang(240) * d);
+      endShape(CLOSE);
+    }
+  
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawTruck (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+  
+    stroke(255); 
+    fill(0);
+  
+    float d = 0.625 * r;
+  
+    float a = 0;
+    float b = 0;
+    if (_type == 1) {
+      a = funcs.cos_ang(30) * d; 
+      b = -funcs.sin_ang(30) * d;
+    }
+    if (_type == 2) {
+      a = -funcs.cos_ang(30) * d; 
+      b = -funcs.sin_ang(30) * d;
+    }
+    if (_type == 3) {
+      a = 0; 
+      b = d;
+    }
+  
+    strokeWeight(1);
+    {
+      pushMatrix();
+      translate(0.5 * a, 0.5 * b);
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      popMatrix();
+    }
+  
+  
+  
+  
+    strokeWeight(2);
+    {
+      pushMatrix();
+      translate(-0.5 * a, -0.5 * b);
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      popMatrix();
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  
+  void drawZOOM (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    {
+      pushMatrix();
+      translate(0.25 * r, 0.25 * r);
+  
+      stroke(255); 
+  
+      fill(0);
+      strokeWeight(1);
+      ellipse(-0.4 * r, -0.4 * r, 0.8 * r, 0.8 * r); 
+  
+      noFill();  
+      strokeWeight(4);
+      line(-0.1 * r, -0.1 * r, 0.3 * r, 0.3 * r);
+  
+      strokeWeight(2);
+      stroke(255, 255, 0);
+      if (_type == 1) {
+        line(-0.6 * r, -0.4 * r, -0.2 * r, -0.4 * r); 
+        line(-0.4 * r, -0.6 * r, -0.4 * r, -0.2 * r);
+      } 
+      if (_type == 2) {
+        line(-0.6 * r, -0.4 * r, -0.2 * r, -0.4 * r);
+      }
+  
+      popMatrix();
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void draw3DModelSize (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    stroke(255); 
+    fill(0);
+    strokeWeight(2);
+    ellipse(0, 0, r, r);
+    noFill();
+    strokeWeight(1);
+    ellipse(0, 0, 1.5 * r, 1.5 * r); 
+  
+    strokeWeight(1);
+    line(-0.75 * r, 0, -0.5 * r, 0);
+    line(0, -0.75 * r, 0, -0.5 * r);
+    line(0.75 * r, 0, 0.5 * r, 0);
+    line(0, 0.75 * r, 0, 0.5 * r);
+  
+  
+    strokeWeight(2);
+    stroke(255, 255, 0);
+    line(-0.2 * r, 0, 0.2 * r, 0);
+    line(0, -0.2 * r, 0, 0.2 * r); 
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  
+  
+  void drawAllModelSize (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 0.75 * r;
+  
+    stroke(255); 
+    fill(0); 
+    strokeWeight(1);
+    ellipse(0, 0, d, d);
+    noFill();
+    strokeWeight(1);
+    ellipse(0, 0, 2 * d, 2 * d); 
+  
+    strokeWeight(1);
+    line(-1 * d, 0, -0.5 * d, 0);
+    line(0, -1 * d, 0, -0.5 * d);
+    line(1 * d, 0, 0.5 * d, 0);
+    line(0, 1 * d, 0, 0.5 * d);
+  
+  
+    strokeWeight(2);
+    stroke(255, 255, 0);
+    line(-0.2 * r, 0, 0.2 * r, 0);
+    line(0, -0.2 * r, 0, 0.2 * r); 
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawSkydomeSize (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    {
+      pushMatrix();
+      translate(0, 0.125 * r);
+  
+      float d = 1.0 * r;
+  
+      strokeWeight(1);
+      stroke(255); 
+      fill(0);
+      arc(0, 0, d, d, PI, 2 * PI); 
+      arc(0, 0, d, 0.333 * d, 0, PI);
+  
+      d = 1.5 * r;
+  
+      strokeWeight(2);
+      stroke(255); 
+      noFill();  
+      arc(0, 0, d, d, PI, 2 * PI);
+      arc(0, 0, d, 0.333 * d, 0, PI);
+  
+      popMatrix();
+    }
+  
+    strokeWeight(2);
+    stroke(255, 255, 0);
+    line(-0.2 * r, 0, 0.2 * r, 0);
+    line(0, -0.2 * r, 0, 0.2 * r); 
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawLandOrbit (int _type, float x, float y, float r) {
+  
+    {
+      pushMatrix();
+      translate(x, y);
+      translate(-0.333 * r, -0.333 * r); // <<<<<<
+    
+      float d = 1.0 * r;
+    
+      strokeWeight(1);
+      stroke(255); 
+      fill(0); 
+      ellipse(0, 0, d, d); 
+    
+      strokeWeight(2);
+      stroke(255); 
+      noFill();  
+    
+      if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
+      if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+      if (_type == 1) {
+        arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+        arc(0, 0, d, 0.333 * d, 0, PI);
+      }
+    
+      strokeWeight(0);
+    
+      popMatrix();
+    }
+    
+    {  
+      pushMatrix();
+      translate(x, y);
+      translate(0.333 * r, 0.333 * r); // <<<<<<
+    
+      float d = 0.75 * r;
+    
+      strokeWeight(1);
+      stroke(255); 
+      noFill();  
+      arc(0, 0, d, d, 0, PI); 
+    
+      stroke(255); 
+      noFill();  
+    
+      for (float i = -1.5; i <= 1.5; i++) { 
+        line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
+    
+        if (i < 1.5) arc(i * 0.25 * d, -0.5 * d, 0.25 * d, 0.25 * d, PI, 2*PI);
+      }
+      
+      strokeWeight(0);
+  
+      popMatrix();      
+    }
+  
+    this.displayText = false;
+  }
+  
+  void drawOrbit (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    float d = 1.5 * r;
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(0); 
+    ellipse(0, 0, d, d); 
+  
+    strokeWeight(2);
+    stroke(255); 
+    noFill();  
+  
+    if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
+    if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+    if (_type == 1) {
+      arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+      arc(0, 0, d, 0.333 * d, 0, PI);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawLookAtOrigin (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(2);
+    stroke(255);
+    fill(127, 63, 0); 
+  
+    {
+      float d = 0.8 * r;
+  
+      line(0, 0, funcs.cos_ang(90) * d, -funcs.sin_ang(90) * d);
+      line(0, 0, funcs.cos_ang(210) * d, -funcs.sin_ang(210) * d);
+      line(0, 0, funcs.cos_ang(330) * d, -funcs.sin_ang(330) * d);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawLookAtDirection (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(2);
+    stroke(255);
+    fill(127, 63, 0); 
+  
+    {
+      float d = 0.8 * r;
+  
+      line(-d,d/2,d,d/2);
+      line(d/2,-d,d/2,d);
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawLookAtSelection (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(2);
+    stroke(255);
+    fill(127, 63, 0); 
+  
+    {
+      float d = 0.8 * r;
+  
+      line(0, 0, funcs.cos_ang(90) * d, -funcs.sin_ang(90) * d);
+      line(0, 0, funcs.cos_ang(210) * d, -funcs.sin_ang(210) * d);
+      line(0, 0, funcs.cos_ang(330) * d, -funcs.sin_ang(330) * d);
+    }
+  
+    {
+      //float d = 0.625 * r;
+      float d = 0.5 * r;
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+    }    
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawCameraRoll (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    {
+      float d = 1.5 * r;
+  
+      strokeWeight(1);
+      stroke(255); 
+      fill(0);
+      ellipse(0, 0, d, d);
+    }
+  
+  
+    strokeWeight(1);
+    stroke(255);
+    fill(127, 63, 0); 
+    {
+      //float d = 0.625 * r;
+      float d = 0.5 * r;
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+    }  
+  
+  
+  
+    {
+      float d = 1.5 * r;
+  
+      strokeWeight(2);
+      stroke(255); 
+      noFill();  
+  
+      if (_type == 3) arc(0, 0, d, 0.333 * d, 0, PI); 
+      if (_type == 2) arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+      if (_type == 1) {
+        arc(0, 0, 0.333 * d, d, 0.5 * PI, 1.5 * PI); 
+        arc(0, 0, d, 0.333 * d, 0, PI);
+      }
+    }  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void drawTargetRoll (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    {  
+  
+      float d = 1.5 * r;
+  
+      strokeWeight(1);
+      stroke(255); 
+      fill(0);  
+      rect(-d/2, -d/2, d, d);   
+  
+      strokeWeight(2);
+      stroke(255); 
+      noFill();  
+  
+      if (_type == 3) arc(0, 0, d, 0.333 * d, PI, 2 * PI); 
+      if (_type == 2) arc(0, 0, 0.333 * d, d, -0.5 * PI, 0.5 * PI); 
+      if (_type == 1) {
+        arc(0, 0, 0.333 * d, d, -0.5 * PI, 0.5 * PI); 
+        arc(0, 0, d, 0.333 * d, PI, 2 * PI);
+      }
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  void drawPan (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    {
+      float d = 1.0 * r;
+  
+      strokeWeight(1);
+      stroke(255); 
+      noFill();  
+      arc(0, 0, d, d, 0, PI); 
+  
+      stroke(255); 
+      noFill();  
+  
+      for (float i = -1.5; i <= 1.5; i++) { 
+        line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
+  
+        if (i < 1.5) arc(i * 0.25 * d, -0.5 * d, 0.25 * d, 0.25 * d, PI, 2*PI);
+      }
+    }
+  
+    strokeWeight(2);
+    stroke(255); 
+    noFill();  
+    {
+      float d = 0.75 * r;
+  
+      if (_type == 2) {
+        line(-1 * d, 0, -0.5 * d, 0);
+        line(1 * d, 0, 0.5 * d, 0);
+      }
+      if (_type == 3) {
+        line(0, -1 * d, 0, -0.5 * d);
+        line(0, 1 * d, 0, 0.5 * d);
+      }
+    }
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void drawDistMouseXY (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    line(-r, -0.5 * r, r, -0.5 * r);
+    strokeWeight(2);
+    line(-0.5 * r, -0.5 * r, r, 0);
+    line(-0.5 * r, -0.5 * r, -r, 0);
+    strokeWeight(2);
+    line(-0.5 * r, -0.5 * r, 0, r);
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void drawCameraDistance (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    line(-r, 0, r, 0);
+    strokeWeight(2);
+    line(0, 0, r, 0.5 * r);
+    line(0, 0, -r, 0.5 * r);
+    strokeWeight(2);
+    line(0, 0, 0, r);
+  
+    strokeWeight(1);
+    stroke(255);
+    fill(127, 63, 0); 
+    {
+      //float d = 0.625 * r;
+      float d = 0.5 * r;
+  
+      beginShape();
+      vertex(0, 0);
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, -d);
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+  
+      beginShape();
+      vertex(-funcs.cos_ang(30) * d, -funcs.sin_ang(30) * d);
+      vertex(0, 0);
+      vertex(0, d);
+      vertex(-funcs.cos_ang(30) * d, (1 - funcs.sin_ang(30)) * d);
+      endShape(CLOSE);
+    }  
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+  
+  
+  
+  void drawDistZ (int _type, float x, float y, float r) {
+  
+    pushMatrix();
+    translate(x, y);
+  
+    strokeWeight(1);
+    stroke(255); 
+    line(-r, 0, r, 0);
+    strokeWeight(2);
+    line(0, 0, r, 0.5 * r);
+    line(0, 0, -r, 0.5 * r);
+    strokeWeight(2);
+    line(0, 0, 0, r);
+  
+  
+    strokeWeight(0);
+  
+    popMatrix();
+  
+    this.displayText = false;
+  }
+
+
+}
+
+solarchvision_UI_BAR_b UI_BAR_b = new solarchvision_UI_BAR_b(); 
