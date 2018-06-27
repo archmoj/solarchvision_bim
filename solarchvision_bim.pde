@@ -18164,7 +18164,7 @@ void draw () {
     SOLARCHVISION_X_clicked = -1;
     SOLARCHVISION_Y_clicked = -1;
     
-    UI_BAR_a_update = true;
+    UI_BAR_a.update = true;
     UI_BAR_b.update = true;
     UI_BAR_c_update = true;
     UI_BAR_d_update = true;
@@ -18708,7 +18708,7 @@ void draw () {
       if (STUDY.update) FRAME_record_JPG = true;
       if (WIN3D.update) FRAME_record_JPG = true;
       if (WORLD.update) FRAME_record_JPG = true;
-      //if (UI_BAR_a_update) FRAME_record_JPG = true;
+      //if (UI_BAR_a.update) FRAME_record_JPG = true;
       //if (UI_BAR_b.update) FRAME_record_JPG = true;
       //if (UI_BAR_d_update) FRAME_record_JPG = true;
     }
@@ -18769,8 +18769,8 @@ void draw () {
           }
         }
 
-        if (UI_BAR_a_update) {
-          SOLARCHVISION_draw_window_BAR_a();
+        if (UI_BAR_a.update) {
+          UI_BAR_a.drawAll();
         }
 
         if (UI_BAR_b.update) {
@@ -21507,10 +21507,10 @@ void keyPressed (KeyEvent e) {
       SOLARCHVISION_X_clicked = -1;
       SOLARCHVISION_Y_clicked = -1;
 
-      if ((UI_BAR_a_selected_parent != -1) || (UI_BAR_a_selected_child != 0)) {
+      if ((UI_BAR_a.selected_parent != -1) || (UI_BAR_a.selected_child != 0)) {
 
-        UI_BAR_a_selected_parent = -1;
-        UI_BAR_a_selected_child = 0;
+        UI_BAR_a.selected_parent = -1;
+        UI_BAR_a.selected_child = 0;
 
         image(pre_screen, 0, SOLARCHVISION_A_Pixel);
       }
@@ -40784,7 +40784,7 @@ void mouseWheel (MouseEvent event) {
 
   if (frameCount > Last_initializationStep) {
 
-    if (UI_BAR_a_selected_parent == -1) {
+    if (UI_BAR_a.selected_parent == -1) {
 
       mouseWheelConsume += 1;
       if (mouseWheelConsume % 2 == 0) {
@@ -41347,7 +41347,7 @@ void mouseReleased () {
           WIN3D.update = true;  
           STUDY.update = true;
           ROLLOUT.update = true;
-          UI_BAR_a_update = true;
+          UI_BAR_a.update = true;
           UI_BAR_b.update = true;
           UI_BAR_d_update = true;          
 
@@ -41899,7 +41899,7 @@ void mouseClicked () {
          WIN3D.update = true;  
          STUDY.update = true;
          ROLLOUT.update = true;
-         UI_BAR_a_update = true;
+         UI_BAR_a.update = true;
          UI_BAR_b.update = true;
          UI_BAR_d_update = true;          
          
@@ -41908,12 +41908,12 @@ void mouseClicked () {
       }    
 
 
-      if ((UI_BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_A_Pixel) == 0)) {
+      if ((UI_BAR_a.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_A_Pixel) == 0)) {
         
-        String menu_option = UI_BAR_a_Items[UI_BAR_a_selected_parent][UI_BAR_a_selected_child];
+        String menu_option = UI_BAR_a.Items[UI_BAR_a.selected_parent][UI_BAR_a.selected_child];
 
         if (mouseButton == LEFT) {
-          if (UI_BAR_a_selected_child != 0) {
+          if (UI_BAR_a.selected_child != 0) {
 
             // should call the functions here!
 
@@ -42398,13 +42398,13 @@ void mouseClicked () {
             
 
 
-            if (UI_BAR_a_Items[UI_BAR_a_selected_parent][0].equals("Layers")) {
-              if (UI_BAR_a_selected_child > 0) {
-                if (CurrentLayer_id != UI_BAR_a_selected_child - 1) {
+            if (UI_BAR_a.Items[UI_BAR_a.selected_parent][0].equals("Layers")) {
+              if (UI_BAR_a.selected_child > 0) {
+                if (CurrentLayer_id != UI_BAR_a.selected_child - 1) {
 
-                  if (UI_BAR_a_selected_child < numberOfLayers) {
+                  if (UI_BAR_a.selected_child < numberOfLayers) {
 
-                    changeCurrentLayerTo(UI_BAR_a_selected_child - 1);
+                    changeCurrentLayerTo(UI_BAR_a.selected_child - 1);
 
                     DevelopLayer_id = CurrentLayer_id;
 
@@ -42418,7 +42418,7 @@ void mouseClicked () {
                         changeCurrentLayerTo(LAYER_developed.id);
                       }
 
-                      Develop_Option = UI_BAR_a_selected_child - numberOfLayers;
+                      Develop_Option = UI_BAR_a.selected_child - numberOfLayers;
 
                       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);   
 
@@ -42429,7 +42429,7 @@ void mouseClicked () {
 
                       changeCurrentLayerTo(LAYER_developed.id); 
 
-                      Develop_Option = UI_BAR_a_selected_child - numberOfLayers;
+                      Develop_Option = UI_BAR_a.selected_child - numberOfLayers;
 
                       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);   
 
@@ -44127,8 +44127,8 @@ void mouseClicked () {
           }
         }
 
-        UI_BAR_a_selected_parent = -1;
-        UI_BAR_a_selected_child = 0;
+        UI_BAR_a.selected_parent = -1;
+        UI_BAR_a.selected_child = 0;
 
         image(pre_screen, 0, SOLARCHVISION_A_Pixel);
 
@@ -44140,7 +44140,7 @@ void mouseClicked () {
         SOLARCHVISION_Y_clicked = mouseY;
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_A_Pixel) == 1) {
-          UI_BAR_a_update = true;
+          UI_BAR_a.update = true;
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel) == 1) {
@@ -48411,14 +48411,14 @@ void mouseMoved () {
 
     if (SOLARCHVISION_automated == 0) {
 
-      if (UI_BAR_a_selected_parent != -1) {
+      if (UI_BAR_a.selected_parent != -1) {
 
         if ((UI_X_moved != mouseX) || (UI_Y_moved != mouseY)) {
 
           UI_X_moved = mouseX;
           UI_Y_moved = mouseY;      
 
-          UI_BAR_a_update = true;     
+          UI_BAR_a.update = true;     
 
           redraw();
         }
@@ -48431,914 +48431,7 @@ void mouseMoved () {
 
 PImage pre_screen;
 
-boolean UI_BAR_a_update = true;
 
-float UI_BAR_a_width_parent = 4 * SOLARCHVISION_A_Pixel;
-float UI_BAR_a_width_child = 3.5 * UI_BAR_a_width_parent;
-
-int UI_BAR_a_selected_parent = -1;
-int UI_BAR_a_selected_child = 0;
-
-String[][] UI_BAR_a_Items = {
-  {
-    "SOLARCHVISION-2017", 
-    "Designed & developed by", 
-    "Mojtaba Samimi", 
-    "www.solarchvision.com"
-  }
-  , 
-  {
-    "Project", 
-    "New", 
-    "Save", 
-    "Hold", 
-    "Fetch", 
-    "Open...", 
-    "Save As...", 
-    "Export 3D-Model > SCR", 
-    "Export 3D-Model > RAD", 
-    "Export 3D-Model > HTML", 
-    "Export 3D-Model > OBJ", 
-    "Export 3D-Model > OBJ (date-series)", 
-    "Export 3D-Model > OBJ (time-series)", 
-    "Import 3D-Model...", 
-    "Execute CommandFile...", 
-    "Preferences", 
-    "Quit"
-  }
-  , 
-  {
-    "Site", 
-    "update Station", 
-    "Load Land Mesh", 
-    "Load Land Texture", 
-    "Download Land Mesh", 
-    "Download Land Texture", 
-    "Download Toroposphere", 
-    "Download NAEFS", 
-    "Download SWOB", 
-    "Download CLMREC", 
-    "Download Aerial" 
-  }
-  , 
-  {
-    "Data", 
-    "Typical Year (TMY)", 
-    "Long-term (CWEEDS)", 
-    "Long-term (CLMREC)", 
-    "Real-time Observed (SWOB)", 
-    "Weather Forecast (NAEFS)", 
-    "update NAEFS", 
-    "update SWOB", 
-    "update CLMREC", 
-    "update CWEEDS", 
-    "update TMYEPW", 
-    "update Aerial"
-  }
-  , 
-  {
-    "View", 
-    "Camera >> Viewport", 
-    "GoTo Selected Camera", 
-    "Top", 
-    "Front", 
-    "Left", 
-    "Back", 
-    "Right", 
-    "Bottom", 
-    "S.W.", 
-    "S.E.", 
-    "N.E.", 
-    "N.W.", 
-    "Display All Viewports", 
-    "Enlarge 3D Viewport", 
-    "Enlarge Map Viewport", 
-    "Enlarge Time Viewport", 
-    "Perspective", 
-    "Orthographic", 
-    "Zoom", 
-    "Zoom as default", 
-    "Look at origin", 
-    "Look at direction", 
-    "Look at selection", 
-    "Pan", 
-    "PanX", 
-    "PanY", 
-    "LandOrbit", 
-    "Orbit", 
-    "OrbitXY", 
-    "OrbitZ", 
-    "CameraRoll", 
-    "CameraRollXY", 
-    "CameraRollZ", 
-    "TargetRoll", 
-    "TargetRollXY", 
-    "TargetRollZ", 
-    "TruckX", 
-    "TruckY", 
-    "TruckZ", 
-    "DistZ", 
-    "DistMouseXY", 
-    "CameraDistance", 
-    "3DModelSize", 
-    "SkydomeSize"
-  }
-  , 
-  {    
-    "Display2D",
-    "Display/Hide SWOB points", 
-    "Display/Hide SWOB nearest", 
-    "Display/Hide NAEFS points", 
-    "Display/Hide NAEFS nearest", 
-    "Display/Hide CWEEDS points", 
-    "Display/Hide CWEEDS nearest", 
-    "Display/Hide CLMREC points", 
-    "Display/Hide CLMREC nearest", 
-    "Display/Hide TMYEPW points", 
-    "Display/Hide TMYEPW nearest"
-  }
-  , 
-  {
-    "Display3D", 
-    "Display/Hide Land Mesh", 
-    "Display/Hide Land Texture", 
-    "Display/Hide Land Points", 
-    "Display/Hide Land Depth", 
-    "Display/Hide Vertices", 
-    "Display/Hide Edges", 
-    "Display/Hide Normals", 
-    "Display/Hide Leaves", 
-    "Display/Hide Model1Ds",
-    "Display/Hide Model2Ds",
-    "Display/Hide Curves", 
-    "Display/Hide Faces", 
-    "Display/Hide Solids", 
-    "Display/Hide Sections", 
-    "Display/Hide Cameras", 
-    "Display/Hide Sky", 
-    "Display/Hide Sun Grid",
-    "Display/Hide Sun Path", 
-    "Display/Hide Sun Pattern", 
-    "Display/Hide Sun Surface", 
-    "Display/Hide Moon Surface", 
-    "Display/Hide Troposphere", 
-    "Display/Hide Earth Surface", 
-    "Display/Hide Solar Section", 
-    "Display/Hide Solid Section", 
-    "Display/Hide Wind Flow", 
-    "Display/Hide Selected allSolids", 
-    "Display/Hide Selected allSections", 
-    "Display/Hide Selected allCameras", 
-    "Display/Hide Selected LandPoints", 
-    "Display/Hide Selected Faces", 
-    "Display/Hide Selected Faces Vertex Count", 
-    "Display/Hide Selected Curves Vertex Count", 
-    "Display/Hide Selected Vertices", 
-    "Display/Hide Selected REF Pivot", 
-    "Display/Hide Selected Group Pivot", 
-    "Display/Hide Selected Group Edges", 
-    "Display/Hide Selected Group Box", 
-    "Display/Hide Selected 2D Edges", 
-    "Display/Hide Selected 1D Edges", 
-  }
-  , 
-  {
-    "Shade", 
-    "Shade Surface Wire", 
-    "Shade Surface Base", 
-    "Shade Surface White", 
-    "Shade Surface Materials", 
-    "Shade Global Solar", 
-    "Shade Vertex Solar", 
-    "Shade Vertex Solid", 
-    "Shade Vertex Elevation"
-  }
-  , 
-  {
-    "Study", 
-    "Wind pattern (active)", 
-    "Wind pattern (passive)", 
-    "Urban solar potential (active)", 
-    "Urban solar potential (passive)", 
-    "Orientation potential (active)", 
-    "Orientation potential (passive)", 
-    "Hourly sun position (active)", 
-    "Hourly sun position (passive)", 
-    "View from sun & sky (active)", 
-    "View from sun & sky (passive)", 
-    "Annual cycle sun path (active)", 
-    "Annual cycle sun path (passive)", 
-    "Render Viewport", 
-    "PreBake Viewport", 
-    "Pre-bake Selected allSections", 
-    "Process Active Impact", 
-    "Process Passive Impact", 
-    "Process Solid Impact", 
-    "Run wind 3D-model"
-  }
-  , 
-  {
-    "Layers"
-  }
-  , // Parameters 
-  {
-    "Layout", 
-    "Layout -2", 
-    "Layout -1", 
-    "Layout 0", 
-    "Layout 1", 
-    "Layout 2", 
-    "Layout 3", 
-    "Layout 4", 
-    "Layout 5", 
-    "Layout 6", 
-    "Layout 7", 
-    "Layout 8", 
-    "Layout 9", 
-    "Layout 10", 
-    "Layout 11", 
-    "Layout 12", 
-    "Layout 13", 
-    "Layout 14"
-  }
-  , 
-  {
-    "Create", 
-    "Begin New Group at Origin", 
-    "Begin New Group at Pivot", 
-    "LandMesh >> Group", 
-    "LandGap >> Group", 
-    "Viewport >> Camera", 
-    "Camera", 
-    "Section", 
-    "Solid", 
-    "Point", 
-    "Spline", 
-    "Surface", 
-    "Model1Ds", 
-    "Tree", 
-    "Person", 
-    "House1", 
-    "House2", 
-    "Box", 
-    "Cushion", 
-    "Cylinder", 
-    "Sphere", 
-    "Octahedron", 
-    "Icosahedron", 
-    "Tri", 
-    "Hyper", 
-    "Plane", 
-    "Poly", 
-    "Extrude", 
-    "Parametric 1", 
-    "Parametric 2", 
-    "Parametric 3", 
-    "Parametric 4", 
-    "Parametric 5", 
-    "Parametric 6", 
-    "Parametric 7", 
-    "Get dX", 
-    "Get dY", 
-    "Get dZ", 
-    "Get dXYZ", 
-    "Get dXY", 
-    "Get Angle"
-  }
-  , 
-  {
-    "Select", 
-    "Reverse Selection", 
-    "Deselect All", 
-    "Select All", 
-    "Select Solid", 
-    "Select Section", 
-    "Select Camera", 
-    "Select LandPoint", 
-    "Select allModel1Ds", 
-    "Select allModel2Ds", 
-    "Select Group", 
-    "Select Face", 
-    "Select Curve", 
-    "Select Vertex", 
-    "Soft Selection", 
-    "Group >> Vertex", 
-    "Group >> Curve", 
-    "Group >> Face", 
-    "Group >> Solid", 
-    "Group >> allModel2Ds", 
-    "Group >> allModel1Ds", 
-    "Model1Ds >> Group", 
-    "Model2Ds >> Group", 
-    "Solid >> Group", 
-    "Face >> Group", 
-    "Curve >> Group", 
-    "Vertex >> Group", 
-    "Vertex >> Face", 
-    "Face >> Vertex", 
-    "Click Select", 
-    "Click Select+", 
-    "Click Select-", 
-    "Window Select", 
-    "Window Select+", 
-    "Window Select-", 
-    "Select Near Vertices Selection", 
-    "Select All Isolated Vertices"
-  }
-  ,
- 
-  {
-    "Edit", 
-    "Duplicate Selection (Identical)", 
-    "Duplicate Selection (Variation)", 
-    "Attach to Last Group", 
-    "Dettach from allGroups", 
-    "Group Selection", 
-    "Ungroup Selection", 
-    "Delete All Empty allGroups", 
-    "Delete Selection", 
-    "Delete All Isolated Vertices", 
-    "Delete Isolated Vertices Selection", 
-    "Separate Vertices Selection", 
-    "Reposition Vertices Selection", 
-    "Weld Objects Vertices Selection", 
-    "Weld Scene Vertices Selection", 
-    "Offset(above) Vertices", 
-    "Offset(below) Vertices", 
-    "Offset(expand) Vertices", 
-    "Offset(shrink) Vertices", 
-    "Extrude Face Edges", 
-    "Extrude Curve Edges", 
-    "Tessellation Triangular", 
-    "Tessellate Rectangular", 
-    "Tessellate Rows & Columns", 
-    "Auto-Normal Faces Selection", 
-    "Force Triangulate Faces Selection", 
-    "Insert Corner Opennings", 
-    "Insert Parallel Opennings", 
-    "Insert Rotated Opennings", 
-    "Insert Edge Opennings", 
-    "Reverse Visibility of All Faces", 
-    "Hide All Faces", 
-    "Hide Selected Faces", 
-    "Unhide Selected Faces", 
-    "Unhide All Faces", 
-    "Isolate Selection", 
-    "Reverse Visibility of All Curves", 
-    "Hide All Curves", 
-    "Hide Selected Curves", 
-    "Unhide Selected Curves", 
-    "Unhide All Curves", 
-    "Flatten Selected LandPoints"
-  }
-  , 
-  {
-    "Modify", 
-    "Move", 
-    "MoveX", 
-    "MoveY", 
-    "MoveZ", 
-    "Rotate", 
-    "RotateX", 
-    "RotateY", 
-    "RotateZ", 
-    "Scale", 
-    "ScaleX", 
-    "ScaleY", 
-    "ScaleZ", 
-    "Power", 
-    "PowerX", 
-    "PowerY", 
-    "PowerZ", 
-    "Flip Normal", 
-    "Set-Out Normal", 
-    "Set-In Normal", 
-    "Get FirstVertex", 
-    "Change Seed/Material", 
-    "Change Tessellation", 
-    "Change Layer", 
-    "Change Visibility", 
-    "Change Weight", 
-    "Change DegreeMax", 
-    "Change DegreeDif", 
-    "Change DegreeMin", 
-    "Change TrunkSize", 
-    "Change LeafSize"
-  }
-  , 
-  {
-    "Match", 
-    "Save Current ReferenceBox", 
-    "Reset Saved ReferenceBox", 
-    "Use Selection ReferenceBox", 
-    "Use Origin ReferenceBox", 
-    "PivotX:Minimum", 
-    "PivotX:Center", 
-    "PivotX:Maximum", 
-    "PivotY:Minimum", 
-    "PivotY:Center", 
-    "PivotY:Maximum", 
-    "PivotZ:Minimum", 
-    "PivotZ:Center", 
-    "PivotZ:Maximum", 
-    "Pick Seed/Material", 
-    "Pick Tessellation", 
-    "Pick Layer", 
-    "Pick Visibility", 
-    "Pick DegreeMax", 
-    "Pick DegreeDif", 
-    "Pick DegreeMin", 
-    "Pick TrunkSize", 
-    "Pick LeafSize", 
-    "Pick AllallModel1DsProps", 
-    "Assign Seed/Material", 
-    "Assign Tessellation", 
-    "Assign Layer", 
-    "Assign Visibility", 
-    "Assign DegreeMax", 
-    "Assign DegreeDif", 
-    "Assign DegreeMin", 
-    "Assign TrunkSize", 
-    "Assign LeafSize", 
-    "Assign AllallModel1DsProps", 
-    "Assign Pivot", 
-    "Drop on LandSurface", 
-    "Drop on ModelSurface (Up)", 
-    "Drop on ModelSurface (Down)"
-  }
-  , 
-  {
-    "Action", 
-    "Undo", 
-    "Redo", 
-    "JPG Time Graph", 
-    "PDF Time Graph", 
-    "JPG Location Graph", 
-    "PDF Location Graph", 
-    "JPG 3D Graph", 
-    "Screenshot", 
-    "Screenshot+Click", 
-    "Screenshot+Drag", 
-    "REC. Time Graph", 
-    "REC. Location Graph", 
-    "REC. Solid Graph", 
-    "REC. Screenshot", 
-    "Stop REC.", 
-    "ERASE_allModel1Ds", 
-    "ERASE_allModel2Ds", 
-    "ERASE_allGroups", 
-    "ERASE_allSolids", 
-    "ERASE_allSections", 
-    "ERASE_allCameras", 
-    "ERASE_Faces", 
-    "ERASE_Curves", 
-    "ERASE_All"
-  }
-};
-
-
-
-
-
-int LayersID_in_Bar_a = 8; 
-{
-
-  UI_BAR_a_Items[LayersID_in_Bar_a] = new String [numberOfLayers + 12];
-
-  UI_BAR_a_Items[LayersID_in_Bar_a][0] = "Layers";
-
-  for (int i = 0; i < numberOfLayers; i++) {
-
-    UI_BAR_a_Items[LayersID_in_Bar_a][i + 1] = allLayers[i].descriptions[Language_EN];
-  }
-
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 0] = "12h accumulated Precipitation";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 1] = "Hourly precipitation";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 2] = "Wind power";  
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 3] = "Accumulated degree day <18°C<";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 4] = "Accumulated radiation on tracker";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 5] = "Accumulated radiation on surface";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 6] = "Radiation on surface inclination";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 7] = "Radiation on solar tracker";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 8] = "Radiation on surface material";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 9] = "Normal trend of parameter";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 10] = "Passive trend of parameter";
-  UI_BAR_a_Items[LayersID_in_Bar_a][numberOfLayers + 11] = "Active trend of parameter";
-}
-
-
-void SOLARCHVISION_draw_window_BAR_a () {
-  
-  if (UI_BAR_a_update) {
-
-    //println("update BAR!");
-
-    UI_BAR_a_update = false;
-
-    fill(127);
-    noStroke();
-
-    rect(0, 0, width, SOLARCHVISION_A_Pixel);
-
-    STUDY.X_control = 0; //0.25 * MessageSize;
-    STUDY.Y_control = 0.5 * SOLARCHVISION_A_Pixel;
-
-    for (int i = 0; i < UI_BAR_a_Items.length; i++) {
-
-      float cx = STUDY.X_control + i * UI_BAR_a_width_parent;
-      float cy = STUDY.Y_control;
-      float cr = 0.5 * SOLARCHVISION_A_Pixel; 
-
-      if (i > 0) cx += 1.5 * UI_BAR_a_width_parent; // to include SOLARCHVISION title     
-
-      if (isInside(mouseX, mouseY, cx, cy - cr, cx + UI_BAR_a_width_parent, cy + cr) == 1) {
-
-        if (UI_BAR_a_selected_parent == -1) {
-
-          pre_screen = get(0, SOLARCHVISION_A_Pixel, width, height - SOLARCHVISION_A_Pixel);
-
-          //println("Screen GET!");
-        }     
-
-        UI_BAR_a_selected_parent = i;
-
-        UI_BAR_a_selected_child = 0;
-      }     
-
-
-      textAlign(LEFT, CENTER);   
-
-      if (UI_BAR_a_selected_parent == i) {
-
-        stroke(0); 
-        fill(0);
-        textSize(1.25 * MessageSize);
-      } else {
-        stroke(255); 
-        fill(255);
-        textSize(1.25 * MessageSize);
-      }
-
-      text(UI_BAR_a_Items[i][0], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize);
-
-
-
-      if (UI_BAR_a_selected_parent == i) {
-
-        image(pre_screen, 0, SOLARCHVISION_A_Pixel);
-
-        UI_BAR_a_selected_child = 0; 
-
-        for (int j = 1; j < UI_BAR_a_Items[UI_BAR_a_selected_parent].length; j++) {
-
-          if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_A_Pixel, cx + UI_BAR_a_width_child, cy + cr + j * SOLARCHVISION_A_Pixel) == 1) {
-
-            UI_BAR_a_selected_child = j;
-
-            fill(255, 127, 0);
-            noStroke();
-            rect(cx, cy - cr + j * SOLARCHVISION_A_Pixel, UI_BAR_a_width_child, SOLARCHVISION_A_Pixel);
-          } else {
-
-            fill(0, 223);
-            noStroke();
-            rect(cx, cy - cr + j * SOLARCHVISION_A_Pixel, UI_BAR_a_width_child, SOLARCHVISION_A_Pixel);
-          }
-
-          textAlign(LEFT, CENTER);
-
-          if (UI_BAR_a_selected_child == j) {
-
-            stroke(0); 
-            fill(0);
-          } else {
-            stroke(255); 
-            fill(255);
-
-            if (UI_BAR_a_Items[i][0].equals("Display2D")) {
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide SWOB points")) {
-                if (WORLD.displayAll_SWOB == 0) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide SWOB nearest")) {
-                if (WORLD.displayNear_SWOB == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide NAEFS points")) {
-                if (WORLD.displayAll_NAEFS == 0) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide NAEFS nearest")) {
-                if (WORLD.displayNear_NAEFS == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide CWEEDS points")) {
-                if (WORLD.displayAll_CWEEDS == 0) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide CWEEDS nearest")) {
-                if (WORLD.displayNear_CWEEDS == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide CLMREC points")) {
-                if (WORLD.displayAll_CLMREC == 0) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide CLMREC nearest")) {
-                if (WORLD.displayNear_CLMREC == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }              
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide TMYEPW points")) {
-                if (WORLD.displayAll_TMYEPW == 0) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide TMYEPW nearest")) {
-                if (WORLD.displayNear_TMYEPW == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-            }
-
-            if (UI_BAR_a_Items[i][0].equals("Display3D")) {
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Mesh")) {
-                if (Land3D.displaySurface == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }       
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
-                if (Land3D.displayTexture == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
-                if (Land3D.displayPoints == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
-                if (Land3D.displayDepth == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }  
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Vertices")) {
-                if (allPoints.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }              
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Edges")) {
-                if (allFaces.displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              } 
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Normals")) {
-                if (allFaces.displayNormals == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }               
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Leaves")) {
-                if (allModel1Ds.displayLeaves == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }  
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Model1Ds")) {
-                if (allModel1Ds.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }               
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Model2Ds")) {
-                if (allModel2Ds.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              } 
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Curves")) {
-                if (allFaces.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }   
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Faces")) {
-                if (allFaces.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }      
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Solids")) {
-                if (allSolids.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }                  
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sections")) {
-                if (allSections.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }          
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Cameras")) {
-                if (allCameras.displayAll == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }                
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sky")) {
-                if (Sky3D.displaySurface == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Grid")) {
-                if (Sun3D.displayGrid == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Path")) {
-                if (Sun3D.displayPath == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Pattern")) {
-                if (Sun3D.displayPattern == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }              
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Sun Surface")) {
-                if (Sun3D.displaySurface == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Moon Surface")) {
-                if (Moon3D.displaySurface == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Earth Surface")) {
-                if (Earth3D.displaySurface == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Troposphere")) {
-                if (Tropo3D.displaySurface == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }  
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Solar Section")) {
-                if (allSolarImpacts.displayImage == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }  
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Solid Section")) {
-                if (allSolidImpacts.displayImage == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              } 
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Wind Flow")) {
-                if (allWindFlows.display == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected allSolids")) {
-                if (userSelections.Solid_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }                        
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected allSections")) {
-                if (userSelections.Section_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }          
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected allCameras")) {
-                if (userSelections.Camera_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }        
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected LandPoints")) {
-                if (userSelections.LandPoint_displayPoints == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }              
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Faces")) {
-                if (userSelections.Face_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }      
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Curves")) {
-                if (userSelections.Curve_displayVertices == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }         
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
-                if (userSelections.Face_displayVertexCount == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }   
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Curves Vertex Count")) {
-                if (userSelections.Curve_displayVertexCount == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }                
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Vertices")) {
-                if (userSelections.Vertex_displayVertices == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }               
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected REF Pivot")) {
-                if (userSelections.displayReferencePivot == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }                 
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Group Pivot")) {
-                if (userSelections.displayReferencePivot == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }                    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Group Edges")) {
-                if (userSelections.Group_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected Group Box")) {
-                if (userSelections.Group_displayBox == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected 2D Edges")) {
-                if (userSelections.Model2D_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }    
-              if (UI_BAR_a_Items[i][j].equals("Display/Hide Selected 1D Edges")) {
-                if (userSelections.Model1D_displayEdges == false) {
-                  stroke(127); 
-                  fill(127);
-                }
-              }              
-            }
-          }
-
-          textSize(1.25 * MessageSize);
-          text(UI_BAR_a_Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_A_Pixel);
-        }
-      }
-    }
-
-    SOLARCHVISION_X_clicked = -1;
-    SOLARCHVISION_Y_clicked = -1;
-  }
-  
-}
 
 
 void SOLARCHVISION_modify_Viewport_Title () {
@@ -51107,7 +50200,7 @@ void SOLARCHVISION_load_project (String myFile) {
     WORLD.update = true;
     WIN3D.update = true; 
     STUDY.update = true;     
-    UI_BAR_a_update = true; 
+    UI_BAR_a.update = true; 
     UI_BAR_b.update = true;
     UI_BAR_d_update = true;
   
@@ -54864,6 +53957,925 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 
+
+
+class solarchvision_UI_BAR_a {
+  
+  private final static String CLASS_STAMP = "UI_BAR_a";
+  
+  boolean update = true;
+  
+  float width_parent = 4 * SOLARCHVISION_A_Pixel;
+  float width_child = 3.5 * 4 * SOLARCHVISION_A_Pixel;
+  
+  int selected_parent = -1;
+  int selected_child = 0;
+  
+  String[][] Items = {
+    {
+      "SOLARCHVISION-2017", 
+      "Designed & developed by", 
+      "Mojtaba Samimi", 
+      "www.solarchvision.com"
+    }
+    , 
+    {
+      "Project", 
+      "New", 
+      "Save", 
+      "Hold", 
+      "Fetch", 
+      "Open...", 
+      "Save As...", 
+      "Export 3D-Model > SCR", 
+      "Export 3D-Model > RAD", 
+      "Export 3D-Model > HTML", 
+      "Export 3D-Model > OBJ", 
+      "Export 3D-Model > OBJ (date-series)", 
+      "Export 3D-Model > OBJ (time-series)", 
+      "Import 3D-Model...", 
+      "Execute CommandFile...", 
+      "Preferences", 
+      "Quit"
+    }
+    , 
+    {
+      "Site", 
+      "update Station", 
+      "Load Land Mesh", 
+      "Load Land Texture", 
+      "Download Land Mesh", 
+      "Download Land Texture", 
+      "Download Toroposphere", 
+      "Download NAEFS", 
+      "Download SWOB", 
+      "Download CLMREC", 
+      "Download Aerial" 
+    }
+    , 
+    {
+      "Data", 
+      "Typical Year (TMY)", 
+      "Long-term (CWEEDS)", 
+      "Long-term (CLMREC)", 
+      "Real-time Observed (SWOB)", 
+      "Weather Forecast (NAEFS)", 
+      "update NAEFS", 
+      "update SWOB", 
+      "update CLMREC", 
+      "update CWEEDS", 
+      "update TMYEPW", 
+      "update Aerial"
+    }
+    , 
+    {
+      "View", 
+      "Camera >> Viewport", 
+      "GoTo Selected Camera", 
+      "Top", 
+      "Front", 
+      "Left", 
+      "Back", 
+      "Right", 
+      "Bottom", 
+      "S.W.", 
+      "S.E.", 
+      "N.E.", 
+      "N.W.", 
+      "Display All Viewports", 
+      "Enlarge 3D Viewport", 
+      "Enlarge Map Viewport", 
+      "Enlarge Time Viewport", 
+      "Perspective", 
+      "Orthographic", 
+      "Zoom", 
+      "Zoom as default", 
+      "Look at origin", 
+      "Look at direction", 
+      "Look at selection", 
+      "Pan", 
+      "PanX", 
+      "PanY", 
+      "LandOrbit", 
+      "Orbit", 
+      "OrbitXY", 
+      "OrbitZ", 
+      "CameraRoll", 
+      "CameraRollXY", 
+      "CameraRollZ", 
+      "TargetRoll", 
+      "TargetRollXY", 
+      "TargetRollZ", 
+      "TruckX", 
+      "TruckY", 
+      "TruckZ", 
+      "DistZ", 
+      "DistMouseXY", 
+      "CameraDistance", 
+      "3DModelSize", 
+      "SkydomeSize"
+    }
+    , 
+    {    
+      "Display2D",
+      "Display/Hide SWOB points", 
+      "Display/Hide SWOB nearest", 
+      "Display/Hide NAEFS points", 
+      "Display/Hide NAEFS nearest", 
+      "Display/Hide CWEEDS points", 
+      "Display/Hide CWEEDS nearest", 
+      "Display/Hide CLMREC points", 
+      "Display/Hide CLMREC nearest", 
+      "Display/Hide TMYEPW points", 
+      "Display/Hide TMYEPW nearest"
+    }
+    , 
+    {
+      "Display3D", 
+      "Display/Hide Land Mesh", 
+      "Display/Hide Land Texture", 
+      "Display/Hide Land Points", 
+      "Display/Hide Land Depth", 
+      "Display/Hide Vertices", 
+      "Display/Hide Edges", 
+      "Display/Hide Normals", 
+      "Display/Hide Leaves", 
+      "Display/Hide Model1Ds",
+      "Display/Hide Model2Ds",
+      "Display/Hide Curves", 
+      "Display/Hide Faces", 
+      "Display/Hide Solids", 
+      "Display/Hide Sections", 
+      "Display/Hide Cameras", 
+      "Display/Hide Sky", 
+      "Display/Hide Sun Grid",
+      "Display/Hide Sun Path", 
+      "Display/Hide Sun Pattern", 
+      "Display/Hide Sun Surface", 
+      "Display/Hide Moon Surface", 
+      "Display/Hide Troposphere", 
+      "Display/Hide Earth Surface", 
+      "Display/Hide Solar Section", 
+      "Display/Hide Solid Section", 
+      "Display/Hide Wind Flow", 
+      "Display/Hide Selected allSolids", 
+      "Display/Hide Selected allSections", 
+      "Display/Hide Selected allCameras", 
+      "Display/Hide Selected LandPoints", 
+      "Display/Hide Selected Faces", 
+      "Display/Hide Selected Faces Vertex Count", 
+      "Display/Hide Selected Curves Vertex Count", 
+      "Display/Hide Selected Vertices", 
+      "Display/Hide Selected REF Pivot", 
+      "Display/Hide Selected Group Pivot", 
+      "Display/Hide Selected Group Edges", 
+      "Display/Hide Selected Group Box", 
+      "Display/Hide Selected 2D Edges", 
+      "Display/Hide Selected 1D Edges", 
+    }
+    , 
+    {
+      "Shade", 
+      "Shade Surface Wire", 
+      "Shade Surface Base", 
+      "Shade Surface White", 
+      "Shade Surface Materials", 
+      "Shade Global Solar", 
+      "Shade Vertex Solar", 
+      "Shade Vertex Solid", 
+      "Shade Vertex Elevation"
+    }
+    , 
+    {
+      "Study", 
+      "Wind pattern (active)", 
+      "Wind pattern (passive)", 
+      "Urban solar potential (active)", 
+      "Urban solar potential (passive)", 
+      "Orientation potential (active)", 
+      "Orientation potential (passive)", 
+      "Hourly sun position (active)", 
+      "Hourly sun position (passive)", 
+      "View from sun & sky (active)", 
+      "View from sun & sky (passive)", 
+      "Annual cycle sun path (active)", 
+      "Annual cycle sun path (passive)", 
+      "Render Viewport", 
+      "PreBake Viewport", 
+      "Pre-bake Selected allSections", 
+      "Process Active Impact", 
+      "Process Passive Impact", 
+      "Process Solid Impact", 
+      "Run wind 3D-model"
+    }
+    , 
+    {
+      "Layers"
+    }
+    , // Parameters 
+    {
+      "Layout", 
+      "Layout -2", 
+      "Layout -1", 
+      "Layout 0", 
+      "Layout 1", 
+      "Layout 2", 
+      "Layout 3", 
+      "Layout 4", 
+      "Layout 5", 
+      "Layout 6", 
+      "Layout 7", 
+      "Layout 8", 
+      "Layout 9", 
+      "Layout 10", 
+      "Layout 11", 
+      "Layout 12", 
+      "Layout 13", 
+      "Layout 14"
+    }
+    , 
+    {
+      "Create", 
+      "Begin New Group at Origin", 
+      "Begin New Group at Pivot", 
+      "LandMesh >> Group", 
+      "LandGap >> Group", 
+      "Viewport >> Camera", 
+      "Camera", 
+      "Section", 
+      "Solid", 
+      "Point", 
+      "Spline", 
+      "Surface", 
+      "Model1Ds", 
+      "Tree", 
+      "Person", 
+      "House1", 
+      "House2", 
+      "Box", 
+      "Cushion", 
+      "Cylinder", 
+      "Sphere", 
+      "Octahedron", 
+      "Icosahedron", 
+      "Tri", 
+      "Hyper", 
+      "Plane", 
+      "Poly", 
+      "Extrude", 
+      "Parametric 1", 
+      "Parametric 2", 
+      "Parametric 3", 
+      "Parametric 4", 
+      "Parametric 5", 
+      "Parametric 6", 
+      "Parametric 7", 
+      "Get dX", 
+      "Get dY", 
+      "Get dZ", 
+      "Get dXYZ", 
+      "Get dXY", 
+      "Get Angle"
+    }
+    , 
+    {
+      "Select", 
+      "Reverse Selection", 
+      "Deselect All", 
+      "Select All", 
+      "Select Solid", 
+      "Select Section", 
+      "Select Camera", 
+      "Select LandPoint", 
+      "Select allModel1Ds", 
+      "Select allModel2Ds", 
+      "Select Group", 
+      "Select Face", 
+      "Select Curve", 
+      "Select Vertex", 
+      "Soft Selection", 
+      "Group >> Vertex", 
+      "Group >> Curve", 
+      "Group >> Face", 
+      "Group >> Solid", 
+      "Group >> allModel2Ds", 
+      "Group >> allModel1Ds", 
+      "Model1Ds >> Group", 
+      "Model2Ds >> Group", 
+      "Solid >> Group", 
+      "Face >> Group", 
+      "Curve >> Group", 
+      "Vertex >> Group", 
+      "Vertex >> Face", 
+      "Face >> Vertex", 
+      "Click Select", 
+      "Click Select+", 
+      "Click Select-", 
+      "Window Select", 
+      "Window Select+", 
+      "Window Select-", 
+      "Select Near Vertices Selection", 
+      "Select All Isolated Vertices"
+    }
+    ,
+   
+    {
+      "Edit", 
+      "Duplicate Selection (Identical)", 
+      "Duplicate Selection (Variation)", 
+      "Attach to Last Group", 
+      "Dettach from allGroups", 
+      "Group Selection", 
+      "Ungroup Selection", 
+      "Delete All Empty allGroups", 
+      "Delete Selection", 
+      "Delete All Isolated Vertices", 
+      "Delete Isolated Vertices Selection", 
+      "Separate Vertices Selection", 
+      "Reposition Vertices Selection", 
+      "Weld Objects Vertices Selection", 
+      "Weld Scene Vertices Selection", 
+      "Offset(above) Vertices", 
+      "Offset(below) Vertices", 
+      "Offset(expand) Vertices", 
+      "Offset(shrink) Vertices", 
+      "Extrude Face Edges", 
+      "Extrude Curve Edges", 
+      "Tessellation Triangular", 
+      "Tessellate Rectangular", 
+      "Tessellate Rows & Columns", 
+      "Auto-Normal Faces Selection", 
+      "Force Triangulate Faces Selection", 
+      "Insert Corner Opennings", 
+      "Insert Parallel Opennings", 
+      "Insert Rotated Opennings", 
+      "Insert Edge Opennings", 
+      "Reverse Visibility of All Faces", 
+      "Hide All Faces", 
+      "Hide Selected Faces", 
+      "Unhide Selected Faces", 
+      "Unhide All Faces", 
+      "Isolate Selection", 
+      "Reverse Visibility of All Curves", 
+      "Hide All Curves", 
+      "Hide Selected Curves", 
+      "Unhide Selected Curves", 
+      "Unhide All Curves", 
+      "Flatten Selected LandPoints"
+    }
+    , 
+    {
+      "Modify", 
+      "Move", 
+      "MoveX", 
+      "MoveY", 
+      "MoveZ", 
+      "Rotate", 
+      "RotateX", 
+      "RotateY", 
+      "RotateZ", 
+      "Scale", 
+      "ScaleX", 
+      "ScaleY", 
+      "ScaleZ", 
+      "Power", 
+      "PowerX", 
+      "PowerY", 
+      "PowerZ", 
+      "Flip Normal", 
+      "Set-Out Normal", 
+      "Set-In Normal", 
+      "Get FirstVertex", 
+      "Change Seed/Material", 
+      "Change Tessellation", 
+      "Change Layer", 
+      "Change Visibility", 
+      "Change Weight", 
+      "Change DegreeMax", 
+      "Change DegreeDif", 
+      "Change DegreeMin", 
+      "Change TrunkSize", 
+      "Change LeafSize"
+    }
+    , 
+    {
+      "Match", 
+      "Save Current ReferenceBox", 
+      "Reset Saved ReferenceBox", 
+      "Use Selection ReferenceBox", 
+      "Use Origin ReferenceBox", 
+      "PivotX:Minimum", 
+      "PivotX:Center", 
+      "PivotX:Maximum", 
+      "PivotY:Minimum", 
+      "PivotY:Center", 
+      "PivotY:Maximum", 
+      "PivotZ:Minimum", 
+      "PivotZ:Center", 
+      "PivotZ:Maximum", 
+      "Pick Seed/Material", 
+      "Pick Tessellation", 
+      "Pick Layer", 
+      "Pick Visibility", 
+      "Pick DegreeMax", 
+      "Pick DegreeDif", 
+      "Pick DegreeMin", 
+      "Pick TrunkSize", 
+      "Pick LeafSize", 
+      "Pick AllallModel1DsProps", 
+      "Assign Seed/Material", 
+      "Assign Tessellation", 
+      "Assign Layer", 
+      "Assign Visibility", 
+      "Assign DegreeMax", 
+      "Assign DegreeDif", 
+      "Assign DegreeMin", 
+      "Assign TrunkSize", 
+      "Assign LeafSize", 
+      "Assign AllallModel1DsProps", 
+      "Assign Pivot", 
+      "Drop on LandSurface", 
+      "Drop on ModelSurface (Up)", 
+      "Drop on ModelSurface (Down)"
+    }
+    , 
+    {
+      "Action", 
+      "Undo", 
+      "Redo", 
+      "JPG Time Graph", 
+      "PDF Time Graph", 
+      "JPG Location Graph", 
+      "PDF Location Graph", 
+      "JPG 3D Graph", 
+      "Screenshot", 
+      "Screenshot+Click", 
+      "Screenshot+Drag", 
+      "REC. Time Graph", 
+      "REC. Location Graph", 
+      "REC. Solid Graph", 
+      "REC. Screenshot", 
+      "Stop REC.", 
+      "ERASE_allModel1Ds", 
+      "ERASE_allModel2Ds", 
+      "ERASE_allGroups", 
+      "ERASE_allSolids", 
+      "ERASE_allSections", 
+      "ERASE_allCameras", 
+      "ERASE_Faces", 
+      "ERASE_Curves", 
+      "ERASE_All"
+    }
+  };
+  
+  
+  
+  
+  
+  final int LayersID_in_Bar = 8; 
+
+  solarchvision_UI_BAR_a () { // constructor
+  
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 12];
+  
+    this.Items[LayersID_in_Bar][0] = "Layers";
+  
+    for (int i = 0; i < numberOfLayers; i++) {
+  
+      this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
+    }
+  
+    this.Items[LayersID_in_Bar][numberOfLayers + 0] = "12h accumulated Precipitation";
+    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Hourly precipitation";
+    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Wind power";  
+    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Accumulated degree day <18°C<";
+    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Accumulated radiation on tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Accumulated radiation on surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on surface inclination";
+    this.Items[LayersID_in_Bar][numberOfLayers + 7] = "Radiation on solar tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 8] = "Radiation on surface material";
+    this.Items[LayersID_in_Bar][numberOfLayers + 9] = "Normal trend of parameter";
+    this.Items[LayersID_in_Bar][numberOfLayers + 10] = "Passive trend of parameter";
+    this.Items[LayersID_in_Bar][numberOfLayers + 11] = "Active trend of parameter";
+  }
+
+  
+  void drawAll () {
+    
+    if (this.update) {
+  
+      //println("update BAR!");
+  
+      this.update = false;
+  
+      fill(127);
+      noStroke();
+  
+      rect(0, 0, width, SOLARCHVISION_A_Pixel);
+  
+      STUDY.X_control = 0; //0.25 * MessageSize;
+      STUDY.Y_control = 0.5 * SOLARCHVISION_A_Pixel;
+  
+      for (int i = 0; i < this.Items.length; i++) {
+  
+        float cx = STUDY.X_control + i * this.width_parent;
+        float cy = STUDY.Y_control;
+        float cr = 0.5 * SOLARCHVISION_A_Pixel; 
+  
+        if (i > 0) cx += 1.5 * this.width_parent; // to include SOLARCHVISION title     
+  
+        if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr) == 1) {
+  
+          if (this.selected_parent == -1) {
+  
+            pre_screen = get(0, SOLARCHVISION_A_Pixel, width, height - SOLARCHVISION_A_Pixel);
+  
+            //println("Screen GET!");
+          }     
+  
+          this.selected_parent = i;
+  
+          this.selected_child = 0;
+        }     
+  
+  
+        textAlign(LEFT, CENTER);   
+  
+        if (this.selected_parent == i) {
+  
+          stroke(0); 
+          fill(0);
+          textSize(1.25 * MessageSize);
+        } else {
+          stroke(255); 
+          fill(255);
+          textSize(1.25 * MessageSize);
+        }
+  
+        text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize);
+  
+  
+  
+        if (this.selected_parent == i) {
+  
+          image(pre_screen, 0, SOLARCHVISION_A_Pixel);
+  
+          this.selected_child = 0; 
+  
+          for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
+  
+            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_A_Pixel, cx + this.width_child, cy + cr + j * SOLARCHVISION_A_Pixel) == 1) {
+  
+              this.selected_child = j;
+  
+              fill(255, 127, 0);
+              noStroke();
+              rect(cx, cy - cr + j * SOLARCHVISION_A_Pixel, this.width_child, SOLARCHVISION_A_Pixel);
+            } else {
+  
+              fill(0, 223);
+              noStroke();
+              rect(cx, cy - cr + j * SOLARCHVISION_A_Pixel, this.width_child, SOLARCHVISION_A_Pixel);
+            }
+  
+            textAlign(LEFT, CENTER);
+  
+            if (this.selected_child == j) {
+  
+              stroke(0); 
+              fill(0);
+            } else {
+              stroke(255); 
+              fill(255);
+  
+              if (this.Items[i][0].equals("Display2D")) {
+                if (this.Items[i][j].equals("Display/Hide SWOB points")) {
+                  if (WORLD.displayAll_SWOB == 0) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide SWOB nearest")) {
+                  if (WORLD.displayNear_SWOB == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide NAEFS points")) {
+                  if (WORLD.displayAll_NAEFS == 0) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide NAEFS nearest")) {
+                  if (WORLD.displayNear_NAEFS == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide CWEEDS points")) {
+                  if (WORLD.displayAll_CWEEDS == 0) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide CWEEDS nearest")) {
+                  if (WORLD.displayNear_CWEEDS == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide CLMREC points")) {
+                  if (WORLD.displayAll_CLMREC == 0) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide CLMREC nearest")) {
+                  if (WORLD.displayNear_CLMREC == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }              
+                if (this.Items[i][j].equals("Display/Hide TMYEPW points")) {
+                  if (WORLD.displayAll_TMYEPW == 0) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide TMYEPW nearest")) {
+                  if (WORLD.displayNear_TMYEPW == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+              }
+  
+              if (this.Items[i][0].equals("Display3D")) {
+                if (this.Items[i][j].equals("Display/Hide Land Mesh")) {
+                  if (Land3D.displaySurface == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }       
+                if (this.Items[i][j].equals("Display/Hide Land Texture")) {
+                  if (Land3D.displayTexture == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }    
+                if (this.Items[i][j].equals("Display/Hide Land Points")) {
+                  if (Land3D.displayPoints == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }    
+                if (this.Items[i][j].equals("Display/Hide Land Depth")) {
+                  if (Land3D.displayDepth == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }  
+                if (this.Items[i][j].equals("Display/Hide Vertices")) {
+                  if (allPoints.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }              
+                if (this.Items[i][j].equals("Display/Hide Edges")) {
+                  if (allFaces.displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                } 
+                if (this.Items[i][j].equals("Display/Hide Normals")) {
+                  if (allFaces.displayNormals == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }               
+                if (this.Items[i][j].equals("Display/Hide Leaves")) {
+                  if (allModel1Ds.displayLeaves == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }  
+                if (this.Items[i][j].equals("Display/Hide Model1Ds")) {
+                  if (allModel1Ds.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }               
+                if (this.Items[i][j].equals("Display/Hide Model2Ds")) {
+                  if (allModel2Ds.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                } 
+                if (this.Items[i][j].equals("Display/Hide Curves")) {
+                  if (allFaces.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }   
+                if (this.Items[i][j].equals("Display/Hide Faces")) {
+                  if (allFaces.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }      
+                if (this.Items[i][j].equals("Display/Hide Solids")) {
+                  if (allSolids.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }                  
+                if (this.Items[i][j].equals("Display/Hide Sections")) {
+                  if (allSections.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }          
+                if (this.Items[i][j].equals("Display/Hide Cameras")) {
+                  if (allCameras.displayAll == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }                
+                if (this.Items[i][j].equals("Display/Hide Sky")) {
+                  if (Sky3D.displaySurface == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide Sun Grid")) {
+                  if (Sun3D.displayGrid == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide Sun Path")) {
+                  if (Sun3D.displayPath == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide Sun Pattern")) {
+                  if (Sun3D.displayPattern == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }              
+                if (this.Items[i][j].equals("Display/Hide Sun Surface")) {
+                  if (Sun3D.displaySurface == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide Moon Surface")) {
+                  if (Moon3D.displaySurface == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide Earth Surface")) {
+                  if (Earth3D.displaySurface == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }    
+                if (this.Items[i][j].equals("Display/Hide Troposphere")) {
+                  if (Tropo3D.displaySurface == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }  
+                if (this.Items[i][j].equals("Display/Hide Solar Section")) {
+                  if (allSolarImpacts.displayImage == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }  
+                if (this.Items[i][j].equals("Display/Hide Solid Section")) {
+                  if (allSolidImpacts.displayImage == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                } 
+                if (this.Items[i][j].equals("Display/Hide Wind Flow")) {
+                  if (allWindFlows.display == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }
+                if (this.Items[i][j].equals("Display/Hide Selected allSolids")) {
+                  if (userSelections.Solid_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }                        
+                if (this.Items[i][j].equals("Display/Hide Selected allSections")) {
+                  if (userSelections.Section_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }          
+                if (this.Items[i][j].equals("Display/Hide Selected allCameras")) {
+                  if (userSelections.Camera_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }        
+                if (this.Items[i][j].equals("Display/Hide Selected LandPoints")) {
+                  if (userSelections.LandPoint_displayPoints == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }              
+                if (this.Items[i][j].equals("Display/Hide Selected Faces")) {
+                  if (userSelections.Face_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }      
+                if (this.Items[i][j].equals("Display/Hide Selected Curves")) {
+                  if (userSelections.Curve_displayVertices == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }         
+                if (this.Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
+                  if (userSelections.Face_displayVertexCount == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }   
+                if (this.Items[i][j].equals("Display/Hide Selected Curves Vertex Count")) {
+                  if (userSelections.Curve_displayVertexCount == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }                
+                if (this.Items[i][j].equals("Display/Hide Selected Vertices")) {
+                  if (userSelections.Vertex_displayVertices == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }               
+                if (this.Items[i][j].equals("Display/Hide Selected REF Pivot")) {
+                  if (userSelections.displayReferencePivot == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }                 
+                if (this.Items[i][j].equals("Display/Hide Selected Group Pivot")) {
+                  if (userSelections.displayReferencePivot == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }                    
+                if (this.Items[i][j].equals("Display/Hide Selected Group Edges")) {
+                  if (userSelections.Group_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }    
+                if (this.Items[i][j].equals("Display/Hide Selected Group Box")) {
+                  if (userSelections.Group_displayBox == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }    
+                if (this.Items[i][j].equals("Display/Hide Selected 2D Edges")) {
+                  if (userSelections.Model2D_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }    
+                if (this.Items[i][j].equals("Display/Hide Selected 1D Edges")) {
+                  if (userSelections.Model1D_displayEdges == false) {
+                    stroke(127); 
+                    fill(127);
+                  }
+                }              
+              }
+            }
+  
+            textSize(1.25 * MessageSize);
+            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_A_Pixel);
+          }
+        }
+      }
+  
+      SOLARCHVISION_X_clicked = -1;
+      SOLARCHVISION_Y_clicked = -1;
+    }
+    
+  }
+  
+}
+
+solarchvision_UI_BAR_a UI_BAR_a = new solarchvision_UI_BAR_a();   
 
 
 
