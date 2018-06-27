@@ -660,6 +660,17 @@ class solarchvision_Functions {
   }
   
   
+  
+  float[][] optimizeVertices (float[][] pVertices_IN) {
+    float[][] lTempVertices = this.cleanShape_removeDuplicateVertices(pVertices_IN);
+    float[][] lVertices_OUT = this.cleanShape_joinParallelSegments(lTempVertices);
+      
+    return lVertices_OUT;
+  }; 
+      
+  
+  
+  
   float calculatePolygonArea(float[][] pPolygonVertices) {
 
    float[] lSumVect = {0, 0, 0};
