@@ -118,44 +118,55 @@ class solarchvision_Functions {
     return(d);
   }
   
-  float[] vec_diff (float[] a, float[] b) {
+  float[] vec_sum (float[] a, float[] b) {
   
     float[] d = new float[a.length];
-    for (int i = 0; i < a.length; i++) {
+    for (int i = a.length - 1; i > -1; --i) {
+      d[i] = b[i] + a[i];
+    }
+  
+    return d;
+  }
+  
+  float[] vec3_sum (float[] a, float[] b) {
+  
+    float[] d = {a[0] + b[0], a[1] + b[1], a[2] + b[2]};
+    
+    return d; 
+  }  
+  
+  float[] vec_sub (float[] a, float[] b) {
+  
+    float[] d = new float[a.length];
+    for (int i = a.length - 1; i > -1; --i) {
       d[i] = b[i] - a[i];
     }
   
     return d;
   }
   
-  float[] vec3_diff (float[] a, float[] b) {
+  float[] vec3_sub (float[] a, float[] b) {
   
-    float[] d = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
+    float[] d = {a[0] - b[0], a[1] - b[1], a[2] - b[2]};
     
     return d; 
   }
   
   float vec_dist (float[] a, float[] b) {
   
-    float d = 0;
-    for (int i = 0; i < a.length; i++) {
-      d += pow(b[i] - a[i], 2);
-    }
-    d = pow(d, 0.5);
-  
-    return d;
+    return this.vec_mag(this.vec_sub(a, b));
   }  
   
   float vec3_dist (float[] a, float[] b) {
   
-    return this.vec3_mag(this.vec3_diff(a, b));
+    return this.vec3_mag(this.vec3_sub(a, b));
   }    
 
   
   float vec_mag (float[] a) {
   
     float d = 0;
-    for (int i = 0; i < a.length; i++) {
+    for (int i = a.length - 1; i > -1 ; --i) {
       d += pow(a[i], 2);
     }
     d = pow(d, 0.5);
@@ -173,14 +184,14 @@ class solarchvision_Functions {
     float[] b = a[0]; // initializing to the first node
   
     // adding other nodes
-    for (int i = 1; i < a.length; i++) {
-      for (int j = 0; j < b.length; j++) {
+    for (int i = a.length - 1; i > 0; --i) {
+      for (int j = b.length - 1; j > -1; --j) {
         b[j] += a[i][j];
       }
     }
   
     // dividing to the number of nodes
-    for (int j = 0; j < b.length; j++) {
+    for (int j = b.length - 1; j > -1; --j) {
       b[j] /= float(a.length);
     }
   
@@ -192,7 +203,7 @@ class solarchvision_Functions {
     float d = this.vec_mag(a);
 
     float[] b = new float[a.length];
-    for (int i = 0; i < a.length; i++) {
+    for (int i = a.length - 1; i > -1; --i) {
       if (d != 0) b[i] = a[i] / d;
       else b[i] = 0;
     } 
@@ -213,7 +224,7 @@ class solarchvision_Functions {
   
   float vec_dot (float[] a, float b[]) {
     float d = 0;
-    for (int i = 0; i < a.length; i++) {
+    for (int i = a.length - 1; i > -1; --i) {
       d += a[i] * b[i];
     }
     return d;
@@ -240,31 +251,7 @@ class solarchvision_Functions {
   }
   
   
-  float[] vec3_sub (float[] a, float b[]) {
-    
-    float[] c = new float [3];
-    
-    c[0] = a[0] - b[0];
-    c[1] = a[1] - b[1];
-    c[2] = a[2] - b[2];
-    
-    return c;
-    
-  }
-  
-  
-  float[] vec3_sum (float[] a, float b[]) {
-    
-    float[] c = new float [3];
-    
-    c[0] = a[0] + b[0];
-    c[1] = a[1] + b[1];
-    c[2] = a[2] + b[2];
-    
-    return c;
-    
-  }
-  
+
   
   float bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
   
@@ -555,20 +542,20 @@ class solarchvision_Functions {
   }
   
   boolean arePointsClose(float[] pPoint1, float[] pPoint2) {
-    return this.is_zero(this.vec_mag(this.vec_diff(pPoint1, pPoint2)), this.EPSILON_POSITION);
+    return this.is_zero(this.vec3_mag(this.vec3_sub(pPoint1, pPoint2)), this.EPSILON_POSITION);
   }  
   
   boolean are3PointsIn1Line(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
     
     return this.is_zero(1.0 - abs(this.vec3_dot(
-                                  this.vec3_unit(this.vec_diff(pPoint1, pPoint2)), 
-                                  this.vec3_unit(this.vec_diff(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
+                                  this.vec3_unit(this.vec3_sub(pPoint1, pPoint2)), 
+                                  this.vec3_unit(this.vec3_sub(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
   }
     
   float[] calculateTriangleNormal(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
     return this.vec3_unit(this.vec3_cross(
-                          this.vec_diff(pPoint1, pPoint2), 
-                          this.vec_diff(pPoint2, pPoint3))); 
+                          this.vec3_sub(pPoint1, pPoint2), 
+                          this.vec3_sub(pPoint2, pPoint3))); 
   }  
   
   
@@ -608,7 +595,7 @@ class solarchvision_Functions {
     // fisrt check at each vertex, if equal to any we return ture
     for (i = 0; i < pPolygon_vertices.length; i++) {
       
-      if (true == this.is_zero(this.vec_mag(this.vec_diff(pPoint, pPolygon_vertices[i])))) {
+      if (true == this.is_zero(this.vec3_mag(this.vec3_sub(pPoint, pPolygon_vertices[i])))) {
         return true;
       }
     }
@@ -617,10 +604,10 @@ class solarchvision_Functions {
     for (i = 0; i < pPolygon_vertices.length; i++) {
       next_i = (i + 1) % pPolygon_vertices.length;
       
-      float[] lAM = this.vec_diff(pPoint, pPolygon_vertices[i]);
-      float[] lBM = this.vec_diff(pPoint, pPolygon_vertices[next_i]);
+      float[] lAM = this.vec3_sub(pPoint, pPolygon_vertices[i]);
+      float[] lBM = this.vec3_sub(pPoint, pPolygon_vertices[next_i]);
       
-      float lDiv = this.vec_mag(lAM) * this.vec_mag(lBM);
+      float lDiv = this.vec3_mag(lAM) * this.vec3_mag(lBM);
       if (lDiv > 0.0) {
         
         float lAcosine = this.vec3_dot(lAM, lBM) / lDiv;
@@ -653,7 +640,7 @@ class solarchvision_Functions {
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
 
-      if (false == this.is_zero(this.vec_mag(this.vec_diff(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
+      if (false == this.is_zero(this.vec3_mag(this.vec3_sub(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
         
         float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
         lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
@@ -710,7 +697,7 @@ class solarchvision_Functions {
       lSumVect = this.vec3_sum(A, B);
     }
     
-    return 0.5 * this.vec_mag(lSumVect); // unit m2
+    return 0.5 * this.vec3_mag(lSumVect); // unit m2
   }  
   
 }
