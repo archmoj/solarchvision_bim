@@ -9,6 +9,10 @@
 class solarchvision_Functions {
   
   private final static String CLASS_STAMP = "Functions";
+  
+  final float EPSILON_DIRECTION = 0.001; // to detect parallels.
+  final float EPSILON_POSITION = 0.0001; // to detect intersections i.e. in the world coordinate.
+  
 
   String[] getfiles (String _Folder) {
     
@@ -114,6 +118,16 @@ class solarchvision_Functions {
     return(d);
   }
   
+  float[] difference (float[] a, float[] b) {
+  
+    float[] d = new float[a.length];
+    for (int i = 0; i < a.length; i++) {
+      d[i] = b[i] - a[i];
+    }
+  
+    return d;
+  }
+  
   float distance (float[] a, float[] b) {
   
     float d = 0;
@@ -123,7 +137,18 @@ class solarchvision_Functions {
     d = pow(d, 0.5);
   
     return d;
-  }
+  }  
+  
+  float magnitude (float[] a) {
+  
+    float d = 0;
+    for (int i = 0; i < a.length; i++) {
+      d += pow(a[i], 2);
+    }
+    d = pow(d, 0.5);
+  
+    return d;
+  }  
   
   float[] centroid (float[][] a) {
   
@@ -153,7 +178,7 @@ class solarchvision_Functions {
     d = pow(d, 0.5);
   
     for (int i = 0; i < a.length; i++) {
-      if (d != 0) b[i] = a[i]/d;
+      if (d != 0) b[i] = a[i] / d;
       else b[i] = 0;
     } 
     return b;
@@ -161,7 +186,7 @@ class solarchvision_Functions {
   
   float dot (float[] a, float b[]) {
     float d = 0;
-    for (int i = 0; i < min (a.length, b.length); i++) {
+    for (int i = 0; i < a.length; i++) {
       d += a[i] * b[i];
     }
     return d;
@@ -493,10 +518,86 @@ class solarchvision_Functions {
   
     return return_vertices;
   }
+
+
+
+  boolean is_zero (float val, float tolerance) { 
+    return (abs(val) < tolerance); 
+  }
+  
+  boolean arePointsClose(float[] pPoint1, float[] pPoint2) {
+    return this.is_zero(this.magnitude(this.difference(pPoint1, pPoint2)), this.EPSILON_POSITION);
+  }  
+  
+  boolean are3PointsIn1Line(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
+    
+    return this.is_zero(1.0 - abs(this.dot3x(
+                                  this.normalize(this.difference(pPoint1, pPoint2)), 
+                                  this.normalize(this.difference(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
+  }
+    
+  float[] calculateTriangleNormal(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
+    return this.normalize(this.cross3x(
+                          this.difference(pPoint1, pPoint2), 
+                          this.difference(pPoint2, pPoint3))); 
+  }  
+  
+  
+  float[][] cleanShape_removeDuplicateVertices (float[][] pVertices_IN) {
+
+    float[][] lVertices_OUT =  new float[0][3];
+    int n = pVertices_IN.length;
+    for (int i = 0; i < n; i++) {
+      int prev_i = (i - 1 + n) % n;
+
+      if (false == this.is_zero(this.magnitude(this.difference(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
+        
+        float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
+        lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
+      }
+    }
+    
+    return lVertices_OUT;
+  }
   
   
   
+  float[][] cleanShape_joinParallelSegments (float[][] pVertices_IN) {
+
+    float[][] lVertices_OUT =  new float[0][3];
+    int n = pVertices_IN.length;
+    for (int i = 0; i < n; i++) {
+      int prev_i = (i - 1 + n) % n;
+      int next_i = (i + 1) % n;
+      
+      if (false == are3PointsIn1Line(pVertices_IN[prev_i], 
+                                     pVertices_IN[i],
+                                     pVertices_IN[next_i])) {  
+                                      
+        float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
+        lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
+      }
+    }
+    
+    return lVertices_OUT;
+  }
   
+  
+  float calculatePolygonArea(float[][] pPolygonVertices) {
+
+   float[] lSumVect = {0, 0, 0};
+      
+    for (int i = 0; i < pPolygonVertices.length; i++) {
+      int next_i = (i + 1) % pPolygonVertices.length;
+      
+      float[] A = this.cross3x(pPolygonVertices[i], pPolygonVertices[next_i]);
+      float[] B = lSumVect;
+      
+      lSumVect = this.sum3x(A, B);
+    }
+    
+    return 0.5 * this.magnitude(lSumVect); // unit m2
+  }  
   
 }
 
