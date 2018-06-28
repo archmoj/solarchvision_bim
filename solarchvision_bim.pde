@@ -12937,8 +12937,8 @@ class solarchvision_SolarImpacts {
           int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
           if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
   
-          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+          float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+          float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
   
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
   
@@ -20824,8 +20824,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+        float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -21240,8 +21240,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+        float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+        float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -21258,7 +21258,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
             for (int i = 0; i < 24; i++) {
               if (STUDY.isInHourlyRange(i)) {
-                if ((i+0.5 >= _sunrise) && (i+0.5 <=_sunset)) {
+                if ((i+0.5 >= sunrise) && (i+0.5 <= sunset)) {
 
                   float HOUR_ANGLE = i; 
                   float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
@@ -21504,8 +21504,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-      float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-      float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+      float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+      float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
       int[] Normals_COL_N;
       Normals_COL_N = new int [9];
@@ -21559,7 +21559,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               Materials_DirectArea_Data[mt][now_i][now_j] = 0;
             }   
 
-            if ((i+0.5 >= _sunrise) && (i+0.5 <=_sunset)) {
+            if ((i+0.5 >= sunrise) && (i+0.5 <= sunset)) {
 
               for (int np = 0; np < (RES1 * RES2); np++) {
                 int Image_X = np % RES1;
@@ -22207,13 +22207,12 @@ float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
     a = 24.0;
   } else a = funcs.acos_ang(q) / 15.0;
 
-  //return (a - EquationOfTime(DateAngle));
-  return a;
+  return (a - EquationOfTime(DateAngle));
 }
 
 float SOLARCHVISION_Sunset (float Latitude, float DateAngle) {
 
-  return 24.0 - SOLARCHVISION_Sunrise(Latitude, DateAngle);
+  return 24.0 - SOLARCHVISION_Sunrise(Latitude, DateAngle) - EquationOfTime(DateAngle);
 }
 
 float SOLARCHVISION_DayTime (float Latitude, float DateAngle) {
@@ -24449,14 +24448,14 @@ class solarchvision_Sun3D {
   
       for (float j = 90; j <= 270; j += 30) {
         
-        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), j); 
-        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), j);
+        float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), j); 
+        float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), j);
         
         float HOUR_step = 0.25;
         for (float i = 0; i <= 24; i += HOUR_step) {
           float i2 = i + HOUR_step;
-          if (((i+0.5 >= _sunrise) && (i+0.5 <=_sunset)) ||
-              ((i2+0.5 >= _sunrise) && (i2+0.5 <=_sunset))) {
+          if (((i+0.5 > sunrise) && (i+0.5 < sunset)) ||
+              ((i2+0.5 > sunrise) && (i2+0.5 < sunset))) {
                
             float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, i);
             float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, i2);
@@ -24471,14 +24470,14 @@ class solarchvision_Sun3D {
           
           float j2 = j + DATE_step;
           
-          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), j); 
-          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), j);
+          float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), j); 
+          float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), j);
           
-          float _sunrise2 = SOLARCHVISION_Sunrise(STATION.getLatitude(), j2); 
-          float _sunset2 = SOLARCHVISION_Sunset(STATION.getLatitude(), j2);
+          float sunrise2 = SOLARCHVISION_Sunrise(STATION.getLatitude(), j2); 
+          float sunset2 = SOLARCHVISION_Sunset(STATION.getLatitude(), j2);
           
-          if (((i+0.5 >= _sunrise) && (i+0.5 <=_sunset)) ||
-              ((i+0.5 >= _sunrise2) && (i+0.5 <=_sunset2))) {
+          if (((i+0.5 > sunrise) && (i+0.5 < sunset)) ||
+              ((i+0.5 > sunrise2) && (i+0.5 < sunset2))) {
   
             float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, i);
             float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j2, i);
@@ -24883,8 +24882,8 @@ class solarchvision_Sun3D {
   
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
   
-          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+          float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+          float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
   
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
@@ -24918,12 +24917,12 @@ class solarchvision_Sun3D {
                 if (Alpha < 0) {              
   
                   if (SunR[1] > 0) { 
-                    float[] SunR_rise = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunrise);
+                    float[] SunR_rise = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, sunrise);
   
                     Alpha = 0;
                     Beta = 180 - funcs.atan2_ang(SunR_rise[1], SunR_rise[2]);
                   } else {
-                    float[] SunR_set = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, _sunset);
+                    float[] SunR_set = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, sunset);
   
                     Alpha = 0;
                     Beta = 180 - funcs.atan2_ang(SunR_set[1], SunR_set[2]);
@@ -25030,12 +25029,12 @@ class solarchvision_Sun3D {
   
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
   
-          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+          float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+          float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
   
           for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {  
             if (STUDY.isInHourlyRange(i)) {
-              if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
+              if ((i > sunrise - 1.0 / float(TES_hour)) && (i < sunset + 1.0 / float(TES_hour))) {              
   
                 if (target_window == TypeWindow.OBJ) {
                 } else if (target_window == TypeWindow.WIN3D) {
@@ -25201,8 +25200,8 @@ class solarchvision_Sun3D {
   
         for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
   
-          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), myDATE); 
-          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), myDATE);        
+          float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), myDATE); 
+          float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), myDATE);        
   
           float myHOUR_step = 1.0 / float(TES_hour);
   
@@ -25217,11 +25216,11 @@ class solarchvision_Sun3D {
             float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, HourB);
   
             if ((SunA[3] < 0) && (SunB[3] > 0)) {
-              SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunrise);
+              SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, sunrise);
               SunA[3] = 0;
             }
             if ((SunA[3] > 0) && (SunB[3] < 0)) {
-              SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, _sunset);
+              SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), myDATE, sunset);
               SunB[3] = 0;
             }
   
@@ -39874,8 +39873,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   
               float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
   
-              float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-              float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+              float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+              float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
   
               int[] Normals_COL_N;
   
@@ -41024,8 +41023,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-    float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-    float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
+    float sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), DATE_ANGLE); 
+    float sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), DATE_ANGLE);
 
     int[] Normals_COL_N;
     Normals_COL_N = new int [9];
