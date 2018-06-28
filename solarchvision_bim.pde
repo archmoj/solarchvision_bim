@@ -1002,15 +1002,15 @@ class solarchvision_TIME {
   
   private final static String CLASS_STAMP = "TIME";
   
-  int ModelRun = 0; //12; 
+  private int ModelRun = 0; //12; 
   
-  int Hour = ModelRun; //hour(); 
-  int Year = year(); 
-  int Month = 1; //month();
-  int Day = 15; //day(); 
+  private int Hour = ModelRun; //hour(); 
+  private int Year = year(); 
+  private int Month = 1; //month();
+  private int Day = 15; //day(); 
   
-  int BeginDay;
-  float Date;    
+  private int BeginDay;
+  private float Date;    
   
   final int Interval = 1; //dT
 
@@ -1092,36 +1092,45 @@ class solarchvision_TIME {
     }
   };
   
-  final int[] lengthOfMonths = {
+  private final int[] lengthOfMonths = {
     31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
   };
-  String[][] dayOfYear = new String [365][2];
-  
   
   private int[] month_fromDate = new int [365];
   private int[] day_fromDate = new int [365];
+
+  private String[][] dayOfYear = new String [365][numberOfLanguages];
   
+  
+  int safeDate(float date_IN) {
+    return floor(0.001 + (365 + date_IN) % 365); 
+  }
 
   int getMonth_fromDate(float date_IN) {
-     return month_fromDate[floor(date_IN + 0.001)];
+     return this.month_fromDate[safeDate(date_IN)];
   }
     
   int getDay_fromDate(float date_IN) {
-     return day_fromDate[floor(date_IN + 0.001)];
+     return this.day_fromDate[safeDate(date_IN)];
   }
 
+  String getDayText(float date_IN) {
+    return this.dayOfYear[safeDate(date_IN)][Language_Active];
+  }
 
   void createCalendar () {
     int k = 285;
-    for (int l = 0; l < 2; l++) {
-      for (int i = 0; i < 12; i++) {
-        for (int j = 0; j < this.lengthOfMonths[i]; j++) {
-          k += 1;
-          if (k == 365) k = 0; 
+    
+    for (int i = 0; i < 12; i++) {
+      for (int j = 0; j < this.lengthOfMonths[i]; j++) {
+        k += 1;
+        if (k == 365) k = 0; 
+
+        this.month_fromDate[k] = i + 1;
+        this.day_fromDate[k] = j + 1;
+        
+        for (int l = 0; l < numberOfLanguages; l++) {
           this.dayOfYear[k][l] = this.namesOfMonths[i][l] + " " + nf(j + 1, 0);
-  
-          this.month_fromDate[k] = i + 1;
-          this.day_fromDate[k] = j + 1;
         }
       }
     }
@@ -6824,13 +6833,13 @@ class solarchvision_STUDY {
     this.graphics.fill(0);
     this.graphics.textAlign(CENTER, CENTER); 
   
-    for (int i = this.j_Start; i < this.j_End; i++) {
-      if ((this.U_scale >= 0.75) || (((i - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
+    for (int j = this.j_Start; j < this.j_End; j++) {
+      if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(TIME.dayOfYear[int((365 + i * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay), (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
-          //this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+          //this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
       }
     }
@@ -7357,7 +7366,7 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay), (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
           this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
@@ -7368,8 +7377,8 @@ class solarchvision_STUDY {
         _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s");
       }
       if ((this.export_info_node) && (this.displayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputRaw[(j - this.j_Start)].println(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+        FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay) + _FilenamesAdd + ".txt");
+        FILE_outputRaw[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
   
         FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
         for (int k = 0; k < count_k; k++) {   
@@ -7378,8 +7387,8 @@ class solarchvision_STUDY {
         FILE_outputRaw[(j - this.j_Start)].println("");
       }
       if ((this.export_info_norm) && (this.displayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputNorms[(j - this.j_Start)].println(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+        FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay) + _FilenamesAdd + ".txt");
+        FILE_outputNorms[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
         FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
         for (int l = 0; l < 9; l++) {
           FILE_outputNorms[(j - this.j_Start)].print(STAT_N_Title[l] + "\t");
@@ -7387,8 +7396,8 @@ class solarchvision_STUDY {
         FILE_outputNorms[(j - this.j_Start)].println("");
       }
       if ((this.export_info_prob) && (this.displayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputProbs[(j - this.j_Start)].println(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+        FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay) + _FilenamesAdd + ".txt");
+        FILE_outputProbs[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.BeginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
   
         FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
         FILE_outputProbs[(j - this.j_Start)].println("");
