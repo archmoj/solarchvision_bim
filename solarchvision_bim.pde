@@ -1012,26 +1012,104 @@ class solarchvision_TIME {
   final int Interval = 1; //dT
 
 
+  final String[][] WORDS = {
+    {
+      "", ""
+    }
+    , 
+    {
+      "at hour", "à l'heure"
+    }
+    , 
+    {
+      "day", "jour"
+    }
+    , 
+    {
+      "month", "mois"
+    }
+    , 
+    {
+      "year", "année"
+    }
+    , 
+    {
+      "date", "date"
+    }
+  };   
+
+  
+  final String[][] namesOfMonths = {
+    {
+      "January", "janvier"
+    }
+    , 
+    {
+      "February", "février"
+    }
+    , 
+    {
+      "March", "mars"
+    }
+    , 
+    {
+      "April", "avril"
+    }
+    , 
+    {
+      "May", "mai"
+    }
+    , 
+    {
+      "June", "juin"
+    }
+    , 
+    {
+      "July", "juillet"
+    }
+    , 
+    {
+      "August", "août"
+    }
+    , 
+    {
+      "September", "septembre"
+    }
+    , 
+    {
+      "October", "octobre"
+    }
+    , 
+    {
+      "November", "novembre"
+    }
+    , 
+    {
+      "December", "décembre"
+    }
+  };
+  
+  final int[] lengthOfMonths = {
+    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+  };
+  String[][] dayOfYear = new String [365][2];
+  int[][] Month_Day = new int [365][2];
+  
+    
+
+
 
   void createCalendar () {
-    CalendarMM = new String [365][2];
-    CalendarDD = new String [365][2];
-    CalendarDay = new String [365][2];
-  
-    CalendarDate = new int [365][2];
-  
     int k = 285;
     for (int l = 0; l < 2; l++) {
       for (int i = 0; i < 12; i++) {
-        for (int j = 0; j < CalendarLength[i]; j++) {
+        for (int j = 0; j < this.lengthOfMonths[i]; j++) {
           k += 1;
           if (k == 365) k = 0; 
-          CalendarMM[k][l] = CalendarMonth[i][l];
-          CalendarDD[k][l] = String.valueOf(j + 1);
-          CalendarDay[k][l] = CalendarDD[k][l] + " " + CalendarMM[k][l];
+          this.dayOfYear[k][l] = this.namesOfMonths[i][l] + " " + nf(j + 1, 0);
   
-          CalendarDate[k][0] = i + 1;
-          CalendarDate[k][1] = j + 1;
+          this.Month_Day[k][0] = i + 1;
+          this.Month_Day[k][1] = j + 1;
         }
       }
     }
@@ -1051,7 +1129,7 @@ class solarchvision_TIME {
   int convert2Date (int month, int day) {
     int k = 0;
     for (int i = 0; i < (month - 1); i++) {
-      for (int j = 0; j < CalendarLength[i]; j++) {
+      for (int j = 0; j < this.lengthOfMonths[i]; j++) {
         k += 1;
         if (k == 365) k = 0;
       }
@@ -1063,8 +1141,8 @@ class solarchvision_TIME {
   }
   
   void updateDate () {
-    this.Month = CalendarDate[int(this.Date)][0]; 
-    this.Day = CalendarDate[int(this.Date)][1];
+    this.Month = this.Month_Day[int(this.Date)][0]; 
+    this.Day = this.Month_Day[int(this.Date)][1];
     this.Hour = int(24 * (this.Date - int(this.Date)));
   }
   
@@ -2795,8 +2873,8 @@ void download_ENSEMBLE_OBSERVED () {
 
   for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
 
-    THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
-    THE_DAY = CalendarDate[int(THE_DATE)][1];
+    THE_MONTH = TIME.Month_Day[int(THE_DATE)][0]; 
+    THE_DAY = TIME.Month_Day[int(THE_DATE)][1];
 
     for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
@@ -2891,8 +2969,8 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
     for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
 
-      THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
-      THE_DAY = CalendarDate[int(THE_DATE)][1];
+      THE_MONTH = TIME.Month_Day[int(THE_DATE)][0]; 
+      THE_DAY = TIME.Month_Day[int(THE_DATE)][1];
 
       for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
@@ -6738,9 +6816,9 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((i - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(CalendarDay[int((365 + i * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
+        this.graphics.text(TIME.dayOfYear[int((365 + i * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
-          //this.graphics.text(("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+          //this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
       }
     }
@@ -6755,11 +6833,11 @@ class solarchvision_STUDY {
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
     this.graphics.textAlign(LEFT, TOP);
   
-    if (CurrentDataSource == dataID_CLIMATE_TMYEPW)    this.graphics.text(STATION.getCity() + "\n"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CWEEDS)    this.graphics.text(STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CLMREC)    this.graphics.text(STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);  
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) this.graphics.text(STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_TMYEPW)    this.graphics.text((STATION.getCity() + "\n"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_CWEEDS)    this.graphics.text((STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_CLMREC)    this.graphics.text((STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);  
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text((STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) this.graphics.text((STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
   
     switch(this.skyScenario) {
     case 1 : 
@@ -7267,19 +7345,19 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
+        this.graphics.text(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
       }
   
       String _FilenamesAdd = "";
       if (this.joinDays > 1) {
-        _FilenamesAdd = ("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s");
+        _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s");
       }
       if ((this.export_info_node) && (this.displayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputRaw[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+        FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputRaw[(j - this.j_Start)].println(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
   
         FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
         for (int k = 0; k < count_k; k++) {   
@@ -7288,8 +7366,8 @@ class solarchvision_STUDY {
         FILE_outputRaw[(j - this.j_Start)].println("");
       }
       if ((this.export_info_norm) && (this.displayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputNorms[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+        FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputNorms[(j - this.j_Start)].println(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
         FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
         for (int l = 0; l < 9; l++) {
           FILE_outputNorms[(j - this.j_Start)].print(STAT_N_Title[l] + "\t");
@@ -7297,8 +7375,8 @@ class solarchvision_STUDY {
         FILE_outputNorms[(j - this.j_Start)].println("");
       }
       if ((this.export_info_prob) && (this.displayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
-        FILE_outputProbs[(j - this.j_Start)].println(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+        FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + ".txt");
+        FILE_outputProbs[(j - this.j_Start)].println(TIME.dayOfYear[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active] + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
   
         FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
         FILE_outputProbs[(j - this.j_Start)].println("");
@@ -9371,118 +9449,6 @@ float LocationLON_step = 0.1;
 float LocationELE_step = 1.0;
 
 int save_frame_number = 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-final String[][] SOLARCHVISION_WORDS = {
-  {
-    "", ""
-  }
-  , 
-  {
-    "at hour", "à l'heure"
-  }
-  , 
-  {
-    "day", "jour"
-  }
-  , 
-  {
-    "month", "mois"
-  }
-  , 
-  {
-    "year", "année"
-  }
-  , 
-  {
-    "date", "date"
-  }
-}; 
-
-final String[][] CalendarMonth = {
-  {
-    "January", "janvier"
-  }
-  , 
-  {
-    "February", "février"
-  }
-  , 
-  {
-    "March", "mars"
-  }
-  , 
-  {
-    "April", "avril"
-  }
-  , 
-  {
-    "May", "mai"
-  }
-  , 
-  {
-    "June", "juin"
-  }
-  , 
-  {
-    "July", "juillet"
-  }
-  , 
-  {
-    "August", "août"
-  }
-  , 
-  {
-    "September", "septembre"
-  }
-  , 
-  {
-    "October", "octobre"
-  }
-  , 
-  {
-    "November", "novembre"
-  }
-  , 
-  {
-    "December", "décembre"
-  }
-};
-
-final int[] CalendarLength = {
-  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-};
-String[][] CalendarDay;
-String[][] CalendarMM;
-String[][] CalendarDD;
-int[][] CalendarDate;
 
 
 
@@ -23179,7 +23145,7 @@ int[] getNow_inUTC () {
           CurrentYear -= 1;
         }
         
-        CurrentDay = CalendarLength[CurrentMonth - 1];
+        CurrentDay = TIME.lengthOfMonths[CurrentMonth - 1];
       }
     }
   }
@@ -23190,7 +23156,7 @@ int[] getNow_inUTC () {
       CurrentHour -= 24;
       CurrentDay += 1;
 
-      if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+      if (CurrentDay > TIME.lengthOfMonths[CurrentMonth - 1]) { 
         CurrentDay = 1;
         CurrentMonth += 1;
         
@@ -23271,7 +23237,7 @@ class solarchvision_Tropo3D {
         CurrentHour -= 24;
         CurrentDay += 1;
   
-        if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+        if (CurrentDay > TIME.lengthOfMonths[CurrentMonth - 1]) { 
           CurrentDay = 1;
           CurrentMonth += 1;
           
@@ -23342,7 +23308,7 @@ class solarchvision_Tropo3D {
               CurrentYear -= 1;
             }
             
-            CurrentDay = CalendarLength[CurrentMonth - 1];
+            CurrentDay = TIME.lengthOfMonths[CurrentMonth - 1];
           }
         }
             
@@ -23355,7 +23321,7 @@ class solarchvision_Tropo3D {
           CurrentHour -= 24;
           CurrentDay += 1;
     
-          if (CurrentDay > CalendarLength[CurrentMonth - 1]) { 
+          if (CurrentDay > TIME.lengthOfMonths[CurrentMonth - 1]) { 
             CurrentDay = 1;
             CurrentMonth += 1;
             
@@ -55182,7 +55148,7 @@ class solarchvision_UI_BAR_d {
             textSize(1.25 * MessageSize);
   
             for (int j = 0; j < 12; j++) {
-              text(CalendarMonth[j][Language_Active], x1 + (x2 - x1) * (j + 0.5) / 12.0, STUDY.Y_control - 0.2 * MessageSize);
+              text(TIME.namesOfMonths[j][Language_Active], x1 + (x2 - x1) * (j + 0.5) / 12.0, STUDY.Y_control - 0.2 * MessageSize);
             }
           }        
   
