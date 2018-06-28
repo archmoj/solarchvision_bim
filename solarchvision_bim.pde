@@ -1096,11 +1096,19 @@ class solarchvision_TIME {
     31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
   };
   String[][] dayOfYear = new String [365][2];
-  int[] monthFromDate = new int [365];
-  int[] dayFromDate = new int [365];
   
-    
+  
+  private int[] month_fromDate = new int [365];
+  private int[] day_fromDate = new int [365];
+  
 
+  int getMonth_fromDate(float date_IN) {
+     return month_fromDate[floor(date_IN + 0.001)];
+  }
+    
+  int getDay_fromDate(float date_IN) {
+     return day_fromDate[floor(date_IN + 0.001)];
+  }
 
 
   void createCalendar () {
@@ -1112,8 +1120,8 @@ class solarchvision_TIME {
           if (k == 365) k = 0; 
           this.dayOfYear[k][l] = this.namesOfMonths[i][l] + " " + nf(j + 1, 0);
   
-          this.monthFromDate[k] = i + 1;
-          this.dayFromDate[k] = j + 1;
+          this.month_fromDate[k] = i + 1;
+          this.day_fromDate[k] = j + 1;
         }
       }
     }
@@ -1145,8 +1153,8 @@ class solarchvision_TIME {
   }
   
   void updateDate () {
-    this.Month = this.monthFromDate[int(this.Date)]; 
-    this.Day = this.dayFromDate[int(this.Date)];
+    this.Month = this.getMonth_fromDate(this.Date); 
+    this.Day = this.getDay_fromDate(this.Date);
     this.Hour = int(24 * (this.Date - int(this.Date)));
   }
   
@@ -2877,8 +2885,8 @@ void download_ENSEMBLE_OBSERVED () {
 
   for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
 
-    THE_MONTH = TIME.monthFromDate[int(THE_DATE)]; 
-    THE_DAY = TIME.dayFromDate[int(THE_DATE)];
+    THE_MONTH = TIME.getMonth_fromDate(THE_DATE); 
+    THE_DAY = TIME.getDay_fromDate(THE_DATE);
 
     for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
@@ -2973,8 +2981,8 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
     for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
 
-      THE_MONTH = TIME.monthFromDate[int(THE_DATE)]; 
-      THE_DAY = TIME.dayFromDate[int(THE_DATE)];
+      THE_MONTH = TIME.getMonth_fromDate(THE_DATE); 
+      THE_DAY = TIME.getDay_fromDate(THE_DATE);
 
       for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
