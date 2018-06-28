@@ -1,4 +1,7 @@
 
+//for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
+
+
 //    allModel2Ds.add_onLand(1); // 1 = people
 
 //    allModel2Ds.add_onLand(2); // 2 = 2D trees
@@ -7,16 +10,11 @@
 boolean displayOutput_inExplorer = false;
 
 
+class solarchvision_OperatingSystem {
+  
+  private final static String CLASS_STAMP = "OperatingSystem";
 
-class solarchvision_Functions {
-  
-  private final static String CLASS_STAMP = "Functions";
-  
-  final float EPSILON_DIRECTION = 0.001; // to detect parallels.
-  final float EPSILON_POSITION = 0.0001; // to detect intersections i.e. in the world coordinate.
-  
-
-  String[] getfiles (String _Folder) {
+  String[] getFiles (String _Folder) {
     
     //println(_Folder);
     
@@ -37,16 +35,22 @@ class solarchvision_Functions {
     
     return filenames;
   }
+}
+solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem(); 
+
+
+
+
+
+
+class solarchvision_Functions {
   
+  private final static String CLASS_STAMP = "Functions";
   
-  
-  int getOpacity (float O_scale) {
-    int k = int(O_scale * 0.01 * 256);
-    if (k > 255) k = 255;
-    if (k < 0) k = 0;
-  
-    return k;
-  }
+  final float EPSILON_DIRECTION = 0.001; // to detect parallels.
+  final float EPSILON_POSITION = 0.0001; // to detect intersections i.e. in the world coordinate.
+
+
   
   
   float asin_ang (float a) {
@@ -727,7 +731,7 @@ class solarchvision_Functions {
     float L2 = this.vec3_mag(this.vec3_diff(point, pEnd));
     float L3 = this.vec3_mag(this.vec3_diff(pStart, pEnd));
 
-    return this.is_zero(L3-(L2+L1), this.EPSILON_POSITION);
+    return this.is_zero(L3 -(L2 + L1), this.EPSILON_POSITION);
   }   
 
  
@@ -1281,12 +1285,12 @@ void SOLARCHVISION_update_folders () {
   Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
   Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
   
-  Files_CLIMATE_CLMREC = funcs.getfiles(Folder_CLIMATE_CLMREC);
-  Files_CLIMATE_TMYEPW = funcs.getfiles(Folder_CLIMATE_TMYEPW);
-  Files_CLIMATE_CWEEDS = funcs.getfiles(Folder_CLIMATE_CWEEDS);
+  Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
+  Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
+  Files_CLIMATE_CWEEDS = OPESYS.getFiles(Folder_CLIMATE_CWEEDS);
   
-  Files_ENSEMBLE_OBSERVED = funcs.getfiles(Folder_ENSEMBLE_OBSERVED);
-  Files_ENSEMBLE_FORECAST = funcs.getfiles(Folder_ENSEMBLE_FORECAST);  
+  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
+  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
 
   Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
@@ -1305,7 +1309,7 @@ void SOLARCHVISION_update_folders () {
   Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
   Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
 
-  String[] filenames = funcs.getfiles(Folder_ScreenShots);
+  String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
   if (filenames != null) SavedScreenShots = filenames.length;
   
 }
@@ -2282,7 +2286,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       launch(Command1 + " & " + Command2);
     }
     
-    Files_ENSEMBLE_FORECAST = funcs.getfiles(Folder_ENSEMBLE_FORECAST);  
+    Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
     
     ENSEMBLE_FORECAST_load = true;
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);    
@@ -2292,7 +2296,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
 void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  Files_ENSEMBLE_FORECAST = funcs.getfiles(Folder_ENSEMBLE_FORECAST); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
+  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
 
   ENSEMBLE_FORECAST_values = new float [24][365][numberOfLayers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)];
   ENSEMBLE_FORECAST_flags = new boolean [24][365][numberOfLayers][(1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -2581,7 +2585,7 @@ void download_CLIMATE_CLMREC () {
       }
     }
     
-    Files_CLIMATE_CLMREC = funcs.getfiles(Folder_CLIMATE_CLMREC);
+    Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
     
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
@@ -2942,7 +2946,7 @@ void download_ENSEMBLE_OBSERVED () {
   }
   
 
-  Files_ENSEMBLE_OBSERVED = funcs.getfiles(Folder_ENSEMBLE_OBSERVED);
+  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
   
   ENSEMBLE_OBSERVED_load = true; 
   SOLARCHVISION_update_ENSEMBLE_OBSERVED();
@@ -3599,9 +3603,9 @@ class solarchvision_WIN3D {
   float Z_Coordinate = 0; //50; 
   float S_Coordinate = 1;
   
-  float RX_Coordinate = 0; //75; 
+  float RX_Coordinate = 90; //75; //0; 
   float RY_Coordinate = 0;
-  float RZ_Coordinate = 0; //180; //0; //180; //135;
+  float RZ_Coordinate = 90; //0; //180; //135;
   float RS_Coordinate = 5.0;
   
   float Zoom = 60; // / (SOLARCHVISION_H_Pixel / 300.0);
@@ -5371,7 +5375,7 @@ class solarchvision_WORLD {
 
   void listAllImages () {
   
-    this.VIEW_Filenames = sort(funcs.getfiles(this.ViewFolder));
+    this.VIEW_Filenames = sort(OPESYS.getFiles(this.ViewFolder));
   
     this.Viewports_num = this.VIEW_Filenames.length;
   
@@ -6894,8 +6898,8 @@ class solarchvision_STUDY {
     //this.graphics.fill(this.color_data_raws);
     //this.graphics.strokeWeight(this.T_scale * 1);
   
-    this.graphics.stroke(0, funcs.getOpacity(this.O_scale));
-    this.graphics.fill(0, funcs.getOpacity(this.O_scale));
+    this.graphics.stroke(0, PAINT.getOpacity(this.O_scale));
+    this.graphics.fill(0, PAINT.getOpacity(this.O_scale));
     this.graphics.strokeWeight(this.T_scale * 0.5);
   
     for (int i = 0; i < Ax_LINES.length; i++) {
@@ -7294,7 +7298,7 @@ class solarchvision_STUDY {
     this.graphics.pushMatrix();
     this.graphics.translate(x_Plot, y_Plot);
   
-    this.color_data_raws = color(0, 0, 63, funcs.getOpacity(this.O_scale));
+    this.color_data_raws = color(0, 0, 63, PAINT.getOpacity(this.O_scale));
   
     this.drawTimeGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   
@@ -19262,6 +19266,17 @@ void SOLARCHVISION_regenerate_desired_bakings () {
 
 
 class solarchvision_PAINT {
+  
+  private final static String CLASS_STAMP = "PAINT";
+  
+  
+  int getOpacity (float O_scale) {
+    int k = int(O_scale * 0.01 * 256);
+    if (k > 255) k = 255;
+    if (k < 0) k = 0;
+  
+    return k;
+  }  
 
   float[] WBGRW (float _variable) {
     _variable *= 600.0;
@@ -19720,7 +19735,7 @@ class solarchvision_PAINT {
     };
   
     if (COLOR_STYLE_Current == 0) {
-      c[0] = funcs.getOpacity(STUDY.O_scale);
+      c[0] = PAINT.getOpacity(STUDY.O_scale);
       c[1] = 0;
       c[2] = 0;
       c[3] = 0;
@@ -23236,7 +23251,7 @@ class solarchvision_Tropo3D {
   
   void load_images () {
     
-    String[] allFilenames = sort(funcs.getfiles(Folder_GEOMET));
+    String[] allFilenames = sort(OPESYS.getFiles(Folder_GEOMET));
     
   
     
@@ -24432,21 +24447,43 @@ class solarchvision_Sun3D {
       WIN3D.graphics.strokeWeight(1);
       WIN3D.graphics.stroke(0);
   
-      for (int j = 90; j <= 270; j += 30) {
-        float HOUR_step = 1;
-        for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
-          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, (HOUR + HOUR_step));
-          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+      for (float j = 90; j <= 270; j += 30) {
+        
+        float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), j); 
+        float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), j);
+        
+        float HOUR_step = 0.25;
+        for (float i = 0; i <= 24; i += HOUR_step) {
+          float i2 = i + HOUR_step;
+          if (((i+0.5 >= _sunrise) && (i+0.5 <=_sunset)) ||
+              ((i2+0.5 >= _sunrise) && (i2+0.5 <=_sunset))) {
+               
+            float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, i);
+            float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, i2);
+            WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+          }
         }
       }
   
-      for (int HOUR = 0; HOUR <= 24; HOUR++) {
+      for (float i = 0; i <= 24; i += 1) {
         float DATE_step = 1;
-        for (int j = 0; j <= 360; j += DATE_step) {
-          float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, HOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), (j + DATE_step), HOUR);
-          WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+        for (float j = 0; j <= 360; j += DATE_step) {
+          
+          float j2 = j + DATE_step;
+          
+          float _sunrise = SOLARCHVISION_Sunrise(STATION.getLatitude(), j); 
+          float _sunset = SOLARCHVISION_Sunset(STATION.getLatitude(), j);
+          
+          float _sunrise2 = SOLARCHVISION_Sunrise(STATION.getLatitude(), j2); 
+          float _sunset2 = SOLARCHVISION_Sunset(STATION.getLatitude(), j2);
+          
+          if (((i+0.5 >= _sunrise) && (i+0.5 <=_sunset)) ||
+              ((i+0.5 >= _sunrise2) && (i+0.5 <=_sunset2))) {
+  
+            float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), j, i);
+            float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), j2, i);
+            WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+          }
         }
       }
   
@@ -25599,7 +25636,7 @@ class solarchvision_Earth3D {
   
   String Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/EarthSurface";
   
-  String[] Filenames = sort(funcs.getfiles(this.Path));
+  String[] Filenames = sort(OPESYS.getFiles(this.Path));
   
   
   void resize_images () {
@@ -26021,7 +26058,7 @@ class solarchvision_Land3D {
   
       try {     
     
-        String[] filenames = sort(funcs.getfiles(Folder_Land)); // important to sort
+        String[] filenames = sort(OPESYS.getFiles(Folder_Land)); // important to sort
     
         if (filenames != null) {
           for (int i = 0; i < filenames.length; i++) {
@@ -27196,8 +27233,8 @@ class solarchvision_Model2Ds {
     this.ImagePath = new String [1];
     this.ImagePath[0] = "";
   
-    this.Filenames_PEOPLE = sort(funcs.getfiles(Folder_People));
-    this.Filenames_TREES = sort(funcs.getfiles(Folder_Trees));  
+    this.Filenames_PEOPLE = sort(OPESYS.getFiles(Folder_People));
+    this.Filenames_TREES = sort(OPESYS.getFiles(Folder_Trees));  
   
     this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
     this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
