@@ -298,7 +298,7 @@ class solarchvision_Functions {
     float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
     float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
-    float r = (AA * BB - AB * AB);
+    float r = (AA * BB - AB * AB); if (r == 0.0) return false;
     float u = (BB * AP - AB * BP) / r;
     float v = (AA * BP - AB * AP) / r;
     
@@ -328,7 +328,7 @@ class solarchvision_Functions {
     float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
     float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
   
-    float r = (AA * BB - AB * AB);
+    float r = (AA * BB - AB * AB); if (r == 0.0) return false;
     float u = (BB * AP - AB * BP) / r;
     float v = (AA * BP - AB * AP) / r;
    
@@ -344,7 +344,7 @@ class solarchvision_Functions {
       float CP = cX * pX + cY * pY + cZ * pZ; // this.vec3_dot(c, p);
       float BC = bX * cX + bY * cY + bZ * cZ; // this.vec3_dot(b, c);
     
-      r = (BB * CC - BC * BC);
+      r = (BB * CC - BC * BC); if (r == 0.0) return false;
       u = (CC * BP - BC * CP) / r;
       v = (BB * CP - BC * BP) / r;  
       
@@ -360,7 +360,7 @@ class solarchvision_Functions {
         float DD = dX * dX + dY * dY + dZ * dZ; // this.vec3_dot(d, d);
         float DP = dX * pX + dY * pY + dZ * pZ; // this.vec3_dot(d, p);
       
-        r = (CC * DD - CD * CD);
+        r = (CC * DD - CD * CD); if (r == 0.0) return false;
         u = (DD * CP - CD * DP) / r;
         v = (CC * DP - CD * CP) / r;
         
@@ -370,7 +370,7 @@ class solarchvision_Functions {
           
           float DA = dX * aX + dY * aY + dZ * aZ; // this.vec3_dot(d, a);  
           
-          r = (DD * AA - DA * DA);
+          r = (DD * AA - DA * DA); if (r == 0.0) return false;
           u = (AA * DP - DA * AP) / r;
           v = (DD * AP - DA * DP) / r;
           
@@ -402,7 +402,7 @@ class solarchvision_Functions {
     float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
     float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
-    float r = (AA * BB - AB * AB);
+    float r = (AA * BB - AB * AB); if (r == 0.0) return false;
     float u = (BB * AP - AB * BP) / r;
     float v = (AA * BP - AB * AP) / r;
     
@@ -429,7 +429,7 @@ class solarchvision_Functions {
     float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
     float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
-    float r = (AA * BB - AB * AB);
+    float r = (AA * BB - AB * AB); if (r == 0.0) return false;
     float u = (BB * AP - AB * BP) / r;
     float v = (AA * BP - AB * AP) / r;
     
@@ -1117,11 +1117,11 @@ class solarchvision_TIME {
   
   int convert2Day (int Date_Angle) {
     int DAY = (Date_Angle + 360) % 360;
-    if (DAY >=  31) DAY += 1;
-    if (DAY >=  62) DAY += 1;
-    if (DAY >=  93) DAY += 1;
-    if (DAY >= 124) DAY += 1;
-    if (DAY >= 155) DAY += 1;
+    if (DAY >=  31) DAY++;
+    if (DAY >=  62) DAY++;
+    if (DAY >=  93) DAY++;
+    if (DAY >= 124) DAY++;
+    if (DAY >= 155) DAY++;
     DAY = DAY % 365;
     return DAY;
   }
