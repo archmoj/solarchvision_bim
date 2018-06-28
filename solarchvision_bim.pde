@@ -429,11 +429,14 @@ class solarchvision_Functions {
     float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
     float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
     
-    float r = (AA * BB - AB * AB); if (r == 0.0) return false;
+    float[] result = {0, 0};
+    
+    float r = (AA * BB - AB * AB); if (r == 0.0) return result;
     float u = (BB * AP - AB * BP) / r;
     float v = (AA * BP - AB * AP) / r;
     
-    float[] result = {u, v};
+    result[0] = u;
+    result[1] = v;
     
     return result;
   }
@@ -1093,7 +1096,8 @@ class solarchvision_TIME {
     31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
   };
   String[][] dayOfYear = new String [365][2];
-  int[][] Month_Day = new int [365][2];
+  int[] monthFromDate = new int [365];
+  int[] dayFromDate = new int [365];
   
     
 
@@ -1108,8 +1112,8 @@ class solarchvision_TIME {
           if (k == 365) k = 0; 
           this.dayOfYear[k][l] = this.namesOfMonths[i][l] + " " + nf(j + 1, 0);
   
-          this.Month_Day[k][0] = i + 1;
-          this.Month_Day[k][1] = j + 1;
+          this.monthFromDate[k] = i + 1;
+          this.dayFromDate[k] = j + 1;
         }
       }
     }
@@ -1141,8 +1145,8 @@ class solarchvision_TIME {
   }
   
   void updateDate () {
-    this.Month = this.Month_Day[int(this.Date)][0]; 
-    this.Day = this.Month_Day[int(this.Date)][1];
+    this.Month = this.monthFromDate[int(this.Date)]; 
+    this.Day = this.dayFromDate[int(this.Date)];
     this.Hour = int(24 * (this.Date - int(this.Date)));
   }
   
@@ -2873,8 +2877,8 @@ void download_ENSEMBLE_OBSERVED () {
 
   for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
 
-    THE_MONTH = TIME.Month_Day[int(THE_DATE)][0]; 
-    THE_DAY = TIME.Month_Day[int(THE_DATE)][1];
+    THE_MONTH = TIME.monthFromDate[int(THE_DATE)]; 
+    THE_DAY = TIME.dayFromDate[int(THE_DATE)];
 
     for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
@@ -2969,8 +2973,8 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
 
     for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
 
-      THE_MONTH = TIME.Month_Day[int(THE_DATE)][0]; 
-      THE_DAY = TIME.Month_Day[int(THE_DATE)][1];
+      THE_MONTH = TIME.monthFromDate[int(THE_DATE)]; 
+      THE_DAY = TIME.dayFromDate[int(THE_DATE)];
 
       for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
