@@ -1,9 +1,10 @@
-// WIN3D.draw_referencePivot
 
 //    allModel2Ds.add_onLand(1); // 1 = people
 
 //    allModel2Ds.add_onLand(2); // 2 = 2D trees
 
+
+boolean displayOutput_inExplorer = false;
 
 
 
@@ -557,91 +558,91 @@ class solarchvision_Functions {
     return (abs(val) < tolerance); 
   }
   
-  boolean arePointsClose(float[] pPoint1, float[] pPoint2) {
-    return this.is_zero(this.vec3_mag(this.vec3_diff(pPoint1, pPoint2)), this.EPSILON_POSITION);
+  boolean arePointsClose(float[] point1, float[] point2) {
+    return this.is_zero(this.vec3_mag(this.vec3_diff(point1, point2)), this.EPSILON_POSITION);
   }  
   
-  boolean are3PointsIn1Line(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
+  boolean are3PointsIn1Line(float[] point1, float[] point2, float[] point3) {
     
     return this.is_zero(1.0 - abs(this.vec3_dot(
-                                  this.vec3_unit(this.vec3_diff(pPoint1, pPoint2)), 
-                                  this.vec3_unit(this.vec3_diff(pPoint2, pPoint3)))), this.EPSILON_DIRECTION);
+                                  this.vec3_unit(this.vec3_diff(point1, point2)), 
+                                  this.vec3_unit(this.vec3_diff(point2, point3)))), this.EPSILON_DIRECTION);
   }
     
-  float[] calculateTriangleNormal(float[] pPoint1, float[] pPoint2, float[] pPoint3) {
+  float[] calculateTriangleNormal(float[] point1, float[] point2, float[] point3) {
     return this.vec3_unit(this.vec3_cross(
-                          this.vec3_diff(pPoint1, pPoint2), 
-                          this.vec3_diff(pPoint2, pPoint3))); 
+                          this.vec3_diff(point1, point2), 
+                          this.vec3_diff(point2, point3))); 
   }  
   
   
-  float[] calculatePolygonNormal(float[][] pPolygonVertices) {
+  float[] calculatePolygonNormal(float[][] polygonVertices) {
     
-    float[] lPolygonNormal = {0, 0, 0};
+    float[] polygonNormal = {0, 0, 0};
     
-    int n = pPolygonVertices.length;
+    int n = polygonVertices.length;
     
     for (int i = 0; i < n; i++) {
       int i1 = (i + 1) % n;
       int i2 = (i + 2) % n;
       
-      if (false == are3PointsIn1Line(pPolygonVertices[i], 
-                                     pPolygonVertices[i1],
-                                     pPolygonVertices[i2])) {
+      if (false == are3PointsIn1Line(polygonVertices[i], 
+                                     polygonVertices[i1],
+                                     polygonVertices[i2])) {
         
-        lPolygonNormal = calculateTriangleNormal(pPolygonVertices[i], 
-                                                 pPolygonVertices[i1],
-                                                 pPolygonVertices[i2]);
+        polygonNormal = calculateTriangleNormal(polygonVertices[i], 
+                                                polygonVertices[i1],
+                                                polygonVertices[i2]);
   
         break;
       }
     }
                                                   
-    return lPolygonNormal;
+    return polygonNormal;
   }  
   
   
-  boolean isPointInPolygon(float[] pPoint, float[][] pPolygon_vertices) { 
+  boolean isPointInPolygon(float[] point, float[][] polygon_vertices) { 
 
-    float[] lPolygon_normal = calculatePolygonNormal(pPolygon_vertices);
+    float[] polygon_normal = calculatePolygonNormal(polygon_vertices);
     
  
     int i, next_i;
     
     // fisrt check at each vertex, if equal to any we return ture
-    for (i = 0; i < pPolygon_vertices.length; i++) {
+    for (i = 0; i < polygon_vertices.length; i++) {
       
-      if (true == this.is_zero(this.vec3_mag(this.vec3_diff(pPoint, pPolygon_vertices[i])))) {
+      if (true == this.is_zero(this.vec3_mag(this.vec3_diff(point, polygon_vertices[i])))) {
         return true;
       }
     }
 
-    float lSumAngles = 0.0;
-    for (i = 0; i < pPolygon_vertices.length; i++) {
-      next_i = (i + 1) % pPolygon_vertices.length;
+    float sumAngles = 0.0;
+    for (i = 0; i < polygon_vertices.length; i++) {
+      next_i = (i + 1) % polygon_vertices.length;
       
-      float[] lAM = this.vec3_diff(pPoint, pPolygon_vertices[i]);
-      float[] lBM = this.vec3_diff(pPoint, pPolygon_vertices[next_i]);
+      float[] AM = this.vec3_diff(point, polygon_vertices[i]);
+      float[] BM = this.vec3_diff(point, polygon_vertices[next_i]);
       
-      float lDiv = this.vec3_mag(lAM) * this.vec3_mag(lBM);
-      if (lDiv > 0.0) {
+      float divisor = this.vec3_mag(AM) * this.vec3_mag(BM);
+      if (divisor > 0.0) {
         
-        float lAcosine = this.vec3_dot(lAM, lBM) / lDiv;
-        if (lAcosine < -1.0) lAcosine = -1.0;
-        else if (lAcosine > 1.0) lAcosine = 1.0;
+        float acosine = this.vec3_dot(AM, BM) / divisor;
+        if (acosine < -1.0) acosine = -1.0;
+        else if (acosine > 1.0) acosine = 1.0;
         
-        float lAngle = acos(lAcosine); // returns between 0 and PI
-        if (false == Float.isNaN(lAngle)){
-          if (this.vec3_dot(this.vec3_cross(lAM, lBM), lPolygon_normal) < 0) {
-            lAngle = -lAngle;
+        float angle = acos(acosine); // returns between 0 and PI
+        if (false == Float.isNaN(angle)){
+          if (this.vec3_dot(this.vec3_cross(AM, BM), polygon_normal) < 0) {
+            angle = -angle;
           }
-          lSumAngles += lAngle;
+          sumAngles += angle;
         }
       }
     }
     
-    float lRemainder = (abs(lSumAngles) / (2.0 * PI)) % 2.0;
-    if (lRemainder < 0.9999 || lRemainder > 1.0001) {
+    float remainder = (abs(sumAngles) / (2.0 * PI)) % 2.0;
+    if (remainder < 0.9999 || remainder > 1.0001) {
       return false;
     }
     return true;
@@ -649,87 +650,87 @@ class solarchvision_Functions {
   
   
   
-  float[][] cleanShape_removeDuplicateVertices (float[][] pVertices_IN) {
+  float[][] cleanShape_removeDuplicateVertices (float[][] vertices_IN) {
 
-    float[][] lVertices_OUT =  new float[0][3];
-    int n = pVertices_IN.length;
+    float[][] vertices_OUT =  new float[0][3];
+    int n = vertices_IN.length;
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
 
-      if (false == this.is_zero(this.vec3_mag(this.vec3_diff(pVertices_IN[i], pVertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
+      if (false == this.is_zero(this.vec3_mag(this.vec3_diff(vertices_IN[i], vertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
         
-        float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
-        lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
+        float[][] newVertex = {{vertices_IN[i][0], vertices_IN[i][1], vertices_IN[i][2]}};
+        vertices_OUT = (float[][]) concat(vertices_OUT, newVertex);
       }
     }
     
-    return lVertices_OUT;
+    return vertices_OUT;
   }
   
   
   
-  float[][] cleanShape_joinParallelSegments (float[][] pVertices_IN) {
+  float[][] cleanShape_joinParallelSegments (float[][] vertices_IN) {
 
-    float[][] lVertices_OUT =  new float[0][3];
-    int n = pVertices_IN.length;
+    float[][] vertices_OUT =  new float[0][3];
+    int n = vertices_IN.length;
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
       int next_i = (i + 1) % n;
       
-      if (false == are3PointsIn1Line(pVertices_IN[prev_i], 
-                                     pVertices_IN[i],
-                                     pVertices_IN[next_i])) {  
+      if (false == are3PointsIn1Line(vertices_IN[prev_i], 
+                                     vertices_IN[i],
+                                     vertices_IN[next_i])) {  
                                       
-        float[][] newVertex = {{pVertices_IN[i][0], pVertices_IN[i][1], pVertices_IN[i][2]}};
-        lVertices_OUT = (float[][]) concat(lVertices_OUT, newVertex);
+        float[][] newVertex = {{vertices_IN[i][0], vertices_IN[i][1], vertices_IN[i][2]}};
+        vertices_OUT = (float[][]) concat(vertices_OUT, newVertex);
       }
     }
     
-    return lVertices_OUT;
+    return vertices_OUT;
   }
   
   
   
-  float[][] optimizeVertices (float[][] pVertices_IN) {
-    float[][] lTempVertices = this.cleanShape_removeDuplicateVertices(pVertices_IN);
-    float[][] lVertices_OUT = this.cleanShape_joinParallelSegments(lTempVertices);
+  float[][] optimizeVertices (float[][] vertices_IN) {
+    float[][] vertices_TMP = this.cleanShape_removeDuplicateVertices(vertices_IN);
+    float[][] vertices_OUT = this.cleanShape_joinParallelSegments(vertices_TMP);
       
-    return lVertices_OUT;
+    return vertices_OUT;
   }; 
       
   
   
   
-  float calculatePolygonArea(float[][] pPolygonVertices) {
+  float calculatePolygonArea(float[][] polygonVertices) {
 
-   float[] lSumVect = {0, 0, 0};
+   float[] sumVect = {0, 0, 0};
       
-    for (int i = 0; i < pPolygonVertices.length; i++) {
-      int next_i = (i + 1) % pPolygonVertices.length;
+    for (int i = 0; i < polygonVertices.length; i++) {
+      int next_i = (i + 1) % polygonVertices.length;
       
-      float[] A = this.vec3_cross(pPolygonVertices[i], pPolygonVertices[next_i]);
-      float[] B = lSumVect;
+      float[] A = this.vec3_cross(polygonVertices[i], polygonVertices[next_i]);
+      float[] B = sumVect;
       
-      lSumVect = this.vec3_sum(A, B);
+      sumVect = this.vec3_sum(A, B);
     }
     
-    return 0.5 * this.vec3_mag(lSumVect); // unit m2
+    return 0.5 * this.vec3_mag(sumVect); // unit m2
   }  
   
   
-  boolean isPointOnSegment(float[] pPoint, float[] pStart, float[] pEnd) {
+  boolean isPointOnSegment(float[] point, float[] pStart, float[] pEnd) {
     
-    float L1 = this.vec3_mag(this.vec3_diff(pStart, pPoint));
-    float L2 = this.vec3_mag(this.vec3_diff(pPoint, pEnd));
+    float L1 = this.vec3_mag(this.vec3_diff(pStart, point));
+    float L2 = this.vec3_mag(this.vec3_diff(point, pEnd));
     float L3 = this.vec3_mag(this.vec3_diff(pStart, pEnd));
 
     return this.is_zero(L3-(L2+L1), this.EPSILON_POSITION);
   }   
 
  
-  float[] getBetween(float[] pPoint1, float[] pPoint2, float pRatio) {
+  float[] getBetween(float[] point1, float[] point2, float ratio) {
     
-    return this.vec3_sum(this.vec3_scale(pPoint1, pRatio), this.vec3_scale(pPoint2, 1.0 - pRatio));
+    return this.vec3_sum(this.vec3_scale(point1, ratio), this.vec3_scale(point2, 1.0 - ratio));
   }   
   
   float[] intersect_segmentXsegment (float[] A1, float[] A2, float[] B1, float[] B2) {
@@ -754,19 +755,19 @@ class solarchvision_Functions {
       return nullPoint;
     } 
     
-    float[] lCross = this.vec3_cross(Axis_A, Axis_B);
-    float lCrossLen = this.vec3_mag(lCross);
+    float[] cross_vect = this.vec3_cross(Axis_A, Axis_B);
+    float cross_dist = this.vec3_mag(cross_vect);
     
-    if (this.is_zero(lCrossLen)) {
+    if (this.is_zero(cross_dist)) {
 
       return nullPoint;
     }
     
-    float lT_A = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_B), lCross) / (lCrossLen * lCrossLen);
-    float lT_B = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_A), lCross) / (lCrossLen * lCrossLen);
+    float rA = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_B), cross_vect) / (cross_dist * cross_dist);
+    float rB = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_A), cross_vect) / (cross_dist * cross_dist);
     
-    float[] result_A = this.vec3_sum(A1, this.vec3_scale(Axis_A, lT_A));
-    float[] result_B = this.vec3_sum(B1, this.vec3_scale(Axis_B, lT_B));
+    float[] result_A = this.vec3_sum(A1, this.vec3_scale(Axis_A, rA));
+    float[] result_B = this.vec3_sum(B1, this.vec3_scale(Axis_B, rB));
 
     
     
@@ -790,19 +791,19 @@ class solarchvision_Functions {
   
 
 
-  int[][] tessellatePolygon (float[][] pPolygon_vertices) {
+  int[][] tessellatePolygon (float[][] polygon_vertices) {
     
-    int lMaximumDegree = 3;
+    int maximumDegree = 3;
     
-    int[][] lAllDiagonals = new int[0][2]; // start, end
-    float[] lAllDiagonals_dist = new float[0];
-    float[] lIntersectionPoint;
+    int[][] allDiagonals = new int[0][2]; // start, end
+    float[] allDiagonals_dist = new float[0];
+    float[] intersectionPoint;
     
     int i, j, k, q;
     int i2, j2;
     float[] A, B, A2, B2;
     
-    int n = pPolygon_vertices.length;
+    int n = polygon_vertices.length;
     
     for (i = 0; i < n; i++) {
       
@@ -813,14 +814,14 @@ class solarchvision_Functions {
         
         if ((j != prev_i) && (j != next_i)) {
         
-          A = pPolygon_vertices[i];
-          B = pPolygon_vertices[j];
+          A = polygon_vertices[i];
+          B = polygon_vertices[j];
           
-          boolean lDiagonalRejected = false;
+          boolean diagonalRejected = false;
           
           float[] lEdgeMiddle = this.vec3_scale(this.vec_sum(A, B), 0.5);          
-          if (false == isPointInPolygon(lEdgeMiddle, pPolygon_vertices)) {
-            lDiagonalRejected = true;
+          if (false == isPointInPolygon(lEdgeMiddle, polygon_vertices)) {
+            diagonalRejected = true;
           }
           else {
           
@@ -831,28 +832,28 @@ class solarchvision_Functions {
               if ((i != k) && (i != next_k) &&
                   (j != k) && (j != next_k)) {
                     
-                A2 = pPolygon_vertices[k];
-                B2 = pPolygon_vertices[next_k];
+                A2 = polygon_vertices[k];
+                B2 = polygon_vertices[next_k];
             
-                lIntersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
+                intersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
                 
-                if (false == is_undefined_FLOAT(lIntersectionPoint[0])) {
-                  lDiagonalRejected = true;
+                if (false == is_undefined_FLOAT(intersectionPoint[0])) {
+                  diagonalRejected = true;
                   break;
                 }
               }
             }
           }
           
-          if (false == lDiagonalRejected) {
+          if (false == diagonalRejected) {
             
-            float lDist = this.vec3_mag(this.vec3_diff(A, B));
+            float dist = this.vec3_mag(this.vec3_diff(A, B));
             
             int[][] newDiagonal = {{i, j}};
-            lAllDiagonals = (int[][]) concat(lAllDiagonals, newDiagonal);
+            allDiagonals = (int[][]) concat(allDiagonals, newDiagonal);
             
-            float[] newDiagonal_dist = {lDist};
-            lAllDiagonals_dist = (float[]) concat(lAllDiagonals_dist, newDiagonal_dist);
+            float[] newDiagonal_dist = {dist};
+            allDiagonals_dist = (float[]) concat(allDiagonals_dist, newDiagonal_dist);
             
           }
           
@@ -861,17 +862,17 @@ class solarchvision_Functions {
     }
     
     // ascending sort:
-    for (k = 0; k < lAllDiagonals.length; k++) { 
-      for (q = k + 1; q < lAllDiagonals.length; q++) {
-        if (lAllDiagonals_dist[k] > lAllDiagonals_dist[q]) {
-          float tmp_float = lAllDiagonals_dist[k];
-          lAllDiagonals_dist[k] = lAllDiagonals_dist[q];
-          lAllDiagonals_dist[q] = tmp_float;
+    for (k = 0; k < allDiagonals.length; k++) { 
+      for (q = k + 1; q < allDiagonals.length; q++) {
+        if (allDiagonals_dist[k] > allDiagonals_dist[q]) {
+          float tmp_float = allDiagonals_dist[k];
+          allDiagonals_dist[k] = allDiagonals_dist[q];
+          allDiagonals_dist[q] = tmp_float;
           
           for (j = 0; k < 2; j++) {
-            int tmp_int = lAllDiagonals[k][j];
-            lAllDiagonals[k][j] = lAllDiagonals[q][j];
-            lAllDiagonals[q][j] = tmp_int;
+            int tmp_int = allDiagonals[k][j];
+            allDiagonals[k][j] = allDiagonals[q][j];
+            allDiagonals[q][j] = tmp_int;
           }          
           
         }
@@ -879,29 +880,29 @@ class solarchvision_Functions {
     }
 
     
-    for (k = 0; k < lAllDiagonals.length; k++) { 
+    for (k = 0; k < allDiagonals.length; k++) { 
     
-      i = lAllDiagonals[k][0]; // start
-      j = lAllDiagonals[k][1]; // end
-      A = pPolygon_vertices[i];
-      B = pPolygon_vertices[j];
+      i = allDiagonals[k][0]; // start
+      j = allDiagonals[k][1]; // end
+      A = polygon_vertices[i];
+      B = polygon_vertices[j];
     
-      for (q = lAllDiagonals.length - 1 ; q > k; q--) { // reversed loop required.
+      for (q = allDiagonals.length - 1 ; q > k; q--) { // reversed loop required.
         
-        i2 = lAllDiagonals[q][0]; // start
-        j2 = lAllDiagonals[q][1]; // end
-        A2 = pPolygon_vertices[i2];
-        B2 = pPolygon_vertices[j2];
+        i2 = allDiagonals[q][0]; // start
+        j2 = allDiagonals[q][1]; // end
+        A2 = polygon_vertices[i2];
+        B2 = polygon_vertices[j2];
         
         if ((i != i2) && (i != j2) &&
             (j != i2) && (j != j2)) {
           
-          lIntersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
+          intersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
           
-          if (false == is_undefined_FLOAT(lIntersectionPoint[0])) {
-            int[][] startList = (int[][]) subset(lAllDiagonals, 0, q);
-            int[][] endList = (int[][]) subset(lAllDiagonals, q + 1);
-            lAllDiagonals = (int[][]) concat(startList, endList); // remove this diagonal
+          if (false == is_undefined_FLOAT(intersectionPoint[0])) {
+            int[][] startList = (int[][]) subset(allDiagonals, 0, q);
+            int[][] endList = (int[][]) subset(allDiagonals, q + 1);
+            allDiagonals = (int[][]) concat(startList, endList); // remove this diagonal
           }
         }
         
@@ -909,25 +910,25 @@ class solarchvision_Functions {
     }
     
     
-    int[][] lFaces = new int[0][n];
+    int[][] faces = new int[0][n];
     for (k = 0; k < n; k++) {
-      lFaces[0][n] = k;
+      faces[0][n] = k;
     }
     
     int vertexID;
     
-    for (k = 0; k < lAllDiagonals.length; k++) { 
-      int v1 = lAllDiagonals[k][0]; // start
-      int v2 = lAllDiagonals[k][1]; // end
+    for (k = 0; k < allDiagonals.length; k++) { 
+      int v1 = allDiagonals[k][0]; // start
+      int v2 = allDiagonals[k][1]; // end
       
       int ID_1st = -1;
       int ID_2nd = -1;
-      for (i = 0; i < lFaces.length; i++) {
+      for (i = 0; i < faces.length; i++) {
         
-        if (lFaces[i].length > lMaximumDegree) { 
+        if (faces[i].length > maximumDegree) { 
         
-          for (j = 0; j < lFaces[i].length; j++) {
-            vertexID = lFaces[i][j];
+          for (j = 0; j < faces[i].length; j++) {
+            vertexID = faces[i][j];
                  if (v1 == vertexID) ID_1st = j;
             else if (v2 == vertexID) ID_2nd = j;
           }
@@ -935,30 +936,30 @@ class solarchvision_Functions {
           if ((-1 != ID_1st) && (-1 != ID_2nd)) { 
             // we found the face to devide by the diagonal
 
-            int[][] lNewFace1 = new int[0][0];
-            int[][] lNewFace2 = new int[0][0]; 
+            int[][] newFace1 = new int[0][0];
+            int[][] newFace2 = new int[0][0]; 
             
-            for (j = 0; j < lFaces[i].length; j++) {
-              vertexID = lFaces[i][j];
+            for (j = 0; j < faces[i].length; j++) {
+              vertexID = faces[i][j];
               
               int[][] newItem = {{vertexID}};
               
               if ((j <= ID_1st) || (j >= ID_2nd)) {
-                lNewFace1 = (int[][]) concat(lNewFace1, newItem); // pushing vertexID
+                newFace1 = (int[][]) concat(newFace1, newItem); // pushing vertexID
               }
               
               if ((j >= ID_1st) && (j <= ID_2nd)) {
-                lNewFace2 = (int[][]) concat(lNewFace2, newItem); // pushing vertexID
+                newFace2 = (int[][]) concat(newFace2, newItem); // pushing vertexID
               }
 
             }
             
-            int[][] startList = (int[][]) subset(lFaces, 0, i);
-            int[][] endList = (int[][]) subset(lFaces, i + 1);
-            lFaces = (int[][]) concat(startList, endList); // remove this face
+            int[][] startList = (int[][]) subset(faces, 0, i);
+            int[][] endList = (int[][]) subset(faces, i + 1);
+            faces = (int[][]) concat(startList, endList); // remove this face
             
-            lFaces = (int[][]) concat(lFaces, lNewFace1); // pushing 1st new face
-            lFaces = (int[][]) concat(lFaces, lNewFace2); // pushing 2st new face
+            faces = (int[][]) concat(faces, newFace1); // pushing 1st new face
+            faces = (int[][]) concat(faces, newFace2); // pushing 2st new face
             i--; // since we added 2 faces and removed one
             break; 
           }
@@ -966,7 +967,7 @@ class solarchvision_Functions {
       }
     }
       
-    return lFaces;
+    return faces;
   }
 
   
@@ -1164,7 +1165,7 @@ String Subfolder_exportMaps = "maps/";
 
 void SOLARCHVISION_update_folders () {
   
-  Folder_Project = BaseFolder + "/Projects/Roodbar";    
+  Folder_Project = BaseFolder + "/Projects/Esfahan";    
   
   Folder_Wgrib2Temp = Folder_Project + "/Temp";
 
@@ -1899,9 +1900,9 @@ class solarchvision_STATION {
 
 solarchvision_STATION STATION = new solarchvision_STATION(
 
-  "", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
+  //"", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
 
-  //"", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
+  "", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
   
 );
   
@@ -6737,7 +6738,7 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((i - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(CalendarDay[int((365 + i * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / this.U_scale);
+        this.graphics.text(CalendarDay[int((365 + i * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
           //this.graphics.text(("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
@@ -6754,11 +6755,11 @@ class solarchvision_STUDY {
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
     this.graphics.textAlign(LEFT, TOP);
   
-    if (CurrentDataSource == dataID_CLIMATE_TMYEPW) this.graphics.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getCity() + "\n"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);  
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) this.graphics.text((SOLARCHVISION_WORDS[0][Language_Active] + ":" + STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_TMYEPW)    this.graphics.text(STATION.getCity() + "\n"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_CWEEDS)    this.graphics.text(STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_CLMREC)    this.graphics.text(STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);  
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) this.graphics.text(STATION.getCity() + "\n(" + nf(TIME.Year, 4) + "_" + nf(TIME.Month, 2) + "_" + nf(TIME.Day, 2) + "_" + nf(TIME.Hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
   
     switch(this.skyScenario) {
     case 1 : 
@@ -7266,7 +7267,7 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / this.U_scale);
+        this.graphics.text(CalendarDay[int((365 + j * this.perDays + 286 + TIME.BeginDay) % 365)][Language_Active], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
           this.graphics.text(("±" + int(this.joinDays / 2) + SOLARCHVISION_WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
         }
@@ -9216,18 +9217,7 @@ float pre_USER_create_powAll;
 
 
 
-
-
-
-
-
-
-int SavedScreenShots = 0;
-
 float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
-
-
-
 
 final int Impact_ACTIVE = 0; // internal
 final int Impact_PASSIVE = 1; // internal
@@ -9235,64 +9225,23 @@ final int numberOfImpactVariations = 2; // internal
 
 int Impact_TYPE;
 
-
-
-
-
-
 float CubePower = 16; //8; 
 float StarPower = 0.25; 
 
-
 final double DOUBLE_r_Earth = 6367470.0; //6373000.0;
 final float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
-
 
 float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
 
 float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
 
-
-
-
 float GlobalAlbedo = 0; // 0-100
-
 
 
 float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
 
-
-
-
-
-
-
-
 float Planetary_Magnification = 4.0; // <<<<<<<<<<
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-boolean displayOutput_inExplorer = true;
-
-
-
-
-
-
-
-
 
 
 int current_Material = 7;
@@ -9356,10 +9305,9 @@ int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 
 
-void SOLARCHVISION_RecordFrame () {
 
-  saveFrame(Folder_ScreenShots + "/" + CreateStamp(1) + "Screen.jpg");
-}
+
+int SavedScreenShots = 0;
 
 String CreateStamp (int _add) {
 
@@ -9370,7 +9318,10 @@ String CreateStamp (int _add) {
 
 
 
+void SOLARCHVISION_RecordFrame () {
 
+  saveFrame(Folder_ScreenShots + "/" + CreateStamp(1) + "Screen.jpg");
+}
 
 
 
@@ -9394,12 +9345,12 @@ String MAKE_MainName () {
 
 String getFilename_SolidImpact () {
 
-  return Folder_Graphics + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolidImpacts" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+  return Folder_Graphics + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.elevation[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.rotation[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
 }
 
 String getFilename_SolarImpact () {
 
-  return Folder_Graphics + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/SolarImpacts" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.rotation, 1)), 3);
+  return Folder_Graphics + "/" + nf(TIME.Year, 2) + "-" + nf(TIME.Month, 2) + "-" + nf(TIME.Day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solar" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.elevation, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.rotation, 1)), 3);
 }
 
 
@@ -34343,6 +34294,90 @@ class solarchvision_Model3Ds {
     }
   }
   
+
+
+  void optimizeFaceSelection () {
+  
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+  
+      if (current_ObjectCategory == ObjectCategory.GROUP) { 
+  
+        userSelections.Group_ids = sort(userSelections.Group_ids);
+  
+        this.convert_allGroups_to_Faces();    
+  
+        userSelections.Face_ids = sort(userSelections.Face_ids);
+      }
+  
+      if (current_ObjectCategory == ObjectCategory.FACE) { 
+  
+        userSelections.Face_ids = sort(userSelections.Face_ids);
+  
+        this.convert_Faces_to_allGroups();    
+  
+        userSelections.Group_ids = sort(userSelections.Group_ids);
+      }
+  
+      for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) { 
+  
+        int OBJ_NUM = userSelections.Group_ids[o];
+  
+        for (int q = userSelections.Face_ids.length - 1; q >= 0; q--) {
+  
+          int f = userSelections.Face_ids[q];
+  
+          int startFace = allGroups.Faces[OBJ_NUM][0];
+          int endFace = allGroups.Faces[OBJ_NUM][1];          
+
+          if ((startFace <= f) && (f <= endFace)) {
+            
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            
+            for (int s = 0; s < allFaces.nodes[f].length; s++) {
+              int vNo = allFaces.nodes[f][s];
+  
+              base_Vertices[s][0] = allPoints.getX(vNo);      
+              base_Vertices[s][1] = allPoints.getY(vNo);
+              base_Vertices[s][2] = allPoints.getZ(vNo);
+            }      
+            
+            println("Before:");
+            println(base_Vertices);
+            float[][] new_Vertices = funcs.optimizeVertices(base_Vertices);            
+            println("After:");
+            println(new_Vertices);
+            
+            int[] newList = new int[0];
+              
+            // finding ids of new vertices in old vertices
+            for (int k = 0; k < new_Vertices.length; k++) {
+              for (int s = 0; s < base_Vertices.length; s++) {
+                if (funcs.arePointsClose(new_Vertices[k], base_Vertices[s])) {
+                  int[] newItem = {allFaces.nodes[f][s]};
+                  newList = (int []) concat(newList, newItem);
+                  break;
+                }
+              }  
+            }
+            allFaces.nodes[f] = newList;   
+          }
+          
+        }
+      }
+  
+      UI_BAR_b.update = true;
+  
+      userSelections.calculate_selection_BoundingBox();
+  
+    }
+  }
+
+
+
+
+
+
+
   
   
   void autoNormalFaces_Selection () {
@@ -42312,6 +42347,12 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   } else {
     Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
 
+
+    if (allGroups.num == 0) {
+      allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+
     println("Importing:", Filename);
 
     int number_of_allGroups_before = allGroups.num;
@@ -44213,6 +44254,11 @@ void mouseClicked () {
               allModel3Ds.insertEdgeOpennings_Selection();
               WIN3D.update = true;
             } 
+            
+            if (menu_option.equals("Optimize Faces")) {
+              allModel3Ds.optimizeFaceSelection();
+              WIN3D.update = true;
+            }            
             
  
 
@@ -52150,6 +52196,7 @@ class solarchvision_UI_BAR_a {
       "Offset(shrink) Vertices", 
       "Extrude Face Edges", 
       "Extrude Curve Edges", 
+      "Optimize Faces",
       "Tessellation Triangular", 
       "Tessellate Rectangular", 
       "Tessellate Rows & Columns", 
