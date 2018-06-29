@@ -1100,6 +1100,7 @@ class solarchvision_TIME {
   
   private int[] monthFromDate = new int [365];
   private int[] dayFromDate = new int [365];
+  private String[] MM = new String [365];
   private String[] MMDD = new String [365];
   private String[][] dayOfYear = new String [365][numberOfLanguages];
   
@@ -1123,6 +1124,10 @@ class solarchvision_TIME {
     return this.MMDD[safeDate(date_IN)];
   }  
   
+  String getMM(float date_IN) {
+    return this.MM[safeDate(date_IN)];
+  }    
+  
   solarchvision_TIME () { // constructor
     this.createCalendar();
   }
@@ -1138,6 +1143,7 @@ class solarchvision_TIME {
         this.monthFromDate[k] = i + 1;
         this.dayFromDate[k] = j + 1;
         
+        this.MM[k] = nf(i + 1, 2);
         this.MMDD[k] = nf(i + 1, 2) + nf(j + 1, 2);
         
         for (int l = 0; l < numberOfLanguages; l++) {
@@ -3620,8 +3626,8 @@ class solarchvision_WIN3D {
   boolean update = true;
   boolean include = true;
 
-
-  boolean record_JPG = false;
+  boolean fullPeriod_IMG = false;
+  boolean record_IMG = false;
   boolean record_AUTO = false;  
   
   float ImageScale = 1.0;
@@ -3682,7 +3688,7 @@ class solarchvision_WIN3D {
     
     if (this.update) {
   
-      if (this.record_JPG) this.ImageScale = 2; //3;
+      if (this.record_IMG) this.ImageScale = 2; //3;
       else this.ImageScale = 1;
   
       //////////////////////////////////
@@ -3694,105 +3700,124 @@ class solarchvision_WIN3D {
         println("IMG:high-res");
         this.graphics = createGraphics(this.dX, this.dY, P3D);
       }  
-  
-      this.graphics.beginDraw();  
-  
-      this.scale = this.dY / this.refScale; // fits field of view to window's height
-  
-      this.graphics.background(233);
-  
-      this.graphics.fill(127);
-      this.graphics.strokeWeight(0);
-  
-      this.graphics.pushMatrix();
-  
-      this.graphics.hint(ENABLE_DEPTH_TEST);
-  
-      WIN3D.record_last3DViewport();
-  
-      WIN3D.transform_3DViewport();
-  
-      WIN3D.put_3DViewport();
-  
-      Sky3D.draw(TypeWindow.WIN3D);
-  
-      Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
-  
-      Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
-  
-      Sun3D.drawGrid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
-  
-      Sun3D.draw();
-  
-      Moon3D.draw();
       
-      Earth3D.draw(TypeWindow.WIN3D);
-  
-      Land3D.draw(TypeWindow.WIN3D);
+      int first = IMPACTS_displayDay;
+      int last = IMPACTS_displayDay;      
       
-      Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
-  
-      allFaces.draw(TypeWindow.WIN3D);
-      
-      allCurves.draw(TypeWindow.WIN3D);
-  
-      allPoints.draw();
-  
-      allModel1Ds.draw(TypeWindow.WIN3D);
-  
-      allWindRoses.draw();
-  
-      allSections.draw(TypeWindow.WIN3D);
-  
-      allCameras.draw();
-  
-      allSolids.draw();
-  
-      allSolidImpacts.draw_lines();
-  
-      allSolidImpacts.draw_points();
-  
-      allModel2Ds.draw(TypeWindow.WIN3D);  
-  
-      allWindFlows.draw(TypeWindow.WIN3D);
-      
-      WIN3D.draw_AERIAL();
-
-      this.graphics.hint(DISABLE_DEPTH_TEST);
-  
-      WIN3D.draw_referencePivot();
-  
-      this.graphics.popMatrix();
-  
-  
-      this.drawPallet();  
-  
-      this.graphics.endDraw();
-  
-      if ((this.record_JPG) || (this.record_AUTO)) {
-        String myFile = MAKE_Filename(CreateStamp(1));
-
-        if (Impact_TYPE == Impact_ACTIVE) {
-          myFile += "_RAD";
-        }
-        if (Impact_TYPE == Impact_PASSIVE) {
-          myFile += "_EFF";
-        }        
-        myFile += "_CAM" + WIN3D.CurrentCamera;
-        myFile += "_" + importedObjectName;
-        myFile += ".jpg";
-      
-        this.graphics.save(myFile);
-        SOLARCHVISION_explore_output(myFile);
-        println("File created:" + myFile);
+      if (this.fullPeriod_IMG) {
+        this.fullPeriod_IMG = false;
+        
+        first = 0;
+        last = STUDY.j_End;
       }
+      
+      int keep_IMPACTS_displayDay = IMPACTS_displayDay;
+      for (IMPACTS_displayDay = last; IMPACTS_displayDay >= first; IMPACTS_displayDay--) {
+        
+        this.graphics.beginDraw();  
+    
+        this.scale = this.dY / this.refScale; // fits field of view to window's height
+    
+        this.graphics.background(233);
+    
+        this.graphics.fill(127);
+        this.graphics.strokeWeight(0);
+    
+        this.graphics.pushMatrix();
+    
+        this.graphics.hint(ENABLE_DEPTH_TEST);
+    
+        WIN3D.record_last3DViewport();
+    
+        WIN3D.transform_3DViewport();
+    
+        WIN3D.put_3DViewport();
+    
+        Sky3D.draw(TypeWindow.WIN3D);
+    
+        Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
+    
+        Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
+    
+        Sun3D.drawGrid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
+    
+        Sun3D.draw();
+    
+        Moon3D.draw();
+        
+        Earth3D.draw(TypeWindow.WIN3D);
+    
+        Land3D.draw(TypeWindow.WIN3D);
+        
+        Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
+    
+        allFaces.draw(TypeWindow.WIN3D);
+        
+        allCurves.draw(TypeWindow.WIN3D);
+    
+        allPoints.draw();
+    
+        allModel1Ds.draw(TypeWindow.WIN3D);
+    
+        allWindRoses.draw();
+    
+        allSections.draw(TypeWindow.WIN3D);
+    
+        allCameras.draw();
+    
+        allSolids.draw();
+    
+        allSolidImpacts.draw_lines();
+    
+        allSolidImpacts.draw_points();
+    
+        allModel2Ds.draw(TypeWindow.WIN3D);  
+    
+        allWindFlows.draw(TypeWindow.WIN3D);
+        
+        WIN3D.draw_AERIAL();
+  
+        this.graphics.hint(DISABLE_DEPTH_TEST);
+    
+        if ((this.record_IMG) || (this.record_AUTO)) {
+        }
+        else {
+          WIN3D.draw_referencePivot();
+        }
+    
+        this.graphics.popMatrix();
+    
+    
+        this.drawPallet();  
+    
+        this.graphics.endDraw();
+    
+        if ((this.record_IMG) || (this.record_AUTO)) {
+          String myFile = MAKE_Filename(createStamp(1));
+  
+          if (Impact_TYPE == Impact_ACTIVE) {
+            myFile += "_RAD";
+          }
+          if (Impact_TYPE == Impact_PASSIVE) {
+            myFile += "_EFF";
+          }        
+          myFile += "_CAM" + WIN3D.CurrentCamera;
+          myFile += "_" + importedObjectName;
+          myFile += ".jpg";
+        
+          this.graphics.save(myFile);
+          SOLARCHVISION_explore_output(myFile);
+          println("File created:" + myFile);
+        }
+      }
+      IMPACTS_displayDay = keep_IMPACTS_displayDay;
   
       imageMode(CORNER);
       image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
   
   
   
-      if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;  
+      if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;  
   
       //////////////////////////////////
       this.dX /= this.ImageScale;
@@ -5360,7 +5385,7 @@ class solarchvision_WORLD {
 
   int AutoView = 1;
   
-  boolean record_JPG = false;
+  boolean record_IMG = false;
   boolean record_PDF = false;
   boolean record_AUTO = false;  
 
@@ -5498,7 +5523,7 @@ class solarchvision_WORLD {
     if (this.update) {
   
       if (this.record_PDF) this.ImageScale = 1;
-      else if (this.record_JPG) this.ImageScale = 2;
+      else if (this.record_IMG) this.ImageScale = 2;
       else this.ImageScale = 1;
   
       //////////////////////////////////
@@ -5508,7 +5533,7 @@ class solarchvision_WORLD {
   
       if (this.record_PDF) {
         println("PDF:begin");
-        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".pdf");
+        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(createStamp(1) + CLASS_STAMP) + ".pdf");
         beginRecord(this.graphics);
       } else if (this.ImageScale != 1) {
         println("IMG:high-res");
@@ -6062,14 +6087,14 @@ class solarchvision_WORLD {
       if (this.record_PDF) {
         endRecord();
   
-        String myFile = MAKE_Filename(CreateStamp(0) + CLASS_STAMP) + ".pdf";
+        String myFile = MAKE_Filename(createStamp(0) + CLASS_STAMP) + ".pdf";
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       } else {
         this.graphics.endDraw();
   
-        if ((this.record_JPG) || (this.record_AUTO)) {
-          String myFile = MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".jpg";
+        if ((this.record_IMG) || (this.record_AUTO)) {
+          String myFile = MAKE_Filename(createStamp(1) + CLASS_STAMP) + ".jpg";
           this.graphics.save(myFile);
           SOLARCHVISION_explore_output(myFile);
           println("File created:" + myFile);
@@ -6093,7 +6118,7 @@ class solarchvision_WORLD {
       }
   
   
-      if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;
+      if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
     }
   }
   
@@ -6178,7 +6203,7 @@ class solarchvision_STUDY {
   boolean update = true;
   boolean include = true;
 
-  boolean record_JPG = false;
+  boolean record_IMG = false;
   boolean record_PDF = false;
   boolean record_AUTO = false;   
   
@@ -6688,14 +6713,14 @@ class solarchvision_STUDY {
           break;
   
         case 's' : 
-          this.record_JPG = true; 
+          this.record_IMG = true; 
           this.record_PDF = false; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'S' : 
           this.record_PDF = true; 
-          this.record_JPG = false; 
+          this.record_IMG = false; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
@@ -8022,7 +8047,7 @@ class solarchvision_STUDY {
     if (this.update) {
   
       if (this.record_PDF) this.ImageScale = 1;
-      else if (this.record_JPG) this.ImageScale = 2;
+      else if (this.record_IMG) this.ImageScale = 2;
       else this.ImageScale = 1;
   
       //////////////////////////////////
@@ -8033,7 +8058,7 @@ class solarchvision_STUDY {
   
       if (this.record_PDF) {
         println("PDF:begin");
-        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".pdf");
+        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(createStamp(1) + CLASS_STAMP) + ".pdf");
         beginRecord(this.graphics);
       } else if (this.ImageScale != 1) {
         println("IMG:high-res");
@@ -8103,14 +8128,14 @@ class solarchvision_STUDY {
       if (this.record_PDF) {
         endRecord();
   
-        String myFile = MAKE_Filename(CreateStamp(0) + CLASS_STAMP) + ".pdf";
+        String myFile = MAKE_Filename(createStamp(0) + CLASS_STAMP) + ".pdf";
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       } else {
         this.graphics.endDraw();
   
-        if ((this.record_JPG) || (this.record_AUTO)) {
-          String myFile = MAKE_Filename(CreateStamp(1) + CLASS_STAMP) + ".jpg";
+        if ((this.record_IMG) || (this.record_AUTO)) {
+          String myFile = MAKE_Filename(createStamp(1) + CLASS_STAMP) + ".jpg";
           this.graphics.save(myFile);
           SOLARCHVISION_explore_output(myFile);
           println("File created:" + myFile);
@@ -8134,7 +8159,7 @@ class solarchvision_STUDY {
       }
   
   
-      if ((this.record_JPG) || (this.record_AUTO == false)) this.record_JPG = false;
+      if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
     }
   
     this.export_info_node = false;
@@ -9055,10 +9080,10 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 2) { // Media
   
-        allSolidImpacts.record_JPG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_JPG, 0, 1, 1), 1));
+        allSolidImpacts.record_IMG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, 0, 1, 1), 1));
         allSolidImpacts.record_PDF = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1), 1));
   
-        allSolarImpacts.record_JPG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_JPG, 0, 1, 1), 1));
+        allSolarImpacts.record_IMG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG, 0, 1, 1), 1));
       }
   
     }    
@@ -9403,9 +9428,9 @@ int CreateObject = CREATE.Nothing;
 
 
 boolean FRAME_record_AUTO = false;
-boolean FRAME_record_JPG = false;
-boolean FRAME_click_JPG = false;
-boolean FRAME_drag_JPG = false;
+boolean FRAME_record_IMG = false;
+boolean FRAME_click_IMG = false;
+boolean FRAME_drag_IMG = false;
 
 
 
@@ -9438,7 +9463,7 @@ int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 int SavedScreenShots = 0;
 
-String CreateStamp (int _add) {
+String createStamp (int _add) {
 
   SavedScreenShots += _add; 
 
@@ -9451,14 +9476,11 @@ String CreateStamp (int _add) {
   txt += STATION.getCity() + "_";
 
   if (IMPACTS_displayDay != 0) {
-//    txt += TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay).replace(" ", "");
-    txt += TIME.getMMDD((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay); 
+    txt += TIME.getMM((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay); 
   }
   else {
-//    txt += TIME.getDayText( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay).replace(" ", "") + "-" + 
-//           TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay).replace(" ", "");
-    txt += TIME.getMMDD( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + "-" + 
-           TIME.getMMDD((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
+    txt += TIME.getMM( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + "-" + 
+           TIME.getMM((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
   }
   
   return txt;  
@@ -9468,7 +9490,7 @@ String CreateStamp (int _add) {
 
 void SOLARCHVISION_RecordFrame () {
 
-  saveFrame(Folder_ScreenShots + "/" + CreateStamp(1) + "Screen.jpg");
+  saveFrame(Folder_ScreenShots + "/" + createStamp(1) + "Screen.jpg");
 }
 
 
@@ -11461,7 +11483,7 @@ class solarchvision_SolidImpacts {
   
   
   int record_PDF = 0;
-  int record_JPG = 0;
+  int record_IMG = 0;
   
   float WindSpeed = 5; // (5m/s = 18 km/h) 
   float WindDirection = 180.0;
@@ -11974,7 +11996,7 @@ class solarchvision_SolidImpacts {
   
       this.Image.updatePixels();
   
-      if (this.record_JPG == 1) {
+      if (this.record_IMG == 1) {
         String myFile = getFilename_SolidImpact() + ".jpg";
         this.Image.save(myFile);
         SOLARCHVISION_explore_output(myFile);
@@ -12873,7 +12895,7 @@ class solarchvision_SolarImpacts {
   
   float elevation;
   
-  int record_JPG = 0;  
+  int record_IMG = 0;  
   
   void resize_Image_array () {
   
@@ -13217,7 +13239,7 @@ class solarchvision_SolarImpacts {
     
                 //if (Camera_Variation == 0) {
                 this.Image[q][j + 1] = Image_RGBA[q];           
-                if (this.record_JPG == 1) {
+                if (this.record_IMG == 1) {
                   String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
                   this.Image[q][j + 1].save(myFile);
                   if (j == 0) SOLARCHVISION_explore_output(myFile);
@@ -13306,7 +13328,7 @@ class solarchvision_SolarImpacts {
     
             //if (Camera_Variation == 0) {
             this.Image[q][0] = total_Image_RGBA[q];           
-            if (this.record_JPG == 1) {
+            if (this.record_IMG == 1) {
               String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(0, 0) + ".jpg";
               this.Image[q][0].save(myFile);
               //SOLARCHVISION_explore_output(myFile);
@@ -19157,12 +19179,12 @@ void draw () {
 
 
     if (FRAME_record_AUTO) {
-      if (STUDY.update) FRAME_record_JPG = true;
-      if (WIN3D.update) FRAME_record_JPG = true;
-      if (WORLD.update) FRAME_record_JPG = true;
-      //if (UI_BAR_a.update) FRAME_record_JPG = true;
-      //if (UI_BAR_b.update) FRAME_record_JPG = true;
-      //if (UI_BAR_d.update) FRAME_record_JPG = true;
+      if (STUDY.update) FRAME_record_IMG = true;
+      if (WIN3D.update) FRAME_record_IMG = true;
+      if (WORLD.update) FRAME_record_IMG = true;
+      //if (UI_BAR_a.update) FRAME_record_IMG = true;
+      //if (UI_BAR_b.update) FRAME_record_IMG = true;
+      //if (UI_BAR_d.update) FRAME_record_IMG = true;
     }
 
 
@@ -19239,9 +19261,9 @@ void draw () {
 
 
 
-        if (FRAME_record_JPG) {
+        if (FRAME_record_IMG) {
           SOLARCHVISION_RecordFrame();
-          FRAME_record_JPG = false;
+          FRAME_record_IMG = false;
         }
       } else {
         WORLD.record_PDF = false;
@@ -24675,7 +24697,7 @@ class solarchvision_Sun3D {
                     WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
                     WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
   
-                    WIN3D.graphics.strokeWeight(4);
+                    WIN3D.graphics.strokeWeight(8);
   
                     float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE - 0.5 * (1.0 / float(TES_hour)));
                     float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE + 0.5 * (1.0 / float(TES_hour)));
@@ -41875,7 +41897,7 @@ void mouseReleased () {
           SOLARCHVISION_Y_click1 = swap_tmp;
         }        
 
-        if (FRAME_drag_JPG) {
+        if (FRAME_drag_IMG) {
 
           SOLARCHVISION_RecordFrame();
 
@@ -41901,7 +41923,7 @@ void mouseReleased () {
           UI_BAR_b.update = true;
           UI_BAR_d.update = true;          
 
-          FRAME_drag_JPG = false;
+          FRAME_drag_IMG = false;
 
           dragging_started = 0;
         } else {        
@@ -42066,7 +42088,7 @@ void mouseDragged () {
 
     if (SOLARCHVISION_automated == 0) {
 
-      if (FRAME_drag_JPG) {
+      if (FRAME_drag_IMG) {
         if (dragging_started == 0) {
           SOLARCHVISION_X_click1 = pmouseX;
           SOLARCHVISION_Y_click1 = pmouseY;
@@ -42443,7 +42465,7 @@ void mouseClicked () {
 
     if (SOLARCHVISION_automated == 0) {
 
-      if (FRAME_click_JPG) {
+      if (FRAME_click_IMG) {
 
         SOLARCHVISION_RecordFrame();
 
@@ -42459,7 +42481,7 @@ void mouseClicked () {
          UI_BAR_b.update = true;
          UI_BAR_d.update = true;          
          
-         FRAME_click_JPG = 0;
+         FRAME_click_IMG = 0;
          */
       }    
 
@@ -42692,85 +42714,85 @@ void mouseClicked () {
 
             if (menu_option.equals("Stop REC.")) { 
               STUDY.record_AUTO = false;
-              STUDY.record_JPG = false;
+              STUDY.record_IMG = false;
               STUDY.record_PDF = false;
               WORLD.record_AUTO = false;
-              WORLD.record_JPG = false;
+              WORLD.record_IMG = false;
               WORLD.record_PDF = false;
               WIN3D.record_AUTO = false;
-              WIN3D.record_JPG = false;
+              WIN3D.record_IMG = false;
               FRAME_record_AUTO = false;
-              FRAME_record_JPG = false;
-              FRAME_click_JPG = false;
-              FRAME_drag_JPG = false;   
+              FRAME_record_IMG = false;
+              FRAME_click_IMG = false;
+              FRAME_drag_IMG = false;   
 
               ROLLOUT.update = true;
             }
 
             if (menu_option.equals("REC. Time Graph")) { 
               STUDY.record_AUTO = true;
-              STUDY.record_JPG = false;
+              STUDY.record_IMG = false;
               STUDY.record_PDF = false;
               WORLD.record_AUTO = false;
-              WORLD.record_JPG = false;
+              WORLD.record_IMG = false;
               WORLD.record_PDF = false;
               WIN3D.record_AUTO = false;
-              WIN3D.record_JPG = false;
+              WIN3D.record_IMG = false;
               FRAME_record_AUTO = false;
-              FRAME_record_JPG = false;
-              FRAME_click_JPG = false;
-              FRAME_drag_JPG = false;   
+              FRAME_record_IMG = false;
+              FRAME_click_IMG = false;
+              FRAME_drag_IMG = false;   
 
               ROLLOUT.update = true;
             } 
 
             if (menu_option.equals("REC. Location Graph")) { 
               STUDY.record_AUTO = false;
-              STUDY.record_JPG = false;
+              STUDY.record_IMG = false;
               STUDY.record_PDF = false;
               WORLD.record_AUTO = true;
-              WORLD.record_JPG = false;
+              WORLD.record_IMG = false;
               WORLD.record_PDF = false;
               WIN3D.record_AUTO = false;
-              WIN3D.record_JPG = false;
+              WIN3D.record_IMG = false;
               FRAME_record_AUTO = false;
-              FRAME_record_JPG = false;
-              FRAME_click_JPG = false;
-              FRAME_drag_JPG = false;   
+              FRAME_record_IMG = false;
+              FRAME_click_IMG = false;
+              FRAME_drag_IMG = false;   
 
               ROLLOUT.update = true;
             } 
 
             if (menu_option.equals("REC. Solid Graph")) { 
               STUDY.record_AUTO = false;
-              STUDY.record_JPG = false;
+              STUDY.record_IMG = false;
               STUDY.record_PDF = false;
               WORLD.record_AUTO = false;
-              WORLD.record_JPG = false;
+              WORLD.record_IMG = false;
               WORLD.record_PDF = false;
               WIN3D.record_AUTO = true;
-              WIN3D.record_JPG = false;
+              WIN3D.record_IMG = false;
               FRAME_record_AUTO = false;
-              FRAME_record_JPG = false;
-              FRAME_click_JPG = false;
-              FRAME_drag_JPG = false;   
+              FRAME_record_IMG = false;
+              FRAME_click_IMG = false;
+              FRAME_drag_IMG = false;   
 
               ROLLOUT.update = true;
             } 
 
             if (menu_option.equals("REC. Screenshot")) { 
               STUDY.record_AUTO = false;
-              STUDY.record_JPG = false;
+              STUDY.record_IMG = false;
               STUDY.record_PDF = false;
               WORLD.record_AUTO = false;
-              WORLD.record_JPG = false;
+              WORLD.record_IMG = false;
               WORLD.record_PDF = false;
               WIN3D.record_AUTO = false;
-              WIN3D.record_JPG = false;
+              WIN3D.record_IMG = false;
               FRAME_record_AUTO = true;
-              FRAME_record_JPG = false;
-              FRAME_click_JPG = false;
-              FRAME_drag_JPG = false;   
+              FRAME_record_IMG = false;
+              FRAME_click_IMG = false;
+              FRAME_drag_IMG = false;   
 
               ROLLOUT.update = true;
             }             
@@ -42781,12 +42803,12 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("JPG Time Graph")) { 
-              STUDY.record_JPG = true;
+              STUDY.record_IMG = true;
               STUDY.update = true;
             }   
 
             if (menu_option.equals("JPG Location Graph")) { 
-              WORLD.record_JPG = true;
+              WORLD.record_IMG = true;
               WORLD.update = true;
             } 
 
@@ -42796,20 +42818,26 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("JPG 3D Graph")) { 
-              WIN3D.record_JPG = true;
+              WIN3D.record_IMG = true;
               WIN3D.update = true;
             } 
+            
+            if (menu_option.equals("JPG 3D Full-Period")) { 
+              WIN3D.fullPeriod_IMG = true;
+              WIN3D.record_IMG = true;
+              WIN3D.update = true;
+            }             
 
             if (menu_option.equals("Screenshot")) { 
-              FRAME_record_JPG = true;
+              FRAME_record_IMG = true;
             }             
 
             if (menu_option.equals("Screenshot+Click")) { 
-              FRAME_click_JPG = true;
+              FRAME_click_IMG = true;
             }           
 
             if (menu_option.equals("Screenshot+Drag")) { 
-              FRAME_drag_JPG = true;
+              FRAME_drag_IMG = true;
             }                
 
             if (menu_option.equals("update Station")) { 
@@ -50886,7 +50914,7 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   Image_RGBA.updatePixels();
  
-  String myFile = Folder_ScreenShots + "/" + CreateStamp(1) + "Render.png";
+  String myFile = Folder_ScreenShots + "/" + createStamp(1) + "Render.png";
   Image_RGBA.save(myFile);
   SOLARCHVISION_explore_output(myFile);
   println("File created:" + myFile);
@@ -52340,6 +52368,7 @@ class solarchvision_UI_BAR_a {
       "JPG Location Graph", 
       "PDF Location Graph", 
       "JPG 3D Graph", 
+      "JPG 3D Full-Period",
       "Screenshot", 
       "Screenshot+Click", 
       "Screenshot+Drag", 
