@@ -1,3 +1,4 @@
+// remember: should optimize vertics after optimizing faces!
 
 //for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
 
@@ -1270,8 +1271,9 @@ String Folder_ViewsFromSky;
 String Folder_ScreenShots;
 String Folder_Shadings;
 
-String SOLARCHVISION_version = "2017"; 
-String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
+String SOLARCHVISION_version = "2018"; 
+//String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
+String BaseFolder = "C:/SOLARCHVISION_2017";
 
 String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
 String ProjectName = "Revision_" + RunStamp;
@@ -1708,7 +1710,7 @@ int CLIMATE_CWEEDS_start = 1953;
 int CLIMATE_CWEEDS_end = 2005;
 
 int CLIMATE_CLMREC_start = 2000;
-int CLIMATE_CLMREC_end = 2017;
+int CLIMATE_CLMREC_end = year();
 
 int ENSEMBLE_FORECAST_start = 1; 
 int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
@@ -3688,7 +3690,7 @@ class solarchvision_WIN3D {
     
     if (this.update) {
   
-      if (this.record_IMG) this.ImageScale = 2; //3;
+      if (this.record_IMG) this.ImageScale = 2; //3; 
       else this.ImageScale = 1;
   
       //////////////////////////////////
@@ -3701,116 +3703,136 @@ class solarchvision_WIN3D {
         this.graphics = createGraphics(this.dX, this.dY, P3D);
       }  
       
-      int first = IMPACTS_displayDay;
-      int last = IMPACTS_displayDay;      
+      int firstDay = IMPACTS_displayDay;
+      int lastDay = IMPACTS_displayDay;      
+
+      int firstImpact = Impact_TYPE;
+      int lastImpact = Impact_TYPE;      
       
       if (this.fullPeriod_IMG) {
         this.fullPeriod_IMG = false;
         
-        first = 0;
-        last = STUDY.j_End;
+        firstDay = 0;
+        lastDay = STUDY.j_End;
+        
+        firstImpact = 0;
+        lastImpact = numberOfImpactVariations - 1;        
       }
       
+      int keep_Impact_TYPE = Impact_TYPE;
       int keep_IMPACTS_displayDay = IMPACTS_displayDay;
-      for (IMPACTS_displayDay = last; IMPACTS_displayDay >= first; IMPACTS_displayDay--) {
-        
-        this.graphics.beginDraw();  
-    
-        this.scale = this.dY / this.refScale; // fits field of view to window's height
-    
-        this.graphics.background(233);
-    
-        this.graphics.fill(127);
-        this.graphics.strokeWeight(0);
-    
-        this.graphics.pushMatrix();
-    
-        this.graphics.hint(ENABLE_DEPTH_TEST);
-    
-        WIN3D.record_last3DViewport();
-    
-        WIN3D.transform_3DViewport();
-    
-        WIN3D.put_3DViewport();
-    
-        Sky3D.draw(TypeWindow.WIN3D);
-    
-        Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
-    
-        Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
-    
-        Sun3D.drawGrid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
-    
-        Sun3D.draw();
-    
-        Moon3D.draw();
-        
-        Earth3D.draw(TypeWindow.WIN3D);
-    
-        Land3D.draw(TypeWindow.WIN3D);
-        
-        Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
-    
-        allFaces.draw(TypeWindow.WIN3D);
-        
-        allCurves.draw(TypeWindow.WIN3D);
-    
-        allPoints.draw();
-    
-        allModel1Ds.draw(TypeWindow.WIN3D);
-    
-        allWindRoses.draw();
-    
-        allSections.draw(TypeWindow.WIN3D);
-    
-        allCameras.draw();
-    
-        allSolids.draw();
-    
-        allSolidImpacts.draw_lines();
-    
-        allSolidImpacts.draw_points();
-    
-        allModel2Ds.draw(TypeWindow.WIN3D);  
-    
-        allWindFlows.draw(TypeWindow.WIN3D);
-        
-        WIN3D.draw_AERIAL();
+      for (IMPACTS_displayDay = lastDay; IMPACTS_displayDay >= firstDay; IMPACTS_displayDay--) {
+        for (Impact_TYPE = lastImpact; Impact_TYPE >= firstImpact; Impact_TYPE--) {
+
+          this.graphics.beginDraw();  
+      
+          this.scale = this.dY / this.refScale; // fits field of view to window's height
+      
+          this.graphics.background(233);
+      
+          this.graphics.fill(127);
+          this.graphics.strokeWeight(0);
+      
+          this.graphics.pushMatrix();
+      
+          this.graphics.hint(ENABLE_DEPTH_TEST);
+      
+          WIN3D.record_last3DViewport();
+      
+          WIN3D.transform_3DViewport();
   
-        this.graphics.hint(DISABLE_DEPTH_TEST);
+  //Farshad        
+  WIN3D.X_Coordinate = 0; 
+  WIN3D.Y_Coordinate = 40;
+  WIN3D.Z_Coordinate = -50;
+  WIN3D.S_Coordinate = 1;
+  WIN3D.RX_Coordinate = 90;
+  WIN3D.RY_Coordinate = 0;
+  WIN3D.RZ_Coordinate = 90;
+  WIN3D.Zoom = 60;
+      
+          WIN3D.put_3DViewport();
+      
+          Sky3D.draw(TypeWindow.WIN3D);
+      
+          Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
+      
+          Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
+      
+          Sun3D.drawGrid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
+      
+          Sun3D.draw();
+      
+          Moon3D.draw();
+          
+          Earth3D.draw(TypeWindow.WIN3D);
+      
+          Land3D.draw(TypeWindow.WIN3D);
+          
+          Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
+      
+          allFaces.draw(TypeWindow.WIN3D);
+          
+          allCurves.draw(TypeWindow.WIN3D);
+      
+          allPoints.draw();
+      
+          allModel1Ds.draw(TypeWindow.WIN3D);
+      
+          allWindRoses.draw();
+      
+          allSections.draw(TypeWindow.WIN3D);
+      
+          allCameras.draw();
+      
+          allSolids.draw();
+      
+          allSolidImpacts.draw_lines();
+      
+          allSolidImpacts.draw_points();
+      
+          allModel2Ds.draw(TypeWindow.WIN3D);  
+      
+          allWindFlows.draw(TypeWindow.WIN3D);
+          
+          WIN3D.draw_AERIAL();
     
-        if ((this.record_IMG) || (this.record_AUTO)) {
-        }
-        else {
-          WIN3D.draw_referencePivot();
-        }
-    
-        this.graphics.popMatrix();
-    
-    
-        this.drawPallet();  
-    
-        this.graphics.endDraw();
-    
-        if ((this.record_IMG) || (this.record_AUTO)) {
-          String myFile = MAKE_Filename(createStamp(1));
-  
-          if (Impact_TYPE == Impact_ACTIVE) {
-            myFile += "_RAD";
+          this.graphics.hint(DISABLE_DEPTH_TEST);
+      
+          if ((this.record_IMG) || (this.record_AUTO)) {
           }
-          if (Impact_TYPE == Impact_PASSIVE) {
-            myFile += "_EFF";
-          }        
-          myFile += "_CAM" + WIN3D.CurrentCamera;
-          myFile += "_" + importedObjectName;
-          myFile += ".jpg";
-        
-          this.graphics.save(myFile);
-          SOLARCHVISION_explore_output(myFile);
-          println("File created:" + myFile);
+          else {
+            WIN3D.draw_referencePivot();
+          }
+      
+          this.graphics.popMatrix();
+      
+      
+          this.drawPallet();  
+      
+          this.graphics.endDraw();
+      
+          if ((this.record_IMG) || (this.record_AUTO)) {
+            String myFile = MAKE_Filename(createStamp(1));
+    
+            if (Impact_TYPE == Impact_ACTIVE) {
+              myFile += "_RAD";
+            }
+            if (Impact_TYPE == Impact_PASSIVE) {
+              myFile += "_EFF";
+            }        
+            myFile += "_CAM" + WIN3D.CurrentCamera;
+            myFile += "_" + importedObjectName;
+            myFile += ".jpg";
+          
+            this.graphics.save(myFile);
+            SOLARCHVISION_explore_output(myFile);
+            println("File created:" + myFile);
+          }
         }
       }
       IMPACTS_displayDay = keep_IMPACTS_displayDay;
+      Impact_TYPE = keep_Impact_TYPE;
   
       imageMode(CORNER);
       image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
@@ -3829,9 +3851,14 @@ class solarchvision_WIN3D {
         this.update = false; //true;
       } else {
         this.update = false;
-  
+      }
+        
+      if ((this.record_IMG) || (this.record_AUTO)) {
+      }
+      else {      
         SOLARCHVISION_draw_Perspective_Internally();
       }
+      
     }
   }
   
@@ -4008,14 +4035,24 @@ class solarchvision_WIN3D {
       if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       
-      this.graphics.textAlign(CENTER, CENTER);
+      String txt = "SOLARCHVISION ";
+      
+      if (Impact_TYPE == Impact_ACTIVE) txt += "active model ";
+      if (Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
+
       if (IMPACTS_displayDay != 0) {
-        this.graphics.text(TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay), 0, y1 - 1.0 * txtSize, 0);
+        txt += TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
       }
       else {
-        this.graphics.text(TIME.getDayText( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + " - " + 
-                           TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay) , 0, y1 - 1.0 * txtSize, 0);
+        txt += TIME.getDayText( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + " - ";
+        txt += TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
       }
+      
+      txt += ", 3D-model: " + importedObjectName;
+
+      this.graphics.textAlign(CENTER, CENTER);
+      this.graphics.text(txt, 0, y1 - 1.0 * txtSize, 0);
+
 
   
       this.graphics.popMatrix();
@@ -9768,7 +9805,7 @@ class solarchvision_Faces {
   boolean displayNormals = false;
   boolean displayEdges = true;
   
-  int displayTessellation = 2;
+  int displayTessellation = 2;  
   
   int pallet_ACTIVE_CLR = 19; //15; //14;
   int pallet_ACTIVE_DIR = 1;
@@ -9776,7 +9813,7 @@ class solarchvision_Faces {
   
   int pallet_PASSIVE_CLR = 1; 
   int pallet_PASSIVE_DIR = 1;  
-  float pallet_PASSIVE_MLT = 4; //1;   
+  float pallet_PASSIVE_MLT = 8; //1;   
   
   
   int[][] nodes = new int[0][0];
@@ -18385,7 +18422,7 @@ void SOLARCHVISION_draw_frameIcon () {
   frame_icon.endDraw();
   frame.setIconImage(frame_icon.image);  
 
-  frame.setTitle("SOLARCHVISION-2017");
+  frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
 }
 
 
@@ -18510,13 +18547,13 @@ void draw () {
     fill(255);
     textAlign(CENTER, CENTER); 
     textSize(3 * MessageSize);
-    text("SOLARCHVISION model integrations 2017", 0.5 * width, 0.05 * height); 
+    text("SOLARCHVISION model integrations " + SOLARCHVISION_version, 0.5 * width, 0.05 * height); 
 
     stroke(0);
     fill(0);
     textAlign(CENTER, CENTER); 
     textSize(1.5 * MessageSize);
-    text("Raz, Mehr, Mehraz solarch studio\n1998-2017\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
+    text("Raz, Mehr, Mehraz solarch studio\n1998-" + SOLARCHVISION_version + "\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
     textAlign(CENTER, CENTER); 
     textSize(MessageSize);
@@ -24376,7 +24413,7 @@ class solarchvision_Sun3D {
   
   int pallet_PASSIVE_CLR = 18; 
   int pallet_PASSIVE_DIR = -1;  
-  float pallet_PASSIVE_MLT = 4; //1;
+  float pallet_PASSIVE_MLT = 8; //1;
   
   boolean displayGrid = true;
   boolean displayPath = true;
@@ -30311,7 +30348,7 @@ class solarchvision_User3D {
   
   private final static String CLASS_STAMP = "User3D";
 
-  int default_Material = 7; //0;
+  int default_Material = 7; //0; // Farshad
   int default_Tessellation = 0;
   int default_Layer = 0;
   int default_Visibility = 1; // 1: view 0: hide -1:freeze 
@@ -38306,6 +38343,8 @@ class solarchvision_Cameras {
     WIN3D.ViewType
   };
   int num = 1;
+
+
   
   
   private float[][] Vertices;
@@ -42438,6 +42477,12 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     userSelections.calculate_selection_BoundingBox();
 
     WIN3D.update = true;
+    
+    
+    
+    
+//Farshad  
+allModel3Ds.optimizeFaceSelection();      
   }
 }     
 
@@ -51932,7 +51977,7 @@ class solarchvision_UI_BAR_a {
   
   String[][] Items = {
     {
-      "SOLARCHVISION-2017", 
+      "SOLARCHVISION-" + SOLARCHVISION_version, 
       "Designed & developed by", 
       "Mojtaba Samimi", 
       "www.solarchvision.com"
@@ -52928,7 +52973,7 @@ class solarchvision_UI_BAR_b {
     , 
   
     {
-      "2", "Model1Ds", "Tree", "Person", "Model2DsType", "1.5"
+      "3", "Model1Ds", "Tree", "Person", "Model2DsType", "1.5"
     }
     , 
     {
