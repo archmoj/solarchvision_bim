@@ -13074,7 +13074,7 @@ class solarchvision_SolarImpacts {
                               File_Name += "DIF_" + STR_SHD[SHD];
                             }
   
-                            File_Name += "_Camera" + nf(Camera_Variation, 2) + ".PNG";
+                            File_Name += "_Camera" + nf(Camera_Variation, 2) + ".png";
   
   
                             println(File_Name);
@@ -26066,8 +26066,8 @@ class solarchvision_Land3D {
   int num_rows = 24;  
   int num_columns = 48 + 1;  
   
-  int Surface_SkipStart = 4; //0; 
-  int Surface_SkipEnd = 4; //0; 
+  int Surface_SkipStart = 5; //0; 
+  int Surface_SkipEnd = 5; //0; 
   
   int displayTessellation = 1; //0; //2;  
 
@@ -47908,7 +47908,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           TREES_graphics.endDraw();     
 
-          TREES_graphics.save(File_Name + "_2D.JPG");
+          TREES_graphics.save(File_Name + "_2D.jpg");
 
 
 
@@ -48221,11 +48221,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           }
 
 
-          SHADOW_graphics.save(File_Name + "3D_.JPG"); //just to test   
+          SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test   
 
           if (allModel2Ds.displayAll) {
 
-            PImage img = loadImage(File_Name + "_2D.JPG");
+            PImage img = loadImage(File_Name + "_2D.jpg");
 
             img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
 
@@ -48241,7 +48241,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           SHADOW_graphics.endDraw();        
 
 
-          SHADOW_graphics.save(File_Name + ".PNG");
+          SHADOW_graphics.save(File_Name + ".png");
         }
       }
     }
@@ -48523,7 +48523,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
         TREES_graphics.endDraw();
         //------------------------------------ end of copy & paste from the direct version!
 
-        TREES_graphics.save(File_Name + nf(i, 3) + "_2D.JPG");
+        TREES_graphics.save(File_Name + nf(i, 3) + "_2D.jpg");
 
 
 
@@ -48831,11 +48831,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           SHADOW_graphics.popMatrix();
         }
 
-        SHADOW_graphics.save(File_Name + "3D_.JPG"); //just to test   
+        SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test   
 
         if (allModel2Ds.displayAll) {
 
-          PImage img = loadImage(File_Name + nf(i, 3) + "_2D.JPG");
+          PImage img = loadImage(File_Name + nf(i, 3) + "_2D.jpg");
 
           img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
 
@@ -48850,7 +48850,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
         SHADOW_graphics.endDraw();    
 
-        SHADOW_graphics.save(File_Name + nf(i, 3) + ".JPG");
+        SHADOW_graphics.save(File_Name + nf(i, 3) + ".jpg");
       }
 
 
@@ -48869,7 +48869,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
       for (int i = 0; i < skyFaces.length; i++) {
 
-        PImage img = loadImage(File_Name + nf(i, 3) + ".JPG");
+        PImage img = loadImage(File_Name + nf(i, 3) + ".jpg");
 
         DIFFUSE_graphics.blendMode(ADD); 
 
@@ -48882,7 +48882,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
       DIFFUSE_graphics.endDraw();
 
-      File_Name += "_Camera00.PNG"; 
+      File_Name += "_Camera00.png"; 
 
       DIFFUSE_graphics.save(File_Name);
       println(File_Name);
@@ -50617,9 +50617,9 @@ void SOLARCHVISION_preBakeViewport () {
   
         Direct_RGBA[n_Map][SHD].updatePixels();
         
-        Direct_RGBA[n_Map][SHD].save(File_Name + ".PNG");
+        Direct_RGBA[n_Map][SHD].save(File_Name + ".png");
         
-        println(File_Name + ".PNG");
+        println(File_Name + ".png");
       }
     }
   }  
@@ -50656,9 +50656,9 @@ void SOLARCHVISION_preBakeViewport () {
     Diffuse_RGBA[SHD].updatePixels();
     
     
-    Diffuse_RGBA[SHD].save(File_Name + ".PNG");
+    Diffuse_RGBA[SHD].save(File_Name + ".png");
     
-    println(File_Name + ".PNG");    
+    println(File_Name + ".png");    
   }       
 
 
