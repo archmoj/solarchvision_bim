@@ -3610,10 +3610,10 @@ class solarchvision_WIN3D {
   int dX = int(1.5 * SOLARCHVISION_H_Pixel);
   int dY = SOLARCHVISION_H_Pixel;
   float R_View = float(dY) / float(dX);
-  
+
   float X_Coordinate = 0;
-  float Y_Coordinate = 0; //10;
-  float Z_Coordinate = 0; //50; 
+  float Y_Coordinate = 50; //10;
+  float Z_Coordinate = -50; //50; 
   float S_Coordinate = 1;
   
   float RX_Coordinate = 90; //75; //0; 
@@ -3740,16 +3740,6 @@ class solarchvision_WIN3D {
           WIN3D.record_last3DViewport();
       
           WIN3D.transform_3DViewport();
-  
-  //Farshad        
-  WIN3D.X_Coordinate = 0; 
-  WIN3D.Y_Coordinate = 40;
-  WIN3D.Z_Coordinate = -50;
-  WIN3D.S_Coordinate = 1;
-  WIN3D.RX_Coordinate = 90;
-  WIN3D.RY_Coordinate = 0;
-  WIN3D.RZ_Coordinate = 90;
-  WIN3D.Zoom = 60;
       
           WIN3D.put_3DViewport();
       
@@ -3851,17 +3841,13 @@ class solarchvision_WIN3D {
         this.update = false; //true;
       } else {
         this.update = false;
-      }
         
-      if ((this.record_IMG) || (this.record_AUTO)) {
-      }
-      else {      
         SOLARCHVISION_draw_Perspective_Internally();
       }
-      
+        
     }
   }
-  
+
   
   
   void draw_referencePivot () {
@@ -24734,7 +24720,7 @@ class solarchvision_Sun3D {
                     WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
                     WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
   
-                    WIN3D.graphics.strokeWeight(8);
+                    WIN3D.graphics.strokeWeight(0.01 * WIN3D.dY);
   
                     float[] SunA = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE - 0.5 * (1.0 / float(TES_hour)));
                     float[] SunB = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE + 0.5 * (1.0 / float(TES_hour)));
