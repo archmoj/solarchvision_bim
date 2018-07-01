@@ -1,3 +1,6 @@
+
+// bug drawProbs
+
 // remember: should optimize vertics after optimizing faces!
 
 //for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
@@ -7018,7 +7021,7 @@ class solarchvision_STUDY {
       int[] _probs;
       int total_probs = 0;
   
-      _probs = new int [floor((1 + max_v - min_v))];
+      _probs = new int [floor(max_v - min_v) + 1];
   
       for (int k = 0; k < _valuesSUM.length; k++) {
         if (is_undefined_FLOAT(_valuesSUM[k]) == false) {
@@ -7028,7 +7031,10 @@ class solarchvision_STUDY {
             if (funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) >= (360 * abs(sy_Plot))) the_value -= 360;
           }
   
-          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) / this.Pix) - min_v, 1));
+          int h = int(funcs.roundTo((the_value - min_v) * abs(sy_Plot) / this.Pix, 1)); //??????????
+          
+          if (h < 0) h = 0;
+          else if (h > _probs.length - 1) h = _probs.length - 1; 
           _probs[h] += 1;
           total_probs += 1;
         }
