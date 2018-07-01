@@ -6841,7 +6841,7 @@ class solarchvision_STUDY {
         if (((t + 45) % 90) == 0) {
           this.graphics.stroke(0, 127);
           this.graphics.fill(0, 127);
-          this.graphics.textSize(sx_Plot * 0.200 / this.U_scale);
+          this.graphics.textSize(sx_Plot * 0.150 / this.U_scale);
           this.graphics.textAlign(CENTER, CENTER);
   
           String ORI = "";
@@ -7072,9 +7072,12 @@ class solarchvision_STUDY {
     }
   
     float pal_length = 400;
+    float pal_ox = 700;
+    float pal_oy = (50 * this.V_belowLine) + 25;
+ 
     for (int q = 0; q < 11; q++) {
       float prob_V = 10 * q / 100.0;
-  
+
       float _u = PAL_Multiplier * prob_V;
   
       if (PAL_DIR == -1) _u = 1 - _u;
@@ -7086,11 +7089,8 @@ class solarchvision_STUDY {
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);     
   
       this.graphics.strokeWeight(0); 
-  
-      float Y_OFFSET = (0.25 + this.V_belowLine) * sx_Plot / this.U_scale;
-  
-      //this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, 125 * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
-      this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, Y_OFFSET, (pal_length / 11.0) * this.S_View, 20 * this.S_View);
+
+      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_View, pal_oy * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View);
   
       if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
         this.graphics.stroke(127);
@@ -7104,8 +7104,7 @@ class solarchvision_STUDY {
   
       this.graphics.textSize(15.0 * this.S_View);
       this.graphics.textAlign(CENTER, CENTER);
-      //this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 125 - 0.05 * 20) * this.S_View);
-      this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, Y_OFFSET + (10 - 0.05 * 20) * this.S_View);
+      this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
     }
   }
   
@@ -7173,6 +7172,9 @@ class solarchvision_STUDY {
       "MIN", "", "25%", "", "MED", "", "75%", "", "MAX"
     }; 
     float pal_length = 400;
+    float pal_ox = 700;
+    float pal_oy = (50 * this.V_belowLine) + 25;
+  
     for (int q = 0; q < 9; q++) {
       float sort_V = 1.1 * (q - 4) / 8.0;
   
@@ -7185,14 +7187,11 @@ class solarchvision_STUDY {
       float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);     
-  
-      float Y_OFFSET = (0.25 + this.V_belowLine) * sx_Plot / this.U_scale;
-  
+
       //this.graphics.strokeWeight(0.0);
       this.graphics.stroke(255); 
       this.graphics.strokeWeight(0.5); 
-      //this.graphics.rect((700 + q * (pal_length / 9.0)) * this.S_View, 125 * this.S_View, (pal_length / 9.0) * this.S_View, 20 * this.S_View);
-      this.graphics.rect((700 + q * (pal_length / 9.0)) * this.S_View, Y_OFFSET, (pal_length / 9.0) * this.S_View, 20 * this.S_View);
+      this.graphics.rect((pal_ox + q * (pal_length / 9.0)) * this.S_View, pal_oy * this.S_View, (pal_length / 9.0) * this.S_View, 20 * this.S_View);
   
       if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
         this.graphics.stroke(127);
@@ -7206,8 +7205,7 @@ class solarchvision_STUDY {
   
       this.graphics.textSize(15.0 * this.S_View);
       this.graphics.textAlign(CENTER, CENTER);
-      //this.graphics.text(_txt[q], (25 + 700 + q * (pal_length / 9.0)) * this.S_View, (10 + 125 - 0.05 * 20) * this.S_View);
-      this.graphics.text(_txt[q], (25 + 700 + q * (pal_length / 9.0)) * this.S_View, Y_OFFSET + (10 - 0.05 * 20) * this.S_View);
+      this.graphics.text(_txt[q], (25 + pal_ox + q * (pal_length / 9.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
     }
   }
   
@@ -8541,6 +8539,8 @@ class solarchvision_STUDY {
       if (Impact_TYPE != Impact_ACTIVE) { 
   
         float pal_length = 400;
+        float pal_ox = 700;
+        float pal_oy = 125;
         for (int q = 0; q < 11; q++) {
           float _u = 0;
   
@@ -8555,7 +8555,7 @@ class solarchvision_STUDY {
           this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);         
   
           this.graphics.strokeWeight(0);
-          this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, 175 * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
+          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_View, pal_oy * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
   
           if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
             this.graphics.stroke(127);
@@ -8570,7 +8570,7 @@ class solarchvision_STUDY {
           this.graphics.textSize(15.0 * this.S_View);
           this.graphics.textAlign(CENTER, CENTER);
   
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
         }
       }         
   
@@ -8742,6 +8742,8 @@ class solarchvision_STUDY {
         }
   
         float pal_length = 400;
+        float pal_ox = 700;
+        float pal_oy = 125;        
         for (int q = 0; q < 11; q++) {
           float _u = 0;
   
@@ -8757,7 +8759,7 @@ class solarchvision_STUDY {
           this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);         
   
           this.graphics.strokeWeight(0);
-          this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, 175 * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
+          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_View, pal_oy * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
   
           if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
             this.graphics.stroke(127);
@@ -8771,8 +8773,8 @@ class solarchvision_STUDY {
   
           this.graphics.textSize(15.0 * this.S_View);
           this.graphics.textAlign(CENTER, CENTER);
-          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
+          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
         }
   
         if (this.PrintTtitle) {
@@ -9179,6 +9181,8 @@ class solarchvision_STUDY {
       }
   
       float pal_length = 400;
+      float pal_ox = 700;
+      float pal_oy = 125;      
       for (int q = 0; q < 11; q++) {
         float _u = 0;
   
@@ -9194,7 +9198,7 @@ class solarchvision_STUDY {
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
   
         this.graphics.strokeWeight(0);
-        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, 175 * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
+        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_View, pal_oy * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
   
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -9208,8 +9212,8 @@ class solarchvision_STUDY {
   
         this.graphics.textSize(15.0 * this.S_View);
         this.graphics.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
       }
   
   
@@ -9452,8 +9456,9 @@ class solarchvision_STUDY {
       }
   
       float pal_length = 400;
+      float pal_ox = 700;
+      float pal_oy = 125;      
       for (int q = 0; q < 11; q++) {
-        
         float _u = 0;
   
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
@@ -9468,7 +9473,7 @@ class solarchvision_STUDY {
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
   
         this.graphics.strokeWeight(0);
-        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, 175 * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
+        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_View, pal_oy * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View); 
   
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -9483,8 +9488,8 @@ class solarchvision_STUDY {
         this.graphics.textSize(15.0 * this.S_View);
         this.graphics.textAlign(CENTER, CENTER);
   
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 + 175 - 0.05 * 20) * this.S_View);
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 + pal_oy - 0.05 * 20) * this.S_View);
       } 
   
   
@@ -9814,10 +9819,11 @@ class solarchvision_STUDY {
       if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
   
       float pal_length = 400;
-  
-      float pal_offsetY = 175;    
+      float pal_ox = 700;
+      float pal_oy = 125;  
+
       if (this.j_End == 2) {
-        pal_offsetY = 325;
+        pal_oy = 325;
       }
   
       for (int q = 0; q < 11; q++) {
@@ -9835,7 +9841,7 @@ class solarchvision_STUDY {
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
   
         this.graphics.strokeWeight(0);
-        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, -pal_offsetY * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View);
+        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_View, -pal_oy * this.S_View, (pal_length / 11.0) * this.S_View, 20 * this.S_View);
   
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -9849,8 +9855,8 @@ class solarchvision_STUDY {
   
         this.graphics.textSize(15.0 * this.S_View);
         this.graphics.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 - pal_offsetY - 0.05 * 20) * this.S_View);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * this.S_View, (10 - pal_offsetY - 0.05 * 20) * this.S_View);
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 - pal_oy - 0.05 * 20) * this.S_View);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_View, (10 - pal_oy - 0.05 * 20) * this.S_View);
       } 
   
   
@@ -9870,11 +9876,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(CENTER, TOP); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.S_View + (pal_length / 11.0) * this.S_View, -pal_offsetY * this.S_View + 20 * this.S_View);
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.S_View + (pal_length / 11.0) * this.S_View, -pal_oy * this.S_View + 20 * this.S_View);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.S_View + (pal_length / 11.0) * this.S_View, -pal_offsetY * this.S_View + 20 * this.S_View);
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.S_View + (pal_length / 11.0) * this.S_View, -pal_oy * this.S_View + 20 * this.S_View);
           //?? French
         }
       }
