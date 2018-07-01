@@ -6986,15 +6986,19 @@ class solarchvision_STUDY {
   
     float txt_max_width = (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale;
     float txt_max_height = this.Pix;
-    if (txt_max_height > txt_max_width) this.graphics.textSize(0.9 * txt_max_width);
-    else this.graphics.textSize(0.9 * txt_max_height);
+    if (txt_max_height > txt_max_width) {
+      this.graphics.textSize(0.9 * txt_max_width);
+    }
+    else {
+      this.graphics.textSize(0.9 * txt_max_height);
+    }
   
     this.graphics.textAlign(CENTER, CENTER);
   
     this.graphics.strokeWeight(this.T_scale * 0);
   
-    float min_v = funcs.tan_ang(89.99);
-    float max_v = funcs.tan_ang(-89.99);
+    float min_v = FLOAT_undefined;
+    float max_v = -FLOAT_undefined;
   
     for (int k = 0; k < _valuesSUM.length; k++) {
       if (is_undefined_FLOAT(_valuesSUM[k]) == false) {
@@ -7002,8 +7006,8 @@ class solarchvision_STUDY {
         if (max_v < _valuesSUM[k]) max_v = _valuesSUM[k];
       }
     } 
-  
-    if ((min_v != funcs.tan_ang(89.99)) && (max_v != funcs.tan_ang(-89.99))) {    
+
+    if ((is_undefined_FLOAT(min_v) == false) && (is_undefined_FLOAT(-max_v) == false)) {    
       min_v = funcs.roundTo((min_v * abs(sy_Plot)), this.Pix) / this.Pix;
       max_v = funcs.roundTo((max_v * abs(sy_Plot)), this.Pix) / this.Pix;
   
@@ -7012,7 +7016,7 @@ class solarchvision_STUDY {
       int[] _probs;
       int total_probs = 0;
   
-      _probs = new int [int((1 + max_v - min_v))];
+      _probs = new int [floor((1 + max_v - min_v)) + 1];
   
       for (int k = 0; k < _valuesSUM.length; k++) {
         if (is_undefined_FLOAT(_valuesSUM[k]) == false) {
@@ -7027,7 +7031,7 @@ class solarchvision_STUDY {
           total_probs += 1;
         }
       }
-  
+
       if (total_probs != 0) {
         for (int n = 0; n < _probs.length; n++) {
           float prob_V = 1.0 * _probs[n] / total_probs;
@@ -7040,8 +7044,9 @@ class solarchvision_STUDY {
             if (PAL_DIR == -1) _u = 1 - _u;
             if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
             if (PAL_DIR == 2) _u =  0.5 * _u;
-  
+
             float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+  
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
@@ -7062,6 +7067,7 @@ class solarchvision_STUDY {
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
             }
+
           }
         }  
   
@@ -7070,7 +7076,7 @@ class solarchvision_STUDY {
         }
       }
     }
-  
+
     float pal_length = 400;
     float pal_ox = 700;
     float pal_oy = (50 * this.V_belowLine) + 25;
@@ -25078,9 +25084,9 @@ class solarchvision_Sun3D {
   
                 int row_J = more_J / STUDY.joinDays;
   
-                SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
-                SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
-                SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
+                SunPathMesh[floor(i * TES_hour)][row_J][0] = Alpha;
+                SunPathMesh[floor(i * TES_hour)][row_J][1] = Beta;
+                SunPathMesh[floor(i * TES_hour)][row_J][2] = _valuesSUM;
               }
             } else {
               for (float i = 0; i < 24; i += 1.0 / float (TES_hour)) {
@@ -25095,9 +25101,9 @@ class solarchvision_Sun3D {
   
                 int row_J = more_J / STUDY.joinDays;
   
-                SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
-                SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
-                SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
+                SunPathMesh[floor(i * TES_hour)][row_J][0] = Alpha;
+                SunPathMesh[floor(i * TES_hour)][row_J][1] = Beta;
+                SunPathMesh[floor(i * TES_hour)][row_J][2] = _valuesSUM;
               }
             }
           }
