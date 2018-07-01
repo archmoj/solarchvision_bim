@@ -26120,8 +26120,8 @@ class solarchvision_Land3D {
   int num_rows = 24;  
   int num_columns = 48 + 1;  
   
-  int Surface_SkipStart = 5; //0; 
-  int Surface_SkipEnd = 5; //0; 
+  int Surface_SkipStart = 0; 
+  int Surface_SkipEnd = 0;  
   
   int displayTessellation = 1; //0; //2;  
 
