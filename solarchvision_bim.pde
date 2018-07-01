@@ -6979,7 +6979,9 @@ class solarchvision_STUDY {
   
   
   void drawProbs (int i, int j, float[] _valuesSUM, float[] _valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
-  
+
+    this.Pix = (100.0 * this.S_View / this.LevelPix);
+    
     int PAL_TYPE = this.pallet_PROB_CLR; 
     int PAL_DIR = this.pallet_PROB_DIR;  
     float PAL_Multiplier = this.pallet_PROB_MLT;
@@ -7016,7 +7018,7 @@ class solarchvision_STUDY {
       int[] _probs;
       int total_probs = 0;
   
-      _probs = new int [floor((1 + max_v - min_v)) + 1];
+      _probs = new int [floor((1 + max_v - min_v))];
   
       for (int k = 0; k < _valuesSUM.length; k++) {
         if (is_undefined_FLOAT(_valuesSUM[k]) == false) {
@@ -7051,7 +7053,7 @@ class solarchvision_STUDY {
             this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
             this.graphics.strokeWeight(this.T_scale * 0); 
-            this.graphics.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * this.Pix) - 0.5 * this.Pix, -(this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, this.Pix); 
+            this.graphics.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n - 0.5) * this.Pix * -sy_Plot), -(this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, this.Pix * -sy_Plot); 
   
             if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
               this.graphics.stroke(127);
@@ -7062,7 +7064,7 @@ class solarchvision_STUDY {
               this.graphics.fill(255);
               this.graphics.strokeWeight(2);
             }   
-            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix) - 0.05 * txt_max_height);
+            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_View * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix * sy_Plot) - 0.05 * txt_max_height);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
@@ -7366,8 +7368,6 @@ class solarchvision_STUDY {
     int DATA_start = getStart_CurrentDataSource();
     int DATA_end = getEnd_CurrentDataSource();
     String DATA_reference = getReference_CurrentDataSource();
-  
-    this.Pix = (100.0 * this.S_View / this.LevelPix);
   
     this.graphics.pushMatrix();
     this.graphics.translate(x_Plot, y_Plot);
