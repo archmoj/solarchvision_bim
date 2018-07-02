@@ -1523,7 +1523,7 @@ solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER(
 ); 
 
 solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER(
-  2.0,
+  2.5,
   0,
   0,
   "km/h",
@@ -1543,7 +1543,7 @@ solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER(
 ); 
 
 solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER(
-  2.5 * pow(2, 0.5),
+  2.5,
   0,
   1,
   "°C",
@@ -6917,9 +6917,9 @@ class solarchvision_STUDY {
       if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
   
-        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), (j - ((0 - 12) / 24.0)) * sx_Plot, -1.2 * sx_Plot / this.U_scale);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), (j - ((0 - 12) / 24.0)) * sx_Plot, -1.0 * sx_Plot / this.U_scale);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -0.8 * sx_Plot);
         }
       }
     }
@@ -6932,13 +6932,15 @@ class solarchvision_STUDY {
     this.graphics.stroke(0);
     this.graphics.fill(0);
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-    this.graphics.textAlign(LEFT, TOP);
+    this.graphics.textAlign(RIGHT, TOP);
+    
+    String txt = STATION.getCity();
   
-    if (CurrentDataSource == dataID_CLIMATE_TMYEPW)    this.graphics.text((STATION.getCity() + "\n"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CWEEDS)    this.graphics.text((STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CLMREC)    this.graphics.text((STATION.getCity() + "\n("), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);  
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text((STATION.getCity() + "\n(" + nf(TIME.year, 4) + "_" + nf(TIME.month, 2) + "_" + nf(TIME.day, 2) + "_" + nf(TIME.hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) this.graphics.text((STATION.getCity() + "\n(" + nf(TIME.year, 4) + "_" + nf(TIME.month, 2) + "_" + nf(TIME.day, 2) + "_" + nf(TIME.hour, 2) + ")"), -1.5 * sx_Plot / this.U_scale, (1.0 + V_belowLine) * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+      txt += "\n(" + nf(TIME.year, 4) + "_" + nf(TIME.month, 2) + "_" + nf(TIME.day, 2) + "_" + nf(TIME.hour, 2) + ")";
+    }
+  
+    this.graphics.text(txt, -1.0 * sx_Plot / this.U_scale, -1.25 * sx_Plot / this.U_scale);
   
     switch(this.skyScenario) {
     case 1 : 
@@ -6961,7 +6963,7 @@ class solarchvision_STUDY {
   
     this.graphics.textAlign(RIGHT, TOP);
   
-    this.graphics.text(skyScenario_Title[this.skyScenario], (this.j_End - this.j_Start - 0.05) * sx_Plot, (0.3 + V_belowLine) * sx_Plot / this.U_scale);
+    this.graphics.text(skyScenario_Title[this.skyScenario], -0.8 * sx_Plot / this.U_scale, -1.0 * sx_Plot / this.U_scale);
   }  
   
   
@@ -6984,7 +6986,7 @@ class solarchvision_STUDY {
   void drawProbs (int i, int j, float[] _valuesSUM, float[] _valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
     this.Pix = (100.0 * this.S_View / this.LevelPix);
-    
+
     int PAL_TYPE = this.pallet_PROB_CLR; 
     int PAL_DIR = this.pallet_PROB_DIR;  
     float PAL_Multiplier = this.pallet_PROB_MLT;
@@ -6997,11 +6999,16 @@ class solarchvision_STUDY {
     else {
       this.graphics.textSize(0.9 * txt_max_height);
     }
-  
     this.graphics.textAlign(CENTER, CENTER);
-  
-    this.graphics.strokeWeight(this.T_scale * 0);
-  
+    this.graphics.strokeWeight(this.T_scale * 0);    
+    
+    
+    
+    
+    
+    
+    
+    
     float min_v = FLOAT_undefined;
     float max_v = -FLOAT_undefined;
   
@@ -7010,14 +7017,15 @@ class solarchvision_STUDY {
         if (min_v > _valuesSUM[k]) min_v = _valuesSUM[k];
         if (max_v < _valuesSUM[k]) max_v = _valuesSUM[k];
       }
-    } 
-
+    }     
+    
+    
     if ((is_undefined_FLOAT(min_v) == false) && (is_undefined_FLOAT(-max_v) == false)) {    
       min_v = funcs.roundTo((min_v * abs(sy_Plot)), this.Pix) / this.Pix;
       max_v = funcs.roundTo((max_v * abs(sy_Plot)), this.Pix) / this.Pix;
   
       if (CurrentLayer_id == LAYER_winddir.id) min_v = 0;
-  
+    
       int[] _probs;
       int total_probs = 0;
   
@@ -7030,8 +7038,8 @@ class solarchvision_STUDY {
           if (CurrentLayer_id == LAYER_winddir.id) {
             if (funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) >= (360 * abs(sy_Plot))) the_value -= 360;
           }
-  
-          int h = int(funcs.roundTo((the_value - min_v) * abs(sy_Plot) / this.Pix, 1)); //??????????
+
+          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) / this.Pix) - min_v, 1));
           
           if (h < 0) h = 0;
           else if (h > _probs.length - 1) h = _probs.length - 1; 
@@ -7087,7 +7095,7 @@ class solarchvision_STUDY {
 
     float pal_length = 400;
     float pal_ox = 700;
-    float pal_oy = (50 * this.V_belowLine) + 25;
+    float pal_oy = (50 * this.V_belowLine) + 50;
  
     for (int q = 0; q < 11; q++) {
       float prob_V = 10 * q / 100.0;
@@ -7187,7 +7195,7 @@ class solarchvision_STUDY {
     }; 
     float pal_length = 400;
     float pal_ox = 700;
-    float pal_oy = (50 * this.V_belowLine) + 25;
+    float pal_oy = (50 * this.V_belowLine) + 50;
   
     for (int q = 0; q < 9; q++) {
       float sort_V = 1.1 * (q - 4) / 8.0;
@@ -7398,14 +7406,14 @@ class solarchvision_STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(RIGHT, CENTER); 
   
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, (0.5 + this.V_belowLine) * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, (0.5 + this.V_belowLine) * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, (0.5 + this.V_belowLine) * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
   
   
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(LEFT, CENTER); 
-      this.graphics.text((CurrentLayer_descriptions[Language_Active]), 0, (0.5 + this.V_belowLine) * sx_Plot / this.U_scale);
+      this.graphics.text((CurrentLayer_descriptions[Language_Active]), 0, 1.0 * sx_Plot / this.U_scale);
     }
 
     float Pa = FLOAT_undefined;
@@ -8595,18 +8603,18 @@ class solarchvision_STUDY {
   
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(RIGHT, TOP); 
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
   
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(("Wind direction and speed"), 0, 1.4 * sx_Plot / this.U_scale);
+          this.graphics.text(("Wind direction and speed"), 0, 1.2 * sx_Plot / this.U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.4 * sx_Plot / this.U_scale);
+          this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.2 * sx_Plot / this.U_scale);
           //?? French
         }
       }
@@ -8797,9 +8805,9 @@ class solarchvision_STUDY {
   
           this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
           this.graphics.textAlign(RIGHT, TOP); 
-          if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-          if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-          if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
+          if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+          if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+          if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
   
   
           String Model_Description = "";
@@ -8808,11 +8816,11 @@ class solarchvision_STUDY {
           this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
           this.graphics.textAlign(LEFT, TOP); 
           if (Impact_TYPE == Impact_ACTIVE) {  
-            this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.4 * sx_Plot / this.U_scale);
+            this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
             //?? French
           }
           if (Impact_TYPE == Impact_PASSIVE) {  
-            this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.4 * sx_Plot / this.U_scale);
+            this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
             //?? French
           }
         }
@@ -9238,19 +9246,19 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(RIGHT, TOP); 
         
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
         
   
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.4 * sx_Plot / this.U_scale);
+          this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.4 * sx_Plot / this.U_scale);
+          this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
           //?? French
         }
       }
@@ -9514,19 +9522,19 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(RIGHT, TOP); 
   
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
   
   
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.4 * sx_Plot / this.U_scale);
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.4 * sx_Plot / this.U_scale);
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
           //?? French
         }
       }
@@ -9769,7 +9777,7 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP); 
   
-        this.graphics.text(("Solar perspectives"), 0, 1.4 * sx_Plot / this.U_scale);
+        this.graphics.text(("Solar perspectives"), 0, 1.2 * sx_Plot / this.U_scale);
       }
     } 
   
@@ -9881,9 +9889,9 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(RIGHT, TOP); 
   
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.4 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
+        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.2 * sx_Plot / this.U_scale);
   
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(CENTER, TOP); 
