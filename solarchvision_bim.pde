@@ -2196,7 +2196,7 @@ void inputCoordinates_SWOB () {
 
 
 
-solarchvision_STATION[] NAEFposition_Ss;
+solarchvision_STATION[] NAEFposition_Ts;
 
 void inputCoordinates_NAEFS () {
 
@@ -2206,7 +2206,7 @@ void inputCoordinates_NAEFS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line 
 
-  NAEFposition_Ss = new solarchvision_STATION [num_stn]; 
+  NAEFposition_Ts = new solarchvision_STATION [num_stn]; 
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line  
@@ -2247,16 +2247,16 @@ void inputCoordinates_NAEFS () {
     elevation = float(parts[3].substring(0, l - 1));
     
     
-    NAEFposition_Ss[f] = new solarchvision_STATION(); 
+    NAEFposition_Ts[f] = new solarchvision_STATION(); 
 
-    NAEFposition_Ss[f].setCity(city);
-    NAEFposition_Ss[f].setProvince(province);
-    NAEFposition_Ss[f].setCountry(country);
-    NAEFposition_Ss[f].setLatitude(latitude);
-    NAEFposition_Ss[f].setLongitude(longitude);
-    NAEFposition_Ss[f].setTimelong(funcs.roundTo(longitude, 15));
-    NAEFposition_Ss[f].setElevation(elevation);
-    NAEFposition_Ss[f].setFilename_NAEFS(filename);
+    NAEFposition_Ts[f].setCity(city);
+    NAEFposition_Ts[f].setProvince(province);
+    NAEFposition_Ts[f].setCountry(country);
+    NAEFposition_Ts[f].setLatitude(latitude);
+    NAEFposition_Ts[f].setLongitude(longitude);
+    NAEFposition_Ts[f].setTimelong(funcs.roundTo(longitude, 15));
+    NAEFposition_Ts[f].setElevation(elevation);
+    NAEFposition_Ts[f].setFilename_NAEFS(filename);
   }
 }
 
@@ -3624,12 +3624,12 @@ class solarchvision_WIN3D {
   float position_X = 0;
   float position_Y = 50; //10;
   float position_Z = -50; //50; 
-  float position_S = 1.0;
+  float position_T = 1.0;
   
   float rotation_X = 90; //75; //0; 
   float rotation_Y = 0;
   float rotation_Z = 90; //0; //180; //135;
-  float rotation_S = 5.0;
+  float rotation_T = 5.0;
   
   float Zoom = 60.0; // / (SOLARCHVISION_pixel_H / 300.0);
   
@@ -4390,7 +4390,7 @@ class solarchvision_WIN3D {
           this.position_Y = 0;
           this.position_Z = -100;   
   
-          this.position_S = 1;
+          this.position_T = 1;
   
           this.Zoom = 60;        
   
@@ -4524,25 +4524,25 @@ class solarchvision_WIN3D {
         switch(keyCode) {
   
         case DOWN :
-          WIN3D.rotateZ_3DViewport_around_Selection(this.rotation_S);
+          WIN3D.rotateZ_3DViewport_around_Selection(this.rotation_T);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case LEFT :
-          WIN3D.rotateXY_3DViewport_around_Selection(-this.rotation_S);
+          WIN3D.rotateXY_3DViewport_around_Selection(-this.rotation_T);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case RIGHT :
-          WIN3D.rotateXY_3DViewport_around_Selection(this.rotation_S);
+          WIN3D.rotateXY_3DViewport_around_Selection(this.rotation_T);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case UP :
-          WIN3D.rotateZ_3DViewport_around_Selection(-this.rotation_S);
+          WIN3D.rotateZ_3DViewport_around_Selection(-this.rotation_T);
           this.update = true; 
           ROLLOUT.update = true; 
           break;     
@@ -4599,7 +4599,7 @@ class solarchvision_WIN3D {
   
         case ',' :
           if (this.ViewType == 1) {
-            this.position_Z += this.position_S * OBJECTS_scale; 
+            this.position_Z += this.position_T * OBJECTS_scale; 
             this.update = true; 
             ROLLOUT.update = true;
           } else {
@@ -4611,7 +4611,7 @@ class solarchvision_WIN3D {
   
         case '.' :
           if (this.ViewType == 1) {
-            this.position_Z -= this.position_S * OBJECTS_scale; 
+            this.position_Z -= this.position_T * OBJECTS_scale; 
             this.update = true; 
             ROLLOUT.update = true;
           } else {
@@ -4623,7 +4623,7 @@ class solarchvision_WIN3D {
   
         case '0' :
           if (this.ViewType == 1) {
-            this.position_Z += this.position_S * OBJECTS_scale; 
+            this.position_Z += this.position_T * OBJECTS_scale; 
             this.update = true; 
             ROLLOUT.update = true;
           } else {
@@ -4640,47 +4640,47 @@ class solarchvision_WIN3D {
           break;
   
         case '4' :
-          this.rotation_Z += this.rotation_S; 
+          this.rotation_Z += this.rotation_T; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '6' :
-          this.rotation_Z -= this.rotation_S; 
+          this.rotation_Z -= this.rotation_T; 
           WIN3D.reverseTransform_3DViewport();
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '2' :
-          this.rotation_X -= this.rotation_S; 
+          this.rotation_X -= this.rotation_T; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '8' :
-          this.rotation_X += this.rotation_S; 
+          this.rotation_X += this.rotation_T; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case '1' :
-          this.position_X += this.position_S * OBJECTS_scale; 
+          this.position_X += this.position_T * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '3' :
-          this.position_X -= this.position_S * OBJECTS_scale; 
+          this.position_X -= this.position_T * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break; 
         case '9' :
-          this.position_Y += this.position_S * OBJECTS_scale; 
+          this.position_Y += this.position_T * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '7' :
-          this.position_Y -= this.position_S * OBJECTS_scale; 
+          this.position_Y -= this.position_T * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;                  
@@ -4915,7 +4915,7 @@ class solarchvision_WIN3D {
     WIN3D.reverseTransform_3DViewport();
   
   
-    //this.position_S *= t; // just to adjust panning better
+    //this.position_T *= t; // just to adjust panning better
   }
   
   void move_3DViewport_towards_Selection (float t) {
@@ -4945,7 +4945,7 @@ class solarchvision_WIN3D {
     WIN3D.reverseTransform_3DViewport();
   
   
-    //this.position_S *= t; // just to adjust panning better
+    //this.position_T *= t; // just to adjust panning better
   }
   
   void rotateZ_3DViewport_around_Selection (float t) {
@@ -5142,11 +5142,11 @@ class solarchvision_WIN3D {
     allCameras.options[this.currentCamera][0] = this.position_X;
     allCameras.options[this.currentCamera][1] = this.position_Y;
     allCameras.options[this.currentCamera][2] = this.position_Z;
-    allCameras.options[this.currentCamera][3] = this.position_S;
+    allCameras.options[this.currentCamera][3] = this.position_T;
     allCameras.options[this.currentCamera][4] = this.rotation_X;
     allCameras.options[this.currentCamera][5] = this.rotation_Y;
     allCameras.options[this.currentCamera][6] = this.rotation_Z;
-    allCameras.options[this.currentCamera][7] = this.rotation_S;
+    allCameras.options[this.currentCamera][7] = this.rotation_T;
     allCameras.options[this.currentCamera][8] = this.Zoom;
   
     allCameras.Type[this.currentCamera] = this.ViewType;
@@ -5158,11 +5158,11 @@ class solarchvision_WIN3D {
     this.position_X = allCameras.options[this.currentCamera][0];
     this.position_Y = allCameras.options[this.currentCamera][1];
     this.position_Z = allCameras.options[this.currentCamera][2];
-    this.position_S = allCameras.options[this.currentCamera][3];
+    this.position_T = allCameras.options[this.currentCamera][3];
     this.rotation_X = allCameras.options[this.currentCamera][4];
     this.rotation_Y = allCameras.options[this.currentCamera][5];
     this.rotation_Z = allCameras.options[this.currentCamera][6];
-    this.rotation_S = allCameras.options[this.currentCamera][7];
+    this.rotation_T = allCameras.options[this.currentCamera][7];
     this.Zoom = allCameras.options[this.currentCamera][8];
   
     this.ViewType = allCameras.Type[this.currentCamera];
@@ -5339,11 +5339,11 @@ class solarchvision_WIN3D {
     parent.setFloat("position_X", this.position_X);
     parent.setFloat("position_Y", this.position_Y);
     parent.setFloat("position_Z", this.position_Z);
-    parent.setFloat("position_S", this.position_S);
+    parent.setFloat("position_T", this.position_T);
     parent.setFloat("rotation_X", this.rotation_X);
     parent.setFloat("rotation_Y", this.rotation_Y);
     parent.setFloat("rotation_Z", this.rotation_Z);
-    parent.setFloat("rotation_S", this.rotation_S);
+    parent.setFloat("rotation_T", this.rotation_T);
     parent.setFloat("Zoom", this.Zoom);
     parent.setInt("ViewType", this.ViewType);
     parent.setInt("FacesShade", this.FacesShade);    
@@ -5373,11 +5373,11 @@ class solarchvision_WIN3D {
     this.position_X = parent.getFloat("position_X");
     this.position_Y = parent.getFloat("position_Y");
     this.position_Z = parent.getFloat("position_Z");
-    this.position_S = parent.getFloat("position_S");
+    this.position_T = parent.getFloat("position_T");
     this.rotation_X = parent.getFloat("rotation_X");
     this.rotation_Y = parent.getFloat("rotation_Y");
     this.rotation_Z = parent.getFloat("rotation_Z");
-    this.rotation_S = parent.getFloat("rotation_S");
+    this.rotation_T = parent.getFloat("rotation_T");
     this.Zoom = parent.getFloat("Zoom");
     this.ViewType = parent.getInt("ViewType");
     this.FacesShade = parent.getInt("FacesShade");
@@ -5858,13 +5858,13 @@ class solarchvision_WORLD {
       int nearest_WORLD_NAEFS = -1;
       float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
   
-      for (int f = 0; f < NAEFposition_Ss.length; f++) {
+      for (int f = 0; f < NAEFposition_Ts.length; f++) {
         boolean draw_info = false;
   
         if (this.displayAll_NAEFS != 0) draw_info = true;
   
-        float _lat = NAEFposition_Ss[f].getLatitude();
-        float _lon = NAEFposition_Ss[f].getLongitude(); 
+        float _lat = NAEFposition_Ts[f].getLatitude();
+        float _lon = NAEFposition_Ts[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!
   
         if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
@@ -5889,7 +5889,7 @@ class solarchvision_WORLD {
             this.graphics.fill(0);      
             this.graphics.textAlign(RIGHT, CENTER); 
             this.graphics.textSize(MessageSize * this.ImageScale);
-            this.graphics.text(NAEFposition_Ss[f].getCity(), x_point, y_point);
+            this.graphics.text(NAEFposition_Ts[f].getCity(), x_point, y_point);
           }
         }
   
@@ -5904,8 +5904,8 @@ class solarchvision_WORLD {
       if (this.displayNear_NAEFS) {   
         int f = nearest_WORLD_NAEFS;
   
-        float _lat = NAEFposition_Ss[f].getLatitude();
-        float _lon = NAEFposition_Ss[f].getLongitude(); 
+        float _lat = NAEFposition_Ts[f].getLatitude();
+        float _lon = NAEFposition_Ts[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!      
   
         float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
@@ -5916,8 +5916,8 @@ class solarchvision_WORLD {
         this.graphics.fill(0);      
         this.graphics.textAlign(RIGHT, CENTER); 
         this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(NAEFposition_Ss[f].getCity(), x_point, y_point);
-        //println(NAEFposition_Ss[f].getCity());
+        this.graphics.text(NAEFposition_Ts[f].getCity(), x_point, y_point);
+        //println(NAEFposition_Ts[f].getCity());
       }
   
   
@@ -15710,16 +15710,16 @@ class solarchvision_Selections {
           float Camera_pX = allCameras.options[n][0];
           float Camera_pY = allCameras.options[n][1];
           float Camera_pZ = allCameras.options[n][2];
-          float Camera_pS = allCameras.options[n][3];
+          float Camera_pT = allCameras.options[n][3];
           float Camera_rX = allCameras.options[n][4];
           float Camera_rY = allCameras.options[n][5];
           float Camera_rZ = allCameras.options[n][6];
-          float Camera_rS = allCameras.options[n][7];
+          float Camera_rT = allCameras.options[n][7];
           float Camera_ZOOM = allCameras.options[n][8];
   
           int Camera_type = allCameras.Type[n];
   
-          float[][] ImageVertex = allCameras.getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
+          float[][] ImageVertex = allCameras.getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
   
           // the first vertex is the Camera point
           x = ImageVertex[0][0]; 
@@ -31195,16 +31195,16 @@ class solarchvision_Model3Ds {
         float Camera_pX = allCameras.options[OBJ_NUM][0];
         float Camera_pY = allCameras.options[OBJ_NUM][1];
         float Camera_pZ = allCameras.options[OBJ_NUM][2];
-        float Camera_pS = allCameras.options[OBJ_NUM][3];
+        float Camera_pT = allCameras.options[OBJ_NUM][3];
         float Camera_rX = allCameras.options[OBJ_NUM][4];
         float Camera_rY = allCameras.options[OBJ_NUM][5];
         float Camera_rZ = allCameras.options[OBJ_NUM][6];
-        float Camera_rS = allCameras.options[OBJ_NUM][7];
+        float Camera_rT = allCameras.options[OBJ_NUM][7];
         float Camera_ZOOM = allCameras.options[OBJ_NUM][8];
   
         int Camera_type = allCameras.Type[OBJ_NUM];
   
-        this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
+        this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
       }
   
       // selecting new objetcs
@@ -38240,11 +38240,11 @@ class solarchvision_Model3Ds {
     allCameras.options[0][0] = WIN3D.position_X;
     allCameras.options[0][1] = WIN3D.position_Y;
     allCameras.options[0][2] = WIN3D.position_Z;
-    allCameras.options[0][3] = WIN3D.position_S;
+    allCameras.options[0][3] = WIN3D.position_T;
     allCameras.options[0][4] = WIN3D.rotation_X;
     allCameras.options[0][5] = WIN3D.rotation_Y;
     allCameras.options[0][6] = WIN3D.rotation_Z;
-    allCameras.options[0][7] = WIN3D.rotation_S;
+    allCameras.options[0][7] = WIN3D.rotation_T;
     allCameras.options[0][8] = WIN3D.Zoom;
   
     allCameras.Type = new int [1];
@@ -38492,7 +38492,7 @@ class solarchvision_Cameras {
   
   float[][] options = {
     {
-      WIN3D.position_X, WIN3D.position_Y, WIN3D.position_Z, WIN3D.position_S, WIN3D.rotation_X, WIN3D.rotation_Y, WIN3D.rotation_Z, WIN3D.rotation_S, WIN3D.Zoom
+      WIN3D.position_X, WIN3D.position_Y, WIN3D.position_Z, WIN3D.position_T, WIN3D.rotation_X, WIN3D.rotation_Y, WIN3D.rotation_Z, WIN3D.rotation_T, WIN3D.Zoom
     }
   };
   int[] Type = {
@@ -38519,11 +38519,11 @@ class solarchvision_Cameras {
         float Camera_pX = this.options[f][0];
         float Camera_pY = this.options[f][1];
         float Camera_pZ = this.options[f][2];
-        float Camera_pS = this.options[f][3];
+        float Camera_pT = this.options[f][3];
         float Camera_rX = this.options[f][4];
         float Camera_rY = this.options[f][5];
         float Camera_rZ = this.options[f][6];
-        float Camera_rS = this.options[f][7];
+        float Camera_rT = this.options[f][7];
         float Camera_ZOOM = this.options[f][8];
   
         int Camera_type = this.Type[f];
@@ -38534,7 +38534,7 @@ class solarchvision_Cameras {
   
         WIN3D.graphics.beginShape();
   
-        float[][] ImageVertex = getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
+        float[][] ImageVertex = getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
   
         for (int q = 1; q <= 4; q++) {
   
@@ -38602,11 +38602,11 @@ class solarchvision_Cameras {
   }
   
   
-  float[][] getCorners (int Camera_type, float Camera_pX, float Camera_pY, float Camera_pZ, float Camera_pS, float Camera_rX, float Camera_rY, float Camera_rZ, float Camera_rS, float Camera_ZOOM) {
+  float[][] getCorners (int Camera_type, float Camera_pX, float Camera_pY, float Camera_pZ, float Camera_pT, float Camera_rX, float Camera_rY, float Camera_rZ, float Camera_rT, float Camera_ZOOM) {
   
     float[][] ImageVertex = new float [5][3];
   
-    float r = Camera_pS * 5; // <<<<<<
+    float r = Camera_pT * 5; // <<<<<<
   
     float rx = r * funcs.sin_ang(0.5 * Camera_ZOOM) /  WIN3D.view_R;
     float ry = r * funcs.sin_ang(0.5 * Camera_ZOOM);  
@@ -38646,11 +38646,11 @@ class solarchvision_Cameras {
       float keep_WIN3D_position_X = WIN3D.position_X; 
       float keep_WIN3D_position_Y = WIN3D.position_Y;
       float keep_WIN3D_position_Z = WIN3D.position_Z;
-      float keep_WIN3D_position_S = WIN3D.position_S;
+      float keep_WIN3D_position_T = WIN3D.position_T;
       float keep_WIN3D_rotation_X = WIN3D.rotation_X; 
       float keep_WIN3D_rotation_Y = WIN3D.rotation_Y;
       float keep_WIN3D_rotation_Z = WIN3D.rotation_Z;
-      float keep_WIN3D_rotation_S = WIN3D.rotation_S;
+      float keep_WIN3D_rotation_T = WIN3D.rotation_T;
       float keep_WIN3D_Zoom = WIN3D.Zoom;
   
       {
@@ -38658,11 +38658,11 @@ class solarchvision_Cameras {
         WIN3D.position_X = Camera_pX;
         WIN3D.position_Y = Camera_pY;
         WIN3D.position_Z = Camera_pZ;
-        WIN3D.position_S = Camera_pS;
+        WIN3D.position_T = Camera_pT;
         WIN3D.rotation_X = Camera_rX; 
         WIN3D.rotation_Y = Camera_rY;
         WIN3D.rotation_Z = Camera_rZ;
-        WIN3D.rotation_S = Camera_rS;
+        WIN3D.rotation_T = Camera_rT;
         WIN3D.Zoom = Camera_ZOOM;
   
         WIN3D.transform_3DViewport();
@@ -38690,11 +38690,11 @@ class solarchvision_Cameras {
       WIN3D.position_X = keep_WIN3D_position_X; 
       WIN3D.position_Y = keep_WIN3D_position_Y;
       WIN3D.position_Z = keep_WIN3D_position_Z;
-      WIN3D.position_S = keep_WIN3D_position_S;
+      WIN3D.position_T = keep_WIN3D_position_T;
       WIN3D.rotation_X = keep_WIN3D_rotation_X; 
       WIN3D.rotation_Y = keep_WIN3D_rotation_Y;
       WIN3D.rotation_Z = keep_WIN3D_rotation_Z;
-      WIN3D.rotation_S = keep_WIN3D_rotation_S;
+      WIN3D.rotation_T = keep_WIN3D_rotation_T;
       WIN3D.Zoom = keep_WIN3D_Zoom;
   
       ImageVertex[q][0] = x;
@@ -41896,7 +41896,7 @@ void mouseWheel (MouseEvent event) {
               if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || (WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.TargetRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D.ViewType == 1) {
-                  WIN3D.position_Z += Wheel_Value * WIN3D.position_S * OBJECTS_scale;
+                  WIN3D.position_Z += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
                 } else {
                   WIN3D.Zoom /= pow(2.0, Wheel_Value);
                 }
@@ -41926,14 +41926,14 @@ void mouseWheel (MouseEvent event) {
 
                   if (WIN3D.UI_OptionXorY == 0) {
 
-                    WIN3D.position_X += Wheel_Value * WIN3D.position_S * OBJECTS_scale;
+                    WIN3D.position_X += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
 
                     WIN3D.update = true;
                   }
 
                   if (WIN3D.UI_OptionXorY == 1) {
 
-                    WIN3D.position_Y += Wheel_Value * WIN3D.position_S * OBJECTS_scale;
+                    WIN3D.position_Y += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
 
                     WIN3D.update = true;
                   }
@@ -41944,14 +41944,14 @@ void mouseWheel (MouseEvent event) {
 
                   if (WIN3D.UI_OptionXorY == 0) {
 
-                    WIN3D.rotation_X += Wheel_Value * WIN3D.rotation_S;
+                    WIN3D.rotation_X += Wheel_Value * WIN3D.rotation_T;
 
                     WIN3D.update = true;
                   }
 
                   if (WIN3D.UI_OptionXorY == 1) {
 
-                    WIN3D.rotation_Z += Wheel_Value * WIN3D.rotation_S;
+                    WIN3D.rotation_Z += Wheel_Value * WIN3D.rotation_T;
 
                     WIN3D.update = true;
                   }
@@ -41994,13 +41994,13 @@ void mouseWheel (MouseEvent event) {
               if (WIN3D.UI_CurrentTask == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRoolZ
 
                 if (WIN3D.UI_OptionXorY == 0) {   
-                  WIN3D.rotation_X += Wheel_Value * WIN3D.rotation_S;
+                  WIN3D.rotation_X += Wheel_Value * WIN3D.rotation_T;
 
                   WIN3D.reverseTransform_3DViewport();
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {   
-                  WIN3D.rotation_Z += Wheel_Value * WIN3D.rotation_S;
+                  WIN3D.rotation_Z += Wheel_Value * WIN3D.rotation_T;
 
                   WIN3D.reverseTransform_3DViewport();
                 }              
@@ -42012,12 +42012,12 @@ void mouseWheel (MouseEvent event) {
 
                 if (WIN3D.UI_OptionXorY == 0) {   
 
-                  WIN3D.rotateZ_3DViewport_around_Selection(Wheel_Value * WIN3D.rotation_S);
+                  WIN3D.rotateZ_3DViewport_around_Selection(Wheel_Value * WIN3D.rotation_T);
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {   
 
-                  WIN3D.rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D.rotation_S);
+                  WIN3D.rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D.rotation_T);
                 }    
 
                 WIN3D.update = true;
@@ -42032,14 +42032,14 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
 
-                WIN3D.position_X += Wheel_Value * WIN3D.position_S * OBJECTS_scale;
+                WIN3D.position_X += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
 
                 WIN3D.update = true;
               }         
 
               if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
 
-                WIN3D.position_Y += Wheel_Value * WIN3D.position_S * OBJECTS_scale;
+                WIN3D.position_Y += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
 
                 WIN3D.update = true;
               }      
@@ -42313,15 +42313,15 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraLandOrbit
 
-                WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotation_S);
+                WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotation_T);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42331,14 +42331,14 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraRollXY
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_S);
+                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_T);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
 
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_S);
+                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_T);
 
                 WIN3D.update = true;
               }
@@ -42348,16 +42348,16 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // Pan
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }      
 
               if (mouseButton == RIGHT) { // TargetRoll
 
-                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_S; 
-                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_S;
+                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T; 
+                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42369,17 +42369,17 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraRoll
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_S);
+                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_T);
 
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_S);
+                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_T);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42389,14 +42389,14 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraRollXY
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_S);
+                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_T);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
 
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_S);
+                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_T);
 
                 WIN3D.update = true;
               }
@@ -42406,8 +42406,8 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // TargetRoll
 
-                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_S; 
-                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_S;
+                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T; 
+                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42416,8 +42416,8 @@ void mouseDragged () {
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42427,7 +42427,7 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // TargetRollXY
 
-                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_S; 
+                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T; 
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42436,7 +42436,7 @@ void mouseDragged () {
 
               if (mouseButton == RIGHT) { // TargetRollZ
 
-                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_S;
+                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42448,16 +42448,16 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // orbit
 
-                WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_S; 
-                WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_S;
+                WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T; 
+                WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42467,14 +42467,14 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // move Y
 
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;  
 
                 WIN3D.update = true;
               }              
 
               if (mouseButton == RIGHT) { // move X
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
 
                 WIN3D.update = true;
               }
@@ -42484,16 +42484,16 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // Pan
 
-                WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }   
 
               if (mouseButton == RIGHT) { // TargetRoll
 
-                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_S; 
-                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_S;
+                WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T; 
+                WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42506,14 +42506,14 @@ void mouseDragged () {
               if (WIN3D.UI_TaskModifyParameter == 0) { // Truck
 
                 if (WIN3D.UI_OptionXorY == 0) {
-                  if (mouseButton == LEFT) WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                  if (mouseButton == RIGHT) WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                  if (mouseButton == LEFT) WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                  if (mouseButton == RIGHT) WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
                   WIN3D.update = true;
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {
-                  if (mouseButton == RIGHT) WIN3D.position_X += 100 * dx * WIN3D.position_S * OBJECTS_scale;  
-                  if (mouseButton == LEFT) WIN3D.position_Y += 100 * dy * WIN3D.position_S * OBJECTS_scale; 
+                  if (mouseButton == RIGHT) WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;  
+                  if (mouseButton == LEFT) WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale; 
                   WIN3D.update = true;
                 }
               }
@@ -42522,14 +42522,14 @@ void mouseDragged () {
               if (WIN3D.UI_TaskModifyParameter == 1) {  // Orbit
 
                 if (WIN3D.UI_OptionXorY == 0) {
-                  if (mouseButton == LEFT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_S;
-                  if (mouseButton == RIGHT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_S;
+                  if (mouseButton == LEFT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
+                  if (mouseButton == RIGHT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
                   WIN3D.update = true;
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {
-                  if (mouseButton == RIGHT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_S;
-                  if (mouseButton == LEFT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_S;
+                  if (mouseButton == RIGHT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
+                  if (mouseButton == LEFT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
                   WIN3D.update = true;
                 }
               }
@@ -43944,16 +43944,16 @@ void mouseClicked () {
               float Camera_pX = WIN3D.position_X;
               float Camera_pY = WIN3D.position_Y;
               float Camera_pZ = WIN3D.position_Z;
-              float Camera_pS = WIN3D.position_S;
+              float Camera_pT = WIN3D.position_T;
               float Camera_rX = WIN3D.rotation_X;
               float Camera_rY = WIN3D.rotation_Y;
               float Camera_rZ = WIN3D.rotation_Z;
-              float Camera_rS = WIN3D.rotation_S;
+              float Camera_rT = WIN3D.rotation_T;
               float Camera_ZOOM = WIN3D.Zoom;
 
               int Camera_type = WIN3D.ViewType;
 
-              allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
+              allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
 
               WIN3D.currentCamera = allCameras.num - 1;
               WIN3D.apply_currentCamera();
@@ -44979,10 +44979,10 @@ void mouseClicked () {
               int nearest_WORLD_NAEFS = -1;
               float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
 
-              for (int f = 0; f < NAEFposition_Ss.length; f++) {
+              for (int f = 0; f < NAEFposition_Ts.length; f++) {
 
-                float _lat = NAEFposition_Ss[f].getLatitude();
-                float _lon = NAEFposition_Ss[f].getLongitude(); 
+                float _lat = NAEFposition_Ts[f].getLatitude();
+                float _lon = NAEFposition_Ts[f].getLongitude(); 
                 if (_lon > 180) _lon -= 360; // << important!
 
                 float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
@@ -44996,25 +44996,25 @@ void mouseClicked () {
               {
                 int f = nearest_WORLD_NAEFS;
 
-                if (STATION.getFilename_NAEFS().equals(NAEFposition_Ss[f].getFilename_NAEFS())) {
+                if (STATION.getFilename_NAEFS().equals(NAEFposition_Ts[f].getFilename_NAEFS())) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon);
 
-                  STATION.setFilename_NAEFS(NAEFposition_Ss[f].getFilename_NAEFS()); // naefs filename
+                  STATION.setFilename_NAEFS(NAEFposition_Ts[f].getFilename_NAEFS()); // naefs filename
 
-                  println("nearest naefs filename:", NAEFposition_Ss[f].getFilename_NAEFS());    
+                  println("nearest naefs filename:", NAEFposition_Ts[f].getFilename_NAEFS());    
 
                   if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-                    STATION.setCity(NAEFposition_Ss[f].getCity());
-                    STATION.setProvince(NAEFposition_Ss[f].getProvince());
-                    STATION.setCountry(NAEFposition_Ss[f].getCountry());
+                    STATION.setCity(NAEFposition_Ts[f].getCity());
+                    STATION.setProvince(NAEFposition_Ts[f].getProvince());
+                    STATION.setCountry(NAEFposition_Ts[f].getCountry());
 
-                    //STATION.setLatitude(NAEFposition_Ss[f].getLatitude());
-                    //STATION.setLongitude(NAEFposition_Ss[f].getLongitude());
-                    STATION.setElevation(NAEFposition_Ss[f].getElevation()); 
-                    STATION.setTimelong(NAEFposition_Ss[f].getTimelong());                     
+                    //STATION.setLatitude(NAEFposition_Ts[f].getLatitude());
+                    //STATION.setLongitude(NAEFposition_Ts[f].getLongitude());
+                    STATION.setElevation(NAEFposition_Ts[f].getElevation()); 
+                    STATION.setTimelong(NAEFposition_Ts[f].getTimelong());                     
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;
@@ -45956,11 +45956,11 @@ void mouseClicked () {
                       float keep_WIN3D_position_X = WIN3D.position_X; 
                       float keep_WIN3D_position_Y = WIN3D.position_Y;
                       float keep_WIN3D_position_Z = WIN3D.position_Z;
-                      float keep_WIN3D_position_S = WIN3D.position_S;
+                      float keep_WIN3D_position_T = WIN3D.position_T;
                       float keep_WIN3D_rotation_X = WIN3D.rotation_X; 
                       float keep_WIN3D_rotation_Y = WIN3D.rotation_Y;
                       float keep_WIN3D_rotation_Z = WIN3D.rotation_Z;
-                      float keep_WIN3D_rotation_S = WIN3D.rotation_S;
+                      float keep_WIN3D_rotation_T = WIN3D.rotation_T;
                       float keep_WIN3D_Zoom = WIN3D.Zoom;
     
                       {
@@ -45974,16 +45974,16 @@ void mouseClicked () {
                         float Camera_pX = WIN3D.position_X;
                         float Camera_pY = WIN3D.position_Y;
                         float Camera_pZ = WIN3D.position_Z;
-                        float Camera_pS = WIN3D.position_S;
+                        float Camera_pT = WIN3D.position_T;
                         float Camera_rX = WIN3D.rotation_X;
                         float Camera_rY = WIN3D.rotation_Y;
                         float Camera_rZ = WIN3D.rotation_Z;
-                        float Camera_rS = WIN3D.rotation_S;
+                        float Camera_rT = WIN3D.rotation_T;
                         float Camera_ZOOM = WIN3D.Zoom;
     
                         int Camera_type = WIN3D.ViewType;
     
-                        allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
+                        allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
     
                         WIN3D.update = true;
                       }  
@@ -45994,11 +45994,11 @@ void mouseClicked () {
                       WIN3D.position_X = keep_WIN3D_position_X; 
                       WIN3D.position_Y = keep_WIN3D_position_Y;
                       WIN3D.position_Z = keep_WIN3D_position_Z;
-                      WIN3D.position_S = keep_WIN3D_position_S;
+                      WIN3D.position_T = keep_WIN3D_position_T;
                       WIN3D.rotation_X = keep_WIN3D_rotation_X; 
                       WIN3D.rotation_Y = keep_WIN3D_rotation_Y;
                       WIN3D.rotation_Z = keep_WIN3D_rotation_Z;
-                      WIN3D.rotation_S = keep_WIN3D_rotation_S;
+                      WIN3D.rotation_T = keep_WIN3D_rotation_T;
                       WIN3D.Zoom = keep_WIN3D_Zoom;
                     }
                   }
@@ -57358,14 +57358,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("CAMERA")) {
     if (parts.length > 1) {
       int t = 1;
-      float x = 0;
-      float y = 0;
-      float z = 0;
-      float s = 1;
+      float px = 0;
+      float py = 0;
+      float pz = 0;
+      float pt = 1;
       float rx = 0;
       float ry = 0;
       float rz = 0;
-      float rs = 5;
+      float rt = 5;
       float a = 60;
       
       for (int q = 1; q < parts.length; q++) {
@@ -57373,19 +57373,19 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         if (parameters.length > 1) {
           String low_case = parameters[0].toLowerCase();
                if (low_case.equals("t")) t = int(parameters[1]);
-          else if (low_case.equals("x")) x = float(parameters[1]);
-          else if (low_case.equals("y")) y = float(parameters[1]);
-          else if (low_case.equals("z")) z = float(parameters[1]);
-          else if (low_case.equals("s")) s = float(parameters[1]);
+          else if (low_case.equals("px")) px = float(parameters[1]);
+          else if (low_case.equals("py")) py = float(parameters[1]);
+          else if (low_case.equals("pz")) pz = float(parameters[1]);
+          else if (low_case.equals("pt")) pt = float(parameters[1]);
           else if (low_case.equals("rx")) rx = float(parameters[1]);
           else if (low_case.equals("ry")) ry = float(parameters[1]);
           else if (low_case.equals("rz")) rz = float(parameters[1]);
-          else if (low_case.equals("rs")) rs = float(parameters[1]);
+          else if (low_case.equals("rt")) rt = float(parameters[1]);
           else if (low_case.equals("a")) a = float(parameters[1]);
         }
       }
-      if ((s != 0) && (a != 0)) {   
-        allModel3Ds.add_Camera(t, x, y, z, s, rx, ry, rz, rs, a);
+      if (a != 0) {   
+        allModel3Ds.add_Camera(t, px, py, pz, pt, rx, ry, rz, rt, a);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CAMERA; 
         UI_BAR_b.update = true;
@@ -57393,7 +57393,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Camera t=? x=? y=? z=? s=? rx=? ry=? rz=? a=?";
+      return_message = "Camera t=? px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=?";
       
       UI_set_to_Create_Camera();
       UI_BAR_b.hghlight("CAM");
