@@ -871,7 +871,8 @@ class solarchvision_Functions {
         }
       }
     }
-    
+
+
     // ascending sort:
     for (k = 0; k < allDiagonals.length; k++) { 
       for (q = k + 1; q < allDiagonals.length; q++) {
@@ -919,9 +920,9 @@ class solarchvision_Functions {
         
       }
     }
+
     
-    
-    int[][] faces = new int[0][n];
+    int[][] faces = new int[1][n];
     for (k = 0; k < n; k++) {
       faces[0][n] = k;
     }
@@ -34493,7 +34494,7 @@ class solarchvision_Model3Ds {
 
 
 
-  void triangulateFaceSelection () {  // exactly similar to optimizeFaceSelection but passing to a different function
+  void triangulateFaceSelection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
   
@@ -34513,39 +34514,108 @@ class solarchvision_Model3Ds {
         this.convert_Faces_to_allGroups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
+  
       }
   
-      for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) { 
+      int[] new_selection_Face_ids = userSelections.Face_ids;
+  
+      for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
   
         int OBJ_NUM = userSelections.Group_ids[o];
   
-        for (int q = userSelections.Face_ids.length - 1; q >= 0; q--) {
+        for (int q = userSelections.Face_ids.length - 1; q >= 0; q--) { 
   
           int f = userSelections.Face_ids[q];
   
           int startFace = allGroups.Faces[OBJ_NUM][0];
           int endFace = allGroups.Faces[OBJ_NUM][1];          
-
-          if ((startFace <= f) && (f <= endFace)) {
-            
-            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-            
-            for (int s = 0; s < allFaces.nodes[f].length; s++) {
-              int vNo = allFaces.nodes[f][s];
   
-              base_Vertices[s][0] = allPoints.getX(vNo);      
-              base_Vertices[s][1] = allPoints.getY(vNo);
-              base_Vertices[s][2] = allPoints.getZ(vNo);
-            }      
-            
-            int[][] new_Faces = funcs.reduceDegreePolygon(base_Vertices);            
-            
-//allFaces.nodes[f] = ?;   
+          if ((startFace <= f) && (f <= endFace)) {
+  
+            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
+              for (int j = 0; j < 2; j++) {
+                allGroups.Faces[i][j] += allFaces.nodes[f].length;
+              }
+            }  
+            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
+  
+            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
+  
+              if (new_selection_Face_ids[p] != 0) {
+  
+                if (new_selection_Face_ids[p] > f) {  
+                  new_selection_Face_ids[p] += allFaces.nodes[f].length;
+                }
+              }
+            }              
+
+  
+            int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
+            int[][] midList_Faces_nodes;
+            int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
+  
+  
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options;
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
+  
+            { 
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+  
+              for (int i = 0; i < allFaces.nodes[f].length; i++) {
+                
+                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
+                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
+                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
+                
+              }
+              
+              midList_Faces_nodes = funcs.reduceDegreePolygon(base_Vertices);
+              midList_Faces_options = new int[0][0];   
+         
+              current_Material = allFaces.getMaterial(f);
+              current_Tessellation = allFaces.getTessellation(f);
+              current_Layer = allFaces.getLayer(f);
+              current_Visibility = allFaces.getVisibility(f);                         
+              
+              for (int s = 0; s < midList_Faces_nodes.length; s++) { 
+
+                int[][] newFace_options = {
+                  {
+                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
+                  }
+                }; 
+  
+                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+              }
+  
+            }
+  
+            startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
+  
+            allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
+  
+            { // to avoid processing the faces twice they should be deleted from the list.
+              for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
+                userSelections.Face_ids[i] -= 1;
+              }              
+  
+              int[] startList = (int[]) subset(userSelections.Face_ids, 0, q);
+              int[] endList = (int[]) subset(userSelections.Face_ids, q + 1);
+  
+              userSelections.Face_ids = (int[]) concat(startList, endList);
+            }
           }
-          
         }
       }
   
+  
+  
+      userSelections.Face_ids = new_selection_Face_ids;
+  
+      current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
       userSelections.calculate_selection_BoundingBox();
@@ -52381,7 +52451,7 @@ class solarchvision_UI_BAR_a {
       "Extrude Face Edges", 
       "Extrude Curve Edges", 
       "Optimize Faces",
-      "Triangulate Faces",
+      //"Triangulate Faces",
       "Tessellation Triangular", 
       "Tessellate Rectangular", 
       "Tessellate Rows & Columns", 
