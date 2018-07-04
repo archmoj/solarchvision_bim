@@ -55288,7 +55288,7 @@ class solarchvision_UI_BAR_d {
               float x_start = x1 + (x2 - x1) * ((now_j) % 365) / 365.0;  
               float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
   
-              fill(191, 0, 0, 191);
+              fill(191, 0, 0, 127);
               noStroke();
   
               if (x_start <= x_end) { 
