@@ -3624,14 +3624,14 @@ class solarchvision_WIN3D {
   float coordinate_PX = 0;
   float coordinate_PY = 50; //10;
   float coordinate_PZ = -50; //50; 
-  float coordinate_PS = 1;
+  float coordinate_PS = 1.0;
   
   float coordinate_RX = 90; //75; //0; 
   float coordinate_RY = 0;
   float coordinate_RZ = 90; //0; //180; //135;
   float coordinate_RS = 5.0;
   
-  float Zoom = 60; // / (SOLARCHVISION_pixel_H / 300.0);
+  float Zoom = 60.0; // / (SOLARCHVISION_pixel_H / 300.0);
   
   int ViewType = 1; // 0: Ortho 1: Perspective
   
@@ -5139,14 +5139,15 @@ class solarchvision_WIN3D {
   
   void record_last3DViewport () {
   
-    allCameras.PPPSRRRF[this.currentCamera][0] = this.coordinate_PX;
-    allCameras.PPPSRRRF[this.currentCamera][1] = this.coordinate_PY;
-    allCameras.PPPSRRRF[this.currentCamera][2] = this.coordinate_PZ;
-    allCameras.PPPSRRRF[this.currentCamera][3] = this.coordinate_PS;
-    allCameras.PPPSRRRF[this.currentCamera][4] = this.coordinate_RX;
-    allCameras.PPPSRRRF[this.currentCamera][5] = this.coordinate_RY;
-    allCameras.PPPSRRRF[this.currentCamera][6] = this.coordinate_RZ;
-    allCameras.PPPSRRRF[this.currentCamera][7] = this.Zoom;
+    allCameras.options[this.currentCamera][0] = this.coordinate_PX;
+    allCameras.options[this.currentCamera][1] = this.coordinate_PY;
+    allCameras.options[this.currentCamera][2] = this.coordinate_PZ;
+    allCameras.options[this.currentCamera][3] = this.coordinate_PS;
+    allCameras.options[this.currentCamera][4] = this.coordinate_RX;
+    allCameras.options[this.currentCamera][5] = this.coordinate_RY;
+    allCameras.options[this.currentCamera][6] = this.coordinate_RZ;
+    allCameras.options[this.currentCamera][7] = this.coordinate_RS;
+    allCameras.options[this.currentCamera][8] = this.Zoom;
   
     allCameras.Type[this.currentCamera] = this.ViewType;
   }  
@@ -5154,14 +5155,15 @@ class solarchvision_WIN3D {
   
   void apply_currentCamera () {
   
-    this.coordinate_PX = allCameras.PPPSRRRF[this.currentCamera][0];
-    this.coordinate_PY = allCameras.PPPSRRRF[this.currentCamera][1];
-    this.coordinate_PZ = allCameras.PPPSRRRF[this.currentCamera][2];
-    this.coordinate_PS = allCameras.PPPSRRRF[this.currentCamera][3];
-    this.coordinate_RX = allCameras.PPPSRRRF[this.currentCamera][4];
-    this.coordinate_RY = allCameras.PPPSRRRF[this.currentCamera][5];
-    this.coordinate_RZ = allCameras.PPPSRRRF[this.currentCamera][6];
-    this.Zoom = allCameras.PPPSRRRF[this.currentCamera][7];
+    this.coordinate_PX = allCameras.options[this.currentCamera][0];
+    this.coordinate_PY = allCameras.options[this.currentCamera][1];
+    this.coordinate_PZ = allCameras.options[this.currentCamera][2];
+    this.coordinate_PS = allCameras.options[this.currentCamera][3];
+    this.coordinate_RX = allCameras.options[this.currentCamera][4];
+    this.coordinate_RY = allCameras.options[this.currentCamera][5];
+    this.coordinate_RZ = allCameras.options[this.currentCamera][6];
+    this.coordinate_RS = allCameras.options[this.currentCamera][7];
+    this.Zoom = allCameras.options[this.currentCamera][8];
   
     this.ViewType = allCameras.Type[this.currentCamera];
   }  
@@ -15705,18 +15707,19 @@ class solarchvision_Selections {
   
         if (n < allCameras.num) {
   
-          float Camera_X = allCameras.PPPSRRRF[n][0];
-          float Camera_Y = allCameras.PPPSRRRF[n][1];
-          float Camera_Z = allCameras.PPPSRRRF[n][2];
-          float Camera_S = allCameras.PPPSRRRF[n][3];
-          float Camera_RX = allCameras.PPPSRRRF[n][4];
-          float Camera_RY = allCameras.PPPSRRRF[n][5];
-          float Camera_RZ = allCameras.PPPSRRRF[n][6];
-          float Camera_ZOOM = allCameras.PPPSRRRF[n][7];
+          float Camera_pX = allCameras.options[n][0];
+          float Camera_pY = allCameras.options[n][1];
+          float Camera_pZ = allCameras.options[n][2];
+          float Camera_pS = allCameras.options[n][3];
+          float Camera_rX = allCameras.options[n][4];
+          float Camera_rY = allCameras.options[n][5];
+          float Camera_rZ = allCameras.options[n][6];
+          float Camera_rS = allCameras.options[n][7];
+          float Camera_ZOOM = allCameras.options[n][8];
   
-          int Camera_Type = allCameras.Type[n];
+          int Camera_type = allCameras.Type[n];
   
-          float[][] ImageVertex = allCameras.getCorners(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+          float[][] ImageVertex = allCameras.getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
   
           // the first vertex is the Camera point
           x = ImageVertex[0][0]; 
@@ -17042,9 +17045,9 @@ class solarchvision_Selections {
   
       int f = this.Camera_ids[q];
   
-      allCameras.PPPSRRRF[f][0] += dx; 
-      allCameras.PPPSRRRF[f][1] += dy;
-      allCameras.PPPSRRRF[f][2] += dz;
+      allCameras.options[f][0] += dx; 
+      allCameras.options[f][1] += dy;
+      allCameras.options[f][2] += dz;
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
@@ -17061,22 +17064,22 @@ class solarchvision_Selections {
   
       int f = this.Camera_ids[q];
   
-      float x = allCameras.PPPSRRRF[f][0] - x0; 
-      float y = allCameras.PPPSRRRF[f][1] - y0; 
-      float z = allCameras.PPPSRRRF[f][2] - z0;
+      float x = allCameras.options[f][0] - x0; 
+      float y = allCameras.options[f][1] - y0; 
+      float z = allCameras.options[f][2] - z0;
   
       if (the_Vector == 2) {
-        allCameras.PPPSRRRF[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-        allCameras.PPPSRRRF[f][1] = y0 + (x * sin(r) + y * cos(r));
-        allCameras.PPPSRRRF[f][2] = z0 + (z);
+        allCameras.options[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+        allCameras.options[f][1] = y0 + (x * sin(r) + y * cos(r));
+        allCameras.options[f][2] = z0 + (z);
       } else if (the_Vector == 1) {
-        allCameras.PPPSRRRF[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-        allCameras.PPPSRRRF[f][1] = y0 + (y);
-        allCameras.PPPSRRRF[f][2] = z0 + (z * cos(r) - x * sin(r));
+        allCameras.options[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+        allCameras.options[f][1] = y0 + (y);
+        allCameras.options[f][2] = z0 + (z * cos(r) - x * sin(r));
       } else if (the_Vector == 0) {
-        allCameras.PPPSRRRF[f][0] = x0 + (x); 
-        allCameras.PPPSRRRF[f][1] = y0 + (y * cos(r) - z * sin(r));
-        allCameras.PPPSRRRF[f][2] = z0 + (y * sin(r) + z * cos(r));
+        allCameras.options[f][0] = x0 + (x); 
+        allCameras.options[f][1] = y0 + (y * cos(r) - z * sin(r));
+        allCameras.options[f][2] = z0 + (y * sin(r) + z * cos(r));
       }    
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
@@ -17095,13 +17098,13 @@ class solarchvision_Selections {
   
       int f = this.Camera_ids[q];
   
-      float x = allCameras.PPPSRRRF[f][0] - x0; 
-      float y = allCameras.PPPSRRRF[f][1] - y0; 
-      float z = allCameras.PPPSRRRF[f][2] - z0;
+      float x = allCameras.options[f][0] - x0; 
+      float y = allCameras.options[f][1] - y0; 
+      float z = allCameras.options[f][2] - z0;
   
-      allCameras.PPPSRRRF[f][0] = x0 + sx * x; 
-      allCameras.PPPSRRRF[f][1] = y0 + sy * y;
-      allCameras.PPPSRRRF[f][2] = z0 + sz * z;
+      allCameras.options[f][0] = x0 + sx * x; 
+      allCameras.options[f][1] = y0 + sy * y;
+      allCameras.options[f][2] = z0 + sz * z;
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
@@ -30737,19 +30740,19 @@ class solarchvision_Model3Ds {
   
   
   
-  void add_Camera (int n, float x, float y, float z, float s, float rx, float ry, float rz, float f) {
+  void add_Camera (int n, float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f) {
   
-    int[] TempCamera_Type = {
+    int[] TempCamera_type = {
       n
     }; 
-    allCameras.Type = concat(allCameras.Type, TempCamera_Type);
+    allCameras.Type = concat(allCameras.Type, TempCamera_type);
   
-    float[][] TempCamera_PPPRRRF = {
+    float[][] TempCamera_options = {
       {
-        x, y, z, s, rx, ry, rz, f
+        x, y, z, s, rx, ry, rz, rs, f
       }
     };
-    allCameras.PPPSRRRF = (float[][]) concat(allCameras.PPPSRRRF, TempCamera_PPPRRRF);
+    allCameras.options = (float[][]) concat(allCameras.options, TempCamera_options);
   
     allCameras.num += 1;
   }
@@ -31189,18 +31192,19 @@ class solarchvision_Model3Ds {
   
         int OBJ_NUM = userSelections.Camera_ids[o];
   
-        float Camera_X = allCameras.PPPSRRRF[OBJ_NUM][0];
-        float Camera_Y = allCameras.PPPSRRRF[OBJ_NUM][1];
-        float Camera_Z = allCameras.PPPSRRRF[OBJ_NUM][2];
-        float Camera_S = allCameras.PPPSRRRF[OBJ_NUM][3];
-        float Camera_RX = allCameras.PPPSRRRF[OBJ_NUM][4];
-        float Camera_RY = allCameras.PPPSRRRF[OBJ_NUM][5];
-        float Camera_RZ = allCameras.PPPSRRRF[OBJ_NUM][6];
-        float Camera_ZOOM = allCameras.PPPSRRRF[OBJ_NUM][7];
+        float Camera_pX = allCameras.options[OBJ_NUM][0];
+        float Camera_pY = allCameras.options[OBJ_NUM][1];
+        float Camera_pZ = allCameras.options[OBJ_NUM][2];
+        float Camera_pS = allCameras.options[OBJ_NUM][3];
+        float Camera_rX = allCameras.options[OBJ_NUM][4];
+        float Camera_rY = allCameras.options[OBJ_NUM][5];
+        float Camera_rZ = allCameras.options[OBJ_NUM][6];
+        float Camera_rS = allCameras.options[OBJ_NUM][7];
+        float Camera_ZOOM = allCameras.options[OBJ_NUM][8];
   
-        int Camera_Type = allCameras.Type[OBJ_NUM];
+        int Camera_type = allCameras.Type[OBJ_NUM];
   
-        this.add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+        this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
       }
   
       // selecting new objetcs
@@ -31897,10 +31901,10 @@ class solarchvision_Model3Ds {
         int OBJ_NUM = userSelections.Camera_ids[o];
   
         {
-          float[][] startList = (float[][]) subset(allCameras.PPPSRRRF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allCameras.PPPSRRRF, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allCameras.options, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allCameras.options, OBJ_NUM + 1);
   
-          allCameras.PPPSRRRF = (float[][]) concat(startList, endList);
+          allCameras.options = (float[][]) concat(startList, endList);
         }
   
         {
@@ -38221,7 +38225,7 @@ class solarchvision_Model3Ds {
   
   void delete_allCameras () {
   
-    allCameras.PPPSRRRF = new float [0][8]; 
+    allCameras.options = new float [0][8]; 
   
     allCameras.Type = new int [0];
   
@@ -38232,15 +38236,16 @@ class solarchvision_Model3Ds {
   
   void add_veryFirstCamera () {
     
-    allCameras.PPPSRRRF = new float [1][8]; 
-    allCameras.PPPSRRRF[0][0] = WIN3D.coordinate_PX;
-    allCameras.PPPSRRRF[0][1] = WIN3D.coordinate_PY;
-    allCameras.PPPSRRRF[0][2] = WIN3D.coordinate_PZ;
-    allCameras.PPPSRRRF[0][3] = WIN3D.coordinate_PS;
-    allCameras.PPPSRRRF[0][4] = WIN3D.coordinate_RX;
-    allCameras.PPPSRRRF[0][5] = WIN3D.coordinate_RY;
-    allCameras.PPPSRRRF[0][6] = WIN3D.coordinate_RZ;
-    allCameras.PPPSRRRF[0][7] = WIN3D.Zoom;
+    allCameras.options = new float [1][8]; 
+    allCameras.options[0][0] = WIN3D.coordinate_PX;
+    allCameras.options[0][1] = WIN3D.coordinate_PY;
+    allCameras.options[0][2] = WIN3D.coordinate_PZ;
+    allCameras.options[0][3] = WIN3D.coordinate_PS;
+    allCameras.options[0][4] = WIN3D.coordinate_RX;
+    allCameras.options[0][5] = WIN3D.coordinate_RY;
+    allCameras.options[0][6] = WIN3D.coordinate_RZ;
+    allCameras.options[0][7] = WIN3D.coordinate_RS;
+    allCameras.options[0][8] = WIN3D.Zoom;
   
     allCameras.Type = new int [1];
     allCameras.Type[0] = WIN3D.ViewType;  
@@ -38485,9 +38490,9 @@ class solarchvision_Cameras {
   
   boolean displayAll = false;
   
-  float[][] PPPSRRRF = {
+  float[][] options = {
     {
-      WIN3D.coordinate_PX, WIN3D.coordinate_PY, WIN3D.coordinate_PZ, WIN3D.coordinate_PS, WIN3D.coordinate_RX, WIN3D.coordinate_RY, WIN3D.coordinate_RZ, WIN3D.Zoom
+      WIN3D.coordinate_PX, WIN3D.coordinate_PY, WIN3D.coordinate_PZ, WIN3D.coordinate_PS, WIN3D.coordinate_RX, WIN3D.coordinate_RY, WIN3D.coordinate_RZ, WIN3D.coordinate_RS, WIN3D.Zoom
     }
   };
   int[] Type = {
@@ -38511,16 +38516,17 @@ class solarchvision_Cameras {
   
       for (int f = 0; f < this.num; f++) {
   
-        float Camera_X = this.PPPSRRRF[f][0];
-        float Camera_Y = this.PPPSRRRF[f][1];
-        float Camera_Z = this.PPPSRRRF[f][2];
-        float Camera_S = this.PPPSRRRF[f][3];
-        float Camera_RX = this.PPPSRRRF[f][4];
-        float Camera_RY = this.PPPSRRRF[f][5];
-        float Camera_RZ = this.PPPSRRRF[f][6];
-        float Camera_ZOOM = this.PPPSRRRF[f][7];
+        float Camera_pX = this.options[f][0];
+        float Camera_pY = this.options[f][1];
+        float Camera_pZ = this.options[f][2];
+        float Camera_pS = this.options[f][3];
+        float Camera_rX = this.options[f][4];
+        float Camera_rY = this.options[f][5];
+        float Camera_rZ = this.options[f][6];
+        float Camera_rS = this.options[f][7];
+        float Camera_ZOOM = this.options[f][8];
   
-        int Camera_Type = this.Type[f];
+        int Camera_type = this.Type[f];
   
         WIN3D.graphics.strokeWeight(1);
         WIN3D.graphics.stroke(0);
@@ -38528,7 +38534,7 @@ class solarchvision_Cameras {
   
         WIN3D.graphics.beginShape();
   
-        float[][] ImageVertex = getCorners(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+        float[][] ImageVertex = getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
   
         for (int q = 1; q <= 4; q++) {
   
@@ -38596,11 +38602,11 @@ class solarchvision_Cameras {
   }
   
   
-  float[][] getCorners (int Camera_Type, float Camera_X, float Camera_Y, float Camera_Z, float Camera_S, float Camera_RX, float Camera_RY, float Camera_RZ, float Camera_ZOOM) {
+  float[][] getCorners (int Camera_type, float Camera_pX, float Camera_pY, float Camera_pZ, float Camera_pS, float Camera_rX, float Camera_rY, float Camera_rZ, float Camera_rS, float Camera_ZOOM) {
   
     float[][] ImageVertex = new float [5][3];
   
-    float r = Camera_S * 5; // <<<<<<
+    float r = Camera_pS * 5; // <<<<<<
   
     float rx = r * funcs.sin_ang(0.5 * Camera_ZOOM) /  WIN3D.view_R;
     float ry = r * funcs.sin_ang(0.5 * Camera_ZOOM);  
@@ -38648,13 +38654,13 @@ class solarchvision_Cameras {
   
       {
   
-        WIN3D.coordinate_PX = Camera_X;
-        WIN3D.coordinate_PY = Camera_Y;
-        WIN3D.coordinate_PZ = Camera_Z;
-        WIN3D.coordinate_PS = Camera_S;
-        WIN3D.coordinate_RX = Camera_RX; 
-        WIN3D.coordinate_RY = Camera_RY;
-        WIN3D.coordinate_RZ = Camera_RZ;
+        WIN3D.coordinate_PX = Camera_pX;
+        WIN3D.coordinate_PY = Camera_pY;
+        WIN3D.coordinate_PZ = Camera_pZ;
+        WIN3D.coordinate_PS = Camera_pS;
+        WIN3D.coordinate_RX = Camera_rX; 
+        WIN3D.coordinate_RY = Camera_rY;
+        WIN3D.coordinate_RZ = Camera_rZ;
         WIN3D.Zoom = Camera_ZOOM;
   
         WIN3D.transform_3DViewport();
@@ -38664,11 +38670,11 @@ class solarchvision_Cameras {
         float z1 = rz * qz;
   
         float x2 = x1;
-        float y2 = y1 * funcs.cos_ang(Camera_RX) - z1 * funcs.sin_ang(Camera_RX);
-        float z2 = y1 * funcs.sin_ang(Camera_RX) + z1 * funcs.cos_ang(Camera_RX);
+        float y2 = y1 * funcs.cos_ang(Camera_rX) - z1 * funcs.sin_ang(Camera_rX);
+        float z2 = y1 * funcs.sin_ang(Camera_rX) + z1 * funcs.cos_ang(Camera_rX);
   
-        float x3 = x2 * funcs.cos_ang(Camera_RZ) - y2 * funcs.sin_ang(Camera_RZ);
-        float y3 = x2 * funcs.sin_ang(Camera_RZ) + y2 * funcs.cos_ang(Camera_RZ);
+        float x3 = x2 * funcs.cos_ang(Camera_rZ) - y2 * funcs.sin_ang(Camera_rZ);
+        float y3 = x2 * funcs.sin_ang(Camera_rZ) + y2 * funcs.cos_ang(Camera_rZ);
         float z3 = z2;
   
         x = WIN3D.CAM_x + x3;
@@ -38798,9 +38804,9 @@ class solarchvision_Cameras {
       XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < this.PPPSRRRF[i].length; j++) {
+      //for (int j = 0; j < this.options[i].length; j++) {
       for (int j = 0; j < 8; j++) { // x, y, z, s, rx, ry, rz, zoom
-        lineSTR += nf(this.PPPSRRRF[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(this.options[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
       lineSTR += nf(this.Type[i], 0);
@@ -38820,7 +38826,7 @@ class solarchvision_Cameras {
 
     int ni = parent.getInt("ni");
 
-    this.PPPSRRRF = new float [ni][8];
+    this.options = new float [ni][8];
     this.Type = new int [ni];
 
     this.num = ni;
@@ -38831,7 +38837,7 @@ class solarchvision_Cameras {
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
       for (int j = 0; j < 8; j++) {
-        this.PPPSRRRF[i][j] = float(parts[j]);
+        this.options[i][j] = float(parts[j]);
       }
 
       this.Type[i] = int(parts[8]);
@@ -43932,18 +43938,19 @@ void mouseClicked () {
 
             if (menu_option.equals("Viewport >> Camera")) {
 
-              float Camera_X = WIN3D.coordinate_PX;
-              float Camera_Y = WIN3D.coordinate_PY;
-              float Camera_Z = WIN3D.coordinate_PZ;
-              float Camera_S = WIN3D.coordinate_PS;
-              float Camera_RX = WIN3D.coordinate_RX;
-              float Camera_RY = WIN3D.coordinate_RY;
-              float Camera_RZ = WIN3D.coordinate_RZ;
+              float Camera_pX = WIN3D.coordinate_PX;
+              float Camera_pY = WIN3D.coordinate_PY;
+              float Camera_pZ = WIN3D.coordinate_PZ;
+              float Camera_pS = WIN3D.coordinate_PS;
+              float Camera_rX = WIN3D.coordinate_RX;
+              float Camera_rY = WIN3D.coordinate_RY;
+              float Camera_rZ = WIN3D.coordinate_RZ;
+              float Camera_rS = WIN3D.coordinate_RS;
               float Camera_ZOOM = WIN3D.Zoom;
 
-              int Camera_Type = WIN3D.ViewType;
+              int Camera_type = WIN3D.ViewType;
 
-              allModel3Ds.add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+              allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
 
               WIN3D.currentCamera = allCameras.num - 1;
               WIN3D.apply_currentCamera();
@@ -43955,14 +43962,15 @@ void mouseClicked () {
 
             if (menu_option.equals("Camera >> Viewport")) {
 
-              allCameras.PPPSRRRF[0][0] = allCameras.PPPSRRRF[WIN3D.currentCamera][0];
-              allCameras.PPPSRRRF[0][1] = allCameras.PPPSRRRF[WIN3D.currentCamera][1];
-              allCameras.PPPSRRRF[0][2] = allCameras.PPPSRRRF[WIN3D.currentCamera][2];
-              allCameras.PPPSRRRF[0][3] = allCameras.PPPSRRRF[WIN3D.currentCamera][3];
-              allCameras.PPPSRRRF[0][4] = allCameras.PPPSRRRF[WIN3D.currentCamera][4];
-              allCameras.PPPSRRRF[0][5] = allCameras.PPPSRRRF[WIN3D.currentCamera][5];
-              allCameras.PPPSRRRF[0][6] = allCameras.PPPSRRRF[WIN3D.currentCamera][6];
-              allCameras.PPPSRRRF[0][7] = allCameras.PPPSRRRF[WIN3D.currentCamera][7];
+              allCameras.options[0][0] = allCameras.options[WIN3D.currentCamera][0];
+              allCameras.options[0][1] = allCameras.options[WIN3D.currentCamera][1];
+              allCameras.options[0][2] = allCameras.options[WIN3D.currentCamera][2];
+              allCameras.options[0][3] = allCameras.options[WIN3D.currentCamera][3];
+              allCameras.options[0][4] = allCameras.options[WIN3D.currentCamera][4];
+              allCameras.options[0][5] = allCameras.options[WIN3D.currentCamera][5];
+              allCameras.options[0][6] = allCameras.options[WIN3D.currentCamera][6];
+              allCameras.options[0][7] = allCameras.options[WIN3D.currentCamera][7];
+              allCameras.options[0][8] = allCameras.options[WIN3D.currentCamera][8];
 
               allCameras.Type[0] = allCameras.Type[WIN3D.currentCamera];
 
@@ -45959,18 +45967,19 @@ void mouseClicked () {
     
                         WIN3D.reverseTransform_3DViewport();
     
-                        float Camera_X = WIN3D.coordinate_PX;
-                        float Camera_Y = WIN3D.coordinate_PY;
-                        float Camera_Z = WIN3D.coordinate_PZ;
-                        float Camera_S = WIN3D.coordinate_PS;
-                        float Camera_RX = WIN3D.coordinate_RX;
-                        float Camera_RY = WIN3D.coordinate_RY;
-                        float Camera_RZ = WIN3D.coordinate_RZ;
+                        float Camera_pX = WIN3D.coordinate_PX;
+                        float Camera_pY = WIN3D.coordinate_PY;
+                        float Camera_pZ = WIN3D.coordinate_PZ;
+                        float Camera_pS = WIN3D.coordinate_PS;
+                        float Camera_rX = WIN3D.coordinate_RX;
+                        float Camera_rY = WIN3D.coordinate_RY;
+                        float Camera_rZ = WIN3D.coordinate_RZ;
+                        float Camera_rS = WIN3D.coordinate_RS;
                         float Camera_ZOOM = WIN3D.Zoom;
     
-                        int Camera_Type = WIN3D.ViewType;
+                        int Camera_type = WIN3D.ViewType;
     
-                        allModel3Ds.add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+                        allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pS, Camera_rX, Camera_rY, Camera_rZ, Camera_rS, Camera_ZOOM);
     
                         WIN3D.update = true;
                       }  
@@ -57351,6 +57360,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       float rx = 0;
       float ry = 0;
       float rz = 0;
+      float rs = 5;
       float a = 60;
       
       for (int q = 1; q < parts.length; q++) {
@@ -57365,11 +57375,12 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (low_case.equals("rx")) rx = float(parameters[1]);
           else if (low_case.equals("ry")) ry = float(parameters[1]);
           else if (low_case.equals("rz")) rz = float(parameters[1]);
+          else if (low_case.equals("rs")) rs = float(parameters[1]);
           else if (low_case.equals("a")) a = float(parameters[1]);
         }
       }
       if ((s != 0) && (a != 0)) {   
-        allModel3Ds.add_Camera(t, x, y, z, s, rx, ry, rz, a);
+        allModel3Ds.add_Camera(t, x, y, z, s, rx, ry, rz, rs, a);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CAMERA; 
         UI_BAR_b.update = true;
