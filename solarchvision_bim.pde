@@ -3358,21 +3358,21 @@ class solarchvision_SHADE {
   }
   
   
-  float[] vertexRender_Vertex_Solar (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float[] vertexRender_Vertex_Solar (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
-    float _u = this.vertexU_Vertex_Solar(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+    float _u = this.vertexU_Vertex_Solar(VERTEX_now, PAL_type, PAL_direction, PAL_multiplier);
   
     float[] COL = {0,0,0,0}; // default color for undefined values 
   
     if (is_undefined_FLOAT(_u) == false) {   
-      COL = PAINT.getColorStyle(PAL_TYPE, _u);
+      COL = PAINT.getColorStyle(PAL_type, _u);
     }
   
     return COL;
   }
   
   
-  float vertexU_Vertex_Solar (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float vertexU_Vertex_Solar (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
     float val = this.get_SolarImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
   
@@ -3380,12 +3380,12 @@ class solarchvision_SHADE {
   
     if (is_undefined_FLOAT(val) == false) { 
   
-      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * val);
-      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * val);  
+      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * val);
+      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);  
     
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
+      if (PAL_direction == -1) _u = 1 - _u;
+      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_direction == 2) _u =  0.5 * _u;
     }
   
     return _u;
@@ -3429,66 +3429,66 @@ class solarchvision_SHADE {
   
   
   
-  float[] vertexRender_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float[] vertexRender_Vertex_Solid (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
-    float _u = this.vertexU_Vertex_Solid(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+    float _u = this.vertexU_Vertex_Solid(VERTEX_now, PAL_type, PAL_direction, PAL_multiplier);
   
-    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);     
+    float[] COL = PAINT.getColorStyle(PAL_type, _u);     
   
     return COL;
   }
   
   
-  float vertexU_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float vertexU_Vertex_Solid (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
     allSolidImpacts.Type = 0;
     float val = allSolidImpacts.get_Impact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
   
-    float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
+    float _u = 0.5 + 0.5 * (PAL_multiplier * val);
   
-    if (PAL_DIR == -1) _u = 1 - _u;
-    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-    if (PAL_DIR == 2) _u =  0.5 * _u;
+    if (PAL_direction == -1) _u = 1 - _u;
+    if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+    if (PAL_direction == 2) _u =  0.5 * _u;
   
     return _u;
   }
   
   
-  float[] vertexRender_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float[] vertexRender_Vertex_Elevation (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
-    float _u = this.vertexU_Vertex_Elevation(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+    float _u = this.vertexU_Vertex_Elevation(VERTEX_now, PAL_type, PAL_direction, PAL_multiplier);
   
-    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+    float[] COL = PAINT.getColorStyle(PAL_type, _u);  
   
     return COL;
   }
   
-  float vertexU_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float vertexU_Vertex_Elevation (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
-    float _u = 0.5 + 0.5 * (PAL_Multiplier * VERTEX_now[2]);
+    float _u = 0.5 + 0.5 * (PAL_multiplier * VERTEX_now[2]);
   
-    if (PAL_DIR == -1) _u = 1 - _u;
-    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-    if (PAL_DIR == 2) _u =  0.5 * _u;
+    if (PAL_direction == -1) _u = 1 - _u;
+    if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+    if (PAL_direction == 2) _u =  0.5 * _u;
   
     return _u;
   }
   
   
-  float[] vertexRender_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float[] vertexRender_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
-    float _u = this.vertexU_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+    float _u = this.vertexU_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
   
     float[] COL = {63,63,63,127}; // default color for undefined values 
   
     if (is_undefined_FLOAT(_u) == false) { 
-      COL = PAINT.getColorStyle(PAL_TYPE, _u);
+      COL = PAINT.getColorStyle(PAL_type, _u);
     }
   
     return COL;
   }
   
-  float vertexU_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  float vertexU_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
     PVector U = new PVector(VERTEX_next[0] - VERTEX_now[0], VERTEX_next[1] - VERTEX_now[1], VERTEX_next[2] - VERTEX_now[2]);
     PVector V = new PVector(VERTEX_prev[0] - VERTEX_now[0], VERTEX_prev[1] - VERTEX_now[1], VERTEX_prev[2] - VERTEX_now[2]);
@@ -3515,12 +3515,12 @@ class solarchvision_SHADE {
   
     if (is_undefined_FLOAT(_valuesSUM) == false) {
   
-      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * _valuesSUM);
+      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
   
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
+      if (PAL_direction == -1) _u = 1 - _u;
+      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_direction == 2) _u =  0.5 * _u;
     }
   
     return _u;
@@ -3528,66 +3528,66 @@ class solarchvision_SHADE {
   
   
   
-  int get_PAL_TYPE () {
+  int get_PAL_type () {
   
-    int PAL_TYPE = 0; 
+    int PAL_type = 0; 
   
     if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-      if (Impact_TYPE == Impact_ACTIVE) PAL_TYPE = allFaces.pallet_ACTIVE_CLR;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_TYPE = allFaces.pallet_PASSIVE_CLR;
+      if (Impact_TYPE == Impact_ACTIVE) PAL_type = allFaces.pallet_ACTIVE_CLR;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_type = allFaces.pallet_PASSIVE_CLR;
     }          
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_TYPE = allSolids.pallet_CLR;
+      PAL_type = allSolids.pallet_CLR;
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_TYPE = Land3D.pallet_CLR;
+      PAL_type = Land3D.pallet_CLR;
     }  
   
-    return PAL_TYPE;
+    return PAL_type;
   }
   
   
-  int get_PAL_DIR () {
+  int get_PAL_direction () {
   
-    int PAL_DIR = 1;
+    int PAL_direction = 1;
   
     if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-      if (Impact_TYPE == Impact_ACTIVE) PAL_DIR = allFaces.pallet_ACTIVE_DIR;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_DIR = allFaces.pallet_PASSIVE_DIR;
+      if (Impact_TYPE == Impact_ACTIVE) PAL_direction = allFaces.pallet_ACTIVE_DIR;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_direction = allFaces.pallet_PASSIVE_DIR;
     }              
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_DIR = allSolids.pallet_DIR;
+      PAL_direction = allSolids.pallet_DIR;
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_DIR = Land3D.pallet_DIR;
+      PAL_direction = Land3D.pallet_DIR;
     }  
   
-    return PAL_DIR;
+    return PAL_direction;
   }
   
   
-  float get_PAL_Multiplier () {
+  float get_PAL_multiplier () {
   
-    float PAL_Multiplier = 1; 
+    float PAL_multiplier = 1; 
   
     if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT; 
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT; 
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
     }              
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_Multiplier = allSolids.pallet_MLT;
+      PAL_multiplier = allSolids.pallet_MLT;
     }                  
   
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_Multiplier = Land3D.pallet_MLT;
+      PAL_multiplier = Land3D.pallet_MLT;
     }
   
-    return PAL_Multiplier;
+    return PAL_multiplier;
   }
 
   
@@ -3612,7 +3612,7 @@ class solarchvision_WIN3D {
   // width and height
   int dX = int(1.5 * SOLARCHVISION_H_Pixel);
   int dY = SOLARCHVISION_H_Pixel;
-  float R_view = float(dY) / float(dX);
+  float view_R = float(dY) / float(dX);
 
   float X_Coordinate = 0;
   float Y_Coordinate = 50; //10;
@@ -3664,7 +3664,7 @@ class solarchvision_WIN3D {
   
     if (this.ViewType == 1) {
   
-      float aspect = 1.0 / this.R_view;
+      float aspect = 1.0 / this.view_R;
   
       float zFar = this.CAM_dist * this.CAM_clipFar;
       float zNear = this.CAM_dist * this.CAM_clipNear;
@@ -3882,21 +3882,21 @@ class solarchvision_WIN3D {
   
     boolean draw_pal = false;
   
-    int PAL_TYPE = 0; 
-    int PAL_DIR = 1;
-    float PAL_Multiplier = 1; 
+    int PAL_type = 0; 
+    int PAL_direction = 1;
+    float PAL_multiplier = 1; 
   
     if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
   
       if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = allFaces.pallet_ACTIVE_CLR; 
-        PAL_DIR = allFaces.pallet_ACTIVE_DIR; 
-        PAL_Multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
+        PAL_type = allFaces.pallet_ACTIVE_CLR; 
+        PAL_direction = allFaces.pallet_ACTIVE_DIR; 
+        PAL_multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = allFaces.pallet_PASSIVE_CLR; 
-        PAL_DIR = allFaces.pallet_PASSIVE_DIR;
-        PAL_Multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
+        PAL_type = allFaces.pallet_PASSIVE_CLR; 
+        PAL_direction = allFaces.pallet_PASSIVE_DIR;
+        PAL_multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
       }   
   
       draw_pal = true;
@@ -3904,18 +3904,18 @@ class solarchvision_WIN3D {
   
     if (this.FacesShade == SHADE.Vertex_Elevation) {
   
-      PAL_TYPE = Land3D.pallet_CLR; 
-      PAL_DIR = Land3D.pallet_DIR; 
-      PAL_Multiplier = Land3D.pallet_MLT; 
+      PAL_type = Land3D.pallet_CLR; 
+      PAL_direction = Land3D.pallet_DIR; 
+      PAL_multiplier = Land3D.pallet_MLT; 
   
       draw_pal = true;
     }
   
     if (this.FacesShade == SHADE.Vertex_Solid) {
   
-      PAL_TYPE = allSolids.pallet_CLR; 
-      PAL_DIR = allSolids.pallet_DIR;
-      PAL_Multiplier = allSolids.pallet_MLT;
+      PAL_type = allSolids.pallet_CLR; 
+      PAL_direction = allSolids.pallet_DIR;
+      PAL_multiplier = allSolids.pallet_MLT;
   
       draw_pal = true;
     }          
@@ -3939,7 +3939,7 @@ class solarchvision_WIN3D {
   
       if (this.ViewType == 1) {
   
-        float aspect = 1.0 / this.R_view;
+        float aspect = 1.0 / this.view_R;
   
         float zFar = this.CAM_dist * 1000;
         float zNear = this.CAM_dist * 0.001;
@@ -3971,11 +3971,11 @@ class solarchvision_WIN3D {
           if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
         }
   
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
+        if (PAL_direction == -1) _u = 1 - _u;
+        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_direction == 2) _u =  0.5 * _u;
   
-        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u); 
+        float[] COL = PAINT.getColorStyle(PAL_type, _u); 
   
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -4003,16 +4003,16 @@ class solarchvision_WIN3D {
         this.graphics.textAlign(CENTER, CENTER);
   
         if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
-          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
   
         if (this.FacesShade == SHADE.Vertex_Elevation) {
-          this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
   
         if (this.FacesShade == SHADE.Vertex_Solid) {
-          this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+          this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         }
       }
   
@@ -4073,9 +4073,9 @@ class solarchvision_WIN3D {
 
         if (AERIAL_graphOption == 0) {
           //-----------------------------
-          int PAL_TYPE = 6; //12; 
-          int PAL_DIR = -1;
-          float PAL_Multiplier = 1.0 / 30.0;
+          int PAL_type = 6; //12; 
+          int PAL_direction = -1;
+          float PAL_multiplier = 1.0 / 30.0;
           //-----------------------------
 
           for (int o = 0; o < GRIB2_maxScenarios; o++) {
@@ -4084,12 +4084,12 @@ class solarchvision_WIN3D {
 
             if (is_undefined_FLOAT(_val) == false) {
 
-              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
+              float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
+              if (PAL_direction == -1) _u = 1 - _u;
+              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_direction == 2) _u =  0.5 * _u;
 
-              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
+              float[] COL = PAINT.getColorStyle(PAL_type, _u);             
 
               this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
               this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
@@ -4116,9 +4116,9 @@ class solarchvision_WIN3D {
         if (AERIAL_graphOption == 1) {
 
           //-----------------------------
-          int PAL_TYPE = 1;//12; 
-          int PAL_DIR = 1;//-1;
-          float PAL_Multiplier = 0.1;//1.0 / 30.0;
+          int PAL_type = 1;//12; 
+          int PAL_direction = 1;//-1;
+          float PAL_multiplier = 0.1;//1.0 / 30.0;
           //-----------------------------
 
           for (int o = 0; o < GRIB2_maxScenarios; o++) {
@@ -4150,12 +4150,12 @@ class solarchvision_WIN3D {
               float ox = -2 * (R * funcs.cos_ang(90 - teta)) / 3.0;
               float oy = -2 * (R * -funcs.sin_ang(90 - teta)) / 3.0;            
 
-              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
+              float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
+              if (PAL_direction == -1) _u = 1 - _u;
+              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_direction == 2) _u =  0.5 * _u;
 
-              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
+              float[] COL = PAINT.getColorStyle(PAL_type, _u);             
 
               this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
               //this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);           
@@ -5616,9 +5616,9 @@ class solarchvision_WORLD {
   
           if (AERIAL_graphOption == 0) {
             //-----------------------------
-            int PAL_TYPE = 6; //12; 
-            int PAL_DIR = -1;
-            float PAL_Multiplier = 1.0 / 30.0;
+            int PAL_type = 6; //12; 
+            int PAL_direction = -1;
+            float PAL_multiplier = 1.0 / 30.0;
             //-----------------------------
   
             for (int _turn = 1; _turn <= 2; _turn++) {
@@ -5628,12 +5628,12 @@ class solarchvision_WORLD {
   
                 if (is_undefined_FLOAT(_val) == false) {
   
-                  float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-                  if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 * _u;
+                  float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
+                  if (PAL_direction == -1) _u = 1 - _u;
+                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                  if (PAL_direction == 2) _u =  0.5 * _u;
   
-                  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
+                  float[] COL = PAINT.getColorStyle(PAL_type, _u);             
   
                   if (_turn == 1) {
                     this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -5647,7 +5647,7 @@ class solarchvision_WORLD {
                     this.graphics.textSize(MessageSize * this.ImageScale);
                     this.graphics.textAlign(CENTER, CENTER);
   
-                    _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+                    _u = 0.5 + 0.5 * (PAL_multiplier * _val);
   
                     if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
                       this.graphics.stroke(127);
@@ -5668,9 +5668,9 @@ class solarchvision_WORLD {
           if (AERIAL_graphOption == 1) {
   
             //-----------------------------
-            int PAL_TYPE = 1;//12; 
-            int PAL_DIR = 1;//-1;
-            float PAL_Multiplier = 0.1;//1.0 / 30.0;
+            int PAL_type = 1;//12; 
+            int PAL_direction = 1;//-1;
+            float PAL_multiplier = 0.1;//1.0 / 30.0;
             //-----------------------------
   
             for (int _turn = 1; _turn <= 2; _turn++) {
@@ -5703,12 +5703,12 @@ class solarchvision_WORLD {
                   float ox = -2 * (R * funcs.cos_ang(90 - teta)) / 3.0 * this.ImageScale;
                   float oy = -2 * (R * -funcs.sin_ang(90 - teta)) / 3.0 * this.ImageScale;            
   
-                  float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-                  if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 * _u;
+                  float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
+                  if (PAL_direction == -1) _u = 1 - _u;
+                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                  if (PAL_direction == 2) _u =  0.5 * _u;
   
-                  float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);             
+                  float[] COL = PAINT.getColorStyle(PAL_type, _u);             
   
                   if (_turn == 1) {
                     this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -5723,7 +5723,7 @@ class solarchvision_WORLD {
                     this.graphics.textSize(MessageSize * this.ImageScale);
                     this.graphics.textAlign(CENTER, CENTER);
   
-                    _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+                    _u = 0.5 + 0.5 * (PAL_multiplier * _val);
   
                     if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
                       this.graphics.stroke(127);
@@ -6222,8 +6222,8 @@ class solarchvision_STUDY {
   int cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_H_Pixel;
   int dX = 2 * SOLARCHVISION_W_Pixel;
   int dY = 1 * SOLARCHVISION_H_Pixel;
-  float R_view = float(dY) / float(dX);
-  float S_view;
+  float view_R = float(dY) / float(dX);
+  float view_S;
   
   boolean update = true;
   boolean include = true;
@@ -6770,15 +6770,15 @@ class solarchvision_STUDY {
         this.graphics.stroke(0);
         this.graphics.fill(0);
       }
-      this.graphics.line(this.j_Start * sx_Plot, -i * this.S_view, this.j_End * sx_Plot, -i * this.S_view); 
+      this.graphics.line(this.j_Start * sx_Plot, -i * this.view_S, this.j_End * sx_Plot, -i * this.view_S); 
   
       if ((i >= 0) || (this.V_belowLine != 0)) {  
         this.graphics.stroke(0);
         this.graphics.fill(0);
         this.graphics.textSize(sx_Plot * 0.200 / this.U_scale);
         this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.text(((nf(-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1), 0, 1)) + CurrentLayer_unit), -5, -i * this.S_view);
-        //this.graphics.text(((String.valueOf(int(-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1)))) + CurrentLayer_unit), -5, -i * this.S_view);
+        this.graphics.text(((nf(-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1), 0, 1)) + CurrentLayer_unit), -5, -i * this.view_S);
+        //this.graphics.text(((String.valueOf(int(-this.V_offset + funcs.roundTo(i / this.V_scale, 0.1)))) + CurrentLayer_unit), -5, -i * this.view_S);
       }
     }
   
@@ -6789,9 +6789,9 @@ class solarchvision_STUDY {
         int j_step = 3;
         for (int j = j_step; j <= 24; j += j_step) {
           if (j != 24) {
-            this.graphics.line((i + j / 24.0) * sx_Plot, -5 * this.S_view, (i + j / 24.0) * sx_Plot, 5 * this.S_view);
+            this.graphics.line((i + j / 24.0) * sx_Plot, -5 * this.view_S, (i + j / 24.0) * sx_Plot, 5 * this.view_S);
           } else {
-            this.graphics.line((i + j / 24.0) * sx_Plot, -105 * this.S_view, (i + j / 24.0) * sx_Plot, (5 - Shift_DOWN) * this.S_view);
+            this.graphics.line((i + j / 24.0) * sx_Plot, -105 * this.view_S, (i + j / 24.0) * sx_Plot, (5 - Shift_DOWN) * this.view_S);
           }
         }
       }
@@ -6985,13 +6985,13 @@ class solarchvision_STUDY {
   
   void drawProbs (int i, int j, float[] valuesSUM, float[] valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
-    this.Pix = (100.0 * this.S_view / this.LevelPix);
+    this.Pix = (100.0 * this.view_S / this.LevelPix);
 
-    int PAL_TYPE = this.pallet_PROB_CLR; 
-    int PAL_DIR = this.pallet_PROB_DIR;  
-    float PAL_Multiplier = this.pallet_PROB_MLT;
+    int PAL_type = this.pallet_PROB_CLR; 
+    int PAL_direction = this.pallet_PROB_DIR;  
+    float PAL_multiplier = this.pallet_PROB_MLT;
   
-    float txt_max_width = (this.sumInterval * this.S_view * 100 / 24.0) * this.U_scale;
+    float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = this.Pix;
     if (txt_max_height > txt_max_width) {
       this.graphics.textSize(0.9 * txt_max_width);
@@ -7055,19 +7055,19 @@ class solarchvision_STUDY {
           //if (int(funcs.roundTo(100 * prob_V, 1)) > 0) {
           if ((100 * prob_V) > 0) {
   
-            float _u = PAL_Multiplier * prob_V;
+            float _u = PAL_multiplier * prob_V;
   
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
+            if (PAL_direction == -1) _u = 1 - _u;
+            if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_direction == 2) _u =  0.5 * _u;
 
-            float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+            float[] COL = PAINT.getColorStyle(PAL_type, _u);
   
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
             this.graphics.strokeWeight(this.T_scale * 0); 
-            this.graphics.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n - 0.5) * this.Pix * -sy_Plot), -(this.sumInterval * this.S_view * 100 / 24.0) * this.U_scale, this.Pix * -sy_Plot); 
+            this.graphics.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n - 0.5) * this.Pix * -sy_Plot), -(this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale, this.Pix * -sy_Plot); 
   
             if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
               this.graphics.stroke(127);
@@ -7078,7 +7078,7 @@ class solarchvision_STUDY {
               this.graphics.fill(255);
               this.graphics.strokeWeight(2);
             }   
-            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.S_view * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix * sy_Plot) - 0.05 * txt_max_height);
+            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale, -((min_v + n) * this.Pix * sy_Plot) - 0.05 * txt_max_height);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
@@ -7100,19 +7100,19 @@ class solarchvision_STUDY {
     for (int q = 0; q < 11; q++) {
       float prob_V = 10 * q / 100.0;
 
-      float _u = PAL_Multiplier * prob_V;
+      float _u = PAL_multiplier * prob_V;
   
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
+      if (PAL_direction == -1) _u = 1 - _u;
+      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_direction == 2) _u =  0.5 * _u;
   
-      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+      float[] COL = PAINT.getColorStyle(PAL_type, _u);  
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);     
   
       this.graphics.strokeWeight(0); 
 
-      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_view, pal_oy * this.S_view, (pal_length / 11.0) * this.S_view, 20 * this.S_view);
+      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
   
       if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
         this.graphics.stroke(127);
@@ -7124,18 +7124,18 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(2);
       }   
   
-      this.graphics.textSize(15.0 * this.S_view);
+      this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
-      this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
+      this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
     }
   }
   
   
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   
-    int PAL_TYPE = this.pallet_SORT_CLR; 
-    int PAL_DIR = this.pallet_SORT_DIR;  
-    float PAL_Multiplier = this.pallet_SORT_MLT;
+    int PAL_type = this.pallet_SORT_CLR; 
+    int PAL_direction = this.pallet_SORT_DIR;  
+    float PAL_multiplier = this.pallet_SORT_MLT;
   
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = 0;
@@ -7158,13 +7158,13 @@ class solarchvision_STUDY {
     for (int l = 0; l < (num_sortedvaluesAB - 1); l++) {
       float sort_V = 1.1 * (0.5 - ((num_sortedvaluesAB - (l + 1)) / float(num_sortedvaluesAB)));
   
-      float _u = 0.5 + 0.5 * (PAL_Multiplier * sort_V);
+      float _u = 0.5 + 0.5 * (PAL_multiplier * sort_V);
   
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
+      if (PAL_direction == -1) _u = 1 - _u;
+      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_direction == 2) _u =  0.5 * _u;
   
-      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_type, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
   
@@ -7200,20 +7200,20 @@ class solarchvision_STUDY {
     for (int q = 0; q < 9; q++) {
       float sort_V = 1.1 * (q - 4) / 8.0;
   
-      float _u = 0.5 + 0.5 * (PAL_Multiplier * sort_V);
+      float _u = 0.5 + 0.5 * (PAL_multiplier * sort_V);
   
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
+      if (PAL_direction == -1) _u = 1 - _u;
+      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_direction == 2) _u =  0.5 * _u;
   
-      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+      float[] COL = PAINT.getColorStyle(PAL_type, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);     
 
       //this.graphics.strokeWeight(0.0);
       this.graphics.stroke(255); 
       this.graphics.strokeWeight(0.5); 
-      this.graphics.rect((pal_ox + q * (pal_length / 9.0)) * this.S_view, pal_oy * this.S_view, (pal_length / 9.0) * this.S_view, 20 * this.S_view);
+      this.graphics.rect((pal_ox + q * (pal_length / 9.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 9.0) * this.view_S, 20 * this.view_S);
   
       if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
         this.graphics.stroke(127);
@@ -7225,9 +7225,9 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(2);
       }   
   
-      this.graphics.textSize(15.0 * this.S_view);
+      this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
-      this.graphics.text(_txt[q], (25 + pal_ox + q * (pal_length / 9.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
+      this.graphics.text(_txt[q], (25 + pal_ox + q * (pal_length / 9.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
     }
   }
   
@@ -7659,11 +7659,11 @@ class solarchvision_STUDY {
         for (int p = 0; p < 3; p++) { 
           this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
   
-          SOLARCHVISION_PlotIMPACT(0, (175 - p * 350) * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+          SOLARCHVISION_PlotIMPACT(0, (175 - p * 350) * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
         }
         this.ImpactLayer = pre_STUDY_ImpactLayer;
   
-        this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
       } else {
   
         if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
@@ -7678,16 +7678,16 @@ class solarchvision_STUDY {
           this.j_End = 2;
           this.U_scale = 18.0 / float(this.j_End - this.j_Start);
   
-          SOLARCHVISION_PlotIMPACT(0, 0 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+          SOLARCHVISION_PlotIMPACT(0, 0 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
           TIME.beginDay = keep_TIME_BeginDay;
           this.perDays = keep_STUDY_perDays;
           this.j_End = keep_STUDY_j_End;
           this.U_scale = keep_STUDY_U_scale;
         } else {
-          SOLARCHVISION_PlotIMPACT(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+          SOLARCHVISION_PlotIMPACT(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
-          this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+          this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
         }
       }
     }  
@@ -7700,28 +7700,28 @@ class solarchvision_STUDY {
         int keep_TIME_BeginDay = TIME.beginDay;
         int delta = 4;
   
-        this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         TIME.date -= delta;
         TIME.updateDate();
         TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
         update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
         TIME.beginDay = (TIME.beginDay + delta) % 365;
-        this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         TIME.date -= delta;
         TIME.updateDate();
         TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
         update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
         TIME.beginDay = (TIME.beginDay + 2 * delta) % 365;
-        this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         TIME.date -= delta;
         TIME.updateDate();
         TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
         update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
         TIME.beginDay = (TIME.beginDay + 3 * delta) % 365;
-        this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         TIME.date = pre_TIME_Date;
         TIME.updateDate();
@@ -7741,13 +7741,13 @@ class solarchvision_STUDY {
       this.displayNormals = false;
       this.displayRaws = true;
       this.displayProbs = true;
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false; 
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       CurrentDataSource = dataID_CLIMATE_CWEEDS;
   
@@ -7756,13 +7756,13 @@ class solarchvision_STUDY {
       this.displayRaws = true;
       this.displayProbs = true;
   
-      this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false; 
-      this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       CurrentDataSource = pre_CurrentDataSource;
     }
@@ -7770,7 +7770,7 @@ class solarchvision_STUDY {
   
     if (this.plotSetup == 0) {
   
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
     }
   
@@ -7782,19 +7782,19 @@ class solarchvision_STUDY {
   
       Develop_Option = DEV_OP_01;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       Develop_Option = DEV_OP_02;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       Develop_Option = DEV_OP_03;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       Develop_Option = DEV_OP_04;
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       Develop_Option = pre_Develop_Option;
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
@@ -7805,22 +7805,22 @@ class solarchvision_STUDY {
       if (CurrentLayer_id != LAYER_developed.id) {
   
   
-        this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         DevelopLayer_id = CurrentLayer_id;
         changeCurrentLayerTo(LAYER_developed.id);
   
         Develop_Option = DEV_OP_06; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         Develop_Option = DEV_OP_07; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         Develop_Option = DEV_OP_08; 
         SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+        this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
         changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
       }
@@ -7830,16 +7830,16 @@ class solarchvision_STUDY {
     if (this.plotSetup == 3) {
   
       changeCurrentLayerTo(LAYER_windspd200hPa.id);
-      this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_pressure.id);
-      this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_heightp500hPa.id);
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_thicknesses_1000_500.id);
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
     }
@@ -7848,16 +7848,16 @@ class solarchvision_STUDY {
     if (this.plotSetup == 4) {
   
       changeCurrentLayerTo(LAYER_windspd.id);
-      this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_precipitation.id);
-      this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_relhum.id);
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_drybulb.id);
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
     }  
@@ -7866,20 +7866,20 @@ class solarchvision_STUDY {
     if (this.plotSetup == 5) {
   
       changeCurrentLayerTo(LAYER_dirnorrad.id);
-      this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_difhorrad.id);
-      this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_developed.id);
       Develop_Option = DEV_OP_01; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_developed.id);
       Develop_Option = DEV_OP_03; 
       SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
       Develop_Option = pre_Develop_Option;
@@ -7889,16 +7889,16 @@ class solarchvision_STUDY {
     if (this.plotSetup == 6) {
   
       this.skyScenario = 4;
-      this.plotHourly(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.skyScenario = 3;
-      this.plotHourly(0, -175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, -175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.skyScenario = 2;
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.skyScenario = 1;
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.skyScenario = pre_STUDY_SkyScenario;
     }  
@@ -7910,19 +7910,19 @@ class solarchvision_STUDY {
       this.displayNormals = false;
       this.displayRaws = true;
       this.displayProbs = true; 
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false;
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = -2;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = -1;
-      SOLARCHVISION_PlotIMPACT(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = pre_STUDY_PlotImpacts;
     }
@@ -7934,16 +7934,16 @@ class solarchvision_STUDY {
       this.displayNormals = false;
       this.displayRaws = true;
       this.displayProbs = true;
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false; 
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 3;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = pre_STUDY_PlotImpacts; 
       this.ImpactLayer = pre_STUDY_ImpactLayer;
@@ -7956,16 +7956,16 @@ class solarchvision_STUDY {
       this.displayNormals = false;
       this.displayRaws = true;
       this.displayProbs = true;
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false; 
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 2;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = pre_STUDY_PlotImpacts;
       this.ImpactLayer = pre_STUDY_ImpactLayer;
@@ -7977,16 +7977,16 @@ class solarchvision_STUDY {
       this.displayNormals = false;
       this.displayRaws = true;
       this.displayProbs = true;
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false;
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 4;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = pre_STUDY_PlotImpacts; 
       this.ImpactLayer = pre_STUDY_ImpactLayer;
@@ -7998,16 +7998,16 @@ class solarchvision_STUDY {
       this.displayNormals = false;
       this.displayRaws = true;
       this.displayProbs = true;
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false;
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 5;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = pre_STUDY_PlotImpacts; 
       this.ImpactLayer = pre_STUDY_ImpactLayer;
@@ -8023,23 +8023,23 @@ class solarchvision_STUDY {
       }
   
       changeCurrentLayerTo(LAYER_windspd.id); 
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       //changeCurrentLayerTo(LAYER_precipitation.id); 
       //DevelopLayer_id = CurrentLayer_id);
       //changeCurrentLayerTo(LAYER_developed.id); 
       //Develop_Option = DEV_OP_09;
       //SOLARCHVISION_postProcess_developDATA(CurrentDataSource); 
-      //this.plotHourly(0, 325 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      //this.plotHourly(0, 325 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_drybulb.id); 
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 1;
-      SOLARCHVISION_PlotIMPACT(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = -2;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
     }
   
     if (this.plotSetup == 13) {
@@ -8052,19 +8052,19 @@ class solarchvision_STUDY {
       }
   
       changeCurrentLayerTo(LAYER_dirnorrad.id); 
-      this.plotHourly(0, 175 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view); 
+      this.plotHourly(0, 175 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S); 
   
       //changeCurrentLayerTo(LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<< 
-      //this.plotHourly(0, 325 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      //this.plotHourly(0, 325 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       changeCurrentLayerTo(LAYER_cloudcover.id);
-      this.plotHourly(0, 525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      this.plotHourly(0, 525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 0;
-      SOLARCHVISION_PlotIMPACT(0, -525 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -525 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
       this.PlotImpacts = 2; //4;
-      SOLARCHVISION_PlotIMPACT(0, -200 * this.S_view, 0, (100.0 * this.U_scale * this.S_view), (-1.0 * this.V_scale * this.S_view), 1.0 * this.S_view);
+      SOLARCHVISION_PlotIMPACT(0, -200 * this.view_S, 0, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S), 1.0 * this.view_S);
   
   
       this.PlotImpacts = pre_STUDY_PlotImpacts; 
@@ -8113,7 +8113,7 @@ class solarchvision_STUDY {
       }     
   
   
-      this.S_view = (this.dX / 2100.0);
+      this.view_S = (this.dX / 2100.0);
       this.U_scale = 18.0 / float(this.j_End - this.j_Start);
   
   
@@ -8157,7 +8157,7 @@ class solarchvision_STUDY {
       //_text += ", www.solarchvision.com";
   
       this.graphics.textSize(this.dX * 0.01);
-      ///this.graphics.text(_text, this.dX * 0.55, this.dY * -0.1666 / this.R_view, 0);
+      ///this.graphics.text(_text, this.dX * 0.55, this.dY * -0.1666 / this.view_R, 0);
   
       if (this.record_PDF) {
         endRecord();
@@ -8274,22 +8274,22 @@ class solarchvision_STUDY {
         _values_w_tmp[k] = FLOAT_undefined;
       }
   
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
+      int PAL_type = 0; 
+      int PAL_direction = 1;
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        //PAL_TYPE = this.pallet_ACTIVE_CLR; PAL_DIR = this.pallet_ACTIVE_DIR;
-        PAL_TYPE = 12; 
-        PAL_DIR = -1;
+        //PAL_type = this.pallet_ACTIVE_CLR; PAL_direction = this.pallet_ACTIVE_DIR;
+        PAL_type = 12; 
+        PAL_direction = -1;
       }             
   
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 1.0 / 30.0;
+      float PAL_multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 1.0 / 30.0;
   
       for (int j = this.j_Start; j < this.j_End; j++) { 
   
@@ -8376,13 +8376,13 @@ class solarchvision_STUDY {
                         WIND_graphics.strokeWeight(this.T_scale * 0);
                       }
                       if (Impact_TYPE == Impact_PASSIVE) {
-                        _u = 0.5 + 0.5 * (PAL_Multiplier * T);
+                        _u = 0.5 + 0.5 * (PAL_multiplier * T);
   
-                        if (PAL_DIR == -1) _u = 1 - _u;
-                        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                        if (PAL_DIR == 2) _u =  0.5 * _u;
+                        if (PAL_direction == -1) _u = 1 - _u;
+                        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                        if (PAL_direction == 2) _u =  0.5 * _u;
   
-                        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+                        float[] COL = PAINT.getColorStyle(PAL_type, _u);
   
                         WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
   
@@ -8489,13 +8489,13 @@ class solarchvision_STUDY {
                         total_WIND_graphics.strokeWeight(this.T_scale * 0);
                       }
                       if (Impact_TYPE == Impact_PASSIVE) {
-                        _u = 0.5 + 0.5 * (PAL_Multiplier * T);
+                        _u = 0.5 + 0.5 * (PAL_multiplier * T);
   
-                        if (PAL_DIR == -1) _u = 1 - _u;
-                        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                        if (PAL_DIR == 2) _u =  0.5 * _u;
+                        if (PAL_direction == -1) _u = 1 - _u;
+                        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                        if (PAL_direction == 2) _u =  0.5 * _u;
   
-                        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+                        float[] COL = PAINT.getColorStyle(PAL_type, _u);
                         total_WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
   
                         total_WIND_graphics.strokeWeight(this.T_scale * 2);
@@ -8560,16 +8560,16 @@ class solarchvision_STUDY {
   
           if (Impact_TYPE == Impact_PASSIVE) _u = 0.1 * q;
   
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
+          if (PAL_direction == -1) _u = 1 - _u;
+          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_direction == 2) _u =  0.5 * _u;
   
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+          float[] COL = PAINT.getColorStyle(PAL_type, _u);
           this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
           this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);         
   
           this.graphics.strokeWeight(0);
-          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_view, pal_oy * this.S_view, (pal_length / 11.0) * this.S_view, 20 * this.S_view); 
+          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S); 
   
           if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
             this.graphics.stroke(127);
@@ -8581,10 +8581,10 @@ class solarchvision_STUDY {
             this.graphics.strokeWeight(2);
           }  
   
-          this.graphics.textSize(15.0 * this.S_view);
+          this.graphics.textSize(15.0 * this.view_S);
           this.graphics.textAlign(CENTER, CENTER);
   
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
         }
       }         
   
@@ -8647,19 +8647,19 @@ class solarchvision_STUDY {
         int now_i = 0;
         int now_j = 0;
   
-        int PAL_TYPE = 0; 
-        int PAL_DIR = 1;
-        float PAL_Multiplier = 1; 
+        int PAL_type = 0; 
+        int PAL_direction = 1;
+        float PAL_multiplier = 1; 
   
         if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = allFaces.pallet_ACTIVE_CLR; 
-          PAL_DIR = allFaces.pallet_ACTIVE_DIR;  
-          PAL_Multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
+          PAL_type = allFaces.pallet_ACTIVE_CLR; 
+          PAL_direction = allFaces.pallet_ACTIVE_DIR;  
+          PAL_multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          PAL_TYPE = allFaces.pallet_PASSIVE_CLR; 
-          PAL_DIR = allFaces.pallet_PASSIVE_DIR;
-          PAL_Multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
+          PAL_type = allFaces.pallet_PASSIVE_CLR; 
+          PAL_direction = allFaces.pallet_PASSIVE_DIR;
+          PAL_multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
         }        
   
         for (int p = 0; p < 1; p++) { 
@@ -8764,16 +8764,16 @@ class solarchvision_STUDY {
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
           if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
   
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
+          if (PAL_direction == -1) _u = 1 - _u;
+          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_direction == 2) _u =  0.5 * _u;
   
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+          float[] COL = PAINT.getColorStyle(PAL_type, _u);
           this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
           this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);         
   
           this.graphics.strokeWeight(0);
-          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_view, pal_oy * this.S_view, (pal_length / 11.0) * this.S_view, 20 * this.S_view); 
+          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S); 
   
           if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
             this.graphics.stroke(127);
@@ -8785,10 +8785,10 @@ class solarchvision_STUDY {
             this.graphics.strokeWeight(2);
           }  
   
-          this.graphics.textSize(15.0 * this.S_view);
+          this.graphics.textSize(15.0 * this.view_S);
           this.graphics.textAlign(CENTER, CENTER);
-          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
+          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
         }
   
         if (this.PrintTtitle) {
@@ -8850,21 +8850,21 @@ class solarchvision_STUDY {
       int now_i = 0;
       int now_j = 0;
   
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
+      int PAL_type = 0; 
+      int PAL_direction = 1;
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;
       }             
   
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT; 
+      float PAL_multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.pallet_PASSIVE_MLT; 
   
       //for (int p = 0; p < 3; p++) { 
       //int l = 3 * int(this.ImpactLayer / 3) + p;
@@ -9034,15 +9034,15 @@ class solarchvision_STUDY {
   
                     float _u = 0;
   
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
   
-                    if (PAL_DIR == -1) _u = 1 - _u;
-                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_DIR == 2) _u =  0.5 * _u;
+                    if (PAL_direction == -1) _u = 1 - _u;
+                    if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                    if (PAL_direction == 2) _u =  0.5 * _u;
   
-                    //float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
-                    float[] COL = PAINT.getColorStyle(PAL_TYPE, funcs.roundTo(_u, 0.1));
+                    //float[] COL = PAINT.getColorStyle(PAL_type, _u);
+                    float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
                     this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                     this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
   
@@ -9118,15 +9118,15 @@ class solarchvision_STUDY {
   
                 float _u = 0;
   
-                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
   
-                if (PAL_DIR == -1) _u = 1 - _u;
-                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                if (PAL_DIR == 2) _u =  0.5 * _u;
+                if (PAL_direction == -1) _u = 1 - _u;
+                if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_direction == 2) _u =  0.5 * _u;
   
-                //float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
-                float[] COL = PAINT.getColorStyle(PAL_TYPE, funcs.roundTo(_u, 0.1));
+                //float[] COL = PAINT.getColorStyle(PAL_type, _u);
+                float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
                 this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                 this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);               
   
@@ -9203,16 +9203,16 @@ class solarchvision_STUDY {
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
         if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
   
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
+        if (PAL_direction == -1) _u = 1 - _u;
+        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_direction == 2) _u =  0.5 * _u;
   
-        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+        float[] COL = PAINT.getColorStyle(PAL_type, _u);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
   
         this.graphics.strokeWeight(0);
-        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_view, pal_oy * this.S_view, (pal_length / 11.0) * this.S_view, 20 * this.S_view); 
+        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S); 
   
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -9224,10 +9224,10 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(2);
         }   
   
-        this.graphics.textSize(15.0 * this.S_view);
+        this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
   
   
@@ -9280,21 +9280,21 @@ class solarchvision_STUDY {
       int now_i = 0;
       int now_j = 0;
   
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
+      int PAL_type = 0; 
+      int PAL_direction = 1;
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;
       }             
   
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
+      float PAL_multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.pallet_PASSIVE_MLT;
   
       this.drawPositionGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
   
@@ -9400,14 +9400,14 @@ class solarchvision_STUDY {
   
                       float _u = 0;
   
-                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
-                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * _valuesSUM);
   
-                      if (PAL_DIR == -1) _u = 1 - _u;
-                      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                      if (PAL_DIR == 2) _u =  0.5 * _u;
+                      if (PAL_direction == -1) _u = 1 - _u;
+                      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                      if (PAL_direction == 2) _u =  0.5 * _u;
   
-                      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+                      float[] COL = PAINT.getColorStyle(PAL_type, _u);
                       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);                     
   
@@ -9425,7 +9425,7 @@ class solarchvision_STUDY {
                         this.graphics.strokeWeight(2);
                       }   
   
-                      this.graphics.textSize(this.S_view * 4.0 * this.U_scale);
+                      this.graphics.textSize(this.view_S * 4.0 * this.U_scale);
   
                       this.graphics.textAlign(CENTER, CENTER);
                       if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(_valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
@@ -9478,16 +9478,16 @@ class solarchvision_STUDY {
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
         if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
   
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
+        if (PAL_direction == -1) _u = 1 - _u;
+        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_direction == 2) _u =  0.5 * _u;
   
-        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+        float[] COL = PAINT.getColorStyle(PAL_type, _u);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
   
         this.graphics.strokeWeight(0);
-        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.S_view, pal_oy * this.S_view, (pal_length / 11.0) * this.S_view, 20 * this.S_view); 
+        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S); 
   
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -9499,11 +9499,11 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(2);
         }   
   
-        this.graphics.textSize(15.0 * this.S_view);
+        this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
   
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 + pal_oy - 0.05 * 20) * this.S_view);
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       } 
   
   
@@ -9556,21 +9556,21 @@ class solarchvision_STUDY {
       int now_i = 0;
       int now_j = 0;
   
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
+      int PAL_type = 0; 
+      int PAL_direction = 1;
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;
       }             
   
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
+      float PAL_multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.pallet_PASSIVE_MLT;
   
       this.drawPositionGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
   
@@ -9816,21 +9816,21 @@ class solarchvision_STUDY {
       }    
   
   
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
+      int PAL_type = 0; 
+      int PAL_direction = 1;
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;
       }             
   
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
+      float PAL_multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.pallet_PASSIVE_MLT;
   
       float pal_length = 400;
       float pal_ox = 700;
@@ -9846,16 +9846,16 @@ class solarchvision_STUDY {
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
         if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
   
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
+        if (PAL_direction == -1) _u = 1 - _u;
+        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_direction == 2) _u =  0.5 * _u;
   
-        float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+        float[] COL = PAINT.getColorStyle(PAL_type, _u);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);       
   
         this.graphics.strokeWeight(0);
-        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.S_view, -pal_oy * this.S_view, (pal_length / 11.0) * this.S_view, 20 * this.S_view);
+        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
   
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -9867,10 +9867,10 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(2);
         }   
   
-        this.graphics.textSize(15.0 * this.S_view);
+        this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 - pal_oy - 0.05 * 20) * this.S_view);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.S_view, (10 - pal_oy - 0.05 * 20) * this.S_view);
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
       } 
   
   
@@ -9890,11 +9890,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(CENTER, TOP); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.S_view + (pal_length / 11.0) * this.S_view, -pal_oy * this.S_view + 20 * this.S_view);
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 20 * this.view_S);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.S_view + (pal_length / 11.0) * this.S_view, -pal_oy * this.S_view + 20 * this.S_view);
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 20 * this.view_S);
           //?? French
         }
       }
@@ -10052,17 +10052,17 @@ float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int upd
   float cx, cy, cr;
   float w1, w2, h, o, t_o; 
 
-  //w1 = 32.5 * ROLLOUT.S_view;
-  //w2 = 142.5 * ROLLOUT.S_view;
+  //w1 = 32.5 * ROLLOUT.view_S;
+  //w2 = 142.5 * ROLLOUT.view_S;
 
-  w1 = 100 * ROLLOUT.S_view;
-  w2 = 200 * ROLLOUT.S_view;
+  w1 = 100 * ROLLOUT.view_S;
+  w2 = 200 * ROLLOUT.view_S;
 
-  h = 16 * ROLLOUT.S_view;
-  o = 2 * ROLLOUT.S_view;
-  t_o = h * ROLLOUT.S_view / 8.0;
+  h = 16 * ROLLOUT.view_S;
+  o = 2 * ROLLOUT.view_S;
+  t_o = h * ROLLOUT.view_S / 8.0;
 
-  STUDY.Y_control += 25 * ROLLOUT.S_view; //(h + 2 * o) * 1.25;
+  STUDY.Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
 
   strokeWeight(0); 
   stroke(0); 
@@ -10222,8 +10222,8 @@ class solarchvision_ROLLOUT {
   int cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
   int dX = 1 * SOLARCHVISION_H_Pixel;
   int dY = 2 * SOLARCHVISION_H_Pixel;
-  float R_view = float(dY) / float(dX);
-  float S_view = SOLARCHVISION_H_Pixel / 325.0; //1; //0.75; // ?????
+  float view_R = float(dY) / float(dX);
+  float view_S = SOLARCHVISION_H_Pixel / 325.0; //1; //0.75; // ?????
   
   boolean update = true;
   boolean include = true;
@@ -10240,13 +10240,13 @@ class solarchvision_ROLLOUT {
     rect(this.cX, this.cY, this.dX, this.dY);
   
   
-    float h = 20 * this.S_view;
+    float h = 20 * this.view_S;
   
     STUDY.X_control = this.cX;
     STUDY.Y_control = this.cY;
   
-    STUDY.X_control += 307.5 * this.S_view;
-    STUDY.Y_control += 7.5 * this.S_view;
+    STUDY.X_control += 307.5 * this.view_S;
+    STUDY.Y_control += 7.5 * this.view_S;
   
     if (this.parent >= allRollouts.length) {
       this.parent = allRollouts.length - 1;
@@ -10260,13 +10260,13 @@ class solarchvision_ROLLOUT {
   
       for (int i = 0; i < allRollouts.length; i++) {
   
-        float cx = this.cX + (150 * (i % 2) + 5) * this.S_view;
+        float cx = this.cX + (150 * (i % 2) + 5) * this.view_S;
         float cy = STUDY.Y_control;
-        float cr = 6.75 * this.S_view;      
+        float cr = 6.75 * this.view_S;      
   
         textAlign(LEFT, CENTER);    
   
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.S_view, cy + cr) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr) == 1) {
           this.parent = i;
           this.child = 1; // <<<<<
   
@@ -10277,40 +10277,40 @@ class solarchvision_ROLLOUT {
           strokeWeight(2); 
           stroke(63); 
           fill(191);
-          rect(cx - 2.5 * this.S_view, cy - 5 * this.S_view, 150 * this.S_view, 2 * 7.5 * this.S_view);
+          rect(cx - 2.5 * this.view_S, cy - 5 * this.view_S, 150 * this.view_S, 2 * 7.5 * this.view_S);
           strokeWeight(0); 
   
           stroke(0); 
           fill(0);
-          textSize(15 * this.S_view);
+          textSize(15 * this.view_S);
         } else {
           stroke(127); 
           fill(127);
-          textSize(15 * this.S_view);
+          textSize(15 * this.view_S);
         }
   
         text(nf(i + 1, 0) + ":" + allRollouts[i][0], cx, cy);
   
-        if (i % 2 == 1) STUDY.Y_control += 15 * this.S_view;
+        if (i % 2 == 1) STUDY.Y_control += 15 * this.view_S;
       }
   
       strokeWeight(2); 
       stroke(63); 
       fill(63);
-      rect(this.cX, STUDY.Y_control, this.dX, 17.5 * ceil((allRollouts[this.parent].length - 1) / 3.0) * this.S_view);
+      rect(this.cX, STUDY.Y_control, this.dX, 17.5 * ceil((allRollouts[this.parent].length - 1) / 3.0) * this.view_S);
       strokeWeight(0);    
   
-      STUDY.Y_control += 5 * this.S_view;
+      STUDY.Y_control += 5 * this.view_S;
   
       for (int i = 1; i < allRollouts[this.parent].length; i++) {
   
-        float cx = this.cX + (100 * ((i - 1) % 3) + 10) * this.S_view;
+        float cx = this.cX + (100 * ((i - 1) % 3) + 10) * this.view_S;
         float cy = STUDY.Y_control;
-        float cr = 6.75 * this.S_view;        
+        float cr = 6.75 * this.view_S;        
   
         textAlign(LEFT, CENTER);     
   
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.S_view, cy + cr) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr) == 1) {
           this.child = i;
   
           this.update = true;
@@ -10319,21 +10319,21 @@ class solarchvision_ROLLOUT {
         if (i == this.child) {
           stroke(255, 127, 0); 
           fill(255, 127, 0);
-          textSize(15 * this.S_view);
+          textSize(15 * this.view_S);
         } else {
           stroke(255); 
           fill(255);
-          textSize(12.5 * this.S_view);
+          textSize(12.5 * this.view_S);
         }
   
         text("[" + nf(i, 0) + "]" + allRollouts[this.parent][i], cx, cy);
   
-        if (i % 3 == 0) STUDY.Y_control += 15 * this.S_view;
+        if (i % 3 == 0) STUDY.Y_control += 15 * this.view_S;
       }
   
-      if (allRollouts[this.parent].length % 3 != 1) STUDY.Y_control += 15 * this.S_view;
+      if (allRollouts[this.parent].length % 3 != 1) STUDY.Y_control += 15 * this.view_S;
   
-      STUDY.Y_control += 15 * this.S_view;
+      STUDY.Y_control += 15 * this.view_S;
     }
   
   
@@ -11652,9 +11652,9 @@ class solarchvision_Faces {
         WIN3D.graphics.stroke(0, 0, 0);
         if (this.displayEdges == false) WIN3D.graphics.noStroke();
     
-        int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-        int PAL_DIR = SHADE.get_PAL_DIR();
-        float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+        int PAL_type = SHADE.get_PAL_type(); 
+        int PAL_direction = SHADE.get_PAL_direction();
+        float PAL_multiplier = SHADE.get_PAL_multiplier(); 
     
         for (int f = 0; f < this.nodes.length; f++) {
     
@@ -11713,22 +11713,22 @@ class solarchvision_Faces {
                       int s_next = (s + 1) % subFace.length;
                       int s_prev = (s + subFace.length - 1) % subFace.length;
                       
-                      COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                     }        
               
                     if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
     
-                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }                   
     
                     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
     
-                      COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }
     
                     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
     
-                      COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }
     
                     if (WIN3D.FacesShade == SHADE.Surface_Materials) {
@@ -11919,9 +11919,9 @@ class solarchvision_Faces {
           }
         } else {
     
-          int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-          int PAL_DIR = SHADE.get_PAL_DIR();
-          float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+          int PAL_type = SHADE.get_PAL_type(); 
+          int PAL_direction = SHADE.get_PAL_direction();
+          float PAL_multiplier = SHADE.get_PAL_multiplier(); 
     
           String the_filename = "";
           String TEXTURE_path = "";
@@ -11954,7 +11954,7 @@ class solarchvision_Faces {
                 if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }            
     
-              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+              float[] COL = PAINT.getColorStyle(PAL_type, _u);  
     
               pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
             }
@@ -12106,22 +12106,22 @@ class solarchvision_Faces {
                               s_prev = s_temp;
                             }
     
-                            _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                           }
             
                           if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
                             
-                            _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                           }                            
     
                           if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
     
-                            _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                           }                  
     
                           if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
     
-                            _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                           }
     
     
@@ -12188,9 +12188,9 @@ class solarchvision_Faces {
           Create_Face_Texture = 1;
         }    
         
-        int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-        int PAL_DIR = SHADE.get_PAL_DIR();
-        float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+        int PAL_type = SHADE.get_PAL_type(); 
+        int PAL_direction = SHADE.get_PAL_direction();
+        float PAL_multiplier = SHADE.get_PAL_multiplier(); 
     
         String the_filename = "";
         String TEXTURE_path = "";        
@@ -12257,7 +12257,7 @@ class solarchvision_Faces {
                 if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }            
     
-              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+              float[] COL = PAINT.getColorStyle(PAL_type, _u);  
     
               pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
             }
@@ -12370,22 +12370,22 @@ class solarchvision_Faces {
                             s_prev = s_temp;
                           }
             
-                          _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                         }
             
                         if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
                           
-                          _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                         }                            
             
                         if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
             
-                          _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                         }                  
             
                         if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
             
-                          _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                         }
             
             
@@ -13652,9 +13652,9 @@ class solarchvision_SolidImpacts {
       this.Contours_V2Lines[0][1] = 0;  
   
   
-      int PAL_TYPE = allSolids.pallet_CLR; 
-      int PAL_DIR = allSolids.pallet_DIR;
-      float PAL_Multiplier = allSolids.pallet_MLT;     
+      int PAL_type = allSolids.pallet_CLR; 
+      int PAL_direction = allSolids.pallet_DIR;
+      float PAL_multiplier = allSolids.pallet_MLT;     
   
       this.Image.loadPixels();
   
@@ -13689,13 +13689,13 @@ class solarchvision_SolidImpacts {
           float g =      funcs.roundTo(this.Grade * val, this.deltaStep) - 0.5 * this.deltaStep;
           float g_line = funcs.roundTo(this.Grade * val, this.deltaLines);
   
-          float _u = PAL_Multiplier * val + 0.5;
+          float _u = PAL_multiplier * val + 0.5;
   
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
+          if (PAL_direction == -1) _u = 1 - _u;
+          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_direction == 2) _u =  0.5 * _u;
   
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);     
+          float[] COL = PAINT.getColorStyle(PAL_type, _u);     
   
           if ((this.Process_subDivisions == 1) || (this.Process_subDivisions == 2)) {
             //if ((g == g_line) && (g != 0)) {
@@ -14918,20 +14918,20 @@ class solarchvision_SolarImpacts {
     
                   float _valuesSUM = FLOAT_undefined;
     
-                  int PAL_TYPE = 0; 
-                  int PAL_DIR = 1;
-                  float PAL_Multiplier = 1; 
+                  int PAL_type = 0; 
+                  int PAL_direction = 1;
+                  float PAL_multiplier = 1; 
     
                   if (q == Impact_ACTIVE) {
                     _valuesSUM = Image_G;
     
-                    PAL_TYPE = allFaces.pallet_ACTIVE_CLR; 
-                    PAL_DIR = allFaces.pallet_ACTIVE_DIR;  
-                    PAL_Multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
+                    PAL_type = allFaces.pallet_ACTIVE_CLR; 
+                    PAL_direction = allFaces.pallet_ACTIVE_DIR;  
+                    PAL_multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
     
-                    //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                    //_u = (0.1 * PAL_Multiplier * _valuesSUM);
-                    _u = (0.2 * PAL_Multiplier * _valuesSUM);
+                    //_u = 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
+                    //_u = (0.1 * PAL_multiplier * _valuesSUM);
+                    _u = (0.2 * PAL_multiplier * _valuesSUM);
                   }
     
                   if (q == Impact_PASSIVE) {
@@ -14944,23 +14944,23 @@ class solarchvision_SolarImpacts {
     
                     _valuesSUM = COMPARISON;
     
-                    PAL_TYPE = allFaces.pallet_PASSIVE_CLR; 
-                    PAL_DIR = allFaces.pallet_PASSIVE_DIR;
-                    PAL_Multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
+                    PAL_type = allFaces.pallet_PASSIVE_CLR; 
+                    PAL_direction = allFaces.pallet_PASSIVE_DIR;
+                    PAL_multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
     
-                    //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                    _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+                    //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
+                    _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * _valuesSUM);
                   }
     
     
                   //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
                   //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
     
-                  if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 * _u;
+                  if (PAL_direction == -1) _u = 1 - _u;
+                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                  if (PAL_direction == 2) _u =  0.5 * _u;
     
-                  _c = PAINT.getColorStyle(PAL_TYPE, _u);
+                  _c = PAINT.getColorStyle(PAL_type, _u);
     
                   if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
                   else Image_RGBA[q].pixels[np] = color(223, 223, 223);
@@ -15011,20 +15011,20 @@ class solarchvision_SolarImpacts {
     
               float _valuesSUM = FLOAT_undefined;
   
-              int PAL_TYPE = 0; 
-              int PAL_DIR = 1;
-              float PAL_Multiplier = 1; 
+              int PAL_type = 0; 
+              int PAL_direction = 1;
+              float PAL_multiplier = 1; 
     
               if (q == Impact_ACTIVE) {
                 _valuesSUM = Image_G;
     
-                PAL_TYPE = allFaces.pallet_ACTIVE_CLR; 
-                PAL_DIR = allFaces.pallet_ACTIVE_DIR;  
-                PAL_Multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
+                PAL_type = allFaces.pallet_ACTIVE_CLR; 
+                PAL_direction = allFaces.pallet_ACTIVE_DIR;  
+                PAL_multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
     
-                //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                //_u = (0.1 * PAL_Multiplier * _valuesSUM);
-                _u = (0.2 * PAL_Multiplier * _valuesSUM);
+                //_u = 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
+                //_u = (0.1 * PAL_multiplier * _valuesSUM);
+                _u = (0.2 * PAL_multiplier * _valuesSUM);
               }
     
               if (q == Impact_PASSIVE) {
@@ -15037,19 +15037,19 @@ class solarchvision_SolarImpacts {
      
                 _valuesSUM = COMPARISON;
     
-                PAL_TYPE = allFaces.pallet_PASSIVE_CLR; 
-                PAL_DIR = allFaces.pallet_PASSIVE_DIR;
-                PAL_Multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
+                PAL_type = allFaces.pallet_PASSIVE_CLR; 
+                PAL_direction = allFaces.pallet_PASSIVE_DIR;
+                PAL_multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
     
-                //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
+                //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
+                _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * _valuesSUM);
               }
     
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
+              if (PAL_direction == -1) _u = 1 - _u;
+              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_direction == 2) _u =  0.5 * _u;
     
-              _c = PAINT.getColorStyle(PAL_TYPE, _u);
+              _c = PAINT.getColorStyle(PAL_type, _u);
     
               if (Image_A != 0) total_Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
               else total_Image_RGBA[q].pixels[np] = color(223, 223, 223);
@@ -21973,7 +21973,7 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
     WIN3D.dX = int(1.5 * SOLARCHVISION_H_Pixel);
     WIN3D.dY = SOLARCHVISION_H_Pixel;
-    WIN3D.R_view = float(WIN3D.dY) / float(WIN3D.dX);
+    WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
 
     WORLD.cX = int(1.5 * SOLARCHVISION_H_Pixel);
@@ -21986,7 +21986,7 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_H_Pixel;
     STUDY.dX = 2 * SOLARCHVISION_W_Pixel;
     STUDY.dY = 1 * SOLARCHVISION_H_Pixel;
-    STUDY.R_view = float(STUDY.dY) / float(STUDY.dX);   
+    STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);   
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
   } else if (FrameVariation == 1) {
 
@@ -21998,7 +21998,7 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
     WIN3D.dX = 2 * SOLARCHVISION_W_Pixel;
     WIN3D.dY = 2 * SOLARCHVISION_H_Pixel;
-    WIN3D.R_view = float(WIN3D.dY) / float(WIN3D.dX);
+    WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
   } else if (FrameVariation == 2) {
 
@@ -22010,7 +22010,7 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
     STUDY.dX = 2 * SOLARCHVISION_W_Pixel;
     STUDY.dY = 2 * SOLARCHVISION_H_Pixel;
-    STUDY.R_view = float(STUDY.dY) / float(STUDY.dX);   
+    STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);   
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
   } else if (FrameVariation == 3) {
 
@@ -24117,19 +24117,19 @@ class solarchvision_Sky3D {
     
     if (proceed) {  
 
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
-      float PAL_Multiplier = 1; 
+      int PAL_type = 0; 
+      int PAL_direction = 1;
+      float PAL_multiplier = 1; 
 
       if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;  
-        PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;  
+        PAL_multiplier = 1.0 * this.pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;  
-        PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;  
+        PAL_multiplier = 0.05 * this.pallet_PASSIVE_MLT;
       }        
     
       if (target_window == TypeWindow.OBJ) {
@@ -24165,7 +24165,7 @@ class solarchvision_Sky3D {
     
               if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
     
-              float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+              float[] COL = PAINT.getColorStyle(PAL_type, _u);  
     
               pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
             }
@@ -24237,7 +24237,7 @@ class solarchvision_Sky3D {
                   float y = subFace[s][1] * Sky3D.scale * WIN3D.scale;
                   float z = subFace[s][2] * Sky3D.scale * WIN3D.scale;
     
-                  float _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                  float _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
     
     
                   if (_turn == 1) {
@@ -24324,7 +24324,7 @@ class solarchvision_Sky3D {
                 int s_next = (s + 1) % subFace.length;
                 int s_prev = (s + subFace.length - 1) % subFace.length;
       
-                float[] COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                float[] COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
       
                 WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       
@@ -24611,21 +24611,21 @@ class solarchvision_Sun3D {
   
       int TES_hour = 4; // 1 = every 1 hour, 4 = every 15 minutes
   
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
+      int PAL_type = 0; 
+      int PAL_direction = 1;
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;
       }             
   
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * this.pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * this.pallet_PASSIVE_MLT;
+      float PAL_multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * this.pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.pallet_PASSIVE_MLT;
   
   
   
@@ -24737,14 +24737,14 @@ class solarchvision_Sun3D {
   
                     float _u = 0;
   
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * sun_V);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * sun_V);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * sun_V);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * sun_V);
   
-                    if (PAL_DIR == -1) _u = 1 - _u;
-                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_DIR == 2) _u =  0.5 * _u;
+                    if (PAL_direction == -1) _u = 1 - _u;
+                    if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                    if (PAL_direction == 2) _u =  0.5 * _u;
   
-                    float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);    
+                    float[] COL = PAINT.getColorStyle(PAL_type, _u);    
   
                     WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
                     WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -24848,36 +24848,36 @@ class solarchvision_Sun3D {
     int now_i2 = 0;
     int now_j = 0;
   
-    int PAL_TYPE = 0; 
-    int PAL_DIR = 1;
+    int PAL_type = 0; 
+    int PAL_direction = 1;
   
-    float PAL_Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY.pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY.pallet_PASSIVE_MLT;
+    float PAL_multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * STUDY.pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * STUDY.pallet_PASSIVE_MLT;
   
     if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = this.pallet_ACTIVE_CLR; 
-        PAL_DIR = this.pallet_ACTIVE_DIR;
-        PAL_Multiplier = this.pallet_ACTIVE_MLT;
+        PAL_type = this.pallet_ACTIVE_CLR; 
+        PAL_direction = this.pallet_ACTIVE_DIR;
+        PAL_multiplier = this.pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = this.pallet_PASSIVE_CLR; 
-        PAL_DIR = this.pallet_PASSIVE_DIR;
-        PAL_Multiplier = this.pallet_PASSIVE_MLT;
+        PAL_type = this.pallet_PASSIVE_CLR; 
+        PAL_direction = this.pallet_PASSIVE_DIR;
+        PAL_multiplier = this.pallet_PASSIVE_MLT;
       }
     } else {
   
       if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = STUDY.pallet_ACTIVE_CLR; 
-        PAL_DIR = STUDY.pallet_ACTIVE_DIR;
-        PAL_Multiplier = STUDY.pallet_ACTIVE_MLT;
+        PAL_type = STUDY.pallet_ACTIVE_CLR; 
+        PAL_direction = STUDY.pallet_ACTIVE_DIR;
+        PAL_multiplier = STUDY.pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = STUDY.pallet_PASSIVE_CLR; 
-        PAL_DIR = STUDY.pallet_PASSIVE_DIR;
-        PAL_Multiplier = STUDY.pallet_PASSIVE_MLT;
+        PAL_type = STUDY.pallet_PASSIVE_CLR; 
+        PAL_direction = STUDY.pallet_PASSIVE_DIR;
+        PAL_multiplier = STUDY.pallet_PASSIVE_MLT;
       }
     }  
   
@@ -24917,7 +24917,7 @@ class solarchvision_Sun3D {
   
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
   
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+          float[] COL = PAINT.getColorStyle(PAL_type, _u);  
   
           pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
         }
@@ -25176,14 +25176,14 @@ class solarchvision_Sun3D {
   
                       float _u = 0;
   
-                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
-                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * _valuesSUM);
   
-                      if (PAL_DIR == -1) _u = 1 - _u;
-                      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                      if (PAL_DIR == 2) _u =  0.5 * _u;
+                      if (PAL_direction == -1) _u = 1 - _u;
+                      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+                      if (PAL_direction == 2) _u =  0.5 * _u;
   
-                      float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);
+                      float[] COL = PAINT.getColorStyle(PAL_type, _u);
   
                       float r = sx_Plot;
   
@@ -26490,9 +26490,9 @@ class solarchvision_Land3D {
     
     if (proceed) {
   
-      int PAL_TYPE = SHADE.get_PAL_TYPE(); 
-      int PAL_DIR = SHADE.get_PAL_DIR();
-      float PAL_Multiplier = SHADE.get_PAL_Multiplier(); 
+      int PAL_type = SHADE.get_PAL_type(); 
+      int PAL_direction = SHADE.get_PAL_direction();
+      float PAL_multiplier = SHADE.get_PAL_multiplier(); 
   
       if (User3D.export_MaterialLibrary) {
   
@@ -26773,22 +26773,22 @@ class solarchvision_Land3D {
                       int s_next = (s + 1) % subFace.length;
                       int s_prev = (s + subFace.length - 1) % subFace.length;
   
-                      COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                     }
   
                     if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
   
-                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }  
                     
                     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
   
-                      COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }      
         
                     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
   
-                      COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }   
   
                     if (WIN3D.FacesShade == SHADE.Surface_White) {
@@ -38466,7 +38466,7 @@ class solarchvision_Cameras {
   
     float r = Camera_S * 5; // <<<<<<
   
-    float rx = r * funcs.sin_ang(0.5 * Camera_ZOOM) /  WIN3D.R_view;
+    float rx = r * funcs.sin_ang(0.5 * Camera_ZOOM) /  WIN3D.view_R;
     float ry = r * funcs.sin_ang(0.5 * Camera_ZOOM);  
     float rz = r * funcs.cos_ang(0.5 * Camera_ZOOM);  
   
@@ -39481,9 +39481,9 @@ class solarchvision_WindFlow {
   
     if (proceed) {
   
-      int PAL_TYPE = allWindFlows.pallet_CLR; 
-      int PAL_DIR = allWindFlows.pallet_DIR; 
-      float PAL_Multiplier = allWindFlows.pallet_MLT;
+      int PAL_type = allWindFlows.pallet_CLR; 
+      int PAL_direction = allWindFlows.pallet_DIR; 
+      float PAL_multiplier = allWindFlows.pallet_MLT;
         
         
         
@@ -39515,7 +39515,7 @@ class solarchvision_WindFlow {
     
             float _u = 0.5 + 0.5 * _val;
     
-            float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);  
+            float[] COL = PAINT.getColorStyle(PAL_type, _u);  
     
             pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
           }
@@ -39570,10 +39570,10 @@ class solarchvision_WindFlow {
     
             float _val = allWindFlows.pallet_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
     
-            float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
+            float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
+            if (PAL_direction == -1) _u = 1 - _u;
+            if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_direction == 2) _u =  0.5 * _u;
     
             float the_dist = dist(x1, y1, z1, x2, y2, z2);
     
@@ -39683,12 +39683,12 @@ class solarchvision_WindFlow {
     
           float _val = this.pallet_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
     
-          float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
+          float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
+          if (PAL_direction == -1) _u = 1 - _u;
+          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_direction == 2) _u =  0.5 * _u;
     
-          float[] COL = PAINT.getColorStyle(PAL_TYPE, _u);      
+          float[] COL = PAINT.getColorStyle(PAL_type, _u);      
     
           /*    
            WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -50435,7 +50435,7 @@ void SOLARCHVISION_preBakeViewport () {
  
   WIN3D.dX = allSolarImpacts.RES1;
   WIN3D.dY = allSolarImpacts.RES2;
-  WIN3D.R_view = float(WIN3D.dY) / float(WIN3D.dX);
+  WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
 
   WIN3D.transform_3DViewport();
   
@@ -50755,7 +50755,7 @@ void SOLARCHVISION_preBakeViewport () {
   
   WIN3D.dX = pre_WIN3D_dX;
   WIN3D.dY = pre_WIN3D_dY;
-  WIN3D.R_view = float(WIN3D.dY) / float(WIN3D.dX);
+  WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
 }
 
 
@@ -50767,19 +50767,19 @@ void SOLARCHVISION_RenderViewport () {
 
   println("Render started!");
   
-  int PAL_TYPE = 0; 
-  int PAL_DIR = 1;
-  float PAL_Multiplier = 1;   
+  int PAL_type = 0; 
+  int PAL_direction = 1;
+  float PAL_multiplier = 1;   
 
   if (Impact_TYPE == Impact_ACTIVE) {
-    PAL_TYPE = allFaces.pallet_ACTIVE_CLR; 
-    PAL_DIR = allFaces.pallet_ACTIVE_DIR; 
-    PAL_Multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
+    PAL_type = allFaces.pallet_ACTIVE_CLR; 
+    PAL_direction = allFaces.pallet_ACTIVE_DIR; 
+    PAL_multiplier = 1.0 * allFaces.pallet_ACTIVE_MLT;
   }
   if (Impact_TYPE == Impact_PASSIVE) {  
-    PAL_TYPE = allFaces.pallet_PASSIVE_CLR; 
-    PAL_DIR = allFaces.pallet_PASSIVE_DIR;
-    PAL_Multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
+    PAL_type = allFaces.pallet_PASSIVE_CLR; 
+    PAL_direction = allFaces.pallet_PASSIVE_DIR;
+    PAL_multiplier = 0.05 * allFaces.pallet_PASSIVE_MLT;
   }     
 
   
@@ -50955,15 +50955,15 @@ float _valuesSUM = _valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
       if (is_undefined_FLOAT(_valuesSUM) == false) {
     
-        if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+        if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * _valuesSUM);
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * _valuesSUM);
     
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
+        if (PAL_direction == -1) _u = 1 - _u;
+        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_direction == 2) _u =  0.5 * _u;
       }
     
-      COL = PAINT.getColorStyle(PAL_TYPE, _u);
+      COL = PAINT.getColorStyle(PAL_type, _u);
 
       
       Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
