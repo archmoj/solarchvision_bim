@@ -1346,15 +1346,15 @@ void SOLARCHVISION_update_folders () {
 
 
 
-int SOLARCHVISION_H_Pixel = 275; //300; 
-int SOLARCHVISION_W_Pixel = int(SOLARCHVISION_H_Pixel * 1.75); 
+int SOLARCHVISION_pixel_H = 275; //300; 
+int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75); 
 
-float MessageSize = (2 * SOLARCHVISION_W_Pixel + SOLARCHVISION_H_Pixel) / 120.0; // screen width 
+float MessageSize = (2 * SOLARCHVISION_pixel_W + SOLARCHVISION_pixel_H) / 120.0; // screen width 
 
-int SOLARCHVISION_A_Pixel = int(1.5 * MessageSize); // menu bar
-int SOLARCHVISION_B_Pixel = int(2.75 * MessageSize); // 3D tool bar
-int SOLARCHVISION_C_Pixel = int(3.0 * MessageSize); // command bar
-int SOLARCHVISION_D_Pixel = int(4.5 * MessageSize); // time bar
+int SOLARCHVISION_pixel_A = int(1.5 * MessageSize); // menu bar
+int SOLARCHVISION_pixel_B = int(2.75 * MessageSize); // 3D tool bar
+int SOLARCHVISION_pixel_C = int(3.0 * MessageSize); // command bar
+int SOLARCHVISION_pixel_D = int(4.5 * MessageSize); // time bar
 
 
 
@@ -3611,10 +3611,10 @@ class solarchvision_WIN3D {
   float scale; 
   // (top-left) corner
   int cX = 0;
-  int cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
+  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   // width and height
-  int dX = int(1.5 * SOLARCHVISION_H_Pixel);
-  int dY = SOLARCHVISION_H_Pixel;
+  int dX = int(1.5 * SOLARCHVISION_pixel_H);
+  int dY = SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
 
   float coordinate_PX = 0;
@@ -3627,7 +3627,7 @@ class solarchvision_WIN3D {
   float coordinate_RZ = 90; //0; //180; //135;
   float coordinate_RS = 5.0;
   
-  float Zoom = 60; // / (SOLARCHVISION_H_Pixel / 300.0);
+  float Zoom = 60; // / (SOLARCHVISION_pixel_H / 300.0);
   
   int ViewType = 1; // 0: Ortho 1: Perspective
   
@@ -3955,7 +3955,7 @@ class solarchvision_WIN3D {
         this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
       }
 
-      float pal_length = 1 * SOLARCHVISION_H_Pixel * this.ImageScale / the_scale;
+      float pal_length = 1 * SOLARCHVISION_pixel_H * this.ImageScale / the_scale;
   
       float y1 = -0.2 * (pal_length / 11.0) + (0.4 * this.dY / the_scale);
       float y2 = y1 + 0.4 * (pal_length / 11.0);
@@ -5398,11 +5398,11 @@ class solarchvision_WORLD {
   float oX = 0;
   float oY = 0;
   // (top-left) corner
-  int cX = int(1.5 * SOLARCHVISION_H_Pixel);
-  int cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
+  int cX = int(1.5 * SOLARCHVISION_pixel_H);
+  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   // width and height
-  int dX = int(2.0 * SOLARCHVISION_H_Pixel);
-  int dY = SOLARCHVISION_H_Pixel;
+  int dX = int(2.0 * SOLARCHVISION_pixel_H);
+  int dY = SOLARCHVISION_pixel_H;
   
   boolean update = true;
   boolean include = true;
@@ -6222,9 +6222,9 @@ class solarchvision_STUDY {
 
 
   int cX = 0;
-  int cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_H_Pixel;
-  int dX = 2 * SOLARCHVISION_W_Pixel;
-  int dY = 1 * SOLARCHVISION_H_Pixel;
+  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_H;
+  int dX = 2 * SOLARCHVISION_pixel_W;
+  int dY = 1 * SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
   float view_S;
   
@@ -10221,12 +10221,12 @@ class solarchvision_ROLLOUT {
   
   private final static String CLASS_STAMP = "ROLLOUT";
   
-  int cX = 2 * SOLARCHVISION_W_Pixel;
-  int cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-  int dX = 1 * SOLARCHVISION_H_Pixel;
-  int dY = 2 * SOLARCHVISION_H_Pixel;
+  int cX = 2 * SOLARCHVISION_pixel_W;
+  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+  int dX = 1 * SOLARCHVISION_pixel_H;
+  int dY = 2 * SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
-  float view_S = SOLARCHVISION_H_Pixel / 325.0; //1; //0.75; // ?????
+  float view_S = SOLARCHVISION_pixel_H / 325.0; //1; //0.75; // ?????
   
   boolean update = true;
   boolean include = true;
@@ -10841,8 +10841,8 @@ class solarchvision_MESSAGE {
   private final static String CLASS_STAMP = "MESSAGE";
   
   int cX = 0;
-  int cY = int(1 * SOLARCHVISION_H_Pixel - 0.75 * MessageSize + 0.5 * (SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel));
-  int dX = 2 * SOLARCHVISION_W_Pixel + ROLLOUT.dX;
+  int cY = int(1 * SOLARCHVISION_pixel_H - 0.75 * MessageSize + 0.5 * (SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D));
+  int dX = 2 * SOLARCHVISION_pixel_W + ROLLOUT.dX;
   int dY = int(1.5 * MessageSize);
 }
 
@@ -20060,7 +20060,7 @@ PrintWriter[] FILE_outputProbs;
 void setup () {
 
   //size(1200, 696, P2D);
-  size(2 * SOLARCHVISION_W_Pixel + ROLLOUT.dX, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel, P2D);
+  size(2 * SOLARCHVISION_pixel_W + ROLLOUT.dX, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D, P2D);
 
 
   SOLARCHVISION_draw_frameIcon();
@@ -20193,7 +20193,7 @@ void draw () {
 
     float cr;
 
-    cr = SOLARCHVISION_W_Pixel / 4.0;
+    cr = SOLARCHVISION_pixel_W / 4.0;
     PImage SOLARCHVISION_logo = loadImage(Folder_Backgrounds + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MessageSize - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
@@ -20370,7 +20370,7 @@ void draw () {
 
     stroke(255); fill(255); text("Please wait while integrating the models.", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
 
-    MESSAGE.dX = 2 * SOLARCHVISION_W_Pixel;
+    MESSAGE.dX = 2 * SOLARCHVISION_pixel_W;
 
     SOLARCHVISION_X_clicked = -1;
     SOLARCHVISION_Y_clicked = -1;
@@ -21973,22 +21973,22 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD.include = true;
 
     WIN3D.cX = 0;
-    WIN3D.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WIN3D.dX = int(1.5 * SOLARCHVISION_H_Pixel);
-    WIN3D.dY = SOLARCHVISION_H_Pixel;
+    WIN3D.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+    WIN3D.dX = int(1.5 * SOLARCHVISION_pixel_H);
+    WIN3D.dY = SOLARCHVISION_pixel_H;
     WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
 
-    WORLD.cX = int(1.5 * SOLARCHVISION_H_Pixel);
-    WORLD.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WORLD.dX = int(2.0 * SOLARCHVISION_H_Pixel);
-    WORLD.dY = SOLARCHVISION_H_Pixel;
+    WORLD.cX = int(1.5 * SOLARCHVISION_pixel_H);
+    WORLD.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+    WORLD.dX = int(2.0 * SOLARCHVISION_pixel_H);
+    WORLD.dY = SOLARCHVISION_pixel_H;
     WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
 
     STUDY.cX = 0;
-    STUDY.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + SOLARCHVISION_H_Pixel;
-    STUDY.dX = 2 * SOLARCHVISION_W_Pixel;
-    STUDY.dY = 1 * SOLARCHVISION_H_Pixel;
+    STUDY.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_H;
+    STUDY.dX = 2 * SOLARCHVISION_pixel_W;
+    STUDY.dY = 1 * SOLARCHVISION_pixel_H;
     STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);   
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
   } else if (FrameVariation == 1) {
@@ -21998,9 +21998,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD.include = false;
 
     WIN3D.cX = 0;
-    WIN3D.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WIN3D.dX = 2 * SOLARCHVISION_W_Pixel;
-    WIN3D.dY = 2 * SOLARCHVISION_H_Pixel;
+    WIN3D.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+    WIN3D.dX = 2 * SOLARCHVISION_pixel_W;
+    WIN3D.dY = 2 * SOLARCHVISION_pixel_H;
     WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
   } else if (FrameVariation == 2) {
@@ -22010,9 +22010,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD.include = false;
 
     STUDY.cX = 0;
-    STUDY.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    STUDY.dX = 2 * SOLARCHVISION_W_Pixel;
-    STUDY.dY = 2 * SOLARCHVISION_H_Pixel;
+    STUDY.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+    STUDY.dX = 2 * SOLARCHVISION_pixel_W;
+    STUDY.dY = 2 * SOLARCHVISION_pixel_H;
     STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);   
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
   } else if (FrameVariation == 3) {
@@ -22022,9 +22022,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD.include = true;
 
     WORLD.cX = 0;
-    WORLD.cY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 0;
-    WORLD.dX = 2 * SOLARCHVISION_W_Pixel;
-    WORLD.dY = 2 * SOLARCHVISION_H_Pixel;
+    WORLD.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+    WORLD.dX = 2 * SOLARCHVISION_pixel_W;
+    WORLD.dY = 2 * SOLARCHVISION_pixel_H;
     WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
   } 
 
@@ -22052,7 +22052,7 @@ void keyPressed (KeyEvent e) {
         UI_BAR_a.selected_parent = -1;
         UI_BAR_a.selected_child = 0;
 
-        image(pre_screen, 0, SOLARCHVISION_A_Pixel);
+        image(pre_screen, 0, SOLARCHVISION_pixel_A);
       }
 
       addNewSelectionToPreviousSelection = 0;
@@ -41556,10 +41556,10 @@ void mouseWheel (MouseEvent event) {
 
           {
             float displayBarHeight = MessageSize;
-            float displayBarWidth = 2 * SOLARCHVISION_W_Pixel; 
+            float displayBarWidth = 2 * SOLARCHVISION_pixel_W; 
 
             STUDY.X_control = 0.5 * displayBarWidth;
-            STUDY.Y_control = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + 0.5 * UI_BAR_d.tab;
+            STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + 0.5 * UI_BAR_d.tab;
 
             for (int i = 0; i < UI_BAR_d.Items.length; i++) {
 
@@ -42673,7 +42673,7 @@ void mouseClicked () {
       }    
 
 
-      if ((UI_BAR_a.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_A_Pixel) == 0)) {
+      if ((UI_BAR_a.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_pixel_A) == 0)) {
         
         String menu_option = UI_BAR_a.Items[UI_BAR_a.selected_parent][UI_BAR_a.selected_child];
 
@@ -44909,7 +44909,7 @@ void mouseClicked () {
         UI_BAR_a.selected_parent = -1;
         UI_BAR_a.selected_child = 0;
 
-        image(pre_screen, 0, SOLARCHVISION_A_Pixel);
+        image(pre_screen, 0, SOLARCHVISION_pixel_A);
 
         SOLARCHVISION_X_clicked = -1;
         SOLARCHVISION_Y_clicked = -1;
@@ -44918,20 +44918,20 @@ void mouseClicked () {
         SOLARCHVISION_X_clicked = mouseX;
         SOLARCHVISION_Y_clicked = mouseY;
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_A_Pixel) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_pixel_A) == 1) {
           UI_BAR_a.update = true;
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B) == 1) {
           UI_BAR_b.update = true;
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C) == 1) {
           UI_BAR_c.update = true;
           typeUserCommand = 1;
         }  
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + SOLARCHVISION_D_Pixel) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D) == 1) {
           UI_BAR_d.update = true;
         }  
 
@@ -52114,8 +52114,8 @@ class solarchvision_UI_BAR_a {
   
   boolean update = true;
   
-  float width_parent = 4 * SOLARCHVISION_A_Pixel;
-  float width_child = 3.5 * 4 * SOLARCHVISION_A_Pixel;
+  float width_parent = 4 * SOLARCHVISION_pixel_A;
+  float width_child = 3.5 * 4 * SOLARCHVISION_pixel_A;
   
   int selected_parent = -1;
   int selected_child = 0;
@@ -52623,16 +52623,16 @@ class solarchvision_UI_BAR_a {
       fill(127);
       noStroke();
   
-      rect(0, 0, width, SOLARCHVISION_A_Pixel);
+      rect(0, 0, width, SOLARCHVISION_pixel_A);
   
       STUDY.X_control = 0; //0.25 * MessageSize;
-      STUDY.Y_control = 0.5 * SOLARCHVISION_A_Pixel;
+      STUDY.Y_control = 0.5 * SOLARCHVISION_pixel_A;
   
       for (int i = 0; i < this.Items.length; i++) {
   
         float cx = STUDY.X_control + i * this.width_parent;
         float cy = STUDY.Y_control;
-        float cr = 0.5 * SOLARCHVISION_A_Pixel; 
+        float cr = 0.5 * SOLARCHVISION_pixel_A; 
   
         if (i > 0) cx += 1.5 * this.width_parent; // to include SOLARCHVISION title     
   
@@ -52640,7 +52640,7 @@ class solarchvision_UI_BAR_a {
   
           if (this.selected_parent == -1) {
   
-            pre_screen = get(0, SOLARCHVISION_A_Pixel, width, height - SOLARCHVISION_A_Pixel);
+            pre_screen = get(0, SOLARCHVISION_pixel_A, width, height - SOLARCHVISION_pixel_A);
   
             //println("Screen GET!");
           }     
@@ -52670,24 +52670,24 @@ class solarchvision_UI_BAR_a {
   
         if (this.selected_parent == i) {
   
-          image(pre_screen, 0, SOLARCHVISION_A_Pixel);
+          image(pre_screen, 0, SOLARCHVISION_pixel_A);
   
           this.selected_child = 0; 
   
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
   
-            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_A_Pixel, cx + this.width_child, cy + cr + j * SOLARCHVISION_A_Pixel) == 1) {
+            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_pixel_A, cx + this.width_child, cy + cr + j * SOLARCHVISION_pixel_A) == 1) {
   
               this.selected_child = j;
   
               fill(255, 127, 0);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_A_Pixel, this.width_child, SOLARCHVISION_A_Pixel);
+              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, this.width_child, SOLARCHVISION_pixel_A);
             } else {
   
               fill(0, 223);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_A_Pixel, this.width_child, SOLARCHVISION_A_Pixel);
+              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, this.width_child, SOLARCHVISION_pixel_A);
             }
   
             textAlign(LEFT, CENTER);
@@ -53014,7 +53014,7 @@ class solarchvision_UI_BAR_a {
             }
   
             textSize(1.25 * MessageSize);
-            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_A_Pixel);
+            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_pixel_A);
           }
         }
       }
@@ -53037,7 +53037,7 @@ class solarchvision_UI_BAR_b {
 
   boolean update = true;
   
-  float tab = SOLARCHVISION_B_Pixel;
+  float tab = SOLARCHVISION_pixel_B;
   
   String[][] Items = {
     {
@@ -53255,14 +53255,14 @@ class solarchvision_UI_BAR_b {
   
       fill(0);
       noStroke();
-      rect(0, SOLARCHVISION_A_Pixel, width, SOLARCHVISION_B_Pixel);
+      rect(0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_B);
   
       STUDY.X_control = 0; //0.25 * MessageSize;
-      STUDY.Y_control = SOLARCHVISION_A_Pixel + 0.5 * SOLARCHVISION_B_Pixel;
+      STUDY.Y_control = SOLARCHVISION_pixel_A + 0.5 * SOLARCHVISION_pixel_B;
   
       float cx = STUDY.X_control;
       float cy = STUDY.Y_control;
-      float cr = 0.5 * SOLARCHVISION_B_Pixel;   
+      float cr = 0.5 * SOLARCHVISION_pixel_B;   
   
       for (int i = 0; i < this.Items.length; i++) {
   
@@ -53283,7 +53283,7 @@ class solarchvision_UI_BAR_b {
         noFill();
         stroke(255);
         strokeWeight(1);
-        rect(cx, cy - cr, Item_width, SOLARCHVISION_B_Pixel);
+        rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
         strokeWeight(0);
   
   
@@ -53330,7 +53330,7 @@ class solarchvision_UI_BAR_b {
   
           fill(255, 127, 0);
           noStroke();
-          rect(cx, cy - cr, Item_width, SOLARCHVISION_B_Pixel);     
+          rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);     
   
           String Bar_Switch = this.Items[i][this.Items[i].length - 2];
   
@@ -53485,105 +53485,105 @@ class solarchvision_UI_BAR_b {
           String Bar_Switch = this.Items[i][this.Items[i].length - 2];
   
           if (Bar_Switch.equals("Drop")) {
-            UI_BAR_b.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("GetLength")) {
-            UI_BAR_b.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }        
           if (Bar_Switch.equals("Move")) {
-            UI_BAR_b.drawMove(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawMove(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Scale")) {
-            UI_BAR_b.drawScale(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawScale(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }    
           if (Bar_Switch.equals("Power")) {
-            UI_BAR_b.drawPower(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawPower(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }            
           if (Bar_Switch.equals("Rotate")) {
-            UI_BAR_b.drawRotate(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawRotate(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }    
           if (Bar_Switch.equals("Change Seed/Material")) {
-            UI_BAR_b.drawSeed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawSeed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Change Tessellation")) {
-            UI_BAR_b.drawTessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawTessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Change Layer")) {
-            UI_BAR_b.drawLayer(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawLayer(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Change Visibility")) {
-            UI_BAR_b.drawVisibility(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawVisibility(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }       
           if (Bar_Switch.equals("Change Weight")) {
-            UI_BAR_b.drawWeight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawWeight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }          
           if (Bar_Switch.equals("Normal")) {
-            UI_BAR_b.drawNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }           
           if (Bar_Switch.equals("FirstVertex")) {
-            UI_BAR_b.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }            
   
           if (Bar_Switch.equals("ClickSelect")) {
-            UI_BAR_b.drawClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }       
           if (Bar_Switch.equals("WindowSelect")) {
-            UI_BAR_b.drawWindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawWindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }   
           if (Bar_Switch.equals("ProjectionType")) {
-            UI_BAR_b.drawProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }          
           if (Bar_Switch.equals("Zoom")) {
-            UI_BAR_b.drawZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("LandOrbit")) {
-            UI_BAR_b.drawLandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawLandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }             
           if (Bar_Switch.equals("Orbit")) {
-            UI_BAR_b.drawOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }     
           if (Bar_Switch.equals("CameraRoll")) {
-            UI_BAR_b.drawCameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawCameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }             
           if (Bar_Switch.equals("TargetRoll")) {
-            UI_BAR_b.drawTargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawTargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }      
           if (Bar_Switch.equals("CameraDistance")) {
-            UI_BAR_b.drawCameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawCameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }           
           if (Bar_Switch.equals("LookAtOrigin")) {
-            UI_BAR_b.drawLookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawLookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }  
           if (Bar_Switch.equals("LookAtDirection")) {
-            UI_BAR_b.drawLookAtDirection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawLookAtDirection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }              
           if (Bar_Switch.equals("LookAtSelection")) {
-            UI_BAR_b.drawLookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawLookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }                
           if (Bar_Switch.equals("Pan")) {
-            UI_BAR_b.drawPan(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawPan(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("DistMouseXY")) {
-            UI_BAR_b.drawDistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawDistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }          
           if (Bar_Switch.equals("DistZ")) {
-            UI_BAR_b.drawDistZ(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawDistZ(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }        
           if (Bar_Switch.equals("Truck")) {
-            UI_BAR_b.drawTruck(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawTruck(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("3DModelSize")) {
-            UI_BAR_b.draw3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.draw3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }      
           if (Bar_Switch.equals("SkydomeSize")) {
-            UI_BAR_b.drawSkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawSkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("AllModelSize")) {
-            UI_BAR_b.drawAllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.drawAllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }  
   
           if (Bar_Switch.equals("3DViewSpace")) {
-            UI_BAR_b.draw3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_B_Pixel);
+            UI_BAR_b.draw3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
         }
   
@@ -53592,7 +53592,7 @@ class solarchvision_UI_BAR_b {
           textAlign(CENTER, CENTER);   
           stroke(255); 
           fill(255);
-          textSize(0.45 * SOLARCHVISION_B_Pixel);
+          textSize(0.45 * SOLARCHVISION_pixel_B);
   
           text(this.Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MessageSize);
         }
@@ -55205,7 +55205,7 @@ class solarchvision_UI_BAR_c {
         fill(63);
       }
       noStroke();
-      rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel, width, SOLARCHVISION_C_Pixel);
+      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_C);
   
       noStroke();
       
@@ -55213,7 +55213,7 @@ class solarchvision_UI_BAR_c {
       
   
       pushMatrix();
-      translate(0, 0.333 * MessageSize + SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel);
+      translate(0, 0.333 * MessageSize + SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H);
   
       for (int q = 0; q < maxDisplayLines; q++) {
         
@@ -55278,19 +55278,19 @@ class solarchvision_UI_BAR_d {
   
       this.update = false;
   
-      this.tab = SOLARCHVISION_D_Pixel / float(this.Items.length);
+      this.tab = SOLARCHVISION_pixel_D / float(this.Items.length);
   
       fill(191);
       noStroke();
-      rect(0, SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel, width, SOLARCHVISION_D_Pixel);
+      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_D);
   
   
   
       float displayBarHeight = MessageSize;
-      float displayBarWidth = 2 * SOLARCHVISION_W_Pixel; 
+      float displayBarWidth = 2 * SOLARCHVISION_pixel_W; 
   
       STUDY.X_control = 0.5 * displayBarWidth;
-      STUDY.Y_control = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + 0.5 * this.tab;
+      STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + 0.5 * this.tab;
   
       for (int i = 0; i < this.Items.length; i++) {
   
@@ -55665,7 +55665,7 @@ class solarchvision_UI_BAR_d {
       displayBarHeight = 4.5 * MessageSize;
   
       float temp_offsetX = ROLLOUT.cX + 0.5 * displayBarWidth;
-      float temp_offsetY = SOLARCHVISION_A_Pixel + SOLARCHVISION_B_Pixel + 2 * SOLARCHVISION_H_Pixel + SOLARCHVISION_C_Pixel + 0.5 * displayBarHeight;
+      float temp_offsetY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + 0.5 * displayBarHeight;
   
       for (int n = 0; n < 9; n++) {
   
