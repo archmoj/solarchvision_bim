@@ -1,3 +1,5 @@
+// after calling .reduceDegreePolygon is not complete
+
 
 // bug drawProbs
 
@@ -800,7 +802,7 @@ class solarchvision_Functions {
   
 
 
-  int[][] tessellatePolygon (float[][] polygon_vertices) {
+  int[][] reduceDegreePolygon (float[][] polygon_vertices) {
     
     int maximumDegree = 3;
     
@@ -3219,7 +3221,7 @@ class solarchvision_UITASK {
   private final static int DegreeMin = 11; 
   private final static int TrunkSize = 12; 
   private final static int LeafSize = 13; 
-  private final static int AllallModel1DsProps = 14; 
+  private final static int All_Model1DsProps = 14; 
   private final static int Pivot = 15; 
   private final static int Normal = 16; 
   private final static int FirstVertex = 17; 
@@ -3751,8 +3753,8 @@ class solarchvision_WIN3D {
           Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
       
           Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
-      
-          Sun3D.drawGrid(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale);
+
+          Sun3D.drawGrid(0, 0, 0, 0.975 * Sky3D.scale);
       
           Sun3D.draw();
       
@@ -30363,7 +30365,7 @@ class solarchvision_User3D {
   
   private final static String CLASS_STAMP = "User3D";
 
-  int default_Material = 7; //0; // Farshad
+  int default_Material = 7; //0; 
   int default_Tessellation = 0;
   int default_Layer = 0;
   int default_Visibility = 1; // 1: view 0: hide -1:freeze 
@@ -34490,6 +34492,66 @@ class solarchvision_Model3Ds {
   }
 
 
+
+  void triangulateFaceSelection () {  // exactly similar to optimizeFaceSelection but passing to a different function
+  
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+  
+      if (current_ObjectCategory == ObjectCategory.GROUP) { 
+  
+        userSelections.Group_ids = sort(userSelections.Group_ids);
+  
+        this.convert_allGroups_to_Faces();    
+  
+        userSelections.Face_ids = sort(userSelections.Face_ids);
+      }
+  
+      if (current_ObjectCategory == ObjectCategory.FACE) { 
+  
+        userSelections.Face_ids = sort(userSelections.Face_ids);
+  
+        this.convert_Faces_to_allGroups();    
+  
+        userSelections.Group_ids = sort(userSelections.Group_ids);
+      }
+  
+      for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) { 
+  
+        int OBJ_NUM = userSelections.Group_ids[o];
+  
+        for (int q = userSelections.Face_ids.length - 1; q >= 0; q--) {
+  
+          int f = userSelections.Face_ids[q];
+  
+          int startFace = allGroups.Faces[OBJ_NUM][0];
+          int endFace = allGroups.Faces[OBJ_NUM][1];          
+
+          if ((startFace <= f) && (f <= endFace)) {
+            
+            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+            
+            for (int s = 0; s < allFaces.nodes[f].length; s++) {
+              int vNo = allFaces.nodes[f][s];
+  
+              base_Vertices[s][0] = allPoints.getX(vNo);      
+              base_Vertices[s][1] = allPoints.getY(vNo);
+              base_Vertices[s][2] = allPoints.getZ(vNo);
+            }      
+            
+            int[][] new_Faces = funcs.reduceDegreePolygon(base_Vertices);            
+            
+//allFaces.nodes[f] = ?;   
+          }
+          
+        }
+      }
+  
+      UI_BAR_b.update = true;
+  
+      userSelections.calculate_selection_BoundingBox();
+  
+    }
+  }
 
 
 
@@ -42493,11 +42555,6 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
     WIN3D.update = true;
     
-    
-    
-    
-//Farshad  
-allModel3Ds.optimizeFaceSelection();      
   }
 }     
 
@@ -44053,18 +44110,18 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }     
 
-            if (menu_option.equals("AllallModel1DsProps")) {
-              UI_set_to_Modify_AllallModel1DsProps(0);
+            if (menu_option.equals("Model1DsProps")) {
+              UI_set_to_Modify_All_Model1DsProps(0);
               UI_BAR_b.hghlight("allFP0");
               UI_BAR_b.update = true;
             }
-            if (menu_option.equals("Pick AllallModel1DsProps")) {
-              UI_set_to_Modify_AllallModel1DsProps(1);
+            if (menu_option.equals("Pick Model1DsProps")) {
+              UI_set_to_Modify_All_Model1DsProps(1);
               UI_BAR_b.hghlight("allFP1");
               UI_BAR_b.update = true;
             }
-            if (menu_option.equals("Assign AllallModel1DsProps")) {
-              UI_set_to_Modify_AllallModel1DsProps(2);
+            if (menu_option.equals("Assign Model1DsProps")) {
+              UI_set_to_Modify_All_Model1DsProps(2);
               UI_BAR_b.hghlight("allFP2");
               UI_BAR_b.update = true;
             }                 
@@ -44129,12 +44186,12 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }              
-            if (menu_option.equals("Select allModel1Ds")) {
+            if (menu_option.equals("Select Model1Ds")) {
               current_ObjectCategory = ObjectCategory.MODEL1D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }  
-            if (menu_option.equals("Select allModel2Ds")) {
+            if (menu_option.equals("Select Model2Ds")) {
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
@@ -44295,24 +44352,24 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }
 
-            if (menu_option.equals("Select Near Vertices Selection")) {
+            if (menu_option.equals("Select Near Selected Vertices")) {
               allModel3Ds.selectNearVertices_Selection();
               WIN3D.update = true;
             }
 
-            if (menu_option.equals("Weld Objects Vertices Selection")) {
+            if (menu_option.equals("Weld Objects Selected Vertices")) {
               allModel3Ds.weldObjectsVertices_Selection(User3D.modify_WeldTreshold);
               WIN3D.update = true;
             }            
-            if (menu_option.equals("Weld Scene Vertices Selection")) {
+            if (menu_option.equals("Weld Scene Selected Vertices")) {
               allModel3Ds.weldSceneVertices_Selection(User3D.modify_WeldTreshold);
               WIN3D.update = true;
             }
-            if (menu_option.equals("Reposition Vertices Selection")) {
+            if (menu_option.equals("Reposition Selected Vertices")) {
               allModel3Ds.repositionVertices_Selection();
               WIN3D.update = true;
             }          
-            if (menu_option.equals("Separate Vertices Selection")) {
+            if (menu_option.equals("Separate Selected Vertices")) {
               allModel3Ds.separateVertices_Selection();
               WIN3D.update = true;
             }          
@@ -44324,11 +44381,11 @@ void mouseClicked () {
               allModel3Ds.deleteIsolatedVertices_Scene();
               WIN3D.update = true;
             }   
-            if (menu_option.equals("Delete Isolated Vertices Selection")) {
+            if (menu_option.equals("Delete Isolated Selected Vertices")) {
               allModel3Ds.deleteIsolatedVertices_Selection();
               WIN3D.update = true;
             }              
-            if (menu_option.equals("Delete All Empty allGroups")) {
+            if (menu_option.equals("Delete All Empty Groups")) {
               allModel3Ds.deleteEmptyallGroups_Scene();
               WIN3D.update = true;
             }               
@@ -44336,7 +44393,7 @@ void mouseClicked () {
               allModel3Ds.delete_Selection();
               WIN3D.update = true;
             }      
-            if (menu_option.equals("Dettach from allGroups")) {
+            if (menu_option.equals("Dettach from All Groups")) {
               allModel3Ds.dettachFromallGroups_Selection();
               WIN3D.update = true;
             }                
@@ -44360,11 +44417,11 @@ void mouseClicked () {
               allModel3Ds.duplicate_Selection(1);
               WIN3D.update = true;
             } 
-            if (menu_option.equals("Auto-Normal Faces Selection")) {
+            if (menu_option.equals("Auto-Normal Selected Faces")) {
               allModel3Ds.autoNormalFaces_Selection();
               WIN3D.update = true;
             }
-            if (menu_option.equals("Force Triangulate Faces Selection")) {
+            if (menu_option.equals("Force Triangulate Selected Faces")) {
               allModel3Ds.forceTriangulateFaces_Selection();
               WIN3D.update = true;
             }            
@@ -44391,7 +44448,10 @@ void mouseClicked () {
               WIN3D.update = true;
             }            
             
- 
+            if (menu_option.equals("Triangulate Faces")) {
+              allModel3Ds.triangulateFaceSelection();
+              WIN3D.update = true;
+            }                      
 
             if (menu_option.equals("Tessellate Rows & Columns")) {
               allModel3Ds.tessellateRowsColumnsFaceSelection();
@@ -44461,47 +44521,47 @@ void mouseClicked () {
               WIN3D.update = true;
             }
 
-            if (menu_option.equals("ERASE_allModel1Ds")) {
+            if (menu_option.equals("Erase All Model1Ds")) {
               allModel1Ds.delete();
               WIN3D.update = true;
             }      
     
-            if (menu_option.equals("ERASE_allModel2Ds")) {
+            if (menu_option.equals("Erase All Model2Ds")) {
               allModel2Ds.delete();
               WIN3D.update = true;
             }        
     
-            if (menu_option.equals("ERASE_allGroups")) {
+            if (menu_option.equals("Erase All Groups")) {
               allModel3Ds.delete_allGroups();
               WIN3D.update = true;
             }
     
-            if (menu_option.equals("ERASE_allSolids")) {
+            if (menu_option.equals("Erase All Solids")) {
               allModel3Ds.delete_allSolids();
               WIN3D.update = true;
             }          
     
-            if (menu_option.equals("ERASE_allSections")) {
+            if (menu_option.equals("Erase All Sections")) {
               allModel3Ds.delete_allSections();
               WIN3D.update = true;
             }       
     
-            if (menu_option.equals("ERASE_allCameras")) {
+            if (menu_option.equals("Erase All Cameras")) {
               allModel3Ds.delete_allCameras();
               WIN3D.update = true;
             }    
     
-            if (menu_option.equals("ERASE_Faces")) {
+            if (menu_option.equals("Erase Faces")) {
               allModel3Ds.delete_Faces();
               WIN3D.update = true;
             }             
     
-            if (menu_option.equals("ERASE_Curves")) {
+            if (menu_option.equals("Erase Curves")) {
               allModel3Ds.delete_Curves();
               WIN3D.update = true;
             }  
     
-            if (menu_option.equals("ERASE_All")) {
+            if (menu_option.equals("Erase All ")) {
               SOLARCHVISION_delete_All();
               WIN3D.update = true;
             }  
@@ -45538,7 +45598,7 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_NUM);
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
-                        if (WIN3D.UI_CurrentTask == UITASK.AllallModel1DsProps) { // all properties
+                        if (WIN3D.UI_CurrentTask == UITASK.All_Model1DsProps) { // all properties
                           User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_NUM);
                           User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_NUM);
                           User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
@@ -45554,7 +45614,7 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel1Ds.setDegreeMin(OBJ_NUM, User3D.create_Model1D_DegreeMin);                    
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_NUM, User3D.create_Model1D_TrunkSize);                    
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_NUM, User3D.create_Model1D_LeafSize);
-                        if (WIN3D.UI_CurrentTask == UITASK.AllallModel1DsProps) { // all properties
+                        if (WIN3D.UI_CurrentTask == UITASK.All_Model1DsProps) { // all properties
                           allModel1Ds.setDegreeMax(OBJ_NUM, User3D.create_Model1D_DegreeMax);
                           allModel1Ds.setDegreeMin(OBJ_NUM, User3D.create_Model1D_DegreeMin);                    
                           allModel1Ds.setTrunkSize(OBJ_NUM, User3D.create_Model1D_TrunkSize);                    
@@ -49427,8 +49487,8 @@ void UI_set_to_Modify_LeafSize (int n) {
   ROLLOUT.update = true;
 }
 
-void UI_set_to_Modify_AllallModel1DsProps (int n) {
-  WIN3D.UI_CurrentTask = UITASK.AllallModel1DsProps;
+void UI_set_to_Modify_All_Model1DsProps (int n) {
+  WIN3D.UI_CurrentTask = UITASK.All_Model1DsProps;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT.update = true;
@@ -52266,8 +52326,8 @@ class solarchvision_UI_BAR_a {
       "Select Section", 
       "Select Camera", 
       "Select LandPoint", 
-      "Select allModel1Ds", 
-      "Select allModel2Ds", 
+      "Select Model1Ds", 
+      "Select Model2Ds", 
       "Select Group", 
       "Select Face", 
       "Select Curve", 
@@ -52293,7 +52353,7 @@ class solarchvision_UI_BAR_a {
       "Window Select", 
       "Window Select+", 
       "Window Select-", 
-      "Select Near Vertices Selection", 
+      "Select Near Selected Vertices", 
       "Select All Isolated Vertices"
     }
     ,
@@ -52303,17 +52363,17 @@ class solarchvision_UI_BAR_a {
       "Duplicate Selection (Identical)", 
       "Duplicate Selection (Variation)", 
       "Attach to Last Group", 
-      "Dettach from allGroups", 
+      "Dettach from All Groups", 
       "Group Selection", 
       "Ungroup Selection", 
-      "Delete All Empty allGroups", 
+      "Delete All Empty Groups", 
       "Delete Selection", 
       "Delete All Isolated Vertices", 
-      "Delete Isolated Vertices Selection", 
-      "Separate Vertices Selection", 
-      "Reposition Vertices Selection", 
-      "Weld Objects Vertices Selection", 
-      "Weld Scene Vertices Selection", 
+      "Delete Isolated Selected Vertices", 
+      "Separate Selected Vertices", 
+      "Reposition Selected Vertices", 
+      "Weld Objects Selected Vertices", 
+      "Weld Scene Selected Vertices", 
       "Offset(above) Vertices", 
       "Offset(below) Vertices", 
       "Offset(expand) Vertices", 
@@ -52321,11 +52381,12 @@ class solarchvision_UI_BAR_a {
       "Extrude Face Edges", 
       "Extrude Curve Edges", 
       "Optimize Faces",
+      "Triangulate Faces",
       "Tessellation Triangular", 
       "Tessellate Rectangular", 
       "Tessellate Rows & Columns", 
-      "Auto-Normal Faces Selection", 
-      "Force Triangulate Faces Selection", 
+      "Auto-Normal Selected Faces", 
+      "Force Triangulate Selected Faces", 
       "Insert Corner Opennings", 
       "Insert Parallel Opennings", 
       "Insert Rotated Opennings", 
@@ -52402,7 +52463,7 @@ class solarchvision_UI_BAR_a {
       "Pick DegreeMin", 
       "Pick TrunkSize", 
       "Pick LeafSize", 
-      "Pick AllallModel1DsProps", 
+      "Pick Model1DsProps", 
       "Assign Seed/Material", 
       "Assign Tessellation", 
       "Assign Layer", 
@@ -52412,7 +52473,7 @@ class solarchvision_UI_BAR_a {
       "Assign DegreeMin", 
       "Assign TrunkSize", 
       "Assign LeafSize", 
-      "Assign AllallModel1DsProps", 
+      "Assign Model1DsProps", 
       "Assign Pivot", 
       "Drop on LandSurface", 
       "Drop on ModelSurface (Up)", 
@@ -52437,15 +52498,15 @@ class solarchvision_UI_BAR_a {
       "REC. Solid Graph", 
       "REC. Screenshot", 
       "Stop REC.", 
-      "ERASE_allModel1Ds", 
-      "ERASE_allModel2Ds", 
-      "ERASE_allGroups", 
-      "ERASE_allSolids", 
-      "ERASE_allSections", 
-      "ERASE_allCameras", 
-      "ERASE_Faces", 
-      "ERASE_Curves", 
-      "ERASE_All"
+      "Erase All Model1Ds", 
+      "Erase All Model2Ds", 
+      "Erase All Groups", 
+      "Erase All Solids", 
+      "Erase All Sections", 
+      "Erase All Cameras", 
+      "Erase Faces", 
+      "Erase Curves", 
+      "Erase All "
     }
   };
   
@@ -53081,7 +53142,7 @@ class solarchvision_UI_BAR_b {
     //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
     //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
     //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
-    //{"1", "allFP0", "allFP1", "allFP2", "AllallModel1DsProps", "1.0"},
+    //{"1", "allFP0", "allFP1", "allFP2", "Model1DsProps", "1.0"},
   
     //{"1", "SEC", "Section", "1.0"},
     //{"1", "SLD", "Solid", "1.0"},
