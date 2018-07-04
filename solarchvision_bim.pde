@@ -30613,13 +30613,13 @@ class solarchvision_Model3Ds {
   
     {
   
-      int[][] newFace_MTLVGC = {
+      int[][] newFace_options = {
         {
           current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
         }
       }; 
   
-      allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);
+      allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
   
       int[][] newFace = {
         f
@@ -30637,13 +30637,13 @@ class solarchvision_Model3Ds {
   
     {
   
-      int[][] newCurve_MTLVGC = {
+      int[][] newCurve_options = {
         {
           current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
         }
       }; 
   
-      allCurves.options =  (int[][]) concat(allCurves.options, newCurve_MTLVGC);
+      allCurves.options =  (int[][]) concat(allCurves.options, newCurve_options);
   
       int[][] newCurve = {
         f
@@ -33091,9 +33091,9 @@ class solarchvision_Model3Ds {
             int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
             { 
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -33146,14 +33146,14 @@ class solarchvision_Model3Ds {
                     new_Vertex_ids[s], allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_Vertex_ids[s_next]
                   }
                 };
-                int[][] newFace_MTLVGC = {
+                int[][] newFace_options = {
                   {
                     current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   }
                 }; 
   
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC);
+                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
               }
   
   
@@ -33165,10 +33165,10 @@ class solarchvision_Model3Ds {
             }
   
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
             allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -33257,9 +33257,9 @@ class solarchvision_Model3Ds {
             int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
             { 
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -33328,14 +33328,14 @@ class solarchvision_Model3Ds {
                       allFaces.nodes[f][s], new_B_EdgeVertex_ids[s], new_CenterVertex_ids[s], new_A_EdgeVertex_ids[s]
                     }
                   };
-                  int[][] newFace_MTLVGC = {
+                  int[][] newFace_options = {
                     {
                       current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                     }
                   }; 
   
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC);
+                  midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
                 }   
   
                 {
@@ -33344,14 +33344,14 @@ class solarchvision_Model3Ds {
                       new_B_EdgeVertex_ids[s], new_A_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
                     }
                   };
-                  int[][] newFace_MTLVGC = {
+                  int[][] newFace_options = {
                     {
                       current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                     }
                   }; 
   
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC);
+                  midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
                 }
               }
   
@@ -33364,10 +33364,10 @@ class solarchvision_Model3Ds {
             }
   
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
             allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -33455,9 +33455,9 @@ class solarchvision_Model3Ds {
             int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
             { 
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -33519,14 +33519,14 @@ class solarchvision_Model3Ds {
                     new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
                   }
                 };
-                int[][] newFace_MTLVGC = {
+                int[][] newFace_options = {
                   {
                     current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   }
                 }; 
   
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC);
+                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
               }
   
   
@@ -33538,10 +33538,10 @@ class solarchvision_Model3Ds {
             }
   
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
             allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -33631,9 +33631,9 @@ class solarchvision_Model3Ds {
             int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f, 1);
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
             { 
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -33690,14 +33690,14 @@ class solarchvision_Model3Ds {
                     new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next]
                   }
                 };
-                int[][] newFace_MTLVGC = {
+                int[][] newFace_options = {
                   {
                     current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   }
                 }; 
   
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC);
+                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
               }
   
   
@@ -33709,10 +33709,10 @@ class solarchvision_Model3Ds {
             }
   
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
             allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -33805,9 +33805,9 @@ class solarchvision_Model3Ds {
               int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-              int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-              int[][] midList_Faces_MTLVGC = new int [0][0];
-              int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+              int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+              int[][] midList_Faces_options = new int [0][0];
+              int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
               { 
                 float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -33884,14 +33884,14 @@ class solarchvision_Model3Ds {
                         new_EdgeVertex_ids[s00], new_EdgeVertex_ids[s10], new_EdgeVertex_ids[s11], new_EdgeVertex_ids[s01]
                       }
                     };
-                    int[][] newFace_MTLVGC = {
+                    int[][] newFace_options = {
                       {
                         current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                       }
                     }; 
   
                     midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                    midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC); 
+                    midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options); 
   
                     if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                       int[] newFace_number = {
@@ -33904,10 +33904,10 @@ class solarchvision_Model3Ds {
               }
   
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+              startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
               allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+              allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -33997,9 +33997,9 @@ class solarchvision_Model3Ds {
             int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_MTLVGC = new int [0][0];
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options = new int [0][0];
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
             { 
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -34057,14 +34057,14 @@ class solarchvision_Model3Ds {
                     new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number
                   }
                 };
-                int[][] newFace_MTLVGC = {
+                int[][] newFace_options = {
                   {
                     current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   }
                 }; 
   
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC); 
+                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options); 
   
                 if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                   int[] newFace_number = {
@@ -34076,10 +34076,10 @@ class solarchvision_Model3Ds {
             }
   
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
             allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -34168,9 +34168,9 @@ class solarchvision_Model3Ds {
             int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-            int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_MTLVGC = new int [0][0];
-            int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+            int[][] midList_Faces_options = new int [0][0];
+            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
             { 
               float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -34211,14 +34211,14 @@ class solarchvision_Model3Ds {
                     allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
                   }
                 };
-                int[][] newFace_MTLVGC = {
+                int[][] newFace_options = {
                   {
                     current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   }
                 }; 
   
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC); 
+                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options); 
   
                 if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                   int[] newFace_number = {
@@ -34230,10 +34230,10 @@ class solarchvision_Model3Ds {
             }
   
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
             allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);                      
+            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < userSelections.Face_ids.length; i++) {
@@ -34325,9 +34325,9 @@ class solarchvision_Model3Ds {
               int[][] endList_Faces = (int[][]) subset(allFaces.nodes, f + 1);
   
   
-              int[][] startList_Faces_MTLVGC = (int[][]) subset(allFaces.options, 0, f);
-              int[][] midList_Faces_MTLVGC = new int [0][0];
-              int[][] endList_Faces_MTLVGC = (int[][]) subset(allFaces.options, f + 1);
+              int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
+              int[][] midList_Faces_options = new int [0][0];
+              int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
   
               { 
                 float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
@@ -34368,14 +34368,14 @@ class solarchvision_Model3Ds {
                       allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
                     }
                   };
-                  int[][] newFace_MTLVGC = {
+                  int[][] newFace_options = {
                     {
                       current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                     }
                   }; 
   
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLVGC = (int[][]) concat(midList_Faces_MTLVGC, newFace_MTLVGC); 
+                  midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options); 
   
                   if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
                     int[] newFace_number = {
@@ -34387,10 +34387,10 @@ class solarchvision_Model3Ds {
               }
   
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLVGC = (int[][]) concat(startList_Faces_MTLVGC, midList_Faces_MTLVGC);  
+              startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);  
   
               allFaces.nodes = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces.options = (int[][]) concat(startList_Faces_MTLVGC, endList_Faces_MTLVGC);           
+              allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);           
             }           
   
             { // to avoid processing the faces twice they should be deleted from the list.
@@ -34733,12 +34733,12 @@ class solarchvision_Model3Ds {
                 allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
               }       
   
-              int[][] newFace_MTLVGC = {
+              int[][] newFace_options = {
                 {
                   allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
                 }
               }; 
-              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
             }  
   
             { // adding the cap
@@ -34747,12 +34747,12 @@ class solarchvision_Model3Ds {
               };  
               allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);         
   
-              int[][] newFace_MTLVGC = {
+              int[][] newFace_options = {
                 {
                   allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
                 }
               }; 
-              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);  
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);  
   
               int[] lastFace = {
                 allFaces.nodes.length - 1
@@ -34875,12 +34875,12 @@ class solarchvision_Model3Ds {
                 allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);
               }       
   
-              int[][] newFace_MTLVGC = { // copying target face properties from curve source
+              int[][] newFace_options = { // copying target face properties from curve source
                 {
                   allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
                 }
               }; 
-              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
             }  
   
             { // adding the cap
@@ -34889,12 +34889,12 @@ class solarchvision_Model3Ds {
               };  
               allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace);         
   
-              int[][] newFace_MTLVGC = { // copying target face properties from curve source
+              int[][] newFace_options = { // copying target face properties from curve source
                 {
                   allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
                 }
               }; 
-              allFaces.options =  (int[][]) concat(allFaces.options, newFace_MTLVGC);  
+              allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);  
   
               int[] lastFace = {
                 allFaces.nodes.length - 1
@@ -37393,13 +37393,13 @@ class solarchvision_Model3Ds {
     
     
       {
-        int[][] newFace_MTLVGC = {
+        int[][] newFace_options = {
           {
             current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
           }
         }; 
     
-        allFaces.options = (int[][]) concat(allFaces.options, newFace_MTLVGC);
+        allFaces.options = (int[][]) concat(allFaces.options, newFace_options);
     
     
         int[][] newFace = {
@@ -37412,13 +37412,13 @@ class solarchvision_Model3Ds {
       }
     
       {
-        int[][] newFace_MTLVGC = {
+        int[][] newFace_options = {
           {
             current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
           }
         }; 
     
-        //allFaces.options = (int[][]) concat(allFaces.options, newFace_MTLVGC);
+        //allFaces.options = (int[][]) concat(allFaces.options, newFace_options);
     
     
         int[][] newFace = {
