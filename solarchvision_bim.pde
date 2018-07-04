@@ -5411,7 +5411,7 @@ class solarchvision_WORLD {
   int Viewports_num;
   int Viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
 
-  int AutoView = 1;
+  boolean autoView = true;
   
   boolean record_IMG = false;
   boolean record_PDF = false;
@@ -5484,7 +5484,7 @@ class solarchvision_WORLD {
   
     int return_VIEWPORT = this.VIEW_id;
   
-    if (this.AutoView == 1) {
+    if (this.autoView) {
   
       float d1 = FLOAT_undefined;
       float d2 = FLOAT_undefined;
@@ -10347,7 +10347,7 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 1) { // Point
   
-        //WORLD.AutoView = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.AutoView, 0, 1, 1), 1));
+        //WORLD.autoView = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1), 1));
         //WORLD.VIEW_id = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.Viewports_num - 1, 1), 1));
   
         LocationLAT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
@@ -11000,7 +11000,7 @@ boolean pre_Land3D_loadTextures;
 float pre_LocationLAT;
 float pre_LocationLON;
 
-int pre_WORLD_AutoView;
+boolean pre_WORLD_autoView;
 
 boolean pre_Selection_Model1D_displayEdges;
 boolean pre_Selection_Model2D_displayEdges;
@@ -20418,7 +20418,7 @@ void draw () {
         pre_LocationLAT = LocationLAT;
         pre_LocationLON = LocationLON;
 
-        pre_WORLD_AutoView = WORLD.AutoView;
+        pre_WORLD_autoView = WORLD.autoView;
 
         pre_Land3D_loadMesh = Land3D.loadMesh;
         pre_Land3D_loadTextures = Land3D.loadTextures;
@@ -20594,7 +20594,7 @@ void draw () {
         if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
         if (pre_ENSEMBLE_FORECAST_load != ENSEMBLE_FORECAST_load) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-        if (pre_WORLD_AutoView != WORLD.AutoView) {
+        if (pre_WORLD_autoView != WORLD.autoView) {
           WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
         }
 
@@ -50469,7 +50469,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
     UI_set_to_Create_Nothing();
   
-    WORLD.AutoView = 1;
+    WORLD.autoView = true;
   
     WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
   
