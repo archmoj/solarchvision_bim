@@ -2076,7 +2076,7 @@ void inputCoordinates_TMYEPW () {
 
   
   
-solarchvision_STATION[] CWEEDcoordinate_PSs;
+solarchvision_STATION[] CWEEDS_coordinates;
 
 void inputCoordinates_CWEEDS () {
 
@@ -2086,7 +2086,7 @@ void inputCoordinates_CWEEDS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line 
 
-  CWEEDcoordinate_PSs = new solarchvision_STATION [num_stn]; 
+  CWEEDS_coordinates = new solarchvision_STATION [num_stn]; 
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line  
@@ -2096,16 +2096,16 @@ void inputCoordinates_CWEEDS () {
     float latitude = float(parts[2]) * 0.01;
     float longitude = float(parts[3]) * -0.01;
     
-    CWEEDcoordinate_PSs[f] = new solarchvision_STATION(); 
+    CWEEDS_coordinates[f] = new solarchvision_STATION(); 
 
-    CWEEDcoordinate_PSs[f].setCity(parts[1]);
-    CWEEDcoordinate_PSs[f].setProvince(parts[0]);
-    CWEEDcoordinate_PSs[f].setCountry("CA");
-    CWEEDcoordinate_PSs[f].setLatitude(latitude);
-    CWEEDcoordinate_PSs[f].setLongitude(longitude);
-    CWEEDcoordinate_PSs[f].setTimelong(funcs.roundTo(longitude, 15));
-    CWEEDcoordinate_PSs[f].setElevation(0); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ??
-    CWEEDcoordinate_PSs[f].setFilename_CWEEDS(lineSTR);
+    CWEEDS_coordinates[f].setCity(parts[1]);
+    CWEEDS_coordinates[f].setProvince(parts[0]);
+    CWEEDS_coordinates[f].setCountry("CA");
+    CWEEDS_coordinates[f].setLatitude(latitude);
+    CWEEDS_coordinates[f].setLongitude(longitude);
+    CWEEDS_coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
+    CWEEDS_coordinates[f].setElevation(0); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ??
+    CWEEDS_coordinates[f].setFilename_CWEEDS(lineSTR);
   }
 }
 
@@ -3621,15 +3621,15 @@ class solarchvision_WIN3D {
   int dY = SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
 
-  float coordinate_PX = 0;
-  float coordinate_PY = 50; //10;
-  float coordinate_PZ = -50; //50; 
-  float coordinate_PS = 1.0;
+  float coordinate_pX = 0;
+  float coordinate_pY = 50; //10;
+  float coordinate_pZ = -50; //50; 
+  float coordinate_pS = 1.0;
   
-  float coordinate_RX = 90; //75; //0; 
-  float coordinate_RY = 0;
-  float coordinate_RZ = 90; //0; //180; //135;
-  float coordinate_RS = 5.0;
+  float coordinate_rX = 90; //75; //0; 
+  float coordinate_rY = 0;
+  float coordinate_rZ = 90; //0; //180; //135;
+  float coordinate_rS = 5.0;
   
   float Zoom = 60.0; // / (SOLARCHVISION_pixel_H / 300.0);
   
@@ -3688,10 +3688,10 @@ class solarchvision_WIN3D {
       this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
     }
   
-    this.graphics.translate(this.coordinate_PX * this.scale, this.coordinate_PY * this.scale, this.coordinate_PZ * this.scale);
+    this.graphics.translate(this.coordinate_pX * this.scale, this.coordinate_pY * this.scale, this.coordinate_pZ * this.scale);
   
-    this.graphics.rotateX(this.coordinate_RX * PI / 180); 
-    this.graphics.rotateZ(this.coordinate_RZ * PI / 180);
+    this.graphics.rotateX(this.coordinate_rX * PI / 180); 
+    this.graphics.rotateZ(this.coordinate_rZ * PI / 180);
   }
   
   
@@ -3876,7 +3876,7 @@ class solarchvision_WIN3D {
     this.graphics.pushMatrix(); 
     this.graphics.translate(x * this.scale, -y * this.scale, z * this.scale);
   
-    this.graphics.sphere(1); // <<<<<< size
+    //this.graphics.sphere(1); // <<<<<< size
   
     this.graphics.popMatrix();
   
@@ -4366,15 +4366,15 @@ class solarchvision_WIN3D {
           break;             
   
         case '.' :
-          this.coordinate_PX = 0;
-          this.coordinate_PY = 0;
+          this.coordinate_pX = 0;
+          this.coordinate_pY = 0;
           //this.Zoom = 60;
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case '-' :
-          this.coordinate_RX = 90; 
+          this.coordinate_rX = 90; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -4382,15 +4382,15 @@ class solarchvision_WIN3D {
   
   
         case '+' :
-          this.coordinate_RX = 0;
-          this.coordinate_RY = 0;
-          this.coordinate_RZ = 0; 
+          this.coordinate_rX = 0;
+          this.coordinate_rY = 0;
+          this.coordinate_rZ = 0; 
   
-          this.coordinate_PX = 0;
-          this.coordinate_PY = 0;
-          this.coordinate_PZ = -100;   
+          this.coordinate_pX = 0;
+          this.coordinate_pY = 0;
+          this.coordinate_pZ = -100;   
   
-          this.coordinate_PS = 1;
+          this.coordinate_pS = 1;
   
           this.Zoom = 60;        
   
@@ -4524,25 +4524,25 @@ class solarchvision_WIN3D {
         switch(keyCode) {
   
         case DOWN :
-          WIN3D.rotateZ_3DViewport_around_Selection(this.coordinate_RS);
+          WIN3D.rotateZ_3DViewport_around_Selection(this.coordinate_rS);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case LEFT :
-          WIN3D.rotateXY_3DViewport_around_Selection(-this.coordinate_RS);
+          WIN3D.rotateXY_3DViewport_around_Selection(-this.coordinate_rS);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case RIGHT :
-          WIN3D.rotateXY_3DViewport_around_Selection(this.coordinate_RS);
+          WIN3D.rotateXY_3DViewport_around_Selection(this.coordinate_rS);
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case UP :
-          WIN3D.rotateZ_3DViewport_around_Selection(-this.coordinate_RS);
+          WIN3D.rotateZ_3DViewport_around_Selection(-this.coordinate_rS);
           this.update = true; 
           ROLLOUT.update = true; 
           break;     
@@ -4599,7 +4599,7 @@ class solarchvision_WIN3D {
   
         case ',' :
           if (this.ViewType == 1) {
-            this.coordinate_PZ += this.coordinate_PS * OBJECTS_scale; 
+            this.coordinate_pZ += this.coordinate_pS * OBJECTS_scale; 
             this.update = true; 
             ROLLOUT.update = true;
           } else {
@@ -4611,7 +4611,7 @@ class solarchvision_WIN3D {
   
         case '.' :
           if (this.ViewType == 1) {
-            this.coordinate_PZ -= this.coordinate_PS * OBJECTS_scale; 
+            this.coordinate_pZ -= this.coordinate_pS * OBJECTS_scale; 
             this.update = true; 
             ROLLOUT.update = true;
           } else {
@@ -4623,7 +4623,7 @@ class solarchvision_WIN3D {
   
         case '0' :
           if (this.ViewType == 1) {
-            this.coordinate_PZ += this.coordinate_PS * OBJECTS_scale; 
+            this.coordinate_pZ += this.coordinate_pS * OBJECTS_scale; 
             this.update = true; 
             ROLLOUT.update = true;
           } else {
@@ -4640,47 +4640,47 @@ class solarchvision_WIN3D {
           break;
   
         case '4' :
-          this.coordinate_RZ += this.coordinate_RS; 
+          this.coordinate_rZ += this.coordinate_rS; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '6' :
-          this.coordinate_RZ -= this.coordinate_RS; 
+          this.coordinate_rZ -= this.coordinate_rS; 
           WIN3D.reverseTransform_3DViewport();
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '2' :
-          this.coordinate_RX -= this.coordinate_RS; 
+          this.coordinate_rX -= this.coordinate_rS; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '8' :
-          this.coordinate_RX += this.coordinate_RS; 
+          this.coordinate_rX += this.coordinate_rS; 
           WIN3D.reverseTransform_3DViewport(); 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
   
         case '1' :
-          this.coordinate_PX += this.coordinate_PS * OBJECTS_scale; 
+          this.coordinate_pX += this.coordinate_pS * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '3' :
-          this.coordinate_PX -= this.coordinate_PS * OBJECTS_scale; 
+          this.coordinate_pX -= this.coordinate_pS * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break; 
         case '9' :
-          this.coordinate_PY += this.coordinate_PS * OBJECTS_scale; 
+          this.coordinate_pY += this.coordinate_pS * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case '7' :
-          this.coordinate_PY -= this.coordinate_PS * OBJECTS_scale; 
+          this.coordinate_pY -= this.coordinate_pS * OBJECTS_scale; 
           this.update = true; 
           ROLLOUT.update = true; 
           break;                  
@@ -4772,7 +4772,7 @@ class solarchvision_WIN3D {
   
     float ZOOM = 0.5 * this.Zoom * PI / 180;
     
-    ZOOM *= pow(pow(this.coordinate_PX, 2) + pow(this.coordinate_PY, 2) + pow(this.coordinate_PZ, 2), 0.5); 
+    ZOOM *= pow(pow(this.coordinate_pX, 2) + pow(this.coordinate_pY, 2) + pow(this.coordinate_pZ, 2), 0.5); 
   
     ZOOM /= this.refScale;
   
@@ -4805,7 +4805,7 @@ class solarchvision_WIN3D {
     float zB = P[2] / OBJECTS_scale;  
   
   
-    this.coordinate_RZ += funcs.atan2_ang((yB - yO), (xB - xO)) - funcs.atan2_ang((yA - yO), (xA - xO));
+    this.coordinate_rZ += funcs.atan2_ang((yB - yO), (xB - xO)) - funcs.atan2_ang((yA - yO), (xA - xO));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -4828,7 +4828,7 @@ class solarchvision_WIN3D {
     float yB = P[1] / OBJECTS_scale;
     float zB = P[2] / OBJECTS_scale;  
   
-    this.coordinate_RX += funcs.atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - funcs.atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
+    this.coordinate_rX += funcs.atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - funcs.atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -4858,7 +4858,7 @@ class solarchvision_WIN3D {
     float zB = P[2];  
   
   
-    this.coordinate_RZ += funcs.atan2_ang((yB - yO), (xB - xO)) - funcs.atan2_ang((yA - yO), (xA - xO));
+    this.coordinate_rZ += funcs.atan2_ang((yB - yO), (xB - xO)) - funcs.atan2_ang((yA - yO), (xA - xO));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -4881,7 +4881,7 @@ class solarchvision_WIN3D {
     float yB = P[1];
     float zB = P[2];  
   
-    this.coordinate_RX += funcs.atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - funcs.atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
+    this.coordinate_rX += funcs.atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - funcs.atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
   
     WIN3D.reverseTransform_3DViewport();
   }
@@ -4915,7 +4915,7 @@ class solarchvision_WIN3D {
     WIN3D.reverseTransform_3DViewport();
   
   
-    //this.coordinate_PS *= t; // just to adjust panning better
+    //this.coordinate_pS *= t; // just to adjust panning better
   }
   
   void move_3DViewport_towards_Selection (float t) {
@@ -4945,12 +4945,12 @@ class solarchvision_WIN3D {
     WIN3D.reverseTransform_3DViewport();
   
   
-    //this.coordinate_PS *= t; // just to adjust panning better
+    //this.coordinate_pS *= t; // just to adjust panning better
   }
   
   void rotateZ_3DViewport_around_Selection (float t) {
   
-    this.coordinate_RX += t;
+    this.coordinate_rX += t;
   
     float xA = this.CAM_x / OBJECTS_scale;
     float yA = this.CAM_y / OBJECTS_scale;
@@ -4968,8 +4968,8 @@ class solarchvision_WIN3D {
   
     // rotate to make it on yz plane
   
-    float xC = xB * funcs.cos_ang(-this.coordinate_RZ) - yB * funcs.sin_ang(-this.coordinate_RZ); 
-    float yC = xB * funcs.sin_ang(-this.coordinate_RZ) + yB * funcs.cos_ang(-this.coordinate_RZ);
+    float xC = xB * funcs.cos_ang(-this.coordinate_rZ) - yB * funcs.sin_ang(-this.coordinate_rZ); 
+    float yC = xB * funcs.sin_ang(-this.coordinate_rZ) + yB * funcs.cos_ang(-this.coordinate_rZ);
     float zC = zB;
   
     // rotate it on yz plane
@@ -4980,8 +4980,8 @@ class solarchvision_WIN3D {
   
     // rotate to back from yz plane
   
-    float xE = xD * funcs.cos_ang(this.coordinate_RZ) - yD * funcs.sin_ang(this.coordinate_RZ); 
-    float yE = xD * funcs.sin_ang(this.coordinate_RZ) + yD * funcs.cos_ang(this.coordinate_RZ);
+    float xE = xD * funcs.cos_ang(this.coordinate_rZ) - yD * funcs.sin_ang(this.coordinate_rZ); 
+    float yE = xD * funcs.sin_ang(this.coordinate_rZ) + yD * funcs.cos_ang(this.coordinate_rZ);
     float zE = zD;
   
     float xF = xE + xO;
@@ -4998,7 +4998,7 @@ class solarchvision_WIN3D {
   
   void rotateXY_3DViewport_around_Selection (float t) {
   
-    this.coordinate_RZ += t;
+    this.coordinate_rZ += t;
   
     float xA = this.CAM_x / OBJECTS_scale;
     float yA = this.CAM_y / OBJECTS_scale;
@@ -5078,7 +5078,7 @@ class solarchvision_WIN3D {
       float dx = xA - xO;
       float dy = yA - yO;
     
-      this.coordinate_RZ += t;
+      this.coordinate_rZ += t;
     
       float xB = xO + dx * funcs.cos_ang(t) - dy * funcs.sin_ang(t); 
       float yB = yO + dx * funcs.sin_ang(t) + dy * funcs.cos_ang(t);
@@ -5093,7 +5093,7 @@ class solarchvision_WIN3D {
   }
   
   
-  void reverseTransform_3DViewport () { // computing this.coordinate_PX, this.coordinate_PY and this.coordinate_PZ from new set of camera start and end points.
+  void reverseTransform_3DViewport () { // computing this.coordinate_pX, this.coordinate_pY and this.coordinate_pZ from new set of camera start and end points.
   
     float px, py, pz;
   
@@ -5104,16 +5104,16 @@ class solarchvision_WIN3D {
     float CAM_x1, CAM_y1, CAM_z1;
   
     CAM_z1 = pz;
-    CAM_x1 = px * funcs.cos_ang(-this.coordinate_RZ) - py * funcs.sin_ang(-this.coordinate_RZ);
-    CAM_y1 = px * funcs.sin_ang(-this.coordinate_RZ) + py * funcs.cos_ang(-this.coordinate_RZ);  
+    CAM_x1 = px * funcs.cos_ang(-this.coordinate_rZ) - py * funcs.sin_ang(-this.coordinate_rZ);
+    CAM_y1 = px * funcs.sin_ang(-this.coordinate_rZ) + py * funcs.cos_ang(-this.coordinate_rZ);  
   
     px = CAM_x1;
     py = CAM_y1;
     pz = CAM_z1;  
   
     CAM_x1 = px;
-    CAM_y1 = py * funcs.cos_ang(-this.coordinate_RX) - pz * funcs.sin_ang(-this.coordinate_RX);
-    CAM_z1 = py * funcs.sin_ang(-this.coordinate_RX) + pz * funcs.cos_ang(-this.coordinate_RX);    
+    CAM_y1 = py * funcs.cos_ang(-this.coordinate_rX) - pz * funcs.sin_ang(-this.coordinate_rX);
+    CAM_z1 = py * funcs.sin_ang(-this.coordinate_rX) + pz * funcs.cos_ang(-this.coordinate_rX);    
   
   
     float CAM_x2, CAM_y2, CAM_z2;
@@ -5131,22 +5131,22 @@ class solarchvision_WIN3D {
     CAM_z2 *= tan(0.5 * this.CAM_fov) / tan(0.5 * PI / 3.0);  
   
   
-    this.coordinate_PX = CAM_x2 - CAM_x1; 
-    this.coordinate_PY = -(CAM_y2 - CAM_y1); 
-    this.coordinate_PZ = CAM_z2 - CAM_z1;
+    this.coordinate_pX = CAM_x2 - CAM_x1; 
+    this.coordinate_pY = -(CAM_y2 - CAM_y1); 
+    this.coordinate_pZ = CAM_z2 - CAM_z1;
   }
   
   
   void record_last3DViewport () {
   
-    allCameras.options[this.currentCamera][0] = this.coordinate_PX;
-    allCameras.options[this.currentCamera][1] = this.coordinate_PY;
-    allCameras.options[this.currentCamera][2] = this.coordinate_PZ;
-    allCameras.options[this.currentCamera][3] = this.coordinate_PS;
-    allCameras.options[this.currentCamera][4] = this.coordinate_RX;
-    allCameras.options[this.currentCamera][5] = this.coordinate_RY;
-    allCameras.options[this.currentCamera][6] = this.coordinate_RZ;
-    allCameras.options[this.currentCamera][7] = this.coordinate_RS;
+    allCameras.options[this.currentCamera][0] = this.coordinate_pX;
+    allCameras.options[this.currentCamera][1] = this.coordinate_pY;
+    allCameras.options[this.currentCamera][2] = this.coordinate_pZ;
+    allCameras.options[this.currentCamera][3] = this.coordinate_pS;
+    allCameras.options[this.currentCamera][4] = this.coordinate_rX;
+    allCameras.options[this.currentCamera][5] = this.coordinate_rY;
+    allCameras.options[this.currentCamera][6] = this.coordinate_rZ;
+    allCameras.options[this.currentCamera][7] = this.coordinate_rS;
     allCameras.options[this.currentCamera][8] = this.Zoom;
   
     allCameras.Type[this.currentCamera] = this.ViewType;
@@ -5155,14 +5155,14 @@ class solarchvision_WIN3D {
   
   void apply_currentCamera () {
   
-    this.coordinate_PX = allCameras.options[this.currentCamera][0];
-    this.coordinate_PY = allCameras.options[this.currentCamera][1];
-    this.coordinate_PZ = allCameras.options[this.currentCamera][2];
-    this.coordinate_PS = allCameras.options[this.currentCamera][3];
-    this.coordinate_RX = allCameras.options[this.currentCamera][4];
-    this.coordinate_RY = allCameras.options[this.currentCamera][5];
-    this.coordinate_RZ = allCameras.options[this.currentCamera][6];
-    this.coordinate_RS = allCameras.options[this.currentCamera][7];
+    this.coordinate_pX = allCameras.options[this.currentCamera][0];
+    this.coordinate_pY = allCameras.options[this.currentCamera][1];
+    this.coordinate_pZ = allCameras.options[this.currentCamera][2];
+    this.coordinate_pS = allCameras.options[this.currentCamera][3];
+    this.coordinate_rX = allCameras.options[this.currentCamera][4];
+    this.coordinate_rY = allCameras.options[this.currentCamera][5];
+    this.coordinate_rZ = allCameras.options[this.currentCamera][6];
+    this.coordinate_rS = allCameras.options[this.currentCamera][7];
     this.Zoom = allCameras.options[this.currentCamera][8];
   
     this.ViewType = allCameras.Type[this.currentCamera];
@@ -5184,23 +5184,23 @@ class solarchvision_WIN3D {
     this.CAM_y *= tan(0.5 * this.CAM_fov) / tan(0.5 * PI / 3.0);
     this.CAM_z *= tan(0.5 * this.CAM_fov) / tan(0.5 * PI / 3.0);
   
-    this.CAM_x -= this.coordinate_PX;
-    this.CAM_y += this.coordinate_PY;
-    this.CAM_z -= this.coordinate_PZ;
+    this.CAM_x -= this.coordinate_pX;
+    this.CAM_y += this.coordinate_pY;
+    this.CAM_z -= this.coordinate_pZ;
   
     float px, py, pz;
   
     px = this.CAM_x;
-    py = this.CAM_y * funcs.cos_ang(this.coordinate_RX) - this.CAM_z * funcs.sin_ang(this.coordinate_RX);
-    pz = this.CAM_y * funcs.sin_ang(this.coordinate_RX) + this.CAM_z * funcs.cos_ang(this.coordinate_RX);
+    py = this.CAM_y * funcs.cos_ang(this.coordinate_rX) - this.CAM_z * funcs.sin_ang(this.coordinate_rX);
+    pz = this.CAM_y * funcs.sin_ang(this.coordinate_rX) + this.CAM_z * funcs.cos_ang(this.coordinate_rX);
   
     this.CAM_x = px;
     this.CAM_y = py;
     this.CAM_z = pz;
   
     pz = this.CAM_z;
-    px = this.CAM_x * funcs.cos_ang(this.coordinate_RZ) - this.CAM_y * funcs.sin_ang(this.coordinate_RZ);
-    py = this.CAM_x * funcs.sin_ang(this.coordinate_RZ) + this.CAM_y * funcs.cos_ang(this.coordinate_RZ);
+    px = this.CAM_x * funcs.cos_ang(this.coordinate_rZ) - this.CAM_y * funcs.sin_ang(this.coordinate_rZ);
+    py = this.CAM_x * funcs.sin_ang(this.coordinate_rZ) + this.CAM_y * funcs.cos_ang(this.coordinate_rZ);
   
     this.CAM_x = px;
     this.CAM_y = py;
@@ -5235,16 +5235,16 @@ class solarchvision_WIN3D {
     float px, py, pz;
   
     px = PNT_x;
-    py = PNT_y * funcs.cos_ang(-this.coordinate_RX) - PNT_z * funcs.sin_ang(-this.coordinate_RX);
-    pz = PNT_y * funcs.sin_ang(-this.coordinate_RX) + PNT_z * funcs.cos_ang(-this.coordinate_RX);
+    py = PNT_y * funcs.cos_ang(-this.coordinate_rX) - PNT_z * funcs.sin_ang(-this.coordinate_rX);
+    pz = PNT_y * funcs.sin_ang(-this.coordinate_rX) + PNT_z * funcs.cos_ang(-this.coordinate_rX);
   
     PNT_x = px;
     PNT_y = py;
     PNT_z = pz;
   
     pz = PNT_z;
-    px = PNT_x * funcs.cos_ang(this.coordinate_RZ) - PNT_y * funcs.sin_ang(this.coordinate_RZ);
-    py = PNT_x * funcs.sin_ang(this.coordinate_RZ) + PNT_y * funcs.cos_ang(this.coordinate_RZ);
+    px = PNT_x * funcs.cos_ang(this.coordinate_rZ) - PNT_y * funcs.sin_ang(this.coordinate_rZ);
+    py = PNT_x * funcs.sin_ang(this.coordinate_rZ) + PNT_y * funcs.cos_ang(this.coordinate_rZ);
   
     PNT_x = px;
     PNT_y = py;
@@ -5278,16 +5278,16 @@ class solarchvision_WIN3D {
     z += this.CAM_z;
   
     pz = z;
-    px = x * funcs.cos_ang(-this.coordinate_RZ) - y * funcs.sin_ang(-this.coordinate_RZ);
-    py = x * funcs.sin_ang(-this.coordinate_RZ) + y * funcs.cos_ang(-this.coordinate_RZ);
+    px = x * funcs.cos_ang(-this.coordinate_rZ) - y * funcs.sin_ang(-this.coordinate_rZ);
+    py = x * funcs.sin_ang(-this.coordinate_rZ) + y * funcs.cos_ang(-this.coordinate_rZ);
   
     x = px;
     y = py;
     z = pz;    
   
     px = x;
-    py = y * funcs.cos_ang(this.coordinate_RX) - z * funcs.sin_ang(this.coordinate_RX);
-    pz = y * funcs.sin_ang(this.coordinate_RX) + z * funcs.cos_ang(this.coordinate_RX);
+    py = y * funcs.cos_ang(this.coordinate_rX) - z * funcs.sin_ang(this.coordinate_rX);
+    pz = y * funcs.sin_ang(this.coordinate_rX) + z * funcs.cos_ang(this.coordinate_rX);
   
     x = px;
     y = py;
@@ -5336,14 +5336,14 @@ class solarchvision_WIN3D {
     parent.setInt("currentCamera", this.currentCamera);
     
     parent.setFloat("refScale", this.refScale);
-    parent.setFloat("coordinate_PX", this.coordinate_PX);
-    parent.setFloat("coordinate_PY", this.coordinate_PY);
-    parent.setFloat("coordinate_PZ", this.coordinate_PZ);
-    parent.setFloat("coordinate_PS", this.coordinate_PS);
-    parent.setFloat("coordinate_RX", this.coordinate_RX);
-    parent.setFloat("coordinate_RY", this.coordinate_RY);
-    parent.setFloat("coordinate_RZ", this.coordinate_RZ);
-    parent.setFloat("coordinate_RS", this.coordinate_RS);
+    parent.setFloat("coordinate_PX", this.coordinate_pX);
+    parent.setFloat("coordinate_PY", this.coordinate_pY);
+    parent.setFloat("coordinate_PZ", this.coordinate_pZ);
+    parent.setFloat("coordinate_PS", this.coordinate_pS);
+    parent.setFloat("coordinate_RX", this.coordinate_rX);
+    parent.setFloat("coordinate_RY", this.coordinate_rY);
+    parent.setFloat("coordinate_RZ", this.coordinate_rZ);
+    parent.setFloat("coordinate_RS", this.coordinate_rS);
     parent.setFloat("Zoom", this.Zoom);
     parent.setInt("ViewType", this.ViewType);
     parent.setInt("FacesShade", this.FacesShade);    
@@ -5370,14 +5370,14 @@ class solarchvision_WIN3D {
     this.currentCamera = parent.getInt("currentCamera");
     
     this.refScale = parent.getFloat("refScale");
-    this.coordinate_PX = parent.getFloat("coordinate_PX");
-    this.coordinate_PY = parent.getFloat("coordinate_PY");
-    this.coordinate_PZ = parent.getFloat("coordinate_PZ");
-    this.coordinate_PS = parent.getFloat("coordinate_PS");
-    this.coordinate_RX = parent.getFloat("coordinate_RX");
-    this.coordinate_RY = parent.getFloat("coordinate_RY");
-    this.coordinate_RZ = parent.getFloat("coordinate_RZ");
-    this.coordinate_RS = parent.getFloat("coordinate_RS");
+    this.coordinate_pX = parent.getFloat("coordinate_PX");
+    this.coordinate_pY = parent.getFloat("coordinate_PY");
+    this.coordinate_pZ = parent.getFloat("coordinate_PZ");
+    this.coordinate_pS = parent.getFloat("coordinate_PS");
+    this.coordinate_rX = parent.getFloat("coordinate_RX");
+    this.coordinate_rY = parent.getFloat("coordinate_RY");
+    this.coordinate_rZ = parent.getFloat("coordinate_RZ");
+    this.coordinate_rS = parent.getFloat("coordinate_RS");
     this.Zoom = parent.getFloat("Zoom");
     this.ViewType = parent.getInt("ViewType");
     this.FacesShade = parent.getInt("FacesShade");
@@ -5924,13 +5924,13 @@ class solarchvision_WORLD {
       int nearest_WORLD_CWEEDS = -1;
       float nearest_WORLD_CWEEDS_dist = FLOAT_undefined;
   
-      for (int f = 0; f < CWEEDcoordinate_PSs.length; f++) {
+      for (int f = 0; f < CWEEDS_coordinates.length; f++) {
         boolean draw_info = false;
   
         if (this.displayAll_CWEEDS != 0) draw_info = true;
   
-        float _lat = CWEEDcoordinate_PSs[f].getLatitude();
-        float _lon = CWEEDcoordinate_PSs[f].getLongitude(); 
+        float _lat = CWEEDS_coordinates[f].getLatitude();
+        float _lon = CWEEDS_coordinates[f].getLongitude(); 
         if (_lon > 180) _lon -= 360; // << important!
   
         if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
@@ -5954,7 +5954,7 @@ class solarchvision_WORLD {
             this.graphics.fill(0);      
             this.graphics.textAlign(RIGHT, CENTER); 
             this.graphics.textSize(MessageSize * this.ImageScale);
-            this.graphics.text(CWEEDcoordinate_PSs[f].getCity(), x_point, y_point);
+            this.graphics.text(CWEEDS_coordinates[f].getCity(), x_point, y_point);
           }
         }
   
@@ -5969,8 +5969,8 @@ class solarchvision_WORLD {
       if (this.displayNear_CWEEDS) {   
         int f = nearest_WORLD_CWEEDS;
   
-        float _lat = CWEEDcoordinate_PSs[f].getLatitude();
-        float _lon = CWEEDcoordinate_PSs[f].getLongitude();  
+        float _lat = CWEEDS_coordinates[f].getLatitude();
+        float _lon = CWEEDS_coordinates[f].getLongitude();  
         if (_lon > 180) _lon -= 360; // << important!      
   
         float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
@@ -5981,8 +5981,8 @@ class solarchvision_WORLD {
         this.graphics.fill(0);      
         this.graphics.textAlign(RIGHT, CENTER); 
         this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(CWEEDcoordinate_PSs[f].getCity(), x_point, y_point);
-        //println(CWEEDcoordinate_PSs[f].getCity());
+        this.graphics.text(CWEEDS_coordinates[f].getCity(), x_point, y_point);
+        //println(CWEEDS_coordinates[f].getCity());
       }
   
   
@@ -6275,8 +6275,8 @@ class solarchvision_STUDY {
   float Y_control;
   
   
-  float coordinate_PX = 0;
-  float coordinate_PY = 0;
+  float coordinate_pX = 0;
+  float coordinate_pY = 0;
   
   float O_scale = 50.0;
   float W_scale = 3.0;
@@ -8126,9 +8126,9 @@ class solarchvision_STUDY {
       this.U_scale = 18.0 / float(this.j_End - this.j_Start);
   
   
-      this.coordinate_PX = -0.333 * this.dX;      
+      this.coordinate_pX = -0.333 * this.dX;      
   
-      this.coordinate_PY = 1.0 * this.dY;
+      this.coordinate_pY = 1.0 * this.dY;
   
   
       this.graphics.background(255);
@@ -8141,13 +8141,13 @@ class solarchvision_STUDY {
   
       this.graphics.strokeWeight(0);
   
-      //this.graphics.translate(this.coordinate_PX * -0.25, this.coordinate_PY * 0.5); 
-      this.graphics.translate(this.coordinate_PX * -0.425, this.coordinate_PY * 0.5);
+      //this.graphics.translate(this.coordinate_pX * -0.25, this.coordinate_pY * 0.5); 
+      this.graphics.translate(this.coordinate_pX * -0.425, this.coordinate_pY * 0.5);
   
       this.plotSetup();
   
-      //this.graphics.translate(this.coordinate_PX * 0.25, this.coordinate_PY * 0.5);
-      this.graphics.translate(this.coordinate_PX * 0.425, this.coordinate_PY * 0.5);
+      //this.graphics.translate(this.coordinate_pX * 0.25, this.coordinate_pY * 0.5);
+      this.graphics.translate(this.coordinate_pX * 0.425, this.coordinate_pY * 0.5);
   
       this.graphics.strokeWeight(this.T_scale * 1);
   
@@ -22515,9 +22515,9 @@ void SOLARCHVISION_export_objects_RAD () {
 
   Command2 += " -vp " + nf(WIN3D.CAM_x / OBJECTS_scale, 0, 0) + " " + nf(WIN3D.CAM_y / OBJECTS_scale, 0, 0) + " " + nf(WIN3D.CAM_z / OBJECTS_scale, 0, 0);
 
-  float dx = funcs.cos_ang(90 - WIN3D.coordinate_RX) * funcs.cos_ang(90 - WIN3D.coordinate_RZ);
-  float dy = funcs.cos_ang(90 - WIN3D.coordinate_RX) * funcs.sin_ang(90 - WIN3D.coordinate_RZ);
-  float dz = funcs.sin_ang(90 - WIN3D.coordinate_RX);
+  float dx = funcs.cos_ang(90 - WIN3D.coordinate_rX) * funcs.cos_ang(90 - WIN3D.coordinate_rZ);
+  float dy = funcs.cos_ang(90 - WIN3D.coordinate_rX) * funcs.sin_ang(90 - WIN3D.coordinate_rZ);
+  float dz = funcs.sin_ang(90 - WIN3D.coordinate_rX);
   
   Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
 
@@ -22525,8 +22525,8 @@ void SOLARCHVISION_export_objects_RAD () {
   float uy = 0;
   float uz = 1;
   if (abs(dz) > 0.99) {
-    ux = funcs.cos_ang(90 + WIN3D.coordinate_RZ);
-    uy = funcs.sin_ang(90 + WIN3D.coordinate_RZ);
+    ux = funcs.cos_ang(90 + WIN3D.coordinate_rZ);
+    uy = funcs.sin_ang(90 + WIN3D.coordinate_rZ);
     uz = 0; 
   }
   Command2 += " -vu " + nf(ux, 0, 0) + " " + nf(uy, 0, 0) + " " + nf(uz, 0, 0);
@@ -22579,12 +22579,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM00'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.coordinate_RX * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.coordinate_RX * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.coordinate_RY * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.coordinate_RY * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.coordinate_RZ * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.coordinate_RZ * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.coordinate_rX * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.coordinate_rX * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.coordinate_rY * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.coordinate_rY * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.coordinate_rZ * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.coordinate_rZ * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -22600,12 +22600,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM01'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = funcs.cos_ang(WIN3D.coordinate_RY * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.coordinate_RY * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.coordinate_RZ * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.coordinate_RZ * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.coordinate_RX * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.coordinate_RX * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.coordinate_rY * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.coordinate_rY * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.coordinate_rZ * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.coordinate_rZ * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.coordinate_rX * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.coordinate_rX * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -22620,12 +22620,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM02'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = funcs.cos_ang(WIN3D.coordinate_RZ * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.coordinate_RZ * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.coordinate_RX * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.coordinate_RX * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.coordinate_RY * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.coordinate_RY * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.coordinate_rZ * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.coordinate_rZ * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.coordinate_rX * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.coordinate_rX * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.coordinate_rY * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.coordinate_rY * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -22641,12 +22641,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM03'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = funcs.cos_ang(WIN3D.coordinate_RZ * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.coordinate_RZ * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.coordinate_RY * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.coordinate_RY * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.coordinate_RX * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.coordinate_RX * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.coordinate_rZ * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.coordinate_rZ * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.coordinate_rY * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.coordinate_rY * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.coordinate_rX * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.coordinate_rX * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -22662,12 +22662,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM04'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = funcs.cos_ang(WIN3D.coordinate_RX * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.coordinate_RX * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.coordinate_RZ * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.coordinate_RZ * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.coordinate_RY * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.coordinate_RY * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.coordinate_rX * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.coordinate_rX * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.coordinate_rZ * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.coordinate_rZ * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.coordinate_rY * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.coordinate_rY * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -22682,12 +22682,12 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM05'");
   htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
   
-  float c1 = funcs.cos_ang(WIN3D.coordinate_RY * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.coordinate_RY * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.coordinate_RX * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.coordinate_RX * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.coordinate_RZ * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.coordinate_RZ * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.coordinate_rY * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.coordinate_rY * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.coordinate_rX * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.coordinate_rX * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.coordinate_rZ * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.coordinate_rZ * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -27540,7 +27540,7 @@ class solarchvision_Model2Ds {
           float rh = this.XYZS[f][3] * 0.5 * OBJECTS_scale;
           float rw = rh * this.ImageRatios[n];
   
-          float t = PI + WIN3D.coordinate_RZ * PI / 180.0;
+          float t = PI + WIN3D.coordinate_rZ * PI / 180.0;
           if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
          
           if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
@@ -28764,7 +28764,7 @@ class solarchvision_Model1Ds {
             r *= OBJECTS_scale;
             // ----------------        
     
-            float t = PI + WIN3D.coordinate_RZ * PI / 180.0;
+            float t = PI + WIN3D.coordinate_rZ * PI / 180.0;
             if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
     
     
@@ -31575,7 +31575,7 @@ class solarchvision_Model3Ds {
         float z = userSelections.BoundingBox[1 + userSelections.alignX][2];
   
         float rot = User3D.create_Orientation;
-        if (rot == 360) rot = WIN3D.coordinate_RZ;
+        if (rot == 360) rot = WIN3D.coordinate_rZ;
   
         this.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
       }
@@ -38237,14 +38237,14 @@ class solarchvision_Model3Ds {
   void add_veryFirstCamera () {
     
     allCameras.options = new float [1][8]; 
-    allCameras.options[0][0] = WIN3D.coordinate_PX;
-    allCameras.options[0][1] = WIN3D.coordinate_PY;
-    allCameras.options[0][2] = WIN3D.coordinate_PZ;
-    allCameras.options[0][3] = WIN3D.coordinate_PS;
-    allCameras.options[0][4] = WIN3D.coordinate_RX;
-    allCameras.options[0][5] = WIN3D.coordinate_RY;
-    allCameras.options[0][6] = WIN3D.coordinate_RZ;
-    allCameras.options[0][7] = WIN3D.coordinate_RS;
+    allCameras.options[0][0] = WIN3D.coordinate_pX;
+    allCameras.options[0][1] = WIN3D.coordinate_pY;
+    allCameras.options[0][2] = WIN3D.coordinate_pZ;
+    allCameras.options[0][3] = WIN3D.coordinate_pS;
+    allCameras.options[0][4] = WIN3D.coordinate_rX;
+    allCameras.options[0][5] = WIN3D.coordinate_rY;
+    allCameras.options[0][6] = WIN3D.coordinate_rZ;
+    allCameras.options[0][7] = WIN3D.coordinate_rS;
     allCameras.options[0][8] = WIN3D.Zoom;
   
     allCameras.Type = new int [1];
@@ -38492,7 +38492,7 @@ class solarchvision_Cameras {
   
   float[][] options = {
     {
-      WIN3D.coordinate_PX, WIN3D.coordinate_PY, WIN3D.coordinate_PZ, WIN3D.coordinate_PS, WIN3D.coordinate_RX, WIN3D.coordinate_RY, WIN3D.coordinate_RZ, WIN3D.coordinate_RS, WIN3D.Zoom
+      WIN3D.coordinate_pX, WIN3D.coordinate_pY, WIN3D.coordinate_pZ, WIN3D.coordinate_pS, WIN3D.coordinate_rX, WIN3D.coordinate_rY, WIN3D.coordinate_rZ, WIN3D.coordinate_rS, WIN3D.Zoom
     }
   };
   int[] Type = {
@@ -38643,24 +38643,26 @@ class solarchvision_Cameras {
       float keep_WIN3D_CAM_x = WIN3D.CAM_x;
       float keep_WIN3D_CAM_y = WIN3D.CAM_y;
       float keep_WIN3D_CAM_z = WIN3D.CAM_z;
-      float keep_WIN3D_coordinate_PX = WIN3D.coordinate_PX; 
-      float keep_WIN3D_coordinate_PY = WIN3D.coordinate_PY;
-      float keep_WIN3D_coordinate_PZ = WIN3D.coordinate_PZ;
-      float keep_WIN3D_coordinate_PS = WIN3D.coordinate_PS;
-      float keep_WIN3D_coordinate_RX = WIN3D.coordinate_RX; 
-      float keep_WIN3D_coordinate_RY = WIN3D.coordinate_RY;
-      float keep_WIN3D_coordinate_RZ = WIN3D.coordinate_RZ;
+      float keep_WIN3D_coordinate_PX = WIN3D.coordinate_pX; 
+      float keep_WIN3D_coordinate_PY = WIN3D.coordinate_pY;
+      float keep_WIN3D_coordinate_PZ = WIN3D.coordinate_pZ;
+      float keep_WIN3D_coordinate_PS = WIN3D.coordinate_pS;
+      float keep_WIN3D_coordinate_RX = WIN3D.coordinate_rX; 
+      float keep_WIN3D_coordinate_RY = WIN3D.coordinate_rY;
+      float keep_WIN3D_coordinate_RZ = WIN3D.coordinate_rZ;
+      float keep_WIN3D_coordinate_RS = WIN3D.coordinate_rS;
       float keep_WIN3D_Zoom = WIN3D.Zoom;
   
       {
   
-        WIN3D.coordinate_PX = Camera_pX;
-        WIN3D.coordinate_PY = Camera_pY;
-        WIN3D.coordinate_PZ = Camera_pZ;
-        WIN3D.coordinate_PS = Camera_pS;
-        WIN3D.coordinate_RX = Camera_rX; 
-        WIN3D.coordinate_RY = Camera_rY;
-        WIN3D.coordinate_RZ = Camera_rZ;
+        WIN3D.coordinate_pX = Camera_pX;
+        WIN3D.coordinate_pY = Camera_pY;
+        WIN3D.coordinate_pZ = Camera_pZ;
+        WIN3D.coordinate_pS = Camera_pS;
+        WIN3D.coordinate_rX = Camera_rX; 
+        WIN3D.coordinate_rY = Camera_rY;
+        WIN3D.coordinate_rZ = Camera_rZ;
+        WIN3D.coordinate_rS = Camera_rS;
         WIN3D.Zoom = Camera_ZOOM;
   
         WIN3D.transform_3DViewport();
@@ -38685,13 +38687,14 @@ class solarchvision_Cameras {
       WIN3D.CAM_x = keep_WIN3D_CAM_x;
       WIN3D.CAM_y = keep_WIN3D_CAM_y;
       WIN3D.CAM_z = keep_WIN3D_CAM_z;
-      WIN3D.coordinate_PX = keep_WIN3D_coordinate_PX; 
-      WIN3D.coordinate_PY = keep_WIN3D_coordinate_PY;
-      WIN3D.coordinate_PZ = keep_WIN3D_coordinate_PZ;
-      WIN3D.coordinate_PS = keep_WIN3D_coordinate_PS;
-      WIN3D.coordinate_RX = keep_WIN3D_coordinate_RX; 
-      WIN3D.coordinate_RY = keep_WIN3D_coordinate_RY;
-      WIN3D.coordinate_RZ = keep_WIN3D_coordinate_RZ;
+      WIN3D.coordinate_pX = keep_WIN3D_coordinate_PX; 
+      WIN3D.coordinate_pY = keep_WIN3D_coordinate_PY;
+      WIN3D.coordinate_pZ = keep_WIN3D_coordinate_PZ;
+      WIN3D.coordinate_pS = keep_WIN3D_coordinate_PS;
+      WIN3D.coordinate_rX = keep_WIN3D_coordinate_RX; 
+      WIN3D.coordinate_rY = keep_WIN3D_coordinate_RY;
+      WIN3D.coordinate_rZ = keep_WIN3D_coordinate_RZ;
+      WIN3D.coordinate_rS = keep_WIN3D_coordinate_RS;
       WIN3D.Zoom = keep_WIN3D_Zoom;
   
       ImageVertex[q][0] = x;
@@ -41893,7 +41896,7 @@ void mouseWheel (MouseEvent event) {
               if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || (WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.TargetRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D.ViewType == 1) {
-                  WIN3D.coordinate_PZ += Wheel_Value * WIN3D.coordinate_PS * OBJECTS_scale;
+                  WIN3D.coordinate_pZ += Wheel_Value * WIN3D.coordinate_pS * OBJECTS_scale;
                 } else {
                   WIN3D.Zoom /= pow(2.0, Wheel_Value);
                 }
@@ -41923,14 +41926,14 @@ void mouseWheel (MouseEvent event) {
 
                   if (WIN3D.UI_OptionXorY == 0) {
 
-                    WIN3D.coordinate_PX += Wheel_Value * WIN3D.coordinate_PS * OBJECTS_scale;
+                    WIN3D.coordinate_pX += Wheel_Value * WIN3D.coordinate_pS * OBJECTS_scale;
 
                     WIN3D.update = true;
                   }
 
                   if (WIN3D.UI_OptionXorY == 1) {
 
-                    WIN3D.coordinate_PY += Wheel_Value * WIN3D.coordinate_PS * OBJECTS_scale;
+                    WIN3D.coordinate_pY += Wheel_Value * WIN3D.coordinate_pS * OBJECTS_scale;
 
                     WIN3D.update = true;
                   }
@@ -41941,14 +41944,14 @@ void mouseWheel (MouseEvent event) {
 
                   if (WIN3D.UI_OptionXorY == 0) {
 
-                    WIN3D.coordinate_RX += Wheel_Value * WIN3D.coordinate_RS;
+                    WIN3D.coordinate_rX += Wheel_Value * WIN3D.coordinate_rS;
 
                     WIN3D.update = true;
                   }
 
                   if (WIN3D.UI_OptionXorY == 1) {
 
-                    WIN3D.coordinate_RZ += Wheel_Value * WIN3D.coordinate_RS;
+                    WIN3D.coordinate_rZ += Wheel_Value * WIN3D.coordinate_rS;
 
                     WIN3D.update = true;
                   }
@@ -41991,13 +41994,13 @@ void mouseWheel (MouseEvent event) {
               if (WIN3D.UI_CurrentTask == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRoolZ
 
                 if (WIN3D.UI_OptionXorY == 0) {   
-                  WIN3D.coordinate_RX += Wheel_Value * WIN3D.coordinate_RS;
+                  WIN3D.coordinate_rX += Wheel_Value * WIN3D.coordinate_rS;
 
                   WIN3D.reverseTransform_3DViewport();
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {   
-                  WIN3D.coordinate_RZ += Wheel_Value * WIN3D.coordinate_RS;
+                  WIN3D.coordinate_rZ += Wheel_Value * WIN3D.coordinate_rS;
 
                   WIN3D.reverseTransform_3DViewport();
                 }              
@@ -42009,12 +42012,12 @@ void mouseWheel (MouseEvent event) {
 
                 if (WIN3D.UI_OptionXorY == 0) {   
 
-                  WIN3D.rotateZ_3DViewport_around_Selection(Wheel_Value * WIN3D.coordinate_RS);
+                  WIN3D.rotateZ_3DViewport_around_Selection(Wheel_Value * WIN3D.coordinate_rS);
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {   
 
-                  WIN3D.rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D.coordinate_RS);
+                  WIN3D.rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D.coordinate_rS);
                 }    
 
                 WIN3D.update = true;
@@ -42029,14 +42032,14 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
 
-                WIN3D.coordinate_PX += Wheel_Value * WIN3D.coordinate_PS * OBJECTS_scale;
+                WIN3D.coordinate_pX += Wheel_Value * WIN3D.coordinate_pS * OBJECTS_scale;
 
                 WIN3D.update = true;
               }         
 
               if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
 
-                WIN3D.coordinate_PY += Wheel_Value * WIN3D.coordinate_PS * OBJECTS_scale;
+                WIN3D.coordinate_pY += Wheel_Value * WIN3D.coordinate_pS * OBJECTS_scale;
 
                 WIN3D.update = true;
               }      
@@ -42240,8 +42243,8 @@ void mouseReleased () {
                 float dy = y2 - y1;
                 float dz = z2 - z1;
 
-                float dx_rot = dx * funcs.cos_ang(-WIN3D.coordinate_RZ) - dy * funcs.sin_ang(-WIN3D.coordinate_RZ);
-                float dy_rot = dx * funcs.sin_ang(-WIN3D.coordinate_RZ) + dy * funcs.cos_ang(-WIN3D.coordinate_RZ);
+                float dx_rot = dx * funcs.cos_ang(-WIN3D.coordinate_rZ) - dy * funcs.sin_ang(-WIN3D.coordinate_rZ);
+                float dy_rot = dx * funcs.sin_ang(-WIN3D.coordinate_rZ) + dy * funcs.cos_ang(-WIN3D.coordinate_rZ);
                 float dz_rot = dz;
 
                 if (WIN3D.UI_TaskModifyParameter == 0) {
@@ -42310,15 +42313,15 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraLandOrbit
 
-                WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.coordinate_RS);
+                WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.coordinate_rS);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42328,14 +42331,14 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraRollXY
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.coordinate_RS);
+                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.coordinate_rS);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
 
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.coordinate_RS);
+                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.coordinate_rS);
 
                 WIN3D.update = true;
               }
@@ -42345,16 +42348,16 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // Pan
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }      
 
               if (mouseButton == RIGHT) { // TargetRoll
 
-                WIN3D.coordinate_RZ += 10 * dx * WIN3D.coordinate_RS; 
-                WIN3D.coordinate_RX += 10 * dy * WIN3D.coordinate_RS;
+                WIN3D.coordinate_rZ += 10 * dx * WIN3D.coordinate_rS; 
+                WIN3D.coordinate_rX += 10 * dy * WIN3D.coordinate_rS;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42366,17 +42369,17 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraRoll
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.coordinate_RS);
+                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.coordinate_rS);
 
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.coordinate_RS);
+                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.coordinate_rS);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42386,14 +42389,14 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // CameraRollXY
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.coordinate_RS);
+                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.coordinate_rS);
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
 
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.coordinate_RS);
+                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.coordinate_rS);
 
                 WIN3D.update = true;
               }
@@ -42403,8 +42406,8 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // TargetRoll
 
-                WIN3D.coordinate_RZ += 10 * dx * WIN3D.coordinate_RS; 
-                WIN3D.coordinate_RX += 10 * dy * WIN3D.coordinate_RS;
+                WIN3D.coordinate_rZ += 10 * dx * WIN3D.coordinate_rS; 
+                WIN3D.coordinate_rX += 10 * dy * WIN3D.coordinate_rS;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42413,8 +42416,8 @@ void mouseDragged () {
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42424,7 +42427,7 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // TargetRollXY
 
-                WIN3D.coordinate_RZ += 10 * dx * WIN3D.coordinate_RS; 
+                WIN3D.coordinate_rZ += 10 * dx * WIN3D.coordinate_rS; 
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42433,7 +42436,7 @@ void mouseDragged () {
 
               if (mouseButton == RIGHT) { // TargetRollZ
 
-                WIN3D.coordinate_RX += 10 * dy * WIN3D.coordinate_RS;
+                WIN3D.coordinate_rX += 10 * dy * WIN3D.coordinate_rS;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42445,16 +42448,16 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // orbit
 
-                WIN3D.coordinate_RZ -= 10 * dx * WIN3D.coordinate_RS; 
-                WIN3D.coordinate_RX -= 10 * dy * WIN3D.coordinate_RS;
+                WIN3D.coordinate_rZ -= 10 * dx * WIN3D.coordinate_rS; 
+                WIN3D.coordinate_rX -= 10 * dy * WIN3D.coordinate_rS;
 
                 WIN3D.update = true;
               }
 
               if (mouseButton == RIGHT) { // Pan
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }
@@ -42464,14 +42467,14 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // move Y
 
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale;  
 
                 WIN3D.update = true;
               }              
 
               if (mouseButton == RIGHT) { // move X
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
 
                 WIN3D.update = true;
               }
@@ -42481,16 +42484,16 @@ void mouseDragged () {
 
               if (mouseButton == LEFT) { // Pan
 
-                WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
 
                 WIN3D.update = true;
               }   
 
               if (mouseButton == RIGHT) { // TargetRoll
 
-                WIN3D.coordinate_RZ += 10 * dx * WIN3D.coordinate_RS; 
-                WIN3D.coordinate_RX += 10 * dy * WIN3D.coordinate_RS;
+                WIN3D.coordinate_rZ += 10 * dx * WIN3D.coordinate_rS; 
+                WIN3D.coordinate_rX += 10 * dy * WIN3D.coordinate_rS;
 
                 WIN3D.reverseTransform_3DViewport(); 
 
@@ -42503,14 +42506,14 @@ void mouseDragged () {
               if (WIN3D.UI_TaskModifyParameter == 0) { // Truck
 
                 if (WIN3D.UI_OptionXorY == 0) {
-                  if (mouseButton == LEFT) WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                  if (mouseButton == RIGHT) WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                  if (mouseButton == LEFT) WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                  if (mouseButton == RIGHT) WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
                   WIN3D.update = true;
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {
-                  if (mouseButton == RIGHT) WIN3D.coordinate_PX += 100 * dx * WIN3D.coordinate_PS * OBJECTS_scale;  
-                  if (mouseButton == LEFT) WIN3D.coordinate_PY += 100 * dy * WIN3D.coordinate_PS * OBJECTS_scale; 
+                  if (mouseButton == RIGHT) WIN3D.coordinate_pX += 100 * dx * WIN3D.coordinate_pS * OBJECTS_scale;  
+                  if (mouseButton == LEFT) WIN3D.coordinate_pY += 100 * dy * WIN3D.coordinate_pS * OBJECTS_scale; 
                   WIN3D.update = true;
                 }
               }
@@ -42519,14 +42522,14 @@ void mouseDragged () {
               if (WIN3D.UI_TaskModifyParameter == 1) {  // Orbit
 
                 if (WIN3D.UI_OptionXorY == 0) {
-                  if (mouseButton == LEFT) WIN3D.coordinate_RX -= 10 * dy * WIN3D.coordinate_RS;
-                  if (mouseButton == RIGHT) WIN3D.coordinate_RZ -= 10 * dx * WIN3D.coordinate_RS;
+                  if (mouseButton == LEFT) WIN3D.coordinate_rX -= 10 * dy * WIN3D.coordinate_rS;
+                  if (mouseButton == RIGHT) WIN3D.coordinate_rZ -= 10 * dx * WIN3D.coordinate_rS;
                   WIN3D.update = true;
                 }
 
                 if (WIN3D.UI_OptionXorY == 1) {
-                  if (mouseButton == RIGHT) WIN3D.coordinate_RX -= 10 * dy * WIN3D.coordinate_RS;
-                  if (mouseButton == LEFT) WIN3D.coordinate_RZ -= 10 * dx * WIN3D.coordinate_RS;
+                  if (mouseButton == RIGHT) WIN3D.coordinate_rX -= 10 * dy * WIN3D.coordinate_rS;
+                  if (mouseButton == LEFT) WIN3D.coordinate_rZ -= 10 * dx * WIN3D.coordinate_rS;
                   WIN3D.update = true;
                 }
               }
@@ -43938,14 +43941,14 @@ void mouseClicked () {
 
             if (menu_option.equals("Viewport >> Camera")) {
 
-              float Camera_pX = WIN3D.coordinate_PX;
-              float Camera_pY = WIN3D.coordinate_PY;
-              float Camera_pZ = WIN3D.coordinate_PZ;
-              float Camera_pS = WIN3D.coordinate_PS;
-              float Camera_rX = WIN3D.coordinate_RX;
-              float Camera_rY = WIN3D.coordinate_RY;
-              float Camera_rZ = WIN3D.coordinate_RZ;
-              float Camera_rS = WIN3D.coordinate_RS;
+              float Camera_pX = WIN3D.coordinate_pX;
+              float Camera_pY = WIN3D.coordinate_pY;
+              float Camera_pZ = WIN3D.coordinate_pZ;
+              float Camera_pS = WIN3D.coordinate_pS;
+              float Camera_rX = WIN3D.coordinate_rX;
+              float Camera_rY = WIN3D.coordinate_rY;
+              float Camera_rZ = WIN3D.coordinate_rZ;
+              float Camera_rS = WIN3D.coordinate_rS;
               float Camera_ZOOM = WIN3D.Zoom;
 
               int Camera_type = WIN3D.ViewType;
@@ -45030,10 +45033,10 @@ void mouseClicked () {
               int nearest_WORLD_CWEEDS = -1;
               float nearest_WORLD_CWEEDS_dist = FLOAT_undefined;
 
-              for (int f = 0; f < CWEEDcoordinate_PSs.length; f++) {
+              for (int f = 0; f < CWEEDS_coordinates.length; f++) {
 
-                float _lat = CWEEDcoordinate_PSs[f].getLatitude();
-                float _lon = CWEEDcoordinate_PSs[f].getLongitude(); 
+                float _lat = CWEEDS_coordinates[f].getLatitude();
+                float _lon = CWEEDS_coordinates[f].getLongitude(); 
                 if (_lon > 180) _lon -= 360; // << important!
 
                 float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
@@ -45047,25 +45050,25 @@ void mouseClicked () {
               {
                 int f = nearest_WORLD_CWEEDS;
 
-                if (STATION.getFilename_CWEEDS().equals(CWEEDcoordinate_PSs[f].getFilename_CWEEDS())) {
+                if (STATION.getFilename_CWEEDS().equals(CWEEDS_coordinates[f].getFilename_CWEEDS())) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);                
                   STATION.setLongitude(mouse_lon); 
 
-                  STATION.setFilename_CWEEDS(CWEEDcoordinate_PSs[f].getFilename_CWEEDS()); // CWEEDS filename
+                  STATION.setFilename_CWEEDS(CWEEDS_coordinates[f].getFilename_CWEEDS()); // CWEEDS filename
 
-                  println("nearest CWEEDS filename:", CWEEDcoordinate_PSs[f].getFilename_CWEEDS());       
+                  println("nearest CWEEDS filename:", CWEEDS_coordinates[f].getFilename_CWEEDS());       
 
                   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) { 
 
-                    STATION.setCity(CWEEDcoordinate_PSs[f].getCity());
-                    STATION.setProvince(CWEEDcoordinate_PSs[f].getProvince());
-                    STATION.setCountry(CWEEDcoordinate_PSs[f].getCountry()); 
+                    STATION.setCity(CWEEDS_coordinates[f].getCity());
+                    STATION.setProvince(CWEEDS_coordinates[f].getProvince());
+                    STATION.setCountry(CWEEDS_coordinates[f].getCountry()); 
 
-                    //STATION.setLatitude(CWEEDcoordinate_PSs[f].getLatitude());
-                    //STATION.setLongitude(CWEEDcoordinate_PSs[f].getLongitude());
-                    STATION.setElevation(CWEEDcoordinate_PSs[f].getElevation());
+                    //STATION.setLatitude(CWEEDS_coordinates[f].getLatitude());
+                    //STATION.setLongitude(CWEEDS_coordinates[f].getLongitude());
+                    STATION.setElevation(CWEEDS_coordinates[f].getElevation());
                     STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));   
 
                     ROLLOUT.parent = 0;
@@ -45727,7 +45730,7 @@ void mouseClicked () {
                   float z = RxP[3];         
               
                   float rot = User3D.create_Orientation;
-                  if (rot == 360) rot = WIN3D.coordinate_RZ;
+                  if (rot == 360) rot = WIN3D.coordinate_rZ;
   
   
   
@@ -45950,13 +45953,14 @@ void mouseClicked () {
                       float keep_WIN3D_CAM_x = WIN3D.CAM_x;
                       float keep_WIN3D_CAM_y = WIN3D.CAM_y;
                       float keep_WIN3D_CAM_z = WIN3D.CAM_z;
-                      float keep_WIN3D_coordinate_PX = WIN3D.coordinate_PX; 
-                      float keep_WIN3D_coordinate_PY = WIN3D.coordinate_PY;
-                      float keep_WIN3D_coordinate_PZ = WIN3D.coordinate_PZ;
-                      float keep_WIN3D_coordinate_PS = WIN3D.coordinate_PS;
-                      float keep_WIN3D_coordinate_RX = WIN3D.coordinate_RX; 
-                      float keep_WIN3D_coordinate_RY = WIN3D.coordinate_RY;
-                      float keep_WIN3D_coordinate_RZ = WIN3D.coordinate_RZ;
+                      float keep_WIN3D_coordinate_PX = WIN3D.coordinate_pX; 
+                      float keep_WIN3D_coordinate_PY = WIN3D.coordinate_pY;
+                      float keep_WIN3D_coordinate_PZ = WIN3D.coordinate_pZ;
+                      float keep_WIN3D_coordinate_PS = WIN3D.coordinate_pS;
+                      float keep_WIN3D_coordinate_RX = WIN3D.coordinate_rX; 
+                      float keep_WIN3D_coordinate_RY = WIN3D.coordinate_rY;
+                      float keep_WIN3D_coordinate_RZ = WIN3D.coordinate_rZ;
+                      float keep_WIN3D_coordinate_RS = WIN3D.coordinate_rS;
                       float keep_WIN3D_Zoom = WIN3D.Zoom;
     
                       {
@@ -45967,14 +45971,14 @@ void mouseClicked () {
     
                         WIN3D.reverseTransform_3DViewport();
     
-                        float Camera_pX = WIN3D.coordinate_PX;
-                        float Camera_pY = WIN3D.coordinate_PY;
-                        float Camera_pZ = WIN3D.coordinate_PZ;
-                        float Camera_pS = WIN3D.coordinate_PS;
-                        float Camera_rX = WIN3D.coordinate_RX;
-                        float Camera_rY = WIN3D.coordinate_RY;
-                        float Camera_rZ = WIN3D.coordinate_RZ;
-                        float Camera_rS = WIN3D.coordinate_RS;
+                        float Camera_pX = WIN3D.coordinate_pX;
+                        float Camera_pY = WIN3D.coordinate_pY;
+                        float Camera_pZ = WIN3D.coordinate_pZ;
+                        float Camera_pS = WIN3D.coordinate_pS;
+                        float Camera_rX = WIN3D.coordinate_rX;
+                        float Camera_rY = WIN3D.coordinate_rY;
+                        float Camera_rZ = WIN3D.coordinate_rZ;
+                        float Camera_rS = WIN3D.coordinate_rS;
                         float Camera_ZOOM = WIN3D.Zoom;
     
                         int Camera_type = WIN3D.ViewType;
@@ -45987,13 +45991,14 @@ void mouseClicked () {
                       WIN3D.CAM_x = keep_WIN3D_CAM_x;
                       WIN3D.CAM_y = keep_WIN3D_CAM_y;
                       WIN3D.CAM_z = keep_WIN3D_CAM_z;
-                      WIN3D.coordinate_PX = keep_WIN3D_coordinate_PX; 
-                      WIN3D.coordinate_PY = keep_WIN3D_coordinate_PY;
-                      WIN3D.coordinate_PZ = keep_WIN3D_coordinate_PZ;
-                      WIN3D.coordinate_PS = keep_WIN3D_coordinate_PS;
-                      WIN3D.coordinate_RX = keep_WIN3D_coordinate_RX; 
-                      WIN3D.coordinate_RY = keep_WIN3D_coordinate_RY;
-                      WIN3D.coordinate_RZ = keep_WIN3D_coordinate_RZ;
+                      WIN3D.coordinate_pX = keep_WIN3D_coordinate_PX; 
+                      WIN3D.coordinate_pY = keep_WIN3D_coordinate_PY;
+                      WIN3D.coordinate_pZ = keep_WIN3D_coordinate_PZ;
+                      WIN3D.coordinate_pS = keep_WIN3D_coordinate_PS;
+                      WIN3D.coordinate_rX = keep_WIN3D_coordinate_RX; 
+                      WIN3D.coordinate_rY = keep_WIN3D_coordinate_RY;
+                      WIN3D.coordinate_rZ = keep_WIN3D_coordinate_RZ;
+                      WIN3D.coordinate_rS = keep_WIN3D_coordinate_RS;
                       WIN3D.Zoom = keep_WIN3D_Zoom;
                     }
                   }
@@ -47811,13 +47816,13 @@ String Viewport_Stamp () {
   
   /*
 
-  s += "x" + nf(WIN3D.coordinate_PX, 0, 3);
-  s += "y" + nf(WIN3D.coordinate_PY, 0, 3);
-  s += "z" + nf(WIN3D.coordinate_PZ, 0, 3);
+  s += "x" + nf(WIN3D.coordinate_pX, 0, 3);
+  s += "y" + nf(WIN3D.coordinate_pY, 0, 3);
+  s += "z" + nf(WIN3D.coordinate_pZ, 0, 3);
 
-  s += "rx" + nf(WIN3D.coordinate_RX, 0, 3);
-  s += "ry" + nf(WIN3D.coordinate_RY, 0, 3);
-  s += "rz" + nf(WIN3D.coordinate_RZ, 0, 3);
+  s += "rx" + nf(WIN3D.coordinate_rX, 0, 3);
+  s += "ry" + nf(WIN3D.coordinate_rY, 0, 3);
+  s += "rz" + nf(WIN3D.coordinate_rZ, 0, 3);
   
   s = s.replace('.', 'p');
   s = s.replace('-', 'n');
@@ -49847,9 +49852,9 @@ void UI_set_to_View_LookAtDirection (int n) {
 
 void UI_set_to_View_LookAtOrigin (int n) {
 
-  WIN3D.coordinate_PX = 0;
-  WIN3D.coordinate_PY = 0;
-  WIN3D.coordinate_PZ = 0; 
+  WIN3D.coordinate_pX = 0;
+  WIN3D.coordinate_pY = 0;
+  WIN3D.coordinate_pZ = 0; 
 
   {
     // automatically set another choice of ineterest
@@ -49937,53 +49942,53 @@ void UI_set_to_View_3DViewPoint (int n) {
   WIN3D.apply_currentCamera();
 
   if (n == 0) {
-    WIN3D.rotateZ_3DViewport_around_Selection(0 - WIN3D.coordinate_RX);
-    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(0 - WIN3D.coordinate_rX);
+    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.coordinate_rZ);
   }
 
   if (n == 1) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.coordinate_rZ);
   }          
 
   if (n == 2) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(-90 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(-90 - WIN3D.coordinate_rZ);
   }    
 
   if (n == 3) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(180 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(180 - WIN3D.coordinate_rZ);
   }   
 
   if (n == 4) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(90 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(90 - WIN3D.coordinate_rZ);
   }  
 
   if (n == 5) {
-    WIN3D.rotateZ_3DViewport_around_Selection(180 - WIN3D.coordinate_RX);
-    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(180 - WIN3D.coordinate_rX);
+    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.coordinate_rZ);
   }             
 
   if (n == 6) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(-45 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(-45 - WIN3D.coordinate_rZ);
   }             
 
   if (n == 7) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(45 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(45 - WIN3D.coordinate_rZ);
   }     
 
   if (n == 8) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(135 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(135 - WIN3D.coordinate_rZ);
   }
 
   if (n == 9) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_RX); 
-    WIN3D.rotateXY_3DViewport_around_Selection(-135 - WIN3D.coordinate_RZ);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.coordinate_rX); 
+    WIN3D.rotateXY_3DViewport_around_Selection(-135 - WIN3D.coordinate_rZ);
   }
 
 
