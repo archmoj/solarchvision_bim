@@ -13,6 +13,18 @@
 //    allModel2Ds.add_onLand(2); // 2 = 2D trees
 
 
+
+int SOLARCHVISION_pixel_H = 275; //300; 
+int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75); 
+
+float MessageSize = (2 * SOLARCHVISION_pixel_W + SOLARCHVISION_pixel_H) / 120.0; // screen width 
+
+int SOLARCHVISION_pixel_A = int(1.5 * MessageSize); // menu bar
+int SOLARCHVISION_pixel_B = int(2.75 * MessageSize); // 3D tool bar
+int SOLARCHVISION_pixel_C = int(3.0 * MessageSize); // command bar
+int SOLARCHVISION_pixel_D = int(4.5 * MessageSize); // time bar
+
+
 boolean displayOutput_inExplorer = false;
 
 
@@ -1346,15 +1358,7 @@ void SOLARCHVISION_update_folders () {
 
 
 
-int SOLARCHVISION_pixel_H = 275; //300; 
-int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75); 
 
-float MessageSize = (2 * SOLARCHVISION_pixel_W + SOLARCHVISION_pixel_H) / 120.0; // screen width 
-
-int SOLARCHVISION_pixel_A = int(1.5 * MessageSize); // menu bar
-int SOLARCHVISION_pixel_B = int(2.75 * MessageSize); // 3D tool bar
-int SOLARCHVISION_pixel_C = int(3.0 * MessageSize); // command bar
-int SOLARCHVISION_pixel_D = int(4.5 * MessageSize); // time bar
 
 
 
@@ -5408,8 +5412,8 @@ class solarchvision_WORLD {
   boolean include = true;
   
   
-  int Viewports_num;
-  int Viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
+  int numMaps;
+  int Zoom = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
 
   boolean autoView = true;
   
@@ -5451,16 +5455,16 @@ class solarchvision_WORLD {
   
     this.VIEW_Filenames = sort(OPESYS.getFiles(this.ViewFolder));
   
-    this.Viewports_num = this.VIEW_Filenames.length;
+    this.numMaps = this.VIEW_Filenames.length;
   
-    this.VIEW_Name = new String [this.Viewports_num][2];
+    this.VIEW_Name = new String [this.numMaps][2];
   
-    this.VIEW_BoundariesX = new float [this.Viewports_num][2];
-    this.VIEW_BoundariesY = new float [this.Viewports_num][2];
+    this.VIEW_BoundariesX = new float [this.numMaps][2];
+    this.VIEW_BoundariesY = new float [this.numMaps][2];
   
-    this.VIEW_displayGrid = new int [this.Viewports_num];
+    this.VIEW_displayGrid = new int [this.numMaps];
   
-    for (int i = 0; i < this.Viewports_num; i++) {
+    for (int i = 0; i < this.numMaps; i++) {
       String MapFilename = this.ViewFolder + "/" + this.VIEW_Filenames[i];
   
       String[] Parts = split(this.VIEW_Filenames[i], '_');
@@ -5489,21 +5493,21 @@ class solarchvision_WORLD {
       float d1 = FLOAT_undefined;
       float d2 = FLOAT_undefined;
   
-      for (int i = 0; i < this.Viewports_num; i++) {
+      for (int i = 0; i < this.numMaps; i++) {
   
         int check_it = 0; 
   
         String started_with = this.VIEW_Filenames[i].substring(0, 1);
   
-        if (this.Viewport_ZOOM == 1) {
+        if (this.Zoom == 1) {
           if (started_with.equals("A")) check_it = 1;
-        } else if (this.Viewport_ZOOM == 2) {
+        } else if (this.Zoom == 2) {
           if (started_with.equals("B")) check_it = 1;
-        } else if (this.Viewport_ZOOM == 3) {
+        } else if (this.Zoom == 3) {
           if (started_with.equals("C")) check_it = 1;
-        } else if (this.Viewport_ZOOM == 4) {
+        } else if (this.Zoom == 4) {
           if (started_with.equals("D")) check_it = 1;
-        } else if (this.Viewport_ZOOM == 5) {
+        } else if (this.Zoom == 5) {
           if (started_with.equals("E")) check_it = 1;
         } else {
           check_it = 1;
@@ -6157,7 +6161,7 @@ class solarchvision_WORLD {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
-    parent.setInt("Viewport_ZOOM", this.Viewport_ZOOM);
+    parent.setInt("Zoom", this.Zoom);
     
     parent.setInt("displayAll_SWOB", this.displayAll_SWOB);
     parent.setInt("displayAll_NAEFS", this.displayAll_NAEFS);
@@ -6179,7 +6183,7 @@ class solarchvision_WORLD {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.Viewport_ZOOM = parent.getInt("Viewport_ZOOM");
+    this.Zoom = parent.getInt("Zoom");
     
     this.displayAll_SWOB = parent.getInt("displayAll_SWOB");
     this.displayAll_NAEFS = parent.getInt("displayAll_NAEFS");
@@ -10348,7 +10352,7 @@ class solarchvision_ROLLOUT {
       if (this.child == 1) { // Point
   
         //WORLD.autoView = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1), 1));
-        //WORLD.VIEW_id = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.Viewports_num - 1, 1), 1));
+        //WORLD.VIEW_id = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1), 1));
   
         LocationLAT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
         LocationLON = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
@@ -41769,15 +41773,15 @@ void mouseWheel (MouseEvent event) {
           if (WORLD.include) {
             if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY) == 1) {
 
-              int keep_WORLD_Viewport_ZOOM = WORLD.Viewport_ZOOM;
+              int keep_WORLD_Zoom = WORLD.Zoom;
 
-              if (Wheel_Value < 0) WORLD.Viewport_ZOOM -= 1;
-              if (Wheel_Value > 0) WORLD.Viewport_ZOOM += 1;
+              if (Wheel_Value < 0) WORLD.Zoom -= 1;
+              if (Wheel_Value > 0) WORLD.Zoom += 1;
 
-              if (WORLD.Viewport_ZOOM < 1) WORLD.Viewport_ZOOM = 1;
-              if (WORLD.Viewport_ZOOM > 6) WORLD.Viewport_ZOOM = 6;
+              if (WORLD.Zoom < 1) WORLD.Zoom = 1;
+              if (WORLD.Zoom > 6) WORLD.Zoom = 6;
 
-              if (keep_WORLD_Viewport_ZOOM != WORLD.Viewport_ZOOM) {
+              if (keep_WORLD_Zoom != WORLD.Zoom) {
                 WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
 
                 WORLD.update = true;
@@ -44951,7 +44955,7 @@ void mouseClicked () {
             STATION.setLongitude(mouse_lon);
 
             if (mouseButton == LEFT) {
-              WORLD.Viewport_ZOOM = 6;
+              WORLD.Zoom = 6;
             }
 
             if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
