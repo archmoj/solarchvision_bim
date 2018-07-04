@@ -42852,7 +42852,7 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }  
 
-            if (menu_option.equals("Pre-bake Selected allSections")) {
+            if (menu_option.equals("Pre-bake Selected Sections")) {
               allSolarImpacts.render_Shadows_selectedSections();              
               WIN3D.update = true;
             }         
@@ -43566,14 +43566,14 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }
 
-            if (menu_option.equals("Model1Ds")) {
+            if (menu_option.equals("3D-Tree")) {
               UI_set_to_Create_allModel1Ds();
-              UI_BAR_b.hghlight("Model1Ds");
+              UI_BAR_b.hghlight("3D-Tree");
               UI_BAR_b.update = true;
             }
-            if (menu_option.equals("Tree")) {
+            if (menu_option.equals("2D-Tree")) {
               UI_set_to_Create_Tree();
-              UI_BAR_b.hghlight("Tree");
+              UI_BAR_b.hghlight("2D-Tree");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Person")) {
@@ -44371,7 +44371,7 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
-            if (menu_option.equals("Group >> allModel2Ds")) {
+            if (menu_option.equals("Group >> Model2Ds")) {
               allModel3Ds.convert_allGroups_to_allModel2Ds();
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.update = true;
@@ -44383,7 +44383,7 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
-            if (menu_option.equals("Group >> allModel1Ds")) {
+            if (menu_option.equals("Group >> Model1Ds")) {
               allModel3Ds.convert_allGroups_to_allModel1Ds();
               current_ObjectCategory = ObjectCategory.MODEL1D;
               WIN3D.update = true;
@@ -52267,9 +52267,9 @@ class solarchvision_UI_BAR_a {
       "Display/Hide Solar Section", 
       "Display/Hide Solid Section", 
       "Display/Hide Wind Flow", 
-      "Display/Hide Selected allSolids", 
-      "Display/Hide Selected allSections", 
-      "Display/Hide Selected allCameras", 
+      "Display/Hide Selected Solids", 
+      "Display/Hide Selected Sections", 
+      "Display/Hide Selected Cameras", 
       "Display/Hide Selected LandPoints", 
       "Display/Hide Selected Faces", 
       "Display/Hide Selected Faces Vertex Count", 
@@ -52311,7 +52311,7 @@ class solarchvision_UI_BAR_a {
       "Annual cycle sun path (passive)", 
       "Render Viewport", 
       "PreBake Viewport", 
-      "Pre-bake Selected allSections", 
+      "Pre-bake Selected Sections", 
       "Process Active Impact", 
       "Process Passive Impact", 
       "Process Solid Impact", 
@@ -52356,8 +52356,8 @@ class solarchvision_UI_BAR_a {
       "Point", 
       "Spline", 
       "Surface", 
-      "Model1Ds", 
-      "Tree", 
+      "3D-Tree", 
+      "2D-Tree", 
       "Person", 
       "House1", 
       "House2", 
@@ -52407,8 +52407,8 @@ class solarchvision_UI_BAR_a {
       "Group >> Curve", 
       "Group >> Face", 
       "Group >> Solid", 
-      "Group >> allModel2Ds", 
-      "Group >> allModel1Ds", 
+      "Group >> Model2Ds", 
+      "Group >> Model1Ds", 
       "Model1Ds >> Group", 
       "Model2Ds >> Group", 
       "Solid >> Group", 
@@ -52920,19 +52920,19 @@ class solarchvision_UI_BAR_a {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected allSolids")) {
+                if (this.Items[i][j].equals("Display/Hide Selected Solids")) {
                   if (userSelections.Solid_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }                        
-                if (this.Items[i][j].equals("Display/Hide Selected allSections")) {
+                if (this.Items[i][j].equals("Display/Hide Selected Sections")) {
                   if (userSelections.Section_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }          
-                if (this.Items[i][j].equals("Display/Hide Selected allCameras")) {
+                if (this.Items[i][j].equals("Display/Hide Selected Cameras")) {
                   if (userSelections.Camera_displayEdges == false) {
                     stroke(127); 
                     fill(127);
@@ -53119,7 +53119,7 @@ class solarchvision_UI_BAR_b {
     , 
   
     {
-      "3", "Model1Ds", "Tree", "Person", "Model2DsType", "1.5"
+      "3", "3D-Tree", "2D-Tree", "Person", "Model2DsType", "1.5"
     }
     , 
     {
@@ -53353,8 +53353,8 @@ class solarchvision_UI_BAR_b {
           }        
   
           if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
-            if ((this.Items[i][j]).equals("Model1Ds")) UI_set_to_Create_allModel1Ds();
-            else if ((this.Items[i][j]).equals("Tree")) UI_set_to_Create_Tree();
+            if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
+            else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
             else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
             else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
             else if ((this.Items[i][j]).equals("Spline")) UI_set_to_Create_Curve();
@@ -56023,7 +56023,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (parts[q].toLowerCase().equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("group3ds")) {allModel3Ds.delete_allGroups(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("object2ds")) {allModel2Ds.delete(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("Model1Ds")) {allModel1Ds.delete(); WIN3D.update = true;}
+        else if (parts[q].toLowerCase().equals("model1ds")) {allModel1Ds.delete(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
         else if (parts[q].toLowerCase().equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
@@ -56078,7 +56078,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
              if (parts[q].toLowerCase().equals("group3ds")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
         else if (parts[q].toLowerCase().equals("object2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("Model1Ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
+        else if (parts[q].toLowerCase().equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
         else if (parts[q].toLowerCase().equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b.update = true;}
         else if (parts[q].toLowerCase().equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b.update = true;}
         else if (parts[q].toLowerCase().equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b.update = true;}
@@ -56166,7 +56166,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "2Dtree m=? x=? y=? z=? h=?";
       
       UI_set_to_Create_Tree();
-      UI_BAR_b.hghlight("Tree");
+      UI_BAR_b.hghlight("2D-Tree");
       UI_BAR_b.update = true;      
     }  
   }    
@@ -56213,7 +56213,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
       
       UI_set_to_Create_allModel1Ds();
-      UI_BAR_b.hghlight("Model1Ds");
+      UI_BAR_b.hghlight("3D-Tree");
       UI_BAR_b.update = true;      
     }  
   }     
