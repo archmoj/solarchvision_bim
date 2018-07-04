@@ -55922,9 +55922,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
         }
         else {
                if (q == 1) dx = float(parameters[0]);
@@ -55957,10 +55958,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
         }
         else {
           if (q == 1) r = float(parameters[0]);
@@ -55990,16 +55992,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("s")) {sx = float(parameters[1]); sy = sx; sz = sx;}
-          else if (parameters[0].toLowerCase().equals("sxy")) {sx = float(parameters[1]); sy = sx;}             
-          else if (parameters[0].toLowerCase().equals("syz")) {sy = float(parameters[1]); sz = sy;}
-          else if (parameters[0].toLowerCase().equals("szx")) {sz = float(parameters[1]); sx = sz;}
-          else if (parameters[0].toLowerCase().equals("sx")) sx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("sy")) sy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("sz")) sz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("s")) {sx = float(parameters[1]); sy = sx; sz = sx;}
+          else if (low_case.equals("sxy")) {sx = float(parameters[1]); sy = sx;}             
+          else if (low_case.equals("syz")) {sy = float(parameters[1]); sz = sy;}
+          else if (low_case.equals("szx")) {sz = float(parameters[1]); sx = sz;}
+          else if (low_case.equals("sx")) sx = float(parameters[1]);
+          else if (low_case.equals("sy")) sy = float(parameters[1]);
+          else if (low_case.equals("sz")) sz = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
         }
         else {
           if (q == 1) {sx = float(parameters[0]); sy = sx; sz = sx;}
@@ -56019,17 +56022,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("DELETE")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("group3ds")) {allModel3Ds.delete_allGroups(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {allModel2Ds.delete(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("model1ds")) {allModel1Ds.delete(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("solids")) {allModel3Ds.delete_allSolids(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("sections")) {allModel3Ds.delete_allSections(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("cameras")) {allModel3Ds.delete_allCameras(); WIN3D.update = true;}
+        String low_case = parts[q].toLowerCase();
+             if (low_case.equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
+        else if (low_case.equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
+        else if (low_case.equals("group3ds")) {allModel3Ds.delete_allGroups(); WIN3D.update = true;}
+        else if (low_case.equals("object2ds")) {allModel2Ds.delete(); WIN3D.update = true;}
+        else if (low_case.equals("model1ds")) {allModel1Ds.delete(); WIN3D.update = true;}
+        else if (low_case.equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
+        else if (low_case.equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
+        else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
+        else if (low_case.equals("solids")) {allModel3Ds.delete_allSolids(); WIN3D.update = true;}
+        else if (low_case.equals("sections")) {allModel3Ds.delete_allSections(); WIN3D.update = true;}
+        else if (low_case.equals("cameras")) {allModel3Ds.delete_allCameras(); WIN3D.update = true;}
       }
     }
     else {
@@ -56049,13 +56053,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("n")) n = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rx")) rx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("ry")) ry = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rz")) rz = float(parameters[1]);          
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("n")) n = int(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("rx")) rx = float(parameters[1]);
+          else if (low_case.equals("ry")) ry = float(parameters[1]);
+          else if (low_case.equals("rz")) rz = float(parameters[1]);          
         }
       }
       
@@ -56076,23 +56081,25 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("SELECT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("group3ds")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("object2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("solids")) {current_ObjectCategory = ObjectCategory.SOLID; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("sections")) {current_ObjectCategory = ObjectCategory.SECTION; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("cameras")) {current_ObjectCategory = ObjectCategory.CAMERA; UI_BAR_b.update = true;}
-        else if (parts[q].toLowerCase().equals("landpoints")) {current_ObjectCategory = ObjectCategory.LANDPOINT; UI_BAR_b.update = true;}
+        String low_case = parts[q].toLowerCase();
+             if (low_case.equals("group3ds")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
+        else if (low_case.equals("object2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
+        else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
+        else if (low_case.equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b.update = true;}
+        else if (low_case.equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b.update = true;}
+        else if (low_case.equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b.update = true;}
+        else if (low_case.equals("solids")) {current_ObjectCategory = ObjectCategory.SOLID; UI_BAR_b.update = true;}
+        else if (low_case.equals("sections")) {current_ObjectCategory = ObjectCategory.SECTION; UI_BAR_b.update = true;}
+        else if (low_case.equals("cameras")) {current_ObjectCategory = ObjectCategory.CAMERA; UI_BAR_b.update = true;}
+        else if (low_case.equals("landpoints")) {current_ObjectCategory = ObjectCategory.LANDPOINT; UI_BAR_b.update = true;}
       }
       
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("all")) {allModel3Ds.select_All(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("reverse")) {allModel3Ds.reverse_Selection(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("nothing")) {allModel3Ds.deselect_All(); WIN3D.update = true;}
-        else if (parts[q].toLowerCase().equals("last")) {allModel3Ds.select_Last(); WIN3D.update = true;}
+        String low_case = parts[q].toLowerCase();
+             if (low_case.equals("all")) {allModel3Ds.select_All(); WIN3D.update = true;}
+        else if (low_case.equals("reverse")) {allModel3Ds.reverse_Selection(); WIN3D.update = true;}
+        else if (low_case.equals("nothing")) {allModel3Ds.deselect_All(); WIN3D.update = true;}
+        else if (low_case.equals("last")) {allModel3Ds.select_Last(); WIN3D.update = true;}
       }
     }
     else {
@@ -56115,10 +56122,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
         }
       }
       allModel2Ds.add_single(t, m, x, y, z, 2.5);
@@ -56147,11 +56155,12 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
         }
       }
       if (h != 0) {
@@ -56188,17 +56197,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("sd")) Sd = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("min")) Min = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("max")) Max = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]) * PI / 180.0;
-          else if (parameters[0].toLowerCase().equals("tk")) Tk = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lf")) Lf = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("sd")) Sd = int(parameters[1]);
+          else if (low_case.equals("min")) Min = int(parameters[1]);
+          else if (low_case.equals("max")) Max = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]) * PI / 180.0;
+          else if (low_case.equals("tk")) Tk = float(parameters[1]);
+          else if (low_case.equals("lf")) Lf = float(parameters[1]);
         }
       }
       if (h != 0) {
@@ -56235,16 +56245,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
+          else if (low_case.equals("x1")) x1 = float(parameters[1]);
+          else if (low_case.equals("y1")) y1 = float(parameters[1]);
+          else if (low_case.equals("z1")) z1 = float(parameters[1]);
+          else if (low_case.equals("x2")) x2 = float(parameters[1]);
+          else if (low_case.equals("y2")) y2 = float(parameters[1]);
+          else if (low_case.equals("z2")) z2 = float(parameters[1]);
         }
       }
       if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {   
@@ -56282,17 +56293,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
@@ -56331,18 +56343,19 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
@@ -56381,18 +56394,19 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
@@ -56430,17 +56444,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if ((d != 0) && (h != 0)) {   
@@ -56477,16 +56492,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if (d != 0) {   
@@ -56529,21 +56545,22 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("px")) px = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("py")) py = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("pz")) pz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("px")) px = float(parameters[1]);
+          else if (low_case.equals("py")) py = float(parameters[1]);
+          else if (low_case.equals("pz")) pz = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {   
@@ -56582,18 +56599,19 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
@@ -56632,17 +56650,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dx")) dx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dy")) dy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("dz")) dz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
@@ -56678,15 +56697,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
         }
       }
       if (d != 0) {   
@@ -56724,17 +56744,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if ((d != 0) && (h != 0)) {   
@@ -56772,17 +56793,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if ((d != 0) && (h != 0)) {   
@@ -56819,16 +56841,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if (d != 0) {   
@@ -56866,16 +56889,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
+          else if (low_case.equals("x1")) x1 = float(parameters[1]);
+          else if (low_case.equals("y1")) y1 = float(parameters[1]);
+          else if (low_case.equals("z1")) z1 = float(parameters[1]);
+          else if (low_case.equals("x2")) x2 = float(parameters[1]);
+          else if (low_case.equals("y2")) y2 = float(parameters[1]);
+          else if (low_case.equals("z2")) z2 = float(parameters[1]);
         }
       }
       if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
@@ -56912,19 +56936,20 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x3")) x3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y3")) y3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z3")) z3 = float(parameters[1]);
+          else if (low_case.equals("x1")) x1 = float(parameters[1]);
+          else if (low_case.equals("y1")) y1 = float(parameters[1]);
+          else if (low_case.equals("z1")) z1 = float(parameters[1]);
+          else if (low_case.equals("x2")) x2 = float(parameters[1]);
+          else if (low_case.equals("y2")) y2 = float(parameters[1]);
+          else if (low_case.equals("z2")) z2 = float(parameters[1]);
+          else if (low_case.equals("x3")) x3 = float(parameters[1]);
+          else if (low_case.equals("y3")) y3 = float(parameters[1]);
+          else if (low_case.equals("z3")) z3 = float(parameters[1]);
         }
       }
       {   
@@ -56964,22 +56989,23 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x3")) x3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y3")) y3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z3")) z3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x4")) x4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y4")) y4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z4")) z4 = float(parameters[1]);          
+          else if (low_case.equals("x1")) x1 = float(parameters[1]);
+          else if (low_case.equals("y1")) y1 = float(parameters[1]);
+          else if (low_case.equals("z1")) z1 = float(parameters[1]);
+          else if (low_case.equals("x2")) x2 = float(parameters[1]);
+          else if (low_case.equals("y2")) y2 = float(parameters[1]);
+          else if (low_case.equals("z2")) z2 = float(parameters[1]);
+          else if (low_case.equals("x3")) x3 = float(parameters[1]);
+          else if (low_case.equals("y3")) y3 = float(parameters[1]);
+          else if (low_case.equals("z3")) z3 = float(parameters[1]);
+          else if (low_case.equals("x4")) x4 = float(parameters[1]);
+          else if (low_case.equals("y4")) y4 = float(parameters[1]);
+          else if (low_case.equals("z4")) z4 = float(parameters[1]);          
         }
       }
       {   
@@ -57022,25 +57048,26 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x3")) x3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y3")) y3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z3")) z3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x4")) x4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y4")) y4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z4")) z4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x5")) x5 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y5")) y5 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z5")) z5 = float(parameters[1]);            
+          else if (low_case.equals("x1")) x1 = float(parameters[1]);
+          else if (low_case.equals("y1")) y1 = float(parameters[1]);
+          else if (low_case.equals("z1")) z1 = float(parameters[1]);
+          else if (low_case.equals("x2")) x2 = float(parameters[1]);
+          else if (low_case.equals("y2")) y2 = float(parameters[1]);
+          else if (low_case.equals("z2")) z2 = float(parameters[1]);
+          else if (low_case.equals("x3")) x3 = float(parameters[1]);
+          else if (low_case.equals("y3")) y3 = float(parameters[1]);
+          else if (low_case.equals("z3")) z3 = float(parameters[1]);
+          else if (low_case.equals("x4")) x4 = float(parameters[1]);
+          else if (low_case.equals("y4")) y4 = float(parameters[1]);
+          else if (low_case.equals("z4")) z4 = float(parameters[1]);
+          else if (low_case.equals("x5")) x5 = float(parameters[1]);
+          else if (low_case.equals("y5")) y5 = float(parameters[1]);
+          else if (low_case.equals("z5")) z5 = float(parameters[1]);            
         }
       }
       {   
@@ -57086,28 +57113,29 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x1")) x1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y1")) y1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z1")) z1 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x2")) x2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y2")) y2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z2")) z2 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x3")) x3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y3")) y3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z3")) z3 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x4")) x4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y4")) y4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z4")) z4 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x5")) x5 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y5")) y5 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z5")) z5 = float(parameters[1]);            
-          else if (parameters[0].toLowerCase().equals("x6")) x6 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y6")) y6 = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z6")) z6 = float(parameters[1]);         
+          else if (low_case.equals("x1")) x1 = float(parameters[1]);
+          else if (low_case.equals("y1")) y1 = float(parameters[1]);
+          else if (low_case.equals("z1")) z1 = float(parameters[1]);
+          else if (low_case.equals("x2")) x2 = float(parameters[1]);
+          else if (low_case.equals("y2")) y2 = float(parameters[1]);
+          else if (low_case.equals("z2")) z2 = float(parameters[1]);
+          else if (low_case.equals("x3")) x3 = float(parameters[1]);
+          else if (low_case.equals("y3")) y3 = float(parameters[1]);
+          else if (low_case.equals("z3")) z3 = float(parameters[1]);
+          else if (low_case.equals("x4")) x4 = float(parameters[1]);
+          else if (low_case.equals("y4")) y4 = float(parameters[1]);
+          else if (low_case.equals("z4")) z4 = float(parameters[1]);
+          else if (low_case.equals("x5")) x5 = float(parameters[1]);
+          else if (low_case.equals("y5")) y5 = float(parameters[1]);
+          else if (low_case.equals("z5")) z5 = float(parameters[1]);            
+          else if (low_case.equals("x6")) x6 = float(parameters[1]);
+          else if (low_case.equals("y6")) y6 = float(parameters[1]);
+          else if (low_case.equals("z6")) z6 = float(parameters[1]);         
         }
       }
       {   
@@ -57142,17 +57170,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("w")) w = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("b")) b = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("w")) w = float(parameters[1]);
+          else if (low_case.equals("a")) a = float(parameters[1]);
+          else if (low_case.equals("b")) b = float(parameters[1]);
         }
       }
       if ((d != 0) && (w != 0)) {
@@ -57187,17 +57216,18 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
 
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("d")) d = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("b")) b = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("d")) d = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("a")) a = float(parameters[1]);
+          else if (low_case.equals("b")) b = float(parameters[1]);
         }
       }
       if ((d != 0) && (h != 0)) {   
@@ -57231,19 +57261,20 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("v")) v = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("px")) px = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("py")) py = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("pz")) pz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("sx")) sx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("sy")) sy = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("sz")) sz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rx")) rx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("ry")) ry = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rz")) rz = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("v")) v = float(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("px")) px = float(parameters[1]);
+          else if (low_case.equals("py")) py = float(parameters[1]);
+          else if (low_case.equals("pz")) pz = float(parameters[1]);
+          else if (low_case.equals("sx")) sx = float(parameters[1]);
+          else if (low_case.equals("sy")) sy = float(parameters[1]);
+          else if (low_case.equals("sz")) sz = float(parameters[1]);
+          else if (low_case.equals("rx")) rx = float(parameters[1]);
+          else if (low_case.equals("ry")) ry = float(parameters[1]);
+          else if (low_case.equals("rz")) rz = float(parameters[1]);
         }
       }
       if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {   
@@ -57277,15 +57308,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("t")) t = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("i")) i = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("j")) j = int(parameters[1]);  
-          else if (parameters[0].toLowerCase().equals("w")) w = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("h")) h = float(parameters[1]);          
-          else if (parameters[0].toLowerCase().equals("u")) u = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("v")) v = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("e")) e = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("t")) t = int(parameters[1]);
+          else if (low_case.equals("i")) i = int(parameters[1]);
+          else if (low_case.equals("j")) j = int(parameters[1]);  
+          else if (low_case.equals("w")) w = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);          
+          else if (low_case.equals("u")) u = float(parameters[1]);
+          else if (low_case.equals("v")) v = float(parameters[1]);
+          else if (low_case.equals("e")) e = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
         }
       }
       if ((t > 0) && (i > 0) && (j > 0) && (w > 0) && (h > 0)) {   
@@ -57320,15 +57352,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("t")) t = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("s")) s = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rx")) rx = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("ry")) ry = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rz")) rz = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("a")) a = float(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("t")) t = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("s")) s = float(parameters[1]);
+          else if (low_case.equals("rx")) rx = float(parameters[1]);
+          else if (low_case.equals("ry")) ry = float(parameters[1]);
+          else if (low_case.equals("rz")) rz = float(parameters[1]);
+          else if (low_case.equals("a")) a = float(parameters[1]);
         }
       }
       if ((s != 0) && (a != 0)) {   
@@ -57361,11 +57394,12 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("wgt")) wgt = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("clz")) clz = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+          else if (low_case.equals("wgt")) wgt = int(parameters[1]);
+          else if (low_case.equals("clz")) clz = int(parameters[1]);
         }
         else {
           String[] xyz = split(parts[q], ',');
@@ -57410,18 +57444,19 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
-               if (parameters[0].toLowerCase().equals("m")) m = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("tes")) tes = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("lyr")) lyr = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("wgt")) wgt = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("clz")) clz = int(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("x")) x = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("y")) y = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("z")) z = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("r")) r = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("rot")) rot = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("ang")) ang = float(parameters[1]);
-          else if (parameters[0].toLowerCase().equals("deg")) deg = int(parameters[1]);
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+          else if (low_case.equals("wgt")) wgt = int(parameters[1]);
+          else if (low_case.equals("clz")) clz = int(parameters[1]);
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("rot")) rot = float(parameters[1]);
+          else if (low_case.equals("ang")) ang = float(parameters[1]);
+          else if (low_case.equals("deg")) deg = int(parameters[1]);
         }
       }
       if ((r != 0) && (deg > 2)) {   
@@ -57444,15 +57479,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("PIVOT")) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
-             if (parts[q].toLowerCase().equals("minx")) UI_set_to_View_PivotX(-1);
-        else if (parts[q].toLowerCase().equals("midx")) UI_set_to_View_PivotX(0);
-        else if (parts[q].toLowerCase().equals("maxx")) UI_set_to_View_PivotX(1);
-        else if (parts[q].toLowerCase().equals("miny")) UI_set_to_View_PivotY(-1);
-        else if (parts[q].toLowerCase().equals("midy")) UI_set_to_View_PivotY(0);
-        else if (parts[q].toLowerCase().equals("maxy")) UI_set_to_View_PivotY(1);
-        else if (parts[q].toLowerCase().equals("minz")) UI_set_to_View_PivotZ(-1);
-        else if (parts[q].toLowerCase().equals("midz")) UI_set_to_View_PivotZ(0);
-        else if (parts[q].toLowerCase().equals("maxz")) UI_set_to_View_PivotZ(1);
+        String low_case = parts[q].toLowerCase();
+             if (low_case.equals("minx")) UI_set_to_View_PivotX(-1);
+        else if (low_case.equals("midx")) UI_set_to_View_PivotX(0);
+        else if (low_case.equals("maxx")) UI_set_to_View_PivotX(1);
+        else if (low_case.equals("miny")) UI_set_to_View_PivotY(-1);
+        else if (low_case.equals("midy")) UI_set_to_View_PivotY(0);
+        else if (low_case.equals("maxy")) UI_set_to_View_PivotY(1);
+        else if (low_case.equals("minz")) UI_set_to_View_PivotZ(-1);
+        else if (low_case.equals("midz")) UI_set_to_View_PivotZ(0);
+        else if (low_case.equals("maxz")) UI_set_to_View_PivotZ(1);
       }
     }
     else {
