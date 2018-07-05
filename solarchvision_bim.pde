@@ -5134,33 +5134,31 @@ class solarchvision_WIN3D {
   
   void record_last3DViewport () {
   
-    allCameras.options[this.currentCamera][0] = this.position_X;
-    allCameras.options[this.currentCamera][1] = this.position_Y;
-    allCameras.options[this.currentCamera][2] = this.position_Z;
-    allCameras.options[this.currentCamera][3] = this.position_T;
-    allCameras.options[this.currentCamera][4] = this.rotation_X;
-    allCameras.options[this.currentCamera][5] = this.rotation_Y;
-    allCameras.options[this.currentCamera][6] = this.rotation_Z;
-    allCameras.options[this.currentCamera][7] = this.rotation_T;
-    allCameras.options[this.currentCamera][8] = this.Zoom;
-  
-    allCameras.Type[this.currentCamera] = this.ViewType;
+    allCameras.set_posX(this.currentCamera, this.position_X);
+    allCameras.set_posY(this.currentCamera, this.position_Y);
+    allCameras.set_posZ(this.currentCamera, this.position_Z);
+    allCameras.set_posT(this.currentCamera, this.position_T);
+    allCameras.set_rotX(this.currentCamera, this.rotation_X);
+    allCameras.set_rotY(this.currentCamera, this.rotation_Y);
+    allCameras.set_rotZ(this.currentCamera, this.rotation_Z);
+    allCameras.set_rotT(this.currentCamera, this.rotation_T);
+    allCameras.set_zoom(this.currentCamera, this.Zoom);
+    allCameras.set_type(this.currentCamera, this.ViewType);
   }  
   
   
   void apply_currentCamera () {
   
-    this.position_X = allCameras.options[this.currentCamera][0];
-    this.position_Y = allCameras.options[this.currentCamera][1];
-    this.position_Z = allCameras.options[this.currentCamera][2];
-    this.position_T = allCameras.options[this.currentCamera][3];
-    this.rotation_X = allCameras.options[this.currentCamera][4];
-    this.rotation_Y = allCameras.options[this.currentCamera][5];
-    this.rotation_Z = allCameras.options[this.currentCamera][6];
-    this.rotation_T = allCameras.options[this.currentCamera][7];
-    this.Zoom = allCameras.options[this.currentCamera][8];
-  
-    this.ViewType = allCameras.Type[this.currentCamera];
+    this.position_X = allCameras.get_posX(this.currentCamera);
+    this.position_Y = allCameras.get_posY(this.currentCamera);
+    this.position_Z = allCameras.get_posZ(this.currentCamera);
+    this.position_T = allCameras.get_posT(this.currentCamera);
+    this.rotation_X = allCameras.get_rotX(this.currentCamera);
+    this.rotation_Y = allCameras.get_rotY(this.currentCamera);
+    this.rotation_Z = allCameras.get_rotZ(this.currentCamera);
+    this.rotation_T = allCameras.get_rotT(this.currentCamera);
+    this.Zoom       = allCameras.get_zoom(this.currentCamera);
+    this.ViewType   = allCameras.get_type(this.currentCamera);
   }  
   
   
@@ -15702,19 +15700,18 @@ class solarchvision_Selections {
   
         if (n < allCameras.num) {
   
-          float Camera_pX = allCameras.options[n][0];
-          float Camera_pY = allCameras.options[n][1];
-          float Camera_pZ = allCameras.options[n][2];
-          float Camera_pT = allCameras.options[n][3];
-          float Camera_rX = allCameras.options[n][4];
-          float Camera_rY = allCameras.options[n][5];
-          float Camera_rZ = allCameras.options[n][6];
-          float Camera_rT = allCameras.options[n][7];
-          float Camera_ZOOM = allCameras.options[n][8];
+          float Camera_pX = allCameras.get_posX(n);
+          float Camera_pY = allCameras.get_posY(n);
+          float Camera_pZ = allCameras.get_posZ(n);
+          float Camera_pT = allCameras.get_posT(n);
+          float Camera_rX = allCameras.get_rotX(n);
+          float Camera_rY = allCameras.get_rotY(n);
+          float Camera_rZ = allCameras.get_rotZ(n);
+          float Camera_rT = allCameras.get_rotT(n);
+          float Camera_zoom = allCameras.get_zoom(n);
+          int   Camera_type = allCameras.get_type(n);
   
-          int Camera_type = allCameras.Type[n];
-  
-          float[][] ImageVertex = allCameras.getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
+          float[][] ImageVertex = allCameras.getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
   
           // the first vertex is the Camera point
           x = ImageVertex[0][0]; 
@@ -31257,11 +31254,11 @@ class solarchvision_Model3Ds {
         float Camera_rY = allCameras.options[OBJ_NUM][5];
         float Camera_rZ = allCameras.options[OBJ_NUM][6];
         float Camera_rT = allCameras.options[OBJ_NUM][7];
-        float Camera_ZOOM = allCameras.options[OBJ_NUM][8];
+        float Camera_zoom = allCameras.options[OBJ_NUM][8];
   
         int Camera_type = allCameras.Type[OBJ_NUM];
   
-        this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
+        this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
       }
   
       // selecting new objetcs
@@ -38282,7 +38279,7 @@ class solarchvision_Model3Ds {
   
   void delete_allCameras () {
   
-    allCameras.options = new float [0][8]; 
+    allCameras.options = new float [0][9]; 
   
     allCameras.Type = new int [0];
   
@@ -38660,7 +38657,7 @@ class solarchvision_Cameras {
         float Camera_rY = this.get_rotY(f);
         float Camera_rZ = this.get_rotZ(f);
         float Camera_rT = this.get_rotT(f);
-        float Camera_ZOOM = this.get_zoom(f);
+        float Camera_zoom = this.get_zoom(f);
   
         int Camera_type = this.Type[f];
   
@@ -38670,7 +38667,7 @@ class solarchvision_Cameras {
   
         WIN3D.graphics.beginShape();
   
-        float[][] ImageVertex = getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
+        float[][] ImageVertex = getCorners(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
   
         for (int q = 1; q <= 4; q++) {
   
@@ -38738,15 +38735,15 @@ class solarchvision_Cameras {
   }
   
   
-  float[][] getCorners (int Camera_type, float Camera_pX, float Camera_pY, float Camera_pZ, float Camera_pT, float Camera_rX, float Camera_rY, float Camera_rZ, float Camera_rT, float Camera_ZOOM) {
+  float[][] getCorners (int Camera_type, float Camera_pX, float Camera_pY, float Camera_pZ, float Camera_pT, float Camera_rX, float Camera_rY, float Camera_rZ, float Camera_rT, float Camera_zoom) {
   
     float[][] ImageVertex = new float [5][3];
   
     float r = Camera_pT * 5; // <<<<<<
   
-    float rx = r * funcs.sin_ang(0.5 * Camera_ZOOM) /  WIN3D.view_R;
-    float ry = r * funcs.sin_ang(0.5 * Camera_ZOOM);  
-    float rz = r * funcs.cos_ang(0.5 * Camera_ZOOM);  
+    float rx = r * funcs.sin_ang(0.5 * Camera_zoom) /  WIN3D.view_R;
+    float ry = r * funcs.sin_ang(0.5 * Camera_zoom);  
+    float rz = r * funcs.cos_ang(0.5 * Camera_zoom);  
   
     for (int q = 0; q < 5; q++) {  
   
@@ -38799,7 +38796,7 @@ class solarchvision_Cameras {
         WIN3D.rotation_Y = Camera_rY;
         WIN3D.rotation_Z = Camera_rZ;
         WIN3D.rotation_T = Camera_rT;
-        WIN3D.Zoom = Camera_ZOOM;
+        WIN3D.Zoom = Camera_zoom;
   
         WIN3D.transform_3DViewport();
   
@@ -44101,11 +44098,11 @@ void mouseClicked () {
               float Camera_rY = WIN3D.rotation_Y;
               float Camera_rZ = WIN3D.rotation_Z;
               float Camera_rT = WIN3D.rotation_T;
-              float Camera_ZOOM = WIN3D.Zoom;
+              float Camera_zoom = WIN3D.Zoom;
 
               int Camera_type = WIN3D.ViewType;
 
-              allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
+              allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
 
               WIN3D.currentCamera = allCameras.num - 1;
               WIN3D.apply_currentCamera();
@@ -44117,17 +44114,16 @@ void mouseClicked () {
 
             if (menu_option.equals("Camera >> Viewport")) {
 
-              allCameras.options[0][0] = allCameras.options[WIN3D.currentCamera][0];
-              allCameras.options[0][1] = allCameras.options[WIN3D.currentCamera][1];
-              allCameras.options[0][2] = allCameras.options[WIN3D.currentCamera][2];
-              allCameras.options[0][3] = allCameras.options[WIN3D.currentCamera][3];
-              allCameras.options[0][4] = allCameras.options[WIN3D.currentCamera][4];
-              allCameras.options[0][5] = allCameras.options[WIN3D.currentCamera][5];
-              allCameras.options[0][6] = allCameras.options[WIN3D.currentCamera][6];
-              allCameras.options[0][7] = allCameras.options[WIN3D.currentCamera][7];
-              allCameras.options[0][8] = allCameras.options[WIN3D.currentCamera][8];
-
-              allCameras.Type[0] = allCameras.Type[WIN3D.currentCamera];
+              allCameras.set_posX(0, allCameras.get_posX(WIN3D.currentCamera));
+              allCameras.set_posY(0, allCameras.get_posY(WIN3D.currentCamera));
+              allCameras.set_posZ(0, allCameras.get_posZ(WIN3D.currentCamera));
+              allCameras.set_posT(0, allCameras.get_posT(WIN3D.currentCamera));
+              allCameras.set_rotX(0, allCameras.get_rotX(WIN3D.currentCamera));
+              allCameras.set_rotY(0, allCameras.get_rotY(WIN3D.currentCamera));
+              allCameras.set_rotZ(0, allCameras.get_rotZ(WIN3D.currentCamera));
+              allCameras.set_rotT(0, allCameras.get_rotT(WIN3D.currentCamera));
+              allCameras.set_zoom(0, allCameras.get_zoom(WIN3D.currentCamera));
+              allCameras.set_type(0, allCameras.get_type(WIN3D.currentCamera));
 
               WIN3D.currentCamera = 0;
               SOLARCHVISION_modify_Viewport_Title();
@@ -46142,11 +46138,11 @@ void mouseClicked () {
                         float Camera_rY = WIN3D.rotation_Y;
                         float Camera_rZ = WIN3D.rotation_Z;
                         float Camera_rT = WIN3D.rotation_T;
-                        float Camera_ZOOM = WIN3D.Zoom;
+                        float Camera_zoom = WIN3D.Zoom;
     
                         int Camera_type = WIN3D.ViewType;
     
-                        allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_ZOOM);
+                        allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
     
                         WIN3D.update = true;
                       }  
