@@ -10910,7 +10910,7 @@ final int TROPO_timeSteps = 24;
 
 // exporting shaded land is not written. 
 
-// void userSelections.rotate_selectedGroups 
+// void userSelections.rotate_Groups 
 // serach for userSelections.rotate_Selection ( need to make them all correct for local pivots!
 // local pivot
 
@@ -16226,7 +16226,7 @@ class solarchvision_Selections {
   
   
   
-  void move_selectedGroups (float dx, float dy, float dz) {
+  void move_Groups (float dx, float dy, float dz) {
   
     int[] PolymeshVertices = this.get_Group_Vertices();
   
@@ -16280,7 +16280,7 @@ class solarchvision_Selections {
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
   }
   
-  void rotate_selectedGroups (float r, int the_Vector) {
+  void rotate_Groups (float r, int the_Vector) {
   
     int[] PolymeshVertices = this.get_Group_Vertices();
   
@@ -16569,7 +16569,7 @@ class solarchvision_Selections {
   
   
   
-  void scale_selectedGroups (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     int[] PolymeshVertices = this.get_Group_Vertices();
   
@@ -16727,7 +16727,7 @@ class solarchvision_Selections {
   
   
   
-  void move_selectedFaces (float dx, float dy, float dz) {
+  void move_Faces (float dx, float dy, float dz) {
   
     int[] FaceVertices = this.get_Face_Vertices();
   
@@ -16739,7 +16739,7 @@ class solarchvision_Selections {
     }
   }
   
-  void rotate_selectedFaces (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Faces (float x0, float y0, float z0, float r, int the_Vector) {
   
     int[] FaceVertices = this.get_Face_Vertices();
   
@@ -16767,7 +16767,7 @@ class solarchvision_Selections {
     }
   }
   
-  void scale_selectedFaces (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     int[] FaceVertices = this.get_Face_Vertices();
   
@@ -16798,7 +16798,7 @@ class solarchvision_Selections {
   }
   
   
-  void move_selectedCurves (float dx, float dy, float dz) {
+  void move_Curves (float dx, float dy, float dz) {
   
     int[] CurveVertices = this.get_Curve_Vertices();
   
@@ -16810,7 +16810,7 @@ class solarchvision_Selections {
     }
   }
   
-  void rotate_selectedCurves (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Curves (float x0, float y0, float z0, float r, int the_Vector) {
   
     int[] CurveVertices = this.get_Curve_Vertices();
   
@@ -16838,7 +16838,7 @@ class solarchvision_Selections {
     }
   }
   
-  void scale_selectedCurves (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     int[] CurveVertices = this.get_Curve_Vertices();
   
@@ -16868,7 +16868,7 @@ class solarchvision_Selections {
     }
   }
   
-  void move_selectedVertices (float dx, float dy, float dz) {
+  void move_Vertices (float dx, float dy, float dz) {
   
     for (int q = 0; q < this.Vertex_ids.length; q++) {
   
@@ -16879,7 +16879,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Vertices (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < this.Vertex_ids.length; q++) {
   
@@ -16906,7 +16906,7 @@ class solarchvision_Selections {
   }
   
   
-  void scale_selectedVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     for (int q = 0; q < this.Vertex_ids.length; q++) {
   
@@ -17011,7 +17011,7 @@ class solarchvision_Selections {
   
   
   
-  void scale_selectedModel2D (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void scale_Model2D (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
     int n1 = allModel2Ds.num_files_PEOPLE;    
   
@@ -17049,7 +17049,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedModel2D (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Model2D (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < this.Model2D_ids.length; q++) {
   
@@ -17077,7 +17077,7 @@ class solarchvision_Selections {
   
   
   
-  void move_selectedModel2D (float dx, float dy, float dz) {
+  void move_Model2D (float dx, float dy, float dz) {
   
     for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
   
@@ -17088,7 +17088,7 @@ class solarchvision_Selections {
   } 
   
   
-  void scale_selectedModel1D (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void scale_Model1D (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
     for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
   
@@ -17119,7 +17119,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedModel1D (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Model1D (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < this.Model1D_ids.length; q++) {
   
@@ -17148,7 +17148,7 @@ class solarchvision_Selections {
   }
   
   
-  void move_selectedModel1D (float dx, float dy, float dz) {
+  void move_Model1D (float dx, float dy, float dz) {
   
     for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
   
@@ -17159,7 +17159,7 @@ class solarchvision_Selections {
   } 
   
   
-  void move_selectedSolids (float dx, float dy, float dz) {
+  void move_Solids (float dx, float dy, float dz) {
   
     boolean allSolids_updated = false; 
   
@@ -17180,7 +17180,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedSolids (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Solids (float x0, float y0, float z0, float r, int the_Vector) {
   
     boolean allSolids_updated = false; 
   
@@ -17218,7 +17218,7 @@ class solarchvision_Selections {
   }
   
   
-  void scale_selectedSolids (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     boolean allSolids_updated = false; 
   
@@ -17253,7 +17253,7 @@ class solarchvision_Selections {
   }
   
   
-  void move_selectedSections (float dx, float dy, float dz) {
+  void move_Sections (float dx, float dy, float dz) {
   
     for (int q = 0; q < this.Section_ids.length; q++) {
   
@@ -17269,7 +17269,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedSections (float r) {
+  void rotate_Sections (float r) {
   
     for (int q = 0; q < this.Section_ids.length; q++) {
   
@@ -17284,7 +17284,7 @@ class solarchvision_Selections {
     ROLLOUT.update = true;
   }
   
-  void scale_selectedSections (float sx, float sy) {
+  void scale_Sections (float sx, float sy) {
   
     for (int q = 0; q < this.Section_ids.length; q++) {
   
@@ -17301,7 +17301,7 @@ class solarchvision_Selections {
   }
   
   
-  void move_selectedCameras (float dx, float dy, float dz) {
+  void move_Cameras (float dx, float dy, float dz) {
   
     // swapping y and z vectors to match camera's local coordinate
     float tmp = dz;
@@ -17319,7 +17319,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedCameras (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Cameras (float x0, float y0, float z0, float r, int the_Vector) {
   
     // swapping y and z vectors to match camera's local coordinate
     if (the_Vector == 2) the_Vector = 1;
@@ -17352,7 +17352,7 @@ class solarchvision_Selections {
   }
   
   
-  void scale_selectedCameras (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     // swapping y and z vectors to match camera's local coordinate
     float tmp = sz;
@@ -17392,7 +17392,7 @@ class solarchvision_Selections {
   
   
   
-  void move_selectedLandPoints (float dx, float dy, float dz) {
+  void move_LandPoints (float dx, float dy, float dz) {
   
     for (int q = 0; q < this.LandPoint_ids.length; q++) {
   
@@ -17408,7 +17408,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_selectedLandPoints (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < this.LandPoint_ids.length; q++) {
   
@@ -17438,7 +17438,7 @@ class solarchvision_Selections {
   }
   
   
-  void scale_selectedLandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale_LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     for (int q = 0; q < this.LandPoint_ids.length; q++) {
   
@@ -17483,16 +17483,16 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
   
-      this.scale_selectedCameras(x0, y0, z0, sx, sy, sz);
+      this.scale_Cameras(x0, y0, z0, sx, sy, sz);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
   
-      this.scale_selectedSections(sx, sy);
+      this.scale_Sections(sx, sy);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.scale_selectedSolids(x0, y0, z0, sx, sy, sz);
+      this.scale_Solids(x0, y0, z0, sx, sy, sz);
     }       
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
@@ -17502,37 +17502,37 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
   
-      this.scale_selectedVertices(x0, y0, z0, sx, sy, sz);
+      this.scale_Vertices(x0, y0, z0, sx, sy, sz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
   
-      this.scale_selectedFaces(x0, y0, z0, sx, sy, sz);
+      this.scale_Faces(x0, y0, z0, sx, sy, sz);
     }  
     
     if (current_ObjectCategory == ObjectCategory.CURVE) {
   
-      this.scale_selectedCurves(x0, y0, z0, sx, sy, sz);
+      this.scale_Curves(x0, y0, z0, sx, sy, sz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
   
-      this.scale_selectedGroups(x0, y0, z0, sx, sy, sz);
+      this.scale_Groups(x0, y0, z0, sx, sy, sz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      this.scale_selectedModel2D(x0, y0, z0, sx, sy, sz);
+      this.scale_Model2D(x0, y0, z0, sx, sy, sz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      this.scale_selectedModel1D(x0, y0, z0, sx, sy, sz);
+      this.scale_Model1D(x0, y0, z0, sx, sy, sz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
   
-      this.scale_selectedLandPoints(x0, y0, z0, sx, sy, sz);
+      this.scale_LandPoints(x0, y0, z0, sx, sy, sz);
     }
   }
   
@@ -17552,17 +17552,17 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
   
-      this.rotate_selectedCameras(x0, y0, z0, r, the_Vector);
+      this.rotate_Cameras(x0, y0, z0, r, the_Vector);
     }  
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
   
-      this.rotate_selectedSections(r);
+      this.rotate_Sections(r);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
   
-      this.rotate_selectedSolids(x0, y0, z0, r, the_Vector);
+      this.rotate_Solids(x0, y0, z0, r, the_Vector);
     }       
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
@@ -17572,37 +17572,37 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
   
-      this.rotate_selectedVertices(x0, y0, z0, r, the_Vector);
+      this.rotate_Vertices(x0, y0, z0, r, the_Vector);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
   
-      this.rotate_selectedFaces(x0, y0, z0, r, the_Vector);
+      this.rotate_Faces(x0, y0, z0, r, the_Vector);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
   
-      this.rotate_selectedCurves(x0, y0, z0, r, the_Vector);
+      this.rotate_Curves(x0, y0, z0, r, the_Vector);
     }  
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
   
-      this.rotate_selectedGroups(r, the_Vector);
+      this.rotate_Groups(r, the_Vector);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      this.rotate_selectedModel2D(x0, y0, z0, r, the_Vector);
+      this.rotate_Model2D(x0, y0, z0, r, the_Vector);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      this.rotate_selectedModel1D(x0, y0, z0, r, the_Vector);
+      this.rotate_Model1D(x0, y0, z0, r, the_Vector);
     }   
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
   
-      this.rotate_selectedLandPoints(x0, y0, z0, r, the_Vector);
+      this.rotate_LandPoints(x0, y0, z0, r, the_Vector);
     }
   } 
   
@@ -17627,17 +17627,17 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
   
-      this.move_selectedCameras(dx, dy, dz);
+      this.move_Cameras(dx, dy, dz);
     }     
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
   
-      this.move_selectedSections(dx, dy, dz);
+      this.move_Sections(dx, dy, dz);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
   
-      this.move_selectedSolids(dx, dy, dz);
+      this.move_Solids(dx, dy, dz);
     }      
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
@@ -17647,37 +17647,37 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
   
-      this.move_selectedVertices(dx, dy, dz);
+      this.move_Vertices(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
   
-      this.move_selectedFaces(dx, dy, dz);
+      this.move_Faces(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
   
-      this.move_selectedCurves(dx, dy, dz);
+      this.move_Curves(dx, dy, dz);
     }
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
   
-      this.move_selectedGroups(dx, dy, dz);
+      this.move_Groups(dx, dy, dz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      this.move_selectedModel2D(dx, dy, dz);
+      this.move_Model2D(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      this.move_selectedModel1D(dx, dy, dz);
+      this.move_Model1D(dx, dy, dz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
   
-      this.move_selectedLandPoints(dx, dy, dz);
+      this.move_LandPoints(dx, dy, dz);
     }
   }
   
