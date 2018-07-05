@@ -15939,9 +15939,7 @@ class solarchvision_Selections {
   
       int n = PolymeshVertices[q];
   
-      allPoints.addX(n, dx); 
-      allPoints.addY(n, dy);
-      allPoints.addZ(n, dz);
+      allPoints.move(n, dx, dy, dz); 
     }
   
     boolean allSolids_updated = false;
@@ -15959,18 +15957,14 @@ class solarchvision_Selections {
       for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
-          allModel1Ds.addX(f, dx);
-          allModel1Ds.addY(f, dy);
-          allModel1Ds.addZ(f, dz);
+          allModel1Ds.move(f, dx, dy, dz);
         }
       }
   
       for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
-          allModel2Ds.addX(f, dx);
-          allModel2Ds.addY(f, dy);
-          allModel2Ds.addZ(f, dz);
+          allModel2Ds.move(f, dx, dy, dz);
         }
       }
   
@@ -16446,9 +16440,7 @@ class solarchvision_Selections {
   
       int f = FaceVertices[q];
   
-      allPoints.addX(f, dx); 
-      allPoints.addY(f, dy);
-      allPoints.addZ(f, dz);
+      allPoints.move(f, dx, dy, dz); 
     }
   }
   
@@ -16519,9 +16511,7 @@ class solarchvision_Selections {
   
       int f = CurveVertices[q];
   
-      allPoints.addX(f, dx); 
-      allPoints.addY(f, dy);
-      allPoints.addZ(f, dz);
+      allPoints.move(f, dx, dy, dz); 
     }
   }
   
@@ -16589,9 +16579,7 @@ class solarchvision_Selections {
   
       int f = this.Vertex_ids[q];
   
-      allPoints.addX(f, dx); 
-      allPoints.addY(f, dy);
-      allPoints.addZ(f, dz);
+      allPoints.move(f, dx, dy, dz); 
     }
   }
   
@@ -16673,9 +16661,7 @@ class solarchvision_Selections {
   
       float v = this.Vertex_softSelectionValues[q];
   
-      allPoints.addX(f, dx * v); 
-      allPoints.addY(f, dy * v);
-      allPoints.addZ(f, dz * v);
+      allPoints.move(f, dx * v, dy * v, dz * v); 
     }
   }
   
@@ -16802,9 +16788,7 @@ class solarchvision_Selections {
   
       int f = this.Model2D_ids[o];
       
-      allModel2Ds.addX(f, dx); 
-      allModel2Ds.addY(f, dy); 
-      allModel2Ds.addZ(f, dz);
+      allModel2Ds.move(f, dx, dy, dz); 
     }
   } 
   
@@ -16875,9 +16859,7 @@ class solarchvision_Selections {
   
       int f = this.Model1D_ids[o];
   
-      allModel1Ds.addX(f, dx); 
-      allModel1Ds.addY(f, dy); 
-      allModel1Ds.addZ(f, dz);
+      allModel1Ds.move(f, dx, dy, dz); 
     }
   } 
   
@@ -17037,9 +17019,7 @@ class solarchvision_Selections {
   
       int f = this.Camera_ids[q];
   
-      allCameras.options[f][0] += dx; 
-      allCameras.options[f][1] += dy;
-      allCameras.options[f][2] += dz;
+      allCameras.move(f, dx, dy, dz); 
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
@@ -17056,22 +17036,22 @@ class solarchvision_Selections {
   
       int f = this.Camera_ids[q];
   
-      float x = allCameras.options[f][0] - x0; 
-      float y = allCameras.options[f][1] - y0; 
-      float z = allCameras.options[f][2] - z0;
+      float x = allCameras.get_posX(f) - x0; 
+      float y = allCameras.get_posY(f) - y0; 
+      float z = allCameras.get_posZ(f) - z0;
   
       if (the_Vector == 2) {
-        allCameras.options[f][0] = x0 + (x * cos(r) - y * sin(r)); 
-        allCameras.options[f][1] = y0 + (x * sin(r) + y * cos(r));
-        allCameras.options[f][2] = z0 + (z);
+        allCameras.set_posX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allCameras.set_posY(f, y0 + (x * sin(r) + y * cos(r)));
+        allCameras.set_posZ(f, z0 + (z));
       } else if (the_Vector == 1) {
-        allCameras.options[f][0] = x0 + (z * sin(r) + x * cos(r)); 
-        allCameras.options[f][1] = y0 + (y);
-        allCameras.options[f][2] = z0 + (z * cos(r) - x * sin(r));
+        allCameras.set_posX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allCameras.set_posY(f, y0 + (y));
+        allCameras.set_posZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allCameras.options[f][0] = x0 + (x); 
-        allCameras.options[f][1] = y0 + (y * cos(r) - z * sin(r));
-        allCameras.options[f][2] = z0 + (y * sin(r) + z * cos(r));
+        allCameras.set_posX(f, x0 + (x)); 
+        allCameras.set_posY(f, y0 + (y * cos(r) - z * sin(r)));
+        allCameras.set_posZ(f, z0 + (y * sin(r) + z * cos(r)));
       }    
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
@@ -17090,13 +17070,13 @@ class solarchvision_Selections {
   
       int f = this.Camera_ids[q];
   
-      float x = allCameras.options[f][0] - x0; 
-      float y = allCameras.options[f][1] - y0; 
-      float z = allCameras.options[f][2] - z0;
+      float x = allCameras.get_posX(f) - x0; 
+      float y = allCameras.get_posY(f) - y0; 
+      float z = allCameras.get_posZ(f) - z0;
   
-      allCameras.options[f][0] = x0 + sx * x; 
-      allCameras.options[f][1] = y0 + sy * y;
-      allCameras.options[f][2] = z0 + sz * z;
+      allCameras.set_posX(f, x0 + sx * x); 
+      allCameras.set_posY(f, y0 + sy * y);
+      allCameras.set_posZ(f, z0 + sz * z);
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
@@ -27298,16 +27278,10 @@ class solarchvision_Model2Ds {
     this.XYZS[n][3] = f;  
   }  
 
-  void addX (int n, float f) {
-    this.XYZS[n][0] += f;  
-  }
-
-  void addY (int n, float f) {
-    this.XYZS[n][1] += f;  
-  }
-
-  void addZ (int n, float f) {
-    this.XYZS[n][2] += f;  
+  void move (int n, float dx, float dy, float dz) {
+    this.XYZS[n][0] += dx;  
+    this.XYZS[n][1] += dy;
+    this.XYZS[n][2] += dz;
   }
   
   void magS (int n, float f) {
@@ -28581,18 +28555,12 @@ class solarchvision_Model1Ds {
     this.XYZSR[n][4] = f;  
   }     
   
-  void addX (int n, float f) {
-    this.XYZSR[n][0] += f;  
+  void move (int n, float dx, float dy, float dz) {
+    this.XYZSR[n][0] += dx;  
+    this.XYZSR[n][1] += dy;
+    this.XYZSR[n][2] += dz;
   }  
 
-  void addY (int n, float f) {
-    this.XYZSR[n][1] += f;  
-  }  
-
-  void addZ (int n, float f) {
-    this.XYZSR[n][2] += f;  
-  }  
-  
   void magS (int n, float f) {
     this.XYZSR[n][3] *= f;  
   }    
@@ -30297,20 +30265,13 @@ class solarchvision_Points {
     allVertices[n][2] = f;
   }   
   
-  void addX (int n, float f) { 
+  void move (int n, float dx, float dy, float dz) { 
   
-    allVertices[n][0] += f;
+    allVertices[n][0] += dx;
+    allVertices[n][1] += dy;
+    allVertices[n][2] += dz;
   }     
   
-  void addY (int n, float f) { 
-  
-    allVertices[n][1] += f;
-  }     
-
-  void addZ (int n, float f) { 
-  
-    allVertices[n][2] += f;
-  }       
   
   int getLength () {
     return  allVertices.length;
@@ -31245,18 +31206,17 @@ class solarchvision_Model3Ds {
       for (int o = 0; o < userSelections.Camera_ids.length; o++) {
   
         int OBJ_NUM = userSelections.Camera_ids[o];
-  
-        float Camera_pX = allCameras.options[OBJ_NUM][0];
-        float Camera_pY = allCameras.options[OBJ_NUM][1];
-        float Camera_pZ = allCameras.options[OBJ_NUM][2];
-        float Camera_pT = allCameras.options[OBJ_NUM][3];
-        float Camera_rX = allCameras.options[OBJ_NUM][4];
-        float Camera_rY = allCameras.options[OBJ_NUM][5];
-        float Camera_rZ = allCameras.options[OBJ_NUM][6];
-        float Camera_rT = allCameras.options[OBJ_NUM][7];
-        float Camera_zoom = allCameras.options[OBJ_NUM][8];
-  
-        int Camera_type = allCameras.Type[OBJ_NUM];
+
+        float Camera_pX = allCameras.get_posX(OBJ_NUM);
+        float Camera_pY = allCameras.get_posY(OBJ_NUM);
+        float Camera_pZ = allCameras.get_posZ(OBJ_NUM);
+        float Camera_pT = allCameras.get_posT(OBJ_NUM);
+        float Camera_rX = allCameras.get_rotX(OBJ_NUM);
+        float Camera_rY = allCameras.get_rotY(OBJ_NUM);
+        float Camera_rZ = allCameras.get_rotZ(OBJ_NUM);
+        float Camera_rT = allCameras.get_rotT(OBJ_NUM);
+        float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
+        int   Camera_type = allCameras.get_type(OBJ_NUM);
   
         this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
       }
@@ -35183,9 +35143,9 @@ class solarchvision_Model3Ds {
   
         int vNo = userSelections.Vertex_ids[o];
   
-        allPoints.addX(vNo, Vertex_offsetValues[o][0]);
-        allPoints.addY(vNo, Vertex_offsetValues[o][1]);
-        allPoints.addZ(vNo, Vertex_offsetValues[o][2]);
+        allPoints.move(vNo, Vertex_offsetValues[o][0],
+                            Vertex_offsetValues[o][1],
+                            Vertex_offsetValues[o][2]);
       } 
   
       userSelections.calculate_selection_BoundingBox();
@@ -38290,19 +38250,19 @@ class solarchvision_Model3Ds {
   
   void add_veryFirstCamera () {
     
-    allCameras.options = new float [1][8]; 
-    allCameras.options[0][0] = WIN3D.position_X;
-    allCameras.options[0][1] = WIN3D.position_Y;
-    allCameras.options[0][2] = WIN3D.position_Z;
-    allCameras.options[0][3] = WIN3D.position_T;
-    allCameras.options[0][4] = WIN3D.rotation_X;
-    allCameras.options[0][5] = WIN3D.rotation_Y;
-    allCameras.options[0][6] = WIN3D.rotation_Z;
-    allCameras.options[0][7] = WIN3D.rotation_T;
-    allCameras.options[0][8] = WIN3D.Zoom;
-  
     allCameras.Type = new int [1];
-    allCameras.Type[0] = WIN3D.ViewType;  
+    allCameras.options = new float [1][9];
+    
+    allCameras.set_posX(0, WIN3D.position_X);
+    allCameras.set_posY(0, WIN3D.position_Y);
+    allCameras.set_posZ(0, WIN3D.position_Z);
+    allCameras.set_posT(0, WIN3D.position_T);
+    allCameras.set_rotX(0, WIN3D.rotation_X);
+    allCameras.set_rotY(0, WIN3D.rotation_Y);
+    allCameras.set_rotZ(0, WIN3D.rotation_Z);
+    allCameras.set_rotT(0, WIN3D.rotation_T);
+    allCameras.set_zoom(0, WIN3D.Zoom);
+    allCameras.set_type(0, WIN3D.ViewType);  
     
     allCameras.num = 1;
   }  
@@ -38635,7 +38595,13 @@ class solarchvision_Cameras {
     this.Type[n] = t;  
   }   
 
-  
+
+  void move (int n, float dx, float dy, float dz) {
+    this.options[n][0] += dx;  
+    this.options[n][1] += dy;
+    this.options[n][2] += dz;
+  }
+
   private float[][] Vertices;
   private int[][] Faces;
   
