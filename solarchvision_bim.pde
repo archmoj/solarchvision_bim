@@ -15095,12 +15095,12 @@ class solarchvision_SolarImpacts {
       this.RES1 = allSections.RES1[f];
       this.RES2 = allSections.RES2[f];     
   
-      this.X = allSections.options[f][0];
-      this.Y = allSections.options[f][1];
-      this.Z = 0.1 + allSections.options[f][2];
-      this.R = allSections.options[f][3];
-      this.U = allSections.options[f][4];
-      this.V = allSections.options[f][5];
+      this.X = allSections.getX(f);
+      this.Y = allSections.getY(f);
+      this.Z = allSections.getZ(f) + 0.1; // <<
+      this.R = allSections.getR(f);
+      this.U = allSections.getU(f);
+      this.V = allSections.getV(f);
   
       SceneName = "Section_" + Section_Stamp();
   
@@ -15125,12 +15125,12 @@ class solarchvision_SolarImpacts {
       this.RES1 = allSections.RES1[f];
       this.RES2 = allSections.RES2[f];     
   
-      this.X = allSections.options[f][0];
-      this.Y = allSections.options[f][1];
-      this.Z = 0.1 + allSections.options[f][2];
-      this.R = allSections.options[f][3];
-      this.U = allSections.options[f][4];
-      this.V = allSections.options[f][5];
+      this.X = allSections.getX(f);
+      this.Y = allSections.getY(f);
+      this.Z = allSections.getZ(f) + 0.1; // <<
+      this.R = allSections.getR(f);
+      this.U = allSections.getU(f);
+      this.V = allSections.getV(f);
   
       SceneName = "Section_" + Section_Stamp();
   
@@ -15733,12 +15733,12 @@ class solarchvision_Selections {
   
         if (n < allSections.num) {
   
-          float Section_X = allSections.options[n][0];
-          float Section_Y = allSections.options[n][1];
-          float Section_Z = allSections.options[n][2];
-          float Section_R = allSections.options[n][3];
-          float Section_U = allSections.options[n][4];
-          float Section_V = allSections.options[n][5];
+          float Section_X = allSections.getX(n);
+          float Section_Y = allSections.getY(n);
+          float Section_Z = allSections.getZ(n);
+          float Section_R = allSections.getR(n);
+          float Section_U = allSections.getU(n);
+          float Section_V = allSections.getV(n);
   
           int Section_Type = allSections.Type[n];
           int Section_RES1 = allSections.RES1[n];
@@ -16971,10 +16971,8 @@ class solarchvision_Selections {
     for (int q = 0; q < this.Section_ids.length; q++) {
   
       int f = this.Section_ids[q];
-  
-      allSections.options[f][0] += dx;
-      allSections.options[f][1] += dy;
-      allSections.options[f][2] += dz;
+      
+      allSections.move(f, dx, dy, dz);
     }
   
     allSolidImpacts.calculate_Impact_selectedSections();
@@ -16990,7 +16988,7 @@ class solarchvision_Selections {
   
       int f = this.Section_ids[q];
   
-      allSections.options[f][3] += r * 180.0 / PI;
+      allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
     }
   
     allSolidImpacts.calculate_Impact_selectedSections(); 
@@ -17005,8 +17003,8 @@ class solarchvision_Selections {
   
       int f = this.Section_ids[q];
   
-      allSections.options[f][4] *= sx;
-      allSections.options[f][5] *= sy;
+      allSections.setU(f, allSections.getU(f) * sx);
+      allSections.setV(f, allSections.getV(f) * sy);
     }
   
     allSolidImpacts.calculate_Impact_selectedSections(); 
@@ -17545,13 +17543,13 @@ class solarchvision_Selections {
         int f = OBJ_NUM;
   
         if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-          int n = allCameras.Type[f];
+          int n = allCameras.get_type(f);
           n += p;
           if (n > 1) n = 0;
           if (n < 0) n = 1;
-          allCameras.Type[f] = n;         
+          allCameras.set_type(f, n);         
   
-          if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.Type[f];
+          if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.get_type(f);
         }
       }
     }    
@@ -31181,12 +31179,12 @@ class solarchvision_Model3Ds {
   
         int OBJ_NUM = userSelections.Section_ids[o];
   
-        float Section_X = allSections.options[OBJ_NUM][0];
-        float Section_Y = allSections.options[OBJ_NUM][1];
-        float Section_Z = allSections.options[OBJ_NUM][2];
-        float Section_R = allSections.options[OBJ_NUM][3];
-        float Section_U = allSections.options[OBJ_NUM][4];
-        float Section_V = allSections.options[OBJ_NUM][5];
+        float Section_X = allSections.getX(OBJ_NUM);
+        float Section_Y = allSections.getY(OBJ_NUM);
+        float Section_Z = allSections.getZ(OBJ_NUM);
+        float Section_R = allSections.getR(OBJ_NUM);
+        float Section_U = allSections.getU(OBJ_NUM);
+        float Section_V = allSections.getV(OBJ_NUM);
   
         int Section_Type = allSections.Type[OBJ_NUM];
         int Section_RES1 = allSections.RES1[OBJ_NUM];
@@ -39040,7 +39038,11 @@ class solarchvision_Sections {
     this.options[n][5] = f;  
   }    
   
-  
+  void move (int n, float dx, float dy, float dz) {
+    this.options[n][0] += dx;  
+    this.options[n][1] += dy;  
+    this.options[n][2] += dz;  
+  }      
 
   private float[][] Vertices;
   private int[][] Faces;
