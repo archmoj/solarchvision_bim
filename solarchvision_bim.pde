@@ -23110,7 +23110,7 @@ void SOLARCHVISION_delete_All () {
 
   allModel3Ds.delete_allSolids();
   allModel3Ds.delete_allSections();
-  allCameras.delete_allCameras();
+  allCameras.delete_all();
 
   allModel3Ds.delete_allGroups(); 
 
@@ -31201,7 +31201,7 @@ class solarchvision_Model3Ds {
         float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
         int   Camera_type = allCameras.get_type(OBJ_NUM);
   
-        allCameras.add_Camera(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
+        allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
       }
   
       // selecting new objetcs
@@ -32473,7 +32473,7 @@ class solarchvision_Model3Ds {
   
   
     if (allCameras.num == 0) {
-      allCameras.add_veryFirstCamera();
+      allCameras.add_first();
     }
   
     this.deselect_All();
@@ -38541,6 +38541,64 @@ class solarchvision_Cameras {
     this.options[n][1] += dy;
     this.options[n][2] += dz;
   }
+  
+  
+  
+  void delete_all () {
+  
+    this.options = new float [0][9]; 
+  
+    this.Type = new int [0];
+  
+    this.add_first();
+  
+    allModel3Ds.deselect_Cameras();
+  }
+  
+  void add_first () {
+    
+    this.create(WIN3D.position_X,
+                    WIN3D.position_Y,
+                    WIN3D.position_Z,
+                    WIN3D.position_T,
+                    WIN3D.rotation_X,
+                    WIN3D.rotation_Y,
+                    WIN3D.rotation_Z,
+                    WIN3D.rotation_T,
+                    WIN3D.Zoom,
+                    WIN3D.ViewType);
+  }
+  
+  void create (float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f, int t) {
+  
+    int[] TempCamera_type = {
+      t
+    }; 
+    this.Type = concat(this.Type, TempCamera_type);
+  
+    float[][] TempCamera_options = {
+      {
+        x, y, z, s, rx, ry, rz, rs, f
+      }
+    };
+    this.options = (float[][]) concat(this.options, TempCamera_options);
+  
+    this.num += 1;
+  }  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   private float[][] Vertices;
   private int[][] Faces;
@@ -38830,52 +38888,7 @@ class solarchvision_Cameras {
   
     return return_point;
   }  
-  
 
-
-  void delete_allCameras () {
-  
-    this.options = new float [0][9]; 
-  
-    this.Type = new int [0];
-  
-    this.add_veryFirstCamera();
-  
-    allModel3Ds.deselect_Cameras();
-  }
-  
-  void add_veryFirstCamera () {
-    
-    this.add_Camera(WIN3D.position_X,
-                    WIN3D.position_Y,
-                    WIN3D.position_Z,
-                    WIN3D.position_T,
-                    WIN3D.rotation_X,
-                    WIN3D.rotation_Y,
-                    WIN3D.rotation_Z,
-                    WIN3D.rotation_T,
-                    WIN3D.Zoom,
-                    WIN3D.ViewType);
-  }
-  
-  void add_Camera (float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f, int t) {
-  
-    int[] TempCamera_type = {
-      t
-    }; 
-    this.Type = concat(this.Type, TempCamera_type);
-  
-    float[][] TempCamera_options = {
-      {
-        x, y, z, s, rx, ry, rz, rs, f
-      }
-    };
-    this.options = (float[][]) concat(this.options, TempCamera_options);
-  
-    this.num += 1;
-  }  
-
-  
 
   public void to_XML (XML xml) {
     
@@ -44142,7 +44155,7 @@ void mouseClicked () {
 
               int Camera_type = WIN3D.ViewType;
 
-              allCameras.add_Camera(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
+              allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
 
               WIN3D.currentCamera = allCameras.num - 1;
               WIN3D.apply_currentCamera();
@@ -44829,7 +44842,7 @@ void mouseClicked () {
             }       
     
             if (menu_option.equals("Erase All Cameras")) {
-              allCameras.delete_allCameras();
+              allCameras.delete_all();
               WIN3D.update = true;
             }    
     
@@ -46182,7 +46195,7 @@ void mouseClicked () {
     
                         int Camera_type = WIN3D.ViewType;
     
-                        allCameras.add_Camera(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
+                        allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
     
                         WIN3D.update = true;
                       }  
@@ -56262,7 +56275,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
         else if (low_case.equals("solids")) {allModel3Ds.delete_allSolids(); WIN3D.update = true;}
         else if (low_case.equals("sections")) {allModel3Ds.delete_allSections(); WIN3D.update = true;}
-        else if (low_case.equals("cameras")) {allCameras.delete_allCameras(); WIN3D.update = true;}
+        else if (low_case.equals("cameras")) {allCameras.delete_all(); WIN3D.update = true;}
       }
     }
     else {
@@ -57601,7 +57614,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (a != 0) {   
-        allCameras.add_Camera(px, py, pz, pt, rx, ry, rz, rt, a, t);
+        allCameras.create(px, py, pz, pt, rx, ry, rz, rt, a, t);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CAMERA; 
         UI_BAR_b.update = true;
