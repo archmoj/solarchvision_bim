@@ -38547,12 +38547,12 @@ class solarchvision_Cameras {
   
   boolean displayAll = false;
   
-  float[][] options = {
+  private float[][] options = {
     {
       WIN3D.position_X, WIN3D.position_Y, WIN3D.position_Z, WIN3D.position_T, WIN3D.rotation_X, WIN3D.rotation_Y, WIN3D.rotation_Z, WIN3D.rotation_T, WIN3D.Zoom
     }
   };
-  int[] Type = {
+  private int[] Type = {
     WIN3D.ViewType
   };
   int num = 1;
@@ -38593,6 +38593,10 @@ class solarchvision_Cameras {
   float get_zoom (int n) {
     return this.options[n][8]; 
   }      
+  
+  int get_type (int n) {
+    return this.Type[n]; 
+  }    
 
   void set_posX (int n, float f) {
     this.options[n][0] = f;  
@@ -38629,6 +38633,10 @@ class solarchvision_Cameras {
   void set_zoom (int n, float f) {
     this.options[n][8] = f;  
   }    
+  
+  void set_type (int n, int t) {
+    this.Type[n] = t;  
+  }   
 
   
   private float[][] Vertices;
@@ -38644,15 +38652,15 @@ class solarchvision_Cameras {
   
       for (int f = 0; f < this.num; f++) {
   
-        float Camera_pX = this.options[f][0];
-        float Camera_pY = this.options[f][1];
-        float Camera_pZ = this.options[f][2];
-        float Camera_pT = this.options[f][3];
-        float Camera_rX = this.options[f][4];
-        float Camera_rY = this.options[f][5];
-        float Camera_rZ = this.options[f][6];
-        float Camera_rT = this.options[f][7];
-        float Camera_ZOOM = this.options[f][8];
+        float Camera_pX = this.get_posX(f);
+        float Camera_pY = this.get_posY(f);
+        float Camera_pZ = this.get_posZ(f);
+        float Camera_pT = this.get_posT(f);
+        float Camera_rX = this.get_rotX(f);
+        float Camera_rY = this.get_rotY(f);
+        float Camera_rZ = this.get_rotZ(f);
+        float Camera_rT = this.get_rotT(f);
+        float Camera_ZOOM = this.get_zoom(f);
   
         int Camera_type = this.Type[f];
   
@@ -38935,12 +38943,23 @@ class solarchvision_Cameras {
       XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < this.options[i].length; j++) {
-      for (int j = 0; j < 9; j++) { // x, y, z, s, rx, ry, rz, zoom
-        lineSTR += nf(this.options[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += nf(this.Type[i], 0);
+      lineSTR += nf(this.get_posX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_posY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_posZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_posT(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotT(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";      
+      lineSTR += nf(this.get_type(i), 0);
 
       child.setContent(lineSTR);
     }
@@ -38967,11 +38986,16 @@ class solarchvision_Cameras {
 
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < 9; j++) {
-        this.options[i][j] = float(parts[j]);
-      }
-
-      this.Type[i] = int(parts[9]);
+      this.set_posX(i, float(parts[0]));
+      this.set_posY(i, float(parts[1]));
+      this.set_posZ(i, float(parts[2]));
+      this.set_posT(i, float(parts[3]));
+      this.set_rotX(i, float(parts[4]));
+      this.set_rotY(i, float(parts[5]));
+      this.set_rotZ(i, float(parts[6]));
+      this.set_rotT(i, float(parts[7]));
+      this.set_zoom(i, float(parts[8]));
+      this.set_type(i,   int(parts[9]));
     }
     
     this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
