@@ -23109,7 +23109,7 @@ void SOLARCHVISION_delete_All () {
   allModel3Ds.delete_Vertices();
 
   allModel3Ds.delete_allSolids();
-  allModel3Ds.delete_allSections();
+  allSections.delete_all();
   allCameras.delete_all();
 
   allModel3Ds.delete_allGroups(); 
@@ -30764,40 +30764,7 @@ class solarchvision_Model3Ds {
 
   
   
-  void add_Section (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
 
-    int[][] TempSection_i_options = {
-      {
-        t, RES1, RES2
-      }
-    };
-    allSections.i_options = (int[][]) concat(allSections.i_options, TempSection_i_options);  
-  
-    float[][] TempSection_f_options = {
-      {
-        x, y, z, r, u, v
-      }
-    };
-    allSections.f_options = (float[][]) concat(allSections.f_options, TempSection_f_options);
-    
-    PImage[] TempSection_SolidImpact = {
-      createImage(RES1, RES2, RGB)
-    }; 
-    allSections.SolidImpact = (PImage[]) concat(allSections.SolidImpact, TempSection_SolidImpact);
-  
-    PImage[][][] TempSection_SolarImpact = new PImage [1][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
-    {
-      int i = 0;
-      for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
-        for (int q = 0; q < numberOfImpactVariations; q++) { 
-          TempSection_SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
-        }
-      }
-    }
-    allSections.SolarImpact = (PImage[][][]) concat(allSections.SolarImpact, TempSection_SolarImpact);    
-
-    allSections.num += 1;
-  }  
   
   
   
@@ -31167,7 +31134,7 @@ class solarchvision_Model3Ds {
         int Section_RES1 = allSections.get_res1(OBJ_NUM);
         int Section_RES2 = allSections.get_res2(OBJ_NUM);
   
-        this.add_Section(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
+        allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
       }
   
       // selecting new objetcs
@@ -35327,7 +35294,10 @@ class solarchvision_Model3Ds {
   void deselect_Cameras () {
     userSelections.Camera_ids = new int [0];
   }
-  
+
+  void deselect_Sections () {
+    userSelections.Section_ids = new int [0];
+  }  
   
   void deselect_All () {
   
@@ -35336,7 +35306,7 @@ class solarchvision_Model3Ds {
     }  
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {  
-      userSelections.Section_ids = new int [0];
+      this.deselect_Sections();
     }  
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {  
@@ -38214,18 +38184,7 @@ class solarchvision_Model3Ds {
   
 
   
-  void delete_allSections () {
-    allSections.f_options = new float [0][6]; 
-    allSections.i_options = new int   [0][3];
-  
-    allSections.SolidImpact = new PImage [0];
-  
-    allSections.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
-  
-    allSections.num = 0;
-  
-    this.deselect_All();
-  }
+
 
   
 
@@ -39061,8 +39020,7 @@ class solarchvision_Sections {
     this.f_options[n][2] += dz;  
   }      
 
-  private float[][] Vertices;
-  private int[][] Faces;
+
   
   PImage[] SolidImpact = new PImage[0];
   PImage[][][] SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
@@ -39081,6 +39039,65 @@ class solarchvision_Sections {
     }
   
   }  
+  
+  
+  
+  void delete_all () {
+    this.f_options = new float [0][6]; 
+    this.i_options = new int   [0][3];
+  
+    this.SolidImpact = new PImage [0];
+  
+    this.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+  
+    this.num = 0;
+  
+    allModel3Ds.deselect_Sections();
+  }    
+
+  
+  void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
+
+    int[][] Temp_i_options = {
+      {
+        t, RES1, RES2
+      }
+    };
+    this.i_options = (int[][]) concat(this.i_options, Temp_i_options);  
+  
+    float[][] Temp_f_options = {
+      {
+        x, y, z, r, u, v
+      }
+    };
+    this.f_options = (float[][]) concat(this.f_options, Temp_f_options);
+    
+    PImage[] Temp_SolidImpact = {
+      createImage(RES1, RES2, RGB)
+    }; 
+    this.SolidImpact = (PImage[]) concat(this.SolidImpact, Temp_SolidImpact);
+  
+    PImage[][][] Temp_SolarImpact = new PImage [1][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    {
+      int i = 0;
+      for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
+        for (int q = 0; q < numberOfImpactVariations; q++) { 
+          Temp_SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
+        }
+      }
+    }
+    this.SolarImpact = (PImage[][][]) concat(this.SolarImpact, Temp_SolarImpact);    
+
+    this.num += 1;
+  }  
+  
+  
+  
+  
+  private float[][] Vertices;
+  private int[][] Faces;  
+  
+
   
   
   void draw (int target_window) {
@@ -44837,7 +44854,7 @@ void mouseClicked () {
             }          
     
             if (menu_option.equals("Erase All Sections")) {
-              allModel3Ds.delete_allSections();
+              allSections.delete_all();
               WIN3D.update = true;
             }       
     
@@ -46413,7 +46430,7 @@ void mouseClicked () {
                       
                       if (createNewSection != 0) {
       
-                        allModel3Ds.add_Section(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
+                        allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
     
                         if (keep_number_of_allSections != allSections.num) { // if any Section created during the process
     
@@ -56274,7 +56291,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
         else if (low_case.equals("solids")) {allModel3Ds.delete_allSolids(); WIN3D.update = true;}
-        else if (low_case.equals("sections")) {allModel3Ds.delete_allSections(); WIN3D.update = true;}
+        else if (low_case.equals("sections")) {allSections.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("cameras")) {allCameras.delete_all(); WIN3D.update = true;}
       }
     }
@@ -57567,7 +57584,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((t > 0) && (i > 0) && (j > 0) && (u > 0) && (v > 0)) {   
-        allModel3Ds.add_Section(x, y, z, r, u, v, t, i, j);
+        allSections.create(x, y, z, r, u, v, t, i, j);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SECTION; 
         UI_BAR_b.update = true;
