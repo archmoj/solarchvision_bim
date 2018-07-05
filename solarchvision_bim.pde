@@ -12567,18 +12567,6 @@ class solarchvision_Faces {
         }
         child.setContent(lineSTR);
       }
-      
-      parent.setString("displayAll", Boolean.toString(this.displayAll));
-      parent.setString("displayNormals", Boolean.toString(this.displayNormals));
-      parent.setString("displayEdges", Boolean.toString(this.displayEdges));
-      parent.setInt("displayTessellation", this.displayTessellation);
-      
-      parent.setInt("ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
-      parent.setInt("ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
-      parent.setFloat("ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
-      parent.setInt("PASSIVE_pallet_CLR", this.PASSIVE_pallet_CLR);
-      parent.setInt("PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
-      parent.setFloat("PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);        
     }
 
     {
@@ -12594,6 +12582,18 @@ class solarchvision_Faces {
         }
         child.setContent(lineSTR);
       }
+      
+      parent.setString("displayAll", Boolean.toString(this.displayAll));
+      parent.setString("displayNormals", Boolean.toString(this.displayNormals));
+      parent.setString("displayEdges", Boolean.toString(this.displayEdges));
+      parent.setInt("displayTessellation", this.displayTessellation);
+      
+      parent.setInt("ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
+      parent.setInt("ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
+      parent.setFloat("ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
+      parent.setInt("PASSIVE_pallet_CLR", this.PASSIVE_pallet_CLR);
+      parent.setInt("PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
+      parent.setFloat("PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);     
     }
 
   }
@@ -12623,18 +12623,6 @@ class solarchvision_Faces {
         }
         this.nodes = (int[][]) concat(this.nodes, newFace);
       }
-      
-      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
-      this.displayNormals = Boolean.parseBoolean(parent.getString("displayNormals"));
-      this.displayEdges = Boolean.parseBoolean(parent.getString("displayEdges"));
-      this.displayTessellation = parent.getInt("displayTessellation");
-      
-      this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
-      this.ACTIVE_pallet_DIR = parent.getInt("ACTIVE_pallet_DIR");
-      this.ACTIVE_pallet_MLT = parent.getFloat("ACTIVE_pallet_MLT");
-      this.PASSIVE_pallet_CLR = parent.getInt("PASSIVE_pallet_CLR");
-      this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
-      this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");    
     }
     
     { 
@@ -12649,6 +12637,18 @@ class solarchvision_Faces {
           this.options[i][j] = int(parts[j]);
         }
       }
+      
+      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
+      this.displayNormals = Boolean.parseBoolean(parent.getString("displayNormals"));
+      this.displayEdges = Boolean.parseBoolean(parent.getString("displayEdges"));
+      this.displayTessellation = parent.getInt("displayTessellation");
+      
+      this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
+      this.ACTIVE_pallet_DIR = parent.getInt("ACTIVE_pallet_DIR");
+      this.ACTIVE_pallet_MLT = parent.getFloat("ACTIVE_pallet_MLT");
+      this.PASSIVE_pallet_CLR = parent.getInt("PASSIVE_pallet_CLR");
+      this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
+      this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");    
     }
   }    
   
@@ -12859,8 +12859,6 @@ class solarchvision_Curves {
         }
         child.setContent(lineSTR);
       }
-      
-      parent.setString("displayAll", Boolean.toString(this.displayAll));
     }
 
     {
@@ -12876,6 +12874,8 @@ class solarchvision_Curves {
         }
         child.setContent(lineSTR);
       }
+      
+      parent.setString("displayAll", Boolean.toString(this.displayAll));
     }
 
   }
@@ -12900,8 +12900,6 @@ class solarchvision_Curves {
         }
         this.nodes = (int[][]) concat(this.nodes, newFace);
       }
-      
-      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
     }
     
     { 
@@ -12916,6 +12914,8 @@ class solarchvision_Curves {
           this.options[i][j] = int(parts[j]);
         }
       }
+      
+      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
     }
   }    
   
