@@ -13333,9 +13333,9 @@ class solarchvision_SolidImpacts {
   
       int f = userSelections.Section_ids[o];
   
-      this.sectionType = allSections.Type[f];
-      this.RES1 = allSections.RES1[f];
-      this.RES2 = allSections.RES2[f];     
+      this.sectionType = allSections.get_type(f);
+      this.RES1        = allSections.get_res1(f);
+      this.RES2        = allSections.get_res2(f);     
   
       this.X[this.sectionType] = allSections.getX(f);
       this.Y[this.sectionType] = allSections.getY(f);
@@ -15091,9 +15091,9 @@ class solarchvision_SolarImpacts {
   
       int f = userSelections.Section_ids[o];
   
-      this.sectionType = allSections.Type[f];
-      this.RES1 = allSections.RES1[f];
-      this.RES2 = allSections.RES2[f];     
+      this.sectionType = allSections.get_type(f);
+      this.RES1 = allSections.get_res1(f);
+      this.RES2 = allSections.get_res2(f);     
   
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
@@ -15121,9 +15121,9 @@ class solarchvision_SolarImpacts {
   
       int f = userSelections.Section_ids[o];
   
-      this.sectionType = allSections.Type[f];
-      this.RES1 = allSections.RES1[f];
-      this.RES2 = allSections.RES2[f];     
+      this.sectionType = allSections.get_type(f);
+      this.RES1        = allSections.get_res1(f);
+      this.RES2        = allSections.get_res2(f);     
   
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
@@ -15740,9 +15740,9 @@ class solarchvision_Selections {
           float Section_U = allSections.getU(n);
           float Section_V = allSections.getV(n);
   
-          int Section_Type = allSections.Type[n];
-          int Section_RES1 = allSections.RES1[n];
-          int Section_RES2 = allSections.RES2[n];
+          int Section_Type = allSections.get_type(n);
+          int Section_RES1 = allSections.get_res1(n);
+          int Section_RES2 = allSections.get_res2(n);
   
           float[][] ImageVertex = allSections.getCorners(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
   
@@ -17565,25 +17565,25 @@ class solarchvision_Selections {
         int f = OBJ_NUM;
   
         if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-          int n = allSections.Type[f];
+          int n = allSections.get_type(f);
           n += p;
           if (n > 3) n = 0;
           if (n < 0) n = 3;
-          allSections.Type[f] = n;         
+          allSections.set_type(f, n);         
   
           allSolids_updated = true;
         }        
   
         if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-          int n = allSections.RES1[f];
+          int n = allSections.get_res1(f);
           if (p > 0) n *= 2;
           if (p < 0) n /= 2;
   
           if (n > 1600) n = 100;
           if (n < 100) n = 1600;
-          allSections.RES1[f] = n;
+          allSections.set_res1(f, n);
   
-          allSections.RES2[f] = n; // also modifying the other one
+          allSections.set_res2(f, n); // also modifying the other one
   
           println("RES:", n);
   
@@ -30761,10 +30761,10 @@ class solarchvision_Model3Ds {
   
   
   
-  void add_Camera (int n, float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f) {
+  void add_Camera (float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f, int t) {
   
     int[] TempCamera_type = {
-      n
+      t
     }; 
     allCameras.Type = concat(allCameras.Type, TempCamera_type);
   
@@ -30779,23 +30779,22 @@ class solarchvision_Model3Ds {
   }
   
   
-  void add_Section (int n, float u, float v, float elev, float rot, float dU, float dV, int RES1, int RES2) {
+  void add_Section (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
+
+    int[][] TempSection_i_options = {
+      {
+        t, RES1, RES2
+      }
+    };
+    allSections.i_options = (int[][]) concat(allSections.i_options, TempSection_i_options);  
   
-    int[] TempSection_Type = {
-      n
-    }; 
-    allSections.Type = concat(allSections.Type, TempSection_Type);
-  
-    int[] TempSection_RES1 = {
-      RES1
-    }; 
-    allSections.RES1 = concat(allSections.RES1, TempSection_RES1);
-  
-    int[] TempSection_RES2 = {
-      RES2
-    }; 
-    allSections.RES2 = concat(allSections.RES2, TempSection_RES2);
-  
+    float[][] TempSection_f_options = {
+      {
+        x, y, z, r, u, v
+      }
+    };
+    allSections.f_options = (float[][]) concat(allSections.f_options, TempSection_f_options);
+    
     PImage[] TempSection_SolidImpact = {
       createImage(RES1, RES2, RGB)
     }; 
@@ -30811,14 +30810,7 @@ class solarchvision_Model3Ds {
       }
     }
     allSections.SolarImpact = (PImage[][][]) concat(allSections.SolarImpact, TempSection_SolarImpact);    
-  
-    float[][] TempSection_options = {
-      {
-        u, v, elev, rot, dU, dV
-      }
-    };
-    allSections.options = (float[][]) concat(allSections.options, TempSection_options);
-  
+
     allSections.num += 1;
   }  
   
@@ -31186,11 +31178,11 @@ class solarchvision_Model3Ds {
         float Section_U = allSections.getU(OBJ_NUM);
         float Section_V = allSections.getV(OBJ_NUM);
   
-        int Section_Type = allSections.Type[OBJ_NUM];
-        int Section_RES1 = allSections.RES1[OBJ_NUM];
-        int Section_RES2 = allSections.RES2[OBJ_NUM];
+        int Section_Type = allSections.get_type(OBJ_NUM);
+        int Section_RES1 = allSections.get_res1(OBJ_NUM);
+        int Section_RES2 = allSections.get_res2(OBJ_NUM);
   
-        this.add_Section(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
+        this.add_Section(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
       }
   
       // selecting new objetcs
@@ -31224,7 +31216,7 @@ class solarchvision_Model3Ds {
         float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
         int   Camera_type = allCameras.get_type(OBJ_NUM);
   
-        this.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
+        this.add_Camera(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
       }
   
       // selecting new objetcs
@@ -31956,31 +31948,17 @@ class solarchvision_Model3Ds {
         int OBJ_NUM = userSelections.Section_ids[o];
   
         {
-          float[][] startList = (float[][]) subset(allSections.options, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSections.options, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allSections.f_options, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSections.f_options, OBJ_NUM + 1);
   
-          allSections.options = (float[][]) concat(startList, endList);
+          allSections.f_options = (float[][]) concat(startList, endList);
         }
   
         {
-          int[] startList = (int[]) subset(allSections.Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSections.Type, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allSections.i_options, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allSections.i_options, OBJ_NUM + 1);
   
-          allSections.Type = (int[]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allSections.RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSections.RES1, OBJ_NUM + 1);
-  
-          allSections.RES1 = (int[]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allSections.RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSections.RES2, OBJ_NUM + 1);
-  
-          allSections.RES2 = (int[]) concat(startList, endList);
+          allSections.i_options = (int[][]) concat(startList, endList);
         }
   
         {
@@ -38276,13 +38254,8 @@ class solarchvision_Model3Ds {
 
   
   void delete_allSections () {
-    allSections.options = new float [0][6]; 
-  
-    allSections.Type = new int [0];
-  
-    allSections.RES1 = new int [0];
-  
-    allSections.RES2 = new int [0];
+    allSections.f_options = new float [0][6]; 
+    allSections.i_options = new int   [0][3];
   
     allSections.SolidImpact = new PImage [0];
   
@@ -38927,6 +38900,8 @@ class solarchvision_Cameras {
       lineSTR += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";
       lineSTR += nf(this.get_rotT(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_zoom(i), 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";      
       lineSTR += nf(this.get_type(i), 0);
 
@@ -38982,66 +38957,91 @@ class solarchvision_Sections {
   
   boolean displayAll = true;
 
-  float[][] options = new float[0][6];
-  int[] Type = new int[0];
-  
-  int[] RES1 = new int[0];
-  int[] RES2 = new int[0];
+  float[][] f_options = new float[0][6];
+  int  [][] i_options = new int  [0][3];
+
   int num = 0;
+  
+  int get_type (int n) { // Type
+    return this.i_options[n][0]; 
+  }  
+
+  int get_res1 (int n) { // RES1
+    return this.i_options[n][1]; 
+  }  
+
+  int get_res2 (int n) { // RES1
+    return this.i_options[n][2]; 
+  }  
+  
+  void set_type (int n, int t) {
+    this.i_options[n][0] = t;  
+  }      
+  
+  void set_res1 (int n, int t) {
+    this.i_options[n][1] = t;  
+  }      
+
+  void set_res2 (int n, int t) {
+    this.i_options[n][2] = t;  
+  }      
+  
+  
 
   float getX (int n) { // offsetX
-    return this.options[n][0]; 
+    return this.f_options[n][0]; 
   }
 
   float getY (int n) { // offsetY
-    return this.options[n][1]; 
+    return this.f_options[n][1]; 
   }
 
   float getZ (int n) { // elevation
-    return this.options[n][2]; 
+    return this.f_options[n][2]; 
   }
 
   float getR (int n) { // rotation
-    return this.options[n][3]; 
+    return this.f_options[n][3]; 
   }
 
   float getU (int n) { // scaleU
-    return this.options[n][4]; 
+    return this.f_options[n][4]; 
   }
   
   float getV (int n) { //scaleV
-    return this.options[n][5]; 
+    return this.f_options[n][5]; 
   }  
+  
   
 
   void setX (int n, float f) {
-    this.options[n][0] = f;  
+    this.f_options[n][0] = f;  
   }
 
   void setY (int n, float f) {
-    this.options[n][1] = f;  
+    this.f_options[n][1] = f;  
   }
   
   void setZ (int n, float f) {
-    this.options[n][2] = f;  
+    this.f_options[n][2] = f;  
   }  
   
   void setR (int n, float f) {
-    this.options[n][3] = f;  
+    this.f_options[n][3] = f;  
   }
 
   void setU (int n, float f) {
-    this.options[n][4] = f;  
+    this.f_options[n][4] = f;  
   }
   
   void setV (int n, float f) {
-    this.options[n][5] = f;  
+    this.f_options[n][5] = f;  
   }    
   
   void move (int n, float dx, float dy, float dz) {
-    this.options[n][0] += dx;  
-    this.options[n][1] += dy;  
-    this.options[n][2] += dz;  
+    this.f_options[n][0] += dx;  
+    this.f_options[n][1] += dy;  
+    this.f_options[n][2] += dz;  
   }      
 
   private float[][] Vertices;
@@ -39087,16 +39087,16 @@ class solarchvision_Sections {
   
       for (int f = 0; f < this.num; f++) {
   
-        float Section_X = this.options[f][0];
-        float Section_Y = this.options[f][1];
-        float Section_Z = this.options[f][2];
-        float Section_R = this.options[f][3];
-        float Section_U = this.options[f][4];
-        float Section_V = this.options[f][5];
+        float Section_X = this.getX(f);
+        float Section_Y = this.getY(f);
+        float Section_Z = this.getZ(f);
+        float Section_R = this.getR(f);
+        float Section_U = this.getU(f);
+        float Section_V = this.getV(f);
   
-        int Section_Type = this.Type[f];
-        int Section_RES1 = this.RES1[f];
-        int Section_RES2 = this.RES2[f];
+        int Section_Type = this.get_type(f);
+        int Section_RES1 = this.get_res1(f);
+        int Section_RES2 = this.get_res2(f);
   
         if (Section_Type != 0) {
           
@@ -39478,16 +39478,25 @@ class solarchvision_Sections {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         String lineSTR = "";
-        //for (int j = 0; j < this.options[i].length; j++) {
-        for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-          lineSTR += nf(this.options[i][j], 0, 4).replace(",", "."); // <<<<
-          lineSTR += ",";
-        }
-        lineSTR += nf(this.Type[i], 0);
+        
+        lineSTR += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
-        lineSTR += nf(this.RES1[i], 0);
+        lineSTR += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
-        lineSTR += nf(this.RES2[i], 0);
+        lineSTR += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+        lineSTR += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+        lineSTR += nf(this.getU(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+        lineSTR += nf(this.getV(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+
+        lineSTR += nf(this.get_type(i), 0);
+        lineSTR += ",";
+        lineSTR += nf(this.get_res1(i), 0);
+        lineSTR += ",";
+        lineSTR += nf(this.get_res2(i), 0);
   
         child.setContent(lineSTR);
       }
@@ -39560,10 +39569,8 @@ class solarchvision_Sections {
       
       int ni = parent.getInt("ni");
   
-      this.options = new float [ni][6];
-      this.Type = new int [ni];
-      this.RES1 = new int [ni];
-      this.RES2 = new int [ni];
+      this.f_options = new float [ni][6];
+      this.i_options = new int   [ni][3];
       this.num = ni;
   
       XML[] children = parent.getChildren("item");         
@@ -39571,13 +39578,17 @@ class solarchvision_Sections {
   
         String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 6; j++) {
-          this.options[i][j] = float(parts[j]);
-        }
-  
-        this.Type[i] = int(parts[6]);
-        this.RES1[i] = int(parts[7]);
-        this.RES2[i] = int(parts[8]);
+
+        this.setX(i, float(parts[0]));
+        this.setY(i, float(parts[1]));
+        this.setZ(i, float(parts[2]));
+        this.setR(i, float(parts[3]));
+        this.setU(i, float(parts[4]));
+        this.setV(i, float(parts[5]));
+          
+        this.set_type(i, int(parts[6]));
+        this.set_res1(i, int(parts[7]));
+        this.set_res2(i, int(parts[8]));
       }
       
       this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));      
@@ -44127,7 +44138,7 @@ void mouseClicked () {
 
               int Camera_type = WIN3D.ViewType;
 
-              allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
+              allModel3Ds.add_Camera(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
 
               WIN3D.currentCamera = allCameras.num - 1;
               WIN3D.apply_currentCamera();
@@ -46167,7 +46178,7 @@ void mouseClicked () {
     
                         int Camera_type = WIN3D.ViewType;
     
-                        allModel3Ds.add_Camera(Camera_type, Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom);
+                        allModel3Ds.add_Camera(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
     
                         WIN3D.update = true;
                       }  
@@ -46385,7 +46396,7 @@ void mouseClicked () {
                       
                       if (createNewSection != 0) {
       
-                        allModel3Ds.add_Section(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
+                        allModel3Ds.add_Section(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
     
                         if (keep_number_of_allSections != allSections.num) { // if any Section created during the process
     
@@ -57510,32 +57521,36 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (Command_CAPITAL.equals("SECTION")) {
     if (parts.length > 1) {
+
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float r = 0;
+      float u = 20;
+      float v = 20;      
+
       int t = 1;
       int i = 200;
       int j = 200;
-      float w = 20;
-      float h = 20;      
-      float u = 0;
-      float v = 0;
-      float e = 0;
-      float r = 0;
+      
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
           String low_case = parameters[0].toLowerCase();
-               if (low_case.equals("t")) t = int(parameters[1]);
-          else if (low_case.equals("i")) i = int(parameters[1]);
-          else if (low_case.equals("j")) j = int(parameters[1]);  
-          else if (low_case.equals("w")) w = float(parameters[1]);
-          else if (low_case.equals("h")) h = float(parameters[1]);          
+               if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);          
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
           else if (low_case.equals("u")) u = float(parameters[1]);
           else if (low_case.equals("v")) v = float(parameters[1]);
-          else if (low_case.equals("e")) e = float(parameters[1]);
-          else if (low_case.equals("r")) r = float(parameters[1]);
+          else if (low_case.equals("t")) t = int(parameters[1]);
+          else if (low_case.equals("i")) i = int(parameters[1]);
+          else if (low_case.equals("j")) j = int(parameters[1]);  
+
         }
       }
-      if ((t > 0) && (i > 0) && (j > 0) && (w > 0) && (h > 0)) {   
-        allModel3Ds.add_Section(t, u, v, e, r, w, h, i, j);
+      if ((t > 0) && (i > 0) && (j > 0) && (u > 0) && (v > 0)) {   
+        allModel3Ds.add_Section(x, y, z, r, u, v, t, i, j);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SECTION; 
         UI_BAR_b.update = true;
@@ -57543,7 +57558,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Section t=? i=? j=? w=? h=? u=? v=? e=? r=?";
+      return_message = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
       
       UI_set_to_Create_Section();
       UI_BAR_b.hghlight("SEC");
@@ -57553,7 +57568,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (Command_CAPITAL.equals("CAMERA")) {
     if (parts.length > 1) {
-      int t = 1;
+      
       float px = 0;
       float py = 0;
       float pz = 0;
@@ -57563,13 +57578,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       float rz = 0;
       float rt = 5;
       float a = 60;
+      int t = 1;
       
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
         if (parameters.length > 1) {
           String low_case = parameters[0].toLowerCase();
-               if (low_case.equals("t")) t = int(parameters[1]);
-          else if (low_case.equals("px")) px = float(parameters[1]);
+               if (low_case.equals("px")) px = float(parameters[1]);
           else if (low_case.equals("py")) py = float(parameters[1]);
           else if (low_case.equals("pz")) pz = float(parameters[1]);
           else if (low_case.equals("pt")) pt = float(parameters[1]);
@@ -57578,10 +57593,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (low_case.equals("rz")) rz = float(parameters[1]);
           else if (low_case.equals("rt")) rt = float(parameters[1]);
           else if (low_case.equals("a")) a = float(parameters[1]);
+          else if (low_case.equals("t")) t = int(parameters[1]);
         }
       }
       if (a != 0) {   
-        allModel3Ds.add_Camera(t, px, py, pz, pt, rx, ry, rz, rt, a);
+        allModel3Ds.add_Camera(px, py, pz, pt, rx, ry, rz, rt, a, t);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CAMERA; 
         UI_BAR_b.update = true;
@@ -57589,7 +57605,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "Camera t=? px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=?";
+      return_message = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
       
       UI_set_to_Create_Camera();
       UI_BAR_b.hghlight("CAM");
