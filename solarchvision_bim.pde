@@ -11568,6 +11568,71 @@ class solarchvision_Faces {
   }    
  
 
+  void beginNewFace () {
+  
+    int[] newFace_nodes = {};    
+    
+    this.create(newFace_nodes);
+    
+  }
+  
+  void add_VertexToLastFace (float x, float y, float z) {
+    
+    int n = this.nodes.length - 1;
+    
+    int[] newVertex = {
+      allPoints.create(x, y, z)
+    }; 
+      
+    this.nodes[n] = (int[]) concat(this.nodes[n], newVertex);
+  
+  }
+
+
+
+
+  int create (int[] f) {
+
+    int[][] newFace_options = {
+      {
+        current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
+      }
+    }; 
+
+    this.options =  (int[][]) concat(this.options, newFace_options);
+
+    int[][] newFace_nodes = {
+      f
+    }; 
+
+    this.nodes = (int[][]) concat(this.nodes, newFace_nodes);
+
+
+    if (allGroups.num > 0) allGroups.Faces[allGroups.num - 1][1] = this.nodes.length - 1;
+  
+    return(this.nodes.length - 1);
+  }
+
+  
+  void delete_all () {
+  
+    this.nodes = new int [0][3];
+  
+    this.options = new int [0][6];
+  
+    for (int q = 0; q < allGroups.num; q++) {
+      allGroups.Faces[q][0] = 0;
+      allGroups.Faces[q][1] = -1;
+    }  
+  
+    allModel3Ds.deselect_Faces();
+  }
+  
+  
+  
+
+
+
 
   void draw (int target_window) {
    
@@ -22968,7 +23033,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
 
       //println(newFace);
 
-      allModel3Ds.add_Face(newFace);
+      allFaces.create(newFace);
     }
   }
 
@@ -23104,7 +23169,7 @@ void SOLARCHVISION_delete_All () {
   allModel1Ds.delete_all();
   allModel2Ds.delete_all();
 
-  allModel3Ds.delete_Faces();
+  allFaces.delete_all();
   allModel3Ds.delete_Curves();
   allPoints.delete_all();
 
@@ -26951,7 +27016,7 @@ class solarchvision_Land3D {
                   newFace[1] = allPoints.getLength() - 3;
                   newFace[2] = allPoints.getLength() - 2;
                   newFace[3] = allPoints.getLength() - 1;
-                  allModel3Ds.add_Face(newFace);
+                  allFaces.create(newFace);
                 }
               }
               
@@ -27018,7 +27083,7 @@ class solarchvision_Land3D {
               for (int j = 0; j < newFace.length; j++) {
                 newFace[j] = allPoints.create(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
               }
-              allModel3Ds.add_Face(newFace);
+              allFaces.create(newFace);
             }
           }
         }
@@ -30644,25 +30709,7 @@ class solarchvision_Model3Ds {
     
   }
   
-  void beginNewFace () {
-  
-    int[] newFace_nodes = {};    
-    
-    this.add_Face(newFace_nodes);
-    
-  }
-  
-  void add_VertexToLastFace (float x, float y, float z) {
-    
-    int n = allFaces.nodes.length - 1;
-    
-    int[] newVertex = {
-      allPoints.create(x, y, z)
-    }; 
-      
-    allFaces.nodes[n] = (int[]) concat(allFaces.nodes[n], newVertex);
-  
-  }
+
   
   void add_VertexToLastCurve (float x, float y, float z) {
   
@@ -30677,29 +30724,7 @@ class solarchvision_Model3Ds {
   }
 
   
-  int add_Face (int[] f) {
-  
-    {
-  
-      int[][] newFace_options = {
-        {
-          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-        }
-      }; 
-  
-      allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
-  
-      int[][] newFace_nodes = {
-        f
-      }; 
-  
-      allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
-    }
-  
-    if (allGroups.num > 0) allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
-  
-    return(allFaces.nodes.length - 1);
-  }
+
   
   int add_Curve (int[] f) {
   
@@ -30987,7 +31012,7 @@ class solarchvision_Model3Ds {
           current_Layer = allFaces.getLayer(f);
           current_Visibility = allFaces.getVisibility(f);        
   
-          this.add_Face(newFace_nodes);
+          allFaces.create(newFace_nodes);
         }
       }
   
@@ -31349,7 +31374,7 @@ class solarchvision_Model3Ds {
               current_Layer = allFaces.getLayer(f);
               current_Visibility = allFaces.getVisibility(f);
   
-              this.add_Face(newFace_nodes);
+              allFaces.create(newFace_nodes);
               
               println("newFace_nodes");
               println(newFace_nodes);
@@ -31689,7 +31714,7 @@ class solarchvision_Model3Ds {
             current_Layer = allFaces.getLayer(f);
             current_Visibility = allFaces.getVisibility(f);        
   
-            this.add_Face(newFace_nodes);
+            allFaces.create(newFace_nodes);
           }
         }
       }
@@ -35304,6 +35329,10 @@ class solarchvision_Model3Ds {
   void deselect_Points () {
     userSelections.Vertex_ids = new int [0];
   }
+
+  void deselect_Faces () {
+    userSelections.Face_ids = new int [0];
+  }
   
   void deselect_Solids () {
     userSelections.Solid_ids = new int [0];
@@ -35339,7 +35368,7 @@ class solarchvision_Model3Ds {
   
       userSelections.Model2D_ids = new int [0];
   
-      userSelections.Face_ids = new int [0];
+      this.deselect_Faces();
   
       this.deselect_Points();
     
@@ -36378,7 +36407,7 @@ class solarchvision_Model3Ds {
           v[1], v[2], v[0]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }      
     
       {
@@ -36386,7 +36415,7 @@ class solarchvision_Model3Ds {
           v[2], v[3], v[0]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }      
     
       {
@@ -36394,7 +36423,7 @@ class solarchvision_Model3Ds {
           v[3], v[4], v[0]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }      
     
       {
@@ -36402,7 +36431,7 @@ class solarchvision_Model3Ds {
           v[4], v[1], v[0]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }      
     
       {
@@ -36410,7 +36439,7 @@ class solarchvision_Model3Ds {
           v[1], v[5], v[2]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }      
     
       {
@@ -36418,14 +36447,14 @@ class solarchvision_Model3Ds {
           v[2], v[5], v[3]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }      
       {
         int[] newFace_nodes = {
           v[3], v[5], v[4]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
     
       {
@@ -36433,7 +36462,7 @@ class solarchvision_Model3Ds {
           v[4], v[5], v[1]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }            
@@ -36514,49 +36543,49 @@ class solarchvision_Model3Ds {
           t3, m2, t2, b2, b3
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
       {//Roof-South
         int[] newFace_nodes = {
           m1, m2, t3, t4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
       {//East
         int[] newFace_nodes = {
           t1, m1, t4, b4, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//Roof-North
         int[] newFace_nodes = {
           m2, m1, t1, t2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -36646,63 +36675,63 @@ class solarchvision_Model3Ds {
           t3, t2, b2, b3
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
       {//Roof-West
         int[] newFace_nodes = {
           t3, m2, t2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//Roof-South
         int[] newFace_nodes = {
           m1, m2, t3, t4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
       {//East
         int[] newFace_nodes = {
           t1, t4, b4, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//Roof-East
         int[] newFace_nodes = {
           t1, m1, t4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }  
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//Roof-North
         int[] newFace_nodes = {
           m2, m1, t1, t2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }    
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -36742,42 +36771,42 @@ class solarchvision_Model3Ds {
           t3, t2, b2, b3
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//Roof
         int[] newFace_nodes = {
           t1, t2, t3, t4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//East
         int[] newFace_nodes = {
           t1, t4, b4, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -36814,42 +36843,42 @@ class solarchvision_Model3Ds {
           t3, t2, b2, b3
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//Roof
         int[] newFace_nodes = {
           t1, t2, t3, t4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//East
         int[] newFace_nodes = {
           t1, t4, b4, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -36899,7 +36928,7 @@ class solarchvision_Model3Ds {
         int[] newFace_nodes = {
           v1, v2, v3, v4
         };
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -36945,7 +36974,7 @@ class solarchvision_Model3Ds {
         int[] newFace_nodes = {
           v1, v2, v3, v4
         };
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -36993,7 +37022,7 @@ class solarchvision_Model3Ds {
         int[] newFace_nodes = {
           v1, v2, v3, v4
         };
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -37020,7 +37049,7 @@ class solarchvision_Model3Ds {
             int[] newFace_nodes = {
               v1, v2, v3
             };
-            this.add_Face(newFace_nodes);
+            allFaces.create(newFace_nodes);
           }
     
         }
@@ -37066,7 +37095,7 @@ class solarchvision_Model3Ds {
         int[] newFace_nodes = {
           v1, v2, v3, v4
         };
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
           
     }
@@ -37116,7 +37145,7 @@ class solarchvision_Model3Ds {
         int[] newFace_nodes = {
           v1, v2, v3, v4, v5
         };
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
       
     }
@@ -37169,7 +37198,7 @@ class solarchvision_Model3Ds {
         int[] newFace_nodes = {
           v1, v2, v3, v4, v5, v6
         };
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
     }
   }
@@ -37199,7 +37228,7 @@ class solarchvision_Model3Ds {
         newFace_nodes = concat(newFace_nodes, f);
       } 
     
-      this.add_Face(newFace_nodes);
+      allFaces.create(newFace_nodes);
     }
   }
   
@@ -37227,7 +37256,7 @@ class solarchvision_Model3Ds {
         newFace_nodes = concat(newFace_nodes, f);
       } 
     
-      this.add_Face(newFace_nodes);
+      allFaces.create(newFace_nodes);
     }
   }
   
@@ -37275,10 +37304,10 @@ class solarchvision_Model3Ds {
       if (m == -1) current_Material = 0;
       else current_Material = m;
     
-      this.add_Face(newFace_nodesT);
+      allFaces.create(newFace_nodesT);
     
       if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1)); 
-      this.add_Face(newFace_nodesB);
+      allFaces.create(newFace_nodesB);
     
       for (int i = 0; i < n; i++) {
         int next_i = (i + 1) % n;
@@ -37287,7 +37316,7 @@ class solarchvision_Model3Ds {
           vT[i], vB[i], vB[next_i], vT[next_i]
         };
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1)); 
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
     }
   }
@@ -37345,8 +37374,8 @@ class solarchvision_Model3Ds {
           newFace_nodesB[2] = vT[next_i]; 
     
           if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));   
-          this.add_Face(newFace_nodesT);
-          this.add_Face(newFace_nodesB);
+          allFaces.create(newFace_nodesT);
+          allFaces.create(newFace_nodesB);
         }
     
         {
@@ -37362,8 +37391,8 @@ class solarchvision_Model3Ds {
           newFace_nodesB[2] = vB[0];    
     
           if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
-          this.add_Face(newFace_nodesT);
-          this.add_Face(newFace_nodesB);
+          allFaces.create(newFace_nodesT);
+          allFaces.create(newFace_nodesB);
         }
       }
     }
@@ -37607,7 +37636,7 @@ class solarchvision_Model3Ds {
   
         if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));      
   
-        this.add_Face(newFace_nodes);
+        allFaces.create(newFace_nodes);
       }
     }
   }  
@@ -38011,7 +38040,7 @@ class solarchvision_Model3Ds {
       }
   
       if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));  
-      this.add_Face(new_Vertex_ids);
+      allFaces.create(new_Vertex_ids);
     }
   
     TempObjectVertices = new float [0][3];
@@ -38125,20 +38154,7 @@ class solarchvision_Model3Ds {
     }
   }  
   
-  
-  void delete_Faces () {
-  
-    allFaces.nodes = new int [0][3];
-  
-    allFaces.options = new int [0][6];
-  
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Faces[q][0] = 0;
-      allGroups.Faces[q][1] = -1;
-    }  
-  
-    this.deselect_All();
-  }
+
   
   void delete_Curves () {
   
@@ -44867,7 +44883,7 @@ void mouseClicked () {
             }    
     
             if (menu_option.equals("Erase Faces")) {
-              allModel3Ds.delete_Faces();
+              allFaces.delete_all();
               WIN3D.update = true;
             }             
     
@@ -46148,7 +46164,7 @@ void mouseClicked () {
 
                   if (current_ObjectCategory == ObjectCategory.FACE) { // working with faces
                     if (CreateObject == CREATE.Face) {
-                      allModel3Ds.add_VertexToLastFace(x, y, z); 
+                      allFaces.add_VertexToLastFace(x, y, z); 
 
                       userSelections.Face_ids = new int [1];
                       userSelections.Face_ids[0] = allFaces.nodes.length - 1;
@@ -49527,7 +49543,7 @@ void UI_set_to_Create_Face () {
   current_Weight = User3D.default_Weight;  
   current_Closed = User3D.default_Closed;   
   
-  allModel3Ds.beginNewFace();
+  allFaces.beginNewFace();
 
   CreateObject = CREATE.Face;
   current_ObjectCategory = ObjectCategory.FACE;
@@ -56291,7 +56307,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("object2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
-        else if (low_case.equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
+        else if (low_case.equals("faces")) {allFaces.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
         else if (low_case.equals("solids")) {allSolids.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("sections")) {allSections.delete_all(); WIN3D.update = true;}
