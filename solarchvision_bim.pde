@@ -16402,7 +16402,7 @@ class solarchvision_Selections {
   
           int n = allModel2Ds.MAP[f];
   
-          if (abs(n) > n1) { // does not scale poeple!    
+          if (allModel2Ds.isTree(n)) { // does not scale poeple!    
             allModel2Ds.magS(f, sz);
           }
         }
@@ -16764,7 +16764,7 @@ class solarchvision_Selections {
   
       int n = allModel2Ds.MAP[f];
   
-      if (abs(n) > n1) { // does not scale poeple!    
+      if (allModel2Ds.isTree(n)) { // does not scale poeple!    
         allModel2Ds.magS(f, sz);
       }
     }
@@ -17878,21 +17878,8 @@ class solarchvision_Selections {
   
           int n1 = allModel2Ds.num_files_PEOPLE;
           int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
-  
-  
-          if (n <= n1) { // case: people 
-  
-            n += p;
-  
-            if (n > n1) {
-              n = 1; 
-              sign_n *= -1;
-            }
-            if (n < 1) {
-              n = n1; 
-              sign_n *= -1;
-            }
-          } else { // case: trees
+
+          if (allModel2Ds.isTree(n)) { // case: trees
   
             n += p;
   
@@ -17902,6 +17889,19 @@ class solarchvision_Selections {
             }
             if (n < n1 + 1) {
               n = n2; 
+              sign_n *= -1;
+            }
+          }
+          else { // case: people 
+  
+            n += p;
+  
+            if (n > n1) {
+              n = 1; 
+              sign_n *= -1;
+            }
+            if (n < 1) {
+              n = n1; 
               sign_n *= -1;
             }
           }
@@ -27335,6 +27335,13 @@ class solarchvision_Model2Ds {
   float[][] Vertices;
   int[][] Faces;  
   
+  boolean isTree (int n) {
+    if (abs(n) > this.num_files_PEOPLE) {
+      return true;
+    }
+    return false;
+  }
+  
   void load_images () {
   
     this.ImagePath = new String [1];
@@ -27704,8 +27711,8 @@ class solarchvision_Model2Ds {
                   nf += 2;
                 }            
                 
-                if (n > this.num_files_PEOPLE) { // case: trees   
-    
+                if (allModel2Ds.isTree(n)) { // case: trees   
+                      
                   float ratio = 0.5;
                   
                   float rot = back_front * PI / 2 + t;
@@ -28096,6 +28103,17 @@ class solarchvision_Model2Ds {
                 float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
                 float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
                 float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+                
+                // do not create trees close to each other
+/*                
+                for (int p = 0; p < ?.length; p++) {
+                }
+????????                
+                if () {
+                  
+                  break; 
+                }
+*/                
   
                 float u = (x / Land3D.Textures_U_scale[n_Map] + 0.5);
                 float v = (-y / Land3D.Textures_V_scale[n_Map] + 0.5);
@@ -28335,7 +28353,7 @@ class solarchvision_Model2Ds {
   
     this.num += 1;
   
-    if (abs(n) > n1) {
+    if (allModel2Ds.isTree(n)) {
   
       if (User3D.create_MeshOrSolid != 0) {
   
@@ -30925,7 +30943,7 @@ class solarchvision_Model3Ds {
         float s = allModel2Ds.getS(OBJ_NUM);
   
         int n = allModel2Ds.MAP[OBJ_NUM];
-        if (abs(n) > n1) {
+        if (allModel2Ds.isTree(n)) {
           if (produce_another_variation == 1) n = 0; // this makes it random
           allModel2Ds.add_single("TREES", n, x, y, z, s);
         } else {
@@ -31284,7 +31302,7 @@ class solarchvision_Model3Ds {
     
               int n = allModel2Ds.MAP[q];
     
-              if (abs(n) > n1) {
+              if (allModel2Ds.isTree(n)) {
                 if (produce_another_variation == 1) n = 0; // this makes it random
                 allModel2Ds.add_single("TREES", n, x, y, z, s);
               } else {
@@ -31436,7 +31454,7 @@ class solarchvision_Model3Ds {
   
               int n = allModel2Ds.MAP[q];
   
-              if (abs(n) > n1) {
+              if (allModel2Ds.isTree(n)) {
                 if (produce_another_variation == 1) n = 0; // this makes it random
                 allModel2Ds.add_single("TREES", n, x, y, z, s);
               } else {
@@ -31618,7 +31636,7 @@ class solarchvision_Model3Ds {
           float s = allModel2Ds.getS(OBJ_NUM);
   
           int n = allModel2Ds.MAP[OBJ_NUM];
-          if (abs(n) > n1) {
+          if (allModel2Ds.isTree(n)) {
             allModel2Ds.add_single("TREES", n, x, y, z, s);
           } else {
             allModel2Ds.add_single("PEOPLE", n, x, y, z, s);
@@ -45658,17 +45676,19 @@ void mouseClicked () {
                       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
   
                         if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
-                          if (n <= n1) { // case: people 
-                            User3D.create_Person_Type = n;
-                          } else { // case: trees
+                          if (allModel2Ds.isTree(n)) { // case: trees
                             User3D.create_Plant_Type = n - n1;
                           }
+                          else { // case: people 
+                            User3D.create_Person_Type = n;
+                          } 
                         } 
                         if ((WIN3D.UI_TaskModifyParameter == 2) || (WIN3D.UI_TaskModifyParameter == 3)) { // Assign
-                          if (n <= n1) { // case: people 
-                            allModel2Ds.MAP[OBJ_NUM] = sign_n * User3D.create_Person_Type;
-                          } else { // case: trees
+                          if (allModel2Ds.isTree(n)) { // case: trees
                             allModel2Ds.MAP[OBJ_NUM] = sign_n * (User3D.create_Plant_Type + n1);
+                          }
+                          else { // case: people 
+                            allModel2Ds.MAP[OBJ_NUM] = sign_n * User3D.create_Person_Type;
                           }
                         }
                       }
@@ -52249,7 +52269,7 @@ class solarchvision_UI_BAR_a {
     }
     , 
     {    
-      "Display2D",
+      "Stations",
       "Display/Hide SWOB points", 
       "Display/Hide SWOB nearest", 
       "Display/Hide NAEFS points", 
@@ -52263,7 +52283,7 @@ class solarchvision_UI_BAR_a {
     }
     , 
     {
-      "Display3D", 
+      "Display", 
       "Display/Hide Land Mesh", 
       "Display/Hide Land Texture", 
       "Display/Hide Land Points", 
@@ -52735,7 +52755,7 @@ class solarchvision_UI_BAR_a {
               stroke(255); 
               fill(255);
   
-              if (this.Items[i][0].equals("Display2D")) {
+              if (this.Items[i][0].equals("Stations")) {
                 if (this.Items[i][j].equals("Display/Hide SWOB points")) {
                   if (WORLD.displayAll_SWOB == 0) {
                     stroke(127); 
@@ -52798,7 +52818,7 @@ class solarchvision_UI_BAR_a {
                 }
               }
   
-              if (this.Items[i][0].equals("Display3D")) {
+              if (this.Items[i][0].equals("Display")) {
                 if (this.Items[i][j].equals("Display/Hide Land Mesh")) {
                   if (Land3D.displaySurface == false) {
                     stroke(127); 
