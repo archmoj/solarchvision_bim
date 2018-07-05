@@ -4355,7 +4355,7 @@ class solarchvision_WIN3D {
         switch(key) {
   
         case '*': 
-          allModel3Ds.select_All();
+          userSelections.select_all();
           this.update = true;
           ROLLOUT.update = true;
           break;             
@@ -4575,7 +4575,7 @@ class solarchvision_WIN3D {
   
   
         case 155: // INSERT 
-          allModel3Ds.deselect_All();
+          userSelections.deselect_all();
   
           this.update = true;
           ROLLOUT.update = true;
@@ -11625,8 +11625,8 @@ class solarchvision_Faces {
       allGroups.Faces[q][1] = -1;
     }  
   
-    allModel3Ds.deselect_Groups();
-    allModel3Ds.deselect_Faces();
+    userSelections.deselect_Groups();
+    userSelections.deselect_Faces();
   }
   
   
@@ -12898,8 +12898,8 @@ class solarchvision_Curves {
       allGroups.Curves[q][1] = -1;
     }  
   
-    allModel3Ds.deselect_Groups();
-    allModel3Ds.deselect_Curves();
+    userSelections.deselect_Groups();
+    userSelections.deselect_Curves();
   }
   
 
@@ -13218,7 +13218,7 @@ class solarchvision_Groups {
   
     this.num = 0;
     
-    allModel3Ds.deselect_Groups();
+    userSelections.deselect_Groups();
   }    
 
 
@@ -16107,7 +16107,7 @@ class solarchvision_Selections {
   
   
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = A[0];
       y = A[1];
@@ -16292,7 +16292,7 @@ class solarchvision_Selections {
       float y = allPoints.getY(n); 
       float z = allPoints.getZ(n);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = A[0];
       y = A[1];
@@ -16322,7 +16322,7 @@ class solarchvision_Selections {
         z = c;
       }
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -16349,7 +16349,7 @@ class solarchvision_Selections {
         float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
         float z = allGroups.PivotMatrix[OBJ_NUM][2];
   
-        float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+        float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
         x = A[0];
         y = A[1];
@@ -16379,7 +16379,7 @@ class solarchvision_Selections {
           z = c;
         }
   
-        float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+        float[] B = this.translateInside_ReferencePivot(x, y, z);
   
         x = B[0];
         y = B[1];
@@ -16406,7 +16406,7 @@ class solarchvision_Selections {
           float y = allModel1Ds.getY(f); 
           float z = allModel1Ds.getZ(f);
   
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+          float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
           x = A[0];
           y = A[1];
@@ -16436,7 +16436,7 @@ class solarchvision_Selections {
             z = c;
           }
   
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+          float[] B = this.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -16462,7 +16462,7 @@ class solarchvision_Selections {
           float y = allModel2Ds.getY(f); 
           float z = allModel2Ds.getZ(f);
   
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+          float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
           x = A[0];
           y = A[1];
@@ -16492,7 +16492,7 @@ class solarchvision_Selections {
             z = c;
           }
   
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+          float[] B = this.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -16511,7 +16511,7 @@ class solarchvision_Selections {
           float y = allSolids.get_posY(f);
           float z = allSolids.get_posZ(f);
   
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+          float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
           x = A[0];
           y = A[1];
@@ -16541,7 +16541,7 @@ class solarchvision_Selections {
             z = c;
           }
   
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+          float[] B = this.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -16581,13 +16581,13 @@ class solarchvision_Selections {
       float y = allPoints.getY(n); 
       float z = allPoints.getZ(n);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -16611,13 +16611,13 @@ class solarchvision_Selections {
         float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
         float z = allGroups.PivotMatrix[OBJ_NUM][2];
   
-        float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+        float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
         x = sx * (A[0] - x0) + x0;
         y = sy * (A[1] - y0) + y0;
         z = sz * (A[2] - z0) + z0;
   
-        float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+        float[] B = this.translateInside_ReferencePivot(x, y, z);
   
         x = B[0];
         y = B[1];
@@ -16642,13 +16642,13 @@ class solarchvision_Selections {
           float y = allModel1Ds.getY(f); 
           float z = allModel1Ds.getZ(f);
   
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+          float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
           x = sx * (A[0] - x0) + x0;
           y = sy * (A[1] - y0) + y0;
           z = sz * (A[2] - z0) + z0;
   
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+          float[] B = this.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -16670,13 +16670,13 @@ class solarchvision_Selections {
           float y = allModel2Ds.getY(f); 
           float z = allModel2Ds.getZ(f);
   
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+          float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
           x = sx * (A[0] - x0) + x0;
           y = sy * (A[1] - y0) + y0;
           z = sz * (A[2] - z0) + z0;
   
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+          float[] B = this.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -16701,13 +16701,13 @@ class solarchvision_Selections {
           float y = allSolids.get_posY(f);
           float z = allSolids.get_posZ(f);
   
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+          float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
           x = sx * (A[0] - x0) + x0;
           y = sy * (A[1] - y0) + y0;
           z = sz * (A[2] - z0) + z0;
   
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+          float[] B = this.translateInside_ReferencePivot(x, y, z);
   
           x = B[0]; 
           y = B[1];
@@ -16779,13 +16779,13 @@ class solarchvision_Selections {
       float y = allPoints.getY(f);
       float z = allPoints.getZ(f);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -16850,13 +16850,13 @@ class solarchvision_Selections {
       float y = allPoints.getY(f);
       float z = allPoints.getZ(f);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -16916,13 +16916,13 @@ class solarchvision_Selections {
       float y = allPoints.getY(f); 
       float z = allPoints.getZ(f);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -17023,13 +17023,13 @@ class solarchvision_Selections {
       float y = allModel2Ds.getY(f); 
       float z = allModel2Ds.getZ(f);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -17098,13 +17098,13 @@ class solarchvision_Selections {
       float y = allModel1Ds.getY(f); 
       float z = allModel1Ds.getZ(f);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -17230,13 +17230,13 @@ class solarchvision_Selections {
       float y = allSolids.get_posY(f);
       float z = allSolids.get_posZ(f);
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0]; 
       y = B[1];
@@ -17451,13 +17451,13 @@ class solarchvision_Selections {
       float y = Land3D.Mesh[i][j][1]; 
       float z = Land3D.Mesh[i][j][2];
   
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+      float[] A = this.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+      float[] B = this.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -17474,7 +17474,7 @@ class solarchvision_Selections {
   
   void scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    float[] O = userSelections.translateOutside_ReferencePivot(x0, y0, z0);
+    float[] O = this.translateOutside_ReferencePivot(x0, y0, z0);
   
     x0 = O[0];
     y0 = O[1];
@@ -17542,8 +17542,8 @@ class solarchvision_Selections {
     
     r *= PI / 180; // <<<<<<<<
   
-    float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = userSelections.translateInside_ReferencePivot(x0, y0, z0);
+    float[] A = this.translateInside_ReferencePivot(0, 0, 0);
+    float[] B = this.translateInside_ReferencePivot(x0, y0, z0);
   
     x0 = B[0] - A[0];
     y0 = B[1] - A[1];
@@ -17615,8 +17615,8 @@ class solarchvision_Selections {
     
     println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);
   
-    float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = userSelections.translateInside_ReferencePivot(dx, dy, dz);
+    float[] A = this.translateInside_ReferencePivot(0, 0, 0);
+    float[] B = this.translateInside_ReferencePivot(dx, dy, dz);
   
     dx = B[0] - A[0];
     dy = B[1] - A[1];
@@ -18385,7 +18385,7 @@ class solarchvision_Selections {
       this.alignY = 0; // apply the centre
       this.alignZ = 0; // apply the centre
   
-      float[] A = userSelections.translateInside_ReferencePivot(x - posX, y - posY, z - posZ);  
+      float[] A = this.translateInside_ReferencePivot(x - posX, y - posY, z - posZ);  
   
       x = A[0];
       y = A[1];
@@ -18407,7 +18407,7 @@ class solarchvision_Selections {
   
   void selectPick (float[] RxP) {
     
-    if (addNewSelectionToPreviousSelection == 0) allModel3Ds.deselect_All();
+    if (addNewSelectionToPreviousSelection == 0) this.deselect_all();
   
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -18933,7 +18933,7 @@ class solarchvision_Selections {
   
   void selectRect (float corner1x, float corner1y, float corner2x, float corner2y) {
   
-    if (addNewSelectionToPreviousSelection == 0) allModel3Ds.deselect_All();
+    if (addNewSelectionToPreviousSelection == 0) this.deselect_all();
   
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -19902,6 +19902,451 @@ class solarchvision_Selections {
     }
   }
   
+
+
+
+
+  void deselect_LandPoints () {
+    this.LandPoint_ids = new int [0];
+  }
+
+  void deselect_Points () {
+    this.Vertex_ids = new int [0];
+  }
+
+  void deselect_Faces () {
+    this.Face_ids = new int [0];
+  }
+
+  void deselect_Curves () {
+    this.Curve_ids = new int [0];
+  }
+  
+  void deselect_Solids () {
+    this.Solid_ids = new int [0];
+  }  
+  
+  void deselect_Cameras () {
+    this.Camera_ids = new int [0];
+  }
+
+  void deselect_Sections () {
+    this.Section_ids = new int [0];
+  }  
+  
+  void deselect_Model1Ds () {
+    this.Model1D_ids = new int [0];
+  }
+  
+  void deselect_Model2Ds () {
+    this.Model2D_ids = new int [0];
+  }  
+  
+  void deselect_Groups () {
+    this.Group_ids = new int [0];
+  }    
+
+
+  void deselect_all () {
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      this.deselect_LandPoints();
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {  
+      this.deselect_Sections();
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {  
+      this.deselect_Cameras();
+    }  
+  
+    if ((current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.MODEL2D) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || (current_ObjectCategory == ObjectCategory.SOLID)) {  
+  
+      this.Model1D_ids = new int [0];
+  
+      this.deselect_Groups();
+  
+      this.deselect_Model1Ds();
+      
+      this.deselect_Model2Ds();
+  
+      this.deselect_Curves();
+  
+      this.deselect_Faces();
+  
+      this.deselect_Points();
+  
+      this.deselect_Solids();
+    }  
+  
+    this.calculate_selection_BoundingBox();
+  }
+  
+  void select_all () {
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoint_ids = new int [Land3D.num_rows * Land3D.num_columns];
+      for (int i = 0; i < this.LandPoint_ids.length; i++) { 
+        this.LandPoint_ids[i] = i;
+      }
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1D_ids = new int [allModel1Ds.num];
+      for (int i = 0; i < this.Model1D_ids.length; i++) { 
+        this.Model1D_ids[i] = i;
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2D_ids = new int [allModel2Ds.num];
+      for (int i = 0; i < this.Model2D_ids.length; i++) { 
+        this.Model2D_ids[i] = i;
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      this.Group_ids = new int [allGroups.num];
+      for (int i = 0; i < this.Group_ids.length; i++) { 
+        this.Group_ids[i] = i;
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Face_ids = new int [allFaces.nodes.length];
+      for (int i = 0; i < this.Face_ids.length; i++) { 
+        this.Face_ids[i] = i;
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+      this.Vertex_ids = new int [allPoints.getLength()];
+      for (int i = 0; i < this.Vertex_ids.length; i++) { 
+        this.Vertex_ids[i] = i;
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      this.Curve_ids = new int [allCurves.nodes.length];
+      for (int i = 0; i < this.Curve_ids.length; i++) { 
+        this.Curve_ids[i] = i;
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solid_ids = new int [allSolids.DEF.length];
+      for (int i = 0; i < this.Solid_ids.length; i++) { 
+        this.Solid_ids[i] = i;
+      }
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Section_ids = new int [allSections.num];
+      for (int i = 0; i < this.Section_ids.length; i++) { 
+        this.Section_ids[i] = i;
+      }
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Camera_ids = new int [allCameras.num];
+      for (int i = 0; i < this.Camera_ids.length; i++) { 
+        this.Camera_ids[i] = i;
+      }
+    }  
+  
+    this.calculate_selection_BoundingBox();
+  }
+  
+  
+  void reverse_Selection () {
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      int[] pre_Selection_LandPoint_ids = sort(this.LandPoint_ids);
+  
+      this.LandPoint_ids = new int [0];
+  
+      for (int i = 0; i < Land3D.num_rows * Land3D.num_columns; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_LandPoint_ids.length; j++) {
+  
+          if (pre_Selection_LandPoint_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_LandPoint_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.LandPoint_ids = concat(this.LandPoint_ids, new_Item);
+        }
+      }
+    }     
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      int[] pre_Selection_Model1D_ids = sort(this.Model1D_ids);
+  
+      this.Model1D_ids = new int [0];
+  
+      for (int i = 0; i < allModel1Ds.num; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Model1D_ids.length; j++) {
+  
+          if (pre_Selection_Model1D_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Model1D_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Model1D_ids = concat(this.Model1D_ids, new_Item);
+        }
+      }
+    }    
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      int[] pre_Selection_Model2D_ids = sort(this.Model2D_ids);
+  
+      this.Model2D_ids = new int [0];
+  
+      for (int i = 0; i < allModel2Ds.num; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Model2D_ids.length; j++) {
+  
+          if (pre_Selection_Model2D_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Model2D_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Model2D_ids = concat(this.Model2D_ids, new_Item);
+        }
+      }
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      int[] pre_Selection_Group_ids = sort(this.Group_ids);
+  
+      this.Group_ids = new int [0];
+  
+      for (int i = 0; i < allGroups.num; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Group_ids.length; j++) {
+  
+          if (pre_Selection_Group_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Group_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Group_ids = concat(this.Group_ids, new_Item);
+        }
+      }
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      int[] pre_Selection_Face_ids = sort(this.Face_ids);
+  
+      this.Face_ids = new int [0];
+  
+      for (int i = 0; i < allFaces.nodes.length; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Face_ids.length; j++) {
+  
+          if (pre_Selection_Face_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Face_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Face_ids = concat(this.Face_ids, new_Item);
+        }
+      }
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      int[] pre_Selection_Curve_ids = sort(this.Curve_ids);
+  
+      this.Curve_ids = new int [0];
+  
+      for (int i = 0; i < allCurves.nodes.length; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Curve_ids.length; j++) {
+  
+          if (pre_Selection_Curve_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Curve_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Curve_ids = concat(this.Curve_ids, new_Item);
+        }
+      }
+    }  
+  
+  
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+      int[] pre_Selection_Vertex_ids = sort(this.Vertex_ids);
+  
+      this.Vertex_ids = new int [0];
+  
+      for (int i = 0; i < allPoints.getLength(); i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Vertex_ids.length; j++) {
+  
+          if (pre_Selection_Vertex_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Vertex_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Vertex_ids = concat(this.Vertex_ids, new_Item);
+        }
+      }
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      int[] pre_Selection_Solid_ids = sort(this.Solid_ids);
+  
+      this.Solid_ids = new int [0];
+  
+      for (int i = 0; i < allSolids.DEF.length; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Solid_ids.length; j++) {
+  
+          if (pre_Selection_Solid_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Solid_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Solid_ids = concat(this.Solid_ids, new_Item);
+        }
+      }
+    }      
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      int[] pre_Selection_Section_ids = sort(this.Section_ids);
+  
+      this.Section_ids = new int [0];
+  
+      for (int i = 0; i < allSections.num; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Section_ids.length; j++) {
+  
+          if (pre_Selection_Section_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Section_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Section_ids = concat(this.Section_ids, new_Item);
+        }
+      }
+    }    
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      int[] pre_Selection_Camera_ids = sort(this.Camera_ids);
+  
+      this.Camera_ids = new int [0];
+  
+      for (int i = 0; i < allCameras.num; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Camera_ids.length; j++) {
+  
+          if (pre_Selection_Camera_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Camera_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Camera_ids = concat(this.Camera_ids, new_Item);
+        }
+      }
+    }    
+  
+    this.calculate_selection_BoundingBox();
+  }  
+
+
+
   
   
 
@@ -21078,7 +21523,7 @@ void draw () {
 
         if (pre_Load_DefaultModels != Load_DefaultModels) {
 
-          SOLARCHVISION_delete_All();
+          SOLARCHVISION_delete_ALL();
 
           allModel3Ds.add_DefaultModel(Load_DefaultModels);
 
@@ -23386,7 +23831,7 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 
 
-void SOLARCHVISION_delete_All () {
+void SOLARCHVISION_delete_ALL () {
   
   allModel1Ds.delete_all();
   allModel2Ds.delete_all();
@@ -28647,8 +29092,8 @@ class solarchvision_Model2Ds {
       allGroups.Model2Ds[q][1] = -1;
     }  
   
-    allModel3Ds.deselect_Groups();
-    allModel3Ds.deselect_Model2Ds();
+    userSelections.deselect_Groups();
+    userSelections.deselect_Model2Ds();
   }  
   
   
@@ -29848,8 +30293,8 @@ class solarchvision_Model1Ds {
       allGroups.Model1Ds[q][1] = -1;
     }    
 
-    allModel3Ds.deselect_Groups();  
-    allModel3Ds.deselect_Model1Ds();
+    userSelections.deselect_Groups();  
+    userSelections.deselect_Model1Ds();
   }  
   
   
@@ -30205,8 +30650,8 @@ class solarchvision_Solids {
       allGroups.Solids[q][1] = -1;
     }
   
-    allModel3Ds.deselect_Groups();
-    allModel3Ds.deselect_Solids();
+    userSelections.deselect_Groups();
+    userSelections.deselect_Solids();
   }    
 
 
@@ -30651,10 +31096,10 @@ class solarchvision_Points {
   
     allVertices = new float [0][3];
   
-    allModel3Ds.deselect_Groups();
-    allModel3Ds.deselect_Faces();
-    allModel3Ds.deselect_Curves();
-    allModel3Ds.deselect_Points();
+    userSelections.deselect_Groups();
+    userSelections.deselect_Faces();
+    userSelections.deselect_Curves();
+    userSelections.deselect_Points();
   }  
   
   
@@ -32540,7 +32985,7 @@ class solarchvision_Model3Ds {
       allCameras.add_first();
     }
   
-    this.deselect_All();
+    userSelections.deselect_all();
   }
   
   
@@ -35388,439 +35833,9 @@ class solarchvision_Model3Ds {
   }
   
 
-  void deselect_Model1Ds () {
-    userSelections.Model1D_ids = new int [0];
-  }
-  
-  void deselect_Model2Ds () {
-    userSelections.Model2D_ids = new int [0];
-  }
 
-  void deselect_Points () {
-    userSelections.Vertex_ids = new int [0];
-  }
+  
 
-  void deselect_Faces () {
-    userSelections.Face_ids = new int [0];
-  }
-
-  void deselect_Curves () {
-    userSelections.Curve_ids = new int [0];
-  }
-  
-  void deselect_Solids () {
-    userSelections.Solid_ids = new int [0];
-  }  
-  
-  void deselect_Cameras () {
-    userSelections.Camera_ids = new int [0];
-  }
-
-  void deselect_Sections () {
-    userSelections.Section_ids = new int [0];
-  }  
-  
-  void deselect_Groups () {
-    userSelections.Group_ids = new int [0];
-  }    
-  
-  void deselect_All () {
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      userSelections.LandPoint_ids = new int [0];
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {  
-      this.deselect_Sections();
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {  
-      this.deselect_Cameras();
-    }  
-  
-    if ((current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.MODEL2D) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || (current_ObjectCategory == ObjectCategory.SOLID)) {  
-  
-      userSelections.Model1D_ids = new int [0];
-  
-      this.deselect_Groups();
-  
-      this.deselect_Model1Ds();
-      
-      this.deselect_Model2Ds();
-  
-      this.deselect_Curves();
-  
-      this.deselect_Faces();
-  
-      this.deselect_Points();
-  
-      this.deselect_Solids();
-    }  
-  
-    userSelections.calculate_selection_BoundingBox();
-  }
-  
-  void select_All () {
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      userSelections.LandPoint_ids = new int [Land3D.num_rows * Land3D.num_columns];
-      for (int i = 0; i < userSelections.LandPoint_ids.length; i++) { 
-        userSelections.LandPoint_ids[i] = i;
-      }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      userSelections.Model1D_ids = new int [allModel1Ds.num];
-      for (int i = 0; i < userSelections.Model1D_ids.length; i++) { 
-        userSelections.Model1D_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      userSelections.Model2D_ids = new int [allModel2Ds.num];
-      for (int i = 0; i < userSelections.Model2D_ids.length; i++) { 
-        userSelections.Model2D_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      userSelections.Group_ids = new int [allGroups.num];
-      for (int i = 0; i < userSelections.Group_ids.length; i++) { 
-        userSelections.Group_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      userSelections.Face_ids = new int [allFaces.nodes.length];
-      for (int i = 0; i < userSelections.Face_ids.length; i++) { 
-        userSelections.Face_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      userSelections.Vertex_ids = new int [allPoints.getLength()];
-      for (int i = 0; i < userSelections.Vertex_ids.length; i++) { 
-        userSelections.Vertex_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      userSelections.Curve_ids = new int [allCurves.nodes.length];
-      for (int i = 0; i < userSelections.Curve_ids.length; i++) { 
-        userSelections.Curve_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      userSelections.Solid_ids = new int [allSolids.DEF.length];
-      for (int i = 0; i < userSelections.Solid_ids.length; i++) { 
-        userSelections.Solid_ids[i] = i;
-      }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      userSelections.Section_ids = new int [allSections.num];
-      for (int i = 0; i < userSelections.Section_ids.length; i++) { 
-        userSelections.Section_ids[i] = i;
-      }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      userSelections.Camera_ids = new int [allCameras.num];
-      for (int i = 0; i < userSelections.Camera_ids.length; i++) { 
-        userSelections.Camera_ids[i] = i;
-      }
-    }  
-  
-    userSelections.calculate_selection_BoundingBox();
-  }
-  
-  
-  void reverse_Selection () {
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      int[] pre_Selection_LandPoint_ids = sort(userSelections.LandPoint_ids);
-  
-      userSelections.LandPoint_ids = new int [0];
-  
-      for (int i = 0; i < Land3D.num_rows * Land3D.num_columns; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_LandPoint_ids.length; j++) {
-  
-          if (pre_Selection_LandPoint_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_LandPoint_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.LandPoint_ids = concat(userSelections.LandPoint_ids, new_Item);
-        }
-      }
-    }     
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      int[] pre_Selection_Model1D_ids = sort(userSelections.Model1D_ids);
-  
-      userSelections.Model1D_ids = new int [0];
-  
-      for (int i = 0; i < allModel1Ds.num; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Model1D_ids.length; j++) {
-  
-          if (pre_Selection_Model1D_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Model1D_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Model1D_ids = concat(userSelections.Model1D_ids, new_Item);
-        }
-      }
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      int[] pre_Selection_Model2D_ids = sort(userSelections.Model2D_ids);
-  
-      userSelections.Model2D_ids = new int [0];
-  
-      for (int i = 0; i < allModel2Ds.num; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Model2D_ids.length; j++) {
-  
-          if (pre_Selection_Model2D_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Model2D_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Model2D_ids = concat(userSelections.Model2D_ids, new_Item);
-        }
-      }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      int[] pre_Selection_Group_ids = sort(userSelections.Group_ids);
-  
-      userSelections.Group_ids = new int [0];
-  
-      for (int i = 0; i < allGroups.num; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Group_ids.length; j++) {
-  
-          if (pre_Selection_Group_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Group_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Group_ids = concat(userSelections.Group_ids, new_Item);
-        }
-      }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      int[] pre_Selection_Face_ids = sort(userSelections.Face_ids);
-  
-      userSelections.Face_ids = new int [0];
-  
-      for (int i = 0; i < allFaces.nodes.length; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Face_ids.length; j++) {
-  
-          if (pre_Selection_Face_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Face_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Face_ids = concat(userSelections.Face_ids, new_Item);
-        }
-      }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      int[] pre_Selection_Curve_ids = sort(userSelections.Curve_ids);
-  
-      userSelections.Curve_ids = new int [0];
-  
-      for (int i = 0; i < allCurves.nodes.length; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Curve_ids.length; j++) {
-  
-          if (pre_Selection_Curve_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Curve_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Curve_ids = concat(userSelections.Curve_ids, new_Item);
-        }
-      }
-    }  
-  
-  
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      int[] pre_Selection_Vertex_ids = sort(userSelections.Vertex_ids);
-  
-      userSelections.Vertex_ids = new int [0];
-  
-      for (int i = 0; i < allPoints.getLength(); i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Vertex_ids.length; j++) {
-  
-          if (pre_Selection_Vertex_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Vertex_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Vertex_ids = concat(userSelections.Vertex_ids, new_Item);
-        }
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      int[] pre_Selection_Solid_ids = sort(userSelections.Solid_ids);
-  
-      userSelections.Solid_ids = new int [0];
-  
-      for (int i = 0; i < allSolids.DEF.length; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Solid_ids.length; j++) {
-  
-          if (pre_Selection_Solid_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Solid_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Solid_ids = concat(userSelections.Solid_ids, new_Item);
-        }
-      }
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      int[] pre_Selection_Section_ids = sort(userSelections.Section_ids);
-  
-      userSelections.Section_ids = new int [0];
-  
-      for (int i = 0; i < allSections.num; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Section_ids.length; j++) {
-  
-          if (pre_Selection_Section_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Section_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Section_ids = concat(userSelections.Section_ids, new_Item);
-        }
-      }
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      int[] pre_Selection_Camera_ids = sort(userSelections.Camera_ids);
-  
-      userSelections.Camera_ids = new int [0];
-  
-      for (int i = 0; i < allCameras.num; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Camera_ids.length; j++) {
-  
-          if (pre_Selection_Camera_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Camera_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          userSelections.Camera_ids = concat(userSelections.Camera_ids, new_Item);
-        }
-      }
-    }    
-  
-    userSelections.calculate_selection_BoundingBox();
-  }  
   
   
   void convert_allModel1Ds_to_allGroups () {
@@ -38577,7 +38592,7 @@ class solarchvision_Cameras {
   
     this.add_first();
   
-    allModel3Ds.deselect_Cameras();
+    userSelections.deselect_Cameras();
   }
     
   
@@ -39124,7 +39139,7 @@ class solarchvision_Sections {
   
     this.num = 0;
   
-    allModel3Ds.deselect_Sections();
+    userSelections.deselect_Sections();
   }    
   
   
@@ -42964,7 +42979,7 @@ void mouseClicked () {
               
               selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
 
-              SOLARCHVISION_delete_All();
+              SOLARCHVISION_delete_ALL();
 
               //SOLARCHVISION_update_station(0);
             }  
@@ -44492,15 +44507,15 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Reverse Selection")) {
-              allModel3Ds.reverse_Selection();
+              userSelections.reverse_Selection();
               WIN3D.update = true;
             }             
             if (menu_option.equals("Deselect All")) {
-              allModel3Ds.deselect_All();
+              userSelections.deselect_all();
               WIN3D.update = true;
             } 
             if (menu_option.equals("Select All")) {
-              allModel3Ds.select_All();
+              userSelections.select_all();
               WIN3D.update = true;
             }           
             if (menu_option.equals("Select Solid")) {
@@ -44908,7 +44923,7 @@ void mouseClicked () {
             }  
     
             if (menu_option.equals("Erase All ")) {
-              SOLARCHVISION_delete_All();
+              SOLARCHVISION_delete_ALL();
               WIN3D.update = true;
             }  
             
@@ -56316,7 +56331,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
+             if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
         else if (low_case.equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
         else if (low_case.equals("group3ds")) {allGroups.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("object2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
@@ -56389,9 +56404,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("all")) {allModel3Ds.select_All(); WIN3D.update = true;}
-        else if (low_case.equals("reverse")) {allModel3Ds.reverse_Selection(); WIN3D.update = true;}
-        else if (low_case.equals("nothing")) {allModel3Ds.deselect_All(); WIN3D.update = true;}
+             if (low_case.equals("all")) {userSelections.select_all(); WIN3D.update = true;}
+        else if (low_case.equals("reverse")) {userSelections.reverse_Selection(); WIN3D.update = true;}
+        else if (low_case.equals("nothing")) {userSelections.deselect_all(); WIN3D.update = true;}
         else if (low_case.equals("last")) {allModel3Ds.select_Last(); WIN3D.update = true;}
       }
     }
