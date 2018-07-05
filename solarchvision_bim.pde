@@ -23101,8 +23101,8 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 void SOLARCHVISION_delete_All () {
   
-  allModel1Ds.delete();
-  allModel2Ds.delete();
+  allModel1Ds.delete_all();
+  allModel2Ds.delete_all();
 
   allModel3Ds.delete_Faces();
   allModel3Ds.delete_Curves();
@@ -28135,9 +28135,9 @@ class solarchvision_Model2Ds {
                     if (foundNearTree == 0) {
   
                       if (people_or_trees == 2) {
-                        this.add_single("TREES", 0, x, y, z, s);
+                        this.create("TREES", 0, x, y, z, s);
                       } else {
-                        allModel1Ds.add_single(User3D.create_Model1D_Type, x, y, z, s, random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, s, random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
                       }                  
   
   
@@ -28203,11 +28203,11 @@ class solarchvision_Model2Ds {
                 if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
   
                   if (people_or_trees == 1) {
-                    this.add_single("PEOPLE", 0, x, y, z, 2.5);
+                    this.create("PEOPLE", 0, x, y, z, 2.5);
                   } else if (people_or_trees == 2) {
-                    this.add_single("TREES", 0, x, y, z, 5 + random(10));
+                    this.create("TREES", 0, x, y, z, 5 + random(10));
                   } else {
-                    allModel1Ds.add_single(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                    allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
                   }
                 }
               }
@@ -28230,11 +28230,11 @@ class solarchvision_Model2Ds {
       float z = z0;
   
       if (people_or_trees == 1) {
-        this.add_single("PEOPLE", 0, x, y, z, 2.5);
+        this.create("PEOPLE", 0, x, y, z, 2.5);
       } else if (people_or_trees == 2) {
-        this.add_single("TREES", 0, x, y, z, 5 + random(10));
+        this.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.add_single(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
   }
@@ -28259,11 +28259,11 @@ class solarchvision_Model2Ds {
       z += z0;
   
       if (people_or_trees == 1) {
-        this.add_single("PEOPLE", 0, x, y, z, 2.5);
+        this.create("PEOPLE", 0, x, y, z, 2.5);
       } else if (people_or_trees == 2) {
-        this.add_single("TREES", 0, x, y, z, 5 + random(10));
+        this.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.add_single(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
   }
@@ -28291,16 +28291,16 @@ class solarchvision_Model2Ds {
       float z = z0;
   
       if (people_or_trees == 1) {
-        this.add_single("PEOPLE", 0, x, y, z, 2.5);
+        this.create("PEOPLE", 0, x, y, z, 2.5);
       } else if (people_or_trees == 2) {
-        this.add_single("TREES", 0, x, y, z, 5 + random(10));
+        this.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.add_single(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
   }  
   
-  void add_single (String t, int m, float x, float y, float z, float s) {
+  void create (String t, int m, float x, float y, float z, float s) {
   
     int n1 = this.num_files_PEOPLE;    
     int n2 = this.num_files_PEOPLE + this.num_files_TREES;
@@ -28346,7 +28346,7 @@ class solarchvision_Model2Ds {
     if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
   
-  void delete () {
+  void delete_all () {
   
     this.XYZS = new float [0][4]; 
   
@@ -29477,7 +29477,7 @@ class solarchvision_Model1Ds {
   
   
   
-  void add_single (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
+  void create (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
   
     float[] TempallModel1Ds_TrunkSize = {
       TrunkSize
@@ -29536,7 +29536,7 @@ class solarchvision_Model1Ds {
   }  
   
   
-  void delete () {
+  void delete_all () {
   
     this.XYZSR = new float [0][5]; 
   
@@ -29890,16 +29890,7 @@ class solarchvision_Solids {
 
 
 
-  void delete_all () {
-    this.DEF = new float [0][13]; 
-  
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Solids[q][0] = 0;
-      allGroups.Solids[q][1] = -1;
-    }
-  
-    allModel3Ds.deselect_Solids();
-  }    
+
 
   int create (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
   
@@ -29916,7 +29907,16 @@ class solarchvision_Solids {
   }
 
 
-
+  void delete_all () {
+    this.DEF = new float [0][13]; 
+  
+    for (int q = 0; q < allGroups.num; q++) {
+      allGroups.Solids[q][0] = 0;
+      allGroups.Solids[q][1] = -1;
+    }
+  
+    allModel3Ds.deselect_Solids();
+  }    
 
 
 
@@ -30872,7 +30872,7 @@ class solarchvision_Model3Ds {
         float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
   
         if (produce_another_variation == 1) randomSeed(millis());
-        allModel1Ds.add_single(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+        allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
       }
   
       // selecting new objetcs
@@ -30905,10 +30905,10 @@ class solarchvision_Model3Ds {
         int n = allModel2Ds.MAP[OBJ_NUM];
         if (allModel2Ds.isTree(n)) {
           if (produce_another_variation == 1) n = 0; // this makes it random
-          allModel2Ds.add_single("TREES", n, x, y, z, s);
+          allModel2Ds.create("TREES", n, x, y, z, s);
         } else {
           if (produce_another_variation == 1) n = 0; // this makes it random
-          allModel2Ds.add_single("PEOPLE", n, x, y, z, s);
+          allModel2Ds.create("PEOPLE", n, x, y, z, s);
         }
       }
   
@@ -31247,7 +31247,7 @@ class solarchvision_Model3Ds {
                 rot = random(360);
                 s = int(random(32767));
               }
-              allModel1Ds.add_single(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+              allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
             }
           }
   
@@ -31263,10 +31263,10 @@ class solarchvision_Model3Ds {
     
               if (allModel2Ds.isTree(n)) {
                 if (produce_another_variation == 1) n = 0; // this makes it random
-                allModel2Ds.add_single("TREES", n, x, y, z, s);
+                allModel2Ds.create("TREES", n, x, y, z, s);
               } else {
                 if (produce_another_variation == 1) n = 0; // this makes it random
-                allModel2Ds.add_single("PEOPLE", n, x, y, z, s);
+                allModel2Ds.create("PEOPLE", n, x, y, z, s);
               }
             }
           }
@@ -31399,7 +31399,7 @@ class solarchvision_Model3Ds {
                 rot = random(360);
                 s = int(random(32767));
               }
-              allModel1Ds.add_single(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+              allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
             }
           }
   
@@ -31415,10 +31415,10 @@ class solarchvision_Model3Ds {
   
               if (allModel2Ds.isTree(n)) {
                 if (produce_another_variation == 1) n = 0; // this makes it random
-                allModel2Ds.add_single("TREES", n, x, y, z, s);
+                allModel2Ds.create("TREES", n, x, y, z, s);
               } else {
                 if (produce_another_variation == 1) n = 0; // this makes it random
-                allModel2Ds.add_single("PEOPLE", n, x, y, z, s);
+                allModel2Ds.create("PEOPLE", n, x, y, z, s);
               }
             }
           }
@@ -31577,7 +31577,7 @@ class solarchvision_Model3Ds {
           float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
           float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
   
-          allModel1Ds.add_single(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+          allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
         }
       }  
   
@@ -31596,9 +31596,9 @@ class solarchvision_Model3Ds {
   
           int n = allModel2Ds.MAP[OBJ_NUM];
           if (allModel2Ds.isTree(n)) {
-            allModel2Ds.add_single("TREES", n, x, y, z, s);
+            allModel2Ds.create("TREES", n, x, y, z, s);
           } else {
-            allModel2Ds.add_single("PEOPLE", n, x, y, z, s);
+            allModel2Ds.create("PEOPLE", n, x, y, z, s);
           }
         }
       }
@@ -38379,7 +38379,7 @@ class solarchvision_Model3Ds {
       float y = float(parts[1]);
       float z = float(parts[2]);
   
-      allModel2Ds.add_single("PEOPLE", 0, x, y, z, 2.5);
+      allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
     }
   }
   
@@ -38505,17 +38505,7 @@ class solarchvision_Cameras {
   
   
   
-  void delete_all () {
-  
-    this.options = new float [0][9]; 
-  
-    this.Type = new int [0];
-  
-    this.add_first();
-  
-    allModel3Ds.deselect_Cameras();
-  }
-  
+
   void add_first () {
     
     this.create(WIN3D.position_X,
@@ -38547,7 +38537,18 @@ class solarchvision_Cameras {
     this.num += 1;
   }  
 
+
+  void delete_all () {
   
+    this.options = new float [0][9]; 
+  
+    this.Type = new int [0];
+  
+    this.add_first();
+  
+    allModel3Ds.deselect_Cameras();
+  }
+    
   
   
   
@@ -39043,19 +39044,6 @@ class solarchvision_Sections {
   }  
   
   
-  
-  void delete_all () {
-    this.f_options = new float [0][6]; 
-    this.i_options = new int   [0][3];
-  
-    this.SolidImpact = new PImage [0];
-  
-    this.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
-  
-    this.num = 0;
-  
-    allModel3Ds.deselect_Sections();
-  }    
 
   
   void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
@@ -39094,6 +39082,19 @@ class solarchvision_Sections {
   }  
   
   
+  
+  void delete_all () {
+    this.f_options = new float [0][6]; 
+    this.i_options = new int   [0][3];
+  
+    this.SolidImpact = new PImage [0];
+  
+    this.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+  
+    this.num = 0;
+  
+    allModel3Ds.deselect_Sections();
+  }    
   
   
   private float[][] Vertices;
@@ -44836,12 +44837,12 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Erase All Model1Ds")) {
-              allModel1Ds.delete();
+              allModel1Ds.delete_all();
               WIN3D.update = true;
             }      
     
             if (menu_option.equals("Erase All Model2Ds")) {
-              allModel2Ds.delete();
+              allModel2Ds.delete_all();
               WIN3D.update = true;
             }        
     
@@ -46117,7 +46118,7 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Person) {
     
                       randomSeed(millis());
-                      allModel2Ds.add_single("PEOPLE", User3D.create_Person_Type, x, y, z, 2.5);
+                      allModel2Ds.create("PEOPLE", User3D.create_Person_Type, x, y, z, 2.5);
                     }
     
                     if (CreateObject == CREATE.Plant) {
@@ -46125,7 +46126,7 @@ void mouseClicked () {
                       if (User3D.create_Plant_Type > 0) n = User3D.create_Plant_Type + allModel2Ds.num_files_PEOPLE;
     
                       randomSeed(millis());
-                      allModel2Ds.add_single("TREES", n, x, y, z, 2 * rz);
+                      allModel2Ds.create("TREES", n, x, y, z, 2 * rz);
                     }
                   }    
                   
@@ -46133,7 +46134,7 @@ void mouseClicked () {
                     if (CreateObject == CREATE.allModel1Ds) {
   
                       randomSeed(millis());
-                      allModel1Ds.add_single(User3D.create_Model1D_Type, x, y, z, 2 * rz, rot, User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                      allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 2 * rz, rot, User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
                     }        
                   }
 
@@ -56287,8 +56288,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
              if (low_case.equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
         else if (low_case.equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
         else if (low_case.equals("group3ds")) {allModel3Ds.delete_allGroups(); WIN3D.update = true;}
-        else if (low_case.equals("object2ds")) {allModel2Ds.delete(); WIN3D.update = true;}
-        else if (low_case.equals("model1ds")) {allModel1Ds.delete(); WIN3D.update = true;}
+        else if (low_case.equals("object2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
+        else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
@@ -56390,7 +56391,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (low_case.equals("z")) z = float(parameters[1]);
         }
       }
-      allModel2Ds.add_single(t, m, x, y, z, 2.5);
+      allModel2Ds.create(t, m, x, y, z, 2.5);
       WIN3D.update = true;  
       current_ObjectCategory = ObjectCategory.MODEL2D; 
       UI_BAR_b.update = true;
@@ -56425,7 +56426,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        allModel2Ds.add_single(t, m, x, y, z, h);
+        allModel2Ds.create(t, m, x, y, z, h);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL2D; 
         UI_BAR_b.update = true;
@@ -56473,7 +56474,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        allModel1Ds.add_single(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
+        allModel1Ds.create(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL1D; 
         UI_BAR_b.update = true;
