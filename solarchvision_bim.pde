@@ -3443,7 +3443,7 @@ class solarchvision_SHADE {
   
   float vertexU_Vertex_Solid (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
   
-    allSolidImpacts.Type = 0;
+    allSolidImpacts.complex = 0;
     float val = allSolidImpacts.get_Impact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
   
     float _u = 0.5 + 0.5 * (PAL_multiplier * val);
@@ -13184,6 +13184,12 @@ class solarchvision_SolidImpacts {
   
   private final static String CLASS_STAMP = "SolidImpacts";  
 
+  boolean displayPoints = false;
+  boolean displayLines = true;  
+  
+  int complex = 0; // INTERNAL! 0:simple 1:complex
+  
+
   float[] X = {
     0, 0, 0, 0
   }; 
@@ -13216,9 +13222,6 @@ class solarchvision_SolidImpacts {
   boolean displayImage = true;
   int sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
   
-
-
-  
   float positionStep = 1.25;
   
   
@@ -13232,16 +13235,13 @@ class solarchvision_SolidImpacts {
   float Grade = 0.02; //1.0; //0.1; //10.0; //contour lines   
   
   
-  boolean displayPoints = false;
-  boolean displayLines = true;  
-  
-  int Type = 0; // INTERNAL! 0:simple 1:complex
+
   
   float get_Impact_atXYZ (float x, float y, float z) {
   
     float v = 0;
   
-    if (this.Type == 0) {
+    if (this.complex == 0) {
       v = this.calculate_Impact_atXYZ_simple(x, y, z);
     } else {
       v = this.calculate_Impact_atXYZ_complex(x, y, z);
@@ -13360,7 +13360,7 @@ class solarchvision_SolidImpacts {
   }
   
   
-  float[] traceContour2D (int traceType, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
+  float[] traceContour2D (int tracecomplex, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
   
     float t_max = FLOAT_undefined;
     float t_min = FLOAT_undefined;
@@ -13460,19 +13460,19 @@ class solarchvision_SolidImpacts {
   
     float the_X = 0, the_Y = 0, the_Z = 0, the_T = 0;
   
-    if (traceType == 0) {
+    if (tracecomplex == 0) {
       the_X = x_equ;
       the_Y = y_equ;
       the_Z = z_equ;
       the_T = t_equ;
     }
-    if (traceType == -1) {
+    if (tracecomplex == -1) {
       the_X = x_min;
       the_Y = y_min;
       the_Z = z_min;
       the_T = t_min;
     }
-    if (traceType == 1) {
+    if (tracecomplex == 1) {
       the_X = x_max;
       the_Y = y_max;
       the_Z = z_max;
@@ -13671,11 +13671,11 @@ class solarchvision_SolidImpacts {
       float Section_U = this.U[this.sectionType];
       float Section_V = this.V[this.sectionType];
   
-      int Section_Type = this.sectionType;
+      int Section_complex = this.sectionType;
       int Section_RES1 = this.RES1;
       int Section_RES2 = this.RES2; 
   
-      float[][] ImageVertex = allSections.getCorners(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
+      float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
   
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -13689,7 +13689,7 @@ class solarchvision_SolidImpacts {
           float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
           float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
   
-          this.Type = 0;
+          this.complex = 0;
           float val = this.get_Impact_atXYZ(x, y, z);     
   
           float g =      funcs.roundTo(this.Grade * val, this.deltaStep) - 0.5 * this.deltaStep;
@@ -14266,11 +14266,11 @@ class solarchvision_SolidImpacts {
      float Section_U = this.U[this.sectionType];
      float Section_V = this.V[this.sectionType];
      
-     int Section_Type = this.sectionType;
+     int Section_complex = this.sectionType;
      int Section_RES1 = this.RES1;
      int Section_RES2 = this.RES2; 
      
-     float[][] ImageVertex = allSections.getCorners(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2); 
+     float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2); 
      
      float[] SectionCorner_A = ImageVertex[1];
      float[] SectionCorner_B = ImageVertex[2];
@@ -14302,12 +14302,12 @@ class solarchvision_SolidImpacts {
   
           for (int n = 0; n < num_steps; n++) {
   
-            this.Type = 0;
+            this.complex = 0;
             float inside_or_outside = this.get_Impact_atXYZ(test_point[0], test_point[1], test_point[2]);
   
             if (inside_or_outside > 0) {
   
-              this.Type = 1;
+              this.complex = 1;
               float val = this.get_Impact_atXYZ(test_point[0], test_point[1], test_point[2]);
   
   
