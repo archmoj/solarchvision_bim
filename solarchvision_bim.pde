@@ -15877,7 +15877,7 @@ class solarchvision_Selections {
     
     
   
-  void calculate_selection_BoundingBox () {
+  void calculate_BoundingBox () {
   
     int keep_selection_alignX = this.alignX;
     int keep_selection_alignY = this.alignY;
@@ -16937,7 +16937,7 @@ class solarchvision_Selections {
   
   
   
-  float softVertexSelectionFunction (float d_min) {
+  float softSelectionFunction (float d_min) {
   
     float v = 0;
   
@@ -17819,7 +17819,7 @@ class solarchvision_Selections {
   
   
   
-  void changeProperties_Selection (int p) {
+  void changeProperties (int p) {
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
   
@@ -18455,7 +18455,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
   
@@ -18504,7 +18504,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
   
@@ -18553,7 +18553,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
   
@@ -18614,7 +18614,7 @@ class solarchvision_Selections {
   
   
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -18662,7 +18662,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
@@ -18710,7 +18710,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
     
   
@@ -18778,7 +18778,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
   
@@ -18828,7 +18828,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
   
@@ -18878,7 +18878,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
@@ -18926,7 +18926,7 @@ class solarchvision_Selections {
   
       WIN3D.update = true;
   
-      this.calculate_selection_BoundingBox();
+      this.calculate_BoundingBox();
     }
   }
   
@@ -19980,7 +19980,7 @@ class solarchvision_Selections {
       this.deselect_Solids();
     }  
   
-    this.calculate_selection_BoundingBox();
+    this.calculate_BoundingBox();
   }
   
   void select_all () {
@@ -20055,7 +20055,7 @@ class solarchvision_Selections {
       }
     }  
   
-    this.calculate_selection_BoundingBox();
+    this.calculate_BoundingBox();
   }
   
   
@@ -20342,7 +20342,7 @@ class solarchvision_Selections {
       }
     }    
   
-    this.calculate_selection_BoundingBox();
+    this.calculate_BoundingBox();
   }  
 
 
@@ -21376,17 +21376,17 @@ void draw () {
 
 
         if (pre_Selection_alignX != userSelections.alignX) {    
-          userSelections.calculate_selection_BoundingBox();
+          userSelections.calculate_BoundingBox();
           WIN3D.update = true;
         }        
 
         if (pre_Selection_alignY != userSelections.alignY) {   
-          userSelections.calculate_selection_BoundingBox();
+          userSelections.calculate_BoundingBox();
           WIN3D.update = true;
         }      
 
         if (pre_Selection_alignZ != userSelections.alignZ) {        
-          userSelections.calculate_selection_BoundingBox();
+          userSelections.calculate_BoundingBox();
           WIN3D.update = true;
         }      
 
@@ -32308,7 +32308,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.GROUP;
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
     }
   }
   
@@ -32704,7 +32704,7 @@ class solarchvision_Model3Ds {
       
       
       
-      this.convert_allGroups_to_Vertices(); // finding vertices so that we could delete the isolated ones later  
+      this.convert_Groups_to_Vertices(); // finding vertices so that we could delete the isolated ones later  
   
       userSelections.Group_ids = sort(userSelections.Group_ids);
   
@@ -33164,7 +33164,7 @@ class solarchvision_Model3Ds {
     current_ObjectCategory = ObjectCategory.VERTEX; 
     UI_BAR_b.update = true;
   
-    userSelections.calculate_selection_BoundingBox();
+    userSelections.calculate_BoundingBox();
   }
   
   
@@ -33175,7 +33175,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Vertices();
+        this.convert_Groups_to_Vertices();
       }
   
       if (current_ObjectCategory == ObjectCategory.FACE) { 
@@ -33236,7 +33236,7 @@ class solarchvision_Model3Ds {
         }
       } 
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
     }
   }
   
@@ -33248,7 +33248,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Vertices();
+        this.convert_Groups_to_Vertices();
       }
   
       if (current_ObjectCategory == ObjectCategory.FACE) { 
@@ -33344,7 +33344,7 @@ class solarchvision_Model3Ds {
   
       userSelections.Vertex_ids = new int [0];
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
     }
   }
   
@@ -33356,7 +33356,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Vertices();
+        this.convert_Groups_to_Vertices();
       }
   
       if (current_ObjectCategory == ObjectCategory.FACE) { 
@@ -33449,7 +33449,7 @@ class solarchvision_Model3Ds {
   
       userSelections.Vertex_ids = new int [0];
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
     }
   }
   
@@ -33459,7 +33459,7 @@ class solarchvision_Model3Ds {
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) { 
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
       for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
   
@@ -33470,7 +33470,7 @@ class solarchvision_Model3Ds {
         allPoints.setZ(vNo, userSelections.BoundingBox[1][2]); // center
       } 
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
     }
   }
   
@@ -33482,7 +33482,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Vertices();
+        this.convert_Groups_to_Vertices();
       }
   
       if (current_ObjectCategory == ObjectCategory.FACE) { 
@@ -33525,7 +33525,7 @@ class solarchvision_Model3Ds {
   
       userSelections.Vertex_ids = new int [0];
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
     }
   }
   
@@ -33539,7 +33539,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -33548,7 +33548,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
@@ -33692,7 +33692,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -33706,7 +33706,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -33715,7 +33715,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -33889,7 +33889,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -33904,7 +33904,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -33913,7 +33913,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34066,7 +34066,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -34080,7 +34080,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -34089,7 +34089,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34237,7 +34237,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -34252,7 +34252,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -34261,7 +34261,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34431,7 +34431,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -34446,7 +34446,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -34455,7 +34455,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34602,7 +34602,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -34617,7 +34617,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -34626,7 +34626,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34756,7 +34756,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -34773,7 +34773,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -34782,7 +34782,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34914,7 +34914,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -34929,7 +34929,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -34938,7 +34938,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -34987,7 +34987,7 @@ class solarchvision_Model3Ds {
   
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -35002,7 +35002,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -35011,7 +35011,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
@@ -35118,7 +35118,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -35137,7 +35137,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -35146,7 +35146,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -35196,7 +35196,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -35210,7 +35210,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Faces();    
+        this.convert_Groups_to_Faces();    
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
       }
@@ -35219,7 +35219,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Face_ids = sort(userSelections.Face_ids);
   
-        this.convert_Faces_to_allGroups();    
+        this.convert_Faces_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -35338,7 +35338,7 @@ class solarchvision_Model3Ds {
   
       userSelections.Face_ids = new_selection_Face_ids;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -35352,7 +35352,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
   
-        this.convert_allGroups_to_Curves();    
+        this.convert_Groups_to_Curves();    
   
         userSelections.Curve_ids = sort(userSelections.Curve_ids);
       }
@@ -35361,7 +35361,7 @@ class solarchvision_Model3Ds {
   
         userSelections.Curve_ids = sort(userSelections.Curve_ids);
   
-        this.convert_Curves_to_allGroups();    
+        this.convert_Curves_to_Groups();    
   
         userSelections.Group_ids = sort(userSelections.Group_ids);
       }
@@ -35484,7 +35484,7 @@ class solarchvision_Model3Ds {
       current_ObjectCategory = ObjectCategory.FACE;
       UI_BAR_b.update = true;
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -35496,7 +35496,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Vertices();
+        this.convert_Groups_to_Vertices();
       }
   
       if (current_ObjectCategory == ObjectCategory.FACE) { 
@@ -35626,7 +35626,7 @@ class solarchvision_Model3Ds {
                             Vertex_offsetValues[o][2]);
       } 
   
-      userSelections.calculate_selection_BoundingBox();
+      userSelections.calculate_BoundingBox();
   
     }
   }
@@ -35641,7 +35641,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Faces();
+        this.convert_Groups_to_Faces();
       }
   
       if (current_ObjectCategory == ObjectCategory.VERTEX) { 
@@ -35689,7 +35689,7 @@ class solarchvision_Model3Ds {
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
-        this.convert_allGroups_to_Curves();
+        this.convert_Groups_to_Curves();
       }
   
       if (current_ObjectCategory == ObjectCategory.VERTEX) { 
@@ -35829,7 +35829,7 @@ class solarchvision_Model3Ds {
       }
     } 
   
-    userSelections.calculate_selection_BoundingBox();  
+    userSelections.calculate_BoundingBox();  
   }
   
 
@@ -35838,7 +35838,7 @@ class solarchvision_Model3Ds {
 
   
   
-  void convert_allModel1Ds_to_allGroups () {
+  void convert_Model1Ds_to_Groups () {
   
     userSelections.Group_ids = new int [0];
   
@@ -35869,7 +35869,7 @@ class solarchvision_Model3Ds {
   }
   
   
-  void convert_allModel2Ds_to_allGroups () {
+  void convert_Model2Ds_to_Groups () {
   
     userSelections.Group_ids = new int [0];
   
@@ -35900,7 +35900,7 @@ class solarchvision_Model3Ds {
   }
   
   
-  void convert_allSolids_to_allGroups () {
+  void convert_Solids_to_Groups () {
   
     userSelections.Group_ids = new int [0];
   
@@ -35932,7 +35932,7 @@ class solarchvision_Model3Ds {
     }
   }
   
-  void convert_Faces_to_allGroups () {
+  void convert_Faces_to_Groups () {
   
     userSelections.Group_ids = new int [0];
   
@@ -35965,7 +35965,7 @@ class solarchvision_Model3Ds {
     }
   }
   
-  void convert_Curves_to_allGroups () {
+  void convert_Curves_to_Groups () {
   
     userSelections.Group_ids = new int [0];
   
@@ -36000,7 +36000,7 @@ class solarchvision_Model3Ds {
   
   
   
-  void convert_Vertices_to_allGroups () {
+  void convert_Vertices_to_Groups () {
   
     userSelections.Group_ids = new int [0];
   
@@ -36137,7 +36137,7 @@ class solarchvision_Model3Ds {
   }
   
   
-  void convert_allGroups_to_allModel1Ds () {
+  void convert_Groups_to_Model1Ds () {
   
     userSelections.Model1D_ids = new int [0];
     
@@ -36166,7 +36166,7 @@ class solarchvision_Model3Ds {
   
   
   
-  void convert_allGroups_to_allModel2Ds () {
+  void convert_Groups_to_Model2Ds () {
   
     userSelections.Model2D_ids = new int [0];
   
@@ -36195,7 +36195,7 @@ class solarchvision_Model3Ds {
   
   
   
-  void convert_allGroups_to_allSolids () {
+  void convert_Groups_to_Solids () {
   
     userSelections.Solid_ids = new int [0];
   
@@ -36224,7 +36224,7 @@ class solarchvision_Model3Ds {
   
   
   
-  void convert_allGroups_to_Faces () {
+  void convert_Groups_to_Faces () {
   
     userSelections.Face_ids = new int [0];
   
@@ -36252,7 +36252,7 @@ class solarchvision_Model3Ds {
   }
   
   
-  void convert_allGroups_to_Curves () {
+  void convert_Groups_to_Curves () {
   
     userSelections.Curve_ids = new int [0];
   
@@ -36281,7 +36281,7 @@ class solarchvision_Model3Ds {
   
   
   
-  void convert_allGroups_to_Vertices () {
+  void convert_Groups_to_Vertices () {
   
     userSelections.Vertex_ids = new int [0];
   
@@ -36402,9 +36402,9 @@ class solarchvision_Model3Ds {
   
     int[] keep_selection_Vertex_ids = userSelections.Vertex_ids;
   
-    this.convert_Vertices_to_allGroups();
+    this.convert_Vertices_to_Groups();
   
-    this.convert_allGroups_to_Vertices();
+    this.convert_Groups_to_Vertices();
   
     userSelections.Vertex_softSelectionVertices = new int[userSelections.Vertex_ids.length]; 
     userSelections.Vertex_softSelectionValues = new float[userSelections.Vertex_ids.length];
@@ -36426,7 +36426,7 @@ class solarchvision_Model3Ds {
         }
       }
   
-      userSelections.Vertex_softSelectionValues[q] = userSelections.softVertexSelectionFunction(d_min);
+      userSelections.Vertex_softSelectionValues[q] = userSelections.softSelectionFunction(d_min);
     }
   
     userSelections.Vertex_softSelectionVertices = userSelections.Vertex_ids;
@@ -42151,7 +42151,7 @@ void mouseWheel (MouseEvent event) {
 
                   int p = int(Wheel_Value);
 
-                  userSelections.changeProperties_Selection(p);
+                  userSelections.changeProperties(p);
 
                   WIN3D.update = true;
                 }
@@ -42421,7 +42421,7 @@ void mouseReleased () {
 
                 userSelections.selectRect(corner1x, corner1y, corner2x, corner2y);
 
-                userSelections.calculate_selection_BoundingBox();
+                userSelections.calculate_BoundingBox();
 
                 userSelections.reset_selectedRefValues();  
 
@@ -42902,7 +42902,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
     current_ObjectCategory = ObjectCategory.GROUP;
 
-    userSelections.calculate_selection_BoundingBox();
+    userSelections.calculate_BoundingBox();
 
     WIN3D.update = true;
     
@@ -44156,7 +44156,7 @@ void mouseClicked () {
               WIN3D.update = true;
             }
             if (menu_option.equals("Use Selection ReferenceBox")) {
-              userSelections.calculate_selection_BoundingBox();
+              userSelections.calculate_BoundingBox();
               UI_BAR_b.hghlight("|pvt|");
               UI_BAR_b.update = true;
             }
@@ -44576,31 +44576,31 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }                 
             if (menu_option.equals("Vertex >> Group")) {
-              allModel3Ds.convert_Vertices_to_allGroups();
+              allModel3Ds.convert_Vertices_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Face >> Group")) {
-              allModel3Ds.convert_Faces_to_allGroups();
+              allModel3Ds.convert_Faces_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Face")) {
-              allModel3Ds.convert_allGroups_to_Faces();
+              allModel3Ds.convert_Groups_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Curve >> Group")) {
-              allModel3Ds.convert_Curves_to_allGroups();
+              allModel3Ds.convert_Curves_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Curve")) {
-              allModel3Ds.convert_allGroups_to_Curves();
+              allModel3Ds.convert_Groups_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.update = true;
               UI_BAR_b.update = true;
@@ -44618,7 +44618,7 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }               
             if (menu_option.equals("Group >> Vertex")) {
-              allModel3Ds.convert_allGroups_to_Vertices();
+              allModel3Ds.convert_Groups_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
               UI_BAR_b.update = true;
@@ -44636,37 +44636,37 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Solid >> Group")) {
-              allModel3Ds.convert_allSolids_to_allGroups();
+              allModel3Ds.convert_Solids_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Solid")) {
-              allModel3Ds.convert_allGroups_to_allSolids();
+              allModel3Ds.convert_Groups_to_Solids();
               current_ObjectCategory = ObjectCategory.SOLID;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }                
             if (menu_option.equals("Model2Ds >> Group")) {
-              allModel3Ds.convert_allModel2Ds_to_allGroups();
+              allModel3Ds.convert_Model2Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Model2Ds")) {
-              allModel3Ds.convert_allGroups_to_allModel2Ds();
+              allModel3Ds.convert_Groups_to_Model2Ds();
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Model1Ds >> Group")) {
-              allModel3Ds.convert_allModel1Ds_to_allGroups();
+              allModel3Ds.convert_Model1Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Model1Ds")) {
-              allModel3Ds.convert_allGroups_to_allModel1Ds();
+              allModel3Ds.convert_Groups_to_Model1Ds();
               current_ObjectCategory = ObjectCategory.MODEL1D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
@@ -45633,7 +45633,7 @@ void mouseClicked () {
   
                     userSelections.move_Selection(dx, dy, dz);
   
-                    userSelections.calculate_selection_BoundingBox();
+                    userSelections.calculate_BoundingBox();
                     WIN3D.update = true;
                   }
                 }   
@@ -46199,7 +46199,7 @@ void mouseClicked () {
                       userSelections.Face_ids = new int [1];
                       userSelections.Face_ids[0] = allFaces.nodes.length - 1;
     
-                      userSelections.calculate_selection_BoundingBox();
+                      userSelections.calculate_BoundingBox();
                     }
                   }      
           
@@ -46210,7 +46210,7 @@ void mouseClicked () {
                       userSelections.Curve_ids = new int [1];
                       userSelections.Curve_ids[0] = allCurves.nodes.length - 1;
     
-                      userSelections.calculate_selection_BoundingBox();
+                      userSelections.calculate_BoundingBox();
                     }
                   }        
                       
@@ -46492,7 +46492,7 @@ void mouseClicked () {
                             userSelections.Section_ids = concat(userSelections.Section_ids, newlyAddedSection);
                           }  
     
-                          userSelections.calculate_selection_BoundingBox();
+                          userSelections.calculate_BoundingBox();
                         }      
     
                         allSolidImpacts.X[allSolidImpacts.sectionType] = Section_X;
@@ -46531,7 +46531,7 @@ void mouseClicked () {
                       userSelections.Solid_ids = concat(userSelections.Solid_ids, newlyAddedSolid);
                     }  
   
-                    userSelections.calculate_selection_BoundingBox();
+                    userSelections.calculate_BoundingBox();
                   }   
   
   
@@ -46547,7 +46547,7 @@ void mouseClicked () {
                       userSelections.Camera_ids = concat(userSelections.Camera_ids, newlyAddedCamera);
                     }  
   
-                    userSelections.calculate_selection_BoundingBox();
+                    userSelections.calculate_BoundingBox();
                   }                   
   
   
@@ -46562,7 +46562,7 @@ void mouseClicked () {
                       userSelections.Group_ids = concat(userSelections.Group_ids, newlyAddedGroup);
                     }  
   
-                    userSelections.calculate_selection_BoundingBox();
+                    userSelections.calculate_BoundingBox();
                   }   
   
                   if (keep_number_of_allModel2Ds != allModel2Ds.num) { // if any allModel2Ds created during the process
@@ -46576,7 +46576,7 @@ void mouseClicked () {
                       userSelections.Model2D_ids = concat(userSelections.Model2D_ids, newlyAddedallModel2Ds);
                     }  
   
-                    userSelections.calculate_selection_BoundingBox();
+                    userSelections.calculate_BoundingBox();
                   }   
   
   
@@ -46591,7 +46591,7 @@ void mouseClicked () {
                       userSelections.Model1D_ids = concat(userSelections.Model1D_ids, newlyAddedallModel1Ds);
                     }  
   
-                    userSelections.calculate_selection_BoundingBox();
+                    userSelections.calculate_BoundingBox();
                   }
                   
           
@@ -57812,31 +57812,31 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }
   
   else if (Command_CAPITAL.equals("VERTEX>GROUP")) {
-    allModel3Ds.convert_Vertices_to_allGroups();
+    allModel3Ds.convert_Vertices_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("FACE>GROUP")) {
-    allModel3Ds.convert_Faces_to_allGroups();
+    allModel3Ds.convert_Faces_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
-    allModel3Ds.convert_allGroups_to_Faces();
+    allModel3Ds.convert_Groups_to_Faces();
     current_ObjectCategory = ObjectCategory.FACE;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }    
   else if (Command_CAPITAL.equals("CURVE>GROUP")) {
-    allModel3Ds.convert_Curves_to_allGroups();
+    allModel3Ds.convert_Curves_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>CURVE")) {
-    allModel3Ds.convert_allGroups_to_Curves();
+    allModel3Ds.convert_Groups_to_Curves();
     current_ObjectCategory = ObjectCategory.CURVE;
     WIN3D.update = true;
     UI_BAR_b.update = true;
@@ -57854,7 +57854,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     UI_BAR_b.update = true;
   }               
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
-    allModel3Ds.convert_allGroups_to_Vertices();
+    allModel3Ds.convert_Groups_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
     UI_BAR_b.update = true;
@@ -57872,37 +57872,37 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     UI_BAR_b.update = true;
   }    
   else if (Command_CAPITAL.equals("SOLID>GROUP")) {
-    allModel3Ds.convert_allSolids_to_allGroups();
+    allModel3Ds.convert_Solids_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>SOLID")) {
-    allModel3Ds.convert_allGroups_to_allSolids();
+    allModel3Ds.convert_Groups_to_Solids();
     current_ObjectCategory = ObjectCategory.SOLID;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }                
   else if (Command_CAPITAL.equals("2D>GROUP")) {
-    allModel3Ds.convert_allModel2Ds_to_allGroups();
+    allModel3Ds.convert_Model2Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>2D")) {
-    allModel3Ds.convert_allGroups_to_allModel2Ds();
+    allModel3Ds.convert_Groups_to_Model2Ds();
     current_ObjectCategory = ObjectCategory.MODEL2D;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("1D>GROUP")) {
-    allModel3Ds.convert_allModel1Ds_to_allGroups();
+    allModel3Ds.convert_Model1Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>1D")) {
-    allModel3Ds.convert_allGroups_to_allModel1Ds();
+    allModel3Ds.convert_Groups_to_Model1Ds();
     current_ObjectCategory = ObjectCategory.MODEL1D;
     WIN3D.update = true;
     UI_BAR_b.update = true;
