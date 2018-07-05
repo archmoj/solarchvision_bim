@@ -22934,7 +22934,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
       float z = cz + sz * float(parts[3]);
 
       int[] v = {
-        allModel3Ds.add_Vertex(x, y, z)
+        allPoints.create(x, y, z)
       };
 
       importVerticeNumber = concat(importVerticeNumber, v);
@@ -23106,7 +23106,7 @@ void SOLARCHVISION_delete_All () {
 
   allModel3Ds.delete_Faces();
   allModel3Ds.delete_Curves();
-  allModel3Ds.delete_Vertices();
+  allPoints.delete_all();
 
   allModel3Ds.delete_allSolids();
   allSections.delete_all();
@@ -26871,7 +26871,7 @@ class solarchvision_Land3D {
                   
                   if (target_window == TypeWindow.LandMesh) {
                     if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center
-                      allModel3Ds.add_Vertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                      allPoints.create(subFace[s][0], subFace[s][1], subFace[s][2]);
                     }
                   }
                   
@@ -27016,7 +27016,7 @@ class solarchvision_Land3D {
               
               int[] newFace = new int[this.num_columns - 1];
               for (int j = 0; j < newFace.length; j++) {
-                newFace[j] = allModel3Ds.add_Vertex(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
+                newFace[j] = allPoints.create(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
               }
               allModel3Ds.add_Face(newFace);
             }
@@ -30306,6 +30306,26 @@ class solarchvision_Points {
   } 
   
 
+  int create (float x, float y, float z) {
+  
+    float[][] newVertex = {
+      {
+        x, y, z
+      }
+    }; 
+  
+    allVertices = (float[][]) concat(allVertices, newVertex);
+  
+    return(this.getLength() - 1);
+  }
+  
+  
+  void delete_all () {
+  
+    allVertices = new float [0][3];
+  
+    allModel3Ds.deselect_Points();
+  }  
   
   
   void draw () {
@@ -30601,7 +30621,7 @@ class solarchvision_Model3Ds {
     int n = allFaces.nodes.length - 1;
     
     int[] newVertex = {
-      this.add_Vertex(x, y, z)
+      allPoints.create(x, y, z)
     }; 
       
     allFaces.nodes[n] = (int[]) concat(allFaces.nodes[n], newVertex);
@@ -30613,7 +30633,7 @@ class solarchvision_Model3Ds {
     int n = allCurves.nodes.length - 1;
     
     int[] newVertex = {
-      this.add_Vertex(x, y, z)
+      allPoints.create(x, y, z)
     }; 
       
     allCurves.nodes[n] = (int[]) concat(allCurves.nodes[n], newVertex);
@@ -30623,19 +30643,7 @@ class solarchvision_Model3Ds {
   
   
   
-  int add_Vertex (float x, float y, float z) {
-  
-    float[][] newVertex = {
-      {
-        x, y, z
-      }
-    }; 
-  
-    allVertices = (float[][]) concat(allVertices, newVertex);
-  
-    return(allPoints.getLength() - 1);
-  }
-  
+
   
   
   int add_Face (int[] f) {
@@ -30699,7 +30707,7 @@ class solarchvision_Model3Ds {
     int[] newCurve_nodes = new int[points.length];
    
     for (int i = 0; i < points.length; i++) {
-      newCurve_nodes[i] = this.add_Vertex(points[i][0], points[i][1], points[i][2]);
+      newCurve_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
     }
   
     this.add_Curve(newCurve_nodes);
@@ -30724,12 +30732,12 @@ class solarchvision_Model3Ds {
   
   
     int[] newCurve_nodes = {
-      this.add_Vertex(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
+      allPoints.create(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
     };
     for (int i = 1; i <= EndOfLoop; i++) {
       float t = i * AngleStep + rot;
       int[] f = {
-        this.add_Vertex(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
+        allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
       };
       newCurve_nodes = concat(newCurve_nodes, f);
     } 
@@ -30957,7 +30965,7 @@ class solarchvision_Model3Ds {
               float z = allPoints.getZ(vNo);
   
               int[] newVertexAdded = {
-                this.add_Vertex(x, y, z)
+                allPoints.create(x, y, z)
               };
               PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
   
@@ -31036,7 +31044,7 @@ class solarchvision_Model3Ds {
               float z = allPoints.getZ(vNo);
   
               int[] newVertexAdded = {
-                this.add_Vertex(x, y, z)
+                allPoints.create(x, y, z)
               };
               PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
   
@@ -31321,7 +31329,7 @@ class solarchvision_Model3Ds {
                   float z = allPoints.getZ(vNo);
   
                   int[] newVertexAdded = {
-                    this.add_Vertex(x, y, z)
+                    allPoints.create(x, y, z)
                   };
                   PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
   
@@ -31471,7 +31479,7 @@ class solarchvision_Model3Ds {
                   float z = allPoints.getZ(vNo);
   
                   int[] newVertexAdded = {
-                    this.add_Vertex(x, y, z)
+                    allPoints.create(x, y, z)
                   };
                   PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
   
@@ -31661,7 +31669,7 @@ class solarchvision_Model3Ds {
                 float z = allPoints.getZ(vNo);
   
                 int[] newVertexAdded = {
-                  this.add_Vertex(x, y, z)
+                  allPoints.create(x, y, z)
                 };
                 PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
   
@@ -31725,7 +31733,7 @@ class solarchvision_Model3Ds {
                 float z = allPoints.getZ(vNo);
   
                 int[] newVertexAdded = {
-                  this.add_Vertex(x, y, z)
+                  allPoints.create(x, y, z)
                 };
                 PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
   
@@ -32964,7 +32972,7 @@ class solarchvision_Model3Ds {
   
             if (allFaces.nodes[i][j] == vNo) { 
   
-              allFaces.nodes[i][j] = this.add_Vertex(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+              allFaces.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
             }
           }
         }
@@ -32974,7 +32982,7 @@ class solarchvision_Model3Ds {
   
             if (allCurves.nodes[i][j] == vNo) { 
   
-              allCurves.nodes[i][j] = this.add_Vertex(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+              allCurves.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
             }
           }
         }        
@@ -33088,7 +33096,7 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                new_Vertex_ids[s] = this.add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
+                new_Vertex_ids[s] = allPoints.create(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
               } 
   
               current_Material = allFaces.getMaterial(f);
@@ -33265,9 +33273,9 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                new_A_EdgeVertex_ids[s] = this.add_Vertex(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
-                new_B_EdgeVertex_ids[s] = this.add_Vertex(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
-                new_CenterVertex_ids[s] = this.add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+                new_A_EdgeVertex_ids[s] = allPoints.create(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
+                new_B_EdgeVertex_ids[s] = allPoints.create(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
+                new_CenterVertex_ids[s] = allPoints.create(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
               }               
   
   
@@ -33458,8 +33466,8 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
-                new_CenterVertex_ids[s] = this.add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+                new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
+                new_CenterVertex_ids[s] = allPoints.create(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
               } 
   
   
@@ -33630,7 +33638,7 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+                new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
               } 
   
   
@@ -33815,7 +33823,7 @@ class solarchvision_Model3Ds {
                     } else if ((i == 0) && (j == User3D.modify_TessellateRows)) {
                       new_EdgeVertex_ids[s] = allFaces.nodes[f][3];
                     } else {
-                      new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+                      new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
                     }
                   }
                 }
@@ -33995,11 +34003,11 @@ class solarchvision_Model3Ds {
   
               for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-                new_EdgeVertex_ids[s] = this.add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+                new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
               } 
   
               int new_CenterVertex_number = 0; // at the center
-              new_CenterVertex_number = this.add_Vertex(G_face[0], G_face[1], G_face[2]); 
+              new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); 
   
   
               current_Material = allFaces.getMaterial(f);
@@ -34153,7 +34161,7 @@ class solarchvision_Model3Ds {
   
   
               int new_CenterVertex_number = 0; // at the center
-              new_CenterVertex_number = this.add_Vertex(G_face[0], G_face[1], G_face[2]); 
+              new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); 
   
   
               current_Material = allFaces.getMaterial(f);
@@ -34310,7 +34318,7 @@ class solarchvision_Model3Ds {
   
   
                 int new_CenterVertex_number = 0; // at the center
-                new_CenterVertex_number = this.add_Vertex(G_face[0], G_face[1], G_face[2]); 
+                new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); 
   
   
                 current_Material = allFaces.getMaterial(f);
@@ -34737,8 +34745,8 @@ class solarchvision_Model3Ds {
   
             for (int s = 0; s < allFaces.nodes[f].length; s++) {
   
-              base_Vertex_ids[s] = this.add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
-              top_Vertex_ids[s] = this.add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
+              base_Vertex_ids[s] = allPoints.create(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
+              top_Vertex_ids[s] = allPoints.create(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
             }        
   
             for (int s = 0; s < allFaces.nodes[f].length; s++) {
@@ -34879,8 +34887,8 @@ class solarchvision_Model3Ds {
   
             for (int s = 0; s < allCurves.nodes[f].length; s++) {
   
-              base_Vertex_ids[s] = this.add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
-              top_Vertex_ids[s] = this.add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
+              base_Vertex_ids[s] = allPoints.create(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
+              top_Vertex_ids[s] = allPoints.create(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
             }        
   
             for (int s = 0; s < allCurves.nodes[f].length; s++) {
@@ -35290,6 +35298,11 @@ class solarchvision_Model3Ds {
     userSelections.calculate_selection_BoundingBox();  
   }
   
+
+
+  void deselect_Points () {
+    userSelections.Vertex_ids = new int [0];
+  }
   
   void deselect_Cameras () {
     userSelections.Camera_ids = new int [0];
@@ -35313,8 +35326,6 @@ class solarchvision_Model3Ds {
       this.deselect_Cameras();
     }  
   
-  
-  
     if ((current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.MODEL2D) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || (current_ObjectCategory == ObjectCategory.SOLID)) {  
   
       userSelections.Model1D_ids = new int [0];
@@ -35325,7 +35336,7 @@ class solarchvision_Model3Ds {
   
       userSelections.Face_ids = new int [0];
   
-      userSelections.Vertex_ids = new int [0];
+      this.deselect_Points();
     
       userSelections.Curve_ids = new int [0];
   
@@ -36351,7 +36362,7 @@ class solarchvision_Model3Ds {
       int[] v = new int [6];
     
       for (int i = 0; i < 6; i++) {
-        v[i] = this.add_Vertex(X_[i], Y_[i], Z_[i]);
+        v[i] = allPoints.create(X_[i], Y_[i], Z_[i]);
       } 
     
       if (m == -1) current_Material = 0;
@@ -36475,18 +36486,18 @@ class solarchvision_Model3Ds {
         vz[i] = vz_rot;
       }  
     
-      int b1 = this.add_Vertex(vx[0], vy[0], vz[0]);
-      int b2 = this.add_Vertex(vx[1], vy[1], vz[1]);
-      int b3 = this.add_Vertex(vx[2], vy[2], vz[2]);
-      int b4 = this.add_Vertex(vx[3], vy[3], vz[3]);
+      int b1 = allPoints.create(vx[0], vy[0], vz[0]);
+      int b2 = allPoints.create(vx[1], vy[1], vz[1]);
+      int b3 = allPoints.create(vx[2], vy[2], vz[2]);
+      int b4 = allPoints.create(vx[3], vy[3], vz[3]);
     
-      int t1 = this.add_Vertex(vx[4], vy[4], vz[4]);
-      int t2 = this.add_Vertex(vx[5], vy[5], vz[5]);
-      int t3 = this.add_Vertex(vx[6], vy[6], vz[6]);
-      int t4 = this.add_Vertex(vx[7], vy[7], vz[7]);
+      int t1 = allPoints.create(vx[4], vy[4], vz[4]);
+      int t2 = allPoints.create(vx[5], vy[5], vz[5]);
+      int t3 = allPoints.create(vx[6], vy[6], vz[6]);
+      int t4 = allPoints.create(vx[7], vy[7], vz[7]);
     
-      int m1 = this.add_Vertex(vx[8], vy[8], vz[8]);
-      int m2 = this.add_Vertex(vx[9], vy[9], vz[9]);
+      int m1 = allPoints.create(vx[8], vy[8], vz[8]);
+      int m2 = allPoints.create(vx[9], vy[9], vz[9]);
     
     
       if (m == -1) current_Material = 0;
@@ -36607,18 +36618,18 @@ class solarchvision_Model3Ds {
         vz[i] = vz_rot;
       }  
     
-      int b1 = this.add_Vertex(vx[0], vy[0], vz[0]);
-      int b2 = this.add_Vertex(vx[1], vy[1], vz[1]);
-      int b3 = this.add_Vertex(vx[2], vy[2], vz[2]);
-      int b4 = this.add_Vertex(vx[3], vy[3], vz[3]);
+      int b1 = allPoints.create(vx[0], vy[0], vz[0]);
+      int b2 = allPoints.create(vx[1], vy[1], vz[1]);
+      int b3 = allPoints.create(vx[2], vy[2], vz[2]);
+      int b4 = allPoints.create(vx[3], vy[3], vz[3]);
     
-      int t1 = this.add_Vertex(vx[4], vy[4], vz[4]);
-      int t2 = this.add_Vertex(vx[5], vy[5], vz[5]);
-      int t3 = this.add_Vertex(vx[6], vy[6], vz[6]);
-      int t4 = this.add_Vertex(vx[7], vy[7], vz[7]);
+      int t1 = allPoints.create(vx[4], vy[4], vz[4]);
+      int t2 = allPoints.create(vx[5], vy[5], vz[5]);
+      int t3 = allPoints.create(vx[6], vy[6], vz[6]);
+      int t4 = allPoints.create(vx[7], vy[7], vz[7]);
     
-      int m1 = this.add_Vertex(vx[8], vy[8], vz[8]);
-      int m2 = this.add_Vertex(vx[9], vy[9], vz[9]);
+      int m1 = allPoints.create(vx[8], vy[8], vz[8]);
+      int m2 = allPoints.create(vx[9], vy[9], vz[9]);
     
     
       if (m == -1) current_Material = 0;
@@ -36707,15 +36718,15 @@ class solarchvision_Model3Ds {
     
       float teta = rot * PI / 180.0;
     
-      int t1 = this.add_Vertex(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z + rz);
-      int t2 = this.add_Vertex(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z + rz);
-      int t3 = this.add_Vertex(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z + rz);
-      int t4 = this.add_Vertex(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z + rz);
+      int t1 = allPoints.create(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z + rz);
+      int t2 = allPoints.create(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z + rz);
+      int t3 = allPoints.create(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z + rz);
+      int t4 = allPoints.create(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z + rz);
     
-      int b1 = this.add_Vertex(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
-      int b2 = this.add_Vertex(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
-      int b3 = this.add_Vertex(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
-      int b4 = this.add_Vertex(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
+      int b1 = allPoints.create(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
+      int b2 = allPoints.create(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
+      int b3 = allPoints.create(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
+      int b4 = allPoints.create(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
     
       if (m == -1) current_Material = 0;
       else current_Material = m;
@@ -36779,15 +36790,15 @@ class solarchvision_Model3Ds {
       current_Weight = wgt;
       current_Closed = clz;
     
-      int t1 = this.add_Vertex(x2, y2, z2);
-      int t2 = this.add_Vertex(x1, y2, z2);
-      int t3 = this.add_Vertex(x1, y1, z2);
-      int t4 = this.add_Vertex(x2, y1, z2);
+      int t1 = allPoints.create(x2, y2, z2);
+      int t2 = allPoints.create(x1, y2, z2);
+      int t3 = allPoints.create(x1, y1, z2);
+      int t4 = allPoints.create(x2, y1, z2);
     
-      int b1 = this.add_Vertex(x2, y2, z1);
-      int b2 = this.add_Vertex(x1, y2, z1);
-      int b3 = this.add_Vertex(x1, y1, z1);
-      int b4 = this.add_Vertex(x2, y1, z1);
+      int b1 = allPoints.create(x2, y2, z1);
+      int b2 = allPoints.create(x1, y2, z1);
+      int b3 = allPoints.create(x1, y1, z1);
+      int b4 = allPoints.create(x2, y1, z1);
     
       if (m == -1) current_Material = 0;
       else current_Material = m;
@@ -36874,10 +36885,10 @@ class solarchvision_Model3Ds {
       float y4 = wy + y0 + ry;
       float z4 = wz + z0;
     
-      int v1 = this.add_Vertex(x1, y1, z1);
-      int v2 = this.add_Vertex(x2, y2, z2);
-      int v3 = this.add_Vertex(x3, y3, z3);
-      int v4 = this.add_Vertex(x4, y4, z4);
+      int v1 = allPoints.create(x1, y1, z1);
+      int v2 = allPoints.create(x2, y2, z2);
+      int v3 = allPoints.create(x3, y3, z3);
+      int v4 = allPoints.create(x4, y4, z4);
     
       {
         int[] newFace_nodes = {
@@ -36920,10 +36931,10 @@ class solarchvision_Model3Ds {
       float y4 = y0 + dy;
       float z4 = z0 - 0.5 * h;
     
-      int v1 = this.add_Vertex(x1, y1, z1);
-      int v2 = this.add_Vertex(x2, y2, z2);
-      int v3 = this.add_Vertex(x3, y3, z3);
-      int v4 = this.add_Vertex(x4, y4, z4);
+      int v1 = allPoints.create(x1, y1, z1);
+      int v2 = allPoints.create(x2, y2, z2);
+      int v3 = allPoints.create(x3, y3, z3);
+      int v4 = allPoints.create(x4, y4, z4);
     
       {
         int[] newFace_nodes = {
@@ -36967,10 +36978,10 @@ class solarchvision_Model3Ds {
         z4 = z3;
       }  
     
-      int v1 = this.add_Vertex(x1, y1, z1);
-      int v2 = this.add_Vertex(x2, y2, z2);
-      int v3 = this.add_Vertex(x3, y3, z3);
-      int v4 = this.add_Vertex(x4, y4, z4);
+      int v1 = allPoints.create(x1, y1, z1);
+      int v2 = allPoints.create(x2, y2, z2);
+      int v3 = allPoints.create(x3, y3, z3);
+      int v4 = allPoints.create(x4, y4, z4);
     
     
       {
@@ -36996,9 +37007,9 @@ class solarchvision_Model3Ds {
           current_Weight = wgt;
           current_Closed = clz;
         
-          int v1 = this.add_Vertex(x1, y1, z1);
-          int v2 = this.add_Vertex(x2, y2, z2);
-          int v3 = this.add_Vertex(x3, y3, z3);
+          int v1 = allPoints.create(x1, y1, z1);
+          int v2 = allPoints.create(x2, y2, z2);
+          int v3 = allPoints.create(x3, y3, z3);
         
           {
             int[] newFace_nodes = {
@@ -37041,10 +37052,10 @@ class solarchvision_Model3Ds {
       current_Weight = wgt;  
       current_Closed = clz;
     
-      int v1 = this.add_Vertex(x1, y1, z1);
-      int v2 = this.add_Vertex(x2, y2, z2);
-      int v3 = this.add_Vertex(x3, y3, z3);
-      int v4 = this.add_Vertex(x4, y4, z4);
+      int v1 = allPoints.create(x1, y1, z1);
+      int v2 = allPoints.create(x2, y2, z2);
+      int v3 = allPoints.create(x3, y3, z3);
+      int v4 = allPoints.create(x4, y4, z4);
     
       {
         int[] newFace_nodes = {
@@ -37090,11 +37101,11 @@ class solarchvision_Model3Ds {
       current_Weight = wgt;
       current_Closed = clz;
     
-      int v1 = this.add_Vertex(x1, y1, z1);
-      int v2 = this.add_Vertex(x2, y2, z2);
-      int v3 = this.add_Vertex(x3, y3, z3);
-      int v4 = this.add_Vertex(x4, y4, z4);
-      int v5 = this.add_Vertex(x5, y5, z5);
+      int v1 = allPoints.create(x1, y1, z1);
+      int v2 = allPoints.create(x2, y2, z2);
+      int v3 = allPoints.create(x3, y3, z3);
+      int v4 = allPoints.create(x4, y4, z4);
+      int v5 = allPoints.create(x5, y5, z5);
     
       {
         int[] newFace_nodes = {
@@ -37142,12 +37153,12 @@ class solarchvision_Model3Ds {
       current_Weight = wgt;
       current_Closed = clz;
     
-      int v1 = this.add_Vertex(x1, y1, z1);
-      int v2 = this.add_Vertex(x2, y2, z2);
-      int v3 = this.add_Vertex(x3, y3, z3);
-      int v4 = this.add_Vertex(x4, y4, z4);
-      int v5 = this.add_Vertex(x5, y5, z5);
-      int v6 = this.add_Vertex(x6, y6, z6);
+      int v1 = allPoints.create(x1, y1, z1);
+      int v2 = allPoints.create(x2, y2, z2);
+      int v3 = allPoints.create(x3, y3, z3);
+      int v4 = allPoints.create(x4, y4, z4);
+      int v5 = allPoints.create(x5, y5, z5);
+      int v6 = allPoints.create(x6, y6, z6);
     
       {
         int[] newFace_nodes = {
@@ -37173,12 +37184,12 @@ class solarchvision_Model3Ds {
       current_Closed = clz;
     
       int[] newFace_nodes = {
-        this.add_Vertex(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h)
+        allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h)
       };
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n);
         int[] f = {
-          this.add_Vertex(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
+          allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
         };
         newFace_nodes = concat(newFace_nodes, f);
       } 
@@ -37201,12 +37212,12 @@ class solarchvision_Model3Ds {
       current_Closed = clz;
     
       int[] newFace_nodes = {
-        this.add_Vertex(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
+        allPoints.create(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
       };
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n) + rot;
         int[] f = {
-          this.add_Vertex(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
+          allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
         };
         newFace_nodes = concat(newFace_nodes, f);
       } 
@@ -37231,8 +37242,8 @@ class solarchvision_Model3Ds {
       int[] vT = new int [n];
       int[] vB = new int [n];
     
-      vT[0] = this.add_Vertex(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz + 0.5 * h);
-      vB[0] = this.add_Vertex(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h);
+      vT[0] = allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz + 0.5 * h);
+      vB[0] = allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h);
     
       int[] newFace_nodesT = {
         vT[0]
@@ -37243,8 +37254,8 @@ class solarchvision_Model3Ds {
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n);
     
-        vT[i] = this.add_Vertex(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + 0.5 * h);
-        vB[i] = this.add_Vertex(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz - 0.5 * h);
+        vT[i] = allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + 0.5 * h);
+        vB[i] = allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz - 0.5 * h);
         int[] fT = {
           vT[i]
         };
@@ -37295,8 +37306,8 @@ class solarchvision_Model3Ds {
       int[] vT = new int [6];
       int[] vB = new int [6];
     
-      vT[0] = this.add_Vertex(cx, cy, cz + r);
-      vB[0] = this.add_Vertex(cx, cy, cz - r);
+      vT[0] = allPoints.create(cx, cy, cz + r);
+      vB[0] = allPoints.create(cx, cy, cz - r);
     
       for (int i = 1; i <= 5; i++) {
         float t = i * 72;
@@ -37304,8 +37315,8 @@ class solarchvision_Model3Ds {
         float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
         float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
     
-        vT[i] = this.add_Vertex(cx + R_in * funcs.cos_ang(t + rot), cy + R_in * funcs.sin_ang(t + rot), cz + H_in);
-        vB[i] = this.add_Vertex(cx + R_in * funcs.cos_ang(t + 36 + rot), cy + R_in * funcs.sin_ang(t + 36 + rot), cz - H_in);
+        vT[i] = allPoints.create(cx + R_in * funcs.cos_ang(t + rot), cy + R_in * funcs.sin_ang(t + rot), cz + H_in);
+        vB[i] = allPoints.create(cx + R_in * funcs.cos_ang(t + 36 + rot), cy + R_in * funcs.sin_ang(t + 36 + rot), cz - H_in);
       } 
     
     
@@ -37389,13 +37400,13 @@ class solarchvision_Model3Ds {
         };
     
         G = funcs.vec3_unit(funcs.centroid(the_points));
-        M = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+        M = allPoints.create(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
         G[0] = (allPoints.getX(C) - cx) + (allPoints.getX(D) - cx) - (allPoints.getX(M) - cx);
         G[1] = (allPoints.getY(C) - cy) + (allPoints.getY(D) - cy) - (allPoints.getY(M) - cy);
         G[2] = (allPoints.getZ(C) - cz) + (allPoints.getZ(D) - cz) - (allPoints.getZ(M) - cz);
         G = funcs.vec3_unit(G);
-        MM = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+        MM = allPoints.create(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }   
     
     
@@ -37413,14 +37424,14 @@ class solarchvision_Model3Ds {
         };
     
         G = funcs.vec3_unit(funcs.centroid(the_points));
-        N = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+        N = allPoints.create(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
     
         G[0] = (allPoints.getX(A) - cx) + (allPoints.getX(B) - cx) - (allPoints.getX(N) - cx);
         G[1] = (allPoints.getY(A) - cy) + (allPoints.getY(B) - cy) - (allPoints.getY(N) - cy);
         G[2] = (allPoints.getZ(A) - cz) + (allPoints.getZ(B) - cz) - (allPoints.getZ(N) - cz);
         G = funcs.vec3_unit(G);    
-        NN = this.add_Vertex(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+        NN = allPoints.create(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
       }
     
     
@@ -37584,7 +37595,7 @@ class solarchvision_Model3Ds {
           z = z_rot;
   
           int[] f = {
-            this.add_Vertex(x, y, z)
+            allPoints.create(x, y, z)
           };
           newFace_nodes = concat(newFace_nodes, f);
         }
@@ -37991,7 +38002,7 @@ class solarchvision_Model3Ds {
         float y = x0 * funcs.sin_ang(t) + y0 * funcs.cos_ang(t);
         float z = z0;
   
-        new_Vertex_ids[j] = this.add_Vertex(x + cx, y + cy, z + cz);
+        new_Vertex_ids[j] = allPoints.create(x + cx, y + cy, z + cz);
       }
   
       if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));  
@@ -38138,12 +38149,7 @@ class solarchvision_Model3Ds {
     this.deselect_All();
   }
   
-  void delete_Vertices () {
-  
-    allVertices = new float [0][3];
-  
-    this.deselect_All();
-  }
+
   
   void delete_allGroups () {
     
@@ -46137,7 +46143,7 @@ void mouseClicked () {
 
                   if (current_ObjectCategory == ObjectCategory.VERTEX) { // working with vertices
                     if (CreateObject == CREATE.Vertex) {
-                      allModel3Ds.add_Vertex(x, y, z);
+                      allPoints.create(x, y, z);
                       
                     }
                   }    
