@@ -12779,6 +12779,131 @@ class solarchvision_Curves {
     this.options[n][5] = close;
   }       
   
+
+
+
+
+
+
+  void beginNewCurve () {
+  
+    int[] newCurve_nodes = {};    
+    
+    this.create(newCurve_nodes);
+    
+  }
+  
+
+  
+  void add_VertexToLastCurve (float x, float y, float z) {
+  
+    int n = this.nodes.length - 1;
+    
+    int[] newVertex = {
+      allPoints.create(x, y, z)
+    }; 
+      
+    this.nodes[n] = (int[]) concat(this.nodes[n], newVertex);
+  
+  }
+
+  
+
+  
+  int create (int[] f) {
+  
+    {
+  
+      int[][] newCurve_options = {
+        {
+          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
+        }
+      }; 
+  
+      this.options =  (int[][]) concat(this.options, newCurve_options);
+  
+      int[][] newCurve_nodes = {
+        f
+      }; 
+  
+      this.nodes = (int[][]) concat(this.nodes, newCurve_nodes);
+    }
+  
+    if (allGroups.num > 0) allGroups.Curves[allGroups.num - 1][1] = this.nodes.length - 1;
+  
+    return(this.nodes.length - 1);
+  }
+
+
+  void add_Spline (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
+    
+    current_Material = m;
+    current_Tessellation = tes;
+    current_Layer = lyr;
+    current_Visibility = vsb;
+    current_Weight = wgt;  
+    current_Closed = clz;
+  
+    int[] newCurve_nodes = new int[points.length];
+   
+    for (int i = 0; i < points.length; i++) {
+      newCurve_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
+    }
+  
+    this.create(newCurve_nodes);
+  }
+  
+  
+  void add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot, float TotalAngle) {
+  
+    float AngleStep = TotalAngle / float(n);
+    int EndOfLoop = n;
+    if (TotalAngle % 360 == 0) {
+      EndOfLoop -= 1;
+      clz = 1; // for right closing of a circle 
+    }
+    
+    current_Material = m;
+    current_Tessellation = tes;
+    current_Layer = lyr;
+    current_Visibility = vsb;
+    current_Weight = wgt;
+    current_Closed = clz;
+  
+  
+    int[] newCurve_nodes = {
+      allPoints.create(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
+    };
+    for (int i = 1; i <= EndOfLoop; i++) {
+      float t = i * AngleStep + rot;
+      int[] f = {
+        allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
+      };
+      newCurve_nodes = concat(newCurve_nodes, f);
+    } 
+  
+    this.create(newCurve_nodes);
+  }
+
+
+  void delete_all () {
+  
+    this.nodes = new int [0][3];
+  
+    this.options = new int [0][6];
+  
+    for (int q = 0; q < allGroups.num; q++) {
+      allGroups.Curves[q][0] = 0;
+      allGroups.Curves[q][1] = -1;
+    }  
+  
+    allModel3Ds.deselect_Curves();
+  }
+  
+
+
+
+
   
   
   void draw (int target_window) {
@@ -23169,8 +23294,9 @@ void SOLARCHVISION_delete_All () {
   allModel1Ds.delete_all();
   allModel2Ds.delete_all();
 
+  allCurves.delete_all();
   allFaces.delete_all();
-  allModel3Ds.delete_Curves();
+  
   allPoints.delete_all();
 
   allSolids.delete_all();
@@ -30701,105 +30827,7 @@ class solarchvision_Model3Ds {
   
   private final static String CLASS_STAMP = "Model3Ds";
   
-  void beginNewCurve () {
-  
-    int[] newCurve_nodes = {};    
-    
-    this.add_Curve(newCurve_nodes);
-    
-  }
-  
 
-  
-  void add_VertexToLastCurve (float x, float y, float z) {
-  
-    int n = allCurves.nodes.length - 1;
-    
-    int[] newVertex = {
-      allPoints.create(x, y, z)
-    }; 
-      
-    allCurves.nodes[n] = (int[]) concat(allCurves.nodes[n], newVertex);
-  
-  }
-
-  
-
-  
-  int add_Curve (int[] f) {
-  
-    {
-  
-      int[][] newCurve_options = {
-        {
-          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-        }
-      }; 
-  
-      allCurves.options =  (int[][]) concat(allCurves.options, newCurve_options);
-  
-      int[][] newCurve_nodes = {
-        f
-      }; 
-  
-      allCurves.nodes = (int[][]) concat(allCurves.nodes, newCurve_nodes);
-    }
-  
-    if (allGroups.num > 0) allGroups.Curves[allGroups.num - 1][1] = allCurves.nodes.length - 1;
-  
-    return(allCurves.nodes.length - 1);
-  }
-
-
-  void add_Spline (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
-    
-    current_Material = m;
-    current_Tessellation = tes;
-    current_Layer = lyr;
-    current_Visibility = vsb;
-    current_Weight = wgt;  
-    current_Closed = clz;
-  
-    int[] newCurve_nodes = new int[points.length];
-   
-    for (int i = 0; i < points.length; i++) {
-      newCurve_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
-    }
-  
-    this.add_Curve(newCurve_nodes);
-  }
-  
-  
-  void add_Arc (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot, float TotalAngle) {
-  
-    float AngleStep = TotalAngle / float(n);
-    int EndOfLoop = n;
-    if (TotalAngle % 360 == 0) {
-      EndOfLoop -= 1;
-      clz = 1; // for right closing of a circle 
-    }
-    
-    current_Material = m;
-    current_Tessellation = tes;
-    current_Layer = lyr;
-    current_Visibility = vsb;
-    current_Weight = wgt;
-    current_Closed = clz;
-  
-  
-    int[] newCurve_nodes = {
-      allPoints.create(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
-    };
-    for (int i = 1; i <= EndOfLoop; i++) {
-      float t = i * AngleStep + rot;
-      int[] f = {
-        allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
-      };
-      newCurve_nodes = concat(newCurve_nodes, f);
-    } 
-  
-    this.add_Curve(newCurve_nodes);
-  }
   
  
   int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
@@ -31093,7 +31121,7 @@ class solarchvision_Model3Ds {
           current_Weight = allCurves.getWeight(f);
           current_Closed = allCurves.getClose(f);
   
-          this.add_Curve(newCurve_nodes);
+          allCurves.create(newCurve_nodes);
         }
       }
   
@@ -31526,7 +31554,7 @@ class solarchvision_Model3Ds {
               current_Weight = allCurves.getWeight(f);
               current_Closed = allCurves.getClose(f);
   
-              this.add_Curve(newCurve_nodes);
+              allCurves.create(newCurve_nodes);
             }
           }
         }        
@@ -31780,7 +31808,7 @@ class solarchvision_Model3Ds {
             current_Weight = allCurves.getWeight(f);
             current_Closed = allCurves.getClose(f);          
   
-            this.add_Curve(newCurve_nodes);
+            allCurves.create(newCurve_nodes);
           }
         }
       }
@@ -35333,6 +35361,10 @@ class solarchvision_Model3Ds {
   void deselect_Faces () {
     userSelections.Face_ids = new int [0];
   }
+
+  void deselect_Curves () {
+    userSelections.Curve_ids = new int [0];
+  }
   
   void deselect_Solids () {
     userSelections.Solid_ids = new int [0];
@@ -35368,11 +35400,11 @@ class solarchvision_Model3Ds {
   
       userSelections.Model2D_ids = new int [0];
   
+      this.deselect_Curves();
+  
       this.deselect_Faces();
   
       this.deselect_Points();
-    
-      userSelections.Curve_ids = new int [0];
   
       this.deselect_Solids();
     }  
@@ -38156,20 +38188,7 @@ class solarchvision_Model3Ds {
   
 
   
-  void delete_Curves () {
-  
-    allCurves.nodes = new int [0][3];
-  
-    allCurves.options = new int [0][6];
-  
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Curves[q][0] = 0;
-      allGroups.Curves[q][1] = -1;
-    }  
-  
-    this.deselect_All();
-  }
-  
+
 
   
   void delete_allGroups () {
@@ -44888,7 +44907,7 @@ void mouseClicked () {
             }             
     
             if (menu_option.equals("Erase Curves")) {
-              allModel3Ds.delete_Curves();
+              allCurves.delete_all();
               WIN3D.update = true;
             }  
     
@@ -46175,7 +46194,7 @@ void mouseClicked () {
           
                   if (current_ObjectCategory == ObjectCategory.CURVE) { // working with curves
                     if (CreateObject == CREATE.Curve) {
-                      allModel3Ds.add_VertexToLastCurve(x, y, z);                   
+                      allCurves.add_VertexToLastCurve(x, y, z);                   
 
                       userSelections.Curve_ids = new int [1];
                       userSelections.Curve_ids[0] = allCurves.nodes.length - 1;
@@ -49559,7 +49578,7 @@ void UI_set_to_Create_Curve () {
   current_Weight = User3D.default_Weight;  
   current_Closed = User3D.default_Closed;   
   
-  allModel3Ds.beginNewCurve();
+  allCurves.beginNewCurve();
 
   CreateObject = CREATE.Curve;
   current_ObjectCategory = ObjectCategory.CURVE;
@@ -56308,7 +56327,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allFaces.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
+        else if (low_case.equals("lines")) {allCurves.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("solids")) {allSolids.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("sections")) {allSections.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("cameras")) {allCameras.delete_all(); WIN3D.update = true;}
@@ -57695,7 +57714,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }        
       }
       if (points.length > 1) {   
-        allModel3Ds.add_Spline(m, tes, lyr, vsb, wgt, clz, points);
+        allCurves.add_Spline(m, tes, lyr, vsb, wgt, clz, points);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CURVE;
         UI_BAR_b.update = true;
@@ -57745,7 +57764,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((r != 0) && (deg > 2)) {   
-        allModel3Ds.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
+        allCurves.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CURVE;
         UI_BAR_b.update = true;
