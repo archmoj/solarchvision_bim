@@ -27505,9 +27505,9 @@ class solarchvision_Model2Ds {
       float[] DistZ = new float [this.num];
   
       for (int f = 0; f < this.num; f++) {
-        float x = this.XYZS[f][0] * OBJECTS_scale;
-        float y = this.XYZS[f][1] * OBJECTS_scale;
-        float z = this.XYZS[f][2] * OBJECTS_scale;
+        float x = this.getX(f) * OBJECTS_scale;
+        float y = this.getY(f) * OBJECTS_scale;
+        float z = this.getZ(f) * OBJECTS_scale;
   
         DistZ[f] = dist(x, y, z, WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z);
       }
@@ -27535,11 +27535,11 @@ class solarchvision_Model2Ds {
           int w = this.Images[n].width; 
           int h = this.Images[n].height;
   
-          float x = this.XYZS[f][0] * OBJECTS_scale;
-          float y = this.XYZS[f][1] * OBJECTS_scale;
-          float z = this.XYZS[f][2] * OBJECTS_scale;
+          float x = this.getX(f) * OBJECTS_scale;
+          float y = this.getY(f) * OBJECTS_scale;
+          float z = this.getZ(f) * OBJECTS_scale;
   
-          float rh = this.XYZS[f][3] * 0.5 * OBJECTS_scale;
+          float rh = this.getS(f) * 0.5 * OBJECTS_scale;
           float rw = rh * this.ImageRatios[n];
   
           float t = PI + WIN3D.rotation_Z * PI / 180.0;
@@ -27711,7 +27711,7 @@ class solarchvision_Model2Ds {
                   nf += 2;
                 }            
                 
-                if (allModel2Ds.isTree(n)) { // case: trees   
+                if (this.isTree(n)) { // case: trees   
                       
                   float ratio = 0.5;
                   
@@ -28353,7 +28353,7 @@ class solarchvision_Model2Ds {
   
     this.num += 1;
   
-    if (allModel2Ds.isTree(n)) {
+    if (this.isTree(n)) {
   
       if (User3D.create_MeshOrSolid != 0) {
   
@@ -28400,11 +28400,14 @@ class solarchvision_Model2Ds {
         XML child = parent.addChild("item");
         child.setInt("id", i);
         String lineSTR = "";
-        //for (int j = 0; j < this.XYZS[i].length; j++) {
-        for (int j = 0; j < 4; j++) { // x, y, z, s 
-          lineSTR += nf(this.XYZS[i][j], 0, 4).replace(",", "."); // <<<<
-          lineSTR += ",";
-        }
+        lineSTR += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+        lineSTR += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+        lineSTR += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+        lineSTR += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
         lineSTR += this.MAP[i];
   
         child.setContent(lineSTR);
@@ -28476,9 +28479,10 @@ class solarchvision_Model2Ds {
       for (int i = 0; i < ni; i++) {
         String lineSTR = children[i].getContent();
         String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 4; j++) {
-          this.XYZS[i][j] = float(parts[j]);
-        }
+        this.setX(i, float(parts[0]));
+        this.setY(i, float(parts[1]));
+        this.setZ(i, float(parts[2]));
+        this.setS(i, float(parts[3]));
         this.MAP[i] = int(parts[4]);
       }
       
@@ -29600,11 +29604,16 @@ class solarchvision_Model1Ds {
       XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < this.XYZSR[i].length; j++) {
-      for (int j = 0; j < 5; j++) { // x, y, z, s, rot
-        lineSTR += nf(this.XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
+      lineSTR += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
       lineSTR += nf(this.getType(i), 0);
       lineSTR += ",";
       lineSTR += nf(this.getDegreeMin(i), 0);
@@ -29647,9 +29656,12 @@ class solarchvision_Model1Ds {
 
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < 5; j++) {
-        this.XYZSR[i][j] = float(parts[j]);
-      }
+
+      this.setX(i, float(parts[0]));
+      this.setY(i, float(parts[1]));
+      this.setZ(i, float(parts[2]));
+      this.setS(i, float(parts[3]));
+      this.setR(i, float(parts[4]));
 
       this.setType(i, int(parts[5]));
       this.setDegreeMin(i, int(parts[6]));
@@ -30173,11 +30185,33 @@ class solarchvision_Solids {
       XML child = parent.addChild("item");
       child.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < this.DEF[i].length; j++) {
-      for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
-        lineSTR += nf(this.DEF[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 != this.DEF[i].length) lineSTR += ",";
-      }
+
+      lineSTR += nf(this.get_posX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_posY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_posZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_powX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_powY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_powZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_scaleX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_scaleY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_scaleZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotX(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotY(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(this.get_value(i), 0, 4).replace(",", "."); // <<<<
+      
       child.setContent(lineSTR);
     }    
     
@@ -30202,9 +30236,18 @@ class solarchvision_Solids {
 
       String lineSTR = children[i].getContent();
       String[] parts = split(lineSTR, ',');
-      for (int j = 0; j < 13; j++) {
-        this.DEF[i][j] = float(parts[j]);
-      }
+      this.set_posX(i, float(parts[0]));
+      this.set_posY(i, float(parts[1]));
+      this.set_posZ(i, float(parts[2]));
+      this.set_powX(i, float(parts[3]));
+      this.set_powY(i, float(parts[4]));
+      this.set_powZ(i, float(parts[5]));
+      this.set_scaleX(i, float(parts[6]));
+      this.set_scaleY(i, float(parts[7]));
+      this.set_scaleZ(i, float(parts[8]));
+      this.set_rotX(i, float(parts[9]));
+      this.set_rotY(i, float(parts[10]));
+      this.set_rotZ(i, float(parts[11]));
     }
     
     this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));    
