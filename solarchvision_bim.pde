@@ -11625,6 +11625,7 @@ class solarchvision_Faces {
       allGroups.Faces[q][1] = -1;
     }  
   
+    allModel3Ds.deselect_Groups();
     allModel3Ds.deselect_Faces();
   }
   
@@ -12897,6 +12898,7 @@ class solarchvision_Curves {
       allGroups.Curves[q][1] = -1;
     }  
   
+    allModel3Ds.deselect_Groups();
     allModel3Ds.deselect_Curves();
   }
   
@@ -13127,6 +13129,101 @@ class solarchvision_Groups {
   
   float[][] PivotMatrix = new float[0][9];
   int[][] PivotType = new int[0][1]; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+
+
+
+  int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
+  
+    float[][] newObject_PivotMatrix = {
+      {
+        x, y, z, sx, sy, sz, rx, ry, rz
+      }
+    }; 
+  
+    this.PivotMatrix = (float[][]) concat(this.PivotMatrix, newObject_PivotMatrix);
+  
+    int[][] newObject_Pivot = {
+      {
+        current_PivotType
+      }
+    };
+  
+    this.PivotType = (int[][]) concat(this.PivotType, newObject_Pivot);  
+  
+  
+    int[][] newObject_allModel1Ds = {
+      {
+        allModel1Ds.num, -1
+      }
+    }; // i.e. null because start > end 
+  
+    this.Model1Ds = (int[][]) concat(this.Model1Ds, newObject_allModel1Ds);     
+  
+    int[][] newObject_allModel2Ds = {
+      {
+        allModel2Ds.num, -1
+      }
+    }; // i.e. null because start > end 
+  
+    this.Model2Ds = (int[][]) concat(this.Model2Ds, newObject_allModel2Ds);   
+  
+    int[][] newObject_allSolids = {
+      {
+        allSolids.DEF.length, -1
+      }
+    }; // i.e. null because start > end 
+  
+    this.Solids = (int[][]) concat(this.Solids, newObject_allSolids);      
+  
+    int[][] newObject_Faces = {
+      {
+        allFaces.nodes.length, -1
+      }
+    }; // i.e. null because start > end   
+  
+    this.Faces = (int[][]) concat(this.Faces, newObject_Faces);
+  
+    int[][] newObject_Curves = {
+      {
+        allCurves.nodes.length, -1
+      }
+    }; // i.e. null because start > end   
+  
+    this.Curves = (int[][]) concat(this.Curves, newObject_Curves);
+    
+  
+  
+    this.num += 1;
+    
+    return(this.num - 1);  
+  }
+  
+  
+
+  void delete_all () {
+    
+    this.Model1Ds = new int [0][2];
+  
+    this.Model2Ds = new int [0][2];
+  
+    this.Faces = new int [0][2];
+  
+    this.Curves = new int [0][2];
+  
+    this.Solids = new int [0][2];
+  
+    this.PivotMatrix = new float [0][9];
+  
+    this.PivotType = new int [0][1];
+  
+    this.num = 0;
+    
+    allModel3Ds.deselect_Groups();
+  }    
+
+
+
+
 
 
   public void to_XML (XML xml) {
@@ -20338,7 +20435,7 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
 
-  if ((Step == 0) || (Step == 1)) allModel3Ds.delete_allGroups(); //not deleting all
+  if ((Step == 0) || (Step == 1)) allGroups.delete_all(); //not deleting all
   if ((Step == 0) || (Step == 2)) allModel3Ds.add_Model_Main();
 }
 
@@ -23114,7 +23211,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
     if (parts[0].toLowerCase().equals("g")) {
       if (m == -1) current_Material = 1 + (current_Material % 8);
 
-      if (addToLastGroup == false) allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
 
     if (parts[0].toLowerCase().equals("v")) {
@@ -23303,7 +23400,7 @@ void SOLARCHVISION_delete_All () {
   allSections.delete_all();
   allCameras.delete_all();
 
-  allModel3Ds.delete_allGroups(); 
+  allGroups.delete_all(); 
 
   WIN3D.update = true;
 }
@@ -26755,7 +26852,7 @@ class solarchvision_Land3D {
         current_Weight = User3D.default_Weight;
         current_Closed = User3D.default_Closed;            
         
-        allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         
       }
   
@@ -28550,7 +28647,8 @@ class solarchvision_Model2Ds {
       allGroups.Model2Ds[q][1] = -1;
     }  
   
-    allModel3Ds.deselect_All();
+    allModel3Ds.deselect_Groups();
+    allModel3Ds.deselect_Model2Ds();
   }  
   
   
@@ -29749,8 +29847,9 @@ class solarchvision_Model1Ds {
       allGroups.Model1Ds[q][0] = 0;
       allGroups.Model1Ds[q][1] = -1;
     }    
-  
-    allModel3Ds.deselect_All();
+
+    allModel3Ds.deselect_Groups();  
+    allModel3Ds.deselect_Model1Ds();
   }  
   
   
@@ -30106,6 +30205,7 @@ class solarchvision_Solids {
       allGroups.Solids[q][1] = -1;
     }
   
+    allModel3Ds.deselect_Groups();
     allModel3Ds.deselect_Solids();
   }    
 
@@ -30551,6 +30651,9 @@ class solarchvision_Points {
   
     allVertices = new float [0][3];
   
+    allModel3Ds.deselect_Groups();
+    allModel3Ds.deselect_Faces();
+    allModel3Ds.deselect_Curves();
     allModel3Ds.deselect_Points();
   }  
   
@@ -30822,79 +30925,11 @@ solarchvision_User3D User3D = new solarchvision_User3D();
 
 
 
-
 class solarchvision_Model3Ds {
   
   private final static String CLASS_STAMP = "Model3Ds";
-  
-
-  
  
-  int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
-  
-    float[][] newObject_PivotMatrix = {
-      {
-        x, y, z, sx, sy, sz, rx, ry, rz
-      }
-    }; 
-  
-    allGroups.PivotMatrix = (float[][]) concat(allGroups.PivotMatrix, newObject_PivotMatrix);
-  
-    int[][] newObject_Pivot = {
-      {
-        current_PivotType
-      }
-    };
-  
-    allGroups.PivotType = (int[][]) concat(allGroups.PivotType, newObject_Pivot);  
-  
-  
-    int[][] newObject_allModel1Ds = {
-      {
-        allModel1Ds.num, -1
-      }
-    }; // i.e. null because start > end 
-  
-    allGroups.Model1Ds = (int[][]) concat(allGroups.Model1Ds, newObject_allModel1Ds);     
-  
-    int[][] newObject_allModel2Ds = {
-      {
-        allModel2Ds.num, -1
-      }
-    }; // i.e. null because start > end 
-  
-    allGroups.Model2Ds = (int[][]) concat(allGroups.Model2Ds, newObject_allModel2Ds);   
-  
-    int[][] newObject_allSolids = {
-      {
-        allSolids.DEF.length, -1
-      }
-    }; // i.e. null because start > end 
-  
-    allGroups.Solids = (int[][]) concat(allGroups.Solids, newObject_allSolids);      
-  
-    int[][] newObject_Faces = {
-      {
-        allFaces.nodes.length, -1
-      }
-    }; // i.e. null because start > end   
-  
-    allGroups.Faces = (int[][]) concat(allGroups.Faces, newObject_Faces);
-  
-    int[][] newObject_Curves = {
-      {
-        allCurves.nodes.length, -1
-      }
-    }; // i.e. null because start > end   
-  
-    allGroups.Curves = (int[][]) concat(allGroups.Curves, newObject_Curves);
-    
-  
-  
-    allGroups.num += 1;
-    
-    return(allGroups.num - 1);  
-  }
+
   
   
   
@@ -31262,7 +31297,7 @@ class solarchvision_Model3Ds {
   
           int number_of_Vertices_before = allPoints.getLength();
   
-          this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+          allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
           int new_OBJ_NUM = allGroups.num - 1;
   
@@ -31414,7 +31449,7 @@ class solarchvision_Model3Ds {
   
           int number_of_Vertices_before = allPoints.getLength();
   
-          this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+          allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
           int new_OBJ_NUM = allGroups.num - 1;
   
@@ -31603,7 +31638,7 @@ class solarchvision_Model3Ds {
         float rot = User3D.create_Orientation;
         if (rot == 360) rot = WIN3D.rotation_Z;
   
-        this.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
+        allGroups.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
       }
   
   
@@ -34750,7 +34785,7 @@ class solarchvision_Model3Ds {
   
         int OBJ_NUM = userSelections.Group_ids[o];
   
-        this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
         for (int q = userSelections.Face_ids.length - 1; q >= 0; q--) { 
   
@@ -34892,7 +34927,7 @@ class solarchvision_Model3Ds {
   
         int OBJ_NUM = userSelections.Group_ids[o];
   
-        this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
         for (int q = userSelections.Curve_ids.length - 1; q >= 0; q--) { 
   
@@ -35353,6 +35388,13 @@ class solarchvision_Model3Ds {
   }
   
 
+  void deselect_Model1Ds () {
+    userSelections.Model1D_ids = new int [0];
+  }
+  
+  void deselect_Model2Ds () {
+    userSelections.Model2D_ids = new int [0];
+  }
 
   void deselect_Points () {
     userSelections.Vertex_ids = new int [0];
@@ -35378,6 +35420,10 @@ class solarchvision_Model3Ds {
     userSelections.Section_ids = new int [0];
   }  
   
+  void deselect_Groups () {
+    userSelections.Group_ids = new int [0];
+  }    
+  
   void deselect_All () {
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -35396,9 +35442,11 @@ class solarchvision_Model3Ds {
   
       userSelections.Model1D_ids = new int [0];
   
-      userSelections.Group_ids = new int [0];
+      this.deselect_Groups();
   
-      userSelections.Model2D_ids = new int [0];
+      this.deselect_Model1Ds();
+      
+      this.deselect_Model2Ds();
   
       this.deselect_Curves();
   
@@ -37713,7 +37761,7 @@ class solarchvision_Model3Ds {
         int prev_i = ((i + 5 - 2) % 5) + 1;
   
         {
-          SOLARCHVISION_createLozenge(
+          createLozenge(
           TempObjectVertices[vT[prev_i]][0], TempObjectVertices[vT[prev_i]][1], TempObjectVertices[vT[prev_i]][2], 
           TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2], 
           TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2], 
@@ -37722,7 +37770,7 @@ class solarchvision_Model3Ds {
         }
   
         {
-          SOLARCHVISION_createLozenge(
+          createLozenge(
           TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2], 
           TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2], 
           TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2], 
@@ -37731,7 +37779,7 @@ class solarchvision_Model3Ds {
         }      
   
         {
-          SOLARCHVISION_createLozenge(
+          createLozenge(
           TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2], 
           TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2], 
           TempObjectVertices[vT[prev_i]][0], TempObjectVertices[vT[prev_i]][1], TempObjectVertices[vT[prev_i]][2], 
@@ -37740,7 +37788,7 @@ class solarchvision_Model3Ds {
         }     
   
         {
-          SOLARCHVISION_createLozenge(
+          createLozenge(
   
           TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2], 
           TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2], 
@@ -37751,7 +37799,7 @@ class solarchvision_Model3Ds {
         }
   
         {
-          SOLARCHVISION_createLozenge(
+          createLozenge(
           TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2], 
           TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2], 
           TempObjectVertices[vB[next_i]][0], TempObjectVertices[vB[next_i]][1], TempObjectVertices[vB[next_i]][2], 
@@ -38083,9 +38131,8 @@ class solarchvision_Model3Ds {
     POINTER_TempObjectFaces = 0;
   }
   
-  void SOLARCHVISION_createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
-  
-  
+  void createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
+
     if (Tessellation > 0) {
   
       if (Tessellation == 1) {
@@ -38136,7 +38183,7 @@ class solarchvision_Model3Ds {
       M = funcs.vec3_unit(M);
       N = funcs.vec3_unit(N);
   
-      SOLARCHVISION_createLozenge(x2, y2, z2, N[0], N[1], N[2], x4, y4, z4, M[0], M[1], M[2], Tessellation, BuildFaces);     
+      createLozenge(x2, y2, z2, N[0], N[1], N[2], x4, y4, z4, M[0], M[1], M[2], Tessellation, BuildFaces);     
   
   
       if (BuildFaces != 0) 
@@ -38158,7 +38205,7 @@ class solarchvision_Model3Ds {
   
         Q = funcs.vec3_unit(Q);
   
-        SOLARCHVISION_createLozenge(x2, y2, z2, P[0], P[1], P[2], x1, y1, z1, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
+        createLozenge(x2, y2, z2, P[0], P[1], P[2], x1, y1, z1, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
       }
   
   
@@ -38181,62 +38228,11 @@ class solarchvision_Model3Ds {
   
         Q = funcs.vec3_unit(Q);
   
-        SOLARCHVISION_createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
+        createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
       }
     }
   }  
-  
 
-  
-
-
-  
-  void delete_allGroups () {
-    
-    allGroups.Model1Ds = new int [0][2];
-  
-    allGroups.Model2Ds = new int [0][2];
-  
-    allGroups.Faces = new int [0][2];
-  
-    allGroups.Curves = new int [0][2];
-  
-    allGroups.Solids = new int [0][2];
-  
-    allGroups.PivotMatrix = new float [0][9];
-  
-    allGroups.PivotType = new int [0][1];
-  
-    allGroups.num = 0;
-    
-    this.deselect_All();
-   
-  }    
-  
-  
-
-
-  
-
-  
-
-  
-
-
-  
-
-  
-  
-
-  
-  
-
-  
-  
-  
-
-  
-  
   
   void add_DefaultModel (int n) {
   
@@ -38253,31 +38249,31 @@ class solarchvision_Model3Ds {
   
   
     //if (n != 0) {
-    this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
     //}
   
     if (n == 1) {
-      this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_House1_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 90);
     }
   
     if (n == 2) {
-      this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_House1_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
     }  
   
     if (n == 3) {
-      this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
   
-      this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_House1_Core(7, 0, 0, 1, 0, 0, 25, 25, 0, 6, 6, 6, 6, 0);
     }   
   
     if (n == 4) {
       for (int i = 0; i < int (10 + random (10)); i++) {
-        this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         this.add_House1_Core(7, 0, 0, 1, 0, 0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
       }
     }    
@@ -38356,7 +38352,7 @@ class solarchvision_Model3Ds {
   
     if (n == 6) {
       {
-        this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         float x = 0;
         float y = 0;
         float z = 0;
@@ -38366,7 +38362,7 @@ class solarchvision_Model3Ds {
       }
   
       {
-        this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         float x = 30;
         float y = 0;
         float z = 0;
@@ -38376,7 +38372,7 @@ class solarchvision_Model3Ds {
       }
   
       {
-        this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         float x = 0;
         float y = 20;
         float z = 0;
@@ -38396,7 +38392,7 @@ class solarchvision_Model3Ds {
   
   void add_Model_2DsFromFile () {
   
-    this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
   
     String[] FileALL = loadStrings(BaseFolder + "/Import/Hamedan_PEOPLE.txt");
@@ -38422,7 +38418,7 @@ class solarchvision_Model3Ds {
   
   void add_Model_Main () { 
   
-    this.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
     addToLastGroup = false;
   }
@@ -42870,7 +42866,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
 
     if (allGroups.num == 0) {
-      allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
 
 
@@ -44160,7 +44156,7 @@ void mouseClicked () {
 
             if (menu_option.equals("Begin New Group at Origin")) {
               
-              allModel3Ds.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+              allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
               userSelections.Group_ids = new int [1];
               userSelections.Group_ids[0] = allGroups.num - 1;
@@ -44170,7 +44166,7 @@ void mouseClicked () {
 
             if (menu_option.equals("Begin New Group at Pivot")) {
 
-              allModel3Ds.beginNewGroup(userSelections.BoundingBox[1 + userSelections.alignX][0], userSelections.BoundingBox[1 + userSelections.alignX][1], userSelections.BoundingBox[1 + userSelections.alignX][2], userSelections.BoundingBox[1 + userSelections.alignX][3], userSelections.BoundingBox[1 + userSelections.alignX][4], userSelections.BoundingBox[1 + userSelections.alignX][5], userSelections.BoundingBox[1 + userSelections.alignX][6], userSelections.BoundingBox[1 + userSelections.alignX][7], userSelections.BoundingBox[1 + userSelections.alignX][8]);
+              allGroups.beginNewGroup(userSelections.BoundingBox[1 + userSelections.alignX][0], userSelections.BoundingBox[1 + userSelections.alignX][1], userSelections.BoundingBox[1 + userSelections.alignX][2], userSelections.BoundingBox[1 + userSelections.alignX][3], userSelections.BoundingBox[1 + userSelections.alignX][4], userSelections.BoundingBox[1 + userSelections.alignX][5], userSelections.BoundingBox[1 + userSelections.alignX][6], userSelections.BoundingBox[1 + userSelections.alignX][7], userSelections.BoundingBox[1 + userSelections.alignX][8]);
 
               userSelections.Group_ids = new int [1];
               userSelections.Group_ids[0] = allGroups.num - 1;       
@@ -44882,7 +44878,7 @@ void mouseClicked () {
             }        
     
             if (menu_option.equals("Erase All Groups")) {
-              allModel3Ds.delete_allGroups();
+              allGroups.delete_all();
               WIN3D.update = true;
             }
     
@@ -46059,7 +46055,7 @@ void mouseClicked () {
   
                     if (addToLastGroup == false) {
   
-                      allModel3Ds.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
+                      allGroups.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
                     }
                   }
   
@@ -56322,7 +56318,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_All(); WIN3D.update = true;}
         else if (low_case.equals("selection")) {allModel3Ds.delete_Selection(); WIN3D.update = true;}
-        else if (low_case.equals("group3ds")) {allModel3Ds.delete_allGroups(); WIN3D.update = true;}
+        else if (low_case.equals("group3ds")) {allGroups.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("object2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
