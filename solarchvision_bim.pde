@@ -28694,24 +28694,24 @@ class solarchvision_Model1Ds {
   
       for (int f = 0; f < this.num; f++) {
   
-        float x = this.XYZSR[f][0];
-        float y = this.XYZSR[f][1];
-        float z = this.XYZSR[f][2];
+        float x = this.getX(f);
+        float y = this.getY(f);
+        float z = this.getZ(f);
   
-        float r = this.XYZSR[f][3] * 0.5;
-        float rot = this.XYZSR[f][4];
+        float r = this.getS(f) * 0.5;
+        float rot = this.getR(f);
   
-        int n = this.Type[f];
+        int n = this.getType(f);
   
-        int dMin = this.DegreeMin[f];
+        int dMin = this.getDegreeMin(f);
   
-        int dMax = this.DegreeMax[f];
+        int dMax = this.getDegreeMax(f);
   
-        int s = this.Seed[f];
+        int s = this.getSeed(f);
   
-        float TrunkSize = this.TrunkSize[f];
+        float TrunkSize = this.getTrunkSize(f);
   
-        float LeafSize = this.LeafSize[f];
+        float LeafSize = this.getLeafSize(f);
   
         randomSeed(s);
   
@@ -38603,8 +38603,7 @@ class solarchvision_Cameras {
         float Camera_rZ = this.get_rotZ(f);
         float Camera_rT = this.get_rotT(f);
         float Camera_zoom = this.get_zoom(f);
-  
-        int Camera_type = this.Type[f];
+        int   Camera_type = this.get_type(f);
   
         WIN3D.graphics.strokeWeight(1);
         WIN3D.graphics.stroke(0);
