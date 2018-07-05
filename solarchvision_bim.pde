@@ -23083,7 +23083,7 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
   }  
 
   //allModel3Ds.add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  allModel3Ds.add_Solid(cen_X, cen_Y, cen_Z, CubePower, CubePower, CubePower, X_out, Y_out, Z_out, 0, 0, T_out, 1);
+  allSolids.create(cen_X, cen_Y, cen_Z, CubePower, CubePower, CubePower, X_out, Y_out, Z_out, 0, 0, T_out, 1);
 
   return min_Z;
 }  
@@ -23108,7 +23108,7 @@ void SOLARCHVISION_delete_All () {
   allModel3Ds.delete_Curves();
   allPoints.delete_all();
 
-  allModel3Ds.delete_allSolids();
+  allSolids.delete_all();
   allSections.delete_all();
   allCameras.delete_all();
 
@@ -28339,7 +28339,7 @@ class solarchvision_Model2Ds {
         float z0 = 0.5 * s + z;
         float r0 = 0.4 * s; // <<<<<<< approximate
   
-        allModel3Ds.add_Solid(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.create_MeshOrSolid);
+        allSolids.create(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.create_MeshOrSolid);
       }
     }
   
@@ -29167,7 +29167,7 @@ class solarchvision_Model1Ds {
         //float rz = 0.5 * abs(z_new - z0);
         float rz = 0.5 * abs(z_new - z0) * 1.25; // <<<<<<< to somehow compensate the shrinkage!
   
-        allModel3Ds.add_Solid(cx, cy, cz, 2, 2, 2, rx, ry, rz, 0, (rotZX * 180 / PI), (rotXY * 180 / PI), User3D.create_MeshOrSolid);
+        allSolids.create(cx, cy, cz, 2, 2, 2, rx, ry, rz, 0, (rotZX * 180 / PI), (rotXY * 180 / PI), User3D.create_MeshOrSolid);
   
   
         this.branch_add_allSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
@@ -29182,7 +29182,7 @@ class solarchvision_Model1Ds {
       if (this.displayLeaves) {
   
         float r0 = 0.5 * LeafSize;
-        allModel3Ds.add_Solid(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.create_MeshOrSolid);
+        allSolids.create(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.create_MeshOrSolid);
       }
     }
   }
@@ -29886,6 +29886,42 @@ class solarchvision_Solids {
   
   }  
   
+
+
+
+
+  void delete_all () {
+    this.DEF = new float [0][13]; 
+  
+    for (int q = 0; q < allGroups.num; q++) {
+      allGroups.Solids[q][0] = 0;
+      allGroups.Solids[q][1] = -1;
+    }
+  
+    allModel3Ds.deselect_Solids();
+  }    
+
+  int create (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
+  
+    float[][] newSolid = {
+      {
+        x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v
+      }
+    };
+    this.DEF = (float[][]) concat(this.DEF, newSolid);
+
+    if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = this.DEF.length - 1;
+  
+    return(this.DEF.length - 1);
+  }
+
+
+
+
+
+
+
+
   
   int num_visualFaces = 3; // internal - number of faces: XY, YZ, ZX
   int numdisplayAllDegree = 16; //8; // internal - number of each face corners 
@@ -30639,12 +30675,7 @@ class solarchvision_Model3Ds {
     allCurves.nodes[n] = (int[]) concat(allCurves.nodes[n], newVertex);
   
   }
-  
-  
-  
-  
 
-  
   
   int add_Face (int[] f) {
   
@@ -30745,37 +30776,7 @@ class solarchvision_Model3Ds {
     this.add_Curve(newCurve_nodes);
   }
   
-  
-
-
-  
-  
-  int add_Solid (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
-  
-    {
-  
-      float[][] newSolid = {
-        {
-          x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v
-        }
-      };
-      allSolids.DEF = (float[][]) concat(allSolids.DEF, newSolid);
-    }
-  
-    if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = allSolids.DEF.length - 1;
-  
-    return(allSolids.DEF.length - 1);
-  }
-  
-  
-  
-
-  
-  
-
-  
-  
-  
+ 
   int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
   
     float[][] newObject_PivotMatrix = {
@@ -31107,7 +31108,7 @@ class solarchvision_Model3Ds {
         float Solid_rotZ = allSolids.get_rotZ(OBJ_NUM);
         float Solid_value = allSolids.get_value(OBJ_NUM);
   
-        this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+        allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
       }
   
       // selecting new objetcs
@@ -31288,7 +31289,7 @@ class solarchvision_Model3Ds {
               float Solid_rotZ = allSolids.get_rotZ(q);
               float Solid_value = allSolids.get_value(q);
   
-              this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+              allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
   
               SOLID_added += 1;
             }
@@ -31439,7 +31440,7 @@ class solarchvision_Model3Ds {
               float Solid_rotZ = allSolids.get_rotZ(q);
               float Solid_value = allSolids.get_value(q);
   
-              this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+              allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
   
               SOLID_added += 1;
             }
@@ -31623,7 +31624,7 @@ class solarchvision_Model3Ds {
           float Solid_rotZ = allSolids.get_rotZ(OBJ_NUM);
           float Solid_value = allSolids.get_value(OBJ_NUM);
   
-          this.add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+          allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
         }
       }
   
@@ -35304,6 +35305,10 @@ class solarchvision_Model3Ds {
     userSelections.Vertex_ids = new int [0];
   }
   
+  void deselect_Solids () {
+    userSelections.Solid_ids = new int [0];
+  }  
+  
   void deselect_Cameras () {
     userSelections.Camera_ids = new int [0];
   }
@@ -35340,7 +35345,7 @@ class solarchvision_Model3Ds {
     
       userSelections.Curve_ids = new int [0];
   
-      userSelections.Solid_ids = new int [0];
+      this.deselect_Solids();
     }  
   
     userSelections.calculate_selection_BoundingBox();
@@ -38174,16 +38179,7 @@ class solarchvision_Model3Ds {
   }    
   
   
-  void delete_allSolids () {
-    allSolids.DEF = new float [0][13]; 
-  
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Solids[q][0] = 0;
-      allGroups.Solids[q][1] = -1;
-    }
-  
-    this.deselect_All();
-  }    
+
 
   
 
@@ -38331,7 +38327,7 @@ class solarchvision_Model3Ds {
         float z = 0;
         float r = 10;
         this.add_CrystalSphere(1, 0, 0, 1, 0, 0, x, y, z, r, 5, 0, 90);
-        this.add_Solid(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
       }
   
       {
@@ -38341,7 +38337,7 @@ class solarchvision_Model3Ds {
         float z = 0;
         float r = 8;
         this.add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 90);
-        this.add_Solid(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
       }
   
       {
@@ -38351,7 +38347,7 @@ class solarchvision_Model3Ds {
         float z = 0;
         float r = 8;
         this.add_CrystalSphere(3, 0, 0, 1, 0, 0, x, y, z, r, 3, 0, 90);
-        this.add_Solid(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
       }
     }
   
@@ -44855,7 +44851,7 @@ void mouseClicked () {
             }
     
             if (menu_option.equals("Erase All Solids")) {
-              allModel3Ds.delete_allSolids();
+              allSolids.delete_all();
               WIN3D.update = true;
             }          
     
@@ -46058,7 +46054,7 @@ void mouseClicked () {
     
                       if (User3D.create_MeshOrSolid != 0) {
     
-                        allModel3Ds.add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+                        allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                       }
                     }
     
@@ -46175,7 +46171,7 @@ void mouseClicked () {
   
                   if (current_ObjectCategory == ObjectCategory.SOLID) { // working with solids
                     if (CreateObject == CREATE.Solid) {
-                      allModel3Ds.add_Solid(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+                      allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                     }
                   }        
   
@@ -56296,7 +56292,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("vertices")) {allModel3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allModel3Ds.delete_Faces(); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allModel3Ds.delete_Curves(); WIN3D.update = true;}
-        else if (low_case.equals("solids")) {allModel3Ds.delete_allSolids(); WIN3D.update = true;}
+        else if (low_case.equals("solids")) {allSolids.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("sections")) {allSections.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("cameras")) {allCameras.delete_all(); WIN3D.update = true;}
       }
@@ -57543,7 +57539,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {   
-        allModel3Ds.add_Solid(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
+        allSolids.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SOLID; 
         UI_BAR_b.update = true;
