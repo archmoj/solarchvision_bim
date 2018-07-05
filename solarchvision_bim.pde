@@ -31866,14 +31866,14 @@ class solarchvision_Model3Ds {
   }
   
   
-  void dettachFromallGroups_Selection () {
+  void dettachFromGroups_Selection () {
   
     this.group_Selection(1);
     this.ungroup_Selection();
   }
   
   
-  void deleteEmptyallGroups_Scene () {
+  void deleteEmptyGroups_Scene () {
   
     int pre_current_ObjectCategory = current_ObjectCategory;
   
@@ -44727,7 +44727,7 @@ void mouseClicked () {
               WIN3D.update = true;
             }              
             if (menu_option.equals("Delete All Empty Groups")) {
-              allModel3Ds.deleteEmptyallGroups_Scene();
+              allModel3Ds.deleteEmptyGroups_Scene();
               WIN3D.update = true;
             }               
             if (menu_option.equals("Delete Selection")) {
@@ -44735,7 +44735,7 @@ void mouseClicked () {
               WIN3D.update = true;
             }      
             if (menu_option.equals("Dettach from All Groups")) {
-              allModel3Ds.dettachFromallGroups_Selection();
+              allModel3Ds.dettachFromGroups_Selection();
               WIN3D.update = true;
             }                
             if (menu_option.equals("Ungroup Selection")) {
