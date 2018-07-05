@@ -27285,36 +27285,36 @@ class solarchvision_Model2Ds {
     return this.XYZS[n][3]; 
   }
 
-  void setX (int n, float x) {
-    this.XYZS[n][0] = x;  
+  void setX (int n, float f) {
+    this.XYZS[n][0] = f;  
   }
 
-  void setY (int n, float y) {
-    this.XYZS[n][1] = y;  
+  void setY (int n, float f) {
+    this.XYZS[n][1] = f;  
   }
 
-  void setZ (int n, float z) {
-    this.XYZS[n][2] = z;  
+  void setZ (int n, float f) {
+    this.XYZS[n][2] = f;  
   }
   
-  void setS (int n, float s) {
-    this.XYZS[n][3] = s;  
+  void setS (int n, float f) {
+    this.XYZS[n][3] = f;  
   }  
 
-  void addX (int n, float dx) {
-    this.XYZS[n][0] += dx;  
+  void addX (int n, float f) {
+    this.XYZS[n][0] += f;  
   }
 
-  void addY (int n, float dy) {
-    this.XYZS[n][1] += dy;  
+  void addY (int n, float f) {
+    this.XYZS[n][1] += f;  
   }
 
-  void addZ (int n, float dz) {
-    this.XYZS[n][2] += dz;  
+  void addZ (int n, float f) {
+    this.XYZS[n][2] += f;  
   }
   
-  void magS (int n, float ds) {
-    this.XYZS[n][3] *= ds;  
+  void magS (int n, float f) {
+    this.XYZS[n][3] *= f;  
   }
   
   int[] MAP = new int[0];
@@ -28564,40 +28564,40 @@ class solarchvision_Model1Ds {
     return this.XYZSR[n][4]; 
   }  
 
-  void setX (int n, float x) {
-    this.XYZSR[n][0] = x;  
+  void setX (int n, float f) {
+    this.XYZSR[n][0] = f;  
   }
 
-  void setY (int n, float y) {
-    this.XYZSR[n][1] = y;  
+  void setY (int n, float f) {
+    this.XYZSR[n][1] = f;  
   }
 
-  void setZ (int n, float z) {
-    this.XYZSR[n][2] = z;  
+  void setZ (int n, float f) {
+    this.XYZSR[n][2] = f;  
   }
 
-  void setS (int n, float s) {
-    this.XYZSR[n][3] = s;  
+  void setS (int n, float f) {
+    this.XYZSR[n][3] = f;  
   }  
   
-  void setR (int n, float r) {
-    this.XYZSR[n][4] = r;  
+  void setR (int n, float f) {
+    this.XYZSR[n][4] = f;  
   }     
   
-  void addX (int n, float dx) {
-    this.XYZSR[n][0] += dx;  
+  void addX (int n, float f) {
+    this.XYZSR[n][0] += f;  
   }  
 
-  void addY (int n, float dy) {
-    this.XYZSR[n][1] += dy;  
+  void addY (int n, float f) {
+    this.XYZSR[n][1] += f;  
   }  
 
-  void addZ (int n, float dz) {
-    this.XYZSR[n][2] += dz;  
+  void addZ (int n, float f) {
+    this.XYZSR[n][2] += f;  
   }  
   
-  void magS (int n, float ds) {
-    this.XYZSR[n][3] *= ds;  
+  void magS (int n, float f) {
+    this.XYZSR[n][3] *= f;  
   }    
 
   
@@ -29712,85 +29712,85 @@ class solarchvision_Solids {
     this.DEF[n][8] *= c;
   } 
   
-  void RotateX (int n, float t) {
+  void RotateX (int n, float f) {
   
-    this.DEF[n][9] += t;
+    this.DEF[n][9] += f;
   } 
   
-  void RotateY (int n, float t) {
+  void RotateY (int n, float f) {
   
-    this.DEF[n][10] += t;
+    this.DEF[n][10] += f;
   } 
   
-  void RotateZ (int n, float t) {
+  void RotateZ (int n, float f) {
   
-    this.DEF[n][11] += t;
+    this.DEF[n][11] += f;
   } 
   
-  void set_posX (int n, float r) { 
+  void set_posX (int n, float f) { 
   
-    this.DEF[n][0] = r;
+    this.DEF[n][0] = f;
   } 
   
-  void set_posY (int n, float r) { 
+  void set_posY (int n, float f) { 
   
-    this.DEF[n][1] = r;
+    this.DEF[n][1] = f;
   } 
   
-  void set_posZ (int n, float r) { 
+  void set_posZ (int n, float f) { 
   
-    this.DEF[n][2] = r;
+    this.DEF[n][2] = f;
   } 
   
-  void set_powX (int n, float r) { 
+  void set_powX (int n, float f) { 
   
-    this.DEF[n][3] = r;
+    this.DEF[n][3] = f;
   } 
   
-  void set_powY (int n, float r) { 
+  void set_powY (int n, float f) { 
   
-    this.DEF[n][4] = r;
+    this.DEF[n][4] = f;
   } 
   
-  void set_powZ (int n, float r) { 
+  void set_powZ (int n, float f) { 
   
-    this.DEF[n][5] = r;
+    this.DEF[n][5] = f;
   } 
   
-  void set_scaleX (int n, float r) { 
+  void set_scaleX (int n, float f) { 
   
-    this.DEF[n][6] = r;
+    this.DEF[n][6] = f;
   } 
   
-  void set_scaleY (int n, float r) { 
+  void set_scaleY (int n, float f) { 
   
-    this.DEF[n][7] = r;
+    this.DEF[n][7] = f;
   } 
   
-  void set_scaleZ (int n, float r) { 
+  void set_scaleZ (int n, float f) { 
   
-    this.DEF[n][8] = r;
+    this.DEF[n][8] = f;
   } 
   
-  void set_rotX (int n, float r) { 
+  void set_rotX (int n, float f) { 
   
-    this.DEF[n][9] = r;
+    this.DEF[n][9] = f;
   } 
   
   
-  void set_rotY (int n, float r) { 
+  void set_rotY (int n, float f) { 
   
-    this.DEF[n][10] = r;
+    this.DEF[n][10] = f;
   } 
   
-  void set_rotZ (int n, float r) { 
+  void set_rotZ (int n, float f) { 
   
-    this.DEF[n][11] = r;
+    this.DEF[n][11] = f;
   } 
   
-  void set_value (int n, float r) { 
+  void set_value (int n, float f) { 
   
-    this.DEF[n][12] = r;
+    this.DEF[n][12] = f;
   }   
   
   float get_posX (int n) { 
@@ -30285,34 +30285,34 @@ class solarchvision_Points {
     
   boolean displayAll = false;
   
-  void setX (int n, float x) { 
+  void setX (int n, float f) { 
   
-    allVertices[n][0] = x;
+    allVertices[n][0] = f;
   }   
 
-  void setY (int n, float y) { 
+  void setY (int n, float f) { 
   
-    allVertices[n][1] = y;
+    allVertices[n][1] = f;
   }   
 
-  void setZ (int n, float z) { 
+  void setZ (int n, float f) { 
   
-    allVertices[n][2] = z;
+    allVertices[n][2] = f;
   }   
   
-  void addX (int n, float dx) { 
+  void addX (int n, float f) { 
   
-    allVertices[n][0] += dx;
+    allVertices[n][0] += f;
   }     
   
-  void addY (int n, float dy) { 
+  void addY (int n, float f) { 
   
-    allVertices[n][1] += dy;
+    allVertices[n][1] += f;
   }     
 
-  void addZ (int n, float dz) { 
+  void addZ (int n, float f) { 
   
-    allVertices[n][2] += dz;
+    allVertices[n][2] += f;
   }       
   
   int getLength () {
@@ -38558,7 +38558,78 @@ class solarchvision_Cameras {
   int num = 1;
 
 
+  float get_posX (int n) {
+    return this.options[n][0]; 
+  }
+
+  float get_posY (int n) {
+    return this.options[n][1]; 
+  }
   
+  float get_posZ (int n) {
+    return this.options[n][2]; 
+  }
+
+  float get_posT (int n) {
+    return this.options[n][3]; 
+  }  
+  
+  float get_rotX (int n) {
+    return this.options[n][4]; 
+  }
+
+  float get_rotY (int n) {
+    return this.options[n][5]; 
+  }
+  
+  float get_rotZ (int n) {
+    return this.options[n][6]; 
+  }
+
+  float get_rotT (int n) {
+    return this.options[n][7]; 
+  }    
+  
+  float get_zoom (int n) {
+    return this.options[n][8]; 
+  }      
+
+  void set_posX (int n, float f) {
+    this.options[n][0] = f;  
+  }
+
+  void set_posY (int n, float f) {
+    this.options[n][1] = f;  
+  }
+  
+  void set_posZ (int n, float f) {
+    this.options[n][2] = f;  
+  }  
+  
+  void set_posT (int n, float f) {
+    this.options[n][3] = f;  
+  }  
+  
+  void set_rotX (int n, float f) {
+    this.options[n][4] = f;  
+  }
+
+  void set_rotY (int n, float f) {
+    this.options[n][5] = f;  
+  }
+  
+  void set_rotZ (int n, float f) {
+    this.options[n][6] = f;  
+  }  
+  
+  void set_rotT (int n, float f) {
+    this.options[n][7] = f;  
+  }    
+  
+  void set_zoom (int n, float f) {
+    this.options[n][8] = f;  
+  }    
+
   
   private float[][] Vertices;
   private int[][] Faces;
