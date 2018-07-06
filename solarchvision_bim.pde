@@ -16408,6 +16408,1945 @@ solarchvision_SolarImpacts allSolarImpacts = new solarchvision_SolarImpacts();
 
 
 
+class solarchvision_Edit3Ds {
+  
+  private final static String CLASS_STAMP = "Edit3Ds";
+  
+
+
+  void move_Groups (float dx, float dy, float dz) {
+  
+    int[] PolymeshVertices = userSelections.get_Group_Vertices();
+  
+    for (int q = 0; q < PolymeshVertices.length; q++) {
+  
+      int n = PolymeshVertices[q];
+  
+      allPoints.move(n, dx, dy, dz); 
+    }
+  
+    boolean allSolids_updated = false;
+  
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Group_ids[o];
+  
+      {
+        allGroups.PivotMatrix[OBJ_NUM][0] += dx;
+        allGroups.PivotMatrix[OBJ_NUM][1] += dy;
+        allGroups.PivotMatrix[OBJ_NUM][2] += dz;
+      }
+  
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel1Ds.num)) {
+  
+          allModel1Ds.move(f, dx, dy, dz);
+        }
+      }
+  
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel2Ds.num)) {
+  
+          allModel2Ds.move(f, dx, dy, dz);
+        }
+      }
+  
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allSolids.DEF.length)) {
+  
+          float Solid_posX = allSolids.get_posX(f);
+          float Solid_posY = allSolids.get_posY(f);
+          float Solid_posZ = allSolids.get_posZ(f);
+  
+          allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+  
+          allSolids_updated = true;
+        }
+      }
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+  
+  void rotate_Groups (float r, int the_Vector) {
+  
+    int[] PolymeshVertices = userSelections.get_Group_Vertices();
+  
+    for (int q = 0; q < PolymeshVertices.length; q++) {
+  
+      int n = PolymeshVertices[q];
+  
+      float x = allPoints.getX(n); 
+      float y = allPoints.getY(n); 
+      float z = allPoints.getZ(n);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = A[0];
+      y = A[1];
+      z = A[2];
+  
+      {
+        float a = x;
+        float b = y;
+        float c = z;
+  
+        if (the_Vector == 2) {
+          a = x * cos(r) - y * sin(r); 
+          b = x * sin(r) + y * cos(r);
+          c = z;
+        } else if (the_Vector == 1) {
+          a = z * sin(r) + x * cos(r); 
+          b = y;
+          c = z * cos(r) - x * sin(r);
+        } else if (the_Vector == 0) {
+          a = x;
+          b = y * cos(r) - z * sin(r);
+          c = y * sin(r) + z * cos(r);
+        }   
+  
+        x = a;
+        y = b;
+        z = c;
+      }
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];
+  
+      allPoints.setX(n, x); 
+      allPoints.setY(n, y);
+      allPoints.setZ(n, z);
+    }
+  
+  
+  
+  
+  
+  
+    boolean allSolids_updated = false;
+  
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Group_ids[o];
+  
+      { 
+        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
+        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
+        float z = allGroups.PivotMatrix[OBJ_NUM][2];
+  
+        float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+        x = A[0];
+        y = A[1];
+        z = A[2];
+  
+        {
+          float a = x;
+          float b = y;
+          float c = z;
+  
+          if (the_Vector == 2) {
+            a = x * cos(r) - y * sin(r); 
+            b = x * sin(r) + y * cos(r);
+            c = z;
+          } else if (the_Vector == 1) {
+            a = z * sin(r) + x * cos(r); 
+            b = y;
+            c = z * cos(r) - x * sin(r);
+          } else if (the_Vector == 0) {
+            a = x;
+            b = y * cos(r) - z * sin(r);
+            c = y * sin(r) + z * cos(r);
+          }   
+  
+          x = a;
+          y = b;
+          z = c;
+        }
+  
+        float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+        x = B[0];
+        y = B[1];
+        z = B[2];
+  
+        allGroups.PivotMatrix[OBJ_NUM][0] = x;
+        allGroups.PivotMatrix[OBJ_NUM][1] = y;
+        allGroups.PivotMatrix[OBJ_NUM][2] = z;
+  
+        if (the_Vector == 2) {
+          allGroups.PivotMatrix[OBJ_NUM][8] += r * 180.0 / PI;
+        } else if (the_Vector == 1) {
+          allGroups.PivotMatrix[OBJ_NUM][7] += r * 180.0 / PI;
+        } else if (the_Vector == 0) {
+          allGroups.PivotMatrix[OBJ_NUM][6] += r * 180.0 / PI;
+        }
+      }    
+  
+  
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel1Ds.num)) {
+  
+          float x = allModel1Ds.getX(f); 
+          float y = allModel1Ds.getY(f); 
+          float z = allModel1Ds.getZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = A[0];
+          y = A[1];
+          z = A[2];
+  
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+  
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            } else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            } else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+  
+            x = a;
+            y = b;
+            z = c;
+          }
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+          allModel1Ds.setX(f, x);
+          allModel1Ds.setY(f, y);
+          allModel1Ds.setZ(f, z);
+  
+  
+          if (the_Vector == 2) {
+            allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<
+          } else if (the_Vector == 1) {
+          } else if (the_Vector == 0) {
+          }
+        }
+      }         
+  
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel2Ds.num)) {
+  
+          float x = allModel2Ds.getX(f); 
+          float y = allModel2Ds.getY(f); 
+          float z = allModel2Ds.getZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = A[0];
+          y = A[1];
+          z = A[2];
+  
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+  
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            } else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            } else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+  
+            x = a;
+            y = b;
+            z = c;
+          }
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+          allModel2Ds.setX(f, x);
+          allModel2Ds.setY(f, y);
+          allModel2Ds.setZ(f, z);
+        }
+      }         
+  
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allSolids.DEF.length)) {
+  
+          float x = allSolids.get_posX(f);
+          float y = allSolids.get_posY(f);
+          float z = allSolids.get_posZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = A[0];
+          y = A[1];
+          z = A[2];
+  
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+  
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            } else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            } else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+  
+            x = a;
+            y = b;
+            z = c;
+          }
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+  
+          allSolids.updatePosition(f, x, y, z);
+  
+          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Note: these rotations could be translated to locals to avoid problems!
+          if (the_Vector == 2) {
+            allSolids.RotateZ(f, r * 180 / PI);
+          } else if (the_Vector == 1) {
+            allSolids.RotateY(f, r * 180 / PI);
+          } else if (the_Vector == 0) {
+            allSolids.RotateX(f, r * 180 / PI);
+          }
+  
+          allSolids_updated = true;
+        }
+      }
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+  
+  
+  
+  void scale_Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    int[] PolymeshVertices = userSelections.get_Group_Vertices();
+  
+    for (int q = 0; q < PolymeshVertices.length; q++) {
+  
+      int n = PolymeshVertices[q];
+  
+      float x = allPoints.getX(n); 
+      float y = allPoints.getY(n); 
+      float z = allPoints.getZ(n);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];
+  
+      allPoints.setX(n, x); 
+      allPoints.setY(n, y);
+      allPoints.setZ(n, z);
+    }
+  
+    int n1 = allModel2Ds.num_files_PEOPLE;
+  
+    boolean allSolids_updated = false;
+  
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Group_ids[o];
+  
+      {
+        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
+        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
+        float z = allGroups.PivotMatrix[OBJ_NUM][2];
+  
+        float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+        x = sx * (A[0] - x0) + x0;
+        y = sy * (A[1] - y0) + y0;
+        z = sz * (A[2] - z0) + z0;
+  
+        float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+        x = B[0];
+        y = B[1];
+        z = B[2];
+  
+        allGroups.PivotMatrix[OBJ_NUM][0] = x; 
+        allGroups.PivotMatrix[OBJ_NUM][1] = y;
+        allGroups.PivotMatrix[OBJ_NUM][2] = z;        
+  
+        // ???????
+        //allGroups.PivotMatrix[OBJ_NUM][3] *= sx; 
+        //allGroups.PivotMatrix[OBJ_NUM][4] *= sy;
+        //allGroups.PivotMatrix[OBJ_NUM][5] *= sz;
+        // ???????
+      }
+  
+  
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel1Ds.num)) {
+  
+          float x = allModel1Ds.getX(f);
+          float y = allModel1Ds.getY(f); 
+          float z = allModel1Ds.getZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = sx * (A[0] - x0) + x0;
+          y = sy * (A[1] - y0) + y0;
+          z = sz * (A[2] - z0) + z0;
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+          allModel1Ds.setX(f, x);
+          allModel1Ds.setY(f, y);
+          allModel1Ds.setZ(f, z);
+  
+          allModel1Ds.magS(f, sz);
+        }
+      }  
+  
+  
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel2Ds.num)) {
+  
+          float x = allModel2Ds.getX(f);
+          float y = allModel2Ds.getY(f); 
+          float z = allModel2Ds.getZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = sx * (A[0] - x0) + x0;
+          y = sy * (A[1] - y0) + y0;
+          z = sz * (A[2] - z0) + z0;
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];         
+  
+          allModel2Ds.setX(f, x); 
+          allModel2Ds.setY(f, y);
+          allModel2Ds.setZ(f, z);
+  
+          int n = allModel2Ds.MAP[f];
+  
+          if (allModel2Ds.isTree(n)) { // does not scale poeple!    
+            allModel2Ds.magS(f, sz);
+          }
+        }
+      }     
+  
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allSolids.DEF.length)) {
+  
+          float x = allSolids.get_posX(f);
+          float y = allSolids.get_posY(f);
+          float z = allSolids.get_posZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = sx * (A[0] - x0) + x0;
+          y = sy * (A[1] - y0) + y0;
+          z = sz * (A[2] - z0) + z0;
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0]; 
+          y = B[1];
+          z = B[2];
+  
+          allSolids.updatePosition(f, x, y, z);
+  
+          allSolids.Scale(f, sx, sy, sz);
+  
+          allSolids_updated = true;
+        }
+      }
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+  
+  
+  
+  void move_Faces (float dx, float dy, float dz) {
+  
+    int[] FaceVertices = userSelections.get_Face_Vertices();
+  
+    for (int q = 0; q < FaceVertices.length; q++) {
+  
+      int f = FaceVertices[q];
+  
+      allPoints.move(f, dx, dy, dz); 
+    }
+  }
+  
+  void rotate_Faces (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    int[] FaceVertices = userSelections.get_Face_Vertices();
+  
+    for (int q = 0; q < FaceVertices.length; q++) {
+  
+      int f = FaceVertices[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+  
+  void scale_Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    int[] FaceVertices = userSelections.get_Face_Vertices();
+  
+    for (int q = 0; q < FaceVertices.length; q++) {
+  
+      int f = FaceVertices[q];
+  
+      float x = allPoints.getX(f);
+      float y = allPoints.getY(f);
+      float z = allPoints.getZ(f);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];    
+  
+      allPoints.setX(f, x); 
+      allPoints.setY(f, y);
+      allPoints.setZ(f, z);
+    }
+  }
+  
+  
+  void move_Curves (float dx, float dy, float dz) {
+  
+    int[] CurveVertices = userSelections.get_Curve_Vertices();
+  
+    for (int q = 0; q < CurveVertices.length; q++) {
+  
+      int f = CurveVertices[q];
+  
+      allPoints.move(f, dx, dy, dz); 
+    }
+  }
+  
+  void rotate_Curves (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    int[] CurveVertices = userSelections.get_Curve_Vertices();
+  
+    for (int q = 0; q < CurveVertices.length; q++) {
+  
+      int f = CurveVertices[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+  
+  void scale_Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    int[] CurveVertices = userSelections.get_Curve_Vertices();
+  
+    for (int q = 0; q < CurveVertices.length; q++) {
+  
+      int f = CurveVertices[q];
+  
+      float x = allPoints.getX(f);
+      float y = allPoints.getY(f);
+      float z = allPoints.getZ(f);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];    
+  
+      allPoints.setX(f, x); 
+      allPoints.setY(f, y);
+      allPoints.setZ(f, z);
+    }
+  }
+  
+  void move_Vertices (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
+  
+      int f = userSelections.Vertex_ids[q];
+  
+      allPoints.move(f, dx, dy, dz); 
+    }
+  }
+  
+  
+  void rotate_Vertices (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
+  
+      int f = userSelections.Vertex_ids[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+  
+  
+  void scale_Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
+  
+      int f = userSelections.Vertex_ids[q];
+  
+      float x = allPoints.getX(f); 
+      float y = allPoints.getY(f); 
+      float z = allPoints.getZ(f);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];
+  
+      allPoints.setX(f, x); 
+      allPoints.setY(f, y);
+      allPoints.setZ(f, z);
+    }
+  }
+  
+  
+  
+  
+
+  
+  void softMove_selectedVertices (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
+  
+      int f = userSelections.Vertex_softSelectionVertices[q];
+  
+      float v = userSelections.Vertex_softSelectionValues[q];
+  
+      allPoints.move(f, dx * v, dy * v, dz * v); 
+    }
+  }
+  
+  
+  void softRotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
+  
+      int f = userSelections.Vertex_softSelectionVertices[q];
+  
+      float v = userSelections.Vertex_softSelectionValues[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r * v) - y * sin(r * v))); 
+        allPoints.setY(f, y0 + (x * sin(r * v) + y * cos(r * v)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r * v) + x * cos(r * v))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r * v) - x * sin(r * v)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r * v) - z * sin(r * v)));
+        allPoints.setZ(f, z0 + (y * sin(r * v) + z * cos(r * v)));
+      }
+    }
+  }
+  
+  
+  
+  void softScale_selectedVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
+  
+      int f = userSelections.Vertex_softSelectionVertices[q];
+  
+      float v = userSelections.Vertex_softSelectionValues[q];    
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      allPoints.setX(f, (x0 + sx * x) * v + (x0 + x) * (1 - v)); 
+      allPoints.setY(f, (y0 + sy * y) * v + (y0 + y) * (1 - v)); 
+      allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
+    }
+  }
+  
+  
+  
+  void scale_Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  
+    int n1 = allModel2Ds.num_files_PEOPLE;    
+  
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+  
+      int f = userSelections.Model2D_ids[o];
+  
+      float x = allModel2Ds.getX(f);
+      float y = allModel2Ds.getY(f); 
+      float z = allModel2Ds.getZ(f);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];         
+  
+      allModel2Ds.setX(f, x); 
+      allModel2Ds.setY(f, y);
+      allModel2Ds.setZ(f, z);    
+  
+  
+      int n = allModel2Ds.MAP[f];
+  
+      if (allModel2Ds.isTree(n)) { // does not scale poeple!    
+        allModel2Ds.magS(f, sz);
+      }
+    }
+  }
+  
+  
+  void rotate_Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Model2D_ids.length; q++) {
+  
+      int f = userSelections.Model2D_ids[q];
+  
+      float x = allModel2Ds.getX(f) - x0; 
+      float y = allModel2Ds.getY(f) - y0; 
+      float z = allModel2Ds.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allModel2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allModel2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allModel2Ds.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allModel2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allModel2Ds.setY(f, y0 + (y));
+        allModel2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allModel2Ds.setX(f, x0 + (x)); 
+        allModel2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+  
+  
+  
+  void move_Model2Ds (float dx, float dy, float dz) {
+  
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+  
+      int f = userSelections.Model2D_ids[o];
+      
+      allModel2Ds.move(f, dx, dy, dz); 
+    }
+  } 
+  
+  
+  void scale_Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+  
+      int f = userSelections.Model1D_ids[o];
+  
+      float x = allModel1Ds.getX(f);
+      float y = allModel1Ds.getY(f); 
+      float z = allModel1Ds.getZ(f);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];
+  
+      allModel1Ds.setX(f, x);
+      allModel1Ds.setY(f, y);
+      allModel1Ds.setZ(f, z);
+  
+      allModel1Ds.magS(f, sz);
+    }
+  }
+  
+  
+  void rotate_Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Model1D_ids.length; q++) {
+  
+      int f = userSelections.Model1D_ids[q];
+  
+      float x = allModel1Ds.getX(f) - x0; 
+      float y = allModel1Ds.getY(f) - y0; 
+      float z = allModel1Ds.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allModel1Ds.setZ(f, z0 + (z));
+  
+        allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      } else if (the_Vector == 1) {
+        allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allModel1Ds.setY(f, y0 + (y));
+        allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allModel1Ds.setX(f, x0 + (x)); 
+        allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+  
+  
+  void move_Model1Ds (float dx, float dy, float dz) {
+  
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+  
+      int f = userSelections.Model1D_ids[o];
+  
+      allModel1Ds.move(f, dx, dy, dz); 
+    }
+  } 
+  
+  
+  void move_Solids (float dx, float dy, float dz) {
+  
+    boolean allSolids_updated = false; 
+  
+    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
+  
+      int f = userSelections.Solid_ids[q];
+  
+      float Solid_posX = allSolids.get_posX(f);
+      float Solid_posY = allSolids.get_posY(f);
+      float Solid_posZ = allSolids.get_posZ(f);
+  
+      allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+  
+      allSolids_updated = true;
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+  
+  
+  void rotate_Solids (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    boolean allSolids_updated = false; 
+  
+    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
+  
+      int f = userSelections.Solid_ids[q];
+  
+      float Solid_posX = allSolids.get_posX(f);
+      float Solid_posY = allSolids.get_posY(f);
+      float Solid_posZ = allSolids.get_posZ(f);
+  
+  
+      float x = Solid_posX - x0; 
+      float y = Solid_posY - y0; 
+      float z = Solid_posZ - z0;
+  
+      if (the_Vector == 2) {
+        allSolids.updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+  
+        allSolids.RotateZ(f, r * 180 / PI);
+      } else if (the_Vector == 1) {
+        allSolids.updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+  
+        allSolids.RotateY(f, r * 180 / PI);
+      } else if (the_Vector == 0) {
+        allSolids.updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+  
+        allSolids.RotateX(f, r * 180 / PI);
+      }
+  
+      allSolids_updated = true;
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+  
+  
+  void scale_Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    boolean allSolids_updated = false; 
+  
+    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
+  
+      int f = userSelections.Solid_ids[q];
+  
+      float x = allSolids.get_posX(f);
+      float y = allSolids.get_posY(f);
+      float z = allSolids.get_posZ(f);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0]; 
+      y = B[1];
+      z = B[2];
+  
+      allSolids.updatePosition(f, x, y, z);
+  
+      allSolids.Scale(f, sx, sy, sz);    
+  
+      allSolids_updated = true;
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+  
+  
+  void move_Sections (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.Section_ids.length; q++) {
+  
+      int f = userSelections.Section_ids[q];
+      
+      allSections.move(f, dx, dy, dz);
+    }
+  
+    allSolidImpacts.calculate_Impact_selectedSections();
+  
+    WIN3D.update = true;
+    ROLLOUT.update = true;
+  }
+  
+  
+  void rotate_Sections (float r) {
+  
+    for (int q = 0; q < userSelections.Section_ids.length; q++) {
+  
+      int f = userSelections.Section_ids[q];
+  
+      allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
+    }
+  
+    allSolidImpacts.calculate_Impact_selectedSections(); 
+  
+    WIN3D.update = true;
+    ROLLOUT.update = true;
+  }
+  
+  void scale_Sections (float sx, float sy) {
+  
+    for (int q = 0; q < userSelections.Section_ids.length; q++) {
+  
+      int f = userSelections.Section_ids[q];
+  
+      allSections.setU(f, allSections.getU(f) * sx);
+      allSections.setV(f, allSections.getV(f) * sy);
+    }
+  
+    allSolidImpacts.calculate_Impact_selectedSections(); 
+  
+    WIN3D.update = true;
+    ROLLOUT.update = true;
+  }
+  
+  
+  void move_Cameras (float dx, float dy, float dz) {
+  
+    // swapping y and z vectors to match camera's local coordinate
+    float tmp = dz;
+    dz = dy;
+    dy = tmp;
+  
+    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
+  
+      int f = userSelections.Camera_ids[q];
+  
+      allCameras.move(f, dx, dy, dz); 
+  
+      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+    }
+  }
+  
+  
+  void rotate_Cameras (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    // swapping y and z vectors to match camera's local coordinate
+    if (the_Vector == 2) the_Vector = 1;
+    else if (the_Vector == 1) the_Vector = 2;
+  
+    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
+  
+      int f = userSelections.Camera_ids[q];
+  
+      float x = allCameras.get_posX(f) - x0; 
+      float y = allCameras.get_posY(f) - y0; 
+      float z = allCameras.get_posZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allCameras.set_posX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allCameras.set_posY(f, y0 + (x * sin(r) + y * cos(r)));
+        allCameras.set_posZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allCameras.set_posX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allCameras.set_posY(f, y0 + (y));
+        allCameras.set_posZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allCameras.set_posX(f, x0 + (x)); 
+        allCameras.set_posY(f, y0 + (y * cos(r) - z * sin(r)));
+        allCameras.set_posZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }    
+  
+      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+    }
+  }
+  
+  
+  void scale_Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    // swapping y and z vectors to match camera's local coordinate
+    float tmp = sz;
+    sz = sy;
+    sy = tmp;
+  
+    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
+  
+      int f = userSelections.Camera_ids[q];
+  
+      float x = allCameras.get_posX(f) - x0; 
+      float y = allCameras.get_posY(f) - y0; 
+      float z = allCameras.get_posZ(f) - z0;
+  
+      allCameras.set_posX(f, x0 + sx * x); 
+      allCameras.set_posY(f, y0 + sy * y);
+      allCameras.set_posZ(f, z0 + sz * z);
+  
+      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+    }
+  }
+  
+  
+  void flatten_LandPoints () {
+  
+    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
+  
+      int f = userSelections.LandPoint_ids[q];
+  
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
+  
+      Land3D.Mesh[i][j][2] = 0;
+  
+    }
+  }
+  
+  
+  
+  void move_LandPoints (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
+  
+      int f = userSelections.LandPoint_ids[q];
+  
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
+  
+      Land3D.Mesh[i][j][0] += dx; 
+      Land3D.Mesh[i][j][1] += dy;
+      Land3D.Mesh[i][j][2] += dz;
+    }
+  }
+  
+  
+  void rotate_LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
+  
+      int f = userSelections.LandPoint_ids[q];
+  
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
+  
+      float x = Land3D.Mesh[i][j][0] - x0; 
+      float y = Land3D.Mesh[i][j][1] - y0; 
+      float z = Land3D.Mesh[i][j][2] - z0;
+  
+      if (the_Vector == 2) {
+        Land3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
+        Land3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
+        Land3D.Mesh[i][j][2] = z0 + (z);
+      } else if (the_Vector == 1) {
+        Land3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
+        Land3D.Mesh[i][j][1] = y0 + (y);
+        Land3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
+      } else if (the_Vector == 0) {
+        Land3D.Mesh[i][j][0] = x0 + (x); 
+        Land3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
+        Land3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
+      }
+    }
+  }
+  
+  
+  void scale_LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
+  
+      int f = userSelections.LandPoint_ids[q];
+  
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
+  
+      float x = Land3D.Mesh[i][j][0];
+      float y = Land3D.Mesh[i][j][1]; 
+      float z = Land3D.Mesh[i][j][2];
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];
+  
+      Land3D.Mesh[i][j][0] = x; 
+      Land3D.Mesh[i][j][1] = y;
+      Land3D.Mesh[i][j][2] = z;
+  
+    }
+  }
+  
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+  void duplicate_Model1Ds (boolean produce_same_variation) {
+
+    int number_of_allModel1Ds_before = allModel1Ds.num; 
+
+    for (int o = 0; o < userSelections.Model1D_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Model1D_ids[o];
+
+      float x = allModel1Ds.getX(OBJ_NUM);
+      float y = allModel1Ds.getY(OBJ_NUM);
+      float z = allModel1Ds.getZ(OBJ_NUM);
+      float d = allModel1Ds.getS(OBJ_NUM);
+      float rot = allModel1Ds.getR(OBJ_NUM);
+
+      int n = allModel1Ds.getType(OBJ_NUM);
+      int dMin = allModel1Ds.getDegreeMin(OBJ_NUM);
+      int dMax = allModel1Ds.getDegreeMax(OBJ_NUM);
+      int s = allModel1Ds.getSeed(OBJ_NUM);
+      float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
+      float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
+
+      if (produce_same_variation == false) randomSeed(millis());
+      allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Model1D_ids = new int [0];
+
+    for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
+
+      int[] newlyAddedallModel1Ds = {o};
+
+      userSelections.Model1D_ids = concat(userSelections.Model1D_ids, newlyAddedallModel1Ds);
+    }
+  }
+
+
+  void duplicate_Model2Ds (boolean produce_same_variation) {
+
+    int n1 = allModel2Ds.num_files_PEOPLE;
+
+    int number_of_allModel2Ds_before = allModel2Ds.num; 
+
+    for (int o = 0; o < userSelections.Model2D_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      float x = allModel2Ds.getX(OBJ_NUM);
+      float y = allModel2Ds.getY(OBJ_NUM);
+      float z = allModel2Ds.getZ(OBJ_NUM);
+      float s = allModel2Ds.getS(OBJ_NUM);
+
+      int n = allModel2Ds.MAP[OBJ_NUM];
+      if (allModel2Ds.isTree(n)) {
+        if (produce_same_variation == false) n = 0; // this makes it random
+        allModel2Ds.create("TREES", n, x, y, z, s);
+      } else {
+        if (produce_same_variation == false) n = 0; // this makes it random
+        allModel2Ds.create("PEOPLE", n, x, y, z, s);
+      }
+    }
+
+    // selecting new objetcs
+
+    userSelections.Model2D_ids = new int [0];
+
+    for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
+
+      int[] newlyAddedallModel2Ds = {o};
+
+      userSelections.Model2D_ids = concat(userSelections.Model2D_ids, newlyAddedallModel2Ds);
+    }
+  }
+  
+
+  void duplicate_Faces (boolean produce_same_variation) {
+
+    int number_of_Faces_before = allFaces.nodes.length;
+
+    for (int o = 0; o < userSelections.Face_ids.length; o++) {
+
+      int f = userSelections.Face_ids[o];        
+
+      int number_of_Vertices_before = allPoints.getLength();
+
+      int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
+      int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+      if ((0 <= f) && (f < allFaces.nodes.length)) {
+
+        int[] newFace_nodes = {
+        };
+
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
+
+          int vertex_listed = -1;
+
+          for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+            if (vNo == PolymeshVertices_OLD[q]) {
+              vertex_listed = q;
+              break;
+            }
+          }         
+
+          if (vertex_listed == -1) {
+            int[] newVertexListed = {
+              vNo
+            };
+            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+            float x = allPoints.getX(vNo);
+            float y = allPoints.getY(vNo);
+            float z = allPoints.getZ(vNo);
+
+            int[] newVertexAdded = {
+              allPoints.create(x, y, z)
+            };
+            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+            vertex_listed = PolymeshVertices_OLD.length;
+          } 
+
+          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+
+          int[] new_vertexItem = {
+            number_of_Vertices_before + vertex_listed - 1
+          };
+
+          newFace_nodes = concat(newFace_nodes, new_vertexItem);
+        }
+
+        current_Material = allFaces.getMaterial(f);
+        current_Tessellation = allFaces.getTessellation(f);
+        current_Layer = allFaces.getLayer(f);
+        current_Visibility = allFaces.getVisibility(f);        
+
+        allFaces.create(newFace_nodes);
+      }
+    }
+
+
+    // selecting new objetcs
+
+    userSelections.Face_ids = new int [0];
+
+    for (int o = number_of_Faces_before; o < allFaces.nodes.length; o++) {
+
+      int[] newlyAddedFace = {o};
+
+      userSelections.Face_ids = concat(userSelections.Face_ids, newlyAddedFace);
+    }
+  }
+
+
+  void duplicate_Curves (boolean produce_same_variation) {
+
+    int number_of_Curves_before = allCurves.nodes.length;
+
+    for (int o = 0; o < userSelections.Curve_ids.length; o++) {
+
+      int f = userSelections.Curve_ids[o];        
+
+      int number_of_Vertices_before = allPoints.getLength();
+
+      int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
+      int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+      if ((0 <= f) && (f < allCurves.nodes.length)) {
+
+        int[] newCurve_nodes = {
+        };
+
+        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+          int vNo = allCurves.nodes[f][j];
+
+          int vertex_listed = -1;
+
+          for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+            if (vNo == PolymeshVertices_OLD[q]) {
+              vertex_listed = q;
+              break;
+            }
+          }         
+
+          if (vertex_listed == -1) {
+            int[] newVertexListed = {
+              vNo
+            };
+            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+            float x = allPoints.getX(vNo);
+            float y = allPoints.getY(vNo);
+            float z = allPoints.getZ(vNo);
+
+            int[] newVertexAdded = {
+              allPoints.create(x, y, z)
+            };
+            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+            vertex_listed = PolymeshVertices_OLD.length;
+          } 
+
+          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+
+          int[] new_vertexItem = {
+            number_of_Vertices_before + vertex_listed - 1
+          };
+
+          newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+        }
+
+        current_Material = allCurves.getMaterial(f);
+        current_Tessellation = allCurves.getTessellation(f);
+        current_Layer = allCurves.getLayer(f);
+        current_Visibility = allCurves.getVisibility(f);        
+        current_Weight = allCurves.getWeight(f);
+        current_Closed = allCurves.getClose(f);
+
+        allCurves.create(newCurve_nodes);
+      }
+    }
+
+
+    // selecting new objetcs
+
+    userSelections.Curve_ids = new int [0];
+
+    for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
+
+      int[] newlyAddedCurve = {o};
+
+      userSelections.Curve_ids = concat(userSelections.Curve_ids, newlyAddedCurve);
+    }
+  }
+  
+
+  void duplicate_Solids (boolean produce_same_variation) {
+
+    int number_of_Solid_before = allSolids.DEF.length; 
+
+    for (int o = 0; o < userSelections.Solid_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Solid_ids[o];
+
+      float Solid_posX = allSolids.get_posX(OBJ_NUM);
+      float Solid_posY = allSolids.get_posY(OBJ_NUM);
+      float Solid_posZ = allSolids.get_posZ(OBJ_NUM);
+      float Solid_powX = allSolids.get_powX(OBJ_NUM);
+      float Solid_powY = allSolids.get_powY(OBJ_NUM);
+      float Solid_powZ = allSolids.get_powZ(OBJ_NUM);
+      float Solid_scaleX = allSolids.get_scaleX(OBJ_NUM);
+      float Solid_scaleY = allSolids.get_scaleY(OBJ_NUM);
+      float Solid_scaleZ = allSolids.get_scaleZ(OBJ_NUM);
+      float Solid_rotX = allSolids.get_rotX(OBJ_NUM);
+      float Solid_rotY = allSolids.get_rotY(OBJ_NUM);
+      float Solid_rotZ = allSolids.get_rotZ(OBJ_NUM);
+      float Solid_value = allSolids.get_value(OBJ_NUM);
+
+      allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Solid_ids = new int [0];
+
+    for (int o = number_of_Solid_before; o < allSolids.DEF.length; o++) {
+
+      int[] newlyAddedSolid = {o};
+
+      userSelections.Solid_ids = concat(userSelections.Solid_ids, newlyAddedSolid);
+    }
+  }
+  
+  void duplicate_Sections (boolean produce_same_variation) {
+
+    int number_of_Section_before = allSections.num; 
+
+    for (int o = 0; o < userSelections.Section_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Section_ids[o];
+
+      float Section_X = allSections.getX(OBJ_NUM);
+      float Section_Y = allSections.getY(OBJ_NUM);
+      float Section_Z = allSections.getZ(OBJ_NUM);
+      float Section_R = allSections.getR(OBJ_NUM);
+      float Section_U = allSections.getU(OBJ_NUM);
+      float Section_V = allSections.getV(OBJ_NUM);
+
+      int Section_Type = allSections.get_type(OBJ_NUM);
+      int Section_RES1 = allSections.get_res1(OBJ_NUM);
+      int Section_RES2 = allSections.get_res2(OBJ_NUM);
+
+      allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Section_ids = new int [0];
+
+    for (int o = number_of_Section_before; o < allSections.num; o++) {
+
+      int[] newlyAddedSection = {o};
+
+      userSelections.Section_ids = concat(userSelections.Section_ids, newlyAddedSection);
+    }
+  }  
+  
+  
+  void duplicate_Cameras (boolean produce_same_variation) {
+
+    int number_of_Camera_before = allCameras.num; 
+
+    for (int o = 0; o < userSelections.Camera_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Camera_ids[o];
+
+      float Camera_pX = allCameras.get_posX(OBJ_NUM);
+      float Camera_pY = allCameras.get_posY(OBJ_NUM);
+      float Camera_pZ = allCameras.get_posZ(OBJ_NUM);
+      float Camera_pT = allCameras.get_posT(OBJ_NUM);
+      float Camera_rX = allCameras.get_rotX(OBJ_NUM);
+      float Camera_rY = allCameras.get_rotY(OBJ_NUM);
+      float Camera_rZ = allCameras.get_rotZ(OBJ_NUM);
+      float Camera_rT = allCameras.get_rotT(OBJ_NUM);
+      float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
+      int   Camera_type = allCameras.get_type(OBJ_NUM);
+
+      allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Camera_ids = new int [0];
+
+    for (int o = number_of_Camera_before; o < allCameras.num; o++) {
+
+      int[] newlyAddedCamera = {o};
+
+      userSelections.Camera_ids = concat(userSelections.Camera_ids, newlyAddedCamera);
+    }
+  }  
+  
+
+  void duplicate_Groups (boolean produce_same_variation) {
+
+    int n1 = allModel2Ds.num_files_PEOPLE;
+
+    int SOLID_added = 0;
+
+    int number_of_allGroups_before = allGroups.num;
+
+    for (int o = 0; o < userSelections.Group_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Group_ids[o];
+
+      if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) { 
+
+        int number_of_Vertices_before = allPoints.getLength();
+
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+        int new_OBJ_NUM = allGroups.num - 1;
+
+        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
+
+        for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
+          allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
+        }
+
+        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
+
+            float x = allModel1Ds.getX(q);
+            float y = allModel1Ds.getY(q);
+            float z = allModel1Ds.getZ(q);
+
+            float d = allModel1Ds.getS(q);
+            float rot = allModel1Ds.getR(q);
+
+            int n = allModel1Ds.getType(q);
+
+            int dMin = allModel1Ds.getDegreeMin(q);
+
+            int dMax = allModel1Ds.getDegreeMax(q);
+
+            int s = allModel1Ds.getSeed(q);
+
+            float TrunkSize = allModel1Ds.getTrunkSize(q);
+
+            float LeafSize = allModel1Ds.getLeafSize(q);
+
+            if (produce_same_variation == false) {
+              randomSeed(millis());
+
+              rot = random(360);
+              s = int(random(32767));
+            }
+            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+          }
+        }
+
+        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
+  
+            float x = allModel2Ds.getX(q);
+            float y = allModel2Ds.getY(q);
+            float z = allModel2Ds.getZ(q);
+            float s = allModel2Ds.getS(q);
+  
+            int n = allModel2Ds.MAP[q];
+  
+            if (allModel2Ds.isTree(n)) {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("TREES", n, x, y, z, s);
+            } else {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("PEOPLE", n, x, y, z, s);
+            }
+          }
+        }
+
+
+        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
+          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+
+            float Solid_posX = allSolids.get_posX(q);
+            float Solid_posY = allSolids.get_posY(q);
+            float Solid_posZ = allSolids.get_posZ(q);
+            float Solid_powX = allSolids.get_powX(q);
+            float Solid_powY = allSolids.get_powY(q);
+            float Solid_powZ = allSolids.get_powZ(q);
+            float Solid_scaleX = allSolids.get_scaleX(q);
+            float Solid_scaleY = allSolids.get_scaleY(q);
+            float Solid_scaleZ = allSolids.get_scaleZ(q);
+            float Solid_rotX = allSolids.get_rotX(q);
+            float Solid_rotY = allSolids.get_rotY(q);
+            float Solid_rotZ = allSolids.get_rotZ(q);
+            float Solid_value = allSolids.get_value(q);
+
+            allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+
+            SOLID_added += 1;
+          }
+        }
+
+
+
+        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+
+          if ((0 <= f) && (f < allFaces.nodes.length)) {
+
+            int[] newFace_nodes = {
+            };
+
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
+
+              int vertex_listed = -1;
+
+              for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+                if (vNo == PolymeshVertices_OLD[q]) {
+                  vertex_listed = q;
+                  break;
+                }
+              }         
+
+              if (vertex_listed == -1) {
+                int[] newVertexListed = {
+                  vNo
+                };
+                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+                float x = allPoints.getX(vNo);
+                float y = allPoints.getY(vNo);
+                float z = allPoints.getZ(vNo);
+
+                int[] newVertexAdded = {
+                  allPoints.create(x, y, z)
+                };
+                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+                vertex_listed = PolymeshVertices_OLD.length - 1;
+              }
+
+              int[] new_vertexItem = {
+                number_of_Vertices_before + vertex_listed
+              };
+
+              newFace_nodes = concat(newFace_nodes, new_vertexItem);
+            }
+
+            current_Material = allFaces.getMaterial(f);
+            current_Tessellation = allFaces.getTessellation(f);
+            current_Layer = allFaces.getLayer(f);
+            current_Visibility = allFaces.getVisibility(f);
+
+            allFaces.create(newFace_nodes);
+            
+            println("newFace_nodes");
+            println(newFace_nodes);
+          }
+        }
+      }
+      
+      if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) { 
+
+        int number_of_Vertices_before = allPoints.getLength();
+
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+        int new_OBJ_NUM = allGroups.num - 1;
+
+        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
+
+        for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
+          allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
+        }
+
+        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
+
+            float x = allModel1Ds.getX(q);
+            float y = allModel1Ds.getY(q);
+            float z = allModel1Ds.getZ(q);
+
+            float d = allModel1Ds.getS(q);
+            float rot = allModel1Ds.getR(q);
+
+            int n = allModel1Ds.getType(q);
+
+            int dMin = allModel1Ds.getDegreeMin(q);
+
+            int dMax = allModel1Ds.getDegreeMax(q);
+
+            int s = allModel1Ds.getSeed(q);
+
+            float TrunkSize = allModel1Ds.getTrunkSize(q);
+
+            float LeafSize = allModel1Ds.getLeafSize(q);
+
+            if (produce_same_variation == false) {
+              randomSeed(millis());
+
+              rot = random(360);
+              s = int(random(32767));
+            }
+            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+          }
+        }
+
+        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
+
+            float x = allModel2Ds.getX(q);
+            float y = allModel2Ds.getY(q);
+            float z = allModel2Ds.getZ(q);
+            float s = allModel2Ds.getS(q);
+
+            int n = allModel2Ds.MAP[q];
+
+            if (allModel2Ds.isTree(n)) {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("TREES", n, x, y, z, s);
+            } else {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("PEOPLE", n, x, y, z, s);
+            }
+          }
+        }
+
+        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
+          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+
+            float Solid_posX = allSolids.get_posX(q);
+            float Solid_posY = allSolids.get_posY(q);
+            float Solid_posZ = allSolids.get_posZ(q);
+            float Solid_powX = allSolids.get_powX(q);
+            float Solid_powY = allSolids.get_powY(q);
+            float Solid_powZ = allSolids.get_powZ(q);
+            float Solid_scaleX = allSolids.get_scaleX(q);
+            float Solid_scaleY = allSolids.get_scaleY(q);
+            float Solid_scaleZ = allSolids.get_scaleZ(q);
+            float Solid_rotX = allSolids.get_rotX(q);
+            float Solid_rotY = allSolids.get_rotY(q);
+            float Solid_rotZ = allSolids.get_rotZ(q);
+            float Solid_value = allSolids.get_value(q);
+
+            allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+
+            SOLID_added += 1;
+          }
+        }
+
+
+        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+
+          if ((0 <= f) && (f < allCurves.nodes.length)) {
+
+            int[] newCurve_nodes = {
+            };
+
+            for (int j = 0; j < allCurves.nodes[f].length; j++) {
+              int vNo = allCurves.nodes[f][j];
+
+              int vertex_listed = -1;
+
+              for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+                if (vNo == PolymeshVertices_OLD[q]) {
+                  vertex_listed = q;
+                  break;
+                }
+              }         
+
+              if (vertex_listed == -1) {
+                int[] newVertexListed = {
+                  vNo
+                };
+                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+                float x = allPoints.getX(vNo);
+                float y = allPoints.getY(vNo);
+                float z = allPoints.getZ(vNo);
+
+                int[] newVertexAdded = {
+                  allPoints.create(x, y, z)
+                };
+                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+                vertex_listed = PolymeshVertices_OLD.length - 1;
+              } 
+
+              int[] new_vertexItem = {
+                number_of_Vertices_before + vertex_listed
+              };
+
+              newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+            }
+
+            current_Material = allCurves.getMaterial(f);
+            current_Tessellation = allCurves.getTessellation(f);
+            current_Layer = allCurves.getLayer(f);
+            current_Visibility = allCurves.getVisibility(f);
+            current_Weight = allCurves.getWeight(f);
+            current_Closed = allCurves.getClose(f);
+
+            allCurves.create(newCurve_nodes);
+          }
+        }
+      }        
+    }
+  
+
+
+    // selecting new objetcs
+
+    userSelections.Group_ids = new int [0];
+
+    for (int o = number_of_allGroups_before; o < allGroups.num; o++) {
+
+      int[] newlyAddedGroup = {o};
+
+      userSelections.Group_ids = concat(userSelections.Group_ids, newlyAddedGroup);
+    }       
+
+
+    if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+
+  
+
+}
+
+solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
+  
+
+
 
 
 class solarchvision_Selections {
@@ -16479,143 +18418,7 @@ class solarchvision_Selections {
   
 
   
-  int[] get_Face_Vertices () {
-  
-    int[] FaceVertices = new int [0];
-  
-    for (int o = this.Face_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = this.Face_ids[o];
-  
-      int f = OBJ_NUM;
-  
-      for (int j = 0; j < allFaces.nodes[f].length; j++) {
-        int vNo = allFaces.nodes[f][j];
-  
-        int vertex_listed = -1;
-  
-        for (int q = 0; q < FaceVertices.length; q++) {
-          if (vNo == FaceVertices[q]) {
-            vertex_listed = 1;
-            break;
-          }
-        }         
-  
-        if (vertex_listed == -1) {
-          int[] newVertexListed = {
-            vNo
-          };
-          FaceVertices = concat(FaceVertices, newVertexListed);
-        }
-      }
-    }
-  
-  
-    return FaceVertices;
-  } 
-  
-  
-  int[] get_Curve_Vertices () {
-  
-    int[] CurveVertices = new int [0];
-  
-    for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = this.Curve_ids[o];
-  
-      int f = OBJ_NUM;
-  
-      for (int j = 0; j < allCurves.nodes[f].length; j++) {
-        int vNo = allCurves.nodes[f][j];
-  
-        int vertex_listed = -1;
-  
-        for (int q = 0; q < CurveVertices.length; q++) {
-          if (vNo == CurveVertices[q]) {
-            vertex_listed = 1;
-            break;
-          }
-        }         
-  
-        if (vertex_listed == -1) {
-          int[] newVertexListed = {
-            vNo
-          };
-          CurveVertices = concat(CurveVertices, newVertexListed);
-        }
-      }
-    }
-  
-    return CurveVertices;
-  } 
-  
-  
-  
-  int[] get_Group_Vertices () {
-  
-    int[] PolymeshVertices = new int [0];
-  
-    for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = this.Group_ids[o];
-  
-      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-  
-        if ((0 <= f) && (f < allFaces.nodes.length)) { 
-          for (int j = 0; j < allFaces.nodes[f].length; j++) {
-  
-            int vNo = allFaces.nodes[f][j];
-  
-            int vertex_listed = -1;
-  
-            for (int q = 0; q < PolymeshVertices.length; q++) {
-              if (vNo == PolymeshVertices[q]) {
-                vertex_listed = 1;
-                break;
-              }
-            }         
-  
-            if (vertex_listed == -1) {
-              int[] newVertexListed = {
-                vNo
-              };
-              PolymeshVertices = concat(PolymeshVertices, newVertexListed);
-            }
-          }
-        }
-      }
-  
-  
-  
-      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
-  
-        if ((0 <= f) && (f < allCurves.nodes.length)) { 
-          for (int j = 0; j < allCurves.nodes[f].length; j++) {
-  
-            int vNo = allCurves.nodes[f][j];
-  
-            int vertex_listed = -1;
-  
-            for (int q = 0; q < PolymeshVertices.length; q++) {
-              if (vNo == PolymeshVertices[q]) {
-                vertex_listed = 1;
-                break;
-              }
-            }         
-  
-            if (vertex_listed == -1) {
-              int[] newVertexListed = {
-                vNo
-              };
-              PolymeshVertices = concat(PolymeshVertices, newVertexListed);
-            }
-          }
-        }
-      }
-    }    
-  
-    return PolymeshVertices;
-  }   
+
     
     
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
@@ -17149,1249 +18952,6 @@ class solarchvision_Selections {
   
   
   
-  void move_Groups (float dx, float dy, float dz) {
-  
-    int[] PolymeshVertices = this.get_Group_Vertices();
-  
-    for (int q = 0; q < PolymeshVertices.length; q++) {
-  
-      int n = PolymeshVertices[q];
-  
-      allPoints.move(n, dx, dy, dz); 
-    }
-  
-    boolean allSolids_updated = false;
-  
-    for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = this.Group_ids[o];
-  
-      {
-        allGroups.PivotMatrix[OBJ_NUM][0] += dx;
-        allGroups.PivotMatrix[OBJ_NUM][1] += dy;
-        allGroups.PivotMatrix[OBJ_NUM][2] += dz;
-      }
-  
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
-  
-          allModel1Ds.move(f, dx, dy, dz);
-        }
-      }
-  
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
-  
-          allModel2Ds.move(f, dx, dy, dz);
-        }
-      }
-  
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allSolids.DEF.length)) {
-  
-          float Solid_posX = allSolids.get_posX(f);
-          float Solid_posY = allSolids.get_posY(f);
-          float Solid_posZ = allSolids.get_posZ(f);
-  
-          allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
-  
-          allSolids_updated = true;
-        }
-      }
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-  
-  void rotate_Groups (float r, int the_Vector) {
-  
-    int[] PolymeshVertices = this.get_Group_Vertices();
-  
-    for (int q = 0; q < PolymeshVertices.length; q++) {
-  
-      int n = PolymeshVertices[q];
-  
-      float x = allPoints.getX(n); 
-      float y = allPoints.getY(n); 
-      float z = allPoints.getZ(n);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = A[0];
-      y = A[1];
-      z = A[2];
-  
-      {
-        float a = x;
-        float b = y;
-        float c = z;
-  
-        if (the_Vector == 2) {
-          a = x * cos(r) - y * sin(r); 
-          b = x * sin(r) + y * cos(r);
-          c = z;
-        } else if (the_Vector == 1) {
-          a = z * sin(r) + x * cos(r); 
-          b = y;
-          c = z * cos(r) - x * sin(r);
-        } else if (the_Vector == 0) {
-          a = x;
-          b = y * cos(r) - z * sin(r);
-          c = y * sin(r) + z * cos(r);
-        }   
-  
-        x = a;
-        y = b;
-        z = c;
-      }
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];
-  
-      allPoints.setX(n, x); 
-      allPoints.setY(n, y);
-      allPoints.setZ(n, z);
-    }
-  
-  
-  
-  
-  
-  
-    boolean allSolids_updated = false;
-  
-    for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = this.Group_ids[o];
-  
-      { 
-        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
-        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
-        float z = allGroups.PivotMatrix[OBJ_NUM][2];
-  
-        float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-        x = A[0];
-        y = A[1];
-        z = A[2];
-  
-        {
-          float a = x;
-          float b = y;
-          float c = z;
-  
-          if (the_Vector == 2) {
-            a = x * cos(r) - y * sin(r); 
-            b = x * sin(r) + y * cos(r);
-            c = z;
-          } else if (the_Vector == 1) {
-            a = z * sin(r) + x * cos(r); 
-            b = y;
-            c = z * cos(r) - x * sin(r);
-          } else if (the_Vector == 0) {
-            a = x;
-            b = y * cos(r) - z * sin(r);
-            c = y * sin(r) + z * cos(r);
-          }   
-  
-          x = a;
-          y = b;
-          z = c;
-        }
-  
-        float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-        x = B[0];
-        y = B[1];
-        z = B[2];
-  
-        allGroups.PivotMatrix[OBJ_NUM][0] = x;
-        allGroups.PivotMatrix[OBJ_NUM][1] = y;
-        allGroups.PivotMatrix[OBJ_NUM][2] = z;
-  
-        if (the_Vector == 2) {
-          allGroups.PivotMatrix[OBJ_NUM][8] += r * 180.0 / PI;
-        } else if (the_Vector == 1) {
-          allGroups.PivotMatrix[OBJ_NUM][7] += r * 180.0 / PI;
-        } else if (the_Vector == 0) {
-          allGroups.PivotMatrix[OBJ_NUM][6] += r * 180.0 / PI;
-        }
-      }    
-  
-  
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
-  
-          float x = allModel1Ds.getX(f); 
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
-  
-          float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-          x = A[0];
-          y = A[1];
-          z = A[2];
-  
-          {
-            float a = x;
-            float b = y;
-            float c = z;
-  
-            if (the_Vector == 2) {
-              a = x * cos(r) - y * sin(r); 
-              b = x * sin(r) + y * cos(r);
-              c = z;
-            } else if (the_Vector == 1) {
-              a = z * sin(r) + x * cos(r); 
-              b = y;
-              c = z * cos(r) - x * sin(r);
-            } else if (the_Vector == 0) {
-              a = x;
-              b = y * cos(r) - z * sin(r);
-              c = y * sin(r) + z * cos(r);
-            }   
-  
-            x = a;
-            y = b;
-            z = c;
-          }
-  
-          float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
-  
-  
-          if (the_Vector == 2) {
-            allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<
-          } else if (the_Vector == 1) {
-          } else if (the_Vector == 0) {
-          }
-        }
-      }         
-  
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
-  
-          float x = allModel2Ds.getX(f); 
-          float y = allModel2Ds.getY(f); 
-          float z = allModel2Ds.getZ(f);
-  
-          float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-          x = A[0];
-          y = A[1];
-          z = A[2];
-  
-          {
-            float a = x;
-            float b = y;
-            float c = z;
-  
-            if (the_Vector == 2) {
-              a = x * cos(r) - y * sin(r); 
-              b = x * sin(r) + y * cos(r);
-              c = z;
-            } else if (the_Vector == 1) {
-              a = z * sin(r) + x * cos(r); 
-              b = y;
-              c = z * cos(r) - x * sin(r);
-            } else if (the_Vector == 0) {
-              a = x;
-              b = y * cos(r) - z * sin(r);
-              c = y * sin(r) + z * cos(r);
-            }   
-  
-            x = a;
-            y = b;
-            z = c;
-          }
-  
-          float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-          allModel2Ds.setX(f, x);
-          allModel2Ds.setY(f, y);
-          allModel2Ds.setZ(f, z);
-        }
-      }         
-  
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allSolids.DEF.length)) {
-  
-          float x = allSolids.get_posX(f);
-          float y = allSolids.get_posY(f);
-          float z = allSolids.get_posZ(f);
-  
-          float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-          x = A[0];
-          y = A[1];
-          z = A[2];
-  
-          {
-            float a = x;
-            float b = y;
-            float c = z;
-  
-            if (the_Vector == 2) {
-              a = x * cos(r) - y * sin(r); 
-              b = x * sin(r) + y * cos(r);
-              c = z;
-            } else if (the_Vector == 1) {
-              a = z * sin(r) + x * cos(r); 
-              b = y;
-              c = z * cos(r) - x * sin(r);
-            } else if (the_Vector == 0) {
-              a = x;
-              b = y * cos(r) - z * sin(r);
-              c = y * sin(r) + z * cos(r);
-            }   
-  
-            x = a;
-            y = b;
-            z = c;
-          }
-  
-          float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-  
-          allSolids.updatePosition(f, x, y, z);
-  
-          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Note: these rotations could be translated to locals to avoid problems!
-          if (the_Vector == 2) {
-            allSolids.RotateZ(f, r * 180 / PI);
-          } else if (the_Vector == 1) {
-            allSolids.RotateY(f, r * 180 / PI);
-          } else if (the_Vector == 0) {
-            allSolids.RotateX(f, r * 180 / PI);
-          }
-  
-          allSolids_updated = true;
-        }
-      }
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-  
-  
-  
-  void scale_Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    int[] PolymeshVertices = this.get_Group_Vertices();
-  
-    for (int q = 0; q < PolymeshVertices.length; q++) {
-  
-      int n = PolymeshVertices[q];
-  
-      float x = allPoints.getX(n); 
-      float y = allPoints.getY(n); 
-      float z = allPoints.getZ(n);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];
-  
-      allPoints.setX(n, x); 
-      allPoints.setY(n, y);
-      allPoints.setZ(n, z);
-    }
-  
-    int n1 = allModel2Ds.num_files_PEOPLE;
-  
-    boolean allSolids_updated = false;
-  
-    for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = this.Group_ids[o];
-  
-      {
-        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
-        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
-        float z = allGroups.PivotMatrix[OBJ_NUM][2];
-  
-        float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-        x = sx * (A[0] - x0) + x0;
-        y = sy * (A[1] - y0) + y0;
-        z = sz * (A[2] - z0) + z0;
-  
-        float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-        x = B[0];
-        y = B[1];
-        z = B[2];
-  
-        allGroups.PivotMatrix[OBJ_NUM][0] = x; 
-        allGroups.PivotMatrix[OBJ_NUM][1] = y;
-        allGroups.PivotMatrix[OBJ_NUM][2] = z;        
-  
-        // ???????
-        //allGroups.PivotMatrix[OBJ_NUM][3] *= sx; 
-        //allGroups.PivotMatrix[OBJ_NUM][4] *= sy;
-        //allGroups.PivotMatrix[OBJ_NUM][5] *= sz;
-        // ???????
-      }
-  
-  
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
-  
-          float x = allModel1Ds.getX(f);
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
-  
-          float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-          x = sx * (A[0] - x0) + x0;
-          y = sy * (A[1] - y0) + y0;
-          z = sz * (A[2] - z0) + z0;
-  
-          float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
-  
-          allModel1Ds.magS(f, sz);
-        }
-      }  
-  
-  
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
-  
-          float x = allModel2Ds.getX(f);
-          float y = allModel2Ds.getY(f); 
-          float z = allModel2Ds.getZ(f);
-  
-          float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-          x = sx * (A[0] - x0) + x0;
-          y = sy * (A[1] - y0) + y0;
-          z = sz * (A[2] - z0) + z0;
-  
-          float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];         
-  
-          allModel2Ds.setX(f, x); 
-          allModel2Ds.setY(f, y);
-          allModel2Ds.setZ(f, z);
-  
-          int n = allModel2Ds.MAP[f];
-  
-          if (allModel2Ds.isTree(n)) { // does not scale poeple!    
-            allModel2Ds.magS(f, sz);
-          }
-        }
-      }     
-  
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allSolids.DEF.length)) {
-  
-          float x = allSolids.get_posX(f);
-          float y = allSolids.get_posY(f);
-          float z = allSolids.get_posZ(f);
-  
-          float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-          x = sx * (A[0] - x0) + x0;
-          y = sy * (A[1] - y0) + y0;
-          z = sz * (A[2] - z0) + z0;
-  
-          float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0]; 
-          y = B[1];
-          z = B[2];
-  
-          allSolids.updatePosition(f, x, y, z);
-  
-          allSolids.Scale(f, sx, sy, sz);
-  
-          allSolids_updated = true;
-        }
-      }
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-  
-  
-  
-  void move_Faces (float dx, float dy, float dz) {
-  
-    int[] FaceVertices = this.get_Face_Vertices();
-  
-    for (int q = 0; q < FaceVertices.length; q++) {
-  
-      int f = FaceVertices[q];
-  
-      allPoints.move(f, dx, dy, dz); 
-    }
-  }
-  
-  void rotate_Faces (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    int[] FaceVertices = this.get_Face_Vertices();
-  
-    for (int q = 0; q < FaceVertices.length; q++) {
-  
-      int f = FaceVertices[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
-  
-  void scale_Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    int[] FaceVertices = this.get_Face_Vertices();
-  
-    for (int q = 0; q < FaceVertices.length; q++) {
-  
-      int f = FaceVertices[q];
-  
-      float x = allPoints.getX(f);
-      float y = allPoints.getY(f);
-      float z = allPoints.getZ(f);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];    
-  
-      allPoints.setX(f, x); 
-      allPoints.setY(f, y);
-      allPoints.setZ(f, z);
-    }
-  }
-  
-  
-  void move_Curves (float dx, float dy, float dz) {
-  
-    int[] CurveVertices = this.get_Curve_Vertices();
-  
-    for (int q = 0; q < CurveVertices.length; q++) {
-  
-      int f = CurveVertices[q];
-  
-      allPoints.move(f, dx, dy, dz); 
-    }
-  }
-  
-  void rotate_Curves (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    int[] CurveVertices = this.get_Curve_Vertices();
-  
-    for (int q = 0; q < CurveVertices.length; q++) {
-  
-      int f = CurveVertices[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
-  
-  void scale_Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    int[] CurveVertices = this.get_Curve_Vertices();
-  
-    for (int q = 0; q < CurveVertices.length; q++) {
-  
-      int f = CurveVertices[q];
-  
-      float x = allPoints.getX(f);
-      float y = allPoints.getY(f);
-      float z = allPoints.getZ(f);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];    
-  
-      allPoints.setX(f, x); 
-      allPoints.setY(f, y);
-      allPoints.setZ(f, z);
-    }
-  }
-  
-  void move_Vertices (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < this.Vertex_ids.length; q++) {
-  
-      int f = this.Vertex_ids[q];
-  
-      allPoints.move(f, dx, dy, dz); 
-    }
-  }
-  
-  
-  void rotate_Vertices (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < this.Vertex_ids.length; q++) {
-  
-      int f = this.Vertex_ids[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
-  
-  
-  void scale_Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    for (int q = 0; q < this.Vertex_ids.length; q++) {
-  
-      int f = this.Vertex_ids[q];
-  
-      float x = allPoints.getX(f); 
-      float y = allPoints.getY(f); 
-      float z = allPoints.getZ(f);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];
-  
-      allPoints.setX(f, x); 
-      allPoints.setY(f, y);
-      allPoints.setZ(f, z);
-    }
-  }
-  
-  
-  
-  
-  float softSelectionFunction (float d_min) {
-  
-    float v = 0;
-  
-    if (d_min < this.softRadius) {
-      v = pow(funcs.cos_ang(90 * d_min / this.softRadius), this.softPower);
-    }
-  
-    return v;
-  }
-  
-  void softMove_selectedVertices (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < this.Vertex_softSelectionVertices.length; q++) {
-  
-      int f = this.Vertex_softSelectionVertices[q];
-  
-      float v = this.Vertex_softSelectionValues[q];
-  
-      allPoints.move(f, dx * v, dy * v, dz * v); 
-    }
-  }
-  
-  
-  void softRotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < this.Vertex_softSelectionVertices.length; q++) {
-  
-      int f = this.Vertex_softSelectionVertices[q];
-  
-      float v = this.Vertex_softSelectionValues[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r * v) - y * sin(r * v))); 
-        allPoints.setY(f, y0 + (x * sin(r * v) + y * cos(r * v)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r * v) + x * cos(r * v))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r * v) - x * sin(r * v)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r * v) - z * sin(r * v)));
-        allPoints.setZ(f, z0 + (y * sin(r * v) + z * cos(r * v)));
-      }
-    }
-  }
-  
-  
-  
-  void softScale_selectedVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    for (int q = 0; q < this.Vertex_softSelectionVertices.length; q++) {
-  
-      int f = this.Vertex_softSelectionVertices[q];
-  
-      float v = this.Vertex_softSelectionValues[q];    
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      allPoints.setX(f, (x0 + sx * x) * v + (x0 + x) * (1 - v)); 
-      allPoints.setY(f, (y0 + sy * y) * v + (y0 + y) * (1 - v)); 
-      allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
-    }
-  }
-  
-  
-  
-  void scale_Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
-  
-    int n1 = allModel2Ds.num_files_PEOPLE;    
-  
-    for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
-  
-      int f = this.Model2D_ids[o];
-  
-      float x = allModel2Ds.getX(f);
-      float y = allModel2Ds.getY(f); 
-      float z = allModel2Ds.getZ(f);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];         
-  
-      allModel2Ds.setX(f, x); 
-      allModel2Ds.setY(f, y);
-      allModel2Ds.setZ(f, z);    
-  
-  
-      int n = allModel2Ds.MAP[f];
-  
-      if (allModel2Ds.isTree(n)) { // does not scale poeple!    
-        allModel2Ds.magS(f, sz);
-      }
-    }
-  }
-  
-  
-  void rotate_Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < this.Model2D_ids.length; q++) {
-  
-      int f = this.Model2D_ids[q];
-  
-      float x = allModel2Ds.getX(f) - x0; 
-      float y = allModel2Ds.getY(f) - y0; 
-      float z = allModel2Ds.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allModel2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel2Ds.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allModel2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel2Ds.setY(f, y0 + (y));
-        allModel2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allModel2Ds.setX(f, x0 + (x)); 
-        allModel2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
-  
-  
-  
-  void move_Model2Ds (float dx, float dy, float dz) {
-  
-    for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
-  
-      int f = this.Model2D_ids[o];
-      
-      allModel2Ds.move(f, dx, dy, dz); 
-    }
-  } 
-  
-  
-  void scale_Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
-  
-    for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-  
-      int f = this.Model1D_ids[o];
-  
-      float x = allModel1Ds.getX(f);
-      float y = allModel1Ds.getY(f); 
-      float z = allModel1Ds.getZ(f);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];
-  
-      allModel1Ds.setX(f, x);
-      allModel1Ds.setY(f, y);
-      allModel1Ds.setZ(f, z);
-  
-      allModel1Ds.magS(f, sz);
-    }
-  }
-  
-  
-  void rotate_Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < this.Model1D_ids.length; q++) {
-  
-      int f = this.Model1D_ids[q];
-  
-      float x = allModel1Ds.getX(f) - x0; 
-      float y = allModel1Ds.getY(f) - y0; 
-      float z = allModel1Ds.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel1Ds.setZ(f, z0 + (z));
-  
-        allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      } else if (the_Vector == 1) {
-        allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel1Ds.setY(f, y0 + (y));
-        allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allModel1Ds.setX(f, x0 + (x)); 
-        allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
-  
-  
-  void move_Model1Ds (float dx, float dy, float dz) {
-  
-    for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-  
-      int f = this.Model1D_ids[o];
-  
-      allModel1Ds.move(f, dx, dy, dz); 
-    }
-  } 
-  
-  
-  void move_Solids (float dx, float dy, float dz) {
-  
-    boolean allSolids_updated = false; 
-  
-    for (int q = 0; q < this.Solid_ids.length; q++) {
-  
-      int f = this.Solid_ids[q];
-  
-      float Solid_posX = allSolids.get_posX(f);
-      float Solid_posY = allSolids.get_posY(f);
-      float Solid_posZ = allSolids.get_posZ(f);
-  
-      allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
-  
-      allSolids_updated = true;
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-  
-  
-  void rotate_Solids (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    boolean allSolids_updated = false; 
-  
-    for (int q = 0; q < this.Solid_ids.length; q++) {
-  
-      int f = this.Solid_ids[q];
-  
-      float Solid_posX = allSolids.get_posX(f);
-      float Solid_posY = allSolids.get_posY(f);
-      float Solid_posZ = allSolids.get_posZ(f);
-  
-  
-      float x = Solid_posX - x0; 
-      float y = Solid_posY - y0; 
-      float z = Solid_posZ - z0;
-  
-      if (the_Vector == 2) {
-        allSolids.updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
-  
-        allSolids.RotateZ(f, r * 180 / PI);
-      } else if (the_Vector == 1) {
-        allSolids.updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
-  
-        allSolids.RotateY(f, r * 180 / PI);
-      } else if (the_Vector == 0) {
-        allSolids.updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
-  
-        allSolids.RotateX(f, r * 180 / PI);
-      }
-  
-      allSolids_updated = true;
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-  
-  
-  void scale_Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    boolean allSolids_updated = false; 
-  
-    for (int q = 0; q < this.Solid_ids.length; q++) {
-  
-      int f = this.Solid_ids[q];
-  
-      float x = allSolids.get_posX(f);
-      float y = allSolids.get_posY(f);
-      float z = allSolids.get_posZ(f);
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0]; 
-      y = B[1];
-      z = B[2];
-  
-      allSolids.updatePosition(f, x, y, z);
-  
-      allSolids.Scale(f, sx, sy, sz);    
-  
-      allSolids_updated = true;
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-  
-  
-  void move_Sections (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < this.Section_ids.length; q++) {
-  
-      int f = this.Section_ids[q];
-      
-      allSections.move(f, dx, dy, dz);
-    }
-  
-    allSolidImpacts.calculate_Impact_selectedSections();
-  
-    WIN3D.update = true;
-    ROLLOUT.update = true;
-  }
-  
-  
-  void rotate_Sections (float r) {
-  
-    for (int q = 0; q < this.Section_ids.length; q++) {
-  
-      int f = this.Section_ids[q];
-  
-      allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
-    }
-  
-    allSolidImpacts.calculate_Impact_selectedSections(); 
-  
-    WIN3D.update = true;
-    ROLLOUT.update = true;
-  }
-  
-  void scale_Sections (float sx, float sy) {
-  
-    for (int q = 0; q < this.Section_ids.length; q++) {
-  
-      int f = this.Section_ids[q];
-  
-      allSections.setU(f, allSections.getU(f) * sx);
-      allSections.setV(f, allSections.getV(f) * sy);
-    }
-  
-    allSolidImpacts.calculate_Impact_selectedSections(); 
-  
-    WIN3D.update = true;
-    ROLLOUT.update = true;
-  }
-  
-  
-  void move_Cameras (float dx, float dy, float dz) {
-  
-    // swapping y and z vectors to match camera's local coordinate
-    float tmp = dz;
-    dz = dy;
-    dy = tmp;
-  
-    for (int q = 0; q < this.Camera_ids.length; q++) {
-  
-      int f = this.Camera_ids[q];
-  
-      allCameras.move(f, dx, dy, dz); 
-  
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
-    }
-  }
-  
-  
-  void rotate_Cameras (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    // swapping y and z vectors to match camera's local coordinate
-    if (the_Vector == 2) the_Vector = 1;
-    else if (the_Vector == 1) the_Vector = 2;
-  
-    for (int q = 0; q < this.Camera_ids.length; q++) {
-  
-      int f = this.Camera_ids[q];
-  
-      float x = allCameras.get_posX(f) - x0; 
-      float y = allCameras.get_posY(f) - y0; 
-      float z = allCameras.get_posZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allCameras.set_posX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allCameras.set_posY(f, y0 + (x * sin(r) + y * cos(r)));
-        allCameras.set_posZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allCameras.set_posX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allCameras.set_posY(f, y0 + (y));
-        allCameras.set_posZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allCameras.set_posX(f, x0 + (x)); 
-        allCameras.set_posY(f, y0 + (y * cos(r) - z * sin(r)));
-        allCameras.set_posZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }    
-  
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
-    }
-  }
-  
-  
-  void scale_Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    // swapping y and z vectors to match camera's local coordinate
-    float tmp = sz;
-    sz = sy;
-    sy = tmp;
-  
-    for (int q = 0; q < this.Camera_ids.length; q++) {
-  
-      int f = this.Camera_ids[q];
-  
-      float x = allCameras.get_posX(f) - x0; 
-      float y = allCameras.get_posY(f) - y0; 
-      float z = allCameras.get_posZ(f) - z0;
-  
-      allCameras.set_posX(f, x0 + sx * x); 
-      allCameras.set_posY(f, y0 + sy * y);
-      allCameras.set_posZ(f, z0 + sz * z);
-  
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
-    }
-  }
-  
-  
-  void flatten_LandPoints () {
-  
-    for (int q = 0; q < this.LandPoint_ids.length; q++) {
-  
-      int f = this.LandPoint_ids[q];
-  
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
-  
-      Land3D.Mesh[i][j][2] = 0;
-  
-    }
-  }
-  
-  
-  
-  void move_LandPoints (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < this.LandPoint_ids.length; q++) {
-  
-      int f = this.LandPoint_ids[q];
-  
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
-  
-      Land3D.Mesh[i][j][0] += dx; 
-      Land3D.Mesh[i][j][1] += dy;
-      Land3D.Mesh[i][j][2] += dz;
-    }
-  }
-  
-  
-  void rotate_LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < this.LandPoint_ids.length; q++) {
-  
-      int f = this.LandPoint_ids[q];
-  
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
-  
-      float x = Land3D.Mesh[i][j][0] - x0; 
-      float y = Land3D.Mesh[i][j][1] - y0; 
-      float z = Land3D.Mesh[i][j][2] - z0;
-  
-      if (the_Vector == 2) {
-        Land3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
-        Land3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
-        Land3D.Mesh[i][j][2] = z0 + (z);
-      } else if (the_Vector == 1) {
-        Land3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
-        Land3D.Mesh[i][j][1] = y0 + (y);
-        Land3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
-      } else if (the_Vector == 0) {
-        Land3D.Mesh[i][j][0] = x0 + (x); 
-        Land3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
-        Land3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
-      }
-    }
-  }
-  
-  
-  void scale_LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
-  
-    for (int q = 0; q < this.LandPoint_ids.length; q++) {
-  
-      int f = this.LandPoint_ids[q];
-  
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
-  
-      float x = Land3D.Mesh[i][j][0];
-      float y = Land3D.Mesh[i][j][1]; 
-      float z = Land3D.Mesh[i][j][2];
-  
-      float[] A = this.translateOutside_ReferencePivot(x, y, z);
-  
-      x = sx * (A[0] - x0) + x0;
-      y = sy * (A[1] - y0) + y0;
-      z = sz * (A[2] - z0) + z0;
-  
-      float[] B = this.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];
-  
-      Land3D.Mesh[i][j][0] = x; 
-      Land3D.Mesh[i][j][1] = y;
-      Land3D.Mesh[i][j][2] = z;
-  
-    }
-  }
   
   
   
@@ -18403,59 +18963,48 @@ class solarchvision_Selections {
     y0 = O[1];
     z0 = O[2];    
   
-  
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-  
-      this.scale_Cameras(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Cameras(x0, y0, z0, sx, sy, sz);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-  
-      this.scale_Sections(sx, sy);
+      Edit3Ds.scale_Sections(sx, sy);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.scale_Solids(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Solids(x0, y0, z0, sx, sy, sz);
     }       
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-  
-      this.softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-  
-      this.scale_Vertices(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Vertices(x0, y0, z0, sx, sy, sz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-  
-      this.scale_Faces(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Faces(x0, y0, z0, sx, sy, sz);
     }  
     
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-  
-      this.scale_Curves(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Curves(x0, y0, z0, sx, sy, sz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-  
-      this.scale_Groups(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Groups(x0, y0, z0, sx, sy, sz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-  
-      this.scale_Model2Ds(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Model2Ds(x0, y0, z0, sx, sy, sz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      this.scale_Model1Ds(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_Model1Ds(x0, y0, z0, sx, sy, sz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-  
-      this.scale_LandPoints(x0, y0, z0, sx, sy, sz);
+      Edit3Ds.scale_LandPoints(x0, y0, z0, sx, sy, sz);
     }
   }
   
@@ -18472,60 +19021,48 @@ class solarchvision_Selections {
     y0 = B[1] - A[1];
     z0 = B[2] - A[2];  
   
-  
+    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+      Edit3Ds.softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
+    }  
+    
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-  
-      this.rotate_Cameras(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Cameras(x0, y0, z0, r, the_Vector);
     }  
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-  
-      this.rotate_Sections(r);
+      Edit3Ds.rotate_Sections(r);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-  
-      this.rotate_Solids(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Solids(x0, y0, z0, r, the_Vector);
     }       
   
-    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-  
-      this.softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
-    }  
-  
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-  
-      this.rotate_Vertices(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Vertices(x0, y0, z0, r, the_Vector);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-  
-      this.rotate_Faces(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Faces(x0, y0, z0, r, the_Vector);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-  
-      this.rotate_Curves(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Curves(x0, y0, z0, r, the_Vector);
     }  
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-  
-      this.rotate_Groups(r, the_Vector);
+      Edit3Ds.rotate_Groups(r, the_Vector);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-  
-      this.rotate_Model2Ds(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Model2Ds(x0, y0, z0, r, the_Vector);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      this.rotate_Model1Ds(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_Model1Ds(x0, y0, z0, r, the_Vector);
     }   
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-  
-      this.rotate_LandPoints(x0, y0, z0, r, the_Vector);
+      Edit3Ds.rotate_LandPoints(x0, y0, z0, r, the_Vector);
     }
   } 
   
@@ -18545,62 +19082,48 @@ class solarchvision_Selections {
     dy = B[1] - A[1];
     dz = B[2] - A[2];
   
-  
-  
+    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+      Edit3Ds.softMove_selectedVertices(dx, dy, dz);
+    }      
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-  
-      this.move_Cameras(dx, dy, dz);
+      Edit3Ds.move_Cameras(dx, dy, dz);
     }     
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-  
-      this.move_Sections(dx, dy, dz);
+      Edit3Ds.move_Sections(dx, dy, dz);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-  
-      this.move_Solids(dx, dy, dz);
+      Edit3Ds.move_Solids(dx, dy, dz);
     }      
-  
-    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-  
-      this.softMove_selectedVertices(dx, dy, dz);
-    }    
-  
+
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-  
-      this.move_Vertices(dx, dy, dz);
+      Edit3Ds.move_Vertices(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-  
-      this.move_Faces(dx, dy, dz);
+      Edit3Ds.move_Faces(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-  
-      this.move_Curves(dx, dy, dz);
+      Edit3Ds.move_Curves(dx, dy, dz);
     }
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-  
-      this.move_Groups(dx, dy, dz);
+      Edit3Ds.move_Groups(dx, dy, dz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-  
-      this.move_Model2Ds(dx, dy, dz);
+      Edit3Ds.move_Model2Ds(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      this.move_Model1Ds(dx, dy, dz);
+      Edit3Ds.move_Model1Ds(dx, dy, dz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-  
-      this.move_LandPoints(dx, dy, dz);
+      Edit3Ds.move_LandPoints(dx, dy, dz);
     }
   }
   
@@ -19197,681 +19720,7 @@ class solarchvision_Selections {
   }     
   
 
-  void duplicate_Model1Ds (boolean produce_same_variation) {
 
-    int number_of_allModel1Ds_before = allModel1Ds.num; 
-
-    for (int o = 0; o < this.Model1D_ids.length; o++) {
-
-      int OBJ_NUM = this.Model1D_ids[o];
-
-      float x = allModel1Ds.getX(OBJ_NUM);
-      float y = allModel1Ds.getY(OBJ_NUM);
-      float z = allModel1Ds.getZ(OBJ_NUM);
-      float d = allModel1Ds.getS(OBJ_NUM);
-      float rot = allModel1Ds.getR(OBJ_NUM);
-
-      int n = allModel1Ds.getType(OBJ_NUM);
-      int dMin = allModel1Ds.getDegreeMin(OBJ_NUM);
-      int dMax = allModel1Ds.getDegreeMax(OBJ_NUM);
-      int s = allModel1Ds.getSeed(OBJ_NUM);
-      float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
-      float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
-
-      if (produce_same_variation == false) randomSeed(millis());
-      allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-    }
-
-    // selecting new objetcs
-
-    this.Model1D_ids = new int [0];
-
-    for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
-
-      int[] newlyAddedallModel1Ds = {o};
-
-      this.Model1D_ids = concat(this.Model1D_ids, newlyAddedallModel1Ds);
-    }
-  }
-
-
-  void duplicate_Model2Ds (boolean produce_same_variation) {
-
-    int n1 = allModel2Ds.num_files_PEOPLE;
-
-    int number_of_allModel2Ds_before = allModel2Ds.num; 
-
-    for (int o = 0; o < this.Model2D_ids.length; o++) {
-
-      int OBJ_NUM = this.Model2D_ids[o];
-
-      float x = allModel2Ds.getX(OBJ_NUM);
-      float y = allModel2Ds.getY(OBJ_NUM);
-      float z = allModel2Ds.getZ(OBJ_NUM);
-      float s = allModel2Ds.getS(OBJ_NUM);
-
-      int n = allModel2Ds.MAP[OBJ_NUM];
-      if (allModel2Ds.isTree(n)) {
-        if (produce_same_variation == false) n = 0; // this makes it random
-        allModel2Ds.create("TREES", n, x, y, z, s);
-      } else {
-        if (produce_same_variation == false) n = 0; // this makes it random
-        allModel2Ds.create("PEOPLE", n, x, y, z, s);
-      }
-    }
-
-    // selecting new objetcs
-
-    this.Model2D_ids = new int [0];
-
-    for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
-
-      int[] newlyAddedallModel2Ds = {o};
-
-      this.Model2D_ids = concat(this.Model2D_ids, newlyAddedallModel2Ds);
-    }
-  }
-  
-
-  void duplicate_Faces (boolean produce_same_variation) {
-
-    int number_of_Faces_before = allFaces.nodes.length;
-
-    for (int o = 0; o < this.Face_ids.length; o++) {
-
-      int f = this.Face_ids[o];        
-
-      int number_of_Vertices_before = allPoints.getLength();
-
-      int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
-      int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-
-      if ((0 <= f) && (f < allFaces.nodes.length)) {
-
-        int[] newFace_nodes = {
-        };
-
-        for (int j = 0; j < allFaces.nodes[f].length; j++) {
-          int vNo = allFaces.nodes[f][j];
-
-          int vertex_listed = -1;
-
-          for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-            if (vNo == PolymeshVertices_OLD[q]) {
-              vertex_listed = q;
-              break;
-            }
-          }         
-
-          if (vertex_listed == -1) {
-            int[] newVertexListed = {
-              vNo
-            };
-            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-
-            float x = allPoints.getX(vNo);
-            float y = allPoints.getY(vNo);
-            float z = allPoints.getZ(vNo);
-
-            int[] newVertexAdded = {
-              allPoints.create(x, y, z)
-            };
-            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-
-            vertex_listed = PolymeshVertices_OLD.length;
-          } 
-
-          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
-
-          int[] new_vertexItem = {
-            number_of_Vertices_before + vertex_listed - 1
-          };
-
-          newFace_nodes = concat(newFace_nodes, new_vertexItem);
-        }
-
-        current_Material = allFaces.getMaterial(f);
-        current_Tessellation = allFaces.getTessellation(f);
-        current_Layer = allFaces.getLayer(f);
-        current_Visibility = allFaces.getVisibility(f);        
-
-        allFaces.create(newFace_nodes);
-      }
-    }
-
-
-    // selecting new objetcs
-
-    this.Face_ids = new int [0];
-
-    for (int o = number_of_Faces_before; o < allFaces.nodes.length; o++) {
-
-      int[] newlyAddedFace = {o};
-
-      this.Face_ids = concat(this.Face_ids, newlyAddedFace);
-    }
-  }
-
-
-  void duplicate_Curves (boolean produce_same_variation) {
-
-    int number_of_Curves_before = allCurves.nodes.length;
-
-    for (int o = 0; o < this.Curve_ids.length; o++) {
-
-      int f = this.Curve_ids[o];        
-
-      int number_of_Vertices_before = allPoints.getLength();
-
-      int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
-      int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-
-      if ((0 <= f) && (f < allCurves.nodes.length)) {
-
-        int[] newCurve_nodes = {
-        };
-
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
-          int vNo = allCurves.nodes[f][j];
-
-          int vertex_listed = -1;
-
-          for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-            if (vNo == PolymeshVertices_OLD[q]) {
-              vertex_listed = q;
-              break;
-            }
-          }         
-
-          if (vertex_listed == -1) {
-            int[] newVertexListed = {
-              vNo
-            };
-            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-
-            float x = allPoints.getX(vNo);
-            float y = allPoints.getY(vNo);
-            float z = allPoints.getZ(vNo);
-
-            int[] newVertexAdded = {
-              allPoints.create(x, y, z)
-            };
-            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-
-            vertex_listed = PolymeshVertices_OLD.length;
-          } 
-
-          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
-
-          int[] new_vertexItem = {
-            number_of_Vertices_before + vertex_listed - 1
-          };
-
-          newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
-        }
-
-        current_Material = allCurves.getMaterial(f);
-        current_Tessellation = allCurves.getTessellation(f);
-        current_Layer = allCurves.getLayer(f);
-        current_Visibility = allCurves.getVisibility(f);        
-        current_Weight = allCurves.getWeight(f);
-        current_Closed = allCurves.getClose(f);
-
-        allCurves.create(newCurve_nodes);
-      }
-    }
-
-
-    // selecting new objetcs
-
-    this.Curve_ids = new int [0];
-
-    for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
-
-      int[] newlyAddedCurve = {o};
-
-      this.Curve_ids = concat(this.Curve_ids, newlyAddedCurve);
-    }
-  }
-  
-
-  void duplicate_Solids (boolean produce_same_variation) {
-
-    int number_of_Solid_before = allSolids.DEF.length; 
-
-    for (int o = 0; o < this.Solid_ids.length; o++) {
-
-      int OBJ_NUM = this.Solid_ids[o];
-
-      float Solid_posX = allSolids.get_posX(OBJ_NUM);
-      float Solid_posY = allSolids.get_posY(OBJ_NUM);
-      float Solid_posZ = allSolids.get_posZ(OBJ_NUM);
-      float Solid_powX = allSolids.get_powX(OBJ_NUM);
-      float Solid_powY = allSolids.get_powY(OBJ_NUM);
-      float Solid_powZ = allSolids.get_powZ(OBJ_NUM);
-      float Solid_scaleX = allSolids.get_scaleX(OBJ_NUM);
-      float Solid_scaleY = allSolids.get_scaleY(OBJ_NUM);
-      float Solid_scaleZ = allSolids.get_scaleZ(OBJ_NUM);
-      float Solid_rotX = allSolids.get_rotX(OBJ_NUM);
-      float Solid_rotY = allSolids.get_rotY(OBJ_NUM);
-      float Solid_rotZ = allSolids.get_rotZ(OBJ_NUM);
-      float Solid_value = allSolids.get_value(OBJ_NUM);
-
-      allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-    }
-
-    // selecting new objetcs
-
-    this.Solid_ids = new int [0];
-
-    for (int o = number_of_Solid_before; o < allSolids.DEF.length; o++) {
-
-      int[] newlyAddedSolid = {o};
-
-      this.Solid_ids = concat(this.Solid_ids, newlyAddedSolid);
-    }
-  }
-  
-  void duplicate_Sections (boolean produce_same_variation) {
-
-    int number_of_Section_before = allSections.num; 
-
-    for (int o = 0; o < this.Section_ids.length; o++) {
-
-      int OBJ_NUM = this.Section_ids[o];
-
-      float Section_X = allSections.getX(OBJ_NUM);
-      float Section_Y = allSections.getY(OBJ_NUM);
-      float Section_Z = allSections.getZ(OBJ_NUM);
-      float Section_R = allSections.getR(OBJ_NUM);
-      float Section_U = allSections.getU(OBJ_NUM);
-      float Section_V = allSections.getV(OBJ_NUM);
-
-      int Section_Type = allSections.get_type(OBJ_NUM);
-      int Section_RES1 = allSections.get_res1(OBJ_NUM);
-      int Section_RES2 = allSections.get_res2(OBJ_NUM);
-
-      allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
-    }
-
-    // selecting new objetcs
-
-    this.Section_ids = new int [0];
-
-    for (int o = number_of_Section_before; o < allSections.num; o++) {
-
-      int[] newlyAddedSection = {o};
-
-      this.Section_ids = concat(this.Section_ids, newlyAddedSection);
-    }
-  }  
-  
-  
-  void duplicate_Cameras (boolean produce_same_variation) {
-
-    int number_of_Camera_before = allCameras.num; 
-
-    for (int o = 0; o < this.Camera_ids.length; o++) {
-
-      int OBJ_NUM = this.Camera_ids[o];
-
-      float Camera_pX = allCameras.get_posX(OBJ_NUM);
-      float Camera_pY = allCameras.get_posY(OBJ_NUM);
-      float Camera_pZ = allCameras.get_posZ(OBJ_NUM);
-      float Camera_pT = allCameras.get_posT(OBJ_NUM);
-      float Camera_rX = allCameras.get_rotX(OBJ_NUM);
-      float Camera_rY = allCameras.get_rotY(OBJ_NUM);
-      float Camera_rZ = allCameras.get_rotZ(OBJ_NUM);
-      float Camera_rT = allCameras.get_rotT(OBJ_NUM);
-      float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
-      int   Camera_type = allCameras.get_type(OBJ_NUM);
-
-      allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
-    }
-
-    // selecting new objetcs
-
-    this.Camera_ids = new int [0];
-
-    for (int o = number_of_Camera_before; o < allCameras.num; o++) {
-
-      int[] newlyAddedCamera = {o};
-
-      this.Camera_ids = concat(this.Camera_ids, newlyAddedCamera);
-    }
-  }  
-  
-
-  void duplicate_Groups (boolean produce_same_variation) {
-
-    int n1 = allModel2Ds.num_files_PEOPLE;
-
-    int SOLID_added = 0;
-
-    int number_of_allGroups_before = allGroups.num;
-
-    for (int o = 0; o < this.Group_ids.length; o++) {
-
-      int OBJ_NUM = this.Group_ids[o];
-
-      if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) { 
-
-        int number_of_Vertices_before = allPoints.getLength();
-
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-        int new_OBJ_NUM = allGroups.num - 1;
-
-        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
-
-        for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
-          allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
-        }
-
-        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
-
-            float x = allModel1Ds.getX(q);
-            float y = allModel1Ds.getY(q);
-            float z = allModel1Ds.getZ(q);
-
-            float d = allModel1Ds.getS(q);
-            float rot = allModel1Ds.getR(q);
-
-            int n = allModel1Ds.getType(q);
-
-            int dMin = allModel1Ds.getDegreeMin(q);
-
-            int dMax = allModel1Ds.getDegreeMax(q);
-
-            int s = allModel1Ds.getSeed(q);
-
-            float TrunkSize = allModel1Ds.getTrunkSize(q);
-
-            float LeafSize = allModel1Ds.getLeafSize(q);
-
-            if (produce_same_variation == false) {
-              randomSeed(millis());
-
-              rot = random(360);
-              s = int(random(32767));
-            }
-            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-          }
-        }
-
-        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
-  
-            float x = allModel2Ds.getX(q);
-            float y = allModel2Ds.getY(q);
-            float z = allModel2Ds.getZ(q);
-            float s = allModel2Ds.getS(q);
-  
-            int n = allModel2Ds.MAP[q];
-  
-            if (allModel2Ds.isTree(n)) {
-              if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("TREES", n, x, y, z, s);
-            } else {
-              if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("PEOPLE", n, x, y, z, s);
-            }
-          }
-        }
-
-
-        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
-          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
-
-            float Solid_posX = allSolids.get_posX(q);
-            float Solid_posY = allSolids.get_posY(q);
-            float Solid_posZ = allSolids.get_posZ(q);
-            float Solid_powX = allSolids.get_powX(q);
-            float Solid_powY = allSolids.get_powY(q);
-            float Solid_powZ = allSolids.get_powZ(q);
-            float Solid_scaleX = allSolids.get_scaleX(q);
-            float Solid_scaleY = allSolids.get_scaleY(q);
-            float Solid_scaleZ = allSolids.get_scaleZ(q);
-            float Solid_rotX = allSolids.get_rotX(q);
-            float Solid_rotY = allSolids.get_rotY(q);
-            float Solid_rotZ = allSolids.get_rotZ(q);
-            float Solid_value = allSolids.get_value(q);
-
-            allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-
-            SOLID_added += 1;
-          }
-        }
-
-
-
-        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
-        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-
-        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-
-          if ((0 <= f) && (f < allFaces.nodes.length)) {
-
-            int[] newFace_nodes = {
-            };
-
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              int vNo = allFaces.nodes[f][j];
-
-              int vertex_listed = -1;
-
-              for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-                if (vNo == PolymeshVertices_OLD[q]) {
-                  vertex_listed = q;
-                  break;
-                }
-              }         
-
-              if (vertex_listed == -1) {
-                int[] newVertexListed = {
-                  vNo
-                };
-                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-
-                float x = allPoints.getX(vNo);
-                float y = allPoints.getY(vNo);
-                float z = allPoints.getZ(vNo);
-
-                int[] newVertexAdded = {
-                  allPoints.create(x, y, z)
-                };
-                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-
-                vertex_listed = PolymeshVertices_OLD.length - 1;
-              }
-
-              int[] new_vertexItem = {
-                number_of_Vertices_before + vertex_listed
-              };
-
-              newFace_nodes = concat(newFace_nodes, new_vertexItem);
-            }
-
-            current_Material = allFaces.getMaterial(f);
-            current_Tessellation = allFaces.getTessellation(f);
-            current_Layer = allFaces.getLayer(f);
-            current_Visibility = allFaces.getVisibility(f);
-
-            allFaces.create(newFace_nodes);
-            
-            println("newFace_nodes");
-            println(newFace_nodes);
-          }
-        }
-      }
-      
-      if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) { 
-
-        int number_of_Vertices_before = allPoints.getLength();
-
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-        int new_OBJ_NUM = allGroups.num - 1;
-
-        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
-
-        for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
-          allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
-        }
-
-        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
-
-            float x = allModel1Ds.getX(q);
-            float y = allModel1Ds.getY(q);
-            float z = allModel1Ds.getZ(q);
-
-            float d = allModel1Ds.getS(q);
-            float rot = allModel1Ds.getR(q);
-
-            int n = allModel1Ds.getType(q);
-
-            int dMin = allModel1Ds.getDegreeMin(q);
-
-            int dMax = allModel1Ds.getDegreeMax(q);
-
-            int s = allModel1Ds.getSeed(q);
-
-            float TrunkSize = allModel1Ds.getTrunkSize(q);
-
-            float LeafSize = allModel1Ds.getLeafSize(q);
-
-            if (produce_same_variation == false) {
-              randomSeed(millis());
-
-              rot = random(360);
-              s = int(random(32767));
-            }
-            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-          }
-        }
-
-        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
-
-            float x = allModel2Ds.getX(q);
-            float y = allModel2Ds.getY(q);
-            float z = allModel2Ds.getZ(q);
-            float s = allModel2Ds.getS(q);
-
-            int n = allModel2Ds.MAP[q];
-
-            if (allModel2Ds.isTree(n)) {
-              if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("TREES", n, x, y, z, s);
-            } else {
-              if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("PEOPLE", n, x, y, z, s);
-            }
-          }
-        }
-
-        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
-          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
-
-            float Solid_posX = allSolids.get_posX(q);
-            float Solid_posY = allSolids.get_posY(q);
-            float Solid_posZ = allSolids.get_posZ(q);
-            float Solid_powX = allSolids.get_powX(q);
-            float Solid_powY = allSolids.get_powY(q);
-            float Solid_powZ = allSolids.get_powZ(q);
-            float Solid_scaleX = allSolids.get_scaleX(q);
-            float Solid_scaleY = allSolids.get_scaleY(q);
-            float Solid_scaleZ = allSolids.get_scaleZ(q);
-            float Solid_rotX = allSolids.get_rotX(q);
-            float Solid_rotY = allSolids.get_rotY(q);
-            float Solid_rotZ = allSolids.get_rotZ(q);
-            float Solid_value = allSolids.get_value(q);
-
-            allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-
-            SOLID_added += 1;
-          }
-        }
-
-
-        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
-        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-
-        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
-
-          if ((0 <= f) && (f < allCurves.nodes.length)) {
-
-            int[] newCurve_nodes = {
-            };
-
-            for (int j = 0; j < allCurves.nodes[f].length; j++) {
-              int vNo = allCurves.nodes[f][j];
-
-              int vertex_listed = -1;
-
-              for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-                if (vNo == PolymeshVertices_OLD[q]) {
-                  vertex_listed = q;
-                  break;
-                }
-              }         
-
-              if (vertex_listed == -1) {
-                int[] newVertexListed = {
-                  vNo
-                };
-                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-
-                float x = allPoints.getX(vNo);
-                float y = allPoints.getY(vNo);
-                float z = allPoints.getZ(vNo);
-
-                int[] newVertexAdded = {
-                  allPoints.create(x, y, z)
-                };
-                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-
-                vertex_listed = PolymeshVertices_OLD.length - 1;
-              } 
-
-              int[] new_vertexItem = {
-                number_of_Vertices_before + vertex_listed
-              };
-
-              newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
-            }
-
-            current_Material = allCurves.getMaterial(f);
-            current_Tessellation = allCurves.getTessellation(f);
-            current_Layer = allCurves.getLayer(f);
-            current_Visibility = allCurves.getVisibility(f);
-            current_Weight = allCurves.getWeight(f);
-            current_Closed = allCurves.getClose(f);
-
-            allCurves.create(newCurve_nodes);
-          }
-        }
-      }        
-    }
-  
-
-
-    // selecting new objetcs
-
-    this.Group_ids = new int [0];
-
-    for (int o = number_of_allGroups_before; o < allGroups.num; o++) {
-
-      int[] newlyAddedGroup = {o};
-
-      this.Group_ids = concat(this.Group_ids, newlyAddedGroup);
-    }       
-
-
-    if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
-  }
 
   
   
@@ -19881,35 +19730,35 @@ class solarchvision_Selections {
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.duplicate_Model1Ds(produce_same_variation);
+      Edit3Ds.duplicate_Model1Ds(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.duplicate_Model2Ds(produce_same_variation);
+      Edit3Ds.duplicate_Model2Ds(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      this.duplicate_Faces(produce_same_variation);
+      Edit3Ds.duplicate_Faces(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.duplicate_Curves(produce_same_variation);
+      Edit3Ds.duplicate_Curves(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.duplicate_Solids(produce_same_variation);
+      Edit3Ds.duplicate_Solids(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      this.duplicate_Sections(produce_same_variation);
+      Edit3Ds.duplicate_Sections(produce_same_variation);
     }    
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      this.duplicate_Cameras(produce_same_variation);
+      Edit3Ds.duplicate_Cameras(produce_same_variation);
     }    
   
     if (current_ObjectCategory == ObjectCategory.GROUP)  {
-      this.duplicate_Groups(produce_same_variation);
+      Edit3Ds.duplicate_Groups(produce_same_variation);
     }    
   }
 
@@ -22186,6 +22035,18 @@ class solarchvision_Selections {
   
 
 
+  float softSelectionFunction (float d_min) {
+  
+    float v = 0;
+  
+    if (d_min < userSelections.softRadius) {
+      v = pow(funcs.cos_ang(90 * d_min / userSelections.softRadius), userSelections.softPower);
+    }
+  
+    return v;
+  }
+
+
 
   void convert_Model1Ds_to_Groups () {
   
@@ -22902,6 +22763,155 @@ class solarchvision_Selections {
   
     this.calculate_BoundingBox();
   }
+
+
+
+
+
+
+
+
+
+  int[] get_Face_Vertices () {
+  
+    int[] FaceVertices = new int [0];
+  
+    for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Face_ids[o];
+  
+      int f = OBJ_NUM;
+  
+      for (int j = 0; j < allFaces.nodes[f].length; j++) {
+        int vNo = allFaces.nodes[f][j];
+  
+        int vertex_listed = -1;
+  
+        for (int q = 0; q < FaceVertices.length; q++) {
+          if (vNo == FaceVertices[q]) {
+            vertex_listed = 1;
+            break;
+          }
+        }         
+  
+        if (vertex_listed == -1) {
+          int[] newVertexListed = {
+            vNo
+          };
+          FaceVertices = concat(FaceVertices, newVertexListed);
+        }
+      }
+    }
+  
+  
+    return FaceVertices;
+  } 
+  
+  
+  int[] get_Curve_Vertices () {
+  
+    int[] CurveVertices = new int [0];
+  
+    for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Curve_ids[o];
+  
+      int f = OBJ_NUM;
+  
+      for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        int vNo = allCurves.nodes[f][j];
+  
+        int vertex_listed = -1;
+  
+        for (int q = 0; q < CurveVertices.length; q++) {
+          if (vNo == CurveVertices[q]) {
+            vertex_listed = 1;
+            break;
+          }
+        }         
+  
+        if (vertex_listed == -1) {
+          int[] newVertexListed = {
+            vNo
+          };
+          CurveVertices = concat(CurveVertices, newVertexListed);
+        }
+      }
+    }
+  
+    return CurveVertices;
+  } 
+  
+  
+  
+  int[] get_Group_Vertices () {
+  
+    int[] PolymeshVertices = new int [0];
+  
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Group_ids[o];
+  
+      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+  
+        if ((0 <= f) && (f < allFaces.nodes.length)) { 
+          for (int j = 0; j < allFaces.nodes[f].length; j++) {
+  
+            int vNo = allFaces.nodes[f][j];
+  
+            int vertex_listed = -1;
+  
+            for (int q = 0; q < PolymeshVertices.length; q++) {
+              if (vNo == PolymeshVertices[q]) {
+                vertex_listed = 1;
+                break;
+              }
+            }         
+  
+            if (vertex_listed == -1) {
+              int[] newVertexListed = {
+                vNo
+              };
+              PolymeshVertices = concat(PolymeshVertices, newVertexListed);
+            }
+          }
+        }
+      }
+  
+  
+  
+      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+  
+        if ((0 <= f) && (f < allCurves.nodes.length)) { 
+          for (int j = 0; j < allCurves.nodes[f].length; j++) {
+  
+            int vNo = allCurves.nodes[f][j];
+  
+            int vertex_listed = -1;
+  
+            for (int q = 0; q < PolymeshVertices.length; q++) {
+              if (vNo == PolymeshVertices[q]) {
+                vertex_listed = 1;
+                break;
+              }
+            }         
+  
+            if (vertex_listed == -1) {
+              int[] newVertexListed = {
+                vNo
+              };
+              PolymeshVertices = concat(PolymeshVertices, newVertexListed);
+            }
+          }
+        }
+      }
+    }    
+  
+    return PolymeshVertices;
+  }
+
+
+
 
 
 
@@ -44931,7 +44941,7 @@ void mouseClicked () {
             }         
 
             if (menu_option.equals("Flatten Selected LandPoints")) {
-              userSelections.flatten_LandPoints();
+              Edit3Ds.flatten_LandPoints();
               WIN3D.update = true;
             }
             
