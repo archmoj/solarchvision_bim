@@ -17011,7 +17011,7 @@ class solarchvision_Selections {
   
   
   
-  void scale_Model2D (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void scale_Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
     int n1 = allModel2Ds.num_files_PEOPLE;    
   
@@ -17049,7 +17049,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_Model2D (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < this.Model2D_ids.length; q++) {
   
@@ -17077,7 +17077,7 @@ class solarchvision_Selections {
   
   
   
-  void move_Model2D (float dx, float dy, float dz) {
+  void move_Model2Ds (float dx, float dy, float dz) {
   
     for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
   
@@ -17088,7 +17088,7 @@ class solarchvision_Selections {
   } 
   
   
-  void scale_Model1D (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void scale_Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
     for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
   
@@ -17119,7 +17119,7 @@ class solarchvision_Selections {
   }
   
   
-  void rotate_Model1D (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate_Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < this.Model1D_ids.length; q++) {
   
@@ -17148,7 +17148,7 @@ class solarchvision_Selections {
   }
   
   
-  void move_Model1D (float dx, float dy, float dz) {
+  void move_Model1Ds (float dx, float dy, float dz) {
   
     for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
   
@@ -17522,12 +17522,12 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      this.scale_Model2D(x0, y0, z0, sx, sy, sz);
+      this.scale_Model2Ds(x0, y0, z0, sx, sy, sz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      this.scale_Model1D(x0, y0, z0, sx, sy, sz);
+      this.scale_Model1Ds(x0, y0, z0, sx, sy, sz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -17592,12 +17592,12 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      this.rotate_Model2D(x0, y0, z0, r, the_Vector);
+      this.rotate_Model2Ds(x0, y0, z0, r, the_Vector);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      this.rotate_Model1D(x0, y0, z0, r, the_Vector);
+      this.rotate_Model1Ds(x0, y0, z0, r, the_Vector);
     }   
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -17667,12 +17667,12 @@ class solarchvision_Selections {
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-      this.move_Model2D(dx, dy, dz);
+      this.move_Model2Ds(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
-      this.move_Model1D(dx, dy, dz);
+      this.move_Model1Ds(dx, dy, dz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
