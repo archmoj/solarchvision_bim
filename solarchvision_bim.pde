@@ -1,3 +1,5 @@
+// please define station elevation data for CWEEDS points!
+
 // after calling .reduceDegreePolygon is not complete
 
 
@@ -19,8 +21,129 @@ int SOLARCHVISION_pixel_B = int(2.75 * MessageSize); // 3D tool bar
 int SOLARCHVISION_pixel_C = int(3.0 * MessageSize); // command bar
 int SOLARCHVISION_pixel_D = int(4.5 * MessageSize); // time bar
 
+String[] skyScenario_Title = {
+  "", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"
+};
+String[] skyScenario_FileTXT = {
+  "", "", "Overcast sky", "Scattered sky", "Clear sky"
+};
+
+final int filter_HOURLY = 0;
+final int filter_DAILY = 1;
+
+int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
+
+final int numberOfLanguages = 2;
+final int Language_EN = 0;
+final int Language_FR = 1;
+int Language_Active = Language_EN;
+
+
+final float FLOAT_huge = 1000000000;
+final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
+
+final String STRING_undefined = "N/A";
+final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
+final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
+
+boolean is_undefined_FLOAT (float a) {
+  boolean b = false;
+  if (a > FLOAT_max_defined) {
+    b = true; 
+  }
+  return b;
+}
+
 
 boolean displayOutput_inExplorer = false;
+
+String SceneName = "Complex";
+
+String[] Files_CLIMATE_TMYEPW;
+String[] Files_CLIMATE_CWEEDS;
+String[] Files_CLIMATE_CLMREC;
+String[] Files_ENSEMBLE_OBSERVED;
+String[] Files_ENSEMBLE_FORECAST;
+
+String Folder_CLIMATE_TMYEPW;
+String Folder_CLIMATE_CWEEDS;
+String Folder_CLIMATE_CLMREC;
+String Folder_ENSEMBLE_OBSERVED;
+String Folder_ENSEMBLE_FORECAST;
+String Folder_GRIB2;
+String Folder_GEOMET;
+
+String Folder_Wgrib2Temp;
+
+String Folder_Backgrounds;
+String Folder_Coordinates;
+
+String Folder_Land;
+String Folder_People;
+String Folder_Trees;
+String Folder_Export;
+String Folder_Project;
+String Folder_Graphics;
+String Folder_Create3Ds;
+String Folder_ViewsFromSky;
+String Folder_ScreenShots;
+String Folder_Shadings;
+
+String SOLARCHVISION_version = "2018"; 
+//String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
+String BaseFolder = "C:/SOLARCHVISION_2017";
+
+String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+String ProjectName = "Revision_" + RunStamp;
+String HoldStamp = ""; 
+
+String Subfolder_exportMaps = "maps/";
+
+void SOLARCHVISION_update_folders () {
+  
+  Folder_Project = BaseFolder + "/Projects/Esfahan";    
+  
+  Folder_Wgrib2Temp = Folder_Project + "/Temp";
+
+  Folder_GEOMET = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
+  Folder_GRIB2 = Folder_Project + "/Data/GRIB2";
+  
+  Folder_ENSEMBLE_FORECAST = Folder_Project + "/Data/FORECAST_NAEFS";
+  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/Data/OBSERVATION_SWOB";
+
+  Folder_CLIMATE_CLMREC = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
+  Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
+  Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
+  
+  Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
+  Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
+  Files_CLIMATE_CWEEDS = OPESYS.getFiles(Folder_CLIMATE_CWEEDS);
+  
+  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
+  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
+
+  Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
+  Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  
+  Folder_People = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Folder_Trees  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  
+  Folder_Shadings = Folder_Project + "/ShadingAnalysis";
+  
+  Folder_Land         = Folder_Project + "/Land/USE";
+  
+  Folder_Export       = Folder_Project + "/Export";
+  Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
+  Folder_Create3Ds      = Folder_Export + "/Create3Ds" + "/" + RunStamp;
+  Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
+  Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
+
+  String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
+  if (filenames != null) SavedScreenShots = filenames.length;
+  
+}
+
 
 
 class solarchvision_OperatingSystem {
@@ -49,6 +172,227 @@ class solarchvision_OperatingSystem {
 }
 solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem(); 
 
+
+
+class solarchvision_TIME {
+  
+  private final static String CLASS_STAMP = "TIME";
+  
+  private int modelRun = 0; //12; 
+  
+  private int hour = this.modelRun; //hour(); 
+  private int year = year(); 
+  private int month = 1; //month();
+  private int day = 21; //day(); 
+  
+  private int beginDay;
+  private float date;    
+  
+  final int interval = 1; //dT
+
+
+  final String[][] WORDS = {
+    {
+      "", ""
+    }
+    , 
+    {
+      "at hour", "à l'heure"
+    }
+    , 
+    {
+      "day", "jour"
+    }
+    , 
+    {
+      "month", "mois"
+    }
+    , 
+    {
+      "year", "année"
+    }
+    , 
+    {
+      "date", "date"
+    }
+  };   
+
+  
+  final String[][] namesOfMonths = {
+    {
+      "January", "janvier"
+    }
+    , 
+    {
+      "February", "février"
+    }
+    , 
+    {
+      "March", "mars"
+    }
+    , 
+    {
+      "April", "avril"
+    }
+    , 
+    {
+      "May", "mai"
+    }
+    , 
+    {
+      "June", "juin"
+    }
+    , 
+    {
+      "July", "juillet"
+    }
+    , 
+    {
+      "August", "août"
+    }
+    , 
+    {
+      "September", "septembre"
+    }
+    , 
+    {
+      "October", "octobre"
+    }
+    , 
+    {
+      "November", "novembre"
+    }
+    , 
+    {
+      "December", "décembre"
+    }
+  };
+  
+  private final int[] lengthOfMonths = {
+    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+  };
+  
+  private int[] monthFromDate = new int [365];
+  private int[] dayFromDate = new int [365];
+  private String[] MM = new String [365];
+  private String[] MMDD = new String [365];
+  private String[][] dayOfYear = new String [365][numberOfLanguages];
+  
+  int safeDate(float date_IN) {
+    return floor(0.001 + (365 + date_IN) % 365); 
+  }
+
+  int getMonth_fromDate(float date_IN) {
+     return this.monthFromDate[safeDate(date_IN)];
+  }
+    
+  int getDay_fromDate(float date_IN) {
+     return this.dayFromDate[safeDate(date_IN)];
+  }
+
+  String getDayText(float date_IN) {
+    return this.dayOfYear[safeDate(date_IN)][Language_Active];
+  }
+  
+  String getMMDD(float date_IN) {
+    return this.MMDD[safeDate(date_IN)];
+  }  
+  
+  String getMM(float date_IN) {
+    return this.MM[safeDate(date_IN)];
+  }    
+  
+  solarchvision_TIME () { // constructor
+    this.createCalendar();
+  }
+
+  void createCalendar () {
+    int k = 285;
+    
+    for (int i = 0; i < 12; i++) {
+      for (int j = 0; j < this.lengthOfMonths[i]; j++) {
+        k += 1;
+        if (k == 365) k = 0; 
+
+        this.monthFromDate[k] = i + 1;
+        this.dayFromDate[k] = j + 1;
+        
+        this.MM[k] = nf(i + 1, 2);
+        this.MMDD[k] = nf(i + 1, 2) + nf(j + 1, 2);
+        
+        for (int l = 0; l < numberOfLanguages; l++) {
+          this.dayOfYear[k][l] = this.namesOfMonths[i][l] + " " + nf(j + 1, 0);
+        }
+      }
+    }
+  }
+  
+  int convert2Day (int Date_Angle) {
+    int DAY = (Date_Angle + 360) % 360;
+    if (DAY >=  31) DAY++;
+    if (DAY >=  62) DAY++;
+    if (DAY >=  93) DAY++;
+    if (DAY >= 124) DAY++;
+    if (DAY >= 155) DAY++;
+    DAY = DAY % 365;
+    return DAY;
+  }
+  
+  int convert2Date (int month, int day) {
+    int k = 0;
+    for (int i = 0; i < (month - 1); i++) {
+      for (int j = 0; j < this.lengthOfMonths[i]; j++) {
+        k += 1;
+        if (k == 365) k = 0;
+      }
+    }
+    k += day - 1;
+  
+    k = k % 365;
+    return k;
+  }
+  
+  void updateDate () {
+    this.month = this.getMonth_fromDate(this.date); 
+    this.day = this.getDay_fromDate(this.date);
+    this.hour = int(24 * (this.date - int(this.date)));
+  }
+  
+
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+  
+    parent.setInt("modelRun", this.modelRun);
+    parent.setInt("year", this.year);
+    parent.setInt("month", this.month);
+    parent.setInt("day", this.day); 
+    parent.setInt("hour", this.hour); 
+    parent.setInt("beginDay", this.beginDay);
+    parent.setFloat("date", this.date);
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+  
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    
+    this.modelRun = parent.getInt("modelRun"); 
+    this.year = parent.getInt("year");
+    this.month = parent.getInt("month");
+    this.day = parent.getInt("day"); 
+    this.hour = parent.getInt("hour"); 
+    this.beginDay = parent.getInt("beginDay");
+    this.date = parent.getFloat("date");
+  }      
+
+}
+
+solarchvision_TIME TIME = new solarchvision_TIME(); 
 
 
 
@@ -995,403 +1339,6 @@ class solarchvision_Functions {
 solarchvision_Functions funcs = new solarchvision_Functions(); 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class solarchvision_TIME {
-  
-  private final static String CLASS_STAMP = "TIME";
-  
-  private int modelRun = 0; //12; 
-  
-  private int hour = this.modelRun; //hour(); 
-  private int year = year(); 
-  private int month = 1; //month();
-  private int day = 21; //day(); 
-  
-  private int beginDay;
-  private float date;    
-  
-  final int interval = 1; //dT
-
-
-  final String[][] WORDS = {
-    {
-      "", ""
-    }
-    , 
-    {
-      "at hour", "à l'heure"
-    }
-    , 
-    {
-      "day", "jour"
-    }
-    , 
-    {
-      "month", "mois"
-    }
-    , 
-    {
-      "year", "année"
-    }
-    , 
-    {
-      "date", "date"
-    }
-  };   
-
-  
-  final String[][] namesOfMonths = {
-    {
-      "January", "janvier"
-    }
-    , 
-    {
-      "February", "février"
-    }
-    , 
-    {
-      "March", "mars"
-    }
-    , 
-    {
-      "April", "avril"
-    }
-    , 
-    {
-      "May", "mai"
-    }
-    , 
-    {
-      "June", "juin"
-    }
-    , 
-    {
-      "July", "juillet"
-    }
-    , 
-    {
-      "August", "août"
-    }
-    , 
-    {
-      "September", "septembre"
-    }
-    , 
-    {
-      "October", "octobre"
-    }
-    , 
-    {
-      "November", "novembre"
-    }
-    , 
-    {
-      "December", "décembre"
-    }
-  };
-  
-  private final int[] lengthOfMonths = {
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-  };
-  
-  private int[] monthFromDate = new int [365];
-  private int[] dayFromDate = new int [365];
-  private String[] MM = new String [365];
-  private String[] MMDD = new String [365];
-  private String[][] dayOfYear = new String [365][numberOfLanguages];
-  
-  int safeDate(float date_IN) {
-    return floor(0.001 + (365 + date_IN) % 365); 
-  }
-
-  int getMonth_fromDate(float date_IN) {
-     return this.monthFromDate[safeDate(date_IN)];
-  }
-    
-  int getDay_fromDate(float date_IN) {
-     return this.dayFromDate[safeDate(date_IN)];
-  }
-
-  String getDayText(float date_IN) {
-    return this.dayOfYear[safeDate(date_IN)][Language_Active];
-  }
-  
-  String getMMDD(float date_IN) {
-    return this.MMDD[safeDate(date_IN)];
-  }  
-  
-  String getMM(float date_IN) {
-    return this.MM[safeDate(date_IN)];
-  }    
-  
-  solarchvision_TIME () { // constructor
-    this.createCalendar();
-  }
-
-  void createCalendar () {
-    int k = 285;
-    
-    for (int i = 0; i < 12; i++) {
-      for (int j = 0; j < this.lengthOfMonths[i]; j++) {
-        k += 1;
-        if (k == 365) k = 0; 
-
-        this.monthFromDate[k] = i + 1;
-        this.dayFromDate[k] = j + 1;
-        
-        this.MM[k] = nf(i + 1, 2);
-        this.MMDD[k] = nf(i + 1, 2) + nf(j + 1, 2);
-        
-        for (int l = 0; l < numberOfLanguages; l++) {
-          this.dayOfYear[k][l] = this.namesOfMonths[i][l] + " " + nf(j + 1, 0);
-        }
-      }
-    }
-  }
-  
-  int convert2Day (int Date_Angle) {
-    int DAY = (Date_Angle + 360) % 360;
-    if (DAY >=  31) DAY++;
-    if (DAY >=  62) DAY++;
-    if (DAY >=  93) DAY++;
-    if (DAY >= 124) DAY++;
-    if (DAY >= 155) DAY++;
-    DAY = DAY % 365;
-    return DAY;
-  }
-  
-  int convert2Date (int month, int day) {
-    int k = 0;
-    for (int i = 0; i < (month - 1); i++) {
-      for (int j = 0; j < this.lengthOfMonths[i]; j++) {
-        k += 1;
-        if (k == 365) k = 0;
-      }
-    }
-    k += day - 1;
-  
-    k = k % 365;
-    return k;
-  }
-  
-  void updateDate () {
-    this.month = this.getMonth_fromDate(this.date); 
-    this.day = this.getDay_fromDate(this.date);
-    this.hour = int(24 * (this.date - int(this.date)));
-  }
-  
-
-  public void to_XML (XML xml) {
-    
-    println("Saving:" + this.CLASS_STAMP);
-    
-    XML parent = xml.addChild(this.CLASS_STAMP);
-  
-    parent.setInt("modelRun", this.modelRun);
-    parent.setInt("year", this.year);
-    parent.setInt("month", this.month);
-    parent.setInt("day", this.day); 
-    parent.setInt("hour", this.hour); 
-    parent.setInt("beginDay", this.beginDay);
-    parent.setFloat("date", this.date);
-  }
-  
-  
-  public void from_XML (XML xml) {
-    
-    println("Loading:" + this.CLASS_STAMP);
-  
-    XML parent = xml.getChild(this.CLASS_STAMP);
-    
-    this.modelRun = parent.getInt("modelRun"); 
-    this.year = parent.getInt("year");
-    this.month = parent.getInt("month");
-    this.day = parent.getInt("day"); 
-    this.hour = parent.getInt("hour"); 
-    this.beginDay = parent.getInt("beginDay");
-    this.date = parent.getFloat("date");
-  }      
-
-}
-
-solarchvision_TIME TIME = new solarchvision_TIME(); 
-
-
-
-
-
-
-
-
-
-// please define station elevation data for CWEEDS points!
-
-
-
-String SceneName = "Complex";
-
-
-
-
-String[] Files_CLIMATE_TMYEPW;
-String[] Files_CLIMATE_CWEEDS;
-String[] Files_CLIMATE_CLMREC;
-String[] Files_ENSEMBLE_OBSERVED;
-String[] Files_ENSEMBLE_FORECAST;
-
-
-
-String Folder_CLIMATE_TMYEPW;
-String Folder_CLIMATE_CWEEDS;
-String Folder_CLIMATE_CLMREC;
-String Folder_ENSEMBLE_OBSERVED;
-String Folder_ENSEMBLE_FORECAST;
-String Folder_GRIB2;
-String Folder_GEOMET;
-
-String Folder_Wgrib2Temp;
-
-String Folder_Backgrounds;
-String Folder_Coordinates;
-
-
-String Folder_Land;
-String Folder_People;
-String Folder_Trees;
-String Folder_Export;
-String Folder_Project;
-String Folder_Graphics;
-String Folder_Create3Ds;
-String Folder_ViewsFromSky;
-String Folder_ScreenShots;
-String Folder_Shadings;
-
-String SOLARCHVISION_version = "2018"; 
-//String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
-String BaseFolder = "C:/SOLARCHVISION_2017";
-
-String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-String ProjectName = "Revision_" + RunStamp;
-String HoldStamp = ""; 
-
-String Subfolder_exportMaps = "maps/";
-
-void SOLARCHVISION_update_folders () {
-  
-  Folder_Project = BaseFolder + "/Projects/Esfahan";    
-  
-  Folder_Wgrib2Temp = Folder_Project + "/Temp";
-
-  Folder_GEOMET = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
-  Folder_GRIB2 = Folder_Project + "/Data/GRIB2";
-  
-  Folder_ENSEMBLE_FORECAST = Folder_Project + "/Data/FORECAST_NAEFS";
-  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/Data/OBSERVATION_SWOB";
-
-  Folder_CLIMATE_CLMREC = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
-  Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
-  Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
-  
-  Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
-  Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
-  Files_CLIMATE_CWEEDS = OPESYS.getFiles(Folder_CLIMATE_CWEEDS);
-  
-  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
-  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
-
-  Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
-  
-  Folder_People = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
-  Folder_Trees  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
-  
-  Folder_Shadings = Folder_Project + "/ShadingAnalysis";
-  
-  Folder_Land         = Folder_Project + "/Land/USE";
-  
-  Folder_Export       = Folder_Project + "/Export";
-  Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
-  Folder_Create3Ds      = Folder_Export + "/Create3Ds" + "/" + RunStamp;
-  Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
-  Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
-
-  String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
-  if (filenames != null) SavedScreenShots = filenames.length;
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-String[] skyScenario_Title = {
-  "", "", "[66% < Total Cloud Cover]", "[33% < Total Cloud Cover < 66%]", "[Total Cloud Cover < 33%]"
-};
-String[] skyScenario_FileTXT = {
-  "", "", "Overcast sky", "Scattered sky", "Clear sky"
-};
-
-final int filter_HOURLY = 0;
-final int filter_DAILY = 1;
-
-int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
-
-final int numberOfLanguages = 2;
-final int Language_EN = 0;
-final int Language_FR = 1;
-int Language_Active = Language_EN;
-
-
-final float FLOAT_huge = 1000000000;
-final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
-
-final String STRING_undefined = "N/A";
-final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
-final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
-
-boolean is_undefined_FLOAT (float a) {
-  boolean b = false;
-  if (a > FLOAT_max_defined) {
-    b = true; 
-  }
-  return b;
-}
-
-
 int numberOfLayers = 0;
 
 class solarchvision_LAYER {
@@ -1691,19 +1638,6 @@ void changeCurrentLayerTo (int new_id) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 int ENSEMBLE_FORECAST_maxDays = 16; // Constant
 int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
 
@@ -1756,8 +1690,6 @@ boolean[][][][] ENSEMBLE_FORECAST_flags;
 
 float[][][][] ENSEMBLE_OBSERVED_values;
 boolean[][][][] ENSEMBLE_OBSERVED_flags;
-
-
 
 
 boolean CLIMATE_TMYEPW_load = true;
@@ -1833,8 +1765,6 @@ int GRIB2_DomainSelection = 4; int GRIB2_maxScenarios = 1;
 int AERIAL_graphOption = 0; 
 
 
-
-
 final int DEV_OP_00 = 8;
 final int DEV_OP_01 = 6;
 final int DEV_OP_02 = 5;
@@ -1853,43 +1783,8 @@ int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should 
 
 boolean DevelopData_update = true;
 
-
-
-
-
-
-
-
-
-
-
-
 float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface 
 float Develop_AngleOrientation = 0; // 0 = South, 90 = East
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -23340,38 +23235,12 @@ int addNewSelectionToPreviousSelection = 0; // internal
 
 boolean addToLastGroup = false; // internal
 
-
-
-
-
-
-
-
-
-
 int Load_DefaultModels = 0; // internal
 
 int[] GRIB2_TGL_Selected = {
   1, 0, 0, 0
 }; // for levels above ground level 
 int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
