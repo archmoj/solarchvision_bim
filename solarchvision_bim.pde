@@ -17649,6 +17649,61 @@ class solarchvision_Edit3Ds {
     }
   }
   
+  
+  
+  void drop_Model1Ds () {
+
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model1D_ids[o];
+
+      float x = allModel1Ds.getX(OBJ_NUM);
+      float y = allModel1Ds.getY(OBJ_NUM);
+      float z = allModel1Ds.getZ(OBJ_NUM);
+
+      float[] ray_start = {
+        x, y, z
+      };
+
+      float[] ray_direction = {
+        0, 0, -1
+      };
+
+      float[] RxP = new float [8];
+
+      if (WIN3D.UI_TaskModifyParameter == 0) { 
+        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+      } else if (WIN3D.UI_TaskModifyParameter == 1) {
+        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+      } else {
+        RxP[0] = -1; // undefined
+      }
+
+      if (RxP[0] >= 0) {
+        allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel1Ds.setZ(OBJ_NUM, RxP[3]);
+      } else {
+        ray_direction[2] = 1; // <<<< going upwards
+
+        if (WIN3D.UI_TaskModifyParameter == 0) { 
+          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+        } else if (WIN3D.UI_TaskModifyParameter == 2) {
+          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+        } else {
+          RxP[0] = -1; // undefined
+        }
+
+        if (RxP[0] >= 0) {
+          allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+          allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+          allModel1Ds.setZ(OBJ_NUM, RxP[3]);
+        }
+      }
+    }
+  }
+  
+  
 
   void drop_Model2Ds () {
 
@@ -17704,7 +17759,462 @@ class solarchvision_Edit3Ds {
 
 
 
+  void tweak_Cameras (int p) {
+  
+    for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
 
+      int OBJ_NUM = userSelections.Camera_ids[o];
+
+      int f = OBJ_NUM;
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+        int n = allCameras.get_type(f);
+        n += p;
+        if (n > 1) n = 0;
+        if (n < 0) n = 1;
+        allCameras.set_type(f, n);         
+
+        if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.get_type(f);
+      }
+    }
+  }
+  
+  void tweak_Sections (int p) {
+
+    boolean allSolids_updated = false;  
+
+    for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Section_ids[o];
+
+      int f = OBJ_NUM;
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+        int n = allSections.get_type(f);
+        n += p;
+        if (n > 3) n = 0;
+        if (n < 0) n = 3;
+        allSections.set_type(f, n);         
+
+        allSolids_updated = true;
+      }        
+
+      if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
+        int n = allSections.get_res1(f);
+        if (p > 0) n *= 2;
+        if (p < 0) n /= 2;
+
+        if (n > 1600) n = 100;
+        if (n < 100) n = 1600;
+        allSections.set_res1(f, n);
+
+        allSections.set_res2(f, n); // also modifying the other one
+
+        println("RES:", n);
+
+        allSolids_updated = true;
+      }
+
+    } 
+
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+
+  
+  void tweak_Solids (int p) {
+
+    boolean allSolids_updated = false;  
+
+    for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Solid_ids[o];
+
+      int f = OBJ_NUM;
+
+      if ((WIN3D.UI_CurrentTask == UITASK.PowerX) ||  (WIN3D.UI_CurrentTask == UITASK.PowerY) ||  (WIN3D.UI_CurrentTask == UITASK.PowerZ) ||  (WIN3D.UI_CurrentTask == UITASK.PowerAll)) {
+
+
+        float Solid_powX = allSolids.get_powX(f);
+        float Solid_powY = allSolids.get_powY(f);
+        float Solid_powZ = allSolids.get_powZ(f);
+
+
+        float n = 2;
+
+        if (WIN3D.UI_CurrentTask == UITASK.PowerX) n = Solid_powX; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerY) n = Solid_powY; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerZ) n = Solid_powZ; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
+          n = Solid_powX;
+        }          
+
+        if (p > 0) n *= 2;
+        if (p < 0) n /= 2;
+
+        if (n > CubePower) n = StarPower;
+        if (n < StarPower) n = CubePower;
+
+        if (WIN3D.UI_CurrentTask == UITASK.PowerX) Solid_powX = n; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerY) Solid_powY = n; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerZ) Solid_powZ = n; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
+          Solid_powX = n;
+          Solid_powY = n;
+          Solid_powZ = n;
+        } 
+
+        allSolids.updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
+
+        allSolids_updated = true;
+      }
+    }
+
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  } 
+  
+  
+  
+  void tweak_Faces (int p) {
+
+    for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Face_ids[o];
+
+      int f = OBJ_NUM;
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+        int n = allFaces.getMaterial(f);
+        n += p;
+        if (n > 8) n = 0;
+        if (n < 0) n = 8;
+        allFaces.setMaterial(f, n);
+      }
+
+      if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
+        int n = allFaces.getTessellation(f);
+        n += p;
+        if (n > 4) n = 0;
+        if (n < 0) n = 4;
+        allFaces.setTessellation(f, n);
+      }   
+
+      if (WIN3D.UI_CurrentTask == UITASK.Layer) {
+        int n = allFaces.getLayer(f);
+        n += p;
+        if (n > 16) n = 0;
+        if (n < 0) n = 16;
+        allFaces.setLayer(f, n);
+      }  
+
+      if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
+        int n = allFaces.getVisibility(f);
+        n += p;
+        if (n > 2) n = 0;
+        if (n < 0) n = 2;
+        allFaces.setVisibility(f, n);
+      }
+      
+      if (WIN3D.UI_CurrentTask == UITASK.Weight) {
+        int n = allFaces.getWeight(f);
+        n += p;
+        if (n > 20) n = -20;
+        if (n < -20) n = 20;
+        allFaces.setWeight(f, n);
+      }        
+    }
+  }
+  
+  void tweak_Curves (int p) {
+
+    for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Curve_ids[o];
+
+      int f = OBJ_NUM;
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+        int n = allCurves.getMaterial(f);
+        n += p;
+        if (n > 8) n = 0;
+        if (n < 0) n = 8;
+        allCurves.setMaterial(f, n);
+      }
+
+      if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
+        int n = allCurves.getTessellation(f);
+        n += p;
+        if (n > 4) n = 0;
+        if (n < 0) n = 4;
+        allCurves.setTessellation(f, n);
+      }   
+
+      if (WIN3D.UI_CurrentTask == UITASK.Layer) {
+        int n = allCurves.getLayer(f);
+        n += p;
+        if (n > 16) n = 0;
+        if (n < 0) n = 16;
+        allCurves.setLayer(f, n);
+      }  
+
+      if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
+        int n = allCurves.getVisibility(f);
+        n += p;
+        if (n > 2) n = 0;
+        if (n < 0) n = 2;
+        allCurves.setVisibility(f, n);
+      }
+      
+      if (WIN3D.UI_CurrentTask == UITASK.Weight) {
+        int n = allCurves.getWeight(f);
+        n += p;
+        if (n > 20) n = -20;
+        if (n < -20) n = 20;
+        allCurves.setWeight(f, n);
+      }        
+    }
+  }
+  
+
+  
+  
+  void tweak_Groups (int p) {
+
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Group_ids[o];
+
+      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allFaces.nodes.length)) {
+
+          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+            int n = allFaces.getMaterial(f);
+            n += p;
+            if (n > 8) n = 0;
+            if (n < 0) n = 8;
+            allFaces.setMaterial(f, n);
+          }
+
+          if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
+            int n = allFaces.getTessellation(f);
+            n += p;
+            if (n > 4) n = 0;
+            if (n < 0) n = 4;
+            allFaces.setTessellation(f, n);
+          }      
+
+          if (WIN3D.UI_CurrentTask == UITASK.Layer) {
+            int n = allFaces.getLayer(f);
+            n += p;
+            if (n > 16) n = 0;
+            if (n < 0) n = 16;
+            allFaces.setLayer(f, n);
+          }  
+
+          if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
+            int n = allFaces.getVisibility(f);
+            n += p;
+            if (n > 2) n = 0;
+            if (n < 0) n = 2;
+            allFaces.setVisibility(f, n);
+          }
+          
+          if (WIN3D.UI_CurrentTask == UITASK.Weight) {
+            int n = allFaces.getWeight(f);
+            n += p;
+            if (n > 20) n = -20;
+            if (n < -20) n = 20;
+            allFaces.setWeight(f, n);
+          }            
+        }
+      }
+      
+      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allCurves.nodes.length)) {
+
+          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+            int n = allCurves.getMaterial(f);
+            n += p;
+            if (n > 8) n = 0;
+            if (n < 0) n = 8;
+            allCurves.setMaterial(f, n);
+          }
+
+          if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
+            int n = allCurves.getTessellation(f);
+            n += p;
+            if (n > 4) n = 0;
+            if (n < 0) n = 4;
+            allCurves.setTessellation(f, n);
+          }      
+
+          if (WIN3D.UI_CurrentTask == UITASK.Layer) {
+            int n = allCurves.getLayer(f);
+            n += p;
+            if (n > 16) n = 0;
+            if (n < 0) n = 16;
+            allCurves.setLayer(f, n);
+          }  
+
+          if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
+            int n = allCurves.getVisibility(f);
+            n += p;
+            if (n > 2) n = 0;
+            if (n < 0) n = 2;
+            allCurves.setVisibility(f, n);
+          }
+          
+          if (WIN3D.UI_CurrentTask == UITASK.Weight) {
+            int n = allCurves.getWeight(f);
+            n += p;
+            if (n > 20) n = -20;
+            if (n < -20) n = 20;
+            allCurves.setWeight(f, n);
+          }            
+        }
+      }        
+    }
+  }
+   
+
+  void tweak_Model2Ds (int p) {
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+
+        int n = allModel2Ds.MAP[OBJ_NUM];
+        int sign_n = 1;
+        if (n < 0) sign_n = -1;
+
+        n = abs(n);
+
+        int n1 = allModel2Ds.num_files_PEOPLE;
+        int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
+
+        if (allModel2Ds.isTree(n)) { // case: trees
+
+          n += p;
+
+          if (n > n2) {
+            n = n1 + 1; 
+            sign_n *= -1;
+          }
+          if (n < n1 + 1) {
+            n = n2; 
+            sign_n *= -1;
+          }
+        }
+        else { // case: people 
+
+          n += p;
+
+          if (n > n1) {
+            n = 1; 
+            sign_n *= -1;
+          }
+          if (n < 1) {
+            n = n1; 
+            sign_n *= -1;
+          }
+        }
+
+        n *= sign_n;
+
+        allModel2Ds.MAP[OBJ_NUM] = n;
+      }
+    }
+  }
+
+
+  void tweak_Model1Ds (int p) {
+
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model1D_ids[o];
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+
+        allModel1Ds.setSeed(OBJ_NUM, allModel1Ds.getSeed(OBJ_NUM) + p);
+      } 
+      if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) {
+        int q = allModel1Ds.getDegreeMax(OBJ_NUM);
+
+        q += p;
+
+        if (q < 0) q = 0;
+
+        allModel1Ds.setDegreeMax(OBJ_NUM, q);
+
+        User3D.create_Model1D_DegreeMax = q;
+        ROLLOUT.update = true;
+      }
+      if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
+        int q1 = allModel1Ds.getDegreeMin(OBJ_NUM);
+        int q2 = allModel1Ds.getDegreeMax(OBJ_NUM);
+        q1 += p;
+        q2 += p;
+
+        int change_them = 1; 
+
+        if (q1 < 0) {
+          q1 = 0; 
+          change_them = 0;
+        } 
+        if (q2 < 0) {
+          q2 = 0; 
+          change_them = 0;
+        }
+
+        if (change_them == 1) {
+
+          allModel1Ds.setDegreeMin(OBJ_NUM, q1);
+          allModel1Ds.setDegreeMax(OBJ_NUM, q2);
+
+          User3D.create_Model1D_DegreeMin = q1;
+          User3D.create_Model1D_DegreeMax = q2;
+
+          ROLLOUT.update = true;
+        }
+      }
+      if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) {
+        int q = allModel1Ds.getDegreeMin(OBJ_NUM);
+
+        q += p;
+
+        if (q < 0) q = 0;
+
+        allModel1Ds.setDegreeMin(OBJ_NUM, q);
+
+        User3D.create_Model1D_DegreeMin = q;
+        ROLLOUT.update = true;
+      }        
+      if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
+        float q = allModel1Ds.getTrunkSize(OBJ_NUM);
+
+        q += 0.25 * p;
+
+        if (q < 0) q = 0;
+
+        allModel1Ds.setTrunkSize(OBJ_NUM, q);
+
+        User3D.create_Model1D_TrunkSize = q;
+        ROLLOUT.update = true;
+      }
+      if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
+        float q = allModel1Ds.getLeafSize(OBJ_NUM);
+
+        q += 0.25 * p;
+
+        if (q < 0) q = 0;
+
+        allModel1Ds.setLeafSize(OBJ_NUM, q);
+
+        User3D.create_Model1D_LeafSize = q;
+        ROLLOUT.update = true;
+      }
+    }
+  }
 
 
 
@@ -19171,63 +19681,6 @@ class solarchvision_Selections {
       Edit3Ds.move_LandPoints(dx, dy, dz);
     }
   }
-  
-  
-
-  void drop_Model1Ds () {
-
-    for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = this.Model1D_ids[o];
-
-      float x = allModel1Ds.getX(OBJ_NUM);
-      float y = allModel1Ds.getY(OBJ_NUM);
-      float z = allModel1Ds.getZ(OBJ_NUM);
-
-      float[] ray_start = {
-        x, y, z
-      };
-
-      float[] ray_direction = {
-        0, 0, -1
-      };
-
-      float[] RxP = new float [8];
-
-      if (WIN3D.UI_TaskModifyParameter == 0) { 
-        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-      } else if (WIN3D.UI_TaskModifyParameter == 1) {
-        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-      } else {
-        RxP[0] = -1; // undefined
-      }
-
-      if (RxP[0] >= 0) {
-        allModel1Ds.setX(OBJ_NUM, RxP[1]); 
-        allModel1Ds.setY(OBJ_NUM, RxP[2]); 
-        allModel1Ds.setZ(OBJ_NUM, RxP[3]);
-      } else {
-        ray_direction[2] = 1; // <<<< going upwards
-
-        if (WIN3D.UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-        } else if (WIN3D.UI_TaskModifyParameter == 2) {
-          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-        } else {
-          RxP[0] = -1; // undefined
-        }
-
-        if (RxP[0] >= 0) {
-          allModel1Ds.setX(OBJ_NUM, RxP[1]); 
-          allModel1Ds.setY(OBJ_NUM, RxP[2]); 
-          allModel1Ds.setZ(OBJ_NUM, RxP[3]);
-        }
-      }
-    }
-  }
-    
-
-    
     
 
 
@@ -19238,466 +19691,54 @@ class solarchvision_Selections {
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Edit3Ds.drop_Model2Ds(); 
+      Edit3Ds.drop_Model1Ds(); 
     }   
     
   }
   
   
   
-  void changeProperties (int p) {
+
+  void tweak (int p) {
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-  
-      for (int o = this.Camera_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Camera_ids[o];
-  
-        int f = OBJ_NUM;
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-          int n = allCameras.get_type(f);
-          n += p;
-          if (n > 1) n = 0;
-          if (n < 0) n = 1;
-          allCameras.set_type(f, n);         
-  
-          if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.get_type(f);
-        }
-      }
-    }    
+      Edit3Ds.tweak_Cameras(p);
+    }      
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-  
-      boolean allSolids_updated = false;  
-  
-      for (int o = this.Section_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Section_ids[o];
-  
-        int f = OBJ_NUM;
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-          int n = allSections.get_type(f);
-          n += p;
-          if (n > 3) n = 0;
-          if (n < 0) n = 3;
-          allSections.set_type(f, n);         
-  
-          allSolids_updated = true;
-        }        
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-          int n = allSections.get_res1(f);
-          if (p > 0) n *= 2;
-          if (p < 0) n /= 2;
-  
-          if (n > 1600) n = 100;
-          if (n < 100) n = 1600;
-          allSections.set_res1(f, n);
-  
-          allSections.set_res2(f, n); // also modifying the other one
-  
-          println("RES:", n);
-  
-          allSolids_updated = true;
-        }
-  
-      } 
-  
-      if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-    }  
-  
-  
+      Edit3Ds.tweak_Sections(p);
+    }         
+
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-  
-      boolean allSolids_updated = false;  
-  
-      for (int o = this.Solid_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Solid_ids[o];
-  
-        int f = OBJ_NUM;
-  
-        if ((WIN3D.UI_CurrentTask == UITASK.PowerX) ||  (WIN3D.UI_CurrentTask == UITASK.PowerY) ||  (WIN3D.UI_CurrentTask == UITASK.PowerZ) ||  (WIN3D.UI_CurrentTask == UITASK.PowerAll)) {
-  
-  
-          float Solid_powX = allSolids.get_powX(f);
-          float Solid_powY = allSolids.get_powY(f);
-          float Solid_powZ = allSolids.get_powZ(f);
-  
-  
-          float n = 2;
-  
-          if (WIN3D.UI_CurrentTask == UITASK.PowerX) n = Solid_powX; 
-          if (WIN3D.UI_CurrentTask == UITASK.PowerY) n = Solid_powY; 
-          if (WIN3D.UI_CurrentTask == UITASK.PowerZ) n = Solid_powZ; 
-          if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
-            n = Solid_powX;
-          }          
-  
-          if (p > 0) n *= 2;
-          if (p < 0) n /= 2;
-  
-          if (n > CubePower) n = StarPower;
-          if (n < StarPower) n = CubePower;
-  
-          if (WIN3D.UI_CurrentTask == UITASK.PowerX) Solid_powX = n; 
-          if (WIN3D.UI_CurrentTask == UITASK.PowerY) Solid_powY = n; 
-          if (WIN3D.UI_CurrentTask == UITASK.PowerZ) Solid_powZ = n; 
-          if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
-            Solid_powX = n;
-            Solid_powY = n;
-            Solid_powZ = n;
-          } 
-  
-          allSolids.updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
-  
-          allSolids_updated = true;
-        }
-      }
-  
-      if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-    }    
-  
+      Edit3Ds.tweak_Solids(p);
+    }           
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-  
-      for (int o = this.Face_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Face_ids[o];
-  
-        int f = OBJ_NUM;
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-          int n = allFaces.getMaterial(f);
-          n += p;
-          if (n > 8) n = 0;
-          if (n < 0) n = 8;
-          allFaces.setMaterial(f, n);
-        }
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-          int n = allFaces.getTessellation(f);
-          n += p;
-          if (n > 4) n = 0;
-          if (n < 0) n = 4;
-          allFaces.setTessellation(f, n);
-        }   
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-          int n = allFaces.getLayer(f);
-          n += p;
-          if (n > 16) n = 0;
-          if (n < 0) n = 16;
-          allFaces.setLayer(f, n);
-        }  
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-          int n = allFaces.getVisibility(f);
-          n += p;
-          if (n > 2) n = 0;
-          if (n < 0) n = 2;
-          allFaces.setVisibility(f, n);
-        }
-        
-        if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-          int n = allFaces.getWeight(f);
-          n += p;
-          if (n > 20) n = -20;
-          if (n < -20) n = 20;
-          allFaces.setWeight(f, n);
-        }        
-      }
-    }  
+      Edit3Ds.tweak_Faces(p);
+    }         
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-  
-      for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Curve_ids[o];
-  
-        int f = OBJ_NUM;
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-          int n = allCurves.getMaterial(f);
-          n += p;
-          if (n > 8) n = 0;
-          if (n < 0) n = 8;
-          allCurves.setMaterial(f, n);
-        }
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-          int n = allCurves.getTessellation(f);
-          n += p;
-          if (n > 4) n = 0;
-          if (n < 0) n = 4;
-          allCurves.setTessellation(f, n);
-        }   
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-          int n = allCurves.getLayer(f);
-          n += p;
-          if (n > 16) n = 0;
-          if (n < 0) n = 16;
-          allCurves.setLayer(f, n);
-        }  
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-          int n = allCurves.getVisibility(f);
-          n += p;
-          if (n > 2) n = 0;
-          if (n < 0) n = 2;
-          allCurves.setVisibility(f, n);
-        }
-        
-        if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-          int n = allCurves.getWeight(f);
-          n += p;
-          if (n > 20) n = -20;
-          if (n < -20) n = 20;
-          allCurves.setWeight(f, n);
-        }        
-      }
-    }
+      Edit3Ds.tweak_Curves(p);
+    }       
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-  
-      for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Group_ids[o];
-  
-        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allFaces.nodes.length)) {
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-              int n = allFaces.getMaterial(f);
-              n += p;
-              if (n > 8) n = 0;
-              if (n < 0) n = 8;
-              allFaces.setMaterial(f, n);
-            }
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-              int n = allFaces.getTessellation(f);
-              n += p;
-              if (n > 4) n = 0;
-              if (n < 0) n = 4;
-              allFaces.setTessellation(f, n);
-            }      
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-              int n = allFaces.getLayer(f);
-              n += p;
-              if (n > 16) n = 0;
-              if (n < 0) n = 16;
-              allFaces.setLayer(f, n);
-            }  
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-              int n = allFaces.getVisibility(f);
-              n += p;
-              if (n > 2) n = 0;
-              if (n < 0) n = 2;
-              allFaces.setVisibility(f, n);
-            }
-            
-            if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-              int n = allFaces.getWeight(f);
-              n += p;
-              if (n > 20) n = -20;
-              if (n < -20) n = 20;
-              allFaces.setWeight(f, n);
-            }            
-          }
-        }
-        
-        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
-          if ((0 <= f) && (f < allCurves.nodes.length)) {
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-              int n = allCurves.getMaterial(f);
-              n += p;
-              if (n > 8) n = 0;
-              if (n < 0) n = 8;
-              allCurves.setMaterial(f, n);
-            }
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-              int n = allCurves.getTessellation(f);
-              n += p;
-              if (n > 4) n = 0;
-              if (n < 0) n = 4;
-              allCurves.setTessellation(f, n);
-            }      
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-              int n = allCurves.getLayer(f);
-              n += p;
-              if (n > 16) n = 0;
-              if (n < 0) n = 16;
-              allCurves.setLayer(f, n);
-            }  
-  
-            if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-              int n = allCurves.getVisibility(f);
-              n += p;
-              if (n > 2) n = 0;
-              if (n < 0) n = 2;
-              allCurves.setVisibility(f, n);
-            }
-            
-            if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-              int n = allCurves.getWeight(f);
-              n += p;
-              if (n > 20) n = -20;
-              if (n < -20) n = 20;
-              allCurves.setWeight(f, n);
-            }            
-          }
-        }        
-      }
-    }
+      Edit3Ds.tweak_Groups(p);
+    }      
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Model2D_ids[o];
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-  
-          int n = allModel2Ds.MAP[OBJ_NUM];
-          int sign_n = 1;
-          if (n < 0) sign_n = -1;
-  
-          n = abs(n);
-  
-          int n1 = allModel2Ds.num_files_PEOPLE;
-          int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
-
-          if (allModel2Ds.isTree(n)) { // case: trees
-  
-            n += p;
-  
-            if (n > n2) {
-              n = n1 + 1; 
-              sign_n *= -1;
-            }
-            if (n < n1 + 1) {
-              n = n2; 
-              sign_n *= -1;
-            }
-          }
-          else { // case: people 
-  
-            n += p;
-  
-            if (n > n1) {
-              n = 1; 
-              sign_n *= -1;
-            }
-            if (n < 1) {
-              n = n1; 
-              sign_n *= -1;
-            }
-          }
-  
-          n *= sign_n;
-  
-          allModel2Ds.MAP[OBJ_NUM] = n;
-        }
-      }
-    }
+      Edit3Ds.tweak_Model2Ds(p);
+    }      
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Model1D_ids[o];
-  
-        if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-  
-          allModel1Ds.setSeed(OBJ_NUM, allModel1Ds.getSeed(OBJ_NUM) + p);
-        } 
-        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) {
-          int q = allModel1Ds.getDegreeMax(OBJ_NUM);
-  
-          q += p;
-  
-          if (q < 0) q = 0;
-  
-          allModel1Ds.setDegreeMax(OBJ_NUM, q);
-  
-          User3D.create_Model1D_DegreeMax = q;
-          ROLLOUT.update = true;
-        }
-        if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-          int q1 = allModel1Ds.getDegreeMin(OBJ_NUM);
-          int q2 = allModel1Ds.getDegreeMax(OBJ_NUM);
-          q1 += p;
-          q2 += p;
-  
-          int change_them = 1; 
-  
-          if (q1 < 0) {
-            q1 = 0; 
-            change_them = 0;
-          } 
-          if (q2 < 0) {
-            q2 = 0; 
-            change_them = 0;
-          }
-  
-          if (change_them == 1) {
-  
-            allModel1Ds.setDegreeMin(OBJ_NUM, q1);
-            allModel1Ds.setDegreeMax(OBJ_NUM, q2);
-  
-            User3D.create_Model1D_DegreeMin = q1;
-            User3D.create_Model1D_DegreeMax = q2;
-  
-            ROLLOUT.update = true;
-          }
-        }
-        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) {
-          int q = allModel1Ds.getDegreeMin(OBJ_NUM);
-  
-          q += p;
-  
-          if (q < 0) q = 0;
-  
-          allModel1Ds.setDegreeMin(OBJ_NUM, q);
-  
-          User3D.create_Model1D_DegreeMin = q;
-          ROLLOUT.update = true;
-        }        
-        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
-          float q = allModel1Ds.getTrunkSize(OBJ_NUM);
-  
-          q += 0.25 * p;
-  
-          if (q < 0) q = 0;
-  
-          allModel1Ds.setTrunkSize(OBJ_NUM, q);
-  
-          User3D.create_Model1D_TrunkSize = q;
-          ROLLOUT.update = true;
-        }
-        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
-          float q = allModel1Ds.getLeafSize(OBJ_NUM);
-  
-          q += 0.25 * p;
-  
-          if (q < 0) q = 0;
-  
-          allModel1Ds.setLeafSize(OBJ_NUM, q);
-  
-          User3D.create_Model1D_LeafSize = q;
-          ROLLOUT.update = true;
-        }
-      }
-    }
-  }     
+      Edit3Ds.tweak_Model1Ds(p);
+    }       
+  }      
+ 
+    
+   
+    
+ 
+
   
 
 
@@ -42204,7 +42245,7 @@ void mouseWheel (MouseEvent event) {
 
                   int p = int(Wheel_Value);
 
-                  userSelections.changeProperties(p);
+                  userSelections.tweak(p);
 
                   WIN3D.update = true;
                 }
