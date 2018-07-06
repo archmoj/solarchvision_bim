@@ -10,6 +10,205 @@
 //for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
 
 
+import processing.pdf.*;
+
+void launch (String s) {
+  open(s);
+}
+void launch (String[] s) {
+  open(s);
+}
+
+
+class solarchvision_STATION {
+
+  private final static String CLASS_STAMP = "STATION";
+  
+  private float elevation = 0;
+  private float latitude = 0;
+  private float longitude = 0;
+  private float timelong = 0;
+  private String code = "";  
+  private String city = "";
+  private String province = "";
+  private String country = "";
+  private String filename_NAEFS = "";
+  private String filename_CWEEDS = "";
+  private String filename_TMYEPW = "";
+
+
+  public float getElevation () { return this.elevation; } 
+  public float getLatitude () { return this.latitude; }
+  public float getLongitude () { return this.longitude; } 
+  public float getTimelong () { return this.timelong; }
+  public String getCode () { return this.code; }  
+  public String getCity () { return this.city; } 
+  public String getProvince () { return this.province; } 
+  public String getCountry () { return this.country; }
+  public String getFilename_NAEFS () { return this.filename_NAEFS; }
+  public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
+  public String getFilename_TMYEPW () { return this.filename_TMYEPW; } 
+
+  
+  public void setElevation (float elevation) {
+    this.elevation = elevation;
+  }
+  public void setLatitude (float latitude) {
+    this.latitude = latitude;
+  }
+  public void setLongitude (float longitude) {
+    this.longitude = longitude;
+  }
+  public void setTimelong (float timelong) {
+    this.timelong = timelong;
+  }
+  public void setCode (String code) {
+    this.code = code;
+  }  
+  public void setCity (String city) {
+    this.city = city;
+  }
+  public void setProvince (String province) {
+    this.province = province;
+  }
+  public void setCountry (String country) {
+    this.country = country;
+  }
+  public void setFilename_NAEFS (String filename_NAEFS) {
+    this.filename_NAEFS = filename_NAEFS;
+  }
+  public void setFilename_CWEEDS (String filename_CWEEDS) {
+    this.filename_CWEEDS = filename_CWEEDS;
+  }
+  public void setFilename_TMYEPW (String filename_TMYEPW) {
+    this.filename_TMYEPW = filename_TMYEPW;
+  }  
+
+  public solarchvision_STATION () {
+    
+  }  
+  
+  public solarchvision_STATION (String code, String city, String province, String Country, 
+                         float latitude, float longitude, float timelong, float elevation, 
+                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
+  
+    this.code = code;
+    this.city = city;
+    this.province = province;
+    this.country = country;
+    
+    this.filename_NAEFS = filename_NAEFS;
+    this.filename_CWEEDS = filename_CWEEDS;
+    this.filename_TMYEPW = filename_TMYEPW;
+    
+    this.elevation = elevation;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.timelong = timelong;
+  }
+  
+  
+  public void to_XML (XML xml) {
+    
+    XML child = xml.addChild(this.CLASS_STAMP);
+    
+    child.setString("code", this.getCode());
+    child.setString("city", this.getCity());
+    child.setString("province", this.getProvince());
+    child.setString("country", this.getCountry());
+
+    child.setFloat("elevation", this.getElevation());
+    child.setFloat("latitude", this.getLatitude());
+    child.setFloat("longitude", this.getLongitude());
+    child.setFloat("timelong", this.getTimelong());
+    
+    child.setString("filename_NAEFS", this.getFilename_NAEFS());
+    child.setString("filename_CWEEDS", this.getFilename_CWEEDS());
+    child.setString("filename_TMYEPW", this.getFilename_TMYEPW());
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    XML child = xml.getChild(this.CLASS_STAMP);
+    
+    this.setCode(child.getString("code"));
+    this.setCity(child.getString("city"));
+    this.setProvince(child.getString("province"));
+    this.setCountry(child.getString("country"));
+
+    this.setElevation(child.getFloat("elevation"));
+    this.setLatitude(child.getFloat("latitude"));
+    this.setLongitude(child.getFloat("longitude"));
+    this.setTimelong(child.getFloat("timelong"));
+    
+    this.setFilename_NAEFS(child.getString("filename_NAEFS"));
+    this.setFilename_CWEEDS(child.getString("filename_CWEEDS"));
+    this.setFilename_TMYEPW(child.getString("filename_TMYEPW"));    
+  }  
+}
+
+solarchvision_STATION STATION = new solarchvision_STATION(
+
+  //"", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
+
+  "", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
+  
+);
+
+
+// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
+
+
+// bug using small STUDY.LevelPix 
+
+
+// pick select LandPoint is not written. 
+
+
+// diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!" 
+
+
+// snap for Curve objects is not developed yet.
+
+// don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems? 
+
+
+// note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
+
+
+// should see where else could add snap3D :)
+
+
+// drop functions only works for allModel2Ds objects and not at Group level
+
+// could add join/explode groups ?
+
+
+// export and import of curves
+// converting curves to faces e.g. Surface, Extrude, Connect
+
+// Modify Normal at Curve level is not complete...
+
+// Create3Ds.autoNormalCurve_Selection
+
+// writing export to rad completed for meshes and land - not allModel1Ds and 2Ds yet!
+
+// colud record Climate data flags later.
+
+// exporting shaded land is not written. 
+
+// void userSelections.rotate_Groups 
+// serach for userSelections.rotate_Selection ( need to make them all correct for local pivots!
+// local pivot
+
+
+// solid rotations inside groups should be translated to locals to avoid problems!
+
+// some rotations are not in degrees e.g. solids, allModel1Ds??, what else?
+
+
+
 
 int SOLARCHVISION_pixel_H = 275; //300; 
 int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75); 
@@ -393,8 +592,6 @@ class solarchvision_TIME {
 }
 
 solarchvision_TIME TIME = new solarchvision_TIME(); 
-
-
 
 
 
@@ -1339,6 +1536,164 @@ class solarchvision_Functions {
 solarchvision_Functions funcs = new solarchvision_Functions(); 
 
 
+
+
+class solarchvision_UITASK {
+  
+  private final static String CLASS_STAMP = "UITASK";
+ 
+  private final static int LandOrbit_Pan_TargetRollZ = -19;
+  private final static int LookAtDirection = -18;
+  private final static int DistMouseXY_TargetRollXY_TargetRollZ = -17; 
+  private final static int PanY_TargetRollXY_TargetRollZ = -16; 
+  private final static int PanX_TargetRollXY_TargetRollZ = -15; 
+  private final static int Pan_TargetRoll = -14; 
+  private final static int CameraDistance_TargetRollXY_TargetRollZ = -13; 
+  private final static int CameraRoll_Pan = -12; 
+  private final static int CameraRollXY_CameraRollZ = -11; 
+  private final static int TargetRoll_Pan = -10; 
+  private final static int TargetRollXY_TargetRollZ = -9; 
+  private final static int AllModelSize = -8; 
+  private final static int SkydomeSize = -7; 
+  private final static int Truck_Orbit = -6; 
+  private final static int ModelSize_Pan_TargetRoll = -5; 
+  private final static int Pan_Height = -4; 
+  private final static int Zoom_Orbit_Pan = -3; 
+  private final static int RectSelect = -2; 
+  private final static int PickSelect = -1; 
+  private final static int Create = 0; 
+  private final static int Move = 1; 
+  private final static int Scale = 2; 
+  private final static int Rotate = 3; 
+  private final static int Seed_Material = 4; 
+  private final static int Tessellation = 5; 
+  private final static int Layer = 6; 
+  private final static int Visibility = 7; 
+  private final static int Weight = 8; 
+  private final static int DegreeMax = 9; 
+  private final static int DegreeDif = 10; 
+  private final static int DegreeMin = 11; 
+  private final static int TrunkSize = 12; 
+  private final static int LeafSize = 13; 
+  private final static int All_Model1DsProps = 14; 
+  private final static int Pivot = 15; 
+  private final static int Normal = 16; 
+  private final static int FirstVertex = 17; 
+  private final static int Drop = 18; 
+  private final static int GetLength = 19; 
+  private final static int PowerX = 20; 
+  private final static int PowerY = 21; 
+  private final static int PowerZ = 22; 
+  private final static int PowerAll = 23;  
+  
+}
+
+solarchvision_UITASK UITASK = new solarchvision_UITASK();
+
+
+
+
+class solarchvision_CREATE {
+  
+  private final static String CLASS_STAMP = "CREATE";
+
+  private final static int Nothing    = 0;
+  private final static int Plane      = 1;
+  private final static int Poly       = 2;
+  private final static int Extrude    = 3;
+  private final static int Tri        = 4;
+  private final static int Hyper      = 5;
+  private final static int House1     = 6; 
+  private final static int House2     = 7;
+  private final static int SuperOBJ   = 8;
+  private final static int Parametric = 9;
+  private final static int Person     = 10;
+  private final static int Plant      = 11;
+  private final static int allModel1Ds    = 12;
+  private final static int Face       = 13;
+  private final static int Vertex     = 14;
+  private final static int Curve      = 15;
+  private final static int Solid      = 16;
+  private final static int Section    = 17;
+  private final static int Camera     = 18;
+  
+}
+
+solarchvision_CREATE CREATE = new solarchvision_CREATE();
+
+
+
+
+class solarchvision_OBJECTTYPE {
+  
+  private final static String CLASS_STAMP = "OBJECTTYPE";
+  
+  private final static int LANDPOINT = 0; 
+  private final static int MODEL1D = 1; 
+  private final static int MODEL2D = 2; 
+  private final static int GROUP = 3;
+  private final static int FACE = 4; 
+  private final static int VERTEX = 5;
+  private final static int SOFTVERTEX = 6;
+  private final static int SOLID = 7;
+  private final static int SECTION = 8;
+  private final static int CAMERA = 9;
+  private final static int CURVE = 10;
+  
+}
+
+solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE(); 
+
+
+class solarchvision_WINDOWTYPE {
+  
+  private final static String CLASS_STAMP = "WINDOWTYPE";
+  
+  private final static int SKY2D    = -2;
+  private final static int LandGap  = -1;
+  private final static int LandMesh = 0;
+  private final static int STUDY    = 1;
+  private final static int WORLD    = 2;
+  private final static int WIN3D    = 3;
+  private final static int OBJ      = 4;
+  private final static int RAD      = 5;
+  private final static int HTML     = 6;
+  
+}
+
+solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE(); 
+
+
+class solarchvision_DATATYPE {
+  
+  private final static String CLASS_STAMP = "DATATYPE";
+  
+  private final static int SATELLITE_GOES = 0;
+  private final static int FORECAST_HRDPS = 1;
+  private final static int FORECAST_RDPS  = 2;
+  private final static int FORECAST_GDPS  = 3;
+  
+}
+
+solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
+
+
+
+int WMS_type = DataType.FORECAST_GDPS; // <<<<<<<<<<<<<
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int numberOfLayers = 0;
 
 class solarchvision_LAYER {
@@ -1788,141 +2143,7 @@ float Develop_AngleOrientation = 0; // 0 = South, 90 = East
 
 
 
-class solarchvision_STATION {
 
-  private final static String CLASS_STAMP = "STATION";
-  
-  private float elevation = 0;
-  private float latitude = 0;
-  private float longitude = 0;
-  private float timelong = 0;
-  private String code = "";  
-  private String city = "";
-  private String province = "";
-  private String country = "";
-  private String filename_NAEFS = "";
-  private String filename_CWEEDS = "";
-  private String filename_TMYEPW = "";
-
-
-  public float getElevation () { return this.elevation; } 
-  public float getLatitude () { return this.latitude; }
-  public float getLongitude () { return this.longitude; } 
-  public float getTimelong () { return this.timelong; }
-  public String getCode () { return this.code; }  
-  public String getCity () { return this.city; } 
-  public String getProvince () { return this.province; } 
-  public String getCountry () { return this.country; }
-  public String getFilename_NAEFS () { return this.filename_NAEFS; }
-  public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
-  public String getFilename_TMYEPW () { return this.filename_TMYEPW; } 
-
-  
-  public void setElevation (float elevation) {
-    this.elevation = elevation;
-  }
-  public void setLatitude (float latitude) {
-    this.latitude = latitude;
-  }
-  public void setLongitude (float longitude) {
-    this.longitude = longitude;
-  }
-  public void setTimelong (float timelong) {
-    this.timelong = timelong;
-  }
-  public void setCode (String code) {
-    this.code = code;
-  }  
-  public void setCity (String city) {
-    this.city = city;
-  }
-  public void setProvince (String province) {
-    this.province = province;
-  }
-  public void setCountry (String country) {
-    this.country = country;
-  }
-  public void setFilename_NAEFS (String filename_NAEFS) {
-    this.filename_NAEFS = filename_NAEFS;
-  }
-  public void setFilename_CWEEDS (String filename_CWEEDS) {
-    this.filename_CWEEDS = filename_CWEEDS;
-  }
-  public void setFilename_TMYEPW (String filename_TMYEPW) {
-    this.filename_TMYEPW = filename_TMYEPW;
-  }  
-
-  public solarchvision_STATION () {
-    
-  }  
-  
-  public solarchvision_STATION (String code, String city, String province, String Country, 
-                         float latitude, float longitude, float timelong, float elevation, 
-                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
-  
-    this.code = code;
-    this.city = city;
-    this.province = province;
-    this.country = country;
-    
-    this.filename_NAEFS = filename_NAEFS;
-    this.filename_CWEEDS = filename_CWEEDS;
-    this.filename_TMYEPW = filename_TMYEPW;
-    
-    this.elevation = elevation;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.timelong = timelong;
-  }
-  
-  
-  public void to_XML (XML xml) {
-    
-    XML child = xml.addChild(this.CLASS_STAMP);
-    
-    child.setString("code", this.getCode());
-    child.setString("city", this.getCity());
-    child.setString("province", this.getProvince());
-    child.setString("country", this.getCountry());
-
-    child.setFloat("elevation", this.getElevation());
-    child.setFloat("latitude", this.getLatitude());
-    child.setFloat("longitude", this.getLongitude());
-    child.setFloat("timelong", this.getTimelong());
-    
-    child.setString("filename_NAEFS", this.getFilename_NAEFS());
-    child.setString("filename_CWEEDS", this.getFilename_CWEEDS());
-    child.setString("filename_TMYEPW", this.getFilename_TMYEPW());
-  }
-  
-  
-  public void from_XML (XML xml) {
-    
-    XML child = xml.getChild(this.CLASS_STAMP);
-    
-    this.setCode(child.getString("code"));
-    this.setCity(child.getString("city"));
-    this.setProvince(child.getString("province"));
-    this.setCountry(child.getString("country"));
-
-    this.setElevation(child.getFloat("elevation"));
-    this.setLatitude(child.getFloat("latitude"));
-    this.setLongitude(child.getFloat("longitude"));
-    this.setTimelong(child.getFloat("timelong"));
-    
-    this.setFilename_NAEFS(child.getString("filename_NAEFS"));
-    this.setFilename_CWEEDS(child.getString("filename_CWEEDS"));
-    this.setFilename_TMYEPW(child.getString("filename_TMYEPW"));    
-  }  
-}
-
-solarchvision_STATION STATION = new solarchvision_STATION(
-
-  //"", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
-
-  "", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
-  
-);
   
 
 
@@ -3079,144 +3300,10 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
 
 
 
-class solarchvision_UITASK {
-  
-  private final static String CLASS_STAMP = "UITASK";
- 
-  private final static int LandOrbit_Pan_TargetRollZ = -19;
-  private final static int LookAtDirection = -18;
-  private final static int DistMouseXY_TargetRollXY_TargetRollZ = -17; 
-  private final static int PanY_TargetRollXY_TargetRollZ = -16; 
-  private final static int PanX_TargetRollXY_TargetRollZ = -15; 
-  private final static int Pan_TargetRoll = -14; 
-  private final static int CameraDistance_TargetRollXY_TargetRollZ = -13; 
-  private final static int CameraRoll_Pan = -12; 
-  private final static int CameraRollXY_CameraRollZ = -11; 
-  private final static int TargetRoll_Pan = -10; 
-  private final static int TargetRollXY_TargetRollZ = -9; 
-  private final static int AllModelSize = -8; 
-  private final static int SkydomeSize = -7; 
-  private final static int Truck_Orbit = -6; 
-  private final static int ModelSize_Pan_TargetRoll = -5; 
-  private final static int Pan_Height = -4; 
-  private final static int Zoom_Orbit_Pan = -3; 
-  private final static int RectSelect = -2; 
-  private final static int PickSelect = -1; 
-  private final static int Create = 0; 
-  private final static int Move = 1; 
-  private final static int Scale = 2; 
-  private final static int Rotate = 3; 
-  private final static int Seed_Material = 4; 
-  private final static int Tessellation = 5; 
-  private final static int Layer = 6; 
-  private final static int Visibility = 7; 
-  private final static int Weight = 8; 
-  private final static int DegreeMax = 9; 
-  private final static int DegreeDif = 10; 
-  private final static int DegreeMin = 11; 
-  private final static int TrunkSize = 12; 
-  private final static int LeafSize = 13; 
-  private final static int All_Model1DsProps = 14; 
-  private final static int Pivot = 15; 
-  private final static int Normal = 16; 
-  private final static int FirstVertex = 17; 
-  private final static int Drop = 18; 
-  private final static int GetLength = 19; 
-  private final static int PowerX = 20; 
-  private final static int PowerY = 21; 
-  private final static int PowerZ = 22; 
-  private final static int PowerAll = 23;  
-  
-}
-
-solarchvision_UITASK UITASK = new solarchvision_UITASK();
 
 
 
 
-class solarchvision_CREATE {
-  
-  private final static String CLASS_STAMP = "CREATE";
-
-  private final static int Nothing    = 0;
-  private final static int Plane      = 1;
-  private final static int Poly       = 2;
-  private final static int Extrude    = 3;
-  private final static int Tri        = 4;
-  private final static int Hyper      = 5;
-  private final static int House1     = 6; 
-  private final static int House2     = 7;
-  private final static int SuperOBJ   = 8;
-  private final static int Parametric = 9;
-  private final static int Person     = 10;
-  private final static int Plant      = 11;
-  private final static int allModel1Ds    = 12;
-  private final static int Face       = 13;
-  private final static int Vertex     = 14;
-  private final static int Curve      = 15;
-  private final static int Solid      = 16;
-  private final static int Section    = 17;
-  private final static int Camera     = 18;
-  
-}
-
-solarchvision_CREATE CREATE = new solarchvision_CREATE();
-
-
-
-
-class solarchvision_OBJECTTYPE {
-  
-  private final static String CLASS_STAMP = "OBJECTTYPE";
-  
-  private final static int LANDPOINT = 0; 
-  private final static int MODEL1D = 1; 
-  private final static int MODEL2D = 2; 
-  private final static int GROUP = 3;
-  private final static int FACE = 4; 
-  private final static int VERTEX = 5;
-  private final static int SOFTVERTEX = 6;
-  private final static int SOLID = 7;
-  private final static int SECTION = 8;
-  private final static int CAMERA = 9;
-  private final static int CURVE = 10;
-  
-}
-
-solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE(); 
-
-
-class solarchvision_WINDOWTYPE {
-  
-  private final static String CLASS_STAMP = "WINDOWTYPE";
-  
-  private final static int SKY2D    = -2;
-  private final static int LandGap  = -1;
-  private final static int LandMesh = 0;
-  private final static int STUDY    = 1;
-  private final static int WORLD    = 2;
-  private final static int WIN3D    = 3;
-  private final static int OBJ      = 4;
-  private final static int RAD      = 5;
-  private final static int HTML     = 6;
-  
-}
-
-solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE(); 
-
-
-class solarchvision_DATATYPE {
-  
-  private final static String CLASS_STAMP = "DATATYPE";
-  
-  private final static int SATELLITE_GOES = 0;
-  private final static int FORECAST_HRDPS = 1;
-  private final static int FORECAST_RDPS  = 2;
-  private final static int FORECAST_GDPS  = 3;
-  
-}
-
-solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
 
 
 class solarchvision_SHADE {
@@ -9939,148 +10026,7 @@ solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 
 
-float SOLARCHVISION_Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
 
-  float new_value = v;
-
-  if (new_value < min_v) new_value = max_v; 
-  if (new_value > max_v) new_value = min_v;    
-
-  float cx, cy, cr;
-  float w1, w2, h, o, t_o; 
-
-  //w1 = 32.5 * ROLLOUT.view_S;
-  //w2 = 142.5 * ROLLOUT.view_S;
-
-  w1 = 100 * ROLLOUT.view_S;
-  w2 = 200 * ROLLOUT.view_S;
-
-  h = 16 * ROLLOUT.view_S;
-  o = 2 * ROLLOUT.view_S;
-  t_o = h * ROLLOUT.view_S / 8.0;
-
-  STUDY.Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
-
-  strokeWeight(0); 
-  stroke(0); 
-  fill(0);
-  rect(x + o, y - (h / 2) - o, 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
-  rect(x + o, y - (h / 2) - o + 0.5 * (h + 2 * o), 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
-  stroke(255); 
-  fill(255);
-  cx = x + o + 0.25 * (h + 2 * o);
-  cy = y - (h / 2) - o + 0.25 * (h + 2 * o);
-  cr = 0.25 * (h + 2 * o);
-  triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
-
-  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
-    if (mouseButton == LEFT) {
-
-      if (stp_v < 0) {
-        new_value *= abs(stp_v);
-      } else { 
-        new_value += abs(stp_v);
-      }
-    } else if (mouseButton == RIGHT) {
-
-      new_value = max_v;
-    }
-  }
-
-  cy += 2 * cr;
-  triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
-
-  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
-
-    if (mouseButton == LEFT) {
-
-      if (stp_v < 0) {
-        new_value /= abs(stp_v);
-      } else { 
-        new_value -= abs(stp_v);
-      }
-    } else if (mouseButton == RIGHT) {
-
-      new_value = min_v;
-    }
-  }
-
-  if (new_value < min_v) new_value = max_v; 
-  if (new_value > max_v) new_value = min_v; 
-
-
-
-  strokeWeight(0); 
-  stroke(191); 
-  fill(191);
-  rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
-
-  stroke(255); 
-  fill(255);
-  rect(x - w1, y - (h / 2), w1, h);
-
-  float q = 0;
-
-  if (max_v - min_v > 0.001) {
-    q = (new_value - min_v) / (max_v - min_v);
-  }
-
-  if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2)) == 1) {
-
-    q = 1;
-
-    if (max_v - min_v > 0.001) {
-      q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
-    }
-
-    new_value = min_v + q * (max_v - min_v);
-
-    if (new_value < min_v) new_value = max_v; 
-    if (new_value > max_v) new_value = min_v;
-
-    ROLLOUT.update = true;
-  }
-
-  strokeWeight(0); 
-  stroke(191, 255, 191); 
-  fill(191, 255, 191);
-  rect(x - w1, y - (h / 2), q * w1, h);          
-
-
-  strokeWeight(2); 
-  stroke(0); 
-  noFill();
-  rect(x - w1, y - (h / 2), w1, h);    
-
-  strokeWeight(0);
-  stroke(0); 
-  fill(0);
-  textSize(1.0 * h);
-  textAlign(RIGHT, CENTER);
-  if ((new_value == int(new_value)) || (new_value >= 100)) {
-    text(String.valueOf(int(new_value)), x - t_o, y - t_o);
-  } else {
-    text(nf(new_value, 0, 0), x - t_o, y - t_o);
-  }
-
-
-  strokeWeight(0);
-  stroke(0); 
-  fill(0);
-  //textSize(1.0 * h);
-  textSize(0.85 * h);
-  //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_o, y - t_o);
-  textAlign(LEFT, CENTER); 
-  text(caption + ":", x - w1 - w2 + t_o, y - t_o);
-
-  if (new_value != v) {
-    if (update1 != 0) STUDY.update = true;
-    if (update2 != 0) WIN3D.update = true;
-    if (update3 != 0) WORLD.update = true;
-  }
-
-  return new_value;
-}
 
 
 
@@ -10241,378 +10187,378 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 1) { // Point
   
-        //WORLD.autoView = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1), 1));
-        //WORLD.VIEW_id = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1), 1));
+        //WORLD.autoView = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1), 1));
+        //WORLD.VIEW_id = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1), 1));
   
-        LocationLAT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
-        LocationLON = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
-        //LocationELE = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, LocationELE_step);
+        LocationLAT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
+        LocationLON = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
+        //LocationELE = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, LocationELE_step);
   
-        LocationLAT_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
-        LocationLON_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
-        //LocationELE_step = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
+        LocationLAT_step = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
+        LocationLON_step = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
+        //LocationELE_step = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
   
       }
   
       if (this.child == 2) { // Weather
   
-        WORLD.displayAll_TMYEPW = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
-        //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
+        WORLD.displayAll_TMYEPW = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
+        //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
   
-        WORLD.displayAll_CWEEDS = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1), 1));
-        //WORLD.displayNear_CWEEDS = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
+        WORLD.displayAll_CWEEDS = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1), 1));
+        //WORLD.displayNear_CWEEDS = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
   
-        WORLD.displayAll_CLMREC = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1), 1));
-        //WORLD.displayNear_CLMREC = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
+        WORLD.displayAll_CLMREC = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1), 1));
+        //WORLD.displayNear_CLMREC = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
   
-        WORLD.displayAll_SWOB = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1), 1));
-        //WORLD.displayNear_SWOB = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
+        WORLD.displayAll_SWOB = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1), 1));
+        //WORLD.displayNear_SWOB = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
   
-        WORLD.displayAll_NAEFS = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
-        //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
+        WORLD.displayAll_NAEFS = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
+        //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
   
         
-        //ENSEMBLE_FORECAST_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
-        //ENSEMBLE_OBSERVED_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
-        //CLIMATE_CLMREC_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load, 0, 1, 1), 1));
-        //CLIMATE_CWEEDS_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load, 0, 1, 1), 1));
-        //CLIMATE_TMYEPW_load = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load, 0, 1, 1), 1));
+        //ENSEMBLE_FORECAST_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
+        //ENSEMBLE_OBSERVED_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
+        //CLIMATE_CLMREC_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load, 0, 1, 1), 1));
+        //CLIMATE_CWEEDS_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load, 0, 1, 1), 1));
+        //CLIMATE_TMYEPW_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load, 0, 1, 1), 1));
   
-        GRIB2_Hour_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
-        GRIB2_Hour_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
-        GRIB2_Hour_Step = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
+        GRIB2_Hour_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
+        GRIB2_Hour_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
+        GRIB2_Hour_Step = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
   
-        GRIB2_Layer_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, numberOfLayers, 1), 1));
-        GRIB2_Layer_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, numberOfLayers, 1), 1));
-        GRIB2_Layer_Step = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
+        GRIB2_Layer_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, numberOfLayers, 1), 1));
+        GRIB2_Layer_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, numberOfLayers, 1), 1));
+        GRIB2_Layer_Step = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
       }
   
       if (this.child == 3) { // Space
   
-        //Tropo3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
-        //Tropo3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));      
+        //Tropo3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
+        //Tropo3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));      
   
-        //Earth3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
-        //Earth3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
+        //Earth3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
+        //Earth3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
   
-        //Moon3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
-        //Moon3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
+        //Moon3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
+        //Moon3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
   
-        //Sun3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
-        //Sun3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));      
+        //Sun3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
+        //Sun3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));      
   
-        Planetary_Magnification = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
+        Planetary_Magnification = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
     } else if (this.parent == 1) { // Geometries & Space
   
       if (this.child == 1) { // General
   
-        User3D.create_MeshOrSolid = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
+        User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
   
-        allFaces.displayTessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
+        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
   
-        Land3D.displayTessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
+        Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
   
-        Sky3D.displayTessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));   
-        Sky3D.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.scale", Sky3D.scale, 0.0000001, 1000000, -2);
+        Sky3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));   
+        Sky3D.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.scale", Sky3D.scale, 0.0000001, 1000000, -2);
   
-        BIOSPHERE_drawResolution = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
+        BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
   
-        OBJECTS_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
+        OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
   
-        Load_DefaultModels = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3Ds.maximum_default_models, 1), 1));
+        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3Ds.maximum_default_models, 1), 1));
       }
   
   
   
       if (this.child == 2) { // Create
   
-        //addToLastGroup = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
+        //addToLastGroup = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
   
-        User3D.default_Material = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Material", User3D.default_Material, -1, 8, 1), 1));
-        User3D.default_Tessellation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Tessellation", User3D.default_Tessellation, 0, 6, 1), 1));
-        User3D.default_Layer = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Layer", User3D.default_Layer, 0, 16, 1), 1));
-        User3D.default_Visibility = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Visibility", User3D.default_Visibility, -1, 1, 1), 1));
-        User3D.default_Weight = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Weight" , User3D.default_Weight, -20, 20, 1), 1));
-        User3D.default_Closed = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Closed" , User3D.default_Closed, 0, 1, 1), 1));
+        User3D.default_Material = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Material", User3D.default_Material, -1, 8, 1), 1));
+        User3D.default_Tessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Tessellation", User3D.default_Tessellation, 0, 6, 1), 1));
+        User3D.default_Layer = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Layer", User3D.default_Layer, 0, 16, 1), 1));
+        User3D.default_Visibility = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_Visibility", User3D.default_Visibility, -1, 1, 1), 1));
+        User3D.default_Weight = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Weight" , User3D.default_Weight, -20, 20, 1), 1));
+        User3D.default_Closed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Closed" , User3D.default_Closed, 0, 1, 1), 1));
   
-        User3D.default_PivotType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_PivotType", User3D.default_PivotType, 0, 4, 1), 1));
+        User3D.default_PivotType = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_PivotType", User3D.default_PivotType, 0, 4, 1), 1));
   
-        User3D.create_Orientation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Orientation", User3D.create_Orientation, 0, 360, 15);
+        User3D.create_Orientation = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Orientation", User3D.create_Orientation, 0, 360, 15);
   
-        User3D.create_Length = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Length", User3D.create_Length, -50, 150, -2), 0.5); 
-        User3D.create_Width = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Width", User3D.create_Width, -50, 150, -2), 0.5); 
-        User3D.create_Height = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Height", User3D.create_Height, -50, 150, -2), 0.5);     
+        User3D.create_Length = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Length", User3D.create_Length, -50, 150, -2), 0.5); 
+        User3D.create_Width = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Width", User3D.create_Width, -50, 150, -2), 0.5); 
+        User3D.create_Height = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Height", User3D.create_Height, -50, 150, -2), 0.5);     
   
-        User3D.create_Volume = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Volume", User3D.create_Volume, 0, 25000, 1000);
+        User3D.create_Volume = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Volume", User3D.create_Volume, 0, 25000, 1000);
         
-        User3D.create_Snap = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Snap", User3D.create_Snap, 0, 1, 1), 1));
+        User3D.create_Snap = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Snap", User3D.create_Snap, 0, 1, 1), 1));
       }    
   
       if (this.child == 3) { // Modify
   
-        User3D.modify_OpenningDepth = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningDepth", User3D.modify_OpenningDepth, -10, 10, 0.1);
-        User3D.modify_OpenningArea = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
-        User3D.modify_OpenningDeviation = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningDeviation", User3D.modify_OpenningDeviation, 0, 1, 0.05);
+        User3D.modify_OpenningDepth = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningDepth", User3D.modify_OpenningDepth, -10, 10, 0.1);
+        User3D.modify_OpenningArea = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
+        User3D.modify_OpenningDeviation = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OpenningDeviation", User3D.modify_OpenningDeviation, 0, 1, 0.05);
   
-        User3D.modify_TessellateRows = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
-        User3D.modify_TessellateColumns = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
+        User3D.modify_TessellateRows = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
+        User3D.modify_TessellateColumns = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
   
-        User3D.modify_OffsetAmount = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OffsetAmount", User3D.modify_OffsetAmount, 0, 25, 0.001);
+        User3D.modify_OffsetAmount = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_OffsetAmount", User3D.modify_OffsetAmount, 0, 25, 0.001);
   
-        User3D.modify_WeldTreshold = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);      
+        User3D.modify_WeldTreshold = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);      
   
-        userSelections.softPower = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.softPower", userSelections.softPower, 0.125, 8, -2);
-        userSelections.softRadius = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.softRadius", userSelections.softRadius, 0.01, 100, -2);
+        userSelections.softPower = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.softPower", userSelections.softPower, 0.125, 8, -2);
+        userSelections.softRadius = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.softRadius", userSelections.softRadius, 0.01, 100, -2);
   
-        userSelections.posVector = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.posVector", userSelections.posVector, 0, 3, 1), 1));
-        userSelections.rotVector =  int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.rotVector", userSelections.rotVector, 0, 2, 1), 1));
-        userSelections.scaleVector =  int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.scaleVector", userSelections.scaleVector, 0, 3, 1), 1));
+        userSelections.posVector = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.posVector", userSelections.posVector, 0, 3, 1), 1));
+        userSelections.rotVector =  int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.rotVector", userSelections.rotVector, 0, 2, 1), 1));
+        userSelections.scaleVector =  int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.scaleVector", userSelections.scaleVector, 0, 3, 1), 1));
   
-        userSelections.posValue = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.posValue", userSelections.posValue, -50, 50, 1), 1));
-        userSelections.rotValue = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.rotValue", userSelections.rotValue, -180, 180, 5), 5)); 
-        userSelections.scaleValue = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.scaleValue", userSelections.scaleValue, -8, 8, 0.5), 0.5)); 
+        userSelections.posValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.posValue", userSelections.posValue, -50, 50, 1), 1));
+        userSelections.rotValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.rotValue", userSelections.rotValue, -180, 180, 5), 5)); 
+        userSelections.scaleValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.scaleValue", userSelections.scaleValue, -8, 8, 0.5), 0.5)); 
   
-        userSelections.alignX = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.alignX", userSelections.alignX, -1, 1, 1), 1));
-        userSelections.alignY = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.alignY", userSelections.alignY, -1, 1, 1), 1));
-        userSelections.alignZ = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.alignZ", userSelections.alignZ, -1, 1, 1), 1));
+        userSelections.alignX = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.alignX", userSelections.alignX, -1, 1, 1), 1));
+        userSelections.alignY = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.alignY", userSelections.alignY, -1, 1, 1), 1));
+        userSelections.alignZ = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.alignZ", userSelections.alignZ, -1, 1, 1), 1));
       }
   
       if (this.child == 4) { // Solid
   
-        //User3D.create_powRnd = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.create_powRnd" , User3D.create_powRnd, 0, 1, 1), 1));    
-        User3D.create_powAll = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powAll", User3D.create_powAll, 0.5, CubePower, -2);
-        User3D.create_powX = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powX", User3D.create_powX, 0.5, CubePower, -2); 
-        User3D.create_powY = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powY", User3D.create_powY, 0.5, CubePower, -2); 
-        User3D.create_powZ = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powZ", User3D.create_powZ, 0.5, CubePower, -2);
+        //User3D.create_powRnd = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.create_powRnd" , User3D.create_powRnd, 0, 1, 1), 1));    
+        User3D.create_powAll = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powAll", User3D.create_powAll, 0.5, CubePower, -2);
+        User3D.create_powX = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powX", User3D.create_powX, 0.5, CubePower, -2); 
+        User3D.create_powY = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powY", User3D.create_powY, 0.5, CubePower, -2); 
+        User3D.create_powZ = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_powZ", User3D.create_powZ, 0.5, CubePower, -2);
       }  
   
       if (this.child == 5) { // Surface
   
-        User3D.create_SphereDegree = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));      
+        User3D.create_SphereDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));      
   
-        User3D.create_CylinderDegree = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));    
+        User3D.create_CylinderDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));    
   
-        User3D.create_PolyDegree = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
+        User3D.create_PolyDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
   
-        User3D.create_Parametric_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
-        User3D.create_Person_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
-        User3D.create_Plant_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
+        User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
+        User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
+        User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
       }
   
       if (this.child == 6) { // allModel2Ds
   
-        User3D.create_Model1D_Type = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
-        User3D.create_Model1D_DegreeMin = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMin", User3D.create_Model1D_DegreeMin, 1, 9, 1), 1));
-        User3D.create_Model1D_DegreeMax = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMax", User3D.create_Model1D_DegreeMax, 1, 9, 1), 1));
-        User3D.create_Model1D_Seed = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
-        User3D.create_Model1D_TrunkSize = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
-        User3D.create_Model1D_LeafSize = funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_LeafSize", User3D.create_Model1D_LeafSize, 0, 10, 0.1), 0.1);
+        User3D.create_Model1D_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
+        User3D.create_Model1D_DegreeMin = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMin", User3D.create_Model1D_DegreeMin, 1, 9, 1), 1));
+        User3D.create_Model1D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMax", User3D.create_Model1D_DegreeMax, 1, 9, 1), 1));
+        User3D.create_Model1D_Seed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
+        User3D.create_Model1D_TrunkSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
+        User3D.create_Model1D_LeafSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_LeafSize", User3D.create_Model1D_LeafSize, 0, 10, 0.1), 0.1);
       }    
   
       if (this.child == 7) { // Environment
   
-        //Land3D.loadTextures = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
-        //Land3D.loadMesh = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
-        //Land3D.skipStart = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1), 1));
-        //Land3D.skipEnd = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1), 1));
-        //Land3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
-        //Land3D.displayTexture = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
-        //Land3D.displayPoints = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
-        //Land3D.displayDepth = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
+        //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
+        //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
+        //Land3D.skipStart = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1), 1));
+        //Land3D.skipEnd = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1), 1));
+        //Land3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
+        //Land3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
+        //Land3D.displayPoints = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
+        //Land3D.displayDepth = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
   
-        //allModel2Ds.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayLeaves = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
-        //allCurves.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
-        //allFaces.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
+        //allModel2Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
+        //allModel1Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
+        //allModel1Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
+        //allCurves.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
+        //allFaces.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
   
-        //allSolids.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
+        //allSolids.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
   
-        //allSections.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.displayAll", allSections.displayAll, 0, 1, 1), 1));
-  
-  
-  
-  
-        //allWindRoses.displayImage = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.displayImage", allWindRoses.displayImage, 0, 1, 1), 1));
-  
-        allWindRoses.scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.scale", allWindRoses.scale, 50, 3200, -2);
-        allWindRoses.RES = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.resolution", allWindRoses.RES, 200, 600, 100));
+        //allSections.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSections.displayAll", allSections.displayAll, 0, 1, 1), 1));
   
   
   
-        //Sky3D.displaySurface = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
   
-        //Sun3D.displayPath = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath, 0, 1, 1), 1));
-        //Sun3D.displayPattern = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern, 0, 1, 1), 1));
+        //allWindRoses.displayImage = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.displayImage", allWindRoses.displayImage, 0, 1, 1), 1));
+  
+        allWindRoses.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.scale", allWindRoses.scale, 50, 3200, -2);
+        allWindRoses.RES = int(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindRoses.resolution", allWindRoses.RES, 200, 600, 100));
+  
+  
+  
+        //Sky3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
+  
+        //Sun3D.displayPath = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath, 0, 1, 1), 1));
+        //Sun3D.displayPattern = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern, 0, 1, 1), 1));
       }
   
   
       if (this.child == 8) { // Viewport
   
-        WIN3D.currentCamera = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1), 1));
+        WIN3D.currentCamera = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1), 1));
   
-        WIN3D.CAM_clipNear = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
-        WIN3D.CAM_clipFar = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
+        WIN3D.CAM_clipNear = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
+        WIN3D.CAM_clipFar = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "WIN3D.CAM_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
   
-        //WIN3D.FacesShade = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
+        //WIN3D.FacesShade = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
-        //allPoints.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
-        //allFaces.displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
-        //allFaces.displayNormals = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
+        //allPoints.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
+        //allFaces.displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
+        //allFaces.displayNormals = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
   
-        //allCameras.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
+        //allCameras.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
       }    
   
   
       if (this.child == 9) { // Simulation
   
-        IMPACTS_displayDay = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
+        IMPACTS_displayDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
   
-        //allSolarImpacts.displayImage = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.displayImage", allSolarImpacts.displayImage, 0, 1, 1), 1));
-        //allSolidImpacts.displayImage = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.displayImage", allSolidImpacts.displayImage, 0, 1, 1), 1));
+        //allSolarImpacts.displayImage = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.displayImage", allSolarImpacts.displayImage, 0, 1, 1), 1));
+        //allSolidImpacts.displayImage = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.displayImage", allSolidImpacts.displayImage, 0, 1, 1), 1));
   
-        allSolarImpacts.sectionType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1), 1));      
-        allSolidImpacts.sectionType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1), 1));
-  
-  
-        allSolidImpacts.Grade = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
-        allSolidImpacts.Power = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2);      
-        allSolidImpacts.R[allSolidImpacts.sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2);
-        allSolidImpacts.Z[allSolidImpacts.sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2);
-        allSolidImpacts.positionStep = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2);
-  
-        allSolidImpacts.U[allSolidImpacts.sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2);
-        allSolidImpacts.V[allSolidImpacts.sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2);
-        allSolidImpacts.X[allSolidImpacts.sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2);
-        allSolidImpacts.Y[allSolidImpacts.sectionType] = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2);
+        allSolarImpacts.sectionType = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1), 1));      
+        allSolidImpacts.sectionType = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1), 1));
   
   
-        allSolidImpacts.WindSpeed = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2); 
-        allSolidImpacts.WindDirection = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
+        allSolidImpacts.Grade = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
+        allSolidImpacts.Power = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2);      
+        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2);
+        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2);
+        allSolidImpacts.positionStep = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2);
+  
+        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2);
+        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2);
+        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2);
+        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2);
   
   
-        allSolidImpacts.Process_subDivisions = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1), 1));
+        allSolidImpacts.WindSpeed = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2); 
+        allSolidImpacts.WindDirection = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
   
-        //allSolidImpacts.displayPoints = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
-        //allSolidImpacts.displayLines = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
   
-        //allWindFlows.displayAll = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.displayAll", allWindFlows.displayAll, 0, 1, 1), 1));
+        allSolidImpacts.Process_subDivisions = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1), 1));
+  
+        //allSolidImpacts.displayPoints = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
+        //allSolidImpacts.displayLines = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
+  
+        //allWindFlows.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.displayAll", allWindFlows.displayAll, 0, 1, 1), 1));
       }
     } else if (this.parent == 2) { // Period & Scenarios
   
       if (this.child == 1) { // Time
   
-        //TIME.date = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME.date, 0, 364.5, 0.5);
-        TIME.date = int(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME.date, 0, 364, 1));
+        //TIME.date = this.Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME.date, 0, 364.5, 0.5);
+        TIME.date = int(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME.date, 0, 364, 1));
   
-        TIME.day = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME.day, 1, 31, 1), 1));
-        TIME.month = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.month, 1, 12, 1), 1));
-        TIME.year = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.year, 1953, 2100, 1), 1));
+        TIME.day = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME.day, 1, 31, 1), 1));
+        TIME.month = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.month, 1, 12, 1), 1));
+        TIME.year = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.year, 1953, 2100, 1), 1));
   
-        TIME.beginDay = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
+        TIME.beginDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
   
-        STUDY.j_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
+        STUDY.j_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
   
-        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
+        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
             
       }
   
       if (this.child == 2) { // Ranges
-        STUDY.i_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
-        STUDY.i_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
+        STUDY.i_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
+        STUDY.i_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
   
-        STUDY.joinDays = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.joinDays", STUDY.joinDays, 1, 64, -2), 1));
+        STUDY.joinDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.joinDays", STUDY.joinDays, 1, 64, -2), 1));
         
   //??????
-        SampleYear_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-        SampleYear_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
   //??????
   
-        SampleMember_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
-        SampleMember_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
+        SampleMember_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));  
+        SampleMember_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
   
-        SampleStation_Start = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
-        SampleStation_End = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
+        SampleStation_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));  
+        SampleStation_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
   
   
       }
   
       if (this.child == 3) { // Filters
       
-        STUDY.skyScenario = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
-        STUDY.filter = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
+        STUDY.skyScenario = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
+        STUDY.filter = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
       }
     } else if (this.parent == 3) { // Display Options
   
       if (this.child == 1) { // 2D-Layers
   
-        FrameVariation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
+        FrameVariation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
   
-        STUDY.plotSetup = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 14, 1), 1));
+        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 14, 1), 1));
   
-        //STUDY.update = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
+        //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));  
   
-        changeCurrentLayerTo(int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
+        changeCurrentLayerTo(int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
         
-        STUDY.V_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
+        STUDY.V_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
   
-        //STUDY.displayRaws = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
-        //STUDY.displaySorted = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
-        //STUDY.displayNormals = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
-        //STUDY.displayProbs = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
-        STUDY.sumInterval = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1), 1));
-        STUDY.LevelPix = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
+        //STUDY.displayRaws = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
+        //STUDY.displaySorted = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
+        //STUDY.displayNormals = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
+        //STUDY.displayProbs = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
+        STUDY.sumInterval = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1), 1));
+        STUDY.LevelPix = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
       }
   
       if (this.child == 2) { // 2D-Colors
   
-        //COLOR_STYLE_Current = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        //COLOR_STYLE_Current = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
   
-        STUDY.ACTIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_CLR", STUDY.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.ACTIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_DIR", STUDY.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        STUDY.ACTIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_MLT", STUDY.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        STUDY.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_CLR", STUDY.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_DIR", STUDY.ACTIVE_pallet_DIR, -2, 2, 1), 1));
+        STUDY.ACTIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_MLT", STUDY.ACTIVE_pallet_MLT, 0.125, 8, -2);
   
-        STUDY.PASSIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_CLR", STUDY.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.PASSIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_DIR", STUDY.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        STUDY.PASSIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_MLT", STUDY.PASSIVE_pallet_MLT, 0.125, 8, -2);       
+        STUDY.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_CLR", STUDY.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_DIR", STUDY.PASSIVE_pallet_DIR, -2, 2, 2), 1));
+        STUDY.PASSIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_MLT", STUDY.PASSIVE_pallet_MLT, 0.125, 8, -2);       
   
-        STUDY.pallet_SORT_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_CLR", STUDY.pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_SORT_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_DIR", STUDY.pallet_SORT_DIR, -2, 2, 2), 1));
-        STUDY.pallet_SORT_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_MLT", STUDY.pallet_SORT_MLT, 0.125, 8, -2);
+        STUDY.pallet_SORT_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_CLR", STUDY.pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.pallet_SORT_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_DIR", STUDY.pallet_SORT_DIR, -2, 2, 2), 1));
+        STUDY.pallet_SORT_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_MLT", STUDY.pallet_SORT_MLT, 0.125, 8, -2);
   
-        STUDY.pallet_PROB_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_CLR", STUDY.pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_PROB_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_DIR", STUDY.pallet_PROB_DIR, -2, 2, 2), 1));
-        STUDY.pallet_PROB_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_MLT", STUDY.pallet_PROB_MLT, 0.125, 8, -2);
+        STUDY.pallet_PROB_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_CLR", STUDY.pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.pallet_PROB_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_DIR", STUDY.pallet_PROB_DIR, -2, 2, 2), 1));
+        STUDY.pallet_PROB_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_MLT", STUDY.pallet_PROB_MLT, 0.125, 8, -2);
   
-        STUDY.O_scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
+        STUDY.O_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
       }
   
       if (this.child == 3) { // 3D-Solar 
   
-        allFaces.ACTIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_CLR", allFaces.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.ACTIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_DIR", allFaces.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        allFaces.ACTIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_MLT", allFaces.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        allFaces.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_CLR", allFaces.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allFaces.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_DIR", allFaces.ACTIVE_pallet_DIR, -2, 2, 1), 1));
+        allFaces.ACTIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_MLT", allFaces.ACTIVE_pallet_MLT, 0.125, 8, -2);
   
-        allFaces.PASSIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_CLR", allFaces.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.PASSIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_DIR", allFaces.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        allFaces.PASSIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_MLT", allFaces.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        allFaces.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_CLR", allFaces.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allFaces.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_DIR", allFaces.PASSIVE_pallet_DIR, -2, 2, 2), 1));
+        allFaces.PASSIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_MLT", allFaces.PASSIVE_pallet_MLT, 0.125, 8, -2);
   
-        Sky3D.ACTIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_CLR", Sky3D.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.ACTIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_DIR", Sky3D.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        Sky3D.ACTIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_MLT", Sky3D.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        Sky3D.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_CLR", Sky3D.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_DIR", Sky3D.ACTIVE_pallet_DIR, -2, 2, 1), 1));
+        Sky3D.ACTIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_MLT", Sky3D.ACTIVE_pallet_MLT, 0.125, 8, -2);
   
-        Sky3D.PASSIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_CLR", Sky3D.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.PASSIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_DIR", Sky3D.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        Sky3D.PASSIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_MLT", Sky3D.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        Sky3D.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_CLR", Sky3D.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_DIR", Sky3D.PASSIVE_pallet_DIR, -2, 2, 2), 1));
+        Sky3D.PASSIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_MLT", Sky3D.PASSIVE_pallet_MLT, 0.125, 8, -2);
   
-        Sun3D.ACTIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_CLR", Sun3D.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.ACTIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_DIR", Sun3D.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        Sun3D.ACTIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_MLT", Sun3D.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        Sun3D.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_CLR", Sun3D.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_DIR", Sun3D.ACTIVE_pallet_DIR, -2, 2, 1), 1));
+        Sun3D.ACTIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_MLT", Sun3D.ACTIVE_pallet_MLT, 0.125, 8, -2);
   
-        Sun3D.PASSIVE_pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_CLR", Sun3D.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.PASSIVE_pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_DIR", Sun3D.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        Sun3D.PASSIVE_pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_MLT", Sun3D.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        Sun3D.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_CLR", Sun3D.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_DIR", Sun3D.PASSIVE_pallet_DIR, -2, 2, 2), 1));
+        Sun3D.PASSIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_MLT", Sun3D.PASSIVE_pallet_MLT, 0.125, 8, -2);
       }
   
   
@@ -10620,97 +10566,97 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 4) { // 3D-Solid   
   
-        allSolids.pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_CLR", allSolids.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allSolids.pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_DIR", allSolids.pallet_DIR, -2, 2, 2), 1));
-        allSolids.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_MLT", allSolids.pallet_MLT, 0.0001, 64, -2);      
+        allSolids.pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_CLR", allSolids.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allSolids.pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_DIR", allSolids.pallet_DIR, -2, 2, 2), 1));
+        allSolids.pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.pallet_MLT", allSolids.pallet_MLT, 0.0001, 64, -2);      
   
-        Land3D.pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_CLR", Land3D.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Land3D.pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_DIR", Land3D.pallet_DIR, -2, 2, 2), 1));
-        Land3D.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_MLT", Land3D.pallet_MLT, 0.001, 0.5, -2);   
+        Land3D.pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_CLR", Land3D.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Land3D.pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_DIR", Land3D.pallet_DIR, -2, 2, 2), 1));
+        Land3D.pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.pallet_MLT", Land3D.pallet_MLT, 0.001, 0.5, -2);   
   
-        allWindFlows.pallet_CLR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_CLR", allWindFlows.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allWindFlows.pallet_DIR = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_DIR", allWindFlows.pallet_DIR, -2, 2, 2), 1));
-        allWindFlows.pallet_MLT = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_MLT", allWindFlows.pallet_MLT, 0.01, 1.0, -2);
+        allWindFlows.pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_CLR", allWindFlows.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allWindFlows.pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_DIR", allWindFlows.pallet_DIR, -2, 2, 2), 1));
+        allWindFlows.pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allWindFlows.pallet_MLT", allWindFlows.pallet_MLT, 0.01, 1.0, -2);
       }      
   
   
       if (this.child == 5) { // Selection
   
-        //userSelections.Group_displayPivot = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Group_displayPivot", userSelections.Group_displayPivot, 0, 1, 1), 1));
-        //userSelections.displayReferencePivot = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.displayReferencePivot", userSelections.displayReferencePivot, 0, 1, 1), 1));
-        //userSelections.Group_displayBox = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Group_displayBox", userSelections.Group_displayBox, 0, 1, 1), 1));
-        //userSelections.Group_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Group_displayEdges", userSelections.Group_displayEdges, 0, 1, 1), 1));
+        //userSelections.Group_displayPivot = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Group_displayPivot", userSelections.Group_displayPivot, 0, 1, 1), 1));
+        //userSelections.displayReferencePivot = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.displayReferencePivot", userSelections.displayReferencePivot, 0, 1, 1), 1));
+        //userSelections.Group_displayBox = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Group_displayBox", userSelections.Group_displayBox, 0, 1, 1), 1));
+        //userSelections.Group_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Group_displayEdges", userSelections.Group_displayEdges, 0, 1, 1), 1));
   
-        //userSelections.Face_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Face_displayEdges", userSelections.Face_displayEdges, 0, 1, 1), 1));
-        //userSelections.Face_displayVertexCount = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Face_displayVertexCount", userSelections.Face_displayVertexCount, 0, 1, 1), 1));
-        //userSelections.Curve_displayVertexCount = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Curve_displayVertexCount", userSelections.Curve_displayVertexCount, 0, 1, 1), 1));
-        //userSelections.Vertex_displayVertices = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Vertex_displayVertices", userSelections.Vertex_displayVertices, 0, 1, 1), 1));
-        //userSelections.Curve_displayVertices = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Curve_displayVertices", userSelections.Curve_displayVertices, 0, 1, 1), 1));
+        //userSelections.Face_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Face_displayEdges", userSelections.Face_displayEdges, 0, 1, 1), 1));
+        //userSelections.Face_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Face_displayVertexCount", userSelections.Face_displayVertexCount, 0, 1, 1), 1));
+        //userSelections.Curve_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Curve_displayVertexCount", userSelections.Curve_displayVertexCount, 0, 1, 1), 1));
+        //userSelections.Vertex_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Vertex_displayVertices", userSelections.Vertex_displayVertices, 0, 1, 1), 1));
+        //userSelections.Curve_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Curve_displayVertices", userSelections.Curve_displayVertices, 0, 1, 1), 1));
   
-        //userSelections.Model2D_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Model2D_displayEdges", userSelections.Model2D_displayEdges, 0, 1, 1), 1));
-        //userSelections.Model1D_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Model1D_displayEdges", userSelections.Model1D_displayEdges, 0, 1, 1), 1));
+        //userSelections.Model2D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Model2D_displayEdges", userSelections.Model2D_displayEdges, 0, 1, 1), 1));
+        //userSelections.Model1D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Model1D_displayEdges", userSelections.Model1D_displayEdges, 0, 1, 1), 1));
   
-        //userSelections.Solid_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Solid_displayEdges", userSelections.Solid_displayEdges, 0, 1, 1), 1));
+        //userSelections.Solid_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Solid_displayEdges", userSelections.Solid_displayEdges, 0, 1, 1), 1));
   
-        //userSelections.Section_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Section_displayEdges", userSelections.Section_displayEdges, 0, 1, 1), 1));
+        //userSelections.Section_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Section_displayEdges", userSelections.Section_displayEdges, 0, 1, 1), 1));
   
-        //userSelections.Camera_displayEdges = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Camera_displayEdges", userSelections.Camera_displayEdges, 0, 1, 1), 1));
+        //userSelections.Camera_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.Camera_displayEdges", userSelections.Camera_displayEdges, 0, 1, 1), 1));
   
-        //userSelections.LandPoint_displayPoints = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.LandPoint_displayPoints", userSelections.LandPoint_displayPoints, 0, 1, 1), 1));
+        //userSelections.LandPoint_displayPoints = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "userSelections.LandPoint_displayPoints", userSelections.LandPoint_displayPoints, 0, 1, 1), 1));
       }
     } else if (this.parent == 4) { // Post-Processing
   
       if (this.child == 1) { // Interpolation
   
-        Interpolation_Weight = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
-        CLIMATIC_SolarForecast = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
-        CLIMATIC_WeatherForecast = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
+        Interpolation_Weight = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
+        CLIMATIC_SolarForecast = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
+        CLIMATIC_WeatherForecast = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
       } 
       if (this.child == 2) { // Developed
-        Develop_Option = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
-        Develop_DayHour = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
+        Develop_Option = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
+        Develop_DayHour = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
   
-        STUDY.TrendJoinHours = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
-        STUDY.TrendJoinType = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
+        STUDY.TrendJoinHours = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
+        STUDY.TrendJoinType = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
   
-        Develop_AngleInclination = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
-        Develop_AngleOrientation = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
+        Develop_AngleInclination = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
+        Develop_AngleOrientation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
       }
       if (this.child == 3) { // Impacts
-        CurrentDataSource = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
-        STUDY.ImpactLayer = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
-        //STUDY.Impacts_update = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
+        CurrentDataSource = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impacts Source", CurrentDataSource, 0, 3, 1), 1));
+        STUDY.ImpactLayer = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
+        //STUDY.Impacts_update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
       }
     } else if (this.parent == 5) { // Export Products
   
       if (this.child == 1) { // Data
   
-        //STUDY.export_info_node = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
-        //STUDY.export_info_norm = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
-        //STUDY.export_info_prob = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob, 0, 1, 1), 1));
+        //STUDY.export_info_node = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
+        //STUDY.export_info_norm = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
+        //STUDY.export_info_prob = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob, 0, 1, 1), 1));
   
   
-        User3D.export_Scale = SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_Scale", User3D.export_Scale, .001, 1000, -0.1);
-        User3D.export_FlipZYaxis = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_FlipZYaxis", User3D.export_FlipZYaxis, 0, 1, 1), 1));
+        User3D.export_Scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_Scale", User3D.export_Scale, .001, 1000, -0.1);
+        User3D.export_FlipZYaxis = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_FlipZYaxis", User3D.export_FlipZYaxis, 0, 1, 1), 1));
   
-        User3D.export_PrecisionVertex = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVertex", User3D.export_PrecisionVertex, 0, 6, 1), 1));
-        User3D.export_PrecisionVtexture = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1), 1));
-        User3D.export_PolyToPoly = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1), 1));
+        User3D.export_PrecisionVertex = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVertex", User3D.export_PrecisionVertex, 0, 6, 1), 1));
+        User3D.export_PrecisionVtexture = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1), 1));
+        User3D.export_PolyToPoly = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1), 1));
   
-        //User3D.export_MaterialLibrary = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
-        //User3D.export_BackSides = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_BackSides", User3D.export_BackSides, 0, 1, 1), 1));
-        //User3D.export_PalletResolution = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PalletResolution", User3D.export_PalletResolution, 32, 2048, -2), 1));
+        //User3D.export_MaterialLibrary = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
+        //User3D.export_BackSides = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_BackSides", User3D.export_BackSides, 0, 1, 1), 1));
+        //User3D.export_PalletResolution = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PalletResolution", User3D.export_PalletResolution, 32, 2048, -2), 1));
   
   
-        //displayOutput_inExplorer = boolean(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
+        //displayOutput_inExplorer = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
       }  
   
       if (this.child == 2) { // Media
   
-        allSolidImpacts.record_IMG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, 0, 1, 1), 1));
-        allSolidImpacts.record_PDF = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1), 1));
+        allSolidImpacts.record_IMG = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, 0, 1, 1), 1));
+        allSolidImpacts.record_PDF = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1), 1));
   
-        allSolarImpacts.record_IMG = int(funcs.roundTo(SOLARCHVISION_Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG, 0, 1, 1), 1));
+        allSolarImpacts.record_IMG = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG, 0, 1, 1), 1));
       }
   
     }    
@@ -10722,6 +10668,150 @@ class solarchvision_ROLLOUT {
       }
     }
   }
+  
+  
+  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
+  
+    float new_value = v;
+  
+    if (new_value < min_v) new_value = max_v; 
+    if (new_value > max_v) new_value = min_v;    
+  
+    float cx, cy, cr;
+    float w1, w2, h, o, t_o; 
+  
+    //w1 = 32.5 * ROLLOUT.view_S;
+    //w2 = 142.5 * ROLLOUT.view_S;
+  
+    w1 = 100 * ROLLOUT.view_S;
+    w2 = 200 * ROLLOUT.view_S;
+  
+    h = 16 * ROLLOUT.view_S;
+    o = 2 * ROLLOUT.view_S;
+    t_o = h * ROLLOUT.view_S / 8.0;
+  
+    STUDY.Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
+  
+    strokeWeight(0); 
+    stroke(0); 
+    fill(0);
+    rect(x + o, y - (h / 2) - o, 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
+    rect(x + o, y - (h / 2) - o + 0.5 * (h + 2 * o), 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
+    stroke(255); 
+    fill(255);
+    cx = x + o + 0.25 * (h + 2 * o);
+    cy = y - (h / 2) - o + 0.25 * (h + 2 * o);
+    cr = 0.25 * (h + 2 * o);
+    triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
+  
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
+      if (mouseButton == LEFT) {
+  
+        if (stp_v < 0) {
+          new_value *= abs(stp_v);
+        } else { 
+          new_value += abs(stp_v);
+        }
+      } else if (mouseButton == RIGHT) {
+  
+        new_value = max_v;
+      }
+    }
+  
+    cy += 2 * cr;
+    triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
+  
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
+  
+      if (mouseButton == LEFT) {
+  
+        if (stp_v < 0) {
+          new_value /= abs(stp_v);
+        } else { 
+          new_value -= abs(stp_v);
+        }
+      } else if (mouseButton == RIGHT) {
+  
+        new_value = min_v;
+      }
+    }
+  
+    if (new_value < min_v) new_value = max_v; 
+    if (new_value > max_v) new_value = min_v; 
+  
+  
+  
+    strokeWeight(0); 
+    stroke(191); 
+    fill(191);
+    rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
+  
+    stroke(255); 
+    fill(255);
+    rect(x - w1, y - (h / 2), w1, h);
+  
+    float q = 0;
+  
+    if (max_v - min_v > 0.001) {
+      q = (new_value - min_v) / (max_v - min_v);
+    }
+  
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2)) == 1) {
+  
+      q = 1;
+  
+      if (max_v - min_v > 0.001) {
+        q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
+      }
+  
+      new_value = min_v + q * (max_v - min_v);
+  
+      if (new_value < min_v) new_value = max_v; 
+      if (new_value > max_v) new_value = min_v;
+  
+      ROLLOUT.update = true;
+    }
+  
+    strokeWeight(0); 
+    stroke(191, 255, 191); 
+    fill(191, 255, 191);
+    rect(x - w1, y - (h / 2), q * w1, h);          
+  
+  
+    strokeWeight(2); 
+    stroke(0); 
+    noFill();
+    rect(x - w1, y - (h / 2), w1, h);    
+  
+    strokeWeight(0);
+    stroke(0); 
+    fill(0);
+    textSize(1.0 * h);
+    textAlign(RIGHT, CENTER);
+    if ((new_value == int(new_value)) || (new_value >= 100)) {
+      text(String.valueOf(int(new_value)), x - t_o, y - t_o);
+    } else {
+      text(nf(new_value, 0, 0), x - t_o, y - t_o);
+    }
+  
+  
+    strokeWeight(0);
+    stroke(0); 
+    fill(0);
+    //textSize(1.0 * h);
+    textSize(0.85 * h);
+    //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_o, y - t_o);
+    textAlign(LEFT, CENTER); 
+    text(caption + ":", x - w1 - w2 + t_o, y - t_o);
+  
+    if (new_value != v) {
+      if (update1 != 0) STUDY.update = true;
+      if (update2 != 0) WIN3D.update = true;
+      if (update3 != 0) WORLD.update = true;
+    }
+  
+    return new_value;
+  }  
   
 }
 
@@ -10749,80 +10839,10 @@ solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
 
 
 
-int WMS_type = DataType.FORECAST_GDPS; // <<<<<<<<<<<<<
-
-// note we used .... float r = FLOAT_r_Earth + 10000; for clouds
-
-final int TROPO_deltaTime = 1; 
-final int TROPO_timeSteps = 24;
 
 
 
 
-
-
-
-// Tropo3D.draw --- we only use the first image!
-
-// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
-
-
-// bug using small STUDY.LevelPix 
-
-
-// pick select LandPoint is not written. 
-
-
-// diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!" 
-
-
-// snap for Curve objects is not developed yet.
-
-// don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems? 
-
-
-// note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
-
-
-// should see where else could add snap3D :)
-
-
-// drop functions only works for allModel2Ds objects and not at Group level
-
-// could add join/explode groups ?
-
-
-// export and import of curves
-// converting curves to faces e.g. Surface, Extrude, Connect
-
-// Modify Normal at Curve level is not complete...
-
-// Create3Ds.autoNormalCurve_Selection
-
-// writing export to rad completed for meshes and land - not allModel1Ds and 2Ds yet!
-
-// colud record Climate data flags later.
-
-// exporting shaded land is not written. 
-
-// void userSelections.rotate_Groups 
-// serach for userSelections.rotate_Selection ( need to make them all correct for local pivots!
-// local pivot
-
-
-// solid rotations inside groups should be translated to locals to avoid problems!
-
-// some rotations are not in degrees e.g. solids, allModel1Ds??, what else?
-
-
-import processing.pdf.*;
-
-void launch (String s) {
-  open(s);
-}
-void launch (String[] s) {
-  open(s);
-}
 
 
 
@@ -26518,6 +26538,12 @@ int[] getNow_inUTC () {
 
 
 
+// note we used .... float r = FLOAT_r_Earth + 10000; for clouds
+
+final int TROPO_deltaTime = 1; 
+final int TROPO_timeSteps = 24;
+
+// Tropo3D.draw --- we only use the first image!
 
 class solarchvision_Tropo3D {
   
