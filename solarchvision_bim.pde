@@ -33210,14 +33210,29 @@ solarchvision_User3D User3D = new solarchvision_User3D();
 
 
 
+
+ 
+
+
+
+
+
+
+
  
 class solarchvision_Modify3Ds {
   
   private final static String CLASS_STAMP = "Modify3Ds";
   
+
+
+
+
+
+
   
   
-  void duplicate_Selection (int produce_another_variation) {
+  void duplicate_Selection (boolean produce_same_variation) {
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
     }
@@ -33243,7 +33258,7 @@ class solarchvision_Modify3Ds {
         float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
         float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
   
-        if (produce_another_variation == 1) randomSeed(millis());
+        if (produce_same_variation == false) randomSeed(millis());
         allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
       }
   
@@ -33276,10 +33291,10 @@ class solarchvision_Modify3Ds {
   
         int n = allModel2Ds.MAP[OBJ_NUM];
         if (allModel2Ds.isTree(n)) {
-          if (produce_another_variation == 1) n = 0; // this makes it random
+          if (produce_same_variation == false) n = 0; // this makes it random
           allModel2Ds.create("TREES", n, x, y, z, s);
         } else {
-          if (produce_another_variation == 1) n = 0; // this makes it random
+          if (produce_same_variation == false) n = 0; // this makes it random
           allModel2Ds.create("PEOPLE", n, x, y, z, s);
         }
       }
@@ -33613,7 +33628,7 @@ class solarchvision_Modify3Ds {
   
               float LeafSize = allModel1Ds.getLeafSize(q);
   
-              if (produce_another_variation == 1) {
+              if (produce_same_variation == false) {
                 randomSeed(millis());
   
                 rot = random(360);
@@ -33634,10 +33649,10 @@ class solarchvision_Modify3Ds {
               int n = allModel2Ds.MAP[q];
     
               if (allModel2Ds.isTree(n)) {
-                if (produce_another_variation == 1) n = 0; // this makes it random
+                if (produce_same_variation == false) n = 0; // this makes it random
                 allModel2Ds.create("TREES", n, x, y, z, s);
               } else {
-                if (produce_another_variation == 1) n = 0; // this makes it random
+                if (produce_same_variation == false) n = 0; // this makes it random
                 allModel2Ds.create("PEOPLE", n, x, y, z, s);
               }
             }
@@ -33765,7 +33780,7 @@ class solarchvision_Modify3Ds {
   
               float LeafSize = allModel1Ds.getLeafSize(q);
   
-              if (produce_another_variation == 1) {
+              if (produce_same_variation == false) {
                 randomSeed(millis());
   
                 rot = random(360);
@@ -33786,10 +33801,10 @@ class solarchvision_Modify3Ds {
               int n = allModel2Ds.MAP[q];
   
               if (allModel2Ds.isTree(n)) {
-                if (produce_another_variation == 1) n = 0; // this makes it random
+                if (produce_same_variation == false) n = 0; // this makes it random
                 allModel2Ds.create("TREES", n, x, y, z, s);
               } else {
-                if (produce_another_variation == 1) n = 0; // this makes it random
+                if (produce_same_variation == false) n = 0; // this makes it random
                 allModel2Ds.create("PEOPLE", n, x, y, z, s);
               }
             }
@@ -44790,11 +44805,11 @@ void mouseClicked () {
               WIN3D.update = true;
             }                 
             if (menu_option.equals("Duplicate Selection (Identical)")) {
-              Modify3Ds.duplicate_Selection(0);
+              Modify3Ds.duplicate_Selection(true);
               WIN3D.update = true;
             }      
             if (menu_option.equals("Duplicate Selection (Variation)")) {
-              Modify3Ds.duplicate_Selection(1);
+              Modify3Ds.duplicate_Selection(false);
               WIN3D.update = true;
             } 
             if (menu_option.equals("Auto-Normal Selected Faces")) {
@@ -56400,7 +56415,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       
       for (int q = 0; q < n; q++) {
-        Modify3Ds.duplicate_Selection(0); 
+        Modify3Ds.duplicate_Selection(true); 
         if ((dx != 0) || (dy != 0) || (dz != 0)) userSelections.move(dx, dy, dz);
         if (rx != 0) userSelections.rotate(0, 0, 0, rx, 0);
         if (ry != 0) userSelections.rotate(0, 0, 0, ry, 1);
