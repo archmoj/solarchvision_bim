@@ -33226,9 +33226,681 @@ class solarchvision_Modify3Ds {
   
 
 
+  void duplicate_Model1Ds (boolean produce_same_variation) {
+
+    int number_of_allModel1Ds_before = allModel1Ds.num; 
+
+    for (int o = 0; o < userSelections.Model1D_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Model1D_ids[o];
+
+      float x = allModel1Ds.getX(OBJ_NUM);
+      float y = allModel1Ds.getY(OBJ_NUM);
+      float z = allModel1Ds.getZ(OBJ_NUM);
+      float d = allModel1Ds.getS(OBJ_NUM);
+      float rot = allModel1Ds.getR(OBJ_NUM);
+
+      int n = allModel1Ds.getType(OBJ_NUM);
+      int dMin = allModel1Ds.getDegreeMin(OBJ_NUM);
+      int dMax = allModel1Ds.getDegreeMax(OBJ_NUM);
+      int s = allModel1Ds.getSeed(OBJ_NUM);
+      float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
+      float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
+
+      if (produce_same_variation == false) randomSeed(millis());
+      allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Model1D_ids = new int [0];
+
+    for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
+
+      int[] newlyAddedallModel1Ds = {o};
+
+      userSelections.Model1D_ids = concat(userSelections.Model1D_ids, newlyAddedallModel1Ds);
+    }
+  }
+
+
+  void duplicate_Model2Ds (boolean produce_same_variation) {
+
+    int n1 = allModel2Ds.num_files_PEOPLE;
+
+    int number_of_allModel2Ds_before = allModel2Ds.num; 
+
+    for (int o = 0; o < userSelections.Model2D_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      float x = allModel2Ds.getX(OBJ_NUM);
+      float y = allModel2Ds.getY(OBJ_NUM);
+      float z = allModel2Ds.getZ(OBJ_NUM);
+      float s = allModel2Ds.getS(OBJ_NUM);
+
+      int n = allModel2Ds.MAP[OBJ_NUM];
+      if (allModel2Ds.isTree(n)) {
+        if (produce_same_variation == false) n = 0; // this makes it random
+        allModel2Ds.create("TREES", n, x, y, z, s);
+      } else {
+        if (produce_same_variation == false) n = 0; // this makes it random
+        allModel2Ds.create("PEOPLE", n, x, y, z, s);
+      }
+    }
+
+    // selecting new objetcs
+
+    userSelections.Model2D_ids = new int [0];
+
+    for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
+
+      int[] newlyAddedallModel2Ds = {o};
+
+      userSelections.Model2D_ids = concat(userSelections.Model2D_ids, newlyAddedallModel2Ds);
+    }
+  }
+  
+
+  void duplicate_Faces (boolean produce_same_variation) {
+
+    int number_of_Faces_before = allFaces.nodes.length;
+
+    for (int o = 0; o < userSelections.Face_ids.length; o++) {
+
+      int f = userSelections.Face_ids[o];        
+
+      int number_of_Vertices_before = allPoints.getLength();
+
+      int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
+      int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+      if ((0 <= f) && (f < allFaces.nodes.length)) {
+
+        int[] newFace_nodes = {
+        };
+
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
+
+          int vertex_listed = -1;
+
+          for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+            if (vNo == PolymeshVertices_OLD[q]) {
+              vertex_listed = q;
+              break;
+            }
+          }         
+
+          if (vertex_listed == -1) {
+            int[] newVertexListed = {
+              vNo
+            };
+            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+            float x = allPoints.getX(vNo);
+            float y = allPoints.getY(vNo);
+            float z = allPoints.getZ(vNo);
+
+            int[] newVertexAdded = {
+              allPoints.create(x, y, z)
+            };
+            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+            vertex_listed = PolymeshVertices_OLD.length;
+          } 
+
+          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+
+          int[] new_vertexItem = {
+            number_of_Vertices_before + vertex_listed - 1
+          };
+
+          newFace_nodes = concat(newFace_nodes, new_vertexItem);
+        }
+
+        current_Material = allFaces.getMaterial(f);
+        current_Tessellation = allFaces.getTessellation(f);
+        current_Layer = allFaces.getLayer(f);
+        current_Visibility = allFaces.getVisibility(f);        
+
+        allFaces.create(newFace_nodes);
+      }
+    }
+
+
+    // selecting new objetcs
+
+    userSelections.Face_ids = new int [0];
+
+    for (int o = number_of_Faces_before; o < allFaces.nodes.length; o++) {
+
+      int[] newlyAddedFace = {o};
+
+      userSelections.Face_ids = concat(userSelections.Face_ids, newlyAddedFace);
+    }
+  }
+
+
+  void duplicate_Curves (boolean produce_same_variation) {
+
+    int number_of_Curves_before = allCurves.nodes.length;
+
+    for (int o = 0; o < userSelections.Curve_ids.length; o++) {
+
+      int f = userSelections.Curve_ids[o];        
+
+      int number_of_Vertices_before = allPoints.getLength();
+
+      int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
+      int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+      if ((0 <= f) && (f < allCurves.nodes.length)) {
+
+        int[] newCurve_nodes = {
+        };
+
+        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+          int vNo = allCurves.nodes[f][j];
+
+          int vertex_listed = -1;
+
+          for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+            if (vNo == PolymeshVertices_OLD[q]) {
+              vertex_listed = q;
+              break;
+            }
+          }         
+
+          if (vertex_listed == -1) {
+            int[] newVertexListed = {
+              vNo
+            };
+            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+            float x = allPoints.getX(vNo);
+            float y = allPoints.getY(vNo);
+            float z = allPoints.getZ(vNo);
+
+            int[] newVertexAdded = {
+              allPoints.create(x, y, z)
+            };
+            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+            vertex_listed = PolymeshVertices_OLD.length;
+          } 
+
+          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+
+          int[] new_vertexItem = {
+            number_of_Vertices_before + vertex_listed - 1
+          };
+
+          newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+        }
+
+        current_Material = allCurves.getMaterial(f);
+        current_Tessellation = allCurves.getTessellation(f);
+        current_Layer = allCurves.getLayer(f);
+        current_Visibility = allCurves.getVisibility(f);        
+        current_Weight = allCurves.getWeight(f);
+        current_Closed = allCurves.getClose(f);
+
+        allCurves.create(newCurve_nodes);
+      }
+    }
+
+
+    // selecting new objetcs
+
+    userSelections.Curve_ids = new int [0];
+
+    for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
+
+      int[] newlyAddedCurve = {o};
+
+      userSelections.Curve_ids = concat(userSelections.Curve_ids, newlyAddedCurve);
+    }
+  }
+  
+
+  void duplicate_Solids (boolean produce_same_variation) {
+
+    int number_of_Solid_before = allSolids.DEF.length; 
+
+    for (int o = 0; o < userSelections.Solid_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Solid_ids[o];
+
+      float Solid_posX = allSolids.get_posX(OBJ_NUM);
+      float Solid_posY = allSolids.get_posY(OBJ_NUM);
+      float Solid_posZ = allSolids.get_posZ(OBJ_NUM);
+      float Solid_powX = allSolids.get_powX(OBJ_NUM);
+      float Solid_powY = allSolids.get_powY(OBJ_NUM);
+      float Solid_powZ = allSolids.get_powZ(OBJ_NUM);
+      float Solid_scaleX = allSolids.get_scaleX(OBJ_NUM);
+      float Solid_scaleY = allSolids.get_scaleY(OBJ_NUM);
+      float Solid_scaleZ = allSolids.get_scaleZ(OBJ_NUM);
+      float Solid_rotX = allSolids.get_rotX(OBJ_NUM);
+      float Solid_rotY = allSolids.get_rotY(OBJ_NUM);
+      float Solid_rotZ = allSolids.get_rotZ(OBJ_NUM);
+      float Solid_value = allSolids.get_value(OBJ_NUM);
+
+      allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Solid_ids = new int [0];
+
+    for (int o = number_of_Solid_before; o < allSolids.DEF.length; o++) {
+
+      int[] newlyAddedSolid = {o};
+
+      userSelections.Solid_ids = concat(userSelections.Solid_ids, newlyAddedSolid);
+    }
+  }
+  
+  void duplicate_Sections (boolean produce_same_variation) {
+
+    int number_of_Section_before = allSections.num; 
+
+    for (int o = 0; o < userSelections.Section_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Section_ids[o];
+
+      float Section_X = allSections.getX(OBJ_NUM);
+      float Section_Y = allSections.getY(OBJ_NUM);
+      float Section_Z = allSections.getZ(OBJ_NUM);
+      float Section_R = allSections.getR(OBJ_NUM);
+      float Section_U = allSections.getU(OBJ_NUM);
+      float Section_V = allSections.getV(OBJ_NUM);
+
+      int Section_Type = allSections.get_type(OBJ_NUM);
+      int Section_RES1 = allSections.get_res1(OBJ_NUM);
+      int Section_RES2 = allSections.get_res2(OBJ_NUM);
+
+      allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Section_ids = new int [0];
+
+    for (int o = number_of_Section_before; o < allSections.num; o++) {
+
+      int[] newlyAddedSection = {o};
+
+      userSelections.Section_ids = concat(userSelections.Section_ids, newlyAddedSection);
+    }
+  }  
+  
+  
+  void duplicate_Cameras (boolean produce_same_variation) {
+
+    int number_of_Camera_before = allCameras.num; 
+
+    for (int o = 0; o < userSelections.Camera_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Camera_ids[o];
+
+      float Camera_pX = allCameras.get_posX(OBJ_NUM);
+      float Camera_pY = allCameras.get_posY(OBJ_NUM);
+      float Camera_pZ = allCameras.get_posZ(OBJ_NUM);
+      float Camera_pT = allCameras.get_posT(OBJ_NUM);
+      float Camera_rX = allCameras.get_rotX(OBJ_NUM);
+      float Camera_rY = allCameras.get_rotY(OBJ_NUM);
+      float Camera_rZ = allCameras.get_rotZ(OBJ_NUM);
+      float Camera_rT = allCameras.get_rotT(OBJ_NUM);
+      float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
+      int   Camera_type = allCameras.get_type(OBJ_NUM);
+
+      allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
+    }
+
+    // selecting new objetcs
+
+    userSelections.Camera_ids = new int [0];
+
+    for (int o = number_of_Camera_before; o < allCameras.num; o++) {
+
+      int[] newlyAddedCamera = {o};
+
+      userSelections.Camera_ids = concat(userSelections.Camera_ids, newlyAddedCamera);
+    }
+  }  
+  
+
+  void duplicate_Groups (boolean produce_same_variation) {
+
+    int n1 = allModel2Ds.num_files_PEOPLE;
+
+    int SOLID_added = 0;
+
+    int number_of_allGroups_before = allGroups.num;
+
+    for (int o = 0; o < userSelections.Group_ids.length; o++) {
+
+      int OBJ_NUM = userSelections.Group_ids[o];
+
+      if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) { 
+
+        int number_of_Vertices_before = allPoints.getLength();
+
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+        int new_OBJ_NUM = allGroups.num - 1;
+
+        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
+
+        for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
+          allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
+        }
+
+        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
+
+            float x = allModel1Ds.getX(q);
+            float y = allModel1Ds.getY(q);
+            float z = allModel1Ds.getZ(q);
+
+            float d = allModel1Ds.getS(q);
+            float rot = allModel1Ds.getR(q);
+
+            int n = allModel1Ds.getType(q);
+
+            int dMin = allModel1Ds.getDegreeMin(q);
+
+            int dMax = allModel1Ds.getDegreeMax(q);
+
+            int s = allModel1Ds.getSeed(q);
+
+            float TrunkSize = allModel1Ds.getTrunkSize(q);
+
+            float LeafSize = allModel1Ds.getLeafSize(q);
+
+            if (produce_same_variation == false) {
+              randomSeed(millis());
+
+              rot = random(360);
+              s = int(random(32767));
+            }
+            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+          }
+        }
+
+        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
+  
+            float x = allModel2Ds.getX(q);
+            float y = allModel2Ds.getY(q);
+            float z = allModel2Ds.getZ(q);
+            float s = allModel2Ds.getS(q);
+  
+            int n = allModel2Ds.MAP[q];
+  
+            if (allModel2Ds.isTree(n)) {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("TREES", n, x, y, z, s);
+            } else {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("PEOPLE", n, x, y, z, s);
+            }
+          }
+        }
+
+
+        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
+          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+
+            float Solid_posX = allSolids.get_posX(q);
+            float Solid_posY = allSolids.get_posY(q);
+            float Solid_posZ = allSolids.get_posZ(q);
+            float Solid_powX = allSolids.get_powX(q);
+            float Solid_powY = allSolids.get_powY(q);
+            float Solid_powZ = allSolids.get_powZ(q);
+            float Solid_scaleX = allSolids.get_scaleX(q);
+            float Solid_scaleY = allSolids.get_scaleY(q);
+            float Solid_scaleZ = allSolids.get_scaleZ(q);
+            float Solid_rotX = allSolids.get_rotX(q);
+            float Solid_rotY = allSolids.get_rotY(q);
+            float Solid_rotZ = allSolids.get_rotZ(q);
+            float Solid_value = allSolids.get_value(q);
+
+            allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+
+            SOLID_added += 1;
+          }
+        }
 
 
 
+        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+
+          if ((0 <= f) && (f < allFaces.nodes.length)) {
+
+            int[] newFace_nodes = {
+            };
+
+            for (int j = 0; j < allFaces.nodes[f].length; j++) {
+              int vNo = allFaces.nodes[f][j];
+
+              int vertex_listed = -1;
+
+              for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+                if (vNo == PolymeshVertices_OLD[q]) {
+                  vertex_listed = q;
+                  break;
+                }
+              }         
+
+              if (vertex_listed == -1) {
+                int[] newVertexListed = {
+                  vNo
+                };
+                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+                float x = allPoints.getX(vNo);
+                float y = allPoints.getY(vNo);
+                float z = allPoints.getZ(vNo);
+
+                int[] newVertexAdded = {
+                  allPoints.create(x, y, z)
+                };
+                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+                vertex_listed = PolymeshVertices_OLD.length - 1;
+              }
+
+              int[] new_vertexItem = {
+                number_of_Vertices_before + vertex_listed
+              };
+
+              newFace_nodes = concat(newFace_nodes, new_vertexItem);
+            }
+
+            current_Material = allFaces.getMaterial(f);
+            current_Tessellation = allFaces.getTessellation(f);
+            current_Layer = allFaces.getLayer(f);
+            current_Visibility = allFaces.getVisibility(f);
+
+            allFaces.create(newFace_nodes);
+            
+            println("newFace_nodes");
+            println(newFace_nodes);
+          }
+        }
+      }
+      
+      if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) { 
+
+        int number_of_Vertices_before = allPoints.getLength();
+
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+        int new_OBJ_NUM = allGroups.num - 1;
+
+        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
+
+        for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
+          allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
+        }
+
+        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
+
+            float x = allModel1Ds.getX(q);
+            float y = allModel1Ds.getY(q);
+            float z = allModel1Ds.getZ(q);
+
+            float d = allModel1Ds.getS(q);
+            float rot = allModel1Ds.getR(q);
+
+            int n = allModel1Ds.getType(q);
+
+            int dMin = allModel1Ds.getDegreeMin(q);
+
+            int dMax = allModel1Ds.getDegreeMax(q);
+
+            int s = allModel1Ds.getSeed(q);
+
+            float TrunkSize = allModel1Ds.getTrunkSize(q);
+
+            float LeafSize = allModel1Ds.getLeafSize(q);
+
+            if (produce_same_variation == false) {
+              randomSeed(millis());
+
+              rot = random(360);
+              s = int(random(32767));
+            }
+            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+          }
+        }
+
+        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
+
+            float x = allModel2Ds.getX(q);
+            float y = allModel2Ds.getY(q);
+            float z = allModel2Ds.getZ(q);
+            float s = allModel2Ds.getS(q);
+
+            int n = allModel2Ds.MAP[q];
+
+            if (allModel2Ds.isTree(n)) {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("TREES", n, x, y, z, s);
+            } else {
+              if (produce_same_variation == false) n = 0; // this makes it random
+              allModel2Ds.create("PEOPLE", n, x, y, z, s);
+            }
+          }
+        }
+
+        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
+          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+
+            float Solid_posX = allSolids.get_posX(q);
+            float Solid_posY = allSolids.get_posY(q);
+            float Solid_posZ = allSolids.get_posZ(q);
+            float Solid_powX = allSolids.get_powX(q);
+            float Solid_powY = allSolids.get_powY(q);
+            float Solid_powZ = allSolids.get_powZ(q);
+            float Solid_scaleX = allSolids.get_scaleX(q);
+            float Solid_scaleY = allSolids.get_scaleY(q);
+            float Solid_scaleZ = allSolids.get_scaleZ(q);
+            float Solid_rotX = allSolids.get_rotX(q);
+            float Solid_rotY = allSolids.get_rotY(q);
+            float Solid_rotZ = allSolids.get_rotZ(q);
+            float Solid_value = allSolids.get_value(q);
+
+            allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+
+            SOLID_added += 1;
+          }
+        }
+
+
+        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
+
+        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+
+          if ((0 <= f) && (f < allCurves.nodes.length)) {
+
+            int[] newCurve_nodes = {
+            };
+
+            for (int j = 0; j < allCurves.nodes[f].length; j++) {
+              int vNo = allCurves.nodes[f][j];
+
+              int vertex_listed = -1;
+
+              for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
+                if (vNo == PolymeshVertices_OLD[q]) {
+                  vertex_listed = q;
+                  break;
+                }
+              }         
+
+              if (vertex_listed == -1) {
+                int[] newVertexListed = {
+                  vNo
+                };
+                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+
+                float x = allPoints.getX(vNo);
+                float y = allPoints.getY(vNo);
+                float z = allPoints.getZ(vNo);
+
+                int[] newVertexAdded = {
+                  allPoints.create(x, y, z)
+                };
+                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+
+                vertex_listed = PolymeshVertices_OLD.length - 1;
+              } 
+
+              int[] new_vertexItem = {
+                number_of_Vertices_before + vertex_listed
+              };
+
+              newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+            }
+
+            current_Material = allCurves.getMaterial(f);
+            current_Tessellation = allCurves.getTessellation(f);
+            current_Layer = allCurves.getLayer(f);
+            current_Visibility = allCurves.getVisibility(f);
+            current_Weight = allCurves.getWeight(f);
+            current_Closed = allCurves.getClose(f);
+
+            allCurves.create(newCurve_nodes);
+          }
+        }
+      }        
+    }
+  
+
+
+    // selecting new objetcs
+
+    userSelections.Group_ids = new int [0];
+
+    for (int o = number_of_allGroups_before; o < allGroups.num; o++) {
+
+      int[] newlyAddedGroup = {o};
+
+      userSelections.Group_ids = concat(userSelections.Group_ids, newlyAddedGroup);
+    }       
+
+
+    if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
+  }
 
   
   
@@ -33238,678 +33910,36 @@ class solarchvision_Modify3Ds {
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      int number_of_allModel1Ds_before = allModel1Ds.num; 
-  
-      for (int o = 0; o < userSelections.Model1D_ids.length; o++) {
-  
-        int OBJ_NUM = userSelections.Model1D_ids[o];
-  
-        float x = allModel1Ds.getX(OBJ_NUM);
-        float y = allModel1Ds.getY(OBJ_NUM);
-        float z = allModel1Ds.getZ(OBJ_NUM);
-        float d = allModel1Ds.getS(OBJ_NUM);
-        float rot = allModel1Ds.getR(OBJ_NUM);
-  
-        int n = allModel1Ds.getType(OBJ_NUM);
-        int dMin = allModel1Ds.getDegreeMin(OBJ_NUM);
-        int dMax = allModel1Ds.getDegreeMax(OBJ_NUM);
-        int s = allModel1Ds.getSeed(OBJ_NUM);
-        float TrunkSize = allModel1Ds.getTrunkSize(OBJ_NUM);
-        float LeafSize = allModel1Ds.getLeafSize(OBJ_NUM);
-  
-        if (produce_same_variation == false) randomSeed(millis());
-        allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-      }
-  
-      // selecting new objetcs
-  
-      userSelections.Model1D_ids = new int [0];
-  
-      for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
-  
-        int[] newlyAddedallModel1Ds = {o};
-  
-        userSelections.Model1D_ids = concat(userSelections.Model1D_ids, newlyAddedallModel1Ds);
-      }
+      this.duplicate_Model1Ds(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-  
-      int n1 = allModel2Ds.num_files_PEOPLE;
-  
-      int number_of_allModel2Ds_before = allModel2Ds.num; 
-  
-      for (int o = 0; o < userSelections.Model2D_ids.length; o++) {
-  
-        int OBJ_NUM = userSelections.Model2D_ids[o];
-  
-        float x = allModel2Ds.getX(OBJ_NUM);
-        float y = allModel2Ds.getY(OBJ_NUM);
-        float z = allModel2Ds.getZ(OBJ_NUM);
-        float s = allModel2Ds.getS(OBJ_NUM);
-  
-        int n = allModel2Ds.MAP[OBJ_NUM];
-        if (allModel2Ds.isTree(n)) {
-          if (produce_same_variation == false) n = 0; // this makes it random
-          allModel2Ds.create("TREES", n, x, y, z, s);
-        } else {
-          if (produce_same_variation == false) n = 0; // this makes it random
-          allModel2Ds.create("PEOPLE", n, x, y, z, s);
-        }
-      }
-  
-      // selecting new objetcs
-  
-      userSelections.Model2D_ids = new int [0];
-  
-      for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
-  
-        int[] newlyAddedallModel2Ds = {o};
-  
-        userSelections.Model2D_ids = concat(userSelections.Model2D_ids, newlyAddedallModel2Ds);
-      }
-    }
-  
+      this.duplicate_Model2Ds(produce_same_variation);
+    }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-  
-      int number_of_Faces_before = allFaces.nodes.length;
-  
-      for (int o = 0; o < userSelections.Face_ids.length; o++) {
-  
-        int f = userSelections.Face_ids[o];        
-  
-        int number_of_Vertices_before = allPoints.getLength();
-  
-        int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
-        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-  
-        if ((0 <= f) && (f < allFaces.nodes.length)) {
-  
-          int[] newFace_nodes = {
-          };
-  
-          for (int j = 0; j < allFaces.nodes[f].length; j++) {
-            int vNo = allFaces.nodes[f][j];
-  
-            int vertex_listed = -1;
-  
-            for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-              if (vNo == PolymeshVertices_OLD[q]) {
-                vertex_listed = q;
-                break;
-              }
-            }         
-  
-            if (vertex_listed == -1) {
-              int[] newVertexListed = {
-                vNo
-              };
-              PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-  
-              float x = allPoints.getX(vNo);
-              float y = allPoints.getY(vNo);
-              float z = allPoints.getZ(vNo);
-  
-              int[] newVertexAdded = {
-                allPoints.create(x, y, z)
-              };
-              PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-  
-              vertex_listed = PolymeshVertices_OLD.length;
-            } 
-  
-            //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
-  
-            int[] new_vertexItem = {
-              number_of_Vertices_before + vertex_listed - 1
-            };
-  
-            newFace_nodes = concat(newFace_nodes, new_vertexItem);
-          }
-  
-          current_Material = allFaces.getMaterial(f);
-          current_Tessellation = allFaces.getTessellation(f);
-          current_Layer = allFaces.getLayer(f);
-          current_Visibility = allFaces.getVisibility(f);        
-  
-          allFaces.create(newFace_nodes);
-        }
-      }
-  
-  
-      // selecting new objetcs
-  
-      userSelections.Face_ids = new int [0];
-  
-      for (int o = number_of_Faces_before; o < allFaces.nodes.length; o++) {
-  
-        int[] newlyAddedFace = {o};
-  
-        userSelections.Face_ids = concat(userSelections.Face_ids, newlyAddedFace);
-      }
-    }
+      this.duplicate_Faces(produce_same_variation);
+    }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-  
-      int number_of_Curves_before = allCurves.nodes.length;
-  
-      for (int o = 0; o < userSelections.Curve_ids.length; o++) {
-  
-        int f = userSelections.Curve_ids[o];        
-  
-        int number_of_Vertices_before = allPoints.getLength();
-  
-        int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
-        int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-  
-        if ((0 <= f) && (f < allCurves.nodes.length)) {
-  
-          int[] newCurve_nodes = {
-          };
-  
-          for (int j = 0; j < allCurves.nodes[f].length; j++) {
-            int vNo = allCurves.nodes[f][j];
-  
-            int vertex_listed = -1;
-  
-            for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-              if (vNo == PolymeshVertices_OLD[q]) {
-                vertex_listed = q;
-                break;
-              }
-            }         
-  
-            if (vertex_listed == -1) {
-              int[] newVertexListed = {
-                vNo
-              };
-              PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-  
-              float x = allPoints.getX(vNo);
-              float y = allPoints.getY(vNo);
-              float z = allPoints.getZ(vNo);
-  
-              int[] newVertexAdded = {
-                allPoints.create(x, y, z)
-              };
-              PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-  
-              vertex_listed = PolymeshVertices_OLD.length;
-            } 
-  
-            //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
-  
-            int[] new_vertexItem = {
-              number_of_Vertices_before + vertex_listed - 1
-            };
-  
-            newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
-          }
-  
-          current_Material = allCurves.getMaterial(f);
-          current_Tessellation = allCurves.getTessellation(f);
-          current_Layer = allCurves.getLayer(f);
-          current_Visibility = allCurves.getVisibility(f);        
-          current_Weight = allCurves.getWeight(f);
-          current_Closed = allCurves.getClose(f);
-  
-          allCurves.create(newCurve_nodes);
-        }
-      }
-  
-  
-      // selecting new objetcs
-  
-      userSelections.Curve_ids = new int [0];
-  
-      for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
-  
-        int[] newlyAddedCurve = {o};
-  
-        userSelections.Curve_ids = concat(userSelections.Curve_ids, newlyAddedCurve);
-      }
-    }
-  
+      this.duplicate_Curves(produce_same_variation);
+    }  
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-  
-      int number_of_Solid_before = allSolids.DEF.length; 
-  
-      for (int o = 0; o < userSelections.Solid_ids.length; o++) {
-  
-        int OBJ_NUM = userSelections.Solid_ids[o];
-  
-        float Solid_posX = allSolids.get_posX(OBJ_NUM);
-        float Solid_posY = allSolids.get_posY(OBJ_NUM);
-        float Solid_posZ = allSolids.get_posZ(OBJ_NUM);
-        float Solid_powX = allSolids.get_powX(OBJ_NUM);
-        float Solid_powY = allSolids.get_powY(OBJ_NUM);
-        float Solid_powZ = allSolids.get_powZ(OBJ_NUM);
-        float Solid_scaleX = allSolids.get_scaleX(OBJ_NUM);
-        float Solid_scaleY = allSolids.get_scaleY(OBJ_NUM);
-        float Solid_scaleZ = allSolids.get_scaleZ(OBJ_NUM);
-        float Solid_rotX = allSolids.get_rotX(OBJ_NUM);
-        float Solid_rotY = allSolids.get_rotY(OBJ_NUM);
-        float Solid_rotZ = allSolids.get_rotZ(OBJ_NUM);
-        float Solid_value = allSolids.get_value(OBJ_NUM);
-  
-        allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-      }
-  
-      // selecting new objetcs
-  
-      userSelections.Solid_ids = new int [0];
-  
-      for (int o = number_of_Solid_before; o < allSolids.DEF.length; o++) {
-  
-        int[] newlyAddedSolid = {o};
-  
-        userSelections.Solid_ids = concat(userSelections.Solid_ids, newlyAddedSolid);
-      }
-    }    
-  
+      this.duplicate_Solids(produce_same_variation);
+    }  
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-  
-      int number_of_Section_before = allSections.num; 
-  
-      for (int o = 0; o < userSelections.Section_ids.length; o++) {
-  
-        int OBJ_NUM = userSelections.Section_ids[o];
-  
-        float Section_X = allSections.getX(OBJ_NUM);
-        float Section_Y = allSections.getY(OBJ_NUM);
-        float Section_Z = allSections.getZ(OBJ_NUM);
-        float Section_R = allSections.getR(OBJ_NUM);
-        float Section_U = allSections.getU(OBJ_NUM);
-        float Section_V = allSections.getV(OBJ_NUM);
-  
-        int Section_Type = allSections.get_type(OBJ_NUM);
-        int Section_RES1 = allSections.get_res1(OBJ_NUM);
-        int Section_RES2 = allSections.get_res2(OBJ_NUM);
-  
-        allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
-      }
-  
-      // selecting new objetcs
-  
-      userSelections.Section_ids = new int [0];
-  
-      for (int o = number_of_Section_before; o < allSections.num; o++) {
-  
-        int[] newlyAddedSection = {o};
-  
-        userSelections.Section_ids = concat(userSelections.Section_ids, newlyAddedSection);
-      }
-    }  
+      this.duplicate_Sections(produce_same_variation);
+    }    
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-  
-      int number_of_Camera_before = allCameras.num; 
-  
-      for (int o = 0; o < userSelections.Camera_ids.length; o++) {
-  
-        int OBJ_NUM = userSelections.Camera_ids[o];
-
-        float Camera_pX = allCameras.get_posX(OBJ_NUM);
-        float Camera_pY = allCameras.get_posY(OBJ_NUM);
-        float Camera_pZ = allCameras.get_posZ(OBJ_NUM);
-        float Camera_pT = allCameras.get_posT(OBJ_NUM);
-        float Camera_rX = allCameras.get_rotX(OBJ_NUM);
-        float Camera_rY = allCameras.get_rotY(OBJ_NUM);
-        float Camera_rZ = allCameras.get_rotZ(OBJ_NUM);
-        float Camera_rT = allCameras.get_rotT(OBJ_NUM);
-        float Camera_zoom = allCameras.get_zoom(OBJ_NUM);
-        int   Camera_type = allCameras.get_type(OBJ_NUM);
-  
-        allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
-      }
-  
-      // selecting new objetcs
-  
-      userSelections.Camera_ids = new int [0];
-  
-      for (int o = number_of_Camera_before; o < allCameras.num; o++) {
-  
-        int[] newlyAddedCamera = {o};
-  
-        userSelections.Camera_ids = concat(userSelections.Camera_ids, newlyAddedCamera);
-      }
-    }  
-  
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-  
-      int n1 = allModel2Ds.num_files_PEOPLE;
-  
-      int SOLID_added = 0;
-  
-      int number_of_allGroups_before = allGroups.num;
-  
-      for (int o = 0; o < userSelections.Group_ids.length; o++) {
-  
-        int OBJ_NUM = userSelections.Group_ids[o];
-  
-        if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) { 
-  
-          int number_of_Vertices_before = allPoints.getLength();
-  
-          allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-  
-          int new_OBJ_NUM = allGroups.num - 1;
-  
-          allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
-  
-          for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
-            allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
-          }
-  
-          if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
-  
-              float x = allModel1Ds.getX(q);
-              float y = allModel1Ds.getY(q);
-              float z = allModel1Ds.getZ(q);
-  
-              float d = allModel1Ds.getS(q);
-              float rot = allModel1Ds.getR(q);
-  
-              int n = allModel1Ds.getType(q);
-  
-              int dMin = allModel1Ds.getDegreeMin(q);
-  
-              int dMax = allModel1Ds.getDegreeMax(q);
-  
-              int s = allModel1Ds.getSeed(q);
-  
-              float TrunkSize = allModel1Ds.getTrunkSize(q);
-  
-              float LeafSize = allModel1Ds.getLeafSize(q);
-  
-              if (produce_same_variation == false) {
-                randomSeed(millis());
-  
-                rot = random(360);
-                s = int(random(32767));
-              }
-              allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-            }
-          }
-  
-          if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
-    
-              float x = allModel2Ds.getX(q);
-              float y = allModel2Ds.getY(q);
-              float z = allModel2Ds.getZ(q);
-              float s = allModel2Ds.getS(q);
-    
-              int n = allModel2Ds.MAP[q];
-    
-              if (allModel2Ds.isTree(n)) {
-                if (produce_same_variation == false) n = 0; // this makes it random
-                allModel2Ds.create("TREES", n, x, y, z, s);
-              } else {
-                if (produce_same_variation == false) n = 0; // this makes it random
-                allModel2Ds.create("PEOPLE", n, x, y, z, s);
-              }
-            }
-          }
-  
-  
-          if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
-            for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
-  
-              float Solid_posX = allSolids.get_posX(q);
-              float Solid_posY = allSolids.get_posY(q);
-              float Solid_posZ = allSolids.get_posZ(q);
-              float Solid_powX = allSolids.get_powX(q);
-              float Solid_powY = allSolids.get_powY(q);
-              float Solid_powZ = allSolids.get_powZ(q);
-              float Solid_scaleX = allSolids.get_scaleX(q);
-              float Solid_scaleY = allSolids.get_scaleY(q);
-              float Solid_scaleZ = allSolids.get_scaleZ(q);
-              float Solid_rotX = allSolids.get_rotX(q);
-              float Solid_rotY = allSolids.get_rotY(q);
-              float Solid_rotZ = allSolids.get_rotZ(q);
-              float Solid_value = allSolids.get_value(q);
-  
-              allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-  
-              SOLID_added += 1;
-            }
-          }
-  
-  
-  
-          int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
-          int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-  
-          for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
-  
-            if ((0 <= f) && (f < allFaces.nodes.length)) {
-  
-              int[] newFace_nodes = {
-              };
-  
-              for (int j = 0; j < allFaces.nodes[f].length; j++) {
-                int vNo = allFaces.nodes[f][j];
-  
-                int vertex_listed = -1;
-  
-                for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-                  if (vNo == PolymeshVertices_OLD[q]) {
-                    vertex_listed = q;
-                    break;
-                  }
-                }         
-  
-                if (vertex_listed == -1) {
-                  int[] newVertexListed = {
-                    vNo
-                  };
-                  PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-  
-                  float x = allPoints.getX(vNo);
-                  float y = allPoints.getY(vNo);
-                  float z = allPoints.getZ(vNo);
-  
-                  int[] newVertexAdded = {
-                    allPoints.create(x, y, z)
-                  };
-                  PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-  
-                  vertex_listed = PolymeshVertices_OLD.length - 1;
-                }
-  
-                int[] new_vertexItem = {
-                  number_of_Vertices_before + vertex_listed
-                };
-  
-                newFace_nodes = concat(newFace_nodes, new_vertexItem);
-              }
-  
-              current_Material = allFaces.getMaterial(f);
-              current_Tessellation = allFaces.getTessellation(f);
-              current_Layer = allFaces.getLayer(f);
-              current_Visibility = allFaces.getVisibility(f);
-  
-              allFaces.create(newFace_nodes);
-              
-              println("newFace_nodes");
-              println(newFace_nodes);
-            }
-          }
-        }
-        
-        if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) { 
-  
-          int number_of_Vertices_before = allPoints.getLength();
-  
-          allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-  
-          int new_OBJ_NUM = allGroups.num - 1;
-  
-          allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
-  
-          for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
-            allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
-          }
-  
-          if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
-  
-              float x = allModel1Ds.getX(q);
-              float y = allModel1Ds.getY(q);
-              float z = allModel1Ds.getZ(q);
-  
-              float d = allModel1Ds.getS(q);
-              float rot = allModel1Ds.getR(q);
-  
-              int n = allModel1Ds.getType(q);
-  
-              int dMin = allModel1Ds.getDegreeMin(q);
-  
-              int dMax = allModel1Ds.getDegreeMax(q);
-  
-              int s = allModel1Ds.getSeed(q);
-  
-              float TrunkSize = allModel1Ds.getTrunkSize(q);
-  
-              float LeafSize = allModel1Ds.getLeafSize(q);
-  
-              if (produce_same_variation == false) {
-                randomSeed(millis());
-  
-                rot = random(360);
-                s = int(random(32767));
-              }
-              allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-            }
-          }
-  
-          if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
-            for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
-  
-              float x = allModel2Ds.getX(q);
-              float y = allModel2Ds.getY(q);
-              float z = allModel2Ds.getZ(q);
-              float s = allModel2Ds.getS(q);
-  
-              int n = allModel2Ds.MAP[q];
-  
-              if (allModel2Ds.isTree(n)) {
-                if (produce_same_variation == false) n = 0; // this makes it random
-                allModel2Ds.create("TREES", n, x, y, z, s);
-              } else {
-                if (produce_same_variation == false) n = 0; // this makes it random
-                allModel2Ds.create("PEOPLE", n, x, y, z, s);
-              }
-            }
-          }
-  
-          if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
-            for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
-  
-              float Solid_posX = allSolids.get_posX(q);
-              float Solid_posY = allSolids.get_posY(q);
-              float Solid_posZ = allSolids.get_posZ(q);
-              float Solid_powX = allSolids.get_powX(q);
-              float Solid_powY = allSolids.get_powY(q);
-              float Solid_powZ = allSolids.get_powZ(q);
-              float Solid_scaleX = allSolids.get_scaleX(q);
-              float Solid_scaleY = allSolids.get_scaleY(q);
-              float Solid_scaleZ = allSolids.get_scaleZ(q);
-              float Solid_rotX = allSolids.get_rotX(q);
-              float Solid_rotY = allSolids.get_rotY(q);
-              float Solid_rotZ = allSolids.get_rotZ(q);
-              float Solid_value = allSolids.get_value(q);
-  
-              allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-  
-              SOLID_added += 1;
-            }
-          }
-  
-  
-          int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
-          int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
-  
-          for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
-  
-            if ((0 <= f) && (f < allCurves.nodes.length)) {
-  
-              int[] newCurve_nodes = {
-              };
-  
-              for (int j = 0; j < allCurves.nodes[f].length; j++) {
-                int vNo = allCurves.nodes[f][j];
-  
-                int vertex_listed = -1;
-  
-                for (int q = 0; q < PolymeshVertices_OLD.length; q++) {
-                  if (vNo == PolymeshVertices_OLD[q]) {
-                    vertex_listed = q;
-                    break;
-                  }
-                }         
-  
-                if (vertex_listed == -1) {
-                  int[] newVertexListed = {
-                    vNo
-                  };
-                  PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-  
-                  float x = allPoints.getX(vNo);
-                  float y = allPoints.getY(vNo);
-                  float z = allPoints.getZ(vNo);
-  
-                  int[] newVertexAdded = {
-                    allPoints.create(x, y, z)
-                  };
-                  PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-  
-                  vertex_listed = PolymeshVertices_OLD.length - 1;
-                } 
-  
-                int[] new_vertexItem = {
-                  number_of_Vertices_before + vertex_listed
-                };
-  
-                newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
-              }
-  
-              current_Material = allCurves.getMaterial(f);
-              current_Tessellation = allCurves.getTessellation(f);
-              current_Layer = allCurves.getLayer(f);
-              current_Visibility = allCurves.getVisibility(f);
-              current_Weight = allCurves.getWeight(f);
-              current_Closed = allCurves.getClose(f);
-  
-              allCurves.create(newCurve_nodes);
-            }
-          }
-        }        
-      }
-    
-  
-  
-      // selecting new objetcs
-  
-      userSelections.Group_ids = new int [0];
-  
-      for (int o = number_of_allGroups_before; o < allGroups.num; o++) {
-  
-        int[] newlyAddedGroup = {o};
-  
-        userSelections.Group_ids = concat(userSelections.Group_ids, newlyAddedGroup);
-      }       
-  
-  
-      if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
-    }
+      this.duplicate_Cameras(produce_same_variation);
+    }    
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP)  {
+      this.duplicate_Groups(produce_same_variation);
+    }    
   }
   
   
