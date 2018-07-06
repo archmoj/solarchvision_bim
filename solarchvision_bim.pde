@@ -17376,7 +17376,7 @@ class solarchvision_Selections {
   }
   
   
-  void flatten_selectedLandPoints () {
+  void flatten_LandPoints () {
   
     for (int q = 0; q < this.LandPoint_ids.length; q++) {
   
@@ -17472,7 +17472,7 @@ class solarchvision_Selections {
   
   
   
-  void scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void scale (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     float[] O = this.translateOutside_ReferencePivot(x0, y0, z0);
   
@@ -17538,7 +17538,7 @@ class solarchvision_Selections {
   
   
   
-  void rotate_Selection (float x0, float y0, float z0, float r, int the_Vector) {
+  void rotate (float x0, float y0, float z0, float r, int the_Vector) {
     
     r *= PI / 180; // <<<<<<<<
   
@@ -17611,7 +17611,7 @@ class solarchvision_Selections {
   
   
   
-  void move_Selection (float dx, float dy, float dz) {
+  void move (float dx, float dy, float dz) {
     
     println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);
   
@@ -17682,7 +17682,7 @@ class solarchvision_Selections {
   }
   
   
-  void drop_Selection () {
+  void drop () {
   
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
@@ -21413,7 +21413,7 @@ void draw () {
             dy = 0;
           }            
 
-          userSelections.move_Selection(dx, dy, dz);
+          userSelections.move(dx, dy, dz);
           WIN3D.update = true;
         }
         if (pre_Selection_rotValue != userSelections.rotValue) {
@@ -21428,7 +21428,7 @@ void draw () {
 
           int the_Vector = userSelections.rotVector;
 
-          userSelections.rotate_Selection(x0, y0, z0, r, the_Vector);
+          userSelections.rotate(x0, y0, z0, r, the_Vector);
           WIN3D.update = true;
         }
         if (pre_Selection_scaleValue != userSelections.scaleValue) {
@@ -21460,7 +21460,7 @@ void draw () {
             sy = 1;
           }           
 
-          userSelections.scale_Selection(x0, y0, z0, sx, sy, sz);
+          userSelections.scale(x0, y0, z0, sx, sy, sz);
           WIN3D.update = true;
         }        
 
@@ -42082,7 +42082,7 @@ void mouseWheel (MouseEvent event) {
 
                 int the_Vector = userSelections.rotVector;
 
-                userSelections.rotate_Selection(x0, y0, z0, r, the_Vector);
+                userSelections.rotate(x0, y0, z0, r, the_Vector);
 
                 WIN3D.update = true;
               }   
@@ -42110,7 +42110,7 @@ void mouseWheel (MouseEvent event) {
                   sy = 1;
                 }                    
 
-                userSelections.scale_Selection(x0, y0, z0, sx, sy, sz);
+                userSelections.scale(x0, y0, z0, sx, sy, sz);
 
                 WIN3D.update = true;
               }       
@@ -42139,7 +42139,7 @@ void mouseWheel (MouseEvent event) {
                   dy = 0;
                 }  
 
-                userSelections.move_Selection(dx, dy, dz);
+                userSelections.move(dx, dy, dz);
 
                 WIN3D.update = true;
               }   
@@ -43988,7 +43988,7 @@ void mouseClicked () {
               UI_BAR_b.hghlight("DrL±");
               UI_BAR_b.update = true;  
 
-              userSelections.drop_Selection();
+              userSelections.drop();
               WIN3D.update = true;
             }
             if (menu_option.equals("Drop on ModelSurface (Down)")) {
@@ -43996,7 +43996,7 @@ void mouseClicked () {
               UI_BAR_b.hghlight("DrM-");
               UI_BAR_b.update = true;  
 
-              userSelections.drop_Selection(); 
+              userSelections.drop(); 
               WIN3D.update = true;
             }                      
             if (menu_option.equals("Drop on ModelSurface (Up)")) {
@@ -44004,7 +44004,7 @@ void mouseClicked () {
               UI_BAR_b.hghlight("DrM+");
               UI_BAR_b.update = true;  
 
-              userSelections.drop_Selection();
+              userSelections.drop();
               WIN3D.update = true;
             }
 
@@ -44868,7 +44868,7 @@ void mouseClicked () {
             }         
 
             if (menu_option.equals("Flatten Selected LandPoints")) {
-              userSelections.flatten_selectedLandPoints();
+              userSelections.flatten_LandPoints();
               WIN3D.update = true;
             }
             
@@ -45631,7 +45631,7 @@ void mouseClicked () {
                       dy = 0;
                     } 
   
-                    userSelections.move_Selection(dx, dy, dz);
+                    userSelections.move(dx, dy, dz);
   
                     userSelections.calculate_BoundingBox();
                     WIN3D.update = true;
@@ -56241,7 +56241,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (q == 3) dz = float(parameters[0]);
         }
       }
-      userSelections.move_Selection(dx, dy, dz);
+      userSelections.move(dx, dy, dz);
       WIN3D.update = true;
     }
     else {
@@ -56276,7 +56276,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           if (q == 1) r = float(parameters[0]);
         }      
       }
-      userSelections.rotate_Selection(x, y, z, r, v);
+      userSelections.rotate(x, y, z, r, v);
       WIN3D.update = true;
     }
     else {
@@ -56316,7 +56316,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           if (q == 1) {sx = float(parameters[0]); sy = sx; sz = sx;}
         }           
       }
-      userSelections.scale_Selection(x, y, z, sx, sy, sz);
+      userSelections.scale(x, y, z, sx, sy, sz);
       WIN3D.update = true;
     }
     else {
@@ -56374,10 +56374,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       for (int q = 0; q < n; q++) {
         allModel3Ds.duplicate_Selection(0); 
-        if ((dx != 0) || (dy != 0) || (dz != 0)) userSelections.move_Selection(dx, dy, dz);
-        if (rx != 0) userSelections.rotate_Selection(0, 0, 0, rx, 0);
-        if (ry != 0) userSelections.rotate_Selection(0, 0, 0, ry, 1);
-        if (rz != 0) userSelections.rotate_Selection(0, 0, 0, rz, 2);
+        if ((dx != 0) || (dy != 0) || (dz != 0)) userSelections.move(dx, dy, dz);
+        if (rx != 0) userSelections.rotate(0, 0, 0, rx, 0);
+        if (ry != 0) userSelections.rotate(0, 0, 0, ry, 1);
+        if (rz != 0) userSelections.rotate(0, 0, 0, rz, 2);
       }
       WIN3D.update = true;
     }
