@@ -13556,591 +13556,44 @@ class solarchvision_Groups {
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
     }
   
-  
-  
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-  
-      userSelections.Camera_ids = sort(userSelections.Camera_ids);
-  
-      for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Camera_ids[o];
-  
-        {
-          float[][] startList = (float[][]) subset(allCameras.options, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allCameras.options, OBJ_NUM + 1);
-  
-          allCameras.options = (float[][]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allCameras.Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allCameras.Type, OBJ_NUM + 1);
-  
-          allCameras.Type = (int[]) concat(startList, endList);
-        }
-  
-        allCameras.num -= 1;
-  
-        if (OBJ_NUM == WIN3D.currentCamera) {
-    
-          WIN3D.currentCamera = 0;
-          
-          SOLARCHVISION_modify_Viewport_Title();
-        }
-      }
+      Edit3Ds.delete_Cameras();
     }
-  
-  
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-  
-      userSelections.Section_ids = sort(userSelections.Section_ids);
-  
-      for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Section_ids[o];
-  
-        {
-          float[][] startList = (float[][]) subset(allSections.f_options, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSections.f_options, OBJ_NUM + 1);
-  
-          allSections.f_options = (float[][]) concat(startList, endList);
-        }
-  
-        {
-          int[][] startList = (int[][]) subset(allSections.i_options, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allSections.i_options, OBJ_NUM + 1);
-  
-          allSections.i_options = (int[][]) concat(startList, endList);
-        }
-  
-        {
-          PImage[] startList = (PImage[]) subset(allSections.SolidImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(allSections.SolidImpact, OBJ_NUM + 1);
-  
-          allSections.SolidImpact = (PImage[]) concat(startList, endList);
-        }
-  
-        {
-          PImage[][][] startList = (PImage[][][]) subset(allSections.SolarImpact, 0, OBJ_NUM);
-          PImage[][][] endList = (PImage[][][]) subset(allSections.SolarImpact, OBJ_NUM + 1);
-  
-          allSections.SolarImpact = (PImage[][][]) concat(startList, endList);
-        }        
-  
-        allSections.num -= 1;
-      }
+      Edit3Ds.delete_Sections();
     }
-  
-  
-  
-  
-  
-  
+
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      userSelections.Model1D_ids = sort(userSelections.Model1D_ids);
-  
-      for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Model1D_ids[o];
-  
-        for (int q = 0; q < this.num; q++) {
-  
-          if ((this.Model1Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= this.Model1Ds[q][1])) {
-            if (this.Model1Ds[q][1] >= 0) this.Model1Ds[q][1] -= 1;
-          } else if (this.Model1Ds[q][0] > OBJ_NUM) {
-            if (this.Model1Ds[q][0] >= 0) this.Model1Ds[q][0] -= 1;
-            if (this.Model1Ds[q][1] >= 0) this.Model1Ds[q][1] -= 1;
-          }
-        }
-  
-  
-        {
-          float[][] startList = (float[][]) subset(allModel1Ds.XYZSR, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allModel1Ds.XYZSR, OBJ_NUM + 1);
-  
-          allModel1Ds.XYZSR = (float[][]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allModel1Ds.Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allModel1Ds.Type, OBJ_NUM + 1);
-  
-          allModel1Ds.Type = (int[]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allModel1Ds.DegreeMin, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allModel1Ds.DegreeMin, OBJ_NUM + 1);
-  
-          allModel1Ds.DegreeMin = (int[]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allModel1Ds.DegreeMax, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allModel1Ds.DegreeMax, OBJ_NUM + 1);
-  
-          allModel1Ds.DegreeMax = (int[]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allModel1Ds.Seed, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allModel1Ds.Seed, OBJ_NUM + 1);
-  
-          allModel1Ds.Seed = (int[]) concat(startList, endList);
-        }
-  
-        {
-          float[] startList = (float[]) subset(allModel1Ds.TrunkSize, 0, OBJ_NUM);
-          float[] endList = (float[]) subset(allModel1Ds.TrunkSize, OBJ_NUM + 1);
-  
-          allModel1Ds.TrunkSize = (float[]) concat(startList, endList);
-        }
-  
-        {
-          float[] startList = (float[]) subset(allModel1Ds.LeafSize, 0, OBJ_NUM);
-          float[] endList = (float[]) subset(allModel1Ds.LeafSize, OBJ_NUM + 1);
-  
-          allModel1Ds.LeafSize = (float[]) concat(startList, endList);
-        }
-  
-        allModel1Ds.num -= 1;
-      }
+      Edit3Ds.delete_Model1Ds();
     }
-  
-  
-  
+
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-  
-      userSelections.Model2D_ids = sort(userSelections.Model2D_ids);
-  
-      for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Model2D_ids[o];
-  
-        for (int q = 0; q < this.num; q++) {
-  
-          if ((this.Model2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= this.Model2Ds[q][1])) {
-            if (this.Model2Ds[q][1] >= 0) this.Model2Ds[q][1] -= 1;
-          } else if (this.Model2Ds[q][0] > OBJ_NUM) {
-            if (this.Model2Ds[q][0] >= 0) this.Model2Ds[q][0] -= 1;
-            if (this.Model2Ds[q][1] >= 0) this.Model2Ds[q][1] -= 1;
-          }
-        }
-  
-  
-        {
-          float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allModel2Ds.XYZS, OBJ_NUM + 1);
-  
-          allModel2Ds.XYZS = (float[][]) concat(startList, endList);
-        }
-  
-        {
-          int[] startList = (int[]) subset(allModel2Ds.MAP, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allModel2Ds.MAP, OBJ_NUM + 1);
-  
-          allModel2Ds.MAP = (int[]) concat(startList, endList);
-        }   
-  
-        allModel2Ds.num -= 1;
-      }
-  
+      Edit3Ds.delete_Model2Ds();
     }
-  
-  
-  
-  
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-  
-      userSelections.Solid_ids = sort(userSelections.Solid_ids);
-  
-      for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Solid_ids[o];
-  
-        for (int q = 0; q < this.num; q++) {
-  
-          if ((this.Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= this.Solids[q][1])) {
-            if (this.Solids[q][1] >= 0) this.Solids[q][1] -= 1;
-          } else if (this.Solids[q][0] > OBJ_NUM) {
-            if (this.Solids[q][0] >= 0) this.Solids[q][0] -= 1;
-            if (this.Solids[q][1] >= 0) this.Solids[q][1] -= 1;
-          }
-        }
-  
-  
-        {
-          float[][] startList = (float[][]) subset(allSolids.DEF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolids.DEF, OBJ_NUM + 1);
-  
-          allSolids.DEF = (float[][]) concat(startList, endList);
-        }
-      }
+      Edit3Ds.delete_Solids();
     }
-  
-  
-  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-  
-      userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-      for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Face_ids[o];
-  
-        for (int q = 0; q < this.num; q++) {
-  
-          if ((this.Faces[q][0] <= OBJ_NUM) && (OBJ_NUM <= this.Faces[q][1])) {
-            if (this.Faces[q][1] >= 0) this.Faces[q][1] -= 1;
-          } else if (this.Faces[q][0] > OBJ_NUM) {
-            if (this.Faces[q][0] >= 0) this.Faces[q][0] -= 1;
-            if (this.Faces[q][1] >= 0) this.Faces[q][1] -= 1;
-          }
-        }
-  
-  
-        {
-          int[][] startList = (int[][]) subset(allFaces.nodes, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allFaces.nodes, OBJ_NUM + 1);
-  
-          allFaces.nodes = (int[][]) concat(startList, endList);
-        }
-  
-        {
-          int[][] startList = (int[][]) subset(allFaces.options, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allFaces.options, OBJ_NUM + 1);
-  
-          allFaces.options = (int[][]) concat(startList, endList);
-        }
-      }
+      Edit3Ds.delete_Faces();
     }
   
-  
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-  
-      userSelections.Curve_ids = sort(userSelections.Curve_ids);
-  
-      for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Curve_ids[o];
-  
-        for (int q = 0; q < this.num; q++) {
-  
-          if ((this.Curves[q][0] <= OBJ_NUM) && (OBJ_NUM <= this.Curves[q][1])) {
-            if (this.Curves[q][1] >= 0) this.Curves[q][1] -= 1;
-          } else if (this.Curves[q][0] > OBJ_NUM) {
-            if (this.Curves[q][0] >= 0) this.Curves[q][0] -= 1;
-            if (this.Curves[q][1] >= 0) this.Curves[q][1] -= 1;
-          }
-        }
-  
-  
-        {
-          int[][] startList = (int[][]) subset(allCurves.nodes, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allCurves.nodes, OBJ_NUM + 1);
-  
-          allCurves.nodes = (int[][]) concat(startList, endList);
-        }
-  
-        {
-          int[][] startList = (int[][]) subset(allCurves.options, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allCurves.options, OBJ_NUM + 1);
-  
-          allCurves.options = (int[][]) concat(startList, endList);
-        }
-      }
+      Edit3Ds.delete_Curves();
     }
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      
-      /////////////////////////////
-      //SOLARCHVISION_hold_project();
-      /////////////////////////////    
-      
-      
-      
-      userSelections.convert_Groups_to_Vertices(); // finding vertices so that we could delete the isolated ones later  
-  
-      userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-      boolean allSolids_updated = false;  
-  
-      for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = userSelections.Group_ids[o];
-  
-        int startFace = this.Faces[OBJ_NUM][0];
-        int endFace = this.Faces[OBJ_NUM][1];
-  
-        {
-  
-          if ((0 <= startFace) && (startFace <= endFace)) {
-  
-            for (int i = OBJ_NUM + 1; i < this.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                this.Faces[i][j] -= 1 + endFace - startFace;
-  
-                if (this.Faces[i][j] < 0) this.Faces[i][j] = 0;
-              }
-            }
-          }  
-  
-          int[][] startList = (int[][]) subset(this.Faces, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(this.Faces, OBJ_NUM + 1);
-  
-          this.Faces = (int[][]) concat(startList, endList);
-        }  
-  
-        if ((0 <= startFace) && (startFace <= endFace)) {
-          {
-            int[][] startList = (int[][]) subset(allFaces.nodes, 0, startFace);
-            int[][] endList = (int[][]) subset(allFaces.nodes, endFace + 1);
-  
-            allFaces.nodes = (int[][]) concat(startList, endList);
-          }
-  
-          {
-            int[][] startList = (int[][]) subset(allFaces.options, 0, startFace);
-            int[][] endList = (int[][]) subset(allFaces.options, endFace + 1);
-  
-            allFaces.options = (int[][]) concat(startList, endList);
-          }
-        }
-  
-  
-        int startCurve = this.Curves[OBJ_NUM][0];
-        int endCurve = this.Curves[OBJ_NUM][1];
-  
-        {
-  
-          if ((0 <= startCurve) && (startCurve <= endCurve)) {
-  
-            for (int i = OBJ_NUM + 1; i < this.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                this.Curves[i][j] -= 1 + endCurve - startCurve;
-  
-                if (this.Curves[i][j] < 0) this.Curves[i][j] = 0;
-              }
-            }
-          }  
-  
-          int[][] startList = (int[][]) subset(this.Curves, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(this.Curves, OBJ_NUM + 1);
-  
-          this.Curves = (int[][]) concat(startList, endList);
-        }  
-  
-        if ((0 <= startCurve) && (startCurve <= endCurve)) {
-          {
-            int[][] startList = (int[][]) subset(allCurves.nodes, 0, startCurve);
-            int[][] endList = (int[][]) subset(allCurves.nodes, endCurve + 1);
-  
-            allCurves.nodes = (int[][]) concat(startList, endList);
-          }
-  
-          {
-            int[][] startList = (int[][]) subset(allCurves.options, 0, startCurve);
-            int[][] endList = (int[][]) subset(allCurves.options, endCurve + 1);
-  
-            allCurves.options = (int[][]) concat(startList, endList);
-          }
-        }
-  
-  
-        int startallModel1Ds = this.Model1Ds[OBJ_NUM][0];
-        int endallModel1Ds = this.Model1Ds[OBJ_NUM][1];
-  
-        {
-  
-          if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
-  
-            for (int i = OBJ_NUM + 1; i < this.num; i++) {
-  
-              for (int j = 0; j < 2; j++) {
-  
-                this.Model1Ds[i][j] -= 1 + endallModel1Ds - startallModel1Ds;
-  
-                if (this.Model1Ds[i][j] < 0) this.Model1Ds[i][j] = 0;
-              }
-            }
-          }   
-  
-          int[][] startList = (int[][]) subset(this.Model1Ds, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(this.Model1Ds, OBJ_NUM + 1);
-  
-          this.Model1Ds = (int[][]) concat(startList, endList);
-        }  
-  
-        if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
-  
-          {
-            float[][] startList = (float[][]) subset(allModel1Ds.XYZSR, 0, startallModel1Ds);
-            float[][] endList = (float[][]) subset(allModel1Ds.XYZSR, endallModel1Ds + 1);
-  
-            allModel1Ds.XYZSR = (float[][]) concat(startList, endList);
-          }
-  
-          {
-            int[] startList = (int[]) subset(allModel1Ds.Type, 0, startallModel1Ds);
-            int[] endList = (int[]) subset(allModel1Ds.Type, endallModel1Ds + 1);
-  
-            allModel1Ds.Type = (int[]) concat(startList, endList);
-          }
-  
-          {
-            int[] startList = (int[]) subset(allModel1Ds.DegreeMin, 0, startallModel1Ds);
-            int[] endList = (int[]) subset(allModel1Ds.DegreeMin, endallModel1Ds + 1);
-  
-            allModel1Ds.DegreeMin = (int[]) concat(startList, endList);
-          }
-  
-          {
-            int[] startList = (int[]) subset(allModel1Ds.DegreeMax, 0, startallModel1Ds);
-            int[] endList = (int[]) subset(allModel1Ds.DegreeMax, endallModel1Ds + 1);
-  
-            allModel1Ds.DegreeMax = (int[]) concat(startList, endList);
-          }
-  
-          {
-            int[] startList = (int[]) subset(allModel1Ds.Seed, 0, startallModel1Ds);
-            int[] endList = (int[]) subset(allModel1Ds.Seed, endallModel1Ds + 1);
-  
-            allModel1Ds.Seed = (int[]) concat(startList, endList);
-          }
-  
-          {
-            float[] startList = (float[]) subset(allModel1Ds.TrunkSize, 0, startallModel1Ds);
-            float[] endList = (float[]) subset(allModel1Ds.TrunkSize, endallModel1Ds + 1);
-  
-            allModel1Ds.TrunkSize = (float[]) concat(startList, endList);
-          }
-  
-          {
-            float[] startList = (float[]) subset(allModel1Ds.LeafSize, 0, startallModel1Ds);
-            float[] endList = (float[]) subset(allModel1Ds.LeafSize, endallModel1Ds + 1);
-  
-            allModel1Ds.LeafSize = (float[]) concat(startList, endList);
-          }
-  
-  
-          allModel1Ds.num = allModel1Ds.XYZSR.length;
-        }
-  
-        int startallModel2Ds = this.Model2Ds[OBJ_NUM][0];
-        int endallModel2Ds = this.Model2Ds[OBJ_NUM][1];
-  
-        {
-  
-          if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
-  
-            for (int i = OBJ_NUM + 1; i < this.num; i++) {
-  
-              for (int j = 0; j < 2; j++) {
-  
-                this.Model2Ds[i][j] -= 1 + endallModel2Ds - startallModel2Ds;
-  
-                if (this.Model2Ds[i][j] < 0) this.Model2Ds[i][j] = 0;
-              }
-            }
-          }   
-  
-          int[][] startList = (int[][]) subset(this.Model2Ds, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(this.Model2Ds, OBJ_NUM + 1);
-  
-          this.Model2Ds = (int[][]) concat(startList, endList);
-        }  
-  
-        if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
-  
-          {
-            float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, startallModel2Ds);
-            float[][] endList = (float[][]) subset(allModel2Ds.XYZS, endallModel2Ds + 1);
-  
-            allModel2Ds.XYZS = (float[][]) concat(startList, endList);
-          }
-  
-          {
-            int[] startList = (int[]) subset(allModel2Ds.MAP, 0, startallModel2Ds);
-            int[] endList = (int[]) subset(allModel2Ds.MAP, endallModel2Ds + 1);
-  
-            allModel2Ds.MAP = (int[]) concat(startList, endList);
-          }
-  
-          allModel2Ds.num = allModel2Ds.XYZS.length;
-        }
-  
-        int startSolid = this.Solids[OBJ_NUM][0];
-        int endSolid = this.Solids[OBJ_NUM][1];
-  
-        {
-          if ((0 <= startSolid) && (startSolid <= endSolid)) {
-            for (int i = OBJ_NUM + 1; i < this.num; i++) {
-  
-              for (int j = 0; j < 2; j++) {
-                this.Solids[i][j] -= 1 + endSolid - startSolid;
-  
-                if (this.Solids[i][j] < 0) this.Solids[i][j] = 0;
-              }
-            }
-          }  
-  
-          int[][] startList = (int[][]) subset(this.Solids, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(this.Solids, OBJ_NUM + 1);
-  
-          this.Solids = (int[][]) concat(startList, endList);
-        }  
-  
-        if ((0 <= startSolid) && (startSolid <= endSolid)) {
-  
-          float[][] startList = (float[][]) subset(allSolids.DEF, 0, startSolid);
-          float[][] endList = (float[][]) subset(allSolids.DEF, endSolid + 1);
-  
-          allSolids.DEF = (float[][]) concat(startList, endList);
-  
-          allSolids_updated = true;
-        }
-  
-  
-        {
-          float[][] startList = (float[][]) subset(this.PivotMatrix, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(this.PivotMatrix, OBJ_NUM + 1);
-  
-          this.PivotMatrix = (float[][]) concat(startList, endList);
-        } 
-  
-        {
-          int[][] startList = (int[][]) subset(this.PivotType, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(this.PivotType, OBJ_NUM + 1);
-  
-          this.PivotType = (int[][]) concat(startList, endList);
-        } 
-  
-        this.num -= 1;
-      }
-      
-      if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  
+      Edit3Ds.delete_Groups();
     }
-  
-  
-  
-  
   
     if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
   
       println("deleteIsolatedVerticesSelection");
-  
       Modify3Ds.deleteIsolatedVertices_Selection();
     }  
-  
-  
-  
-  
+
     if (allCameras.num == 0) {
       allCameras.add_first();
     }
@@ -18902,7 +18355,571 @@ class solarchvision_Edit3Ds {
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
   }
 
+
+
+
+
+
+  void delete_Cameras () {
+
+    userSelections.Camera_ids = sort(userSelections.Camera_ids);
+
+    for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Camera_ids[o];
+
+      {
+        float[][] startList = (float[][]) subset(allCameras.options, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(allCameras.options, OBJ_NUM + 1);
+
+        allCameras.options = (float[][]) concat(startList, endList);
+      }
+
+      {
+        int[] startList = (int[]) subset(allCameras.Type, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(allCameras.Type, OBJ_NUM + 1);
+
+        allCameras.Type = (int[]) concat(startList, endList);
+      }
+
+      allCameras.num -= 1;
+
+      if (OBJ_NUM == WIN3D.currentCamera) {
   
+        WIN3D.currentCamera = 0;
+        
+        SOLARCHVISION_modify_Viewport_Title();
+      }
+    }
+  }
+
+
+  void delete_Sections () {
+
+    userSelections.Section_ids = sort(userSelections.Section_ids);
+
+    for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Section_ids[o];
+
+      {
+        float[][] startList = (float[][]) subset(allSections.f_options, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(allSections.f_options, OBJ_NUM + 1);
+
+        allSections.f_options = (float[][]) concat(startList, endList);
+      }
+
+      {
+        int[][] startList = (int[][]) subset(allSections.i_options, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allSections.i_options, OBJ_NUM + 1);
+
+        allSections.i_options = (int[][]) concat(startList, endList);
+      }
+
+      {
+        PImage[] startList = (PImage[]) subset(allSections.SolidImpact, 0, OBJ_NUM);
+        PImage[] endList = (PImage[]) subset(allSections.SolidImpact, OBJ_NUM + 1);
+
+        allSections.SolidImpact = (PImage[]) concat(startList, endList);
+      }
+
+      {
+        PImage[][][] startList = (PImage[][][]) subset(allSections.SolarImpact, 0, OBJ_NUM);
+        PImage[][][] endList = (PImage[][][]) subset(allSections.SolarImpact, OBJ_NUM + 1);
+
+        allSections.SolarImpact = (PImage[][][]) concat(startList, endList);
+      }        
+
+      allSections.num -= 1;
+    }
+  }
+
+
+
+
+
+  void delete_Model1Ds () {
+
+    userSelections.Model1D_ids = sort(userSelections.Model1D_ids);
+
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model1D_ids[o];
+
+      for (int q = 0; q < allGroups.num; q++) {
+
+        if ((allGroups.Model1Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Model1Ds[q][1])) {
+          if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
+        } else if (allGroups.Model1Ds[q][0] > OBJ_NUM) {
+          if (allGroups.Model1Ds[q][0] >= 0) allGroups.Model1Ds[q][0] -= 1;
+          if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
+        }
+      }
+
+
+      {
+        float[][] startList = (float[][]) subset(allModel1Ds.XYZSR, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(allModel1Ds.XYZSR, OBJ_NUM + 1);
+
+        allModel1Ds.XYZSR = (float[][]) concat(startList, endList);
+      }
+
+      {
+        int[] startList = (int[]) subset(allModel1Ds.Type, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(allModel1Ds.Type, OBJ_NUM + 1);
+
+        allModel1Ds.Type = (int[]) concat(startList, endList);
+      }
+
+      {
+        int[] startList = (int[]) subset(allModel1Ds.DegreeMin, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(allModel1Ds.DegreeMin, OBJ_NUM + 1);
+
+        allModel1Ds.DegreeMin = (int[]) concat(startList, endList);
+      }
+
+      {
+        int[] startList = (int[]) subset(allModel1Ds.DegreeMax, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(allModel1Ds.DegreeMax, OBJ_NUM + 1);
+
+        allModel1Ds.DegreeMax = (int[]) concat(startList, endList);
+      }
+
+      {
+        int[] startList = (int[]) subset(allModel1Ds.Seed, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(allModel1Ds.Seed, OBJ_NUM + 1);
+
+        allModel1Ds.Seed = (int[]) concat(startList, endList);
+      }
+
+      {
+        float[] startList = (float[]) subset(allModel1Ds.TrunkSize, 0, OBJ_NUM);
+        float[] endList = (float[]) subset(allModel1Ds.TrunkSize, OBJ_NUM + 1);
+
+        allModel1Ds.TrunkSize = (float[]) concat(startList, endList);
+      }
+
+      {
+        float[] startList = (float[]) subset(allModel1Ds.LeafSize, 0, OBJ_NUM);
+        float[] endList = (float[]) subset(allModel1Ds.LeafSize, OBJ_NUM + 1);
+
+        allModel1Ds.LeafSize = (float[]) concat(startList, endList);
+      }
+
+      allModel1Ds.num -= 1;
+    }
+  }
+
+
+  void delete_Model2Ds () {
+
+    userSelections.Model2D_ids = sort(userSelections.Model2D_ids);
+
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      for (int q = 0; q < allGroups.num; q++) {
+
+        if ((allGroups.Model2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Model2Ds[q][1])) {
+          if (allGroups.Model2Ds[q][1] >= 0) allGroups.Model2Ds[q][1] -= 1;
+        } else if (allGroups.Model2Ds[q][0] > OBJ_NUM) {
+          if (allGroups.Model2Ds[q][0] >= 0) allGroups.Model2Ds[q][0] -= 1;
+          if (allGroups.Model2Ds[q][1] >= 0) allGroups.Model2Ds[q][1] -= 1;
+        }
+      }
+
+
+      {
+        float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(allModel2Ds.XYZS, OBJ_NUM + 1);
+
+        allModel2Ds.XYZS = (float[][]) concat(startList, endList);
+      }
+
+      {
+        int[] startList = (int[]) subset(allModel2Ds.MAP, 0, OBJ_NUM);
+        int[] endList = (int[]) subset(allModel2Ds.MAP, OBJ_NUM + 1);
+
+        allModel2Ds.MAP = (int[]) concat(startList, endList);
+      }   
+
+      allModel2Ds.num -= 1;
+    }
+
+  }
+
+
+  void delete_Solids () {
+
+    userSelections.Solid_ids = sort(userSelections.Solid_ids);
+
+    for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Solid_ids[o];
+
+      for (int q = 0; q < allGroups.num; q++) {
+
+        if ((allGroups.Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Solids[q][1])) {
+          if (allGroups.Solids[q][1] >= 0) allGroups.Solids[q][1] -= 1;
+        } else if (allGroups.Solids[q][0] > OBJ_NUM) {
+          if (allGroups.Solids[q][0] >= 0) allGroups.Solids[q][0] -= 1;
+          if (allGroups.Solids[q][1] >= 0) allGroups.Solids[q][1] -= 1;
+        }
+      }
+
+
+      {
+        float[][] startList = (float[][]) subset(allSolids.DEF, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(allSolids.DEF, OBJ_NUM + 1);
+
+        allSolids.DEF = (float[][]) concat(startList, endList);
+      }
+    }
+  }
+
+
+  void delete_Faces () {
+
+    userSelections.Face_ids = sort(userSelections.Face_ids);
+
+    for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Face_ids[o];
+
+      for (int q = 0; q < allGroups.num; q++) {
+
+        if ((allGroups.Faces[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Faces[q][1])) {
+          if (allGroups.Faces[q][1] >= 0) allGroups.Faces[q][1] -= 1;
+        } else if (allGroups.Faces[q][0] > OBJ_NUM) {
+          if (allGroups.Faces[q][0] >= 0) allGroups.Faces[q][0] -= 1;
+          if (allGroups.Faces[q][1] >= 0) allGroups.Faces[q][1] -= 1;
+        }
+      }
+
+
+      {
+        int[][] startList = (int[][]) subset(allFaces.nodes, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allFaces.nodes, OBJ_NUM + 1);
+
+        allFaces.nodes = (int[][]) concat(startList, endList);
+      }
+
+      {
+        int[][] startList = (int[][]) subset(allFaces.options, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allFaces.options, OBJ_NUM + 1);
+
+        allFaces.options = (int[][]) concat(startList, endList);
+      }
+    }
+  }
+
+
+  void delete_Curves () {
+
+    userSelections.Curve_ids = sort(userSelections.Curve_ids);
+
+    for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Curve_ids[o];
+
+      for (int q = 0; q < allGroups.num; q++) {
+
+        if ((allGroups.Curves[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroups.Curves[q][1])) {
+          if (allGroups.Curves[q][1] >= 0) allGroups.Curves[q][1] -= 1;
+        } else if (allGroups.Curves[q][0] > OBJ_NUM) {
+          if (allGroups.Curves[q][0] >= 0) allGroups.Curves[q][0] -= 1;
+          if (allGroups.Curves[q][1] >= 0) allGroups.Curves[q][1] -= 1;
+        }
+      }
+
+
+      {
+        int[][] startList = (int[][]) subset(allCurves.nodes, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allCurves.nodes, OBJ_NUM + 1);
+
+        allCurves.nodes = (int[][]) concat(startList, endList);
+      }
+
+      {
+        int[][] startList = (int[][]) subset(allCurves.options, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allCurves.options, OBJ_NUM + 1);
+
+        allCurves.options = (int[][]) concat(startList, endList);
+      }
+    }
+  } 
+
+
+  void delete_Groups () {
+    
+    /////////////////////////////
+    //SOLARCHVISION_hold_project();
+    /////////////////////////////    
+    
+    userSelections.convert_Groups_to_Vertices(); // finding vertices so that we could delete the isolated ones later  
+
+    userSelections.Group_ids = sort(userSelections.Group_ids);
+
+    boolean allSolids_updated = false;  
+
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Group_ids[o];
+
+      int startFace = allGroups.Faces[OBJ_NUM][0];
+      int endFace = allGroups.Faces[OBJ_NUM][1];
+
+      {
+
+        if ((0 <= startFace) && (startFace <= endFace)) {
+
+          for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
+            for (int j = 0; j < 2; j++) {
+              allGroups.Faces[i][j] -= 1 + endFace - startFace;
+
+              if (allGroups.Faces[i][j] < 0) allGroups.Faces[i][j] = 0;
+            }
+          }
+        }  
+
+        int[][] startList = (int[][]) subset(allGroups.Faces, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allGroups.Faces, OBJ_NUM + 1);
+
+        allGroups.Faces = (int[][]) concat(startList, endList);
+      }  
+
+      if ((0 <= startFace) && (startFace <= endFace)) {
+        {
+          int[][] startList = (int[][]) subset(allFaces.nodes, 0, startFace);
+          int[][] endList = (int[][]) subset(allFaces.nodes, endFace + 1);
+
+          allFaces.nodes = (int[][]) concat(startList, endList);
+        }
+
+        {
+          int[][] startList = (int[][]) subset(allFaces.options, 0, startFace);
+          int[][] endList = (int[][]) subset(allFaces.options, endFace + 1);
+
+          allFaces.options = (int[][]) concat(startList, endList);
+        }
+      }
+
+
+      int startCurve = allGroups.Curves[OBJ_NUM][0];
+      int endCurve = allGroups.Curves[OBJ_NUM][1];
+
+      {
+
+        if ((0 <= startCurve) && (startCurve <= endCurve)) {
+
+          for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
+            for (int j = 0; j < 2; j++) {
+              allGroups.Curves[i][j] -= 1 + endCurve - startCurve;
+
+              if (allGroups.Curves[i][j] < 0) allGroups.Curves[i][j] = 0;
+            }
+          }
+        }  
+
+        int[][] startList = (int[][]) subset(allGroups.Curves, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allGroups.Curves, OBJ_NUM + 1);
+
+        allGroups.Curves = (int[][]) concat(startList, endList);
+      }  
+
+      if ((0 <= startCurve) && (startCurve <= endCurve)) {
+        {
+          int[][] startList = (int[][]) subset(allCurves.nodes, 0, startCurve);
+          int[][] endList = (int[][]) subset(allCurves.nodes, endCurve + 1);
+
+          allCurves.nodes = (int[][]) concat(startList, endList);
+        }
+
+        {
+          int[][] startList = (int[][]) subset(allCurves.options, 0, startCurve);
+          int[][] endList = (int[][]) subset(allCurves.options, endCurve + 1);
+
+          allCurves.options = (int[][]) concat(startList, endList);
+        }
+      }
+
+
+      int startallModel1Ds = allGroups.Model1Ds[OBJ_NUM][0];
+      int endallModel1Ds = allGroups.Model1Ds[OBJ_NUM][1];
+
+      {
+
+        if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
+
+          for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
+
+            for (int j = 0; j < 2; j++) {
+
+              allGroups.Model1Ds[i][j] -= 1 + endallModel1Ds - startallModel1Ds;
+
+              if (allGroups.Model1Ds[i][j] < 0) allGroups.Model1Ds[i][j] = 0;
+            }
+          }
+        }   
+
+        int[][] startList = (int[][]) subset(allGroups.Model1Ds, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allGroups.Model1Ds, OBJ_NUM + 1);
+
+        allGroups.Model1Ds = (int[][]) concat(startList, endList);
+      }  
+
+      if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
+
+        {
+          float[][] startList = (float[][]) subset(allModel1Ds.XYZSR, 0, startallModel1Ds);
+          float[][] endList = (float[][]) subset(allModel1Ds.XYZSR, endallModel1Ds + 1);
+
+          allModel1Ds.XYZSR = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allModel1Ds.Type, 0, startallModel1Ds);
+          int[] endList = (int[]) subset(allModel1Ds.Type, endallModel1Ds + 1);
+
+          allModel1Ds.Type = (int[]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allModel1Ds.DegreeMin, 0, startallModel1Ds);
+          int[] endList = (int[]) subset(allModel1Ds.DegreeMin, endallModel1Ds + 1);
+
+          allModel1Ds.DegreeMin = (int[]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allModel1Ds.DegreeMax, 0, startallModel1Ds);
+          int[] endList = (int[]) subset(allModel1Ds.DegreeMax, endallModel1Ds + 1);
+
+          allModel1Ds.DegreeMax = (int[]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allModel1Ds.Seed, 0, startallModel1Ds);
+          int[] endList = (int[]) subset(allModel1Ds.Seed, endallModel1Ds + 1);
+
+          allModel1Ds.Seed = (int[]) concat(startList, endList);
+        }
+
+        {
+          float[] startList = (float[]) subset(allModel1Ds.TrunkSize, 0, startallModel1Ds);
+          float[] endList = (float[]) subset(allModel1Ds.TrunkSize, endallModel1Ds + 1);
+
+          allModel1Ds.TrunkSize = (float[]) concat(startList, endList);
+        }
+
+        {
+          float[] startList = (float[]) subset(allModel1Ds.LeafSize, 0, startallModel1Ds);
+          float[] endList = (float[]) subset(allModel1Ds.LeafSize, endallModel1Ds + 1);
+
+          allModel1Ds.LeafSize = (float[]) concat(startList, endList);
+        }
+
+
+        allModel1Ds.num = allModel1Ds.XYZSR.length;
+      }
+
+      int startallModel2Ds = allGroups.Model2Ds[OBJ_NUM][0];
+      int endallModel2Ds = allGroups.Model2Ds[OBJ_NUM][1];
+
+      {
+
+        if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
+
+          for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
+
+            for (int j = 0; j < 2; j++) {
+
+              allGroups.Model2Ds[i][j] -= 1 + endallModel2Ds - startallModel2Ds;
+
+              if (allGroups.Model2Ds[i][j] < 0) allGroups.Model2Ds[i][j] = 0;
+            }
+          }
+        }   
+
+        int[][] startList = (int[][]) subset(allGroups.Model2Ds, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allGroups.Model2Ds, OBJ_NUM + 1);
+
+        allGroups.Model2Ds = (int[][]) concat(startList, endList);
+      }  
+
+      if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
+
+        {
+          float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, startallModel2Ds);
+          float[][] endList = (float[][]) subset(allModel2Ds.XYZS, endallModel2Ds + 1);
+
+          allModel2Ds.XYZS = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allModel2Ds.MAP, 0, startallModel2Ds);
+          int[] endList = (int[]) subset(allModel2Ds.MAP, endallModel2Ds + 1);
+
+          allModel2Ds.MAP = (int[]) concat(startList, endList);
+        }
+
+        allModel2Ds.num = allModel2Ds.XYZS.length;
+      }
+
+      int startSolid = allGroups.Solids[OBJ_NUM][0];
+      int endSolid = allGroups.Solids[OBJ_NUM][1];
+
+      {
+        if ((0 <= startSolid) && (startSolid <= endSolid)) {
+          for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
+
+            for (int j = 0; j < 2; j++) {
+              allGroups.Solids[i][j] -= 1 + endSolid - startSolid;
+
+              if (allGroups.Solids[i][j] < 0) allGroups.Solids[i][j] = 0;
+            }
+          }
+        }  
+
+        int[][] startList = (int[][]) subset(allGroups.Solids, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allGroups.Solids, OBJ_NUM + 1);
+
+        allGroups.Solids = (int[][]) concat(startList, endList);
+      }  
+
+      if ((0 <= startSolid) && (startSolid <= endSolid)) {
+
+        float[][] startList = (float[][]) subset(allSolids.DEF, 0, startSolid);
+        float[][] endList = (float[][]) subset(allSolids.DEF, endSolid + 1);
+
+        allSolids.DEF = (float[][]) concat(startList, endList);
+
+        allSolids_updated = true;
+      }
+
+
+      {
+        float[][] startList = (float[][]) subset(allGroups.PivotMatrix, 0, OBJ_NUM);
+        float[][] endList = (float[][]) subset(allGroups.PivotMatrix, OBJ_NUM + 1);
+
+        allGroups.PivotMatrix = (float[][]) concat(startList, endList);
+      } 
+
+      {
+        int[][] startList = (int[][]) subset(allGroups.PivotType, 0, OBJ_NUM);
+        int[][] endList = (int[][]) subset(allGroups.PivotType, OBJ_NUM + 1);
+
+        allGroups.PivotType = (int[][]) concat(startList, endList);
+      } 
+
+      allGroups.num -= 1;
+    }
+    
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+
+  }
+
 
 }
 
