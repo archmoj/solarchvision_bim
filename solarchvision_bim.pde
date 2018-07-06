@@ -17650,6 +17650,59 @@ class solarchvision_Edit3Ds {
   }
   
 
+  void drop_Model2Ds () {
+
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      float x = allModel2Ds.getX(OBJ_NUM);
+      float y = allModel2Ds.getY(OBJ_NUM);
+      float z = allModel2Ds.getZ(OBJ_NUM);
+
+      float[] ray_start = {
+        x, y, z
+      };
+
+      float[] ray_direction = {
+        0, 0, -1
+      };
+
+      float[] RxP = new float [8];
+
+      if (WIN3D.UI_TaskModifyParameter == 0) { 
+        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+      } else if (WIN3D.UI_TaskModifyParameter == 1) {
+        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+      } else {
+        RxP[0] = -1; // undefined
+      }
+
+      if (RxP[0] >= 0) {
+        allModel2Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel2Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel2Ds.setZ(OBJ_NUM, RxP[3]);
+      } else {
+        ray_direction[2] = 1; // <<<< going upwards
+
+        if (WIN3D.UI_TaskModifyParameter == 0) { 
+          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+        } else if (WIN3D.UI_TaskModifyParameter == 2) {
+          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+        } else {
+          RxP[0] = -1; // undefined
+        }
+
+        if (RxP[0] >= 0) {
+          allModel2Ds.setX(OBJ_NUM, RxP[1]); 
+          allModel2Ds.setY(OBJ_NUM, RxP[2]); 
+          allModel2Ds.setZ(OBJ_NUM, RxP[3]);
+        }
+      }
+    }
+  }
+
+
 
 
 
@@ -18945,15 +18998,7 @@ class solarchvision_Selections {
     this.scaleValue = 0;
   }
     
-    
-    
-  
-  
-  
-  
-  
-  
-  
+
   
   void scale (float x0, float y0, float z0, float sx, float sy, float sz) {
   
@@ -19128,139 +19173,74 @@ class solarchvision_Selections {
   }
   
   
-  void drop () {
-  
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-    }     
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-  
-      for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Model2D_ids[o];
-  
-        float x = allModel2Ds.getX(OBJ_NUM);
-        float y = allModel2Ds.getY(OBJ_NUM);
-        float z = allModel2Ds.getZ(OBJ_NUM);
-  
-        float[] ray_start = {
-          x, y, z
-        };
-  
-        float[] ray_direction = {
-          0, 0, -1
-        };
-  
-        float[] RxP = new float [8];
-  
-        if (WIN3D.UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-        } else if (WIN3D.UI_TaskModifyParameter == 1) {
-          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-        } else {
-          RxP[0] = -1; // undefined
-        }
-  
-        if (RxP[0] >= 0) {
-          allModel2Ds.setX(OBJ_NUM, RxP[1]); 
-          allModel2Ds.setY(OBJ_NUM, RxP[2]); 
-          allModel2Ds.setZ(OBJ_NUM, RxP[3]);
-        } else {
-          ray_direction[2] = 1; // <<<< going upwards
-  
-          if (WIN3D.UI_TaskModifyParameter == 0) { 
-            RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-          } else if (WIN3D.UI_TaskModifyParameter == 2) {
-            RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-          } else {
-            RxP[0] = -1; // undefined
-          }
-  
-          if (RxP[0] >= 0) {
-            allModel2Ds.setX(OBJ_NUM, RxP[1]); 
-            allModel2Ds.setY(OBJ_NUM, RxP[2]); 
-            allModel2Ds.setZ(OBJ_NUM, RxP[3]);
-          }
-        }
+
+  void drop_Model1Ds () {
+
+    for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = this.Model1D_ids[o];
+
+      float x = allModel1Ds.getX(OBJ_NUM);
+      float y = allModel1Ds.getY(OBJ_NUM);
+      float z = allModel1Ds.getZ(OBJ_NUM);
+
+      float[] ray_start = {
+        x, y, z
+      };
+
+      float[] ray_direction = {
+        0, 0, -1
+      };
+
+      float[] RxP = new float [8];
+
+      if (WIN3D.UI_TaskModifyParameter == 0) { 
+        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+      } else if (WIN3D.UI_TaskModifyParameter == 1) {
+        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+      } else {
+        RxP[0] = -1; // undefined
       }
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-  
-        int OBJ_NUM = this.Model1D_ids[o];
-  
-        float x = allModel1Ds.getX(OBJ_NUM);
-        float y = allModel1Ds.getY(OBJ_NUM);
-        float z = allModel1Ds.getZ(OBJ_NUM);
-  
-        float[] ray_start = {
-          x, y, z
-        };
-  
-        float[] ray_direction = {
-          0, 0, -1
-        };
-  
-        float[] RxP = new float [8];
-  
+
+      if (RxP[0] >= 0) {
+        allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel1Ds.setZ(OBJ_NUM, RxP[3]);
+      } else {
+        ray_direction[2] = 1; // <<<< going upwards
+
         if (WIN3D.UI_TaskModifyParameter == 0) { 
           RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-        } else if (WIN3D.UI_TaskModifyParameter == 1) {
+        } else if (WIN3D.UI_TaskModifyParameter == 2) {
           RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
         } else {
           RxP[0] = -1; // undefined
         }
-  
+
         if (RxP[0] >= 0) {
           allModel1Ds.setX(OBJ_NUM, RxP[1]); 
           allModel1Ds.setY(OBJ_NUM, RxP[2]); 
           allModel1Ds.setZ(OBJ_NUM, RxP[3]);
-        } else {
-          ray_direction[2] = 1; // <<<< going upwards
-  
-          if (WIN3D.UI_TaskModifyParameter == 0) { 
-            RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-          } else if (WIN3D.UI_TaskModifyParameter == 2) {
-            RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-          } else {
-            RxP[0] = -1; // undefined
-          }
-  
-          if (RxP[0] >= 0) {
-            allModel1Ds.setX(OBJ_NUM, RxP[1]); 
-            allModel1Ds.setY(OBJ_NUM, RxP[2]); 
-            allModel1Ds.setZ(OBJ_NUM, RxP[3]);
-          }
         }
       }
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
     }
+  }
+    
+
+    
+    
+
+
+  void drop () {
+
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      Edit3Ds.drop_Model2Ds(); 
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      Edit3Ds.drop_Model2Ds(); 
+    }   
+    
   }
   
   
