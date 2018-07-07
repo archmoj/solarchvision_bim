@@ -17606,6 +17606,7 @@ class solarchvision_Delete3Ds {
       Delete3Ds.selected_isolatedVertices();
     }  
 
+    userSelections.deselect_all(); // important to deselect
   }  
   
 
@@ -32788,238 +32789,53 @@ class solarchvision_Modify3Ds {
 
   void selectVertices_fromCurrentSelection () {
    
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.convert_Groups_to_Vertices();
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.convert_Faces_to_Vertices();
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.CURVE) { 
-  
-        userSelections.convert_Curves_to_Vertices();
-      }
+    if (current_ObjectCategory == ObjectCategory.GROUP) { 
 
-      userSelections.Vertex_ids = sort(userSelections.Vertex_ids);
+      userSelections.convert_Groups_to_Vertices();
     }
-  }  
+
+    if (current_ObjectCategory == ObjectCategory.FACE) { 
+
+      userSelections.convert_Faces_to_Vertices();
+    }
+
+    if (current_ObjectCategory == ObjectCategory.CURVE) { 
+
+      userSelections.convert_Curves_to_Vertices();
+    }
+
+    userSelections.Vertex_ids = sort(userSelections.Vertex_ids);
+  }
 
 
 
 
+    
 
   void selectFacesAndGroups_fromCurrentSelection () {
 
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-      }  
-  
+    if (current_ObjectCategory == ObjectCategory.GROUP) { 
+
+      userSelections.Group_ids = sort(userSelections.Group_ids);
+
+      userSelections.convert_Groups_to_Faces();    
+
+      userSelections.Face_ids = sort(userSelections.Face_ids);
     }
+
+    if (current_ObjectCategory == ObjectCategory.FACE) { 
+
+      userSelections.Face_ids = sort(userSelections.Face_ids);
+
+      userSelections.convert_Faces_to_Groups();    
+
+      userSelections.Group_ids = sort(userSelections.Group_ids);
+
+    }  
   }  
 
   
-  
-  
-  void weldSceneVertices_Selection (float max_distance) {
 
-    this.selectVertices_fromCurrentSelection();
-  
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
-
-      int vNo = userSelections.Vertex_ids[o];
-
-      int found = -1;
-      
-      if (found != -1) {
-        for (int i = 0; i < allFaces.nodes.length; i++) { 
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-
-            int q = allFaces.nodes[i][j];
-
-            if (q > vNo) { // it is faster than (q != vNo)
-
-              float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-
-              if (d <= max_distance) { 
-
-                allFaces.nodes[i][j] = vNo;
-
-                found = q;
-              }
-            }
-          }
-        }
-      }
-
-      if (found != -1) {
-        for (int i = 0; i < allCurves.nodes.length; i++) { 
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-
-            int q = allCurves.nodes[i][j];
-
-            if (q > vNo) { // it is faster than (q != vNo)
-
-              float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-
-              if (d <= max_distance) { 
-
-                allCurves.nodes[i][j] = vNo;
-
-                found = q;
-              }
-            }
-          }
-        }
-      }
-
-      if (found != -1) {
-
-        int q = found;
-
-        {
-          float[][] startList = (float[][]) subset(allVertices, 0, q);
-          float[][] endList = (float[][]) subset(allVertices, q + 1);
-
-          allVertices = (float[][]) concat(startList, endList);
-        }
-
-        for (int i = 0; i < allFaces.nodes.length; i++) { 
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            if (allFaces.nodes[i][j] > q) {
-
-              allFaces.nodes[i][j] -= 1;
-            }
-          }
-        }
-        
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] > q) {
-
-              allCurves.nodes[i][j] -= 1;
-            }
-          }
-        }          
-      }
-    }
-  
-    userSelections.deselect_Vertices();
-
-    userSelections.calculate_BoundingBox();
-  }
-
-  
-  
-  
-  void weldObjectsVertices_Selection (float max_distance) {
-
-    this.selectVertices_fromCurrentSelection();
-    
-    userSelections.convert_Vertices_to_Faces();
-    userSelections.convert_Vertices_to_Curves();
-
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {  
-
-      int vNo = userSelections.Vertex_ids[o];
-
-      int found = -1;
-
-      for (int m = o - 1; m >= 0; m--) {
-
-        int q = userSelections.Vertex_ids[m];
-
-        float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-
-        if (d <= max_distance) { 
-
-          for (int i = 0; i < userSelections.Face_ids.length; i++) {
-            int f = userSelections.Face_ids[i];
-
-            for (int j = 0; j < allFaces.nodes[f].length; j++) {
-              if (allFaces.nodes[f][j] == q) {
-
-                allFaces.nodes[f][j] = vNo;
-
-                found = q;
-              }
-            }
-          }
-          
-          for (int i = 0; i < userSelections.Curve_ids.length; i++) {
-            int f = userSelections.Curve_ids[i];
-
-            for (int j = 0; j < allCurves.nodes[f].length; j++) {
-              if (allCurves.nodes[f][j] == q) {
-
-                allCurves.nodes[f][j] = vNo;
-
-                found = q;
-              }
-            }
-          }              
-        }
-      }
-
-      if (found != -1) {
-
-        int q = found;
-
-        {
-          float[][] startList = (float[][]) subset(allVertices, 0, q);
-          float[][] endList = (float[][]) subset(allVertices, q + 1);
-
-          allVertices = (float[][]) concat(startList, endList);
-        }
-
-        for (int i = 0; i < allFaces.nodes.length; i++) { 
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            if (allFaces.nodes[i][j] > q) {
-
-              allFaces.nodes[i][j] -= 1;
-            }
-          }
-        }
-        
-        for (int i = 0; i < allCurves.nodes.length; i++) { 
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] > q) {
-
-              allCurves.nodes[i][j] -= 1;
-            }
-          }
-        }          
-      }
-    }
-
-    userSelections.deselect_Vertices();
-
-    userSelections.calculate_BoundingBox();
-  }
-  
-  
-  
   void repositionVertices_Selection () {
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) { 
@@ -33040,66 +32856,360 @@ class solarchvision_Modify3Ds {
   }
   
   
+  void weldSceneVertices_Selection (float max_distance) {
   
-  void separateVertices_Selection () {
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {    
+      this.selectVertices_fromCurrentSelection();
+    
+      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
   
-    this.selectVertices_fromCurrentSelection();
-
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
-
-      int vNo = userSelections.Vertex_ids[o];
-
-      for (int i = 0; i < allFaces.nodes.length; i++) { 
-        for (int j = 0; j < allFaces.nodes[i].length; j++) {
-
-          if (allFaces.nodes[i][j] == vNo) { 
-
-            allFaces.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+        int vNo = userSelections.Vertex_ids[o];
+  
+        int found = -1;
+        
+        if (found != -1) {
+          for (int i = 0; i < allFaces.nodes.length; i++) { 
+            for (int j = 0; j < allFaces.nodes[i].length; j++) {
+  
+              int q = allFaces.nodes[i][j];
+  
+              if (q > vNo) { // it is faster than (q != vNo)
+  
+                float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+  
+                if (d <= max_distance) { 
+  
+                  allFaces.nodes[i][j] = vNo;
+  
+                  found = q;
+                }
+              }
+            }
           }
+        }
+  
+        if (found != -1) {
+          for (int i = 0; i < allCurves.nodes.length; i++) { 
+            for (int j = 0; j < allCurves.nodes[i].length; j++) {
+  
+              int q = allCurves.nodes[i][j];
+  
+              if (q > vNo) { // it is faster than (q != vNo)
+  
+                float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+  
+                if (d <= max_distance) { 
+  
+                  allCurves.nodes[i][j] = vNo;
+  
+                  found = q;
+                }
+              }
+            }
+          }
+        }
+  
+        if (found != -1) {
+  
+          int q = found;
+  
+          {
+            float[][] startList = (float[][]) subset(allVertices, 0, q);
+            float[][] endList = (float[][]) subset(allVertices, q + 1);
+  
+            allVertices = (float[][]) concat(startList, endList);
+          }
+  
+          for (int i = 0; i < allFaces.nodes.length; i++) { 
+            for (int j = 0; j < allFaces.nodes[i].length; j++) {
+              if (allFaces.nodes[i][j] > q) {
+  
+                allFaces.nodes[i][j] -= 1;
+              }
+            }
+          }
+          
+          for (int i = 0; i < allCurves.nodes.length; i++) {
+            for (int j = 0; j < allCurves.nodes[i].length; j++) {
+              if (allCurves.nodes[i][j] > q) {
+  
+                allCurves.nodes[i][j] -= 1;
+              }
+            }
+          }          
         }
       }
+    
+      userSelections.deselect_Vertices();
+  
+      userSelections.calculate_BoundingBox();
+    }
+  }
+
+  
+  
+  
+  void weldObjectsVertices_Selection (float max_distance) {
+  
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {
+      this.selectVertices_fromCurrentSelection();
       
-      for (int i = 0; i < allCurves.nodes.length; i++) { 
-        for (int j = 0; j < allCurves.nodes[i].length; j++) {
-
-          if (allCurves.nodes[i][j] == vNo) { 
-
-            allCurves.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+      userSelections.convert_Vertices_to_Faces();
+      userSelections.convert_Vertices_to_Curves();
+  
+      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {  
+  
+        int vNo = userSelections.Vertex_ids[o];
+  
+        int found = -1;
+  
+        for (int m = o - 1; m >= 0; m--) {
+  
+          int q = userSelections.Vertex_ids[m];
+  
+          float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+  
+          if (d <= max_distance) { 
+  
+            for (int i = 0; i < userSelections.Face_ids.length; i++) {
+              int f = userSelections.Face_ids[i];
+  
+              for (int j = 0; j < allFaces.nodes[f].length; j++) {
+                if (allFaces.nodes[f][j] == q) {
+  
+                  allFaces.nodes[f][j] = vNo;
+  
+                  found = q;
+                }
+              }
+            }
+            
+            for (int i = 0; i < userSelections.Curve_ids.length; i++) {
+              int f = userSelections.Curve_ids[i];
+  
+              for (int j = 0; j < allCurves.nodes[f].length; j++) {
+                if (allCurves.nodes[f][j] == q) {
+  
+                  allCurves.nodes[f][j] = vNo;
+  
+                  found = q;
+                }
+              }
+            }              
           }
         }
-      }        
+  
+        if (found != -1) {
+  
+          int q = found;
+  
+          {
+            float[][] startList = (float[][]) subset(allVertices, 0, q);
+            float[][] endList = (float[][]) subset(allVertices, q + 1);
+  
+            allVertices = (float[][]) concat(startList, endList);
+          }
+  
+          for (int i = 0; i < allFaces.nodes.length; i++) { 
+            for (int j = 0; j < allFaces.nodes[i].length; j++) {
+              if (allFaces.nodes[i][j] > q) {
+  
+                allFaces.nodes[i][j] -= 1;
+              }
+            }
+          }
+          
+          for (int i = 0; i < allCurves.nodes.length; i++) { 
+            for (int j = 0; j < allCurves.nodes[i].length; j++) {
+              if (allCurves.nodes[i][j] > q) {
+  
+                allCurves.nodes[i][j] -= 1;
+              }
+            }
+          }          
+        }
+      }
+  
+      userSelections.deselect_Vertices();
+  
+      userSelections.calculate_BoundingBox();
     }
+  }
 
 
-    userSelections.deselect_Vertices();
 
-    userSelections.calculate_BoundingBox();
+  void offsetVertices_Selection (int _type, float _amount) {
+
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {
+      this.selectVertices_fromCurrentSelection();
+  
+      float[][] Vertex_offsetValues = new float [userSelections.Vertex_ids.length][3];
+      int[] Vertex_offsetNum = new int [userSelections.Vertex_ids.length];
+  
+      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
+        Vertex_offsetValues[o][0] = 0;
+        Vertex_offsetValues[o][1] = 0;
+        Vertex_offsetValues[o][2] = 0;
+  
+        Vertex_offsetNum[o] = 0;
+      }
+  
+      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
+  
+        int vNo = userSelections.Vertex_ids[o];
+  
+        for (int f = 0; f < allFaces.nodes.length; f++) {
+          for (int j = 0; j < allFaces.nodes[f].length; j++) {
+  
+            if (allFaces.nodes[f][j] == vNo) { 
+  
+              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+  
+              for (int s = 0; s < allFaces.nodes[f].length; s++) {
+  
+                base_Vertices[s][0] = allPoints.getX(allFaces.nodes[f][s]);
+                base_Vertices[s][1] = allPoints.getY(allFaces.nodes[f][s]);
+                base_Vertices[s][2] = allPoints.getZ(allFaces.nodes[f][s]);
+              }
+  
+              for (int s = 0; s < base_Vertices.length; s++) {
+  
+                int s_next = (s + 1) % base_Vertices.length;
+                int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+  
+                PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
+                PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
+                PVector UV = new PVector(0, 0, 0);
+  
+                if (_type == 0) UV = U.cross(V);
+                if (_type == 1) UV = PVector.add(U, V);
+  
+                float[] W = {
+                  UV.x, UV.y, UV.z
+                };
+                W = funcs.vec3_unit(W);
+  
+                Vertex_offsetValues[o][0] += W[0] * _amount;
+                Vertex_offsetValues[o][1] += W[1] * _amount;
+                Vertex_offsetValues[o][2] += W[2] * _amount;
+  
+                Vertex_offsetNum[o] += 1;
+              }
+            }
+          }
+        }
+        
+        for (int f = 0; f < allCurves.nodes.length; f++) {
+          for (int j = 0; j < allCurves.nodes[f].length; j++) {
+  
+            if (allCurves.nodes[f][j] == vNo) { 
+  
+              float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
+  
+              for (int s = 0; s < allCurves.nodes[f].length; s++) {
+  
+                base_Vertices[s][0] = allPoints.getX(allCurves.nodes[f][s]);
+                base_Vertices[s][1] = allPoints.getY(allCurves.nodes[f][s]);
+                base_Vertices[s][2] = allPoints.getZ(allCurves.nodes[f][s]);
+              }
+  
+              for (int s = 0; s < base_Vertices.length; s++) {
+  
+                int s_next = (s + 1) % base_Vertices.length;
+                int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+  
+                PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
+                PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
+                PVector UV = new PVector(0, 0, 0);
+  
+                if (_type == 0) UV = U.cross(V);
+                if (_type == 1) UV = PVector.add(U, V);
+  
+                float[] W = {
+                  UV.x, UV.y, UV.z
+                };
+                W = funcs.vec3_unit(W);
+  
+                Vertex_offsetValues[o][0] += W[0] * _amount;
+                Vertex_offsetValues[o][1] += W[1] * _amount;
+                Vertex_offsetValues[o][2] += W[2] * _amount;
+  
+                Vertex_offsetNum[o] += 1;
+              }
+            }
+          }
+        }        
+  
+  
+        if (Vertex_offsetNum[o] != 0) {
+          Vertex_offsetValues[o][0] /= float(Vertex_offsetNum[o]);
+          Vertex_offsetValues[o][1] /= float(Vertex_offsetNum[o]);
+          Vertex_offsetValues[o][2] /= float(Vertex_offsetNum[o]);
+        }
+      } 
+  
+  
+      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
+  
+        int vNo = userSelections.Vertex_ids[o];
+  
+        allPoints.move(vNo, Vertex_offsetValues[o][0],
+                            Vertex_offsetValues[o][1],
+                            Vertex_offsetValues[o][2]);
+      } 
+  
+      userSelections.calculate_BoundingBox();
+    }
   }
   
+  
+  
+
+  
+  
+  
+  void separateVertices_Selection () {
+    
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {    
+      this.selectVertices_fromCurrentSelection();
+  
+      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
+  
+        int vNo = userSelections.Vertex_ids[o];
+  
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+  
+            if (allFaces.nodes[i][j] == vNo) { 
+  
+              allFaces.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+            }
+          }
+        }
+        
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+  
+            if (allCurves.nodes[i][j] == vNo) { 
+  
+              allCurves.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+            }
+          }
+        }        
+      }
+  
+  
+      userSelections.deselect_Vertices();
+  
+      userSelections.calculate_BoundingBox();
+    }
+  }
   
   
   void insertCornerOpennings_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -33248,24 +33358,7 @@ class solarchvision_Modify3Ds {
   void insertParallelOpennings_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -33446,24 +33539,7 @@ class solarchvision_Modify3Ds {
   void insertRotatedOpennings_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -33622,24 +33698,7 @@ class solarchvision_Modify3Ds {
   void insertEdgeOpennings_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -33794,24 +33853,7 @@ class solarchvision_Modify3Ds {
   void tessellateRowsColumns_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -33988,24 +34030,7 @@ class solarchvision_Modify3Ds {
   void tessellateRectangular_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -34159,24 +34184,7 @@ class solarchvision_Modify3Ds {
   void tessellateTriangular_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -34315,24 +34323,7 @@ class solarchvision_Modify3Ds {
     // but only processed the faces with degrees above 3.
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -34471,24 +34462,7 @@ class solarchvision_Modify3Ds {
   void optimizeFace_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) { 
   
@@ -34544,25 +34518,7 @@ class solarchvision_Modify3Ds {
   void triangulateFace_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = userSelections.Face_ids;
   
@@ -34670,106 +34626,12 @@ class solarchvision_Modify3Ds {
     }
   }
 
-
-
-
-
-  
-  
-  void autoNormalFaces_Selection () {
-  
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
-  
-  
-      if ((current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.GROUP)) {
-  
-  
-        for (int o = 0; o < userSelections.Face_ids.length; o++) {
-    
-          int f = userSelections.Face_ids[o];     
-        
-          int n = allFaces.nodes[f].length;
-    
-          if (n > 2) {
-            int[] tmpFace = new int[n];
-            float[] G = {
-              0, 0, 0
-            }; 
-            for (int j = 0; j < n; j++) {
-              tmpFace[j] = allFaces.nodes[f][j];
-              G[0] += allPoints.getX(tmpFace[j]) / float(n); 
-              G[1] += allPoints.getY(tmpFace[j]) / float(n);
-              G[2] += allPoints.getZ(tmpFace[j]) / float(n);
-            }  
-            
-            PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);                       
-            PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
-    
-            PVector GAxGB = AG.cross(BG);
-  
-            float[] ray_start = {G[0], G[1], G[2]};
-            float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
-  
-            float[] RxP = userSelections.intersect(ray_start, ray_direction);
-  
-            if (RxP[0] >= 0) {
-  
-              for (int j = 0; j < n; j++) {
-                allFaces.nodes[f][j] = tmpFace[n - j - 1];
-              }
-            }
-          }
-        }
-      }
-  
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_BAR_b.update = true;
-  
-      userSelections.calculate_BoundingBox();
-  
-    }
-  }
   
   
   void extrudeFaceEdges_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Faces();    
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.FACE) { 
-  
-        userSelections.Face_ids = sort(userSelections.Face_ids);
-  
-        userSelections.convert_Faces_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = {};
   
@@ -34886,7 +34748,6 @@ class solarchvision_Modify3Ds {
       userSelections.Face_ids = new_selection_Face_ids;
   
       userSelections.calculate_BoundingBox();
-  
     }
   }
   
@@ -34894,24 +34755,7 @@ class solarchvision_Modify3Ds {
   void extrudeCurveEdges_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.CURVE)) { 
-  
-      if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-  
-        userSelections.convert_Groups_to_Curves();    
-  
-        userSelections.Curve_ids = sort(userSelections.Curve_ids);
-      }
-  
-      if (current_ObjectCategory == ObjectCategory.CURVE) { 
-  
-        userSelections.Curve_ids = sort(userSelections.Curve_ids);
-  
-        userSelections.convert_Curves_to_Groups();    
-  
-        userSelections.Group_ids = sort(userSelections.Group_ids);
-      }
+      this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] new_selection_Face_ids = {};
   
@@ -35032,146 +34876,60 @@ class solarchvision_Modify3Ds {
       UI_BAR_b.update = true;
   
       userSelections.calculate_BoundingBox();
-  
     }
   }
   
+
+
+  void autoNormalFaces_Selection () {
   
-  void offsetVertices_Selection (int _type, float _amount) {
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+      this.selectFacesAndGroups_fromCurrentSelection();
+
+      for (int o = 0; o < userSelections.Face_ids.length; o++) {
   
-    this.selectVertices_fromCurrentSelection();
-
-    float[][] Vertex_offsetValues = new float [userSelections.Vertex_ids.length][3];
-    int[] Vertex_offsetNum = new int [userSelections.Vertex_ids.length];
-
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
-      Vertex_offsetValues[o][0] = 0;
-      Vertex_offsetValues[o][1] = 0;
-      Vertex_offsetValues[o][2] = 0;
-
-      Vertex_offsetNum[o] = 0;
-    }
-
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
-
-      int vNo = userSelections.Vertex_ids[o];
-
-      for (int f = 0; f < allFaces.nodes.length; f++) {
-        for (int j = 0; j < allFaces.nodes[f].length; j++) {
-
-          if (allFaces.nodes[f][j] == vNo) { 
-
-            float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-
-            for (int s = 0; s < allFaces.nodes[f].length; s++) {
-
-              base_Vertices[s][0] = allPoints.getX(allFaces.nodes[f][s]);
-              base_Vertices[s][1] = allPoints.getY(allFaces.nodes[f][s]);
-              base_Vertices[s][2] = allPoints.getZ(allFaces.nodes[f][s]);
-            }
-
-            for (int s = 0; s < base_Vertices.length; s++) {
-
-              int s_next = (s + 1) % base_Vertices.length;
-              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
-
-              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
-              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
-              PVector UV = new PVector(0, 0, 0);
-
-              if (_type == 0) UV = U.cross(V);
-              if (_type == 1) UV = PVector.add(U, V);
-
-              float[] W = {
-                UV.x, UV.y, UV.z
-              };
-              W = funcs.vec3_unit(W);
-
-              Vertex_offsetValues[o][0] += W[0] * _amount;
-              Vertex_offsetValues[o][1] += W[1] * _amount;
-              Vertex_offsetValues[o][2] += W[2] * _amount;
-
-              Vertex_offsetNum[o] += 1;
-            }
-          }
-        }
-      }
+        int f = userSelections.Face_ids[o];     
       
-      for (int f = 0; f < allCurves.nodes.length; f++) {
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        int n = allFaces.nodes[f].length;
+  
+        if (n > 2) {
+          int[] tmpFace = new int[n];
+          float[] G = {
+            0, 0, 0
+          }; 
+          for (int j = 0; j < n; j++) {
+            tmpFace[j] = allFaces.nodes[f][j];
+            G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+            G[1] += allPoints.getY(tmpFace[j]) / float(n);
+            G[2] += allPoints.getZ(tmpFace[j]) / float(n);
+          }  
+          
+          PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);                       
+          PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
+  
+          PVector GAxGB = AG.cross(BG);
 
-          if (allCurves.nodes[f][j] == vNo) { 
+          float[] ray_start = {G[0], G[1], G[2]};
+          float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
 
-            float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
+          float[] RxP = userSelections.intersect(ray_start, ray_direction);
 
-            for (int s = 0; s < allCurves.nodes[f].length; s++) {
+          if (RxP[0] >= 0) {
 
-              base_Vertices[s][0] = allPoints.getX(allCurves.nodes[f][s]);
-              base_Vertices[s][1] = allPoints.getY(allCurves.nodes[f][s]);
-              base_Vertices[s][2] = allPoints.getZ(allCurves.nodes[f][s]);
-            }
-
-            for (int s = 0; s < base_Vertices.length; s++) {
-
-              int s_next = (s + 1) % base_Vertices.length;
-              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
-
-              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
-              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
-              PVector UV = new PVector(0, 0, 0);
-
-              if (_type == 0) UV = U.cross(V);
-              if (_type == 1) UV = PVector.add(U, V);
-
-              float[] W = {
-                UV.x, UV.y, UV.z
-              };
-              W = funcs.vec3_unit(W);
-
-              Vertex_offsetValues[o][0] += W[0] * _amount;
-              Vertex_offsetValues[o][1] += W[1] * _amount;
-              Vertex_offsetValues[o][2] += W[2] * _amount;
-
-              Vertex_offsetNum[o] += 1;
+            for (int j = 0; j < n; j++) {
+              allFaces.nodes[f][j] = tmpFace[n - j - 1];
             }
           }
         }
-      }        
-
-
-      if (Vertex_offsetNum[o] != 0) {
-        Vertex_offsetValues[o][0] /= float(Vertex_offsetNum[o]);
-        Vertex_offsetValues[o][1] /= float(Vertex_offsetNum[o]);
-        Vertex_offsetValues[o][2] /= float(Vertex_offsetNum[o]);
       }
-    } 
 
-
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
-
-      int vNo = userSelections.Vertex_ids[o];
-
-      allPoints.move(vNo, Vertex_offsetValues[o][0],
-                          Vertex_offsetValues[o][1],
-                          Vertex_offsetValues[o][2]);
-    } 
-
-    userSelections.calculate_BoundingBox();
+      current_ObjectCategory = ObjectCategory.FACE; 
+      UI_BAR_b.update = true;
+  
+      userSelections.calculate_BoundingBox();
+    }
   }
-  
-  
-  
-  
-  
-
-
-
-  
-
-  
-  
-
-  
+ 
   
   
 }  
