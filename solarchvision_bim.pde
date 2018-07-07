@@ -12134,8 +12134,7 @@ class solarchvision_Groups {
   
     if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
   
-      println("deleteIsolatedVerticesSelection");
-      Modify3Ds.deleteIsolatedVertices_Selection();
+      Delete3Ds.selected_isolatedVertices();
     }  
 
     if (allCameras.num == 0) {
@@ -17476,6 +17475,146 @@ class solarchvision_Delete3Ds {
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
   }
+  
+  
+  
+  
+  
+  void selected_isolatedVertices () { 
+  
+    userSelections.Vertex_ids = sort(userSelections.Vertex_ids);
+  
+    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
+  
+      int vNo = userSelections.Vertex_ids[o];
+  
+      int found = -1;
+      
+      if (found == -1) {
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] == vNo) {
+  
+              found = 1;
+            }
+  
+            if (found != -1) break;
+          }
+  
+          if (found != -1) break;
+        }  
+      }
+      
+      if (found == -1) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] == vNo) {
+  
+              found = 1;
+            }
+  
+            if (found != -1) break;
+          }
+  
+          if (found != -1) break;
+        }        
+      }
+      
+  
+      if (found == -1) {
+  
+        for (int i = 0; i < allFaces.nodes.length; i++) {
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] > vNo) {
+  
+              allFaces.nodes[i][j] -= 1;
+            }
+          }
+        }             
+  
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] > vNo) {
+  
+              allCurves.nodes[i][j] -= 1;
+            }
+          }
+        }  
+  
+        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+  
+        allVertices = (float[][]) concat(startList, endList);
+      }
+    }
+  
+    userSelections.Vertex_ids = new int [0];
+  }
+  
+  
+  void scene_isolatedVertices () {
+  
+    for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
+  
+      int found = -1;
+  
+      if (found == -1) {
+        for (int i = 0; i < allFaces.nodes.length; i++) {
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] == vNo) {
+              found = 1;
+            }
+          }
+        }
+      }
+  
+      if (found == -1) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] == vNo) {
+              found = 1;
+            }
+          }
+        }
+      }
+  
+      if (found == -1) {
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+          float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+  
+          allVertices = (float[][]) concat(startList, endList);
+        }
+  
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] > vNo) {
+  
+              allFaces.nodes[i][j] -= 1;
+            }
+          }
+        }
+        
+        for (int i = 0; i < allCurves.nodes.length; i++) {
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] > vNo) {
+  
+              allCurves.nodes[i][j] -= 1;
+            }
+          }
+        }      
+      }
+  
+  
+    } 
+  
+    userSelections.Vertex_ids = new int [0];
+  }
+    
+  
+  
+  
+  
 
 }
 
@@ -21322,7 +21461,7 @@ class solarchvision_Selections {
   }
 
 
-  void selectIsolatedVertices_Scene () {
+  void selectscene_isolatedVertices () {
   
     this.Vertex_ids = new int [0];
   
@@ -32658,137 +32797,7 @@ class solarchvision_Modify3Ds {
   private final static String CLASS_STAMP = "Modify3Ds";
 
   
-  void deleteIsolatedVertices_Selection () { 
-  
-    userSelections.Vertex_ids = sort(userSelections.Vertex_ids);
-  
-    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
-  
-      int vNo = userSelections.Vertex_ids[o];
-  
-      int found = -1;
-      
-      if (found == -1) {
-        for (int i = 0; i < allFaces.nodes.length; i++) { 
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            if (allFaces.nodes[i][j] == vNo) {
-  
-              found = 1;
-            }
-  
-            if (found != -1) break;
-          }
-  
-          if (found != -1) break;
-        }  
-      }
-      
-      if (found == -1) {
-        for (int i = 0; i < allCurves.nodes.length; i++) { 
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] == vNo) {
-  
-              found = 1;
-            }
-  
-            if (found != -1) break;
-          }
-  
-          if (found != -1) break;
-        }        
-      }
-      
-  
-      if (found == -1) {
-  
-        for (int i = 0; i < allFaces.nodes.length; i++) {
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            if (allFaces.nodes[i][j] > vNo) {
-  
-              allFaces.nodes[i][j] -= 1;
-            }
-          }
-        }             
-  
-        for (int i = 0; i < allCurves.nodes.length; i++) { 
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] > vNo) {
-  
-              allCurves.nodes[i][j] -= 1;
-            }
-          }
-        }  
-  
-        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
-        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
-  
-        allVertices = (float[][]) concat(startList, endList);
-      }
-    }
-  
-    userSelections.Vertex_ids = new int [0];
-  }
-  
-  
-  void deleteIsolatedVertices_Scene () {
-  
-    for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
-  
-      int found = -1;
-  
-      if (found == -1) {
-        for (int i = 0; i < allFaces.nodes.length; i++) {
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            if (allFaces.nodes[i][j] == vNo) {
-              found = 1;
-            }
-          }
-        }
-      }
-  
-      if (found == -1) {
-        for (int i = 0; i < allCurves.nodes.length; i++) { 
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] == vNo) {
-              found = 1;
-            }
-          }
-        }
-      }
-  
-      if (found == -1) {
-        {
-          float[][] startList = (float[][]) subset(allVertices, 0, vNo);
-          float[][] endList = (float[][]) subset(allVertices, vNo + 1);
-  
-          allVertices = (float[][]) concat(startList, endList);
-        }
-  
-        for (int i = 0; i < allFaces.nodes.length; i++) { 
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            if (allFaces.nodes[i][j] > vNo) {
-  
-              allFaces.nodes[i][j] -= 1;
-            }
-          }
-        }
-        
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] > vNo) {
-  
-              allCurves.nodes[i][j] -= 1;
-            }
-          }
-        }      
-      }
-  
-  
-    } 
-  
-    userSelections.Vertex_ids = new int [0];
-  }
-  
+
   
 
   
@@ -43504,15 +43513,15 @@ void mouseClicked () {
               WIN3D.update = true;
             }          
             if (menu_option.equals("Select All Isolated Vertices")) {
-              userSelections.selectIsolatedVertices_Scene();
+              userSelections.selectscene_isolatedVertices();
               WIN3D.update = true;
             }             
             if (menu_option.equals("Delete All Isolated Vertices")) {
-              Modify3Ds.deleteIsolatedVertices_Scene();
+              Delete3Ds.scene_isolatedVertices();
               WIN3D.update = true;
             }   
             if (menu_option.equals("Delete Isolated Selected Vertices")) {
-              Modify3Ds.deleteIsolatedVertices_Selection();
+              Delete3Ds.selected_isolatedVertices();
               WIN3D.update = true;
             }              
             if (menu_option.equals("Delete All Empty Groups")) {
@@ -55113,7 +55122,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("group3ds")) {allGroups.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("object2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("vertices")) {Modify3Ds.deleteIsolatedVertices_Selection(); WIN3D.update = true;}
+        else if (low_case.equals("vertices")) {Delete3Ds.selected_isolatedVertices(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allFaces.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allCurves.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("solids")) {allSolids.delete_all(); WIN3D.update = true;}
