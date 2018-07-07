@@ -11171,18 +11171,19 @@ class solarchvision_Faces {
     for (int i = 0; i < this.nodes.length; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String nodes_list = "";
-      String options_list = "";
+      String lineSTR = "";
       for (int j = 0; j < this.nodes[i].length; j++) {
-        nodes_list += nf(this.nodes[i][j], 0);
-        options_list += nf(this.options[i][j], 0);
-        if (j < this.nodes[i].length - 1) {
-          nodes_list += ",";
-          options_list += ",";
-        }
+        lineSTR += nf(this.nodes[i][j], 0);
+        if (j < this.nodes[i].length - 1) lineSTR += ",";
       }
-      child.setContent(nodes_list);
-      child.setString("options", options_list);
+      child.setContent(lineSTR);
+      
+      child.setInt("material", getMaterial(i));
+      child.setInt("tessellation", getTessellation(i));
+      child.setInt("layer", getLayer(i));
+      child.setInt("visibility", getVisibility(i));
+      child.setInt("weight", getWeight(i));
+      child.setInt("close", getClose(i));
     }
     
     parent.setString("displayAll", Boolean.toString(this.displayAll));
@@ -11199,11 +11200,6 @@ class solarchvision_Faces {
   }
 
 
-  
-    
-
-    
-  
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
@@ -11213,6 +11209,7 @@ class solarchvision_Faces {
     
     XML[] children = parent.getChildren("item");
     
+    this.options = new int [ni][6];
     this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
       String lineSTR = children[i].getContent();
@@ -11223,20 +11220,14 @@ class solarchvision_Faces {
         newItem[0][j] = int(parts[j]);
       }
       this.nodes = (int[][]) concat(this.nodes, newItem);
+
+      setMaterial(i, children[i].getInt("material"));
+      setTessellation(i, children[i].getInt("tessellation"));
+      setLayer(i, children[i].getInt("layer"));
+      setVisibility(i, children[i].getInt("visibility"));
+      setWeight(i, children[i].getInt("weight"));
+      setClose(i, children[i].getInt("close"));
     }
-    
-    this.options = new int [0][0];
-    for (int i = 0; i < ni; i++) {
-      String lineSTR = children[i].getString("options");
-      String[] parts = split(lineSTR, ',');
-      int nj = parts.length;
-      int[][] newItem = new int [1][nj];
-      for (int j = 0; j < nj; j++) {
-        newItem[0][j] = int(parts[j]);
-      }
-      this.options = (int[][]) concat(this.options, newItem);
-    }    
-    
 
     this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
     this.displayNormals = Boolean.parseBoolean(parent.getString("displayNormals"));
@@ -11570,78 +11561,61 @@ class solarchvision_Curves {
     
     println("Saving:" + this.CLASS_STAMP);
     
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP);
-      
-      parent.setInt("ni", this.nodes.length);
-      for (int i = 0; i < this.nodes.length; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < this.nodes[i].length; j++) {
-          lineSTR += nf(this.nodes[i][j], 0);
-          if (j < this.nodes[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    parent.setInt("ni", this.nodes.length);
+    for (int i = 0; i < this.nodes.length; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
+      String lineSTR = "";
+      for (int j = 0; j < this.nodes[i].length; j++) {
+        lineSTR += nf(this.nodes[i][j], 0);
+        if (j < this.nodes[i].length - 1) lineSTR += ",";
       }
-    }
-
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".options");
-      parent.setInt("ni", this.options.length);
-      for (int i = 0; i < this.options.length; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < this.options[i].length; j++) {
-          lineSTR += nf(this.options[i][j], 0);
-          if (j < this.options[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
+      child.setContent(lineSTR);
       
-      parent.setString("displayAll", Boolean.toString(this.displayAll));
+      child.setInt("material", getMaterial(i));
+      child.setInt("tessellation", getTessellation(i));
+      child.setInt("layer", getLayer(i));
+      child.setInt("visibility", getVisibility(i));
+      child.setInt("weight", getWeight(i));
+      child.setInt("close", getClose(i));
     }
-
+    
+    parent.setString("displayAll", Boolean.toString(this.displayAll));
   }
-  
-  
+
+
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
+
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    int ni = parent.getInt("ni");
     
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP);
-      int ni = parent.getInt("ni");
-      this.nodes = new int [0][0];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        int nj = parts.length;
-        int[][] newFace = new int [1][nj];
-        for (int j = 0; j < nj; j++) {
-          newFace[0][j] = int(parts[j]);
-        }
-        this.nodes = (int[][]) concat(this.nodes, newFace);
-      }
-    }
+    XML[] children = parent.getChildren("item");
     
-    { 
-      XML parent = xml.getChild(this.CLASS_STAMP + ".options");
-      int ni = parent.getInt("ni");
-      this.options = new int [ni][6];
-      XML[] children = parent.getChildren("item"); 
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.options[i][j] = int(parts[j]);
-        }
+    this.options = new int [ni][6];
+    this.nodes = new int [0][0];
+    for (int i = 0; i < ni; i++) {
+      String lineSTR = children[i].getContent();
+      String[] parts = split(lineSTR, ',');
+      int nj = parts.length;
+      int[][] newItem = new int [1][nj];
+      for (int j = 0; j < nj; j++) {
+        newItem[0][j] = int(parts[j]);
       }
-      
-      this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
+      this.nodes = (int[][]) concat(this.nodes, newItem);
+
+      setMaterial(i, children[i].getInt("material"));
+      setTessellation(i, children[i].getInt("tessellation"));
+      setLayer(i, children[i].getInt("layer"));
+      setVisibility(i, children[i].getInt("visibility"));
+      setWeight(i, children[i].getInt("weight"));
+      setClose(i, children[i].getInt("close"));
     }
+
+    this.displayAll = Boolean.parseBoolean(parent.getString("displayAll"));
   }    
   
 }
