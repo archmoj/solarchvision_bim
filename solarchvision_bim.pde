@@ -1,7 +1,4 @@
-
-
-// design "drawSetPosition" 
-
+// move should keep the same distance of bounding box - now only moves the center
 
 // please define station elevation data for CWEEDS points!
 
@@ -1768,9 +1765,7 @@ class solarchvision_UITASK {
   private final static int PowerX = 20; 
   private final static int PowerY = 21; 
   private final static int PowerZ = 22; 
-  private final static int PowerAll = 23;
-
-  private final static int SetPosition = 24;   
+  private final static int PowerAll = 23;  
   
 }
 
@@ -16033,13 +16028,14 @@ class solarchvision_Move3Ds {
   private final static String CLASS_STAMP = "Move3Ds";
 
   void selection (float dx, float dy, float dz) {
-    
+    /*
     float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
     float[] B = userSelections.translateInside_ReferencePivot(dx, dy, dz);
-  
+    
     dx = B[0] - A[0];
     dy = B[1] - A[1];
     dz = B[2] - A[2];
+    */
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
       this.softSelection(dx, dy, dz);
@@ -42618,27 +42614,6 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }               
 
-            if (menu_option.equals("Set Position X")) {
-              UI_set_to_Modify_SetPosition(0);
-              UI_BAR_b.hghlight("pX=");
-              UI_BAR_b.update = true;
-            }
-            if (menu_option.equals("Set Position Y")) {
-              UI_set_to_Modify_SetPosition(1);
-              UI_BAR_b.hghlight("pY=");
-              UI_BAR_b.update = true;
-            }              
-            if (menu_option.equals("Set Position Z")) {
-              UI_set_to_Modify_SetPosition(2);
-              UI_BAR_b.hghlight("pZ=");
-              UI_BAR_b.update = true;
-            }             
-            if (menu_option.equals("Set Position XYZ")) {
-              UI_set_to_Modify_SetPosition(3);
-              UI_BAR_b.hghlight("pXYZ=");
-              UI_BAR_b.update = true;
-            }
-
 
             if (menu_option.equals("MoveX")) {
               UI_set_to_Modify_Move(0);
@@ -44207,13 +44182,21 @@ void mouseClicked () {
                     float x2 = RxP[1];
                     float y2 = RxP[2];
                     float z2 = RxP[3];
-  
+                    
+                    float dx, dy, dz;
+                    
+                    /*    
                     float[] p = userSelections.translateOutside_ReferencePivot(x2, y2, z2);
-  
-                    float dx = p[0] - x1; 
-                    float dy = p[1] - y1;
-                    float dz = p[2] - z1;
-  
+                    dx = p[0] - x1; 
+                    dy = p[1] - y1;
+                    dz = p[2] - z1;
+                    */
+                    dx = x2 - x1;
+                    dy = y2 - y1;
+                    dz = z2 - z1;
+                    
+                    
+
                     int the_Vector = userSelections.posVector;
   
                     if (the_Vector == 0) {
@@ -44228,7 +44211,7 @@ void mouseClicked () {
                       dx = 0; 
                       dy = 0;
                     } 
-  
+
                     Move3Ds.selection(dx, dy, dz);
   
                     userSelections.calculate_BoundingBox();
@@ -48354,15 +48337,6 @@ void UI_set_to_Create_Cushion () {
 
 
 
-void UI_set_to_Modify_SetPosition (int n) {
-  WIN3D.UI_CurrentTask = UITASK.SetPosition;
-
-  userSelections.posVector = n;
-
-  ROLLOUT.update = true;
-}
-
-
 void UI_set_to_Modify_Move (int n) {
   WIN3D.UI_CurrentTask = UITASK.Move;
 
@@ -51334,10 +51308,6 @@ class solarchvision_UI_BAR_a {
     ,
     {
       "Alter", 
-      "Set Position XYZ", 
-      "Set Position X", 
-      "Set Position Y", 
-      "Set Position Z", 
       "Move", 
       "MoveX", 
       "MoveY", 
@@ -52075,11 +52045,7 @@ class solarchvision_UI_BAR_b {
     , 
     //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
     {
-      "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "Get Length", "1.0"
-    }
-    ,
-    {
-      "3", "pX=", "pY=", "pZ=", "pXYZ=", "Set Position", "1.0"
+      "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "GetLength", "1.0"
     }
     , 
     {
@@ -52348,8 +52314,7 @@ class solarchvision_UI_BAR_b {
           if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);        
           if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
           if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
-          if (Bar_Switch.equals("Set Position")) UI_set_to_Modify_SetPosition(j - 1);
-          if (Bar_Switch.equals("Get Length")) UI_set_to_Modify_GetLength(j - 1);
+          if (Bar_Switch.equals("GetLength")) UI_set_to_Modify_GetLength(j - 1);
           if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
   
           if (Bar_Switch.equals("ProjectionType")) UI_set_to_View_ProjectionType(j - 1);
@@ -52410,12 +52375,9 @@ class solarchvision_UI_BAR_b {
           if (Bar_Switch.equals("Drop")) {
             UI_BAR_b.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("Get Length")) {
+          if (Bar_Switch.equals("GetLength")) {
             UI_BAR_b.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Set Position")) {
-            UI_BAR_b.drawSetPosition(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
+          }        
           if (Bar_Switch.equals("Move")) {
             UI_BAR_b.drawMove(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
@@ -52798,11 +52760,6 @@ class solarchvision_UI_BAR_b {
     this.displayText = false;
   }
   
-
-  void drawSetPosition (int _type, float x, float y, float r) {
-    drawMove(_type, x, y, r);
-  }
-
   
   void drawMove (int _type, float x, float y, float r) {
   
