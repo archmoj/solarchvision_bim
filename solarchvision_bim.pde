@@ -1,3 +1,8 @@
+
+
+// design "drawSetPosition" 
+
+
 // please define station elevation data for CWEEDS points!
 
 // after calling .reduceDegreePolygon is not complete
@@ -1763,7 +1768,9 @@ class solarchvision_UITASK {
   private final static int PowerX = 20; 
   private final static int PowerY = 21; 
   private final static int PowerZ = 22; 
-  private final static int PowerAll = 23;  
+  private final static int PowerAll = 23;
+
+  private final static int SetPosition = 24;   
   
 }
 
@@ -42611,6 +42618,27 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }               
 
+            if (menu_option.equals("Set Position X")) {
+              UI_set_to_Modify_SetPosition(0);
+              UI_BAR_b.hghlight("pX=");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Set Position Y")) {
+              UI_set_to_Modify_SetPosition(1);
+              UI_BAR_b.hghlight("pY=");
+              UI_BAR_b.update = true;
+            }              
+            if (menu_option.equals("Set Position Z")) {
+              UI_set_to_Modify_SetPosition(2);
+              UI_BAR_b.hghlight("pZ=");
+              UI_BAR_b.update = true;
+            }             
+            if (menu_option.equals("Set Position XYZ")) {
+              UI_set_to_Modify_SetPosition(3);
+              UI_BAR_b.hghlight("pXYZ=");
+              UI_BAR_b.update = true;
+            }
+
 
             if (menu_option.equals("MoveX")) {
               UI_set_to_Modify_Move(0);
@@ -48326,6 +48354,15 @@ void UI_set_to_Create_Cushion () {
 
 
 
+void UI_set_to_Modify_SetPosition (int n) {
+  WIN3D.UI_CurrentTask = UITASK.SetPosition;
+
+  userSelections.posVector = n;
+
+  ROLLOUT.update = true;
+}
+
+
 void UI_set_to_Modify_Move (int n) {
   WIN3D.UI_CurrentTask = UITASK.Move;
 
@@ -51297,6 +51334,10 @@ class solarchvision_UI_BAR_a {
     ,
     {
       "Alter", 
+      "Set Position XYZ", 
+      "Set Position X", 
+      "Set Position Y", 
+      "Set Position Z", 
       "Move", 
       "MoveX", 
       "MoveY", 
@@ -52034,7 +52075,11 @@ class solarchvision_UI_BAR_b {
     , 
     //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
     {
-      "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "GetLength", "1.0"
+      "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "Get Length", "1.0"
+    }
+    ,
+    {
+      "3", "pX=", "pY=", "pZ=", "pXYZ=", "Set Position", "1.0"
     }
     , 
     {
@@ -52303,7 +52348,8 @@ class solarchvision_UI_BAR_b {
           if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);        
           if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
           if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
-          if (Bar_Switch.equals("GetLength")) UI_set_to_Modify_GetLength(j - 1);
+          if (Bar_Switch.equals("Set Position")) UI_set_to_Modify_SetPosition(j - 1);
+          if (Bar_Switch.equals("Get Length")) UI_set_to_Modify_GetLength(j - 1);
           if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
   
           if (Bar_Switch.equals("ProjectionType")) UI_set_to_View_ProjectionType(j - 1);
@@ -52364,9 +52410,12 @@ class solarchvision_UI_BAR_b {
           if (Bar_Switch.equals("Drop")) {
             UI_BAR_b.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("GetLength")) {
+          if (Bar_Switch.equals("Get Length")) {
             UI_BAR_b.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }        
+          }
+          if (Bar_Switch.equals("Set Position")) {
+            UI_BAR_b.drawSetPosition(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
+          }
           if (Bar_Switch.equals("Move")) {
             UI_BAR_b.drawMove(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
@@ -52749,6 +52798,11 @@ class solarchvision_UI_BAR_b {
     this.displayText = false;
   }
   
+
+  void drawSetPosition (int _type, float x, float y, float r) {
+    drawMove(_type, x, y, r);
+  }
+
   
   void drawMove (int _type, float x, float y, float r) {
   
