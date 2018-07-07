@@ -12096,7 +12096,7 @@ class solarchvision_Groups {
     
     println("Loading:" + this.CLASS_STAMP);
 
-    XML parent = xml.getChild(this.CLASS_STAMP + ".PivotMatrix");
+    XML parent = xml.getChild(this.CLASS_STAMP);
   
     int ni = parent.getInt("ni");
 
@@ -12111,11 +12111,6 @@ class solarchvision_Groups {
 
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
-      String txt = children[i].getContent();
-      String[] parts = split(txt, ',');
-      for (int j = 0; j < 9; j++) {
-        this.PivotMatrix[i][j] = float(parts[j]);
-      }
       
       this.Faces[i][0] = int(split(children[i].getString("Faces"), ',')[0]);
       this.Faces[i][1] = int(split(children[i].getString("Faces"), ',')[1]);
@@ -12130,10 +12125,14 @@ class solarchvision_Groups {
       this.Model1Ds[i][1] = int(split(children[i].getString("Model1Ds"), ',')[1]);
 
       this.Model2Ds[i][0] = int(split(children[i].getString("Model2Ds"), ',')[0]);
-      this.Model2Ds[i][1] = int(split(children[i].getString("Model2Ds"), ',')[1]);
+      this.Model2Ds[i][1] = int(split(children[i].getString("Model2Ds"), ',')[1]);      
       
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
+      for (int j = 0; j < 9; j++) {
+        this.PivotMatrix[i][j] = float(parts[j]);
+      }
     }
-
   }  
   
 }
