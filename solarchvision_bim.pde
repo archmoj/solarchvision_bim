@@ -3529,7 +3529,7 @@ class solarchvision_WIN3D {
         switch(key) {
   
         case DELETE: 
-          Delete3Ds.selected_all();
+          Delete3Ds.selection();
   
           this.update = true;
           ROLLOUT.update = true; 
@@ -12003,7 +12003,7 @@ class solarchvision_Groups {
       addToLastGroup = pre_addToLastGroup;
   
   
-      Delete3Ds.selected_all();
+      Delete3Ds.selection();
   
   
       userSelections.Group_ids = new int [1];
@@ -12046,7 +12046,7 @@ class solarchvision_Groups {
         this.Solids[OBJ_NUM][1] = -1;
       }
   
-      Delete3Ds.selected_all();
+      Delete3Ds.selection();
     }
   }
   
@@ -12088,7 +12088,7 @@ class solarchvision_Groups {
         }
       }
   
-      Delete3Ds.selected_all();
+      Delete3Ds.selection();
     }
   
     current_ObjectCategory = pre_current_ObjectCategory;
@@ -16175,7 +16175,59 @@ class solarchvision_Edit3Ds {
 
 
 
-  void duplicate_Model1Ds (boolean produce_same_variation) {
+
+
+}
+
+solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
+  
+
+
+class solarchvision_Clone3Ds {
+  
+  private final static String CLASS_STAMP = "Clone3Ds";
+
+  void selection (boolean produce_same_variation) {
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1Ds(produce_same_variation);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2Ds(produce_same_variation);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Faces(produce_same_variation);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      this.Curves(produce_same_variation);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(produce_same_variation);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Sections(produce_same_variation);
+    }    
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Cameras(produce_same_variation);
+    }    
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP)  {
+      this.Groups(produce_same_variation);
+    }    
+  }
+
+
+
+  void Model1Ds (boolean produce_same_variation) {
 
     int number_of_allModel1Ds_before = allModel1Ds.num; 
 
@@ -16213,7 +16265,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void duplicate_Model2Ds (boolean produce_same_variation) {
+  void Model2Ds (boolean produce_same_variation) {
 
     int n1 = allModel2Ds.num_files_PEOPLE;
 
@@ -16251,7 +16303,7 @@ class solarchvision_Edit3Ds {
   }
   
 
-  void duplicate_Faces (boolean produce_same_variation) {
+  void Faces (boolean produce_same_variation) {
 
     int number_of_Faces_before = allFaces.nodes.length;
 
@@ -16331,7 +16383,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void duplicate_Curves (boolean produce_same_variation) {
+  void Curves (boolean produce_same_variation) {
 
     int number_of_Curves_before = allCurves.nodes.length;
 
@@ -16413,7 +16465,7 @@ class solarchvision_Edit3Ds {
   }
   
 
-  void duplicate_Solids (boolean produce_same_variation) {
+  void Solids (boolean produce_same_variation) {
 
     int number_of_Solid_before = allSolids.DEF.length; 
 
@@ -16450,7 +16502,7 @@ class solarchvision_Edit3Ds {
     }
   }
   
-  void duplicate_Sections (boolean produce_same_variation) {
+  void Sections (boolean produce_same_variation) {
 
     int number_of_Section_before = allSections.num; 
 
@@ -16485,7 +16537,7 @@ class solarchvision_Edit3Ds {
   }  
   
   
-  void duplicate_Cameras (boolean produce_same_variation) {
+  void Cameras (boolean produce_same_variation) {
 
     int number_of_Camera_before = allCameras.num; 
 
@@ -16520,7 +16572,7 @@ class solarchvision_Edit3Ds {
   }  
   
 
-  void duplicate_Groups (boolean produce_same_variation) {
+  void Groups (boolean produce_same_variation) {
 
     int n1 = allModel2Ds.num_files_PEOPLE;
 
@@ -16851,17 +16903,66 @@ class solarchvision_Edit3Ds {
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
   }
 
-
 }
 
-solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
+solarchvision_Clone3Ds Clone3Ds = new solarchvision_Clone3Ds();     
   
+
+
+
+
+
 
 
 
 class solarchvision_Delete3Ds {
   
   private final static String CLASS_STAMP = "Delete3Ds";
+
+  void selection () {
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      Delete3Ds.selected_Cameras();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      Delete3Ds.selected_Sections();
+    }
+
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      Delete3Ds.selected_Model1Ds();
+    }
+
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      Delete3Ds.selected_Model2Ds();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      Delete3Ds.selected_Solids();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      Delete3Ds.selected_Faces();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      Delete3Ds.selected_Curves();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      Delete3Ds.selected_Groups();
+    }
+  
+    if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
+  
+      Delete3Ds.selected_isolatedVertices();
+    }  
+
+    userSelections.deselect_all(); // important to deselect
+  }  
 
   void selected_Cameras () {
 
@@ -17561,54 +17662,6 @@ class solarchvision_Delete3Ds {
   
     userSelections.deselect_Vertices();
   }
-    
-  
-  
-  void selected_all () {
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Delete3Ds.selected_Cameras();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Delete3Ds.selected_Sections();
-    }
-
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Delete3Ds.selected_Model1Ds();
-    }
-
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Delete3Ds.selected_Model2Ds();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Delete3Ds.selected_Solids();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      Delete3Ds.selected_Faces();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Delete3Ds.selected_Curves();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Delete3Ds.selected_Groups();
-    }
-  
-    if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
-  
-      Delete3Ds.selected_isolatedVertices();
-    }  
-
-    userSelections.deselect_all(); // important to deselect
-  }  
-  
 
 }
 
@@ -18450,54 +18503,8 @@ class solarchvision_Selections {
     }       
   }      
  
-    
-   
-    
- 
-
   
 
-
-
-  
-  
-  void duplicate_Selection (boolean produce_same_variation) {
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Edit3Ds.duplicate_Model1Ds(produce_same_variation);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Edit3Ds.duplicate_Model2Ds(produce_same_variation);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      Edit3Ds.duplicate_Faces(produce_same_variation);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Edit3Ds.duplicate_Curves(produce_same_variation);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Edit3Ds.duplicate_Solids(produce_same_variation);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Edit3Ds.duplicate_Sections(produce_same_variation);
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Edit3Ds.duplicate_Cameras(produce_same_variation);
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP)  {
-      Edit3Ds.duplicate_Groups(produce_same_variation);
-    }    
-  }
 
 
   
@@ -43250,7 +43257,7 @@ void mouseClicked () {
               WIN3D.update = true;
             }               
             if (menu_option.equals("Delete Selection")) {
-              Delete3Ds.selected_all();
+              Delete3Ds.selection();
               WIN3D.update = true;
             }      
             if (menu_option.equals("Dettach from All Groups")) {
@@ -43269,12 +43276,12 @@ void mouseClicked () {
               allGroups.group_Selection(0);
               WIN3D.update = true;
             }                 
-            if (menu_option.equals("Duplicate Selection (Identical)")) {
-              userSelections.duplicate_Selection(true);
+            if (menu_option.equals("Clone Selection (Identical)")) {
+              Clone3Ds.selection(true);
               WIN3D.update = true;
             }      
-            if (menu_option.equals("Duplicate Selection (Variation)")) {
-              userSelections.duplicate_Selection(false);
+            if (menu_option.equals("Clone Selection (Variation)")) {
+              Clone3Ds.selection(false);
               WIN3D.update = true;
             } 
             if (menu_option.equals("Auto-Normal Selected Faces")) {
@@ -51267,8 +51274,8 @@ class solarchvision_UI_BAR_a {
     ,   
     {
       "Modify", 
-      "Duplicate Selection (Identical)", 
-      "Duplicate Selection (Variation)", 
+      "Clone Selection (Identical)", 
+      "Clone Selection (Variation)", 
       "Attach to Last Group", 
       "Dettach from All Groups", 
       "Group Selection", 
@@ -54839,7 +54846,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
-        else if (low_case.equals("selection")) {Delete3Ds.selected_all(); WIN3D.update = true;}
+        else if (low_case.equals("selection")) {Delete3Ds.selection(); WIN3D.update = true;}
         else if (low_case.equals("groups")) {allGroups.empty(); WIN3D.update = true;}
         else if (low_case.equals("model2ds")) {allModel2Ds.empty(); WIN3D.update = true;}
         else if (low_case.equals("model1ds")) {allModel1Ds.empty(); WIN3D.update = true;}
@@ -54880,7 +54887,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       
       for (int q = 0; q < n; q++) {
-        userSelections.duplicate_Selection(true); 
+        Clone3Ds.selection(true); 
         if ((dx != 0) || (dy != 0) || (dz != 0)) userSelections.move(dx, dy, dz);
         if (rx != 0) userSelections.rotate(0, 0, 0, rx, 0);
         if (ry != 0) userSelections.rotate(0, 0, 0, ry, 1);
