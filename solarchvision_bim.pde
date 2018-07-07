@@ -14357,141 +14357,48 @@ solarchvision_SolarImpacts allSolarImpacts = new solarchvision_SolarImpacts();
 
 
 
-class solarchvision_Drop3Ds {
-  
-  private final static String CLASS_STAMP = "Drop3Ds";
-
-  void selection () {
-
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(); 
-    }       
-    
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(); 
-    }
-
-  }
-  
-
-  
-  void Model1Ds () {
-
-    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = userSelections.Model1D_ids[o];
-
-      float x = allModel1Ds.getX(OBJ_NUM);
-      float y = allModel1Ds.getY(OBJ_NUM);
-      float z = allModel1Ds.getZ(OBJ_NUM);
-
-      float[] ray_start = {
-        x, y, z
-      };
-
-      float[] ray_direction = {
-        0, 0, -1
-      };
-
-      float[] RxP = new float [8];
-
-      if (WIN3D.UI_TaskModifyParameter == 0) { 
-        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-      } else if (WIN3D.UI_TaskModifyParameter == 1) {
-        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-      } else {
-        RxP[0] = -1; // undefined
-      }
-
-      if (RxP[0] >= 0) {
-        allModel1Ds.setX(OBJ_NUM, RxP[1]); 
-        allModel1Ds.setY(OBJ_NUM, RxP[2]); 
-        allModel1Ds.setZ(OBJ_NUM, RxP[3]);
-      } else {
-        ray_direction[2] = 1; // <<<< going upwards
-
-        if (WIN3D.UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-        } else if (WIN3D.UI_TaskModifyParameter == 2) {
-          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-        } else {
-          RxP[0] = -1; // undefined
-        }
-
-        if (RxP[0] >= 0) {
-          allModel1Ds.setX(OBJ_NUM, RxP[1]); 
-          allModel1Ds.setY(OBJ_NUM, RxP[2]); 
-          allModel1Ds.setZ(OBJ_NUM, RxP[3]);
-        }
-      }
-    }
-  }
-  
-  
-
-  void Model2Ds () {
-
-    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = userSelections.Model2D_ids[o];
-
-      float x = allModel2Ds.getX(OBJ_NUM);
-      float y = allModel2Ds.getY(OBJ_NUM);
-      float z = allModel2Ds.getZ(OBJ_NUM);
-
-      float[] ray_start = {
-        x, y, z
-      };
-
-      float[] ray_direction = {
-        0, 0, -1
-      };
-
-      float[] RxP = new float [8];
-
-      if (WIN3D.UI_TaskModifyParameter == 0) { 
-        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-      } else if (WIN3D.UI_TaskModifyParameter == 1) {
-        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-      } else {
-        RxP[0] = -1; // undefined
-      }
-
-      if (RxP[0] >= 0) {
-        allModel2Ds.setX(OBJ_NUM, RxP[1]); 
-        allModel2Ds.setY(OBJ_NUM, RxP[2]); 
-        allModel2Ds.setZ(OBJ_NUM, RxP[3]);
-      } else {
-        ray_direction[2] = 1; // <<<< going upwards
-
-        if (WIN3D.UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
-        } else if (WIN3D.UI_TaskModifyParameter == 2) {
-          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
-        } else {
-          RxP[0] = -1; // undefined
-        }
-
-        if (RxP[0] >= 0) {
-          allModel2Ds.setX(OBJ_NUM, RxP[1]); 
-          allModel2Ds.setY(OBJ_NUM, RxP[2]); 
-          allModel2Ds.setZ(OBJ_NUM, RxP[3]);
-        }
-      }
-    }
-  }
-
-
-}
-
-solarchvision_Drop3Ds Drop3Ds = new solarchvision_Drop3Ds();     
 
 
 class solarchvision_Edit3Ds {
   
   private final static String CLASS_STAMP = "Edit3Ds";
+  
+  void selection (int p) {
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Cameras(p);
+    }      
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Sections(p);
+    }         
 
-  void tweak_Cameras (int p) {
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(p);
+    }           
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Faces(p);
+    }         
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      this.Curves(p);
+    }       
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      this.Groups(p);
+    }      
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2Ds(p);
+    }      
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1Ds(p);
+    }       
+  }        
+
+  void Cameras (int p) {
   
     for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
 
@@ -14511,7 +14418,7 @@ class solarchvision_Edit3Ds {
     }
   }
   
-  void tweak_Sections (int p) {
+  void Sections (int p) {
 
     boolean allSolids_updated = false;  
 
@@ -14553,7 +14460,7 @@ class solarchvision_Edit3Ds {
   }
 
   
-  void tweak_Solids (int p) {
+  void Solids (int p) {
 
     boolean allSolids_updated = false;  
 
@@ -14606,7 +14513,7 @@ class solarchvision_Edit3Ds {
   
   
   
-  void tweak_Faces (int p) {
+  void Faces (int p) {
 
     for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
 
@@ -14656,7 +14563,7 @@ class solarchvision_Edit3Ds {
     }
   }
   
-  void tweak_Curves (int p) {
+  void Curves (int p) {
 
     for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
 
@@ -14709,7 +14616,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void tweak_Groups (int p) {
+  void Groups (int p) {
 
     for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
 
@@ -14808,7 +14715,7 @@ class solarchvision_Edit3Ds {
   }
    
 
-  void tweak_Model2Ds (int p) {
+  void Model2Ds (int p) {
     for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = userSelections.Model2D_ids[o];
@@ -14859,7 +14766,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void tweak_Model1Ds (int p) {
+  void Model1Ds (int p) {
 
     for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
 
@@ -14947,11 +14854,6 @@ class solarchvision_Edit3Ds {
       }
     }
   }
-
-
-
-  
-  
 
 }
 
@@ -16382,6 +16284,133 @@ solarchvision_Move3Ds Move3Ds = new solarchvision_Move3Ds();
 
 
 
+
+class solarchvision_Drop3Ds {
+  
+  private final static String CLASS_STAMP = "Drop3Ds";
+
+  void selection () {
+
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1Ds(); 
+    }       
+    
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2Ds(); 
+    }
+
+  }
+  
+  void Model1Ds () {
+
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model1D_ids[o];
+
+      float x = allModel1Ds.getX(OBJ_NUM);
+      float y = allModel1Ds.getY(OBJ_NUM);
+      float z = allModel1Ds.getZ(OBJ_NUM);
+
+      float[] ray_start = {
+        x, y, z
+      };
+
+      float[] ray_direction = {
+        0, 0, -1
+      };
+
+      float[] RxP = new float [8];
+
+      if (WIN3D.UI_TaskModifyParameter == 0) { 
+        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+      } else if (WIN3D.UI_TaskModifyParameter == 1) {
+        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+      } else {
+        RxP[0] = -1; // undefined
+      }
+
+      if (RxP[0] >= 0) {
+        allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel1Ds.setZ(OBJ_NUM, RxP[3]);
+      } else {
+        ray_direction[2] = 1; // <<<< going upwards
+
+        if (WIN3D.UI_TaskModifyParameter == 0) { 
+          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+        } else if (WIN3D.UI_TaskModifyParameter == 2) {
+          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+        } else {
+          RxP[0] = -1; // undefined
+        }
+
+        if (RxP[0] >= 0) {
+          allModel1Ds.setX(OBJ_NUM, RxP[1]); 
+          allModel1Ds.setY(OBJ_NUM, RxP[2]); 
+          allModel1Ds.setZ(OBJ_NUM, RxP[3]);
+        }
+      }
+    }
+  }
+  
+  
+
+  void Model2Ds () {
+
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      float x = allModel2Ds.getX(OBJ_NUM);
+      float y = allModel2Ds.getY(OBJ_NUM);
+      float z = allModel2Ds.getZ(OBJ_NUM);
+
+      float[] ray_start = {
+        x, y, z
+      };
+
+      float[] ray_direction = {
+        0, 0, -1
+      };
+
+      float[] RxP = new float [8];
+
+      if (WIN3D.UI_TaskModifyParameter == 0) { 
+        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+      } else if (WIN3D.UI_TaskModifyParameter == 1) {
+        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+      } else {
+        RxP[0] = -1; // undefined
+      }
+
+      if (RxP[0] >= 0) {
+        allModel2Ds.setX(OBJ_NUM, RxP[1]); 
+        allModel2Ds.setY(OBJ_NUM, RxP[2]); 
+        allModel2Ds.setZ(OBJ_NUM, RxP[3]);
+      } else {
+        ray_direction[2] = 1; // <<<< going upwards
+
+        if (WIN3D.UI_TaskModifyParameter == 0) { 
+          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+        } else if (WIN3D.UI_TaskModifyParameter == 2) {
+          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+        } else {
+          RxP[0] = -1; // undefined
+        }
+
+        if (RxP[0] >= 0) {
+          allModel2Ds.setX(OBJ_NUM, RxP[1]); 
+          allModel2Ds.setY(OBJ_NUM, RxP[2]); 
+          allModel2Ds.setZ(OBJ_NUM, RxP[3]);
+        }
+      }
+    }
+  }
+
+
+}
+
+solarchvision_Drop3Ds Drop3Ds = new solarchvision_Drop3Ds();     
 
 
 
@@ -18509,40 +18538,7 @@ class solarchvision_Selections {
   
   
 
-  void tweak (int p) {
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Edit3Ds.tweak_Cameras(p);
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Edit3Ds.tweak_Sections(p);
-    }         
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Edit3Ds.tweak_Solids(p);
-    }           
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      Edit3Ds.tweak_Faces(p);
-    }         
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Edit3Ds.tweak_Curves(p);
-    }       
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Edit3Ds.tweak_Groups(p);
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Edit3Ds.tweak_Model2Ds(p);
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Edit3Ds.tweak_Model1Ds(p);
-    }       
-  }      
  
   
 
@@ -40725,7 +40721,7 @@ void mouseWheel (MouseEvent event) {
 
                   int p = int(Wheel_Value);
 
-                  userSelections.tweak(p);
+                  Edit3Ds.selection(p);
 
                   WIN3D.update = true;
                 }
@@ -51229,6 +51225,8 @@ class solarchvision_UI_BAR_a {
       "3D-Tree", 
       "2D-Tree", 
       "Person", 
+      "Add People on Land",
+      "Add 2D-Trees on Land",      
       "House1", 
       "House2", 
       "Box", 
@@ -51298,7 +51296,7 @@ class solarchvision_UI_BAR_a {
     }
     ,
     {
-      "Edit", 
+      "Alter", 
       "Move", 
       "MoveX", 
       "MoveY", 
@@ -51437,8 +51435,6 @@ class solarchvision_UI_BAR_a {
       "REC. Solid Graph", 
       "REC. Screenshot", 
       "Stop REC.", 
-      "Add People on Land",
-      "Add 2D-Trees on Land",
       "Erase All Model1Ds", 
       "Erase All Model2Ds", 
       "Erase All Groups", 
