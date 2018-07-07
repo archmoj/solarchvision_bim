@@ -309,8 +309,8 @@ final int TROPO_timeSteps = 24;
 
 // exporting shaded land is not written. 
 
-// void userSelections.rotate_Groups 
-// serach for userSelections.rotate_Selection ( need to make them all correct for local pivots!
+// void Rotate3Ds.selection_Groups 
+// serach for Rotate3Ds.selection_Selection ( need to make them all correct for local pivots!
 // local pivot
 
 
@@ -14365,292 +14365,7 @@ class solarchvision_Edit3Ds {
 
 
   
-  void rotate_Groups (float r, int the_Vector) {
-  
-    int[] PolymeshVertices = userSelections.get_Group_Vertices();
-  
-    for (int q = 0; q < PolymeshVertices.length; q++) {
-  
-      int n = PolymeshVertices[q];
-  
-      float x = allPoints.getX(n); 
-      float y = allPoints.getY(n); 
-      float z = allPoints.getZ(n);
-  
-      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
-  
-      x = A[0];
-      y = A[1];
-      z = A[2];
-  
-      {
-        float a = x;
-        float b = y;
-        float c = z;
-  
-        if (the_Vector == 2) {
-          a = x * cos(r) - y * sin(r); 
-          b = x * sin(r) + y * cos(r);
-          c = z;
-        } else if (the_Vector == 1) {
-          a = z * sin(r) + x * cos(r); 
-          b = y;
-          c = z * cos(r) - x * sin(r);
-        } else if (the_Vector == 0) {
-          a = x;
-          b = y * cos(r) - z * sin(r);
-          c = y * sin(r) + z * cos(r);
-        }   
-  
-        x = a;
-        y = b;
-        z = c;
-      }
-  
-      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
-  
-      x = B[0];
-      y = B[1];
-      z = B[2];
-  
-      allPoints.setX(n, x); 
-      allPoints.setY(n, y);
-      allPoints.setZ(n, z);
-    }
-  
-  
-  
-  
-  
-  
-    boolean allSolids_updated = false;
-  
-    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = userSelections.Group_ids[o];
-  
-      { 
-        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
-        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
-        float z = allGroups.PivotMatrix[OBJ_NUM][2];
-  
-        float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
-  
-        x = A[0];
-        y = A[1];
-        z = A[2];
-  
-        {
-          float a = x;
-          float b = y;
-          float c = z;
-  
-          if (the_Vector == 2) {
-            a = x * cos(r) - y * sin(r); 
-            b = x * sin(r) + y * cos(r);
-            c = z;
-          } else if (the_Vector == 1) {
-            a = z * sin(r) + x * cos(r); 
-            b = y;
-            c = z * cos(r) - x * sin(r);
-          } else if (the_Vector == 0) {
-            a = x;
-            b = y * cos(r) - z * sin(r);
-            c = y * sin(r) + z * cos(r);
-          }   
-  
-          x = a;
-          y = b;
-          z = c;
-        }
-  
-        float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
-  
-        x = B[0];
-        y = B[1];
-        z = B[2];
-  
-        allGroups.PivotMatrix[OBJ_NUM][0] = x;
-        allGroups.PivotMatrix[OBJ_NUM][1] = y;
-        allGroups.PivotMatrix[OBJ_NUM][2] = z;
-  
-        if (the_Vector == 2) {
-          allGroups.PivotMatrix[OBJ_NUM][8] += r * 180.0 / PI;
-        } else if (the_Vector == 1) {
-          allGroups.PivotMatrix[OBJ_NUM][7] += r * 180.0 / PI;
-        } else if (the_Vector == 0) {
-          allGroups.PivotMatrix[OBJ_NUM][6] += r * 180.0 / PI;
-        }
-      }    
-  
-  
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
-  
-          float x = allModel1Ds.getX(f); 
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
-  
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
-  
-          x = A[0];
-          y = A[1];
-          z = A[2];
-  
-          {
-            float a = x;
-            float b = y;
-            float c = z;
-  
-            if (the_Vector == 2) {
-              a = x * cos(r) - y * sin(r); 
-              b = x * sin(r) + y * cos(r);
-              c = z;
-            } else if (the_Vector == 1) {
-              a = z * sin(r) + x * cos(r); 
-              b = y;
-              c = z * cos(r) - x * sin(r);
-            } else if (the_Vector == 0) {
-              a = x;
-              b = y * cos(r) - z * sin(r);
-              c = y * sin(r) + z * cos(r);
-            }   
-  
-            x = a;
-            y = b;
-            z = c;
-          }
-  
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
-  
-  
-          if (the_Vector == 2) {
-            allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<
-          } else if (the_Vector == 1) {
-          } else if (the_Vector == 0) {
-          }
-        }
-      }         
-  
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
-  
-          float x = allModel2Ds.getX(f); 
-          float y = allModel2Ds.getY(f); 
-          float z = allModel2Ds.getZ(f);
-  
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
-  
-          x = A[0];
-          y = A[1];
-          z = A[2];
-  
-          {
-            float a = x;
-            float b = y;
-            float c = z;
-  
-            if (the_Vector == 2) {
-              a = x * cos(r) - y * sin(r); 
-              b = x * sin(r) + y * cos(r);
-              c = z;
-            } else if (the_Vector == 1) {
-              a = z * sin(r) + x * cos(r); 
-              b = y;
-              c = z * cos(r) - x * sin(r);
-            } else if (the_Vector == 0) {
-              a = x;
-              b = y * cos(r) - z * sin(r);
-              c = y * sin(r) + z * cos(r);
-            }   
-  
-            x = a;
-            y = b;
-            z = c;
-          }
-  
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-          allModel2Ds.setX(f, x);
-          allModel2Ds.setY(f, y);
-          allModel2Ds.setZ(f, z);
-        }
-      }         
-  
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allSolids.DEF.length)) {
-  
-          float x = allSolids.get_posX(f);
-          float y = allSolids.get_posY(f);
-          float z = allSolids.get_posZ(f);
-  
-          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
-  
-          x = A[0];
-          y = A[1];
-          z = A[2];
-  
-          {
-            float a = x;
-            float b = y;
-            float c = z;
-  
-            if (the_Vector == 2) {
-              a = x * cos(r) - y * sin(r); 
-              b = x * sin(r) + y * cos(r);
-              c = z;
-            } else if (the_Vector == 1) {
-              a = z * sin(r) + x * cos(r); 
-              b = y;
-              c = z * cos(r) - x * sin(r);
-            } else if (the_Vector == 0) {
-              a = x;
-              b = y * cos(r) - z * sin(r);
-              c = y * sin(r) + z * cos(r);
-            }   
-  
-            x = a;
-            y = b;
-            z = c;
-          }
-  
-          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
-  
-          x = B[0];
-          y = B[1];
-          z = B[2];
-  
-  
-          allSolids.updatePosition(f, x, y, z);
-  
-          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Note: these rotations could be translated to locals to avoid problems!
-          if (the_Vector == 2) {
-            allSolids.RotateZ(f, r * 180 / PI);
-          } else if (the_Vector == 1) {
-            allSolids.RotateY(f, r * 180 / PI);
-          } else if (the_Vector == 0) {
-            allSolids.RotateX(f, r * 180 / PI);
-          }
-  
-          allSolids_updated = true;
-        }
-      }
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
+
   
   
   
@@ -14814,33 +14529,7 @@ class solarchvision_Edit3Ds {
   
 
   
-  void rotate_Faces (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    int[] FaceVertices = userSelections.get_Face_Vertices();
-  
-    for (int q = 0; q < FaceVertices.length; q++) {
-  
-      int f = FaceVertices[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
+
   
   void scale_Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
   
@@ -14875,33 +14564,7 @@ class solarchvision_Edit3Ds {
   
 
   
-  void rotate_Curves (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    int[] CurveVertices = userSelections.get_Curve_Vertices();
-  
-    for (int q = 0; q < CurveVertices.length; q++) {
-  
-      int f = CurveVertices[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
+
   
   void scale_Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
   
@@ -14936,31 +14599,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void rotate_Vertices (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
-  
-      int f = userSelections.Vertex_ids[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
+
   
   
   void scale_Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -14999,33 +14638,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void softRotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < userSelections.softSelectionVertices.length; q++) {
-  
-      int f = userSelections.softSelectionVertices[q];
-  
-      float v = userSelections.softSelectionValues[q];
-  
-      float x = allPoints.getX(f) - x0; 
-      float y = allPoints.getY(f) - y0; 
-      float z = allPoints.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allPoints.setX(f, x0 + (x * cos(r * v) - y * sin(r * v))); 
-        allPoints.setY(f, y0 + (x * sin(r * v) + y * cos(r * v)));
-        allPoints.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allPoints.setX(f, x0 + (z * sin(r * v) + x * cos(r * v))); 
-        allPoints.setY(f, y0 + (y));
-        allPoints.setZ(f, z0 + (z * cos(r * v) - x * sin(r * v)));
-      } else if (the_Vector == 0) {
-        allPoints.setX(f, x0 + (x)); 
-        allPoints.setY(f, y0 + (y * cos(r * v) - z * sin(r * v)));
-        allPoints.setZ(f, z0 + (y * sin(r * v) + z * cos(r * v)));
-      }
-    }
-  }
+
   
   
   
@@ -15087,31 +14700,7 @@ class solarchvision_Edit3Ds {
   }
   
   
-  void rotate_Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < userSelections.Model2D_ids.length; q++) {
-  
-      int f = userSelections.Model2D_ids[q];
-  
-      float x = allModel2Ds.getX(f) - x0; 
-      float y = allModel2Ds.getY(f) - y0; 
-      float z = allModel2Ds.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allModel2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel2Ds.setZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allModel2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel2Ds.setY(f, y0 + (y));
-        allModel2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allModel2Ds.setX(f, x0 + (x)); 
-        allModel2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
+
   
   
   
@@ -15149,33 +14738,7 @@ class solarchvision_Edit3Ds {
   }
   
   
-  void rotate_Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < userSelections.Model1D_ids.length; q++) {
-  
-      int f = userSelections.Model1D_ids[q];
-  
-      float x = allModel1Ds.getX(f) - x0; 
-      float y = allModel1Ds.getY(f) - y0; 
-      float z = allModel1Ds.getZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel1Ds.setZ(f, z0 + (z));
-  
-        allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      } else if (the_Vector == 1) {
-        allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel1Ds.setY(f, y0 + (y));
-        allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allModel1Ds.setX(f, x0 + (x)); 
-        allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }
-    }
-  }
+
   
   
 
@@ -15183,42 +14746,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void rotate_Solids (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    boolean allSolids_updated = false; 
-  
-    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
-  
-      int f = userSelections.Solid_ids[q];
-  
-      float Solid_posX = allSolids.get_posX(f);
-      float Solid_posY = allSolids.get_posY(f);
-      float Solid_posZ = allSolids.get_posZ(f);
-  
-  
-      float x = Solid_posX - x0; 
-      float y = Solid_posY - y0; 
-      float z = Solid_posZ - z0;
-  
-      if (the_Vector == 2) {
-        allSolids.updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
-  
-        allSolids.RotateZ(f, r * 180 / PI);
-      } else if (the_Vector == 1) {
-        allSolids.updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
-  
-        allSolids.RotateY(f, r * 180 / PI);
-      } else if (the_Vector == 0) {
-        allSolids.updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
-  
-        allSolids.RotateX(f, r * 180 / PI);
-      }
-  
-      allSolids_updated = true;
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
+
   
   
   void scale_Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -15259,20 +14787,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void rotate_Sections (float r) {
-  
-    for (int q = 0; q < userSelections.Section_ids.length; q++) {
-  
-      int f = userSelections.Section_ids[q];
-  
-      allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
-    }
-  
-    allSolidImpacts.calculate_Impact_selectedSections(); 
-  
-    WIN3D.update = true;
-    ROLLOUT.update = true;
-  }
+
   
   void scale_Sections (float sx, float sy) {
   
@@ -15294,37 +14809,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void rotate_Cameras (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    // swapping y and z vectors to match camera's local coordinate
-    if (the_Vector == 2) the_Vector = 1;
-    else if (the_Vector == 1) the_Vector = 2;
-  
-    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
-  
-      int f = userSelections.Camera_ids[q];
-  
-      float x = allCameras.get_posX(f) - x0; 
-      float y = allCameras.get_posY(f) - y0; 
-      float z = allCameras.get_posZ(f) - z0;
-  
-      if (the_Vector == 2) {
-        allCameras.set_posX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allCameras.set_posY(f, y0 + (x * sin(r) + y * cos(r)));
-        allCameras.set_posZ(f, z0 + (z));
-      } else if (the_Vector == 1) {
-        allCameras.set_posX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allCameras.set_posY(f, y0 + (y));
-        allCameras.set_posZ(f, z0 + (z * cos(r) - x * sin(r)));
-      } else if (the_Vector == 0) {
-        allCameras.set_posX(f, x0 + (x)); 
-        allCameras.set_posY(f, y0 + (y * cos(r) - z * sin(r)));
-        allCameras.set_posZ(f, z0 + (y * sin(r) + z * cos(r)));
-      }    
-  
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
-    }
-  }
+
   
   
   void scale_Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -15370,34 +14855,7 @@ class solarchvision_Edit3Ds {
 
   
   
-  void rotate_LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
-  
-    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
-  
-      int f = userSelections.LandPoint_ids[q];
-  
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
-  
-      float x = Land3D.Mesh[i][j][0] - x0; 
-      float y = Land3D.Mesh[i][j][1] - y0; 
-      float z = Land3D.Mesh[i][j][2] - z0;
-  
-      if (the_Vector == 2) {
-        Land3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
-        Land3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
-        Land3D.Mesh[i][j][2] = z0 + (z);
-      } else if (the_Vector == 1) {
-        Land3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
-        Land3D.Mesh[i][j][1] = y0 + (y);
-        Land3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
-      } else if (the_Vector == 0) {
-        Land3D.Mesh[i][j][0] = x0 + (x); 
-        Land3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
-        Land3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
-      }
-    }
-  }
+
   
   
   void scale_LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -16007,63 +15465,710 @@ solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();
 
 
 
+class solarchvision_Rotate3Ds {
+  
+  private final static String CLASS_STAMP = "Rotate3Ds";
+
+  void selection (float x0, float y0, float z0, float r, int the_Vector) {
+    
+    r *= PI / 180; // <<<<<<<<
+  
+    float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
+    float[] B = userSelections.translateInside_ReferencePivot(x0, y0, z0);
+  
+    x0 = B[0] - A[0];
+    y0 = B[1] - A[1];
+    z0 = B[2] - A[2];
+  
+    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+      this.softSelection(x0, y0, z0, r, the_Vector);
+    }  
+    
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Cameras(x0, y0, z0, r, the_Vector);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Sections(r);
+    }   
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(x0, y0, z0, r, the_Vector);
+    }       
+  
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+      this.Vertices(x0, y0, z0, r, the_Vector);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Faces(x0, y0, z0, r, the_Vector);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      this.Curves(x0, y0, z0, r, the_Vector);
+    }  
+    
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      this.Groups(r, the_Vector);
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2Ds(x0, y0, z0, r, the_Vector);
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1Ds(x0, y0, z0, r, the_Vector);
+    }   
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoints(x0, y0, z0, r, the_Vector);
+    }
+  }
+
+
+  void softSelection (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.softSelectionVertices.length; q++) {
+  
+      int f = userSelections.softSelectionVertices[q];
+  
+      float v = userSelections.softSelectionValues[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r * v) - y * sin(r * v))); 
+        allPoints.setY(f, y0 + (x * sin(r * v) + y * cos(r * v)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r * v) + x * cos(r * v))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r * v) - x * sin(r * v)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r * v) - z * sin(r * v)));
+        allPoints.setZ(f, z0 + (y * sin(r * v) + z * cos(r * v)));
+      }
+    }
+  }
+
+
+
+  void LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
+  
+      int f = userSelections.LandPoint_ids[q];
+  
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
+  
+      float x = Land3D.Mesh[i][j][0] - x0; 
+      float y = Land3D.Mesh[i][j][1] - y0; 
+      float z = Land3D.Mesh[i][j][2] - z0;
+  
+      if (the_Vector == 2) {
+        Land3D.Mesh[i][j][0] = x0 + (x * cos(r) - y * sin(r)); 
+        Land3D.Mesh[i][j][1] = y0 + (x * sin(r) + y * cos(r));
+        Land3D.Mesh[i][j][2] = z0 + (z);
+      } else if (the_Vector == 1) {
+        Land3D.Mesh[i][j][0] = x0 + (z * sin(r) + x * cos(r)); 
+        Land3D.Mesh[i][j][1] = y0 + (y);
+        Land3D.Mesh[i][j][2] = z0 + (z * cos(r) - x * sin(r));
+      } else if (the_Vector == 0) {
+        Land3D.Mesh[i][j][0] = x0 + (x); 
+        Land3D.Mesh[i][j][1] = y0 + (y * cos(r) - z * sin(r));
+        Land3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
+      }
+    }
+  }
+  
+  
+
+
+  void Vertices (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
+  
+      int f = userSelections.Vertex_ids[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+
+
+  void Curves (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    int[] CurveVertices = userSelections.get_Curve_Vertices();
+  
+    for (int q = 0; q < CurveVertices.length; q++) {
+  
+      int f = CurveVertices[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+
+
+  void Faces (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    int[] FaceVertices = userSelections.get_Face_Vertices();
+  
+    for (int q = 0; q < FaceVertices.length; q++) {
+  
+      int f = FaceVertices[q];
+  
+      float x = allPoints.getX(f) - x0; 
+      float y = allPoints.getY(f) - y0; 
+      float z = allPoints.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allPoints.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allPoints.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allPoints.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allPoints.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allPoints.setY(f, y0 + (y));
+        allPoints.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allPoints.setX(f, x0 + (x)); 
+        allPoints.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }
+  
+
+  void Solids (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    boolean allSolids_updated = false; 
+  
+    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
+  
+      int f = userSelections.Solid_ids[q];
+  
+      float Solid_posX = allSolids.get_posX(f);
+      float Solid_posY = allSolids.get_posY(f);
+      float Solid_posZ = allSolids.get_posZ(f);
+  
+  
+      float x = Solid_posX - x0; 
+      float y = Solid_posY - y0; 
+      float z = Solid_posZ - z0;
+  
+      if (the_Vector == 2) {
+        allSolids.updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+  
+        allSolids.RotateZ(f, r * 180 / PI);
+      } else if (the_Vector == 1) {
+        allSolids.updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+  
+        allSolids.RotateY(f, r * 180 / PI);
+      } else if (the_Vector == 0) {
+        allSolids.updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+  
+        allSolids.RotateX(f, r * 180 / PI);
+      }
+  
+      allSolids_updated = true;
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }  
+  
+  
+  void Sections (float r) {
+  
+    for (int q = 0; q < userSelections.Section_ids.length; q++) {
+  
+      int f = userSelections.Section_ids[q];
+  
+      allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
+    }
+  
+    allSolidImpacts.calculate_Impact_selectedSections(); 
+  
+    WIN3D.update = true;
+    ROLLOUT.update = true;
+  }  
+  
+  
+  void Cameras (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    // swapping y and z vectors to match camera's local coordinate
+    if (the_Vector == 2) the_Vector = 1;
+    else if (the_Vector == 1) the_Vector = 2;
+  
+    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
+  
+      int f = userSelections.Camera_ids[q];
+  
+      float x = allCameras.get_posX(f) - x0; 
+      float y = allCameras.get_posY(f) - y0; 
+      float z = allCameras.get_posZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allCameras.set_posX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allCameras.set_posY(f, y0 + (x * sin(r) + y * cos(r)));
+        allCameras.set_posZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allCameras.set_posX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allCameras.set_posY(f, y0 + (y));
+        allCameras.set_posZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allCameras.set_posX(f, x0 + (x)); 
+        allCameras.set_posY(f, y0 + (y * cos(r) - z * sin(r)));
+        allCameras.set_posZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }    
+  
+      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+    }
+  }  
+  
+  
+  
+  void Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Model1D_ids.length; q++) {
+  
+      int f = userSelections.Model1D_ids[q];
+  
+      float x = allModel1Ds.getX(f) - x0; 
+      float y = allModel1Ds.getY(f) - y0; 
+      float z = allModel1Ds.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allModel1Ds.setZ(f, z0 + (z));
+  
+        allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      } else if (the_Vector == 1) {
+        allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allModel1Ds.setY(f, y0 + (y));
+        allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allModel1Ds.setX(f, x0 + (x)); 
+        allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }  
+  
+  
+  void Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  
+    for (int q = 0; q < userSelections.Model2D_ids.length; q++) {
+  
+      int f = userSelections.Model2D_ids[q];
+  
+      float x = allModel2Ds.getX(f) - x0; 
+      float y = allModel2Ds.getY(f) - y0; 
+      float z = allModel2Ds.getZ(f) - z0;
+  
+      if (the_Vector == 2) {
+        allModel2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allModel2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allModel2Ds.setZ(f, z0 + (z));
+      } else if (the_Vector == 1) {
+        allModel2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allModel2Ds.setY(f, y0 + (y));
+        allModel2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+      } else if (the_Vector == 0) {
+        allModel2Ds.setX(f, x0 + (x)); 
+        allModel2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+      }
+    }
+  }    
+
+
+
+  void Groups (float r, int the_Vector) {
+  
+    int[] PolymeshVertices = userSelections.get_Group_Vertices();
+  
+    for (int q = 0; q < PolymeshVertices.length; q++) {
+  
+      int n = PolymeshVertices[q];
+  
+      float x = allPoints.getX(n); 
+      float y = allPoints.getY(n); 
+      float z = allPoints.getZ(n);
+  
+      float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+      x = A[0];
+      y = A[1];
+      z = A[2];
+  
+      {
+        float a = x;
+        float b = y;
+        float c = z;
+  
+        if (the_Vector == 2) {
+          a = x * cos(r) - y * sin(r); 
+          b = x * sin(r) + y * cos(r);
+          c = z;
+        } else if (the_Vector == 1) {
+          a = z * sin(r) + x * cos(r); 
+          b = y;
+          c = z * cos(r) - x * sin(r);
+        } else if (the_Vector == 0) {
+          a = x;
+          b = y * cos(r) - z * sin(r);
+          c = y * sin(r) + z * cos(r);
+        }   
+  
+        x = a;
+        y = b;
+        z = c;
+      }
+  
+      float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+      x = B[0];
+      y = B[1];
+      z = B[2];
+  
+      allPoints.setX(n, x); 
+      allPoints.setY(n, y);
+      allPoints.setZ(n, z);
+    }
+  
+  
+  
+  
+  
+  
+    boolean allSolids_updated = false;
+  
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Group_ids[o];
+  
+      { 
+        float x = allGroups.PivotMatrix[OBJ_NUM][0]; 
+        float y = allGroups.PivotMatrix[OBJ_NUM][1]; 
+        float z = allGroups.PivotMatrix[OBJ_NUM][2];
+  
+        float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+        x = A[0];
+        y = A[1];
+        z = A[2];
+  
+        {
+          float a = x;
+          float b = y;
+          float c = z;
+  
+          if (the_Vector == 2) {
+            a = x * cos(r) - y * sin(r); 
+            b = x * sin(r) + y * cos(r);
+            c = z;
+          } else if (the_Vector == 1) {
+            a = z * sin(r) + x * cos(r); 
+            b = y;
+            c = z * cos(r) - x * sin(r);
+          } else if (the_Vector == 0) {
+            a = x;
+            b = y * cos(r) - z * sin(r);
+            c = y * sin(r) + z * cos(r);
+          }   
+  
+          x = a;
+          y = b;
+          z = c;
+        }
+  
+        float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+        x = B[0];
+        y = B[1];
+        z = B[2];
+  
+        allGroups.PivotMatrix[OBJ_NUM][0] = x;
+        allGroups.PivotMatrix[OBJ_NUM][1] = y;
+        allGroups.PivotMatrix[OBJ_NUM][2] = z;
+  
+        if (the_Vector == 2) {
+          allGroups.PivotMatrix[OBJ_NUM][8] += r * 180.0 / PI;
+        } else if (the_Vector == 1) {
+          allGroups.PivotMatrix[OBJ_NUM][7] += r * 180.0 / PI;
+        } else if (the_Vector == 0) {
+          allGroups.PivotMatrix[OBJ_NUM][6] += r * 180.0 / PI;
+        }
+      }    
+  
+  
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel1Ds.num)) {
+  
+          float x = allModel1Ds.getX(f); 
+          float y = allModel1Ds.getY(f); 
+          float z = allModel1Ds.getZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = A[0];
+          y = A[1];
+          z = A[2];
+  
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+  
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            } else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            } else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+  
+            x = a;
+            y = b;
+            z = c;
+          }
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+          allModel1Ds.setX(f, x);
+          allModel1Ds.setY(f, y);
+          allModel1Ds.setZ(f, z);
+  
+  
+          if (the_Vector == 2) {
+            allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<
+          } else if (the_Vector == 1) {
+          } else if (the_Vector == 0) {
+          }
+        }
+      }         
+  
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel2Ds.num)) {
+  
+          float x = allModel2Ds.getX(f); 
+          float y = allModel2Ds.getY(f); 
+          float z = allModel2Ds.getZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = A[0];
+          y = A[1];
+          z = A[2];
+  
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+  
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            } else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            } else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+  
+            x = a;
+            y = b;
+            z = c;
+          }
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+          allModel2Ds.setX(f, x);
+          allModel2Ds.setY(f, y);
+          allModel2Ds.setZ(f, z);
+        }
+      }         
+  
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allSolids.DEF.length)) {
+  
+          float x = allSolids.get_posX(f);
+          float y = allSolids.get_posY(f);
+          float z = allSolids.get_posZ(f);
+  
+          float[] A = userSelections.translateOutside_ReferencePivot(x, y, z);
+  
+          x = A[0];
+          y = A[1];
+          z = A[2];
+  
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+  
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            } else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            } else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+  
+            x = a;
+            y = b;
+            z = c;
+          }
+  
+          float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+  
+          x = B[0];
+          y = B[1];
+          z = B[2];
+  
+  
+          allSolids.updatePosition(f, x, y, z);
+  
+          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Note: these rotations could be translated to locals to avoid problems!
+          if (the_Vector == 2) {
+            allSolids.RotateZ(f, r * 180 / PI);
+          } else if (the_Vector == 1) {
+            allSolids.RotateY(f, r * 180 / PI);
+          } else if (the_Vector == 0) {
+            allSolids.RotateX(f, r * 180 / PI);
+          }
+  
+          allSolids_updated = true;
+        }
+      }
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+
+}
+
+solarchvision_Rotate3Ds Rotate3Ds = new solarchvision_Rotate3Ds();     
+
+
+
+
+
+
 class solarchvision_Move3Ds {
   
   private final static String CLASS_STAMP = "Move3Ds";
 
-  void selection (float x, float y, float z) {
+  void selection (float dx, float dy, float dz) {
     
     float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
+    float[] B = userSelections.translateInside_ReferencePivot(dx, dy, dz);
   
-    float dx = B[0] - A[0];
-    float dy = B[1] - A[1];
-    float dz = B[2] - A[2];
-    
-    println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);    
+    dx = B[0] - A[0];
+    dy = B[1] - A[1];
+    dz = B[2] - A[2];
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-      Move3Ds.softSelection(dx, dy, dz);
+      this.softSelection(dx, dy, dz);
     }      
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Move3Ds.Cameras(dx, dy, dz);
+      this.Cameras(dx, dy, dz);
     }     
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Move3Ds.Sections(dx, dy, dz);
+      this.Sections(dx, dy, dz);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Move3Ds.Solids(dx, dy, dz);
+      this.Solids(dx, dy, dz);
     }      
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      Move3Ds.Vertices(dx, dy, dz);
+      this.Vertices(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      Move3Ds.Faces(dx, dy, dz);
+      this.Faces(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Move3Ds.Curves(dx, dy, dz);
+      this.Curves(dx, dy, dz);
     }
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Move3Ds.Groups(dx, dy, dz);
+      this.Groups(dx, dy, dz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Move3Ds.Model2Ds(dx, dy, dz);
+      this.Model2Ds(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Move3Ds.Model1Ds(dx, dy, dz);
+      this.Model1Ds(dx, dy, dz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      Move3Ds.LandPoints(dx, dy, dz);
+      this.LandPoints(dx, dy, dz);
     }
   }
 
@@ -18435,61 +18540,7 @@ class solarchvision_Selections {
   
   
   
-  void rotate (float x0, float y0, float z0, float r, int the_Vector) {
-    
-    r *= PI / 180; // <<<<<<<<
-  
-    float[] A = this.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = this.translateInside_ReferencePivot(x0, y0, z0);
-  
-    x0 = B[0] - A[0];
-    y0 = B[1] - A[1];
-    z0 = B[2] - A[2];  
-  
-    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-      Edit3Ds.softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
-    }  
-    
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Edit3Ds.rotate_Cameras(x0, y0, z0, r, the_Vector);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Edit3Ds.rotate_Sections(r);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Edit3Ds.rotate_Solids(x0, y0, z0, r, the_Vector);
-    }       
-  
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      Edit3Ds.rotate_Vertices(x0, y0, z0, r, the_Vector);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      Edit3Ds.rotate_Faces(x0, y0, z0, r, the_Vector);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Edit3Ds.rotate_Curves(x0, y0, z0, r, the_Vector);
-    }  
-    
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Edit3Ds.rotate_Groups(r, the_Vector);
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Edit3Ds.rotate_Model2Ds(x0, y0, z0, r, the_Vector);
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Edit3Ds.rotate_Model1Ds(x0, y0, z0, r, the_Vector);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      Edit3Ds.rotate_LandPoints(x0, y0, z0, r, the_Vector);
-    }
-  } 
+ 
   
   
   
@@ -22881,7 +22932,7 @@ void draw () {
 
           int the_Vector = userSelections.rotVector;
 
-          userSelections.rotate(x0, y0, z0, r, the_Vector);
+          Rotate3Ds.selection(x0, y0, z0, r, the_Vector);
           WIN3D.update = true;
         }
         if (pre_Selection_scaleValue != userSelections.scaleValue) {
@@ -40644,7 +40695,7 @@ void mouseWheel (MouseEvent event) {
 
                 int the_Vector = userSelections.rotVector;
 
-                userSelections.rotate(x0, y0, z0, r, the_Vector);
+                Rotate3Ds.selection(x0, y0, z0, r, the_Vector);
 
                 WIN3D.update = true;
               }   
@@ -54837,7 +54888,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           if (q == 1) r = float(parameters[0]);
         }      
       }
-      userSelections.rotate(x, y, z, r, v);
+      Rotate3Ds.selection(x, y, z, r, v);
       WIN3D.update = true;
     }
     else {
@@ -54936,9 +54987,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 0; q < n; q++) {
         Clone3Ds.selection(true); 
         if ((dx != 0) || (dy != 0) || (dz != 0)) Move3Ds.selection(dx, dy, dz);
-        if (rx != 0) userSelections.rotate(0, 0, 0, rx, 0);
-        if (ry != 0) userSelections.rotate(0, 0, 0, ry, 1);
-        if (rz != 0) userSelections.rotate(0, 0, 0, rz, 2);
+        if (rx != 0) Rotate3Ds.selection(0, 0, 0, rx, 0);
+        if (ry != 0) Rotate3Ds.selection(0, 0, 0, ry, 1);
+        if (rz != 0) Rotate3Ds.selection(0, 0, 0, rz, 2);
       }
       WIN3D.update = true;
     }
