@@ -32786,7 +32786,7 @@ class solarchvision_Modify3Ds {
 
   
 
-  int[] getVertices_ofSelection () {
+  void selectVertices_fromCurrentSelection () {
    
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
   
@@ -32805,23 +32805,46 @@ class solarchvision_Modify3Ds {
         userSelections.convert_Curves_to_Vertices();
       }
 
-      return sort(userSelections.Vertex_ids);
+      userSelections.Vertex_ids = sort(userSelections.Vertex_ids);
     }
-    
-    int[] result = {}; 
-    return result;
   }  
 
+
+
+
+
+  void selectFacesAndGroups_fromCurrentSelection () {
+
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
   
+      if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
+        userSelections.Group_ids = sort(userSelections.Group_ids);
   
+        userSelections.convert_Groups_to_Faces();    
+  
+        userSelections.Face_ids = sort(userSelections.Face_ids);
+      }
+  
+      if (current_ObjectCategory == ObjectCategory.FACE) { 
+  
+        userSelections.Face_ids = sort(userSelections.Face_ids);
+  
+        userSelections.convert_Faces_to_Groups();    
+  
+        userSelections.Group_ids = sort(userSelections.Group_ids);
+  
+      }  
+  
+    }
+  }  
 
   
   
   
   void weldSceneVertices_Selection (float max_distance) {
 
-    userSelections.Vertex_ids = this.getVertices_ofSelection();
+    this.selectVertices_fromCurrentSelection();
   
     for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
 
@@ -32912,7 +32935,7 @@ class solarchvision_Modify3Ds {
   
   void weldObjectsVertices_Selection (float max_distance) {
 
-    userSelections.Vertex_ids = this.getVertices_ofSelection();
+    this.selectVertices_fromCurrentSelection();
     
     userSelections.convert_Vertices_to_Faces();
     userSelections.convert_Vertices_to_Curves();
@@ -33020,7 +33043,7 @@ class solarchvision_Modify3Ds {
   
   void separateVertices_Selection () {
   
-    userSelections.Vertex_ids = this.getVertices_ofSelection();
+    this.selectVertices_fromCurrentSelection();
 
     for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) { 
 
@@ -35016,7 +35039,7 @@ class solarchvision_Modify3Ds {
   
   void offsetVertices_Selection (int _type, float _amount) {
   
-    userSelections.Vertex_ids = this.getVertices_ofSelection();
+    this.selectVertices_fromCurrentSelection();
 
     float[][] Vertex_offsetValues = new float [userSelections.Vertex_ids.length][3];
     int[] Vertex_offsetNum = new int [userSelections.Vertex_ids.length];
