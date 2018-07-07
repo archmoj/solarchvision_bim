@@ -14996,26 +14996,16 @@ class solarchvision_Edit3Ds {
   
 
   
-  void softMove_selectedVertices (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
-  
-      int f = userSelections.Vertex_softSelectionVertices[q];
-  
-      float v = userSelections.Vertex_softSelectionValues[q];
-  
-      allPoints.move(f, dx * v, dy * v, dz * v); 
-    }
-  }
+
   
   
   void softRotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
+    for (int q = 0; q < userSelections.softSelectionVertices.length; q++) {
   
-      int f = userSelections.Vertex_softSelectionVertices[q];
+      int f = userSelections.softSelectionVertices[q];
   
-      float v = userSelections.Vertex_softSelectionValues[q];
+      float v = userSelections.softSelectionValues[q];
   
       float x = allPoints.getX(f) - x0; 
       float y = allPoints.getY(f) - y0; 
@@ -15041,11 +15031,11 @@ class solarchvision_Edit3Ds {
   
   void softScale_selectedVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
+    for (int q = 0; q < userSelections.softSelectionVertices.length; q++) {
   
-      int f = userSelections.Vertex_softSelectionVertices[q];
+      int f = userSelections.softSelectionVertices[q];
   
-      float v = userSelections.Vertex_softSelectionValues[q];    
+      float v = userSelections.softSelectionValues[q];    
   
       float x = allPoints.getX(f) - x0; 
       float y = allPoints.getY(f) - y0; 
@@ -16021,66 +16011,65 @@ class solarchvision_Move3Ds {
   
   private final static String CLASS_STAMP = "Move3Ds";
 
-
-  void selection (float dx, float dy, float dz) {
+  void selection (float x, float y, float z) {
     
-    println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);
-  
     float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = userSelections.translateInside_ReferencePivot(dx, dy, dz);
+    float[] B = userSelections.translateInside_ReferencePivot(x, y, z);
   
-    dx = B[0] - A[0];
-    dy = B[1] - A[1];
-    dz = B[2] - A[2];
+    float dx = B[0] - A[0];
+    float dy = B[1] - A[1];
+    float dz = B[2] - A[2];
+    
+    println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);    
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-      Edit3Ds.softMove_selectedVertices(dx, dy, dz);
+      Move3Ds.softSelection(dx, dy, dz);
     }      
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Move3Ds.move_Cameras(dx, dy, dz);
+      Move3Ds.Cameras(dx, dy, dz);
     }     
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Move3Ds.move_Sections(dx, dy, dz);
+      Move3Ds.Sections(dx, dy, dz);
     }   
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Move3Ds.move_Solids(dx, dy, dz);
+      Move3Ds.Solids(dx, dy, dz);
     }      
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      Move3Ds.move_Vertices(dx, dy, dz);
+      Move3Ds.Vertices(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      Move3Ds.move_Faces(dx, dy, dz);
+      Move3Ds.Faces(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Move3Ds.move_Curves(dx, dy, dz);
+      Move3Ds.Curves(dx, dy, dz);
     }
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Move3Ds.move_Groups(dx, dy, dz);
+      Move3Ds.Groups(dx, dy, dz);
     }
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Move3Ds.move_Model2Ds(dx, dy, dz);
+      Move3Ds.Model2Ds(dx, dy, dz);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Move3Ds.move_Model1Ds(dx, dy, dz);
+      Move3Ds.Model1Ds(dx, dy, dz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      Move3Ds.move_LandPoints(dx, dy, dz);
+      Move3Ds.LandPoints(dx, dy, dz);
     }
   }
 
 
 
-  void move_LandPoints (float dx, float dy, float dz) {
+  void LandPoints (float dx, float dy, float dz) {
   
     for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
   
@@ -16094,9 +16083,22 @@ class solarchvision_Move3Ds {
       Land3D.Mesh[i][j][2] += dz;
     }
   }
+  
+  
+  void softSelection (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.softSelectionVertices.length; q++) {
+  
+      int f = userSelections.softSelectionVertices[q];
+  
+      float v = userSelections.softSelectionValues[q];
+  
+      allPoints.move(f, dx * v, dy * v, dz * v); 
+    }
+  }  
 
 
-  void move_Vertices (float dx, float dy, float dz) {
+  void Vertices (float dx, float dy, float dz) {
   
     for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
   
@@ -16107,7 +16109,7 @@ class solarchvision_Move3Ds {
   }
   
   
-  void move_Curves (float dx, float dy, float dz) {
+  void Curves (float dx, float dy, float dz) {
   
     int[] CurveVertices = userSelections.get_Curve_Vertices();
   
@@ -16120,7 +16122,7 @@ class solarchvision_Move3Ds {
   }  
   
 
-  void move_Faces (float dx, float dy, float dz) {
+  void Faces (float dx, float dy, float dz) {
   
     int[] FaceVertices = userSelections.get_Face_Vertices();
   
@@ -16133,7 +16135,7 @@ class solarchvision_Move3Ds {
   }
   
   
-  void move_Model1Ds (float dx, float dy, float dz) {
+  void Model1Ds (float dx, float dy, float dz) {
   
     for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
   
@@ -16145,7 +16147,7 @@ class solarchvision_Move3Ds {
     
   
   
-  void move_Model2Ds (float dx, float dy, float dz) {
+  void Model2Ds (float dx, float dy, float dz) {
   
     for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
   
@@ -16156,7 +16158,7 @@ class solarchvision_Move3Ds {
   } 
   
   
-  void move_Solids (float dx, float dy, float dz) {
+  void Solids (float dx, float dy, float dz) {
   
     boolean allSolids_updated = false; 
   
@@ -16177,7 +16179,7 @@ class solarchvision_Move3Ds {
   }  
   
   
-  void move_Sections (float dx, float dy, float dz) {
+  void Sections (float dx, float dy, float dz) {
   
     for (int q = 0; q < userSelections.Section_ids.length; q++) {
   
@@ -16193,7 +16195,7 @@ class solarchvision_Move3Ds {
   }
 
 
-  void move_Cameras (float dx, float dy, float dz) {
+  void Cameras (float dx, float dy, float dz) {
   
     // swapping y and z vectors to match camera's local coordinate
     float tmp = dz;
@@ -16210,7 +16212,7 @@ class solarchvision_Move3Ds {
     }
   }
 
-  void move_Groups (float dx, float dy, float dz) {
+  void Groups (float dx, float dy, float dz) {
   
     int[] PolymeshVertices = userSelections.get_Group_Vertices();
   
@@ -17828,8 +17830,8 @@ class solarchvision_Selections {
   int[] Vertex_ids = new int[0];
   int[] Curve_ids = new int[0];
   
-  int[] Vertex_softSelectionVertices = new int[0]; 
-  float[] Vertex_softSelectionValues = new float[0];
+  int[] softSelectionVertices = new int[0]; 
+  float[] softSelectionValues = new float[0];
   
   float softPower = 1;
   float softRadius = 2; // 2 = 2m
@@ -21405,8 +21407,8 @@ class solarchvision_Selections {
   
     this.convert_Groups_to_Vertices();
   
-    this.Vertex_softSelectionVertices = new int[this.Vertex_ids.length]; 
-    this.Vertex_softSelectionValues = new float[this.Vertex_ids.length];
+    this.softSelectionVertices = new int[this.Vertex_ids.length]; 
+    this.softSelectionValues = new float[this.Vertex_ids.length];
   
     for (int q = 0; q < this.Vertex_ids.length; q++) {
   
@@ -21425,10 +21427,10 @@ class solarchvision_Selections {
         }
       }
   
-      this.Vertex_softSelectionValues[q] = this.softSelectionFunction(d_min);
+      this.softSelectionValues[q] = this.softSelectionFunction(d_min);
     }
   
-    this.Vertex_softSelectionVertices = this.Vertex_ids;
+    this.softSelectionVertices = this.Vertex_ids;
   
     this.Vertex_ids = keep_selection_Vertex_ids;
   }
@@ -21823,12 +21825,12 @@ class solarchvision_Selections {
   
   
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".Vertex_softSelectionVertices");
-      int ni = this.Vertex_softSelectionVertices.length;
+      XML child = xml.addChild(this.CLASS_STAMP + ".softSelectionVertices");
+      int ni = this.softSelectionVertices.length;
       child.setInt("ni", ni);
       String lineSTR = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Vertex_softSelectionVertices[i];
+        lineSTR += this.softSelectionVertices[i];
         if (i < ni - 1) lineSTR += ",";
       }
       child.setContent(lineSTR);
@@ -21836,12 +21838,12 @@ class solarchvision_Selections {
   
   
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".Vertex_softSelectionValues");
-      int ni = this.Vertex_softSelectionValues.length;
+      XML child = xml.addChild(this.CLASS_STAMP + ".softSelectionValues");
+      int ni = this.softSelectionValues.length;
       child.setInt("ni", ni);
       String lineSTR = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.Vertex_softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(this.softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
         if (i < ni - 1) lineSTR += ",";
       }
       child.setContent(lineSTR);
@@ -22008,26 +22010,26 @@ class solarchvision_Selections {
     }
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".Vertex_softSelectionVertices");
+      XML child = xml.getChild(this.CLASS_STAMP + ".softSelectionVertices");
     
       int ni = child.getInt("ni");
-      this.Vertex_softSelectionVertices = new int [ni];
+      this.softSelectionVertices = new int [ni];
       String lineSTR = child.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        this.Vertex_softSelectionVertices[i] = int(parts[i]);
+        this.softSelectionVertices[i] = int(parts[i]);
       }
     }
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".Vertex_softSelectionValues");
+      XML child = xml.getChild(this.CLASS_STAMP + ".softSelectionValues");
     
       int ni = child.getInt("ni");
-      this.Vertex_softSelectionValues = new float [ni];
+      this.softSelectionValues = new float [ni];
       String lineSTR = child.getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        this.Vertex_softSelectionValues[i] = float(parts[i]);
+        this.softSelectionValues[i] = float(parts[i]);
       }
     }
 
@@ -46020,11 +46022,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       float R = 5;
 
-      for (int q = 0; q < userSelections.Vertex_softSelectionVertices.length; q++) {
+      for (int q = 0; q < userSelections.softSelectionVertices.length; q++) {
 
-        int vNo = userSelections.Vertex_softSelectionVertices[q];
+        int vNo = userSelections.softSelectionVertices[q];
 
-        float _u = userSelections.Vertex_softSelectionValues[q];    
+        float _u = userSelections.softSelectionValues[q];    
 
         float x = allPoints.getX(vNo) * OBJECTS_scale;
         float y = allPoints.getY(vNo) * OBJECTS_scale;
