@@ -240,7 +240,7 @@ int current_Visibility = 1;
 int current_Weight = 0; 
 int current_Closed = 0;
 
-int current_PivotType = 0; // for allGroups
+
 
 
 
@@ -9246,8 +9246,6 @@ class solarchvision_ROLLOUT {
         User3D.default_Weight = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Weight" , User3D.default_Weight, -20, 20, 1), 1));
         User3D.default_Closed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "User3D.default_Closed" , User3D.default_Closed, 0, 1, 1), 1));
   
-        User3D.default_PivotType = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.default_PivotType", User3D.default_PivotType, 0, 4, 1), 1));
-  
         User3D.create_Orientation = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Orientation", User3D.create_Orientation, 0, 360, 15);
   
         User3D.create_Length = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Length", User3D.create_Length, -50, 150, -2), 0.5); 
@@ -11171,12 +11169,12 @@ class solarchvision_Faces {
     for (int i = 0; i < this.nodes.length; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String lineSTR = "";
+      String txt = "";
       for (int j = 0; j < this.nodes[i].length; j++) {
-        lineSTR += nf(this.nodes[i][j], 0);
-        if (j < this.nodes[i].length - 1) lineSTR += ",";
+        txt += nf(this.nodes[i][j], 0);
+        if (j < this.nodes[i].length - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
       
       child.setInt("material", getMaterial(i));
       child.setInt("tessellation", getTessellation(i));
@@ -11212,8 +11210,8 @@ class solarchvision_Faces {
     this.options = new int [ni][6];
     this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
       int nj = parts.length;
       int[][] newItem = new int [1][nj];
       for (int j = 0; j < nj; j++) {
@@ -11567,12 +11565,12 @@ class solarchvision_Curves {
     for (int i = 0; i < this.nodes.length; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String lineSTR = "";
+      String txt = "";
       for (int j = 0; j < this.nodes[i].length; j++) {
-        lineSTR += nf(this.nodes[i][j], 0);
-        if (j < this.nodes[i].length - 1) lineSTR += ",";
+        txt += nf(this.nodes[i][j], 0);
+        if (j < this.nodes[i].length - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
       
       child.setInt("material", getMaterial(i));
       child.setInt("tessellation", getTessellation(i));
@@ -11598,8 +11596,8 @@ class solarchvision_Curves {
     this.options = new int [ni][6];
     this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
       int nj = parts.length;
       int[][] newItem = new int [1][nj];
       for (int j = 0; j < nj; j++) {
@@ -11635,7 +11633,6 @@ class solarchvision_Groups {
   int num = 0; 
   
   float[][] PivotMatrix = new float[0][9];
-  int[][] PivotType = new int[0][1]; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 
 
 
@@ -11649,13 +11646,6 @@ class solarchvision_Groups {
   
     this.PivotMatrix = (float[][]) concat(this.PivotMatrix, newObject_PivotMatrix);
   
-    int[][] newObject_Pivot = {
-      {
-        current_PivotType
-      }
-    };
-  
-    this.PivotType = (int[][]) concat(this.PivotType, newObject_Pivot);  
   
   
     int[][] newObject_allModel1Ds = {
@@ -11720,8 +11710,6 @@ class solarchvision_Groups {
     this.Solids = new int [0][2];
   
     this.PivotMatrix = new float [0][9];
-  
-    this.PivotType = new int [0][1];
   
     this.num = 0;
     
@@ -12064,117 +12052,42 @@ class solarchvision_Groups {
   public void to_XML (XML xml) {
     
     println("Saving:" + this.CLASS_STAMP);
+
+
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    parent.setInt("ni", this.num);
     
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Model2Ds");
-      parent.setInt("ni", this.num);
-      for (int i = 0; i < this.num; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < this.Model2Ds[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.Model2Ds[i][j], 0);
-          if (j < this.Model2Ds[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
-    }
+    for (int i = 0; i < this.num; i++) {
+      XML child = parent.addChild("item");
+      child.setInt("id", i);
 
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Model1Ds");
-      parent.setInt("ni", this.num);
-      for (int i = 0; i < this.num; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < this.Model1Ds[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.Model1Ds[i][j], 0);
-          if (j < this.Model1Ds[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
-    }
+      child.setString("Model1Ds", 
+               nf(this.Model1Ds[i][0], 0) + "," + 
+               nf(this.Model1Ds[i][1], 0));
+               
+      child.setString("Model2Ds", 
+               nf(this.Model2Ds[i][0], 0) + "," + 
+               nf(this.Model2Ds[i][1], 0));
+               
+      child.setString("Faces", 
+               nf(this.Faces[i][0], 0) + "," + 
+               nf(this.Faces[i][1], 0));
+               
+      child.setString("Curves", 
+               nf(this.Curves[i][0], 0) + "," + 
+               nf(this.Curves[i][1], 0));
+               
+      child.setString("Solids", 
+               nf(this.Solids[i][0], 0) + "," + 
+               nf(this.Solids[i][1], 0));
 
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Faces");
-      parent.setInt("ni", this.num);
-      for (int i = 0; i < this.num; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < this.Faces[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.Faces[i][j], 0);
-          if (j < this.Faces[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
+      String txt = "";
+      for (int j = 0; j < 9; j++) {
+        txt += nf(this.PivotMatrix[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 < 9) txt += ",";
       }
-    }
-
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Curves");
-      parent.setInt("ni", this.num);
-      for (int i = 0; i < this.num; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < this.Curves[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.Curves[i][j], 0);
-          if (j < this.Curves[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
-    }
-
-    {    
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Solids");
-      parent.setInt("ni", this.num);
-      for (int i = 0; i < this.num; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        //for (int j = 0; j < this.Solids[i].length; j++) {
-        for (int j = 0; j < 2; j++) { // start, end
-          lineSTR += nf(this.Solids[i][j], 0);
-          if (j < this.Solids[i].length - 1) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
-    }
-
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".PivotMatrix");
-      int ni = this.num;
-      parent.setInt("ni", ni);
-      for (int i = 0; i < ni; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < this.PivotMatrix[i].length; j++) {
-          lineSTR += nf(this.PivotMatrix[i][j], 0, 4).replace(",", "."); // <<<<
-          if (j + 1 < this.PivotMatrix[i].length) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
-    }  
-
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".PivotType");
-      int ni = this.num;
-      parent.setInt("ni", ni);
-      for (int i = 0; i < ni; i++) {
-        XML child = parent.addChild("item");
-        child.setInt("id", i);
-        String lineSTR = "";
-        for (int j = 0; j < this.PivotType[i].length; j++) {
-          lineSTR += nf(this.PivotType[i][j], 0, 4).replace(",", "."); // <<<<
-          if (j + 1 < this.PivotType[i].length) lineSTR += ",";
-        }
-        child.setContent(lineSTR);
-      }
+      child.setContent(txt);
+       
     }
   }
 
@@ -12183,117 +12096,44 @@ class solarchvision_Groups {
     
     println("Loading:" + this.CLASS_STAMP);
 
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".PivotMatrix");
-    
-      int ni = parent.getInt("ni");
+    XML parent = xml.getChild(this.CLASS_STAMP + ".PivotMatrix");
+  
+    int ni = parent.getInt("ni");
 
-      this.num = ni;
+    this.num = ni;
 
-      this.PivotMatrix = new float [ni][9];
+    this.Faces = new int [ni][2];
+    this.Curves = new int [ni][2];
+    this.Solids = new int [ni][2];
+    this.Model1Ds = new int [ni][2];
+    this.Model2Ds = new int [ni][2];
+    this.PivotMatrix = new float [ni][9];
 
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 9; j++) {
-          this.PivotMatrix[i][j] = float(parts[j]);
-        }
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
+      for (int j = 0; j < 9; j++) {
+        this.PivotMatrix[i][j] = float(parts[j]);
       }
-    }  
+      
+      this.Faces[i][0] = int(split(children[i].getString("Faces"), ',')[0]);
+      this.Faces[i][1] = int(split(children[i].getString("Faces"), ',')[1]);
+      
+      this.Curves[i][0] = int(split(children[i].getString("Curves"), ',')[0]);
+      this.Curves[i][1] = int(split(children[i].getString("Curves"), ',')[1]);
 
+      this.Solids[i][0] = int(split(children[i].getString("Solids"), ',')[0]);
+      this.Solids[i][1] = int(split(children[i].getString("Solids"), ',')[1]);
 
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".PivotType");
-    
-      int ni = parent.getInt("ni");
+      this.Model1Ds[i][0] = int(split(children[i].getString("Model1Ds"), ',')[0]);
+      this.Model1Ds[i][1] = int(split(children[i].getString("Model1Ds"), ',')[1]);
 
-      this.PivotType = new int [ni][1];
-
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 1; j++) {
-          this.PivotType[i][j] = int(parts[j]);
-        }
-      }
-    }          
-
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Faces");
-    
-      int ni = parent.getInt("ni");
-      this.Faces = new int [ni][2];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.Faces[i][j] = int(parts[j]);
-        }
-      }
+      this.Model2Ds[i][0] = int(split(children[i].getString("Model2Ds"), ',')[0]);
+      this.Model2Ds[i][1] = int(split(children[i].getString("Model2Ds"), ',')[1]);
+      
     }
- 
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Curves");
-    
-      int ni = parent.getInt("ni");
-      this.Curves = new int [ni][2];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.Curves[i][j] = int(parts[j]);
-        }
-      }
-    }        
 
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Solids");
-    
-      int ni = parent.getInt("ni");
-      this.Solids = new int [ni][2];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.Solids[i][j] = int(parts[j]);
-        }
-      }
-    } 
-
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Model2Ds");
-    
-      int ni = parent.getInt("ni");
-      this.Model2Ds = new int [ni][2];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.Model2Ds[i][j] = int(parts[j]);
-        }
-      }
-    } 
-
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Model1Ds");
-    
-      int ni = parent.getInt("ni");
-      this.Model1Ds = new int [ni][2];
-      XML[] children = parent.getChildren("item");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          this.Model1Ds[i][j] = int(parts[j]);
-        }
-      }
-    }
   }  
   
 }
@@ -13555,72 +13395,72 @@ class solarchvision_SolidImpacts {
       XML child = xml.addChild(this.CLASS_STAMP + ".Z");
       int ni = this.Z.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.Z[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.Z[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".R");
       int ni = this.R.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.R[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.R[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }  
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".U");
       int ni = this.U.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.U[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.U[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".V");
       int ni = this.V.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.V[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.V[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".X");
       int ni = this.X.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.X[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.X[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Y");
       int ni = this.Y.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.Y[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.Y[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
     
   }
@@ -13657,8 +13497,8 @@ class solarchvision_SolidImpacts {
     
       int ni = child.getInt("ni");
       this.Z = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Z[i] = float(parts[i]);
       }
@@ -13669,8 +13509,8 @@ class solarchvision_SolidImpacts {
     
       int ni = child.getInt("ni");
       this.R = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.R[i] = float(parts[i]);
       }
@@ -13681,8 +13521,8 @@ class solarchvision_SolidImpacts {
     
       int ni = child.getInt("ni");
       this.U = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.U[i] = float(parts[i]);
       }
@@ -13693,8 +13533,8 @@ class solarchvision_SolidImpacts {
     
       int ni = child.getInt("ni");
       this.V = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.V[i] = float(parts[i]);
       }
@@ -13705,8 +13545,8 @@ class solarchvision_SolidImpacts {
     
       int ni = child.getInt("ni");
       this.X = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.X[i] = float(parts[i]);
       }
@@ -13718,8 +13558,8 @@ class solarchvision_SolidImpacts {
     
       int ni = child.getInt("ni");
       this.Y = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Y[i] = float(parts[i]);
       }
@@ -16807,8 +16647,6 @@ class solarchvision_Clone3Ds {
 
         int new_OBJ_NUM = allGroups.num - 1;
 
-        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
-
         for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
           allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
         }
@@ -16958,8 +16796,6 @@ class solarchvision_Clone3Ds {
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
         int new_OBJ_NUM = allGroups.num - 1;
-
-        allGroups.PivotType[new_OBJ_NUM][0] = allGroups.PivotType[OBJ_NUM][0];
 
         for (int j = 0; j < allGroups.PivotMatrix[OBJ_NUM].length; j++) { 
           allGroups.PivotMatrix[new_OBJ_NUM][j] = allGroups.PivotMatrix[OBJ_NUM][j];
@@ -17727,13 +17563,6 @@ class solarchvision_Delete3Ds {
         float[][] endList = (float[][]) subset(allGroups.PivotMatrix, OBJ_NUM + 1);
 
         allGroups.PivotMatrix = (float[][]) concat(startList, endList);
-      } 
-
-      {
-        int[][] startList = (int[][]) subset(allGroups.PivotType, 0, OBJ_NUM);
-        int[][] endList = (int[][]) subset(allGroups.PivotType, OBJ_NUM + 1);
-
-        allGroups.PivotType = (int[][]) concat(startList, endList);
       } 
 
       allGroups.num -= 1;
@@ -21707,60 +21536,60 @@ class solarchvision_Select3Ds {
       XML child = xml.addChild(this.CLASS_STAMP + ".LandPoint_ids");
       int ni = this.LandPoint_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.LandPoint_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.LandPoint_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Model1D_ids");
       int ni = this.Model1D_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Model1D_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Model1D_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Model2D_ids");
       int ni = this.Model2D_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Model2D_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Model2D_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Group_ids");
       int ni = this.Group_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Group_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Group_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }  
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Face_ids");
       int ni = this.Face_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Face_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Face_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
   
@@ -21768,24 +21597,24 @@ class solarchvision_Select3Ds {
       XML child = xml.addChild(this.CLASS_STAMP + ".Curve_ids");
       int ni = this.Curve_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Curve_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Curve_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Vertex_ids");
       int ni = this.Vertex_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Vertex_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Vertex_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
   
@@ -21793,12 +21622,12 @@ class solarchvision_Select3Ds {
       XML child = xml.addChild(this.CLASS_STAMP + ".softSelectionVertices");
       int ni = this.softSelectionVertices.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.softSelectionVertices[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.softSelectionVertices[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
   
@@ -21806,12 +21635,12 @@ class solarchvision_Select3Ds {
       XML child = xml.addChild(this.CLASS_STAMP + ".softSelectionValues");
       int ni = this.softSelectionValues.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += nf(this.softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) lineSTR += ",";
+        txt += nf(this.softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
   
@@ -21819,36 +21648,36 @@ class solarchvision_Select3Ds {
       XML child = xml.addChild(this.CLASS_STAMP + ".Solid_ids");
       int ni = this.Solid_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Solid_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Solid_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Section_ids");
       int ni = this.Section_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Section_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Section_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
   
     {
       XML child = xml.addChild(this.CLASS_STAMP + ".Camera_ids");
       int ni = this.Camera_ids.length;
       child.setInt("ni", ni);
-      String lineSTR = "";
+      String txt = "";
       for (int i = 0; i < ni; i++) {
-        lineSTR += this.Camera_ids[i];
-        if (i < ni - 1) lineSTR += ",";
+        txt += this.Camera_ids[i];
+        if (i < ni - 1) txt += ",";
       }
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
   }
   
@@ -21895,8 +21724,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.LandPoint_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.LandPoint_ids[i] = int(parts[i]);
       }
@@ -21907,8 +21736,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Model1D_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Model1D_ids[i] = int(parts[i]);
       }
@@ -21919,8 +21748,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Model2D_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Model2D_ids[i] = int(parts[i]);
       }
@@ -21931,8 +21760,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Group_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Group_ids[i] = int(parts[i]);
       }
@@ -21943,8 +21772,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Face_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Face_ids[i] = int(parts[i]);
       }
@@ -21955,8 +21784,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Curve_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Curve_ids[i] = int(parts[i]);
       }
@@ -21967,8 +21796,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Vertex_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Vertex_ids[i] = int(parts[i]);
       }
@@ -21979,8 +21808,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.softSelectionVertices = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.softSelectionVertices[i] = int(parts[i]);
       }
@@ -21991,8 +21820,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.softSelectionValues = new float [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.softSelectionValues[i] = float(parts[i]);
       }
@@ -22004,8 +21833,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Solid_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Solid_ids[i] = int(parts[i]);
       }
@@ -22017,8 +21846,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Section_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Section_ids[i] = int(parts[i]);
       }
@@ -22029,8 +21858,8 @@ class solarchvision_Select3Ds {
     
       int ni = child.getInt("ni");
       this.Camera_ids = new int [ni];
-      String lineSTR = child.getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = child.getContent();
+      String[] parts = split(txt, ',');
       for (int i = 0; i < ni; i++) {
         this.Camera_ids[i] = int(parts[i]);
       }
@@ -29248,13 +29077,13 @@ class solarchvision_Land3D {
         for (int j = 0; j < this.Mesh[i].length; j++) {
           XML child = parent.addChild("item");
           child.setInt("id", vNo);
-          String lineSTR = "";
+          String txt = "";
           //for (int k = 0; k < this.Mesh[i][j].length; k++) {
           for (int k = 0; k < 3; k++) { // x, y, z 
-            lineSTR += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
-            if (k < this.Mesh[i][j].length - 1) lineSTR += ",";
+            txt += nf(this.Mesh[i][j][k], 0, 4).replace(",", "."); // <<<<
+            if (k < this.Mesh[i][j].length - 1) txt += ",";
           }
-          child.setContent(lineSTR);
+          child.setContent(txt);
           vNo += 1;
         }
       }  
@@ -29336,8 +29165,8 @@ class solarchvision_Land3D {
 
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < this.num_rows * this.num_columns; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
+        String txt = children[i].getContent();
+        String[] parts = split(txt, ',');
         for (int j = 0; j < parts.length; j++) {
           this.Mesh[(i / this.num_columns)][(i % this.num_columns)][j] = float(parts[j]);
         }
@@ -30529,18 +30358,18 @@ class solarchvision_Model2Ds {
       for (int i = 0; i < ni; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
-        String lineSTR = "";
-        lineSTR += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += this.MAP[i];
+        String txt = "";
+        txt += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += this.MAP[i];
   
-        child.setContent(lineSTR);
+        child.setContent(txt);
       }  
       
       parent.setString("displayAll", Boolean.toString(this.displayAll));
@@ -30607,8 +30436,8 @@ class solarchvision_Model2Ds {
   
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
+        String txt = children[i].getContent();
+        String[] parts = split(txt, ',');
         this.setX(i, float(parts[0]));
         this.setY(i, float(parts[1]));
         this.setZ(i, float(parts[2]));
@@ -31728,30 +31557,30 @@ class solarchvision_Model1Ds {
     for (int i = 0; i < ni; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String lineSTR = "";
-      lineSTR += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.getType(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(this.getDegreeMin(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(this.getDegreeMax(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(this.getSeed(i), 0);
-      lineSTR += ",";
-      lineSTR += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
+      String txt = "";
+      txt += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getType(i), 0);
+      txt += ",";
+      txt += nf(this.getDegreeMin(i), 0);
+      txt += ",";
+      txt += nf(this.getDegreeMax(i), 0);
+      txt += ",";
+      txt += nf(this.getSeed(i), 0);
+      txt += ",";
+      txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
 
-      child.setContent(lineSTR);
+      child.setContent(txt);
     } 
     
     
@@ -31779,8 +31608,8 @@ class solarchvision_Model1Ds {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
 
       this.setX(i, float(parts[0]));
       this.setY(i, float(parts[1]));
@@ -32346,35 +32175,35 @@ class solarchvision_Solids {
     for (int i = 0; i < ni; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String lineSTR = "";
+      String txt = "";
 
-      lineSTR += nf(this.get_posX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_posY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_posZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_powX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_powY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_powZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_scaleX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_scaleY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_scaleZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_value(i), 0, 4).replace(",", "."); // <<<<
+      txt += nf(this.get_posX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_posY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_posZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_powX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_powY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_powZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_scaleX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_scaleY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_scaleZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_value(i), 0, 4).replace(",", "."); // <<<<
       
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }    
     
     parent.setString("displayAll", Boolean.toString(this.displayAll));
@@ -32396,8 +32225,8 @@ class solarchvision_Solids {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
       this.set_posX(i, float(parts[0]));
       this.set_posY(i, float(parts[1]));
       this.set_posZ(i, float(parts[2]));
@@ -32562,13 +32391,13 @@ class solarchvision_Points {
     for (int i = 0; i < allPoints.getLength(); i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String lineSTR = "";
-      lineSTR += nf(allPoints.getX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(allPoints.getY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(allPoints.getZ(i), 0, 4).replace(",", "."); // <<<<
-      child.setContent(lineSTR);
+      String txt = "";
+      txt += nf(allPoints.getX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(allPoints.getY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(allPoints.getZ(i), 0, 4).replace(",", "."); // <<<<
+      child.setContent(txt);
     }    
 
     parent.setString("displayAll", Boolean.toString(this.displayAll));
@@ -32585,8 +32414,8 @@ class solarchvision_Points {
     allVertices = new float [ni][3];
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
  
       allPoints.setX(i, float(parts[0]));
       allPoints.setY(i, float(parts[1]));
@@ -32614,7 +32443,6 @@ class solarchvision_User3D {
   int default_Visibility = 1; // 1: view 0: hide -1:freeze 
   int default_Weight = 0; 
   int default_Closed = 0; 
-  int default_PivotType = 0;
 
   float create_Length = 10;
   float create_Width = 10;
@@ -32672,7 +32500,6 @@ class solarchvision_User3D {
     parent.setInt("default_Visibility", this.default_Visibility);
     parent.setInt("default_Weight", this.default_Weight);
     parent.setInt("default_Closed", this.default_Closed);
-    parent.setInt("default_PivotType", this.default_PivotType);
   
     parent.setFloat("create_Length", this.create_Length);
     parent.setFloat("create_Width", this.create_Width);
@@ -32731,7 +32558,6 @@ class solarchvision_User3D {
     this.default_Visibility = parent.getInt("default_Visibility");
     this.default_Weight = parent.getInt("default_Weight");
     this.default_Closed = parent.getInt("default_Closed");
-    this.default_PivotType = parent.getInt("default_PivotType");
 
     this.create_Length = parent.getFloat("create_Length");
     this.create_Width = parent.getFloat("create_Width");
@@ -37454,28 +37280,28 @@ class solarchvision_Cameras {
     for (int i = 0; i < ni; i++) {
       XML child = parent.addChild("item");
       child.setInt("id", i);
-      String lineSTR = "";
-      lineSTR += nf(this.get_posX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_posY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_posZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_posT(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotX(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotY(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_rotT(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";
-      lineSTR += nf(this.get_zoom(i), 0, 4).replace(",", "."); // <<<<
-      lineSTR += ",";      
-      lineSTR += nf(this.get_type(i), 0);
+      String txt = "";
+      txt += nf(this.get_posX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_posY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_posZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_posT(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_rotT(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.get_zoom(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";      
+      txt += nf(this.get_type(i), 0);
 
-      child.setContent(lineSTR);
+      child.setContent(txt);
     }
     
     parent.setString("displayAll", Boolean.toString(this.displayAll));
@@ -37498,8 +37324,8 @@ class solarchvision_Cameras {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
-      String lineSTR = children[i].getContent();
-      String[] parts = split(lineSTR, ',');
+      String txt = children[i].getContent();
+      String[] parts = split(txt, ',');
       this.set_posX(i, float(parts[0]));
       this.set_posY(i, float(parts[1]));
       this.set_posZ(i, float(parts[2]));
@@ -38105,28 +37931,28 @@ class solarchvision_Sections {
       for (int i = 0; i < ni; i++) {
         XML child = parent.addChild("item");
         child.setInt("id", i);
-        String lineSTR = "";
+        String txt = "";
         
-        lineSTR += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getU(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-        lineSTR += nf(this.getV(i), 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
+        txt += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getU(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
+        txt += nf(this.getV(i), 0, 4).replace(",", "."); // <<<<
+        txt += ",";
 
-        lineSTR += nf(this.get_type(i), 0);
-        lineSTR += ",";
-        lineSTR += nf(this.get_res1(i), 0);
-        lineSTR += ",";
-        lineSTR += nf(this.get_res2(i), 0);
+        txt += nf(this.get_type(i), 0);
+        txt += ",";
+        txt += nf(this.get_res1(i), 0);
+        txt += ",";
+        txt += nf(this.get_res2(i), 0);
   
-        child.setContent(lineSTR);
+        child.setContent(txt);
       }
       
       parent.setString("displayAll", Boolean.toString(this.displayAll));
@@ -38204,8 +38030,8 @@ class solarchvision_Sections {
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
   
-        String lineSTR = children[i].getContent();
-        String[] parts = split(lineSTR, ',');
+        String txt = children[i].getContent();
+        String[] parts = split(txt, ',');
 
         this.setX(i, float(parts[0]));
         this.setY(i, float(parts[1]));
@@ -46441,19 +46267,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int f_start = 0;
         int f_end = Pivot_Lines.length - 1;
-
-        if (allGroups.PivotType[OBJ_NUM][0] == 1) {
-          f_start = 0; 
-          f_end = f_start;
-        }
-        if (allGroups.PivotType[OBJ_NUM][0] == 2) {
-          f_start = 1; 
-          f_end = f_start;
-        }
-        if (allGroups.PivotType[OBJ_NUM][0] == 3) {
-          f_start = 2; 
-          f_end = f_start;
-        }
 
         for (int f = f_start; f <= f_end; f++) {
 
