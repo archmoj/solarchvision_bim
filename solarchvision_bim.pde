@@ -14366,152 +14366,41 @@ class solarchvision_Edit3Ds {
   private final static String CLASS_STAMP = "Edit3Ds";
   
   void selection (int p) {
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      this.Cameras(p);
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      this.Sections(p);
-    }         
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.Solids(p);
-    }           
-  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      this.Curves(p);
+    }    
+    
     if (current_ObjectCategory == ObjectCategory.FACE) {
       this.Faces(p);
     }         
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(p);
-    }       
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      this.Groups(p);
-    }      
-  
+    
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1Ds(p);
+    }    
+    
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2Ds(p);
     }      
+
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Cameras(p);
+    }  
+
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(p);
+    }      
+
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Sections(p);
+    }
   
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(p);
-    }       
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      this.Groups(p);
+    }  
+   
   }        
 
-  void Cameras (int p) {
-  
-    for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = userSelections.Camera_ids[o];
-
-      int f = OBJ_NUM;
-
-      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = allCameras.get_type(f);
-        n += p;
-        if (n > 1) n = 0;
-        if (n < 0) n = 1;
-        allCameras.set_type(f, n);         
-
-        if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.get_type(f);
-      }
-    }
-  }
-  
-  void Sections (int p) {
-
-    boolean allSolids_updated = false;  
-
-    for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = userSelections.Section_ids[o];
-
-      int f = OBJ_NUM;
-
-      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = allSections.get_type(f);
-        n += p;
-        if (n > 3) n = 0;
-        if (n < 0) n = 3;
-        allSections.set_type(f, n);         
-
-        allSolids_updated = true;
-      }        
-
-      if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-        int n = allSections.get_res1(f);
-        if (p > 0) n *= 2;
-        if (p < 0) n /= 2;
-
-        if (n > 1600) n = 100;
-        if (n < 100) n = 1600;
-        allSections.set_res1(f, n);
-
-        allSections.set_res2(f, n); // also modifying the other one
-
-        println("RES:", n);
-
-        allSolids_updated = true;
-      }
-
-    } 
-
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
-
-  
-  void Solids (int p) {
-
-    boolean allSolids_updated = false;  
-
-    for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = userSelections.Solid_ids[o];
-
-      int f = OBJ_NUM;
-
-      if ((WIN3D.UI_CurrentTask == UITASK.PowerX) ||  (WIN3D.UI_CurrentTask == UITASK.PowerY) ||  (WIN3D.UI_CurrentTask == UITASK.PowerZ) ||  (WIN3D.UI_CurrentTask == UITASK.PowerAll)) {
-
-
-        float Solid_powX = allSolids.get_powX(f);
-        float Solid_powY = allSolids.get_powY(f);
-        float Solid_powZ = allSolids.get_powZ(f);
-
-
-        float n = 2;
-
-        if (WIN3D.UI_CurrentTask == UITASK.PowerX) n = Solid_powX; 
-        if (WIN3D.UI_CurrentTask == UITASK.PowerY) n = Solid_powY; 
-        if (WIN3D.UI_CurrentTask == UITASK.PowerZ) n = Solid_powZ; 
-        if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
-          n = Solid_powX;
-        }          
-
-        if (p > 0) n *= 2;
-        if (p < 0) n /= 2;
-
-        if (n > CubePower) n = StarPower;
-        if (n < StarPower) n = CubePower;
-
-        if (WIN3D.UI_CurrentTask == UITASK.PowerX) Solid_powX = n; 
-        if (WIN3D.UI_CurrentTask == UITASK.PowerY) Solid_powY = n; 
-        if (WIN3D.UI_CurrentTask == UITASK.PowerZ) Solid_powZ = n; 
-        if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
-          Solid_powX = n;
-          Solid_powY = n;
-          Solid_powZ = n;
-        } 
-
-        allSolids.updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
-
-        allSolids_updated = true;
-      }
-    }
-
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  } 
   
   
   
@@ -14717,55 +14606,6 @@ class solarchvision_Edit3Ds {
   }
    
 
-  void Model2Ds (int p) {
-    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = userSelections.Model2D_ids[o];
-
-      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-
-        int n = allModel2Ds.MAP[OBJ_NUM];
-        int sign_n = 1;
-        if (n < 0) sign_n = -1;
-
-        n = abs(n);
-
-        int n1 = allModel2Ds.num_files_PEOPLE;
-        int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
-
-        if (allModel2Ds.isTree(n)) { // case: trees
-
-          n += p;
-
-          if (n > n2) {
-            n = n1 + 1; 
-            sign_n *= -1;
-          }
-          if (n < n1 + 1) {
-            n = n2; 
-            sign_n *= -1;
-          }
-        }
-        else { // case: people 
-
-          n += p;
-
-          if (n > n1) {
-            n = 1; 
-            sign_n *= -1;
-          }
-          if (n < 1) {
-            n = n1; 
-            sign_n *= -1;
-          }
-        }
-
-        n *= sign_n;
-
-        allModel2Ds.MAP[OBJ_NUM] = n;
-      }
-    }
-  }
 
 
   void Model1Ds (int p) {
@@ -14857,6 +14697,175 @@ class solarchvision_Edit3Ds {
     }
   }
 
+
+
+  void Model2Ds (int p) {
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Model2D_ids[o];
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+
+        int n = allModel2Ds.MAP[OBJ_NUM];
+        int sign_n = 1;
+        if (n < 0) sign_n = -1;
+
+        n = abs(n);
+
+        int n1 = allModel2Ds.num_files_PEOPLE;
+        int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
+
+        if (allModel2Ds.isTree(n)) { // case: trees
+
+          n += p;
+
+          if (n > n2) {
+            n = n1 + 1; 
+            sign_n *= -1;
+          }
+          if (n < n1 + 1) {
+            n = n2; 
+            sign_n *= -1;
+          }
+        }
+        else { // case: people 
+
+          n += p;
+
+          if (n > n1) {
+            n = 1; 
+            sign_n *= -1;
+          }
+          if (n < 1) {
+            n = n1; 
+            sign_n *= -1;
+          }
+        }
+
+        n *= sign_n;
+
+        allModel2Ds.MAP[OBJ_NUM] = n;
+      }
+    }
+  }
+
+
+  void Cameras (int p) {
+  
+    for (int o = userSelections.Camera_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Camera_ids[o];
+
+      int f = OBJ_NUM;
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+        int n = allCameras.get_type(f);
+        n += p;
+        if (n > 1) n = 0;
+        if (n < 0) n = 1;
+        allCameras.set_type(f, n);         
+
+        if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.get_type(f);
+      }
+    }
+  }
+  
+  void Sections (int p) {
+
+    boolean allSolids_updated = false;  
+
+    for (int o = userSelections.Section_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Section_ids[o];
+
+      int f = OBJ_NUM;
+
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
+        int n = allSections.get_type(f);
+        n += p;
+        if (n > 3) n = 0;
+        if (n < 0) n = 3;
+        allSections.set_type(f, n);         
+
+        allSolids_updated = true;
+      }        
+
+      if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
+        int n = allSections.get_res1(f);
+        if (p > 0) n *= 2;
+        if (p < 0) n /= 2;
+
+        if (n > 1600) n = 100;
+        if (n < 100) n = 1600;
+        allSections.set_res1(f, n);
+
+        allSections.set_res2(f, n); // also modifying the other one
+
+        println("RES:", n);
+
+        allSolids_updated = true;
+      }
+
+    } 
+
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+
+  
+  void Solids (int p) {
+
+    boolean allSolids_updated = false;  
+
+    for (int o = userSelections.Solid_ids.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = userSelections.Solid_ids[o];
+
+      int f = OBJ_NUM;
+
+      if ((WIN3D.UI_CurrentTask == UITASK.PowerX) ||  (WIN3D.UI_CurrentTask == UITASK.PowerY) ||  (WIN3D.UI_CurrentTask == UITASK.PowerZ) ||  (WIN3D.UI_CurrentTask == UITASK.PowerAll)) {
+
+
+        float Solid_powX = allSolids.get_powX(f);
+        float Solid_powY = allSolids.get_powY(f);
+        float Solid_powZ = allSolids.get_powZ(f);
+
+
+        float n = 2;
+
+        if (WIN3D.UI_CurrentTask == UITASK.PowerX) n = Solid_powX; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerY) n = Solid_powY; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerZ) n = Solid_powZ; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
+          n = Solid_powX;
+        }          
+
+        if (p > 0) n *= 2;
+        if (p < 0) n /= 2;
+
+        if (n > CubePower) n = StarPower;
+        if (n < StarPower) n = CubePower;
+
+        if (WIN3D.UI_CurrentTask == UITASK.PowerX) Solid_powX = n; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerY) Solid_powY = n; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerZ) Solid_powZ = n; 
+        if (WIN3D.UI_CurrentTask == UITASK.PowerAll) {
+          Solid_powX = n;
+          Solid_powY = n;
+          Solid_powZ = n;
+        } 
+
+        allSolids.updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
+
+        allSolids_updated = true;
+      }
+    }
+
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  } 
+
+
+
+
 }
 
 solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
@@ -14874,19 +14883,11 @@ class solarchvision_Scale3Ds {
     x0 = O[0];
     y0 = O[1];
     z0 = O[2];    
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      this.Cameras(x0, y0, z0, sx, sy, sz);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      this.Sections(sx, sy);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.Solids(x0, y0, z0, sx, sy, sz);
-    }       
-  
+
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoints(x0, y0, z0, sx, sy, sz);
+    }
+      
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
       this.softSelection(x0, y0, z0, sx, sy, sz);
     }    
@@ -14894,18 +14895,18 @@ class solarchvision_Scale3Ds {
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
       this.Vertices(x0, y0, z0, sx, sy, sz);
     }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      this.Faces(x0, y0, z0, sx, sy, sz);
-    }  
-    
+
     if (current_ObjectCategory == ObjectCategory.CURVE) {
       this.Curves(x0, y0, z0, sx, sy, sz);
     }    
-  
+    
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Faces(x0, y0, z0, sx, sy, sz);
+    }     
+    
     if (current_ObjectCategory == ObjectCategory.GROUP) {
       this.Groups(x0, y0, z0, sx, sy, sz);
-    }
+    }        
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2Ds(x0, y0, z0, sx, sy, sz);
@@ -14914,10 +14915,19 @@ class solarchvision_Scale3Ds {
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1Ds(x0, y0, z0, sx, sy, sz);
     }  
+
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(x0, y0, z0, sx, sy, sz);
+    }     
   
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoints(x0, y0, z0, sx, sy, sz);
-    }
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Cameras(x0, y0, z0, sx, sy, sz);
+    }   
+    
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Sections(sx, sy);
+    }         
+    
   }
 
 
@@ -15389,10 +15399,38 @@ class solarchvision_Rotate3Ds {
     y0 = B[1] - A[1];
     z0 = B[2] - A[2];
   
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoints(x0, y0, z0, r, the_Vector);
+    }  
+  
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
       this.softSelection(x0, y0, z0, r, the_Vector);
     }  
     
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+      this.Vertices(x0, y0, z0, r, the_Vector);
+    }      
+
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      this.Curves(x0, y0, z0, r, the_Vector);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Faces(x0, y0, z0, r, the_Vector);
+    }  
+
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      this.Model1Ds(x0, y0, z0, r, the_Vector);
+    }   
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2Ds(x0, y0, z0, r, the_Vector);
+    }
+    
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(x0, y0, z0, r, the_Vector);
+    }          
+  
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
       this.Cameras(x0, y0, z0, r, the_Vector);
     }  
@@ -15400,38 +15438,10 @@ class solarchvision_Rotate3Ds {
     if (current_ObjectCategory == ObjectCategory.SECTION) {
       this.Sections(r);
     }   
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.Solids(x0, y0, z0, r, the_Vector);
-    }       
-  
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      this.Vertices(x0, y0, z0, r, the_Vector);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      this.Faces(x0, y0, z0, r, the_Vector);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(x0, y0, z0, r, the_Vector);
-    }  
     
     if (current_ObjectCategory == ObjectCategory.GROUP) {
       this.Groups(r, the_Vector);
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(x0, y0, z0, r, the_Vector);
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(x0, y0, z0, r, the_Vector);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoints(x0, y0, z0, r, the_Vector);
-    }
+    }    
   }
 
 
@@ -16036,50 +16046,51 @@ class solarchvision_Move3Ds {
     dy = B[1] - A[1];
     dz = B[2] - A[2];
     */
+
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoints(dx, dy, dz);
+    }
   
     if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
       this.softSelection(dx, dy, dz);
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      this.Cameras(dx, dy, dz);
-    }     
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      this.Sections(dx, dy, dz);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.Solids(dx, dy, dz);
     }      
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
       this.Vertices(dx, dy, dz);
     }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      this.Faces(dx, dy, dz);
-    }  
-  
+ 
     if (current_ObjectCategory == ObjectCategory.CURVE) {
       this.Curves(dx, dy, dz);
     }
-    
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      this.Groups(dx, dy, dz);
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(dx, dy, dz);
+
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      this.Faces(dx, dy, dz);
     }  
-  
+    
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1Ds(dx, dy, dz);
     }    
   
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoints(dx, dy, dz);
-    }
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      this.Model2Ds(dx, dy, dz);
+    }  
+    
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      this.Solids(dx, dy, dz);
+    }       
+
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      this.Sections(dx, dy, dz);
+    }   
+          
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      this.Cameras(dx, dy, dz);
+    }     
+
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      this.Groups(dx, dy, dz);
+    }    
   }
 
 
