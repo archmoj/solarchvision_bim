@@ -14363,59 +14363,7 @@ class solarchvision_Edit3Ds {
   
 
 
-  void move_Groups (float dx, float dy, float dz) {
-  
-    int[] PolymeshVertices = userSelections.get_Group_Vertices();
-  
-    for (int q = 0; q < PolymeshVertices.length; q++) {
-  
-      int n = PolymeshVertices[q];
-  
-      allPoints.move(n, dx, dy, dz); 
-    }
-  
-    boolean allSolids_updated = false;
-  
-    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
-  
-      int OBJ_NUM = userSelections.Group_ids[o];
-  
-      {
-        allGroups.PivotMatrix[OBJ_NUM][0] += dx;
-        allGroups.PivotMatrix[OBJ_NUM][1] += dy;
-        allGroups.PivotMatrix[OBJ_NUM][2] += dz;
-      }
-  
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
-  
-          allModel1Ds.move(f, dx, dy, dz);
-        }
-      }
-  
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
-  
-          allModel2Ds.move(f, dx, dy, dz);
-        }
-      }
-  
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
-        if ((0 <= f) && (f < allSolids.DEF.length)) {
-  
-          float Solid_posX = allSolids.get_posX(f);
-          float Solid_posY = allSolids.get_posY(f);
-          float Solid_posZ = allSolids.get_posZ(f);
-  
-          allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
-  
-          allSolids_updated = true;
-        }
-      }
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
+
   
   void rotate_Groups (float r, int the_Vector) {
   
@@ -14864,17 +14812,7 @@ class solarchvision_Edit3Ds {
   
   
   
-  void move_Faces (float dx, float dy, float dz) {
-  
-    int[] FaceVertices = userSelections.get_Face_Vertices();
-  
-    for (int q = 0; q < FaceVertices.length; q++) {
-  
-      int f = FaceVertices[q];
-  
-      allPoints.move(f, dx, dy, dz); 
-    }
-  }
+
   
   void rotate_Faces (float x0, float y0, float z0, float r, int the_Vector) {
   
@@ -14935,17 +14873,7 @@ class solarchvision_Edit3Ds {
   }
   
   
-  void move_Curves (float dx, float dy, float dz) {
-  
-    int[] CurveVertices = userSelections.get_Curve_Vertices();
-  
-    for (int q = 0; q < CurveVertices.length; q++) {
-  
-      int f = CurveVertices[q];
-  
-      allPoints.move(f, dx, dy, dz); 
-    }
-  }
+
   
   void rotate_Curves (float x0, float y0, float z0, float r, int the_Vector) {
   
@@ -15005,15 +14933,7 @@ class solarchvision_Edit3Ds {
     }
   }
   
-  void move_Vertices (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
-  
-      int f = userSelections.Vertex_ids[q];
-  
-      allPoints.move(f, dx, dy, dz); 
-    }
-  }
+
   
   
   void rotate_Vertices (float x0, float y0, float z0, float r, int the_Vector) {
@@ -15205,15 +15125,7 @@ class solarchvision_Edit3Ds {
   
   
   
-  void move_Model2Ds (float dx, float dy, float dz) {
-  
-    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
-  
-      int f = userSelections.Model2D_ids[o];
-      
-      allModel2Ds.move(f, dx, dy, dz); 
-    }
-  } 
+
   
   
   void scale_Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
@@ -15276,36 +15188,9 @@ class solarchvision_Edit3Ds {
   }
   
   
-  void move_Model1Ds (float dx, float dy, float dz) {
+
   
-    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
-  
-      int f = userSelections.Model1D_ids[o];
-  
-      allModel1Ds.move(f, dx, dy, dz); 
-    }
-  } 
-  
-  
-  void move_Solids (float dx, float dy, float dz) {
-  
-    boolean allSolids_updated = false; 
-  
-    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
-  
-      int f = userSelections.Solid_ids[q];
-  
-      float Solid_posX = allSolids.get_posX(f);
-      float Solid_posY = allSolids.get_posY(f);
-      float Solid_posZ = allSolids.get_posZ(f);
-  
-      allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
-  
-      allSolids_updated = true;
-    }
-  
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }
+
   
   
   void rotate_Solids (float x0, float y0, float z0, float r, int the_Vector) {
@@ -15381,20 +15266,7 @@ class solarchvision_Edit3Ds {
   }
   
   
-  void move_Sections (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < userSelections.Section_ids.length; q++) {
-  
-      int f = userSelections.Section_ids[q];
-      
-      allSections.move(f, dx, dy, dz);
-    }
-  
-    allSolidImpacts.calculate_Impact_selectedSections();
-  
-    WIN3D.update = true;
-    ROLLOUT.update = true;
-  }
+
   
   
   void rotate_Sections (float r) {
@@ -15429,22 +15301,7 @@ class solarchvision_Edit3Ds {
   }
   
   
-  void move_Cameras (float dx, float dy, float dz) {
-  
-    // swapping y and z vectors to match camera's local coordinate
-    float tmp = dz;
-    dz = dy;
-    dy = tmp;
-  
-    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
-  
-      int f = userSelections.Camera_ids[q];
-  
-      allCameras.move(f, dx, dy, dz); 
-  
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
-    }
-  }
+
   
   
   void rotate_Cameras (float x0, float y0, float z0, float r, int the_Vector) {
@@ -15520,20 +15377,7 @@ class solarchvision_Edit3Ds {
   
   
   
-  void move_LandPoints (float dx, float dy, float dz) {
-  
-    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
-  
-      int f = userSelections.LandPoint_ids[q];
-  
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
-  
-      Land3D.Mesh[i][j][0] += dx; 
-      Land3D.Mesh[i][j][1] += dy;
-      Land3D.Mesh[i][j][2] += dz;
-    }
-  }
+
   
   
   void rotate_LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
@@ -16166,20 +16010,275 @@ class solarchvision_Edit3Ds {
   }
 
 
-
-
-
-
-
-   
-
-
-
-
-
 }
 
 solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
+
+
+
+
+class solarchvision_Move3Ds {
+  
+  private final static String CLASS_STAMP = "Move3Ds";
+
+
+  void selection (float dx, float dy, float dz) {
+    
+    println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);
+  
+    float[] A = userSelections.translateInside_ReferencePivot(0, 0, 0);
+    float[] B = userSelections.translateInside_ReferencePivot(dx, dy, dz);
+  
+    dx = B[0] - A[0];
+    dy = B[1] - A[1];
+    dz = B[2] - A[2];
+  
+    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+      Edit3Ds.softMove_selectedVertices(dx, dy, dz);
+    }      
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      Move3Ds.move_Cameras(dx, dy, dz);
+    }     
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      Move3Ds.move_Sections(dx, dy, dz);
+    }   
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      Move3Ds.move_Solids(dx, dy, dz);
+    }      
+
+    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+      Move3Ds.move_Vertices(dx, dy, dz);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      Move3Ds.move_Faces(dx, dy, dz);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      Move3Ds.move_Curves(dx, dy, dz);
+    }
+    
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      Move3Ds.move_Groups(dx, dy, dz);
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      Move3Ds.move_Model2Ds(dx, dy, dz);
+    }  
+  
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      Move3Ds.move_Model1Ds(dx, dy, dz);
+    }    
+  
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      Move3Ds.move_LandPoints(dx, dy, dz);
+    }
+  }
+
+
+
+  void move_LandPoints (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.LandPoint_ids.length; q++) {
+  
+      int f = userSelections.LandPoint_ids[q];
+  
+      int i = f / Land3D.num_columns;
+      int j = f % Land3D.num_columns;
+  
+      Land3D.Mesh[i][j][0] += dx; 
+      Land3D.Mesh[i][j][1] += dy;
+      Land3D.Mesh[i][j][2] += dz;
+    }
+  }
+
+
+  void move_Vertices (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.Vertex_ids.length; q++) {
+  
+      int f = userSelections.Vertex_ids[q];
+  
+      allPoints.move(f, dx, dy, dz); 
+    }
+  }
+  
+  
+  void move_Curves (float dx, float dy, float dz) {
+  
+    int[] CurveVertices = userSelections.get_Curve_Vertices();
+  
+    for (int q = 0; q < CurveVertices.length; q++) {
+  
+      int f = CurveVertices[q];
+  
+      allPoints.move(f, dx, dy, dz); 
+    }
+  }  
+  
+
+  void move_Faces (float dx, float dy, float dz) {
+  
+    int[] FaceVertices = userSelections.get_Face_Vertices();
+  
+    for (int q = 0; q < FaceVertices.length; q++) {
+  
+      int f = FaceVertices[q];
+  
+      allPoints.move(f, dx, dy, dz); 
+    }
+  }
+  
+  
+  void move_Model1Ds (float dx, float dy, float dz) {
+  
+    for (int o = userSelections.Model1D_ids.length - 1; o >= 0; o--) {
+  
+      int f = userSelections.Model1D_ids[o];
+  
+      allModel1Ds.move(f, dx, dy, dz); 
+    }
+  } 
+    
+  
+  
+  void move_Model2Ds (float dx, float dy, float dz) {
+  
+    for (int o = userSelections.Model2D_ids.length - 1; o >= 0; o--) {
+  
+      int f = userSelections.Model2D_ids[o];
+      
+      allModel2Ds.move(f, dx, dy, dz); 
+    }
+  } 
+  
+  
+  void move_Solids (float dx, float dy, float dz) {
+  
+    boolean allSolids_updated = false; 
+  
+    for (int q = 0; q < userSelections.Solid_ids.length; q++) {
+  
+      int f = userSelections.Solid_ids[q];
+  
+      float Solid_posX = allSolids.get_posX(f);
+      float Solid_posY = allSolids.get_posY(f);
+      float Solid_posZ = allSolids.get_posZ(f);
+  
+      allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+  
+      allSolids_updated = true;
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }  
+  
+  
+  void move_Sections (float dx, float dy, float dz) {
+  
+    for (int q = 0; q < userSelections.Section_ids.length; q++) {
+  
+      int f = userSelections.Section_ids[q];
+      
+      allSections.move(f, dx, dy, dz);
+    }
+  
+    allSolidImpacts.calculate_Impact_selectedSections();
+  
+    WIN3D.update = true;
+    ROLLOUT.update = true;
+  }
+
+
+  void move_Cameras (float dx, float dy, float dz) {
+  
+    // swapping y and z vectors to match camera's local coordinate
+    float tmp = dz;
+    dz = dy;
+    dy = tmp;
+  
+    for (int q = 0; q < userSelections.Camera_ids.length; q++) {
+  
+      int f = userSelections.Camera_ids[q];
+  
+      allCameras.move(f, dx, dy, dz); 
+  
+      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+    }
+  }
+
+  void move_Groups (float dx, float dy, float dz) {
+  
+    int[] PolymeshVertices = userSelections.get_Group_Vertices();
+  
+    for (int q = 0; q < PolymeshVertices.length; q++) {
+  
+      int n = PolymeshVertices[q];
+  
+      allPoints.move(n, dx, dy, dz); 
+    }
+  
+    boolean allSolids_updated = false;
+  
+    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+  
+      int OBJ_NUM = userSelections.Group_ids[o];
+  
+      {
+        allGroups.PivotMatrix[OBJ_NUM][0] += dx;
+        allGroups.PivotMatrix[OBJ_NUM][1] += dy;
+        allGroups.PivotMatrix[OBJ_NUM][2] += dz;
+      }
+  
+      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel1Ds.num)) {
+  
+          allModel1Ds.move(f, dx, dy, dz);
+        }
+      }
+  
+      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allModel2Ds.num)) {
+  
+          allModel2Ds.move(f, dx, dy, dz);
+        }
+      }
+  
+      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+        if ((0 <= f) && (f < allSolids.DEF.length)) {
+  
+          float Solid_posX = allSolids.get_posX(f);
+          float Solid_posY = allSolids.get_posY(f);
+          float Solid_posZ = allSolids.get_posZ(f);
+  
+          allSolids.updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+  
+          allSolids_updated = true;
+        }
+      }
+    }
+  
+    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+  }
+
+}
+
+solarchvision_Move3Ds Move3Ds = new solarchvision_Move3Ds();     
+
+
+
+
+
+
+
+
+
+
+
+
   
 
 
@@ -18395,61 +18494,7 @@ class solarchvision_Selections {
   
   
   
-  void move (float dx, float dy, float dz) {
-    
-    println("Move: dx=", dx, ", dy=", dy, ", dz=", dz);
-  
-    float[] A = this.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = this.translateInside_ReferencePivot(dx, dy, dz);
-  
-    dx = B[0] - A[0];
-    dy = B[1] - A[1];
-    dz = B[2] - A[2];
-  
-    if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-      Edit3Ds.softMove_selectedVertices(dx, dy, dz);
-    }      
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Edit3Ds.move_Cameras(dx, dy, dz);
-    }     
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Edit3Ds.move_Sections(dx, dy, dz);
-    }   
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Edit3Ds.move_Solids(dx, dy, dz);
-    }      
 
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      Edit3Ds.move_Vertices(dx, dy, dz);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      Edit3Ds.move_Faces(dx, dy, dz);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Edit3Ds.move_Curves(dx, dy, dz);
-    }
-    
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Edit3Ds.move_Groups(dx, dy, dz);
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Edit3Ds.move_Model2Ds(dx, dy, dz);
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Edit3Ds.move_Model1Ds(dx, dy, dz);
-    }    
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      Edit3Ds.move_LandPoints(dx, dy, dz);
-    }
-  }
     
 
 
@@ -22819,7 +22864,7 @@ void draw () {
             dy = 0;
           }            
 
-          userSelections.move(dx, dy, dz);
+          Move3Ds.selection(dx, dy, dz);
           WIN3D.update = true;
         }
         if (pre_Selection_rotValue != userSelections.rotValue) {
@@ -40654,7 +40699,7 @@ void mouseWheel (MouseEvent event) {
                   dy = 0;
                 }  
 
-                userSelections.move(dx, dy, dz);
+                Move3Ds.selection(dx, dy, dz);
 
                 WIN3D.update = true;
               }   
@@ -44146,7 +44191,7 @@ void mouseClicked () {
                       dy = 0;
                     } 
   
-                    userSelections.move(dx, dy, dz);
+                    Move3Ds.selection(dx, dy, dz);
   
                     userSelections.calculate_BoundingBox();
                     WIN3D.update = true;
@@ -54755,7 +54800,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (q == 3) dz = float(parameters[0]);
         }
       }
-      userSelections.move(dx, dy, dz);
+      Move3Ds.selection(dx, dy, dz);
       WIN3D.update = true;
     }
     else {
@@ -54888,7 +54933,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       for (int q = 0; q < n; q++) {
         Clone3Ds.selection(true); 
-        if ((dx != 0) || (dy != 0) || (dz != 0)) userSelections.move(dx, dy, dz);
+        if ((dx != 0) || (dy != 0) || (dz != 0)) Move3Ds.selection(dx, dy, dz);
         if (rx != 0) userSelections.rotate(0, 0, 0, rx, 0);
         if (ry != 0) userSelections.rotate(0, 0, 0, ry, 1);
         if (rz != 0) userSelections.rotate(0, 0, 0, rz, 2);
