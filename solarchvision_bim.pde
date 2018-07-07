@@ -12101,35 +12101,35 @@ class solarchvision_Groups {
     }
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Edit3Ds.delete_Cameras();
+      Delete3Ds.selected_Cameras();
     }
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Edit3Ds.delete_Sections();
+      Delete3Ds.selected_Sections();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Edit3Ds.delete_Model1Ds();
+      Delete3Ds.selected_Model1Ds();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Edit3Ds.delete_Model2Ds();
+      Delete3Ds.selected_Model2Ds();
     }
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Edit3Ds.delete_Solids();
+      Delete3Ds.selected_Solids();
     }
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      Edit3Ds.delete_Faces();
+      Delete3Ds.selected_Faces();
     }
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Edit3Ds.delete_Curves();
+      Delete3Ds.selected_Curves();
     }
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Edit3Ds.delete_Groups();
+      Delete3Ds.selected_Groups();
     }
   
     if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
@@ -16904,7 +16904,20 @@ class solarchvision_Edit3Ds {
 
 
 
-  void delete_Cameras () {
+
+
+}
+
+solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
+  
+
+
+
+class solarchvision_Delete3Ds {
+  
+  private final static String CLASS_STAMP = "Delete3Ds";
+
+  void selected_Cameras () {
 
     userSelections.Camera_ids = sort(userSelections.Camera_ids);
 
@@ -16938,7 +16951,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void delete_Sections () {
+  void selected_Sections () {
 
     userSelections.Section_ids = sort(userSelections.Section_ids);
 
@@ -16982,7 +16995,7 @@ class solarchvision_Edit3Ds {
 
 
 
-  void delete_Model1Ds () {
+  void selected_Model1Ds () {
 
     userSelections.Model1D_ids = sort(userSelections.Model1D_ids);
 
@@ -17055,7 +17068,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void delete_Model2Ds () {
+  void selected_Model2Ds () {
 
     userSelections.Model2D_ids = sort(userSelections.Model2D_ids);
 
@@ -17094,7 +17107,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void delete_Solids () {
+  void selected_Solids () {
 
     userSelections.Solid_ids = sort(userSelections.Solid_ids);
 
@@ -17123,7 +17136,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void delete_Faces () {
+  void selected_Faces () {
 
     userSelections.Face_ids = sort(userSelections.Face_ids);
 
@@ -17159,7 +17172,7 @@ class solarchvision_Edit3Ds {
   }
 
 
-  void delete_Curves () {
+  void selected_Curves () {
 
     userSelections.Curve_ids = sort(userSelections.Curve_ids);
 
@@ -17195,7 +17208,7 @@ class solarchvision_Edit3Ds {
   } 
 
 
-  void delete_Groups () {
+  void selected_Groups () {
     
     /////////////////////////////
     //SOLARCHVISION_hold_project();
@@ -17464,11 +17477,20 @@ class solarchvision_Edit3Ds {
 
   }
 
-
 }
 
-solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
-  
+solarchvision_Delete3Ds Delete3Ds = new solarchvision_Delete3Ds();     
+
+
+
+
+
+
+
+
+
+
+
 
 
 
