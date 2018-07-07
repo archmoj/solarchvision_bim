@@ -12066,7 +12066,7 @@ class solarchvision_Groups {
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {  
   
-      userSelections.Group_ids = new int [0];
+      userSelections.deselect_Groups();
   
       for (int OBJ_NUM = 0; OBJ_NUM < this.num; OBJ_NUM++) {
   
@@ -16249,7 +16249,7 @@ class solarchvision_Edit3Ds {
 
     // selecting new objetcs
 
-    userSelections.Model1D_ids = new int [0];
+    userSelections.deselect_Model1Ds();
 
     for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
 
@@ -16287,7 +16287,7 @@ class solarchvision_Edit3Ds {
 
     // selecting new objetcs
 
-    userSelections.Model2D_ids = new int [0];
+    userSelections.deselect_Model2Ds();
 
     for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
 
@@ -16487,7 +16487,7 @@ class solarchvision_Edit3Ds {
 
     // selecting new objetcs
 
-    userSelections.Solid_ids = new int [0];
+    userSelections.deselect_Solids();
 
     for (int o = number_of_Solid_before; o < allSolids.DEF.length; o++) {
 
@@ -16521,7 +16521,7 @@ class solarchvision_Edit3Ds {
 
     // selecting new objetcs
 
-    userSelections.Section_ids = new int [0];
+    userSelections.deselect_Sections();
 
     for (int o = number_of_Section_before; o < allSections.num; o++) {
 
@@ -16556,7 +16556,7 @@ class solarchvision_Edit3Ds {
 
     // selecting new objetcs
 
-    userSelections.Camera_ids = new int [0];
+    userSelections.deselect_Cameras();
 
     for (int o = number_of_Camera_before; o < allCameras.num; o++) {
 
@@ -16885,7 +16885,7 @@ class solarchvision_Edit3Ds {
 
     // selecting new objetcs
 
-    userSelections.Group_ids = new int [0];
+    userSelections.deselect_Groups();
 
     for (int o = number_of_allGroups_before; o < allGroups.num; o++) {
 
@@ -16897,12 +16897,6 @@ class solarchvision_Edit3Ds {
 
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
   }
-
-
-
-
-
-
 
 
 }
@@ -17548,7 +17542,7 @@ class solarchvision_Delete3Ds {
       }
     }
   
-    userSelections.Vertex_ids = new int [0];
+    userSelections.deselect_Vertices();
   }
   
   
@@ -17608,7 +17602,7 @@ class solarchvision_Delete3Ds {
   
     } 
   
-    userSelections.Vertex_ids = new int [0];
+    userSelections.deselect_Vertices();
   }
     
   
@@ -20143,7 +20137,7 @@ class solarchvision_Selections {
     this.LandPoint_ids = new int [0];
   }
 
-  void deselect_Points () {
+  void deselect_Vertices () {
     this.Vertex_ids = new int [0];
   }
 
@@ -20208,7 +20202,7 @@ class solarchvision_Selections {
   
       this.deselect_Faces();
   
-      this.deselect_Points();
+      this.deselect_Vertices();
   
       this.deselect_Solids();
     }  
@@ -20782,8 +20776,8 @@ class solarchvision_Selections {
   
     float v = 0;
   
-    if (d_min < userSelections.softRadius) {
-      v = pow(funcs.cos_ang(90 * d_min / userSelections.softRadius), userSelections.softPower);
+    if (d_min < this.softRadius) {
+      v = pow(funcs.cos_ang(90 * d_min / this.softRadius), this.softPower);
     }
   
     return v;
@@ -21519,9 +21513,9 @@ class solarchvision_Selections {
   
     int[] FaceVertices = new int [0];
   
-    for (int o = userSelections.Face_ids.length - 1; o >= 0; o--) {
+    for (int o = this.Face_ids.length - 1; o >= 0; o--) {
   
-      int OBJ_NUM = userSelections.Face_ids[o];
+      int OBJ_NUM = this.Face_ids[o];
   
       int f = OBJ_NUM;
   
@@ -21555,9 +21549,9 @@ class solarchvision_Selections {
   
     int[] CurveVertices = new int [0];
   
-    for (int o = userSelections.Curve_ids.length - 1; o >= 0; o--) {
+    for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
   
-      int OBJ_NUM = userSelections.Curve_ids[o];
+      int OBJ_NUM = this.Curve_ids[o];
   
       int f = OBJ_NUM;
   
@@ -21591,9 +21585,9 @@ class solarchvision_Selections {
   
     int[] PolymeshVertices = new int [0];
   
-    for (int o = userSelections.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = this.Group_ids.length - 1; o >= 0; o--) {
   
-      int OBJ_NUM = userSelections.Group_ids[o];
+      int OBJ_NUM = this.Group_ids[o];
   
       for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
   
@@ -32510,7 +32504,7 @@ class solarchvision_Points {
     userSelections.deselect_Groups();
     userSelections.deselect_Faces();
     userSelections.deselect_Curves();
-    userSelections.deselect_Points();
+    userSelections.deselect_Vertices();
   }  
   
   
@@ -32798,17 +32792,8 @@ class solarchvision_Modify3Ds {
 
   
 
-  
-
-  
-  
-  
-
-  
-  
-  
-  void weldSceneVertices_Selection (float max_distance) {
-  
+  int[] getVertices_ofSelection () {
+    
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
@@ -32825,93 +32810,108 @@ class solarchvision_Modify3Ds {
   
         userSelections.convert_Curves_to_Vertices();
       }
+
+      return sort(userSelections.Vertex_ids);
+    }
+    int[] empty_result = {}; 
+    return empty_result;
+  }  
+
   
-      userSelections.Vertex_ids = sort(userSelections.Vertex_ids);
   
-      for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
   
-        int vNo = userSelections.Vertex_ids[o];
+
   
-        int found = -1;
-        
-        if (found != -1) {
-          for (int i = 0; i < allFaces.nodes.length; i++) { 
-            for (int j = 0; j < allFaces.nodes[i].length; j++) {
   
-              int q = allFaces.nodes[i][j];
   
-              if (q > vNo) { // it is faster than (q != vNo)
+  void weldSceneVertices_Selection (float max_distance) {
+
+    userSelections.Vertex_ids = this.getVertices_ofSelection();
   
-                float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-  
-                if (d <= max_distance) { 
-  
-                  allFaces.nodes[i][j] = vNo;
-  
-                  found = q;
-                }
+    for (int o = userSelections.Vertex_ids.length - 1; o >= 0; o--) {
+
+      int vNo = userSelections.Vertex_ids[o];
+
+      int found = -1;
+      
+      if (found != -1) {
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+
+            int q = allFaces.nodes[i][j];
+
+            if (q > vNo) { // it is faster than (q != vNo)
+
+              float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+
+              if (d <= max_distance) { 
+
+                allFaces.nodes[i][j] = vNo;
+
+                found = q;
               }
             }
           }
-        }
-  
-        if (found != -1) {
-          for (int i = 0; i < allCurves.nodes.length; i++) { 
-            for (int j = 0; j < allCurves.nodes[i].length; j++) {
-  
-              int q = allCurves.nodes[i][j];
-  
-              if (q > vNo) { // it is faster than (q != vNo)
-  
-                float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-  
-                if (d <= max_distance) { 
-  
-                  allCurves.nodes[i][j] = vNo;
-  
-                  found = q;
-                }
-              }
-            }
-          }
-        }
-  
-        if (found != -1) {
-  
-          int q = found;
-  
-          {
-            float[][] startList = (float[][]) subset(allVertices, 0, q);
-            float[][] endList = (float[][]) subset(allVertices, q + 1);
-  
-            allVertices = (float[][]) concat(startList, endList);
-          }
-  
-          for (int i = 0; i < allFaces.nodes.length; i++) { 
-            for (int j = 0; j < allFaces.nodes[i].length; j++) {
-              if (allFaces.nodes[i][j] > q) {
-  
-                allFaces.nodes[i][j] -= 1;
-              }
-            }
-          }
-          
-          for (int i = 0; i < allCurves.nodes.length; i++) {
-            for (int j = 0; j < allCurves.nodes[i].length; j++) {
-              if (allCurves.nodes[i][j] > q) {
-  
-                allCurves.nodes[i][j] -= 1;
-              }
-            }
-          }          
         }
       }
-  
-      userSelections.Vertex_ids = new int [0];
-  
-      userSelections.calculate_BoundingBox();
+
+      if (found != -1) {
+        for (int i = 0; i < allCurves.nodes.length; i++) { 
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+
+            int q = allCurves.nodes[i][j];
+
+            if (q > vNo) { // it is faster than (q != vNo)
+
+              float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+
+              if (d <= max_distance) { 
+
+                allCurves.nodes[i][j] = vNo;
+
+                found = q;
+              }
+            }
+          }
+        }
+      }
+
+      if (found != -1) {
+
+        int q = found;
+
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, q);
+          float[][] endList = (float[][]) subset(allVertices, q + 1);
+
+          allVertices = (float[][]) concat(startList, endList);
+        }
+
+        for (int i = 0; i < allFaces.nodes.length; i++) { 
+          for (int j = 0; j < allFaces.nodes[i].length; j++) {
+            if (allFaces.nodes[i][j] > q) {
+
+              allFaces.nodes[i][j] -= 1;
+            }
+          }
+        }
+        
+        for (int i = 0; i < allCurves.nodes.length; i++) {
+          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+            if (allCurves.nodes[i][j] > q) {
+
+              allCurves.nodes[i][j] -= 1;
+            }
+          }
+        }          
+      }
     }
+  
+    userSelections.deselect_Vertices();
+
+    userSelections.calculate_BoundingBox();
   }
+
   
   
   
@@ -33012,7 +33012,7 @@ class solarchvision_Modify3Ds {
         }
       }
   
-      userSelections.Vertex_ids = new int [0];
+      userSelections.deselect_Vertices();
   
       userSelections.calculate_BoundingBox();
     }
@@ -33088,7 +33088,7 @@ class solarchvision_Modify3Ds {
       }
   
   
-      userSelections.Vertex_ids = new int [0];
+      userSelections.deselect_Vertices();
   
       userSelections.calculate_BoundingBox();
     }
@@ -45270,7 +45270,7 @@ void mouseClicked () {
     
                         if (keep_number_of_allSections != allSections.num) { // if any Section created during the process
     
-                          userSelections.Section_ids = new int [0];
+                          userSelections.deselect_Sections();
     
                           for (int o = keep_number_of_allSections; o < allSections.num; o++) {
     
@@ -45309,7 +45309,7 @@ void mouseClicked () {
   
                   if (keep_number_of_allSolids != allSolids.DEF.length) { // if any Solid created during the process
   
-                    userSelections.Solid_ids = new int [0];
+                    userSelections.deselect_Solids();
   
                     for (int o = keep_number_of_allSolids; o < allSolids.DEF.length; o++) {
   
@@ -45325,7 +45325,7 @@ void mouseClicked () {
   
                   if (keep_number_of_allCameras != allCameras.num) { // if any Camera created during the process
   
-                    userSelections.Camera_ids = new int [0];
+                    userSelections.deselect_Cameras();
   
                     for (int o = keep_number_of_allCameras; o < allCameras.num; o++) {
   
@@ -45340,7 +45340,7 @@ void mouseClicked () {
   
                   if (keep_number_of_allGroups != allGroups.num) { // if any Group created during the process
   
-                    userSelections.Group_ids = new int [0];
+                    userSelections.deselect_Groups();
   
                     for (int o = keep_number_of_allGroups; o < allGroups.num; o++) {
   
@@ -45354,7 +45354,7 @@ void mouseClicked () {
   
                   if (keep_number_of_allModel2Ds != allModel2Ds.num) { // if any allModel2Ds created during the process
   
-                    userSelections.Model2D_ids = new int [0];
+                    userSelections.deselect_Model2Ds();
   
                     for (int o = keep_number_of_allModel2Ds; o < allModel2Ds.num; o++) {
   
@@ -45369,7 +45369,7 @@ void mouseClicked () {
   
                   if (keep_number_of_allModel1Ds != allModel1Ds.num) { // if any allModel1Ds created during the process
   
-                    userSelections.Model1D_ids = new int [0];
+                    userSelections.deselect_Model1Ds();
   
                     for (int o = keep_number_of_allModel1Ds; o < allModel1Ds.num; o++) {
   
@@ -55119,8 +55119,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
         else if (low_case.equals("selection")) {allGroups.delete_Selection(); WIN3D.update = true;}
-        else if (low_case.equals("group3ds")) {allGroups.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("object2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
+        else if (low_case.equals("groups")) {allGroups.delete_all(); WIN3D.update = true;}
+        else if (low_case.equals("model2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {Delete3Ds.selected_isolatedVertices(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allFaces.delete_all(); WIN3D.update = true;}
@@ -55176,8 +55176,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("group3ds")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
-        else if (low_case.equals("object2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
+             if (low_case.equals("groups")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
+        else if (low_case.equals("model2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
         else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
         else if (low_case.equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b.update = true;}
         else if (low_case.equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b.update = true;}
