@@ -3529,7 +3529,7 @@ class solarchvision_WIN3D {
         switch(key) {
   
         case DELETE: 
-          allGroups.delete_Selection();
+          Delete3Ds.selected_all();
   
           this.update = true;
           ROLLOUT.update = true; 
@@ -10158,7 +10158,7 @@ class solarchvision_Faces {
   }
 
   
-  void delete_all () {
+  void empty () {
   
     this.nodes = new int [0][3];
   
@@ -11431,7 +11431,7 @@ class solarchvision_Curves {
   }
 
 
-  void delete_all () {
+  void empty () {
   
     this.nodes = new int [0][3];
   
@@ -11744,7 +11744,7 @@ class solarchvision_Groups {
   
   
 
-  void delete_all () {
+  void empty () {
     
     this.Model1Ds = new int [0][2];
   
@@ -12003,7 +12003,7 @@ class solarchvision_Groups {
       addToLastGroup = pre_addToLastGroup;
   
   
-      this.delete_Selection();
+      Delete3Ds.selected_all();
   
   
       userSelections.Group_ids = new int [1];
@@ -12046,7 +12046,7 @@ class solarchvision_Groups {
         this.Solids[OBJ_NUM][1] = -1;
       }
   
-      this.delete_Selection();
+      Delete3Ds.selected_all();
     }
   }
   
@@ -12088,61 +12088,14 @@ class solarchvision_Groups {
         }
       }
   
-      this.delete_Selection();
+      Delete3Ds.selected_all();
     }
   
     current_ObjectCategory = pre_current_ObjectCategory;
   }
 
 
-  void delete_Selection () {
-  
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Delete3Ds.selected_Cameras();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Delete3Ds.selected_Sections();
-    }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Delete3Ds.selected_Model1Ds();
-    }
-
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Delete3Ds.selected_Model2Ds();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Delete3Ds.selected_Solids();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.FACE) {
-      Delete3Ds.selected_Faces();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Delete3Ds.selected_Curves();
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Delete3Ds.selected_Groups();
-    }
-  
-    if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
-  
-      Delete3Ds.selected_isolatedVertices();
-    }  
-
-    if (allCameras.num == 0) {
-      allCameras.add_first();
-    }
-  
-    userSelections.deselect_all();
-  }
 
 
   public void to_XML (XML xml) {
@@ -16941,6 +16894,10 @@ class solarchvision_Delete3Ds {
         SOLARCHVISION_modify_Viewport_Title();
       }
     }
+    
+    if (allCameras.num == 0) {
+      allCameras.add_first();
+    }    
   }
 
 
@@ -17607,7 +17564,49 @@ class solarchvision_Delete3Ds {
     
   
   
+  void selected_all () {
   
+    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      Delete3Ds.selected_Cameras();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SECTION) {
+      Delete3Ds.selected_Sections();
+    }
+
+    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      Delete3Ds.selected_Model1Ds();
+    }
+
+    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      Delete3Ds.selected_Model2Ds();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.SOLID) {
+      Delete3Ds.selected_Solids();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.FACE) {
+      Delete3Ds.selected_Faces();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.CURVE) {
+      Delete3Ds.selected_Curves();
+    }
+  
+    if (current_ObjectCategory == ObjectCategory.GROUP) {
+      Delete3Ds.selected_Groups();
+    }
+  
+    if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
+  
+      Delete3Ds.selected_isolatedVertices();
+    }  
+
+  }  
   
 
 }
@@ -21649,11 +21648,6 @@ class solarchvision_Selections {
 
 
 
-
-
-
-
-
   public void to_XML (XML xml) {
     
     println("Saving:" + this.CLASS_STAMP);
@@ -22284,7 +22278,7 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
 
-  if ((Step == 0) || (Step == 1)) allGroups.delete_all(); //not deleting all
+  if ((Step == 0) || (Step == 1)) allGroups.empty(); //not deleting all
   if ((Step == 0) || (Step == 2)) Create3Ds.add_Model_Main();
 }
 
@@ -25237,19 +25231,19 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 void SOLARCHVISION_delete_ALL () {
   
-  allModel1Ds.delete_all();
-  allModel2Ds.delete_all();
+  allModel1Ds.empty();
+  allModel2Ds.empty();
 
-  allCurves.delete_all();
-  allFaces.delete_all();
+  allCurves.empty();
+  allFaces.empty();
   
-  allPoints.delete_all();
+  allPoints.empty();
 
-  allSolids.delete_all();
-  allSections.delete_all();
-  allCameras.delete_all();
+  allSolids.empty();
+  allSections.empty();
+  allCameras.empty();
 
-  allGroups.delete_all(); 
+  allGroups.empty(); 
 
   WIN3D.update = true;
 }
@@ -25384,14 +25378,14 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
 
 
 
-int getLoactationTimeZone () {
+int getLocationTimeZone () {
   return int(funcs.roundTo(STATION.getLongitude() / 15, 15)); 
 }
 
 
 int[] getNow_inUTC () {
   
-  int LoactationTimeZone = getLoactationTimeZone();
+  int LocationTimeZone = getLocationTimeZone();
   
   int CurrentYear = year();
   int CurrentMonth = month();
@@ -25401,8 +25395,8 @@ int[] getNow_inUTC () {
    
   // converting from local time to global time 
   
-  if (LoactationTimeZone > 0) {
-    CurrentHour -= LoactationTimeZone;
+  if (LocationTimeZone > 0) {
+    CurrentHour -= LocationTimeZone;
     
     if (CurrentHour < 0) {
       CurrentHour += 24;
@@ -25421,8 +25415,8 @@ int[] getNow_inUTC () {
       }
     }
   }
-  else if (LoactationTimeZone < 0) {
-    CurrentHour += abs(LoactationTimeZone);
+  else if (LocationTimeZone < 0) {
+    CurrentHour += abs(LocationTimeZone);
     
     if (CurrentHour > 23) {
       CurrentHour -= 24;
@@ -25493,7 +25487,7 @@ class solarchvision_Tropo3D {
     
   
     
-    int LoactationTimeZone = getLoactationTimeZone();
+    int LocationTimeZone = getLocationTimeZone();
     
     int[] rightNow = getNow_inUTC();
     
@@ -25528,7 +25522,7 @@ class solarchvision_Tropo3D {
         String[] Parts = split(allFilenames[q], '_');
         
         //if (Parts[0].equals(nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2))) {
-        if (Parts[0].equals(nf((CurrentHour + LoactationTimeZone) % 24, 2))) {
+        if (Parts[0].equals(nf((CurrentHour + LocationTimeZone) % 24, 2))) {
           
           this.Filenames[i] = allFilenames[q];
           
@@ -25553,7 +25547,7 @@ class solarchvision_Tropo3D {
   
   void download_images () {
   
-    int LoactationTimeZone = getLoactationTimeZone();
+    int LocationTimeZone = getLocationTimeZone();
     
     int[] rightNow = getNow_inUTC();
     
@@ -25717,7 +25711,7 @@ class solarchvision_Tropo3D {
       this.Map[i] = createImage(2, 2, RGB); // empty and small
       
       //String FN = nf(CurrentYear, 4) + nf(CurrentMonth, 2) + nf(CurrentDay, 2) + nf(CurrentHour, 2) + "_";
-      String FN = nf((CurrentHour + LoactationTimeZone) % 24, 2) + "_";
+      String FN = nf((CurrentHour + LocationTimeZone) % 24, 2) + "_";
       FN += nf(int(funcs.roundTo(-1000 * this.BoundariesX[i][0], 1)), 6) + "_";
       FN += nf(int(funcs.roundTo( 1000 * this.BoundariesY[i][0], 1)), 6) + "_";
       FN += nf(int(funcs.roundTo(-1000 * this.BoundariesX[i][1], 1)), 6) + "_";
@@ -30484,7 +30478,7 @@ class solarchvision_Model2Ds {
     if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
   
-  void delete_all () {
+  void empty () {
   
     this.XYZS = new float [0][4]; 
   
@@ -31675,7 +31669,7 @@ class solarchvision_Model1Ds {
   }  
   
   
-  void delete_all () {
+  void empty () {
   
     this.XYZSR = new float [0][5]; 
   
@@ -32047,7 +32041,7 @@ class solarchvision_Solids {
   }
 
 
-  void delete_all () {
+  void empty () {
     this.DEF = new float [0][13]; 
   
     for (int q = 0; q < allGroups.num; q++) {
@@ -32497,7 +32491,7 @@ class solarchvision_Points {
   }
   
   
-  void delete_all () {
+  void empty () {
   
     allVertices = new float [0][3];
   
@@ -37371,7 +37365,7 @@ class solarchvision_Cameras {
   }  
 
 
-  void delete_all () {
+  void empty () {
   
     this.options = new float [0][9]; 
   
@@ -37916,7 +37910,7 @@ class solarchvision_Sections {
   
   
   
-  void delete_all () {
+  void empty () {
     this.f_options = new float [0][6]; 
     this.i_options = new int   [0][3];
   
@@ -43529,7 +43523,7 @@ void mouseClicked () {
               WIN3D.update = true;
             }               
             if (menu_option.equals("Delete Selection")) {
-              allGroups.delete_Selection();
+              Delete3Ds.selected_all();
               WIN3D.update = true;
             }      
             if (menu_option.equals("Dettach from All Groups")) {
@@ -43670,42 +43664,42 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Erase All Model1Ds")) {
-              allModel1Ds.delete_all();
+              allModel1Ds.empty();
               WIN3D.update = true;
             }      
     
             if (menu_option.equals("Erase All Model2Ds")) {
-              allModel2Ds.delete_all();
+              allModel2Ds.empty();
               WIN3D.update = true;
             }        
     
             if (menu_option.equals("Erase All Groups")) {
-              allGroups.delete_all();
+              allGroups.empty();
               WIN3D.update = true;
             }
     
             if (menu_option.equals("Erase All Solids")) {
-              allSolids.delete_all();
+              allSolids.empty();
               WIN3D.update = true;
             }          
     
             if (menu_option.equals("Erase All Sections")) {
-              allSections.delete_all();
+              allSections.empty();
               WIN3D.update = true;
             }       
     
             if (menu_option.equals("Erase All Cameras")) {
-              allCameras.delete_all();
+              allCameras.empty();
               WIN3D.update = true;
             }    
     
             if (menu_option.equals("Erase Faces")) {
-              allFaces.delete_all();
+              allFaces.empty();
               WIN3D.update = true;
             }             
     
             if (menu_option.equals("Erase Curves")) {
-              allCurves.delete_all();
+              allCurves.empty();
               WIN3D.update = true;
             }  
     
@@ -55118,16 +55112,16 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
-        else if (low_case.equals("selection")) {allGroups.delete_Selection(); WIN3D.update = true;}
-        else if (low_case.equals("groups")) {allGroups.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("model2ds")) {allModel2Ds.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("model1ds")) {allModel1Ds.delete_all(); WIN3D.update = true;}
+        else if (low_case.equals("selection")) {Delete3Ds.selected_all(); WIN3D.update = true;}
+        else if (low_case.equals("groups")) {allGroups.empty(); WIN3D.update = true;}
+        else if (low_case.equals("model2ds")) {allModel2Ds.empty(); WIN3D.update = true;}
+        else if (low_case.equals("model1ds")) {allModel1Ds.empty(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {Delete3Ds.selected_isolatedVertices(); WIN3D.update = true;}
-        else if (low_case.equals("faces")) {allFaces.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("lines")) {allCurves.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("solids")) {allSolids.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("sections")) {allSections.delete_all(); WIN3D.update = true;}
-        else if (low_case.equals("cameras")) {allCameras.delete_all(); WIN3D.update = true;}
+        else if (low_case.equals("faces")) {allFaces.empty(); WIN3D.update = true;}
+        else if (low_case.equals("lines")) {allCurves.empty(); WIN3D.update = true;}
+        else if (low_case.equals("solids")) {allSolids.empty(); WIN3D.update = true;}
+        else if (low_case.equals("sections")) {allSections.empty(); WIN3D.update = true;}
+        else if (low_case.equals("cameras")) {allCameras.empty(); WIN3D.update = true;}
       }
     }
     else {
