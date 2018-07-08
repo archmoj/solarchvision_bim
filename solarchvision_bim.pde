@@ -11741,6 +11741,7 @@ class solarchvision_Groups {
     for (int i = OBJ_NUM + 1; i < this.num; i++) {
       for (int j = 0; j < 2; j++) {
         this.Faces[i][j] += dt;
+        
       }
     }  
     this.append_Face(n, dt); // because adding the faces also changes the end pointer of the same object
