@@ -33198,6 +33198,9 @@ class solarchvision_Modify3Ds {
   }
   
   
+
+
+  
   void insertCornerOpennings_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
@@ -33219,7 +33222,6 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
             
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
-
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
@@ -33324,15 +33326,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) {
+        for (int q = primary_list.length - 1; q >= 0; q--) {
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -33340,18 +33342,7 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
   
             allGroups.inserted_nFaces(OBJ_ID, f, 2 * allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
-  
-            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-              if (new_selection_Face_ids[p] != 0) { 
-  
-                if (new_selection_Face_ids[p] > f) {  
-                  new_selection_Face_ids[p] += 2 * allFaces.nodes[f].length;
-                }
-              }
-            }              
-  
-  
+
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -33469,21 +33460,12 @@ class solarchvision_Modify3Ds {
             allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
             allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -33500,15 +33482,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) {
+        for (int q = primary_list.length - 1; q >= 0; q--) {
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -33516,18 +33498,7 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
   
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
-  
-            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-              if (new_selection_Face_ids[p] != 0) {
-  
-                if (new_selection_Face_ids[p] > f) {  
-                  new_selection_Face_ids[p] += allFaces.nodes[f].length;
-                }
-              }
-            }              
-  
-  
+
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -33621,16 +33592,7 @@ class solarchvision_Modify3Ds {
             allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
             allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
@@ -33638,7 +33600,7 @@ class solarchvision_Modify3Ds {
   
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -33654,15 +33616,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) { 
+        for (int q = primary_list.length - 1; q >= 0; q--) { 
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -33670,18 +33632,7 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
   
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
-  
-            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-              if (new_selection_Face_ids[p] != 0) {
-  
-                if (new_selection_Face_ids[p] > f) {  
-                  new_selection_Face_ids[p] += allFaces.nodes[f].length;
-                }
-              }
-            }              
-  
-  
+
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -33770,16 +33721,7 @@ class solarchvision_Modify3Ds {
             allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
             allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
@@ -33787,7 +33729,7 @@ class solarchvision_Modify3Ds {
   
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -33804,15 +33746,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) { 
+        for (int q = primary_list.length - 1; q >= 0; q--) { 
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -33822,18 +33764,7 @@ class solarchvision_Modify3Ds {
             if (allFaces.nodes[f].length == 4) {
   
               allGroups.inserted_nFaces(OBJ_ID, f, User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1); // because adding the faces also changes the end pointer of the same object 
-  
-              for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-                if (new_selection_Face_ids[p] != 0) {
-  
-                  if (new_selection_Face_ids[p] > f) {  
-                    new_selection_Face_ids[p] += User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1;
-                  }
-                }
-              }             
-  
-  
+
               int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
               int[][] midList_Faces_nodes = new int [0][0];
               int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -33931,7 +33862,7 @@ class solarchvision_Modify3Ds {
                       int[] newFace_nodes_number = {
                         f + s
                       }; 
-                      new_selection_Face_ids = (int[]) concat(new_selection_Face_ids, newFace_nodes_number);
+                      Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
                     }
                   }
                 }
@@ -33943,23 +33874,14 @@ class solarchvision_Modify3Ds {
               allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
               allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-              { // to avoid processing the faces twice they should be deleted from the list.
-                for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                  Select3Ds.Face_ids[i] -= 1;
-                }              
-  
-                int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-                int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-                Select3Ds.Face_ids = (int[]) concat(startList, endList);
-              }
+              primary_list = this.remove_item_from_primary_list(q, primary_list);
             }
           }
         }
       }
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -33976,15 +33898,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) { 
+        for (int q = primary_list.length - 1; q >= 0; q--) { 
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -33992,18 +33914,7 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
   
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
-  
-            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-              if (new_selection_Face_ids[p] != 0) {
-  
-                if (new_selection_Face_ids[p] > f) {  
-                  new_selection_Face_ids[p] += allFaces.nodes[f].length - 1;
-                }
-              }
-            }             
-  
-  
+
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes = new int [0][0];
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -34082,7 +33993,7 @@ class solarchvision_Modify3Ds {
                   int[] newFace_nodes_number = {
                     f + s
                   }; 
-                  new_selection_Face_ids = (int[]) concat(new_selection_Face_ids, newFace_nodes_number);
+                  Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
                 }
               }
             }
@@ -34093,22 +34004,13 @@ class solarchvision_Modify3Ds {
             allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
             allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -34125,15 +34027,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) {
+        for (int q = primary_list.length - 1; q >= 0; q--) {
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -34141,18 +34043,7 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
   
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
-  
-            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-              if (new_selection_Face_ids[p] != 0) {
-  
-                if (new_selection_Face_ids[p] > f) {  
-                  new_selection_Face_ids[p] += allFaces.nodes[f].length - 1;
-                }
-              }
-            }             
-  
-  
+
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes = new int [0][0];
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -34214,7 +34105,7 @@ class solarchvision_Modify3Ds {
                   int[] newFace_nodes_number = {
                     f + s
                   }; 
-                  new_selection_Face_ids = (int[]) concat(new_selection_Face_ids, newFace_nodes_number);
+                  Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
                 }
               }
             }
@@ -34225,22 +34116,13 @@ class solarchvision_Modify3Ds {
             allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
             allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -34259,15 +34141,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) {
+        for (int q = primary_list.length - 1; q >= 0; q--) {
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           if (allFaces.nodes[f].length > 3) { // <<<<<<<<<<< the condition to perform the process 
   
@@ -34277,17 +34159,7 @@ class solarchvision_Modify3Ds {
             if ((startFace <= f) && (f <= endFace)) {
   
               allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
-  
-              for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-                if (new_selection_Face_ids[p] != 0) {
-  
-                  if (new_selection_Face_ids[p] > f) {  
-                    new_selection_Face_ids[p] += allFaces.nodes[f].length - 1;
-                  }
-                }
-              }             
-  
+
               int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
               int[][] midList_Faces_nodes = new int [0][0];
               int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -34349,7 +34221,7 @@ class solarchvision_Modify3Ds {
                     int[] newFace_nodes_number = {
                       f + s
                     }; 
-                    new_selection_Face_ids = (int[]) concat(new_selection_Face_ids, newFace_nodes_number);
+                    Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
                   }
                 }
               }
@@ -34361,22 +34233,13 @@ class solarchvision_Modify3Ds {
               allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);           
             }           
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -34392,14 +34255,16 @@ class solarchvision_Modify3Ds {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
+      
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) {
+        for (int q = primary_list.length - 1; q >= 0; q--) {
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -34449,15 +34314,15 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = Select3Ds.Face_ids;
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
   
         int OBJ_ID = Select3Ds.Group_ids[o];
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) { 
+        for (int q = primary_list.length - 1; q >= 0; q--) { 
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -34465,18 +34330,7 @@ class solarchvision_Modify3Ds {
           if ((startFace <= f) && (f <= endFace)) {
   
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
-  
-            for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
-  
-              if (new_selection_Face_ids[p] != 0) {
-  
-                if (new_selection_Face_ids[p] > f) {  
-                  new_selection_Face_ids[p] += allFaces.nodes[f].length;
-                }
-              }
-            }              
 
-  
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
             int[][] midList_Faces_nodes;
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
@@ -34524,23 +34378,14 @@ class solarchvision_Modify3Ds {
             allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
             allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);                      
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < Select3Ds.Face_ids.length; i++) {
-                Select3Ds.Face_ids[i] -= 1;
-              }              
-  
-              int[] startList = (int[]) subset(Select3Ds.Face_ids, 0, q);
-              int[] endList = (int[]) subset(Select3Ds.Face_ids, q + 1);
-  
-              Select3Ds.Face_ids = (int[]) concat(startList, endList);
-            }
+            primary_list = this.remove_item_from_primary_list(q, primary_list);
           }
         }
       }
   
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
@@ -34557,7 +34402,9 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = {};
+      Select3Ds.deselect_Faces();
+      
+      int[] primary_list = Select3Ds.Face_ids;
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
@@ -34565,9 +34412,9 @@ class solarchvision_Modify3Ds {
   
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
-        for (int q = Select3Ds.Face_ids.length - 1; q >= 0; q--) { 
+        for (int q = primary_list.length - 1; q >= 0; q--) { 
   
-          int f = Select3Ds.Face_ids[q];
+          int f = primary_list[q];
   
           int startFace = allGroups.getStart_Face(OBJ_ID);
           int endFace = allGroups.getStop_Face(OBJ_ID);          
@@ -34661,7 +34508,7 @@ class solarchvision_Modify3Ds {
                 allFaces.nodes.length - 1
               };
   
-              new_selection_Face_ids = (int[]) concat(new_selection_Face_ids, lastFace);
+              Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, lastFace);
             }
   
             allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
@@ -34669,7 +34516,7 @@ class solarchvision_Modify3Ds {
         }
       }
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
   
       Select3Ds.calculate_BoundingBox();
     }
@@ -34681,7 +34528,7 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.CURVE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] new_selection_Face_ids = {};
+      Select3Ds.deselect_Faces();
   
       for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
   
@@ -34785,7 +34632,7 @@ class solarchvision_Modify3Ds {
                 allFaces.nodes.length - 1
               };
   
-              new_selection_Face_ids = (int[]) concat(new_selection_Face_ids, lastFace);
+              Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, lastFace);
             }
   
             allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
@@ -34794,7 +34641,7 @@ class solarchvision_Modify3Ds {
       }
   
   
-      Select3Ds.Face_ids = new_selection_Face_ids;
+      
       
       current_ObjectCategory = ObjectCategory.FACE;
       UI_BAR_b.update = true;
@@ -34874,7 +34721,7 @@ class solarchvision_Modify3Ds {
     }
   }  
   
-}  
+}
 
 solarchvision_Modify3Ds Modify3Ds = new solarchvision_Modify3Ds();  
 
