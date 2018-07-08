@@ -762,13 +762,13 @@ class solarchvision_TIME {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.modelRun = parent.getInt("modelRun"); 
-    this.year = parent.getInt("year");
-    this.month = parent.getInt("month");
-    this.day = parent.getInt("day"); 
-    this.hour = parent.getInt("hour"); 
-    this.beginDay = parent.getInt("beginDay");
-    this.date = parent.getFloat("date");
+    this.modelRun = XML_getInt(parent, "modelRun"); 
+    this.year = XML_getInt(parent, "year");
+    this.month = XML_getInt(parent, "month");
+    this.day = XML_getInt(parent, "day"); 
+    this.hour = XML_getInt(parent, "hour"); 
+    this.beginDay = XML_getInt(parent, "beginDay");
+    this.date = XML_getFloat(parent, "date");
   }      
 
 }
@@ -1841,16 +1841,16 @@ class solarchvision_LAYER {
   
     XML parent = xml.getChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
 
-    this.id = parent.getInt("id");
+    this.id = XML_getInt(parent, "id");
     
     this.unit = XML_getString(parent, "unit");
     this.name = XML_getString(parent, "name");
     this.descriptions[Language_EN] = XML_getString(parent, "description_EN");
     this.descriptions[Language_FR] = XML_getString(parent, "description_FR");
     
-    this.V_scale = parent.getFloat("V_scale");
-    this.V_offset = parent.getFloat("V_offset");
-    this.V_belowLine = parent.getFloat("V_belowLine");
+    this.V_scale = XML_getFloat(parent, "V_scale");
+    this.V_offset = XML_getFloat(parent, "V_offset");
+    this.V_belowLine = XML_getFloat(parent, "V_belowLine");
   }      
   
   
@@ -4299,31 +4299,31 @@ class solarchvision_WIN3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.CAM_x = parent.getFloat("CAM_x");
-    this.CAM_y = parent.getFloat("CAM_y");
-    this.CAM_z = parent.getFloat("CAM_z");
-    this.CAM_fov = parent.getFloat("CAM_fov");
-    this.CAM_dist = parent.getFloat("CAM_dist");
-    this.CAM_clipNear = parent.getFloat("CAM_clipNear");
-    this.CAM_clipFar = parent.getFloat("CAM_clipFar");
-    this.currentCamera = parent.getInt("currentCamera");
+    this.CAM_x = XML_getFloat(parent, "CAM_x");
+    this.CAM_y = XML_getFloat(parent, "CAM_y");
+    this.CAM_z = XML_getFloat(parent, "CAM_z");
+    this.CAM_fov = XML_getFloat(parent, "CAM_fov");
+    this.CAM_dist = XML_getFloat(parent, "CAM_dist");
+    this.CAM_clipNear = XML_getFloat(parent, "CAM_clipNear");
+    this.CAM_clipFar = XML_getFloat(parent, "CAM_clipFar");
+    this.currentCamera = XML_getInt(parent, "currentCamera");
     
-    this.refScale = parent.getFloat("refScale");
-    this.position_X = parent.getFloat("position_X");
-    this.position_Y = parent.getFloat("position_Y");
-    this.position_Z = parent.getFloat("position_Z");
-    this.position_T = parent.getFloat("position_T");
-    this.rotation_X = parent.getFloat("rotation_X");
-    this.rotation_Y = parent.getFloat("rotation_Y");
-    this.rotation_Z = parent.getFloat("rotation_Z");
-    this.rotation_T = parent.getFloat("rotation_T");
-    this.Zoom = parent.getFloat("Zoom");
-    this.ViewType = parent.getInt("ViewType");
-    this.FacesShade = parent.getInt("FacesShade");
+    this.refScale = XML_getFloat(parent, "refScale");
+    this.position_X = XML_getFloat(parent, "position_X");
+    this.position_Y = XML_getFloat(parent, "position_Y");
+    this.position_Z = XML_getFloat(parent, "position_Z");
+    this.position_T = XML_getFloat(parent, "position_T");
+    this.rotation_X = XML_getFloat(parent, "rotation_X");
+    this.rotation_Y = XML_getFloat(parent, "rotation_Y");
+    this.rotation_Z = XML_getFloat(parent, "rotation_Z");
+    this.rotation_T = XML_getFloat(parent, "rotation_T");
+    this.Zoom = XML_getFloat(parent, "Zoom");
+    this.ViewType = XML_getInt(parent, "ViewType");
+    this.FacesShade = XML_getInt(parent, "FacesShade");
 
-    this.UI_CurrentTask = parent.getInt("UI_CurrentTask");
-    this.UI_OptionXorY = parent.getInt("UI_OptionXorY");
-    this.UI_TaskModifyParameter = parent.getInt("UI_TaskModifyParameter");    
+    this.UI_CurrentTask = XML_getInt(parent, "UI_CurrentTask");
+    this.UI_OptionXorY = XML_getInt(parent, "UI_OptionXorY");
+    this.UI_TaskModifyParameter = XML_getInt(parent, "UI_TaskModifyParameter");    
   }       
 
 }
@@ -5110,11 +5110,11 @@ class solarchvision_WORLD {
     XML_setInt(parent, "displayAll_CLMREC", this.displayAll_CLMREC);
     XML_setInt(parent, "displayAll_TMYEPW", this.displayAll_TMYEPW);
     
-    XML_setString(parent, "displayNear_SWOB", Boolean.toString(this.displayNear_SWOB));
-    XML_setString(parent, "displayNear_NAEFS", Boolean.toString(this.displayNear_NAEFS));
-    XML_setString(parent, "displayNear_CWEEDS", Boolean.toString(this.displayNear_CWEEDS));
-    XML_setString(parent, "displayNear_CLMREC", Boolean.toString(this.displayNear_CLMREC));
-    XML_setString(parent, "displayNear_TMYEPW", Boolean.toString(this.displayNear_TMYEPW));
+    XML_setBoolean(parent, "displayNear_SWOB", this.displayNear_SWOB);
+    XML_setBoolean(parent, "displayNear_NAEFS", this.displayNear_NAEFS);
+    XML_setBoolean(parent, "displayNear_CWEEDS", this.displayNear_CWEEDS);
+    XML_setBoolean(parent, "displayNear_CLMREC", this.displayNear_CLMREC);
+    XML_setBoolean(parent, "displayNear_TMYEPW", this.displayNear_TMYEPW);
   }
 
   
@@ -5124,13 +5124,13 @@ class solarchvision_WORLD {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.Zoom = parent.getInt("Zoom");
+    this.Zoom = XML_getInt(parent, "Zoom");
     
-    this.displayAll_SWOB = parent.getInt("displayAll_SWOB");
-    this.displayAll_NAEFS = parent.getInt("displayAll_NAEFS");
-    this.displayAll_CWEEDS = parent.getInt("displayAll_CWEEDS");
-    this.displayAll_CLMREC = parent.getInt("displayAll_CLMREC");
-    this.displayAll_TMYEPW = parent.getInt("displayAll_TMYEPW");
+    this.displayAll_SWOB = XML_getInt(parent, "displayAll_SWOB");
+    this.displayAll_NAEFS = XML_getInt(parent, "displayAll_NAEFS");
+    this.displayAll_CWEEDS = XML_getInt(parent, "displayAll_CWEEDS");
+    this.displayAll_CLMREC = XML_getInt(parent, "displayAll_CLMREC");
+    this.displayAll_TMYEPW = XML_getInt(parent, "displayAll_TMYEPW");
 
     this.displayNear_SWOB = XML_getBoolean(parent, "displayNear_SWOB");
     this.displayNear_NAEFS = XML_getBoolean(parent, "displayNear_NAEFS");
@@ -8889,9 +8889,9 @@ class solarchvision_STUDY {
     XML_setInt(parent, "filter", this.filter);
     XML_setInt(parent, "TrendJoinHours", this.TrendJoinHours);
     XML_setInt(parent, "TrendJoinType", this.TrendJoinType);
-    XML_setString(parent, "export_info_node", Boolean.toString(this.export_info_node));
-    XML_setString(parent, "export_info_norm", Boolean.toString(this.export_info_norm));
-    XML_setString(parent, "export_info_prob", Boolean.toString(this.export_info_prob));
+    XML_setBoolean(parent, "export_info_node", this.export_info_node);
+    XML_setBoolean(parent, "export_info_norm", this.export_info_norm);
+    XML_setBoolean(parent, "export_info_prob", this.export_info_prob);
     XML_setInt(parent, "pallet_SORT_CLR", this.pallet_SORT_CLR);
     XML_setInt(parent, "pallet_SORT_DIR", this.pallet_SORT_DIR);
     XML_setFloat(parent, "pallet_SORT_MLT", this.pallet_SORT_MLT);
@@ -8910,15 +8910,15 @@ class solarchvision_STUDY {
     XML_setFloat(parent, "rect_scale", this.rect_scale);
     XML_setFloat(parent, "rect_offset_x", this.rect_offset_x);
     
-    XML_setString(parent, "impact_summary", Boolean.toString(this.impact_summary));
+    XML_setBoolean(parent, "impact_summary", this.impact_summary);
     XML_setInt(parent, "ImpactLayer", this.ImpactLayer);
     XML_setInt(parent, "PlotImpacts", this.PlotImpacts);
-    XML_setString(parent, "Impacts_update", Boolean.toString(this.Impacts_update));   
+    XML_setBoolean(parent, "Impacts_update", this.Impacts_update);   
    
-    XML_setString(parent, "displayRaws", Boolean.toString(this.displayRaws));
-    XML_setString(parent, "displaySorted", Boolean.toString(this.displaySorted));
-    XML_setString(parent, "displayNormals", Boolean.toString(this.displayNormals));
-    XML_setString(parent, "displayProbs", Boolean.toString(this.displayProbs));
+    XML_setBoolean(parent, "displayRaws", this.displayRaws);
+    XML_setBoolean(parent, "displaySorted", this.displaySorted);
+    XML_setBoolean(parent, "displayNormals", this.displayNormals);
+    XML_setBoolean(parent, "displayProbs", this.displayProbs);
     XML_setInt(parent, "sumInterval", this.sumInterval);
     XML_setFloat(parent, "LevelPix", this.LevelPix);
     XML_setFloat(parent, "Pix", this.Pix);
@@ -8932,54 +8932,54 @@ class solarchvision_STUDY {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.i_Start = parent.getInt("i_Start");
-    this.i_End = parent.getInt("i_End");
-    this.j_Start = parent.getInt("j_Start");
-    this.j_End = parent.getInt("j_End");
-    this.perDays = parent.getFloat("perDays");
-    this.joinDays = parent.getInt("joinDays");
+    this.i_Start = XML_getInt(parent, "i_Start");
+    this.i_End = XML_getInt(parent, "i_End");
+    this.j_Start = XML_getInt(parent, "j_Start");
+    this.j_End = XML_getInt(parent, "j_End");
+    this.perDays = XML_getFloat(parent, "perDays");
+    this.joinDays = XML_getInt(parent, "joinDays");
     
-    this.T_scale = parent.getFloat("T_scale");
-    this.U_scale = parent.getFloat("U_scale");
-    this.skyScenario = parent.getInt("skyScenario");      
-    this.filter = parent.getInt("filter");
-    this.TrendJoinHours = parent.getInt("TrendJoinHours");
-    this.TrendJoinType = parent.getInt("TrendJoinType");
+    this.T_scale = XML_getFloat(parent, "T_scale");
+    this.U_scale = XML_getFloat(parent, "U_scale");
+    this.skyScenario = XML_getInt(parent, "skyScenario");      
+    this.filter = XML_getInt(parent, "filter");
+    this.TrendJoinHours = XML_getInt(parent, "TrendJoinHours");
+    this.TrendJoinType = XML_getInt(parent, "TrendJoinType");
     this.export_info_node = XML_getBoolean(parent, "export_info_node");
     this.export_info_norm = XML_getBoolean(parent, "export_info_norm");
     this.export_info_prob = XML_getBoolean(parent, "export_info_prob");
-    this.pallet_SORT_CLR = parent.getInt("pallet_SORT_CLR");
-    this.pallet_SORT_DIR = parent.getInt("pallet_SORT_DIR");
-    this.pallet_SORT_MLT = parent.getFloat("pallet_SORT_MLT");
-    this.pallet_PROB_CLR = parent.getInt("pallet_PROB_CLR");
-    this.pallet_PROB_DIR = parent.getInt("pallet_PROB_DIR");
-    this.pallet_PROB_MLT = parent.getFloat("pallet_PROB_MLT");
-    this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = parent.getInt("ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = parent.getFloat("ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = parent.getInt("PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");
+    this.pallet_SORT_CLR = XML_getInt(parent, "pallet_SORT_CLR");
+    this.pallet_SORT_DIR = XML_getInt(parent, "pallet_SORT_DIR");
+    this.pallet_SORT_MLT = XML_getFloat(parent, "pallet_SORT_MLT");
+    this.pallet_PROB_CLR = XML_getInt(parent, "pallet_PROB_CLR");
+    this.pallet_PROB_DIR = XML_getInt(parent, "pallet_PROB_DIR");
+    this.pallet_PROB_MLT = XML_getFloat(parent, "pallet_PROB_MLT");
+    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
+    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
+    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
+    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
+    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
+    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
     
     
-    this.O_scale = parent.getFloat("O_scale");
-    this.W_scale = parent.getFloat("W_scale");
-    this.rect_scale = parent.getFloat("rect_scale");
-    this.rect_offset_x = parent.getFloat("rect_offset_x");
+    this.O_scale = XML_getFloat(parent, "O_scale");
+    this.W_scale = XML_getFloat(parent, "W_scale");
+    this.rect_scale = XML_getFloat(parent, "rect_scale");
+    this.rect_offset_x = XML_getFloat(parent, "rect_offset_x");
     
     this.impact_summary = XML_getBoolean(parent, "impact_summary");
-    this.ImpactLayer = parent.getInt("ImpactLayer");
-    this.PlotImpacts = parent.getInt("PlotImpacts");
+    this.ImpactLayer = XML_getInt(parent, "ImpactLayer");
+    this.PlotImpacts = XML_getInt(parent, "PlotImpacts");
     this.Impacts_update = XML_getBoolean(parent, "Impacts_update");
     
     this.displayRaws = XML_getBoolean(parent, "displayRaws");
     this.displaySorted = XML_getBoolean(parent, "displaySorted");
     this.displayNormals = XML_getBoolean(parent, "displayNormals");
     this.displayProbs = XML_getBoolean(parent, "displayProbs");
-    this.sumInterval = parent.getInt("sumInterval");
-    this.LevelPix = parent.getFloat("LevelPix");
-    this.Pix = parent.getFloat("Pix");
-    this.plotSetup = parent.getInt("plotSetup");
+    this.sumInterval = XML_getInt(parent, "sumInterval");
+    this.LevelPix = XML_getFloat(parent, "LevelPix");
+    this.Pix = XML_getFloat(parent, "Pix");
+    this.plotSetup = XML_getInt(parent, "plotSetup");
  
   }       
 
@@ -11184,9 +11184,9 @@ class solarchvision_Faces {
       XML_setInt(child, "close", getClose(i));
     }
     
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
-    XML_setString(parent, "displayNormals", Boolean.toString(this.displayNormals));
-    XML_setString(parent, "displayEdges", Boolean.toString(this.displayEdges));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
+    XML_setBoolean(parent, "displayNormals", this.displayNormals);
+    XML_setBoolean(parent, "displayEdges", this.displayEdges);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
     
     XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
@@ -11203,7 +11203,7 @@ class solarchvision_Faces {
     println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
     
     XML[] children = parent.getChildren("item");
     
@@ -11230,14 +11230,14 @@ class solarchvision_Faces {
     this.displayAll = XML_getBoolean(parent, "displayAll");
     this.displayNormals = XML_getBoolean(parent, "displayNormals");
     this.displayEdges = XML_getBoolean(parent, "displayEdges");
-    this.displayTessellation = parent.getInt("displayTessellation");
+    this.displayTessellation = XML_getInt(parent, "displayTessellation");
     
-    this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = parent.getInt("ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = parent.getFloat("ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = parent.getInt("PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");          
+    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
+    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
+    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
+    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
+    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
+    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");          
   }
   
 }
@@ -11580,7 +11580,7 @@ class solarchvision_Curves {
       XML_setInt(child, "close", getClose(i));
     }
     
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
   }
 
 
@@ -11589,7 +11589,7 @@ class solarchvision_Curves {
     println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
     
     XML[] children = parent.getChildren("item");
     
@@ -12098,7 +12098,7 @@ class solarchvision_Groups {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
   
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
 
     this.num = ni;
 
@@ -13390,13 +13390,13 @@ class solarchvision_SolidImpacts {
     XML_setFloat(parent, this.CLASS_STAMP + ".WindSpeed", this.WindSpeed); 
     XML_setFloat(parent, this.CLASS_STAMP + ".WindDirection", this.WindDirection);
     XML_setFloat(parent, this.CLASS_STAMP + ".Power", this.Power);
-    XML_setString(parent, this.CLASS_STAMP + ".displayPoints", Boolean.toString(this.displayPoints));
-    XML_setString(parent, this.CLASS_STAMP + ".displayLines", Boolean.toString(this.displayLines));  
+    XML_setBoolean(parent, this.CLASS_STAMP + ".displayPoints", this.displayPoints);
+    XML_setBoolean(parent, this.CLASS_STAMP + ".displayLines", this.displayLines);  
     
     XML_setInt(parent, this.CLASS_STAMP + ".RES1", this.RES1);
     XML_setInt(parent, this.CLASS_STAMP + ".RES2", this.RES2);
     XML_setFloat(parent, this.CLASS_STAMP + ".Grade", this.Grade);
-    XML_setString(parent, this.CLASS_STAMP + ".displayImage", Boolean.toString(this.displayImage));
+    XML_setBoolean(parent, this.CLASS_STAMP + ".displayImage", this.displayImage);
     XML_setInt(parent, this.CLASS_STAMP + ".sectionType", this.sectionType);
     XML_setFloat(parent, this.CLASS_STAMP + ".positionStep", this.positionStep);
     XML_setInt(parent, this.CLASS_STAMP + ".Process_subDivisions", this.Process_subDivisions);
@@ -13487,24 +13487,24 @@ class solarchvision_SolidImpacts {
     
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.WindSpeed = parent.getFloat(this.CLASS_STAMP + ".WindSpeed"); 
-    this.WindDirection = parent.getFloat(this.CLASS_STAMP + ".WindDirection");
-    this.Power = parent.getFloat(this.CLASS_STAMP + ".Power");
+    this.WindSpeed = XML_getFloat(parent, this.CLASS_STAMP + ".WindSpeed"); 
+    this.WindDirection = XML_getFloat(parent, this.CLASS_STAMP + ".WindDirection");
+    this.Power = XML_getFloat(parent, this.CLASS_STAMP + ".Power");
 
     this.displayPoints = XML_getBoolean(parent, this.CLASS_STAMP + ".displayPoints");
     this.displayLines = XML_getBoolean(parent, this.CLASS_STAMP + ".displayLines");
     
-    this.RES1 = parent.getInt(this.CLASS_STAMP + ".RES1");
-    this.RES2 = parent.getInt(this.CLASS_STAMP + ".RES2");
-    this.Grade = parent.getFloat(this.CLASS_STAMP + ".Grade");
+    this.RES1 = XML_getInt(parent, this.CLASS_STAMP + ".RES1");
+    this.RES2 = XML_getInt(parent, this.CLASS_STAMP + ".RES2");
+    this.Grade = XML_getFloat(parent, this.CLASS_STAMP + ".Grade");
     this.displayImage = XML_getBoolean(parent, this.CLASS_STAMP + ".displayImage");
-    this.sectionType = parent.getInt(this.CLASS_STAMP + ".sectionType");
-    this.positionStep = parent.getFloat(this.CLASS_STAMP + ".positionStep");
-    this.Process_subDivisions = parent.getInt(this.CLASS_STAMP + ".Process_subDivisions");
-    this.deltaStep = parent.getFloat(this.CLASS_STAMP + ".deltaStep");
-    this.deltaLines = parent.getFloat(this.CLASS_STAMP + ".deltaLines");
-    this.MinimumDistance_traceU = parent.getFloat(this.CLASS_STAMP + ".MinimumDistance_traceU");
-    this.MinimumDistance_traceV = parent.getFloat(this.CLASS_STAMP + ".MinimumDistance_traceV");
+    this.sectionType = XML_getInt(parent, this.CLASS_STAMP + ".sectionType");
+    this.positionStep = XML_getFloat(parent, this.CLASS_STAMP + ".positionStep");
+    this.Process_subDivisions = XML_getInt(parent, this.CLASS_STAMP + ".Process_subDivisions");
+    this.deltaStep = XML_getFloat(parent, this.CLASS_STAMP + ".deltaStep");
+    this.deltaLines = XML_getFloat(parent, this.CLASS_STAMP + ".deltaLines");
+    this.MinimumDistance_traceU = XML_getFloat(parent, this.CLASS_STAMP + ".MinimumDistance_traceU");
+    this.MinimumDistance_traceV = XML_getFloat(parent, this.CLASS_STAMP + ".MinimumDistance_traceV");
 
     {
       XML child = xml.getChild(this.CLASS_STAMP + ".Z");
@@ -14130,7 +14130,7 @@ class solarchvision_SolarImpacts {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
-    XML_setString(parent, "displayImage", Boolean.toString(this.displayImage));
+    XML_setBoolean(parent, "displayImage", this.displayImage);
     
     XML_setFloat(parent, "X", this.X);
     XML_setFloat(parent, "Y", this.Y);  
@@ -14154,16 +14154,16 @@ class solarchvision_SolarImpacts {
     
     this.displayImage = XML_getBoolean(parent, "displayImage");
     
-    this.X = parent.getFloat("X");
-    this.Y = parent.getFloat("Y");     
-    this.Z = parent.getFloat("Z"); 
-    this.R = parent.getFloat("R");
-    this.U = parent.getFloat("U");
-    this.V = parent.getFloat("V");
+    this.X = XML_getFloat(parent, "X");
+    this.Y = XML_getFloat(parent, "Y");     
+    this.Z = XML_getFloat(parent, "Z"); 
+    this.R = XML_getFloat(parent, "R");
+    this.U = XML_getFloat(parent, "U");
+    this.V = XML_getFloat(parent, "V");
    
-    this.RES1 = parent.getInt("RES1");
-    this.RES2 = parent.getInt("RES2");
-    this.sectionType = parent.getInt("sectionType");
+    this.RES1 = XML_getInt(parent, "RES1");
+    this.RES2 = XML_getInt(parent, "RES2");
+    this.sectionType = XML_getInt(parent, "sectionType");
   }      
 
 
@@ -21527,21 +21527,21 @@ class solarchvision_Select3Ds {
     XML_setInt(parent, "alignY", this.alignY);
     XML_setInt(parent, "alignZ", this.alignZ);
   
-    XML_setString(parent, "Face_displayEdges", Boolean.toString(this.Face_displayEdges));
-    XML_setString(parent, "Face_displayVertexCount", Boolean.toString(this.Face_displayVertexCount));
-    XML_setString(parent, "Curve_displayVertexCount", Boolean.toString(this.Curve_displayVertexCount));
-    XML_setString(parent, "Vertex_displayVertices", Boolean.toString(this.Vertex_displayVertices));
-    XML_setString(parent, "Curve_displayVertices", Boolean.toString(this.Curve_displayVertices));
-    XML_setString(parent, "Group_displayPivot", Boolean.toString(this.Group_displayPivot));  
-    XML_setString(parent, "displayReferencePivot", Boolean.toString(this.displayReferencePivot));
-    XML_setString(parent, "Group_displayEdges", Boolean.toString(this.Group_displayEdges));
-    XML_setString(parent, "Group_displayBox", Boolean.toString(this.Group_displayBox));
-    XML_setString(parent, "Model2D_displayEdges", Boolean.toString(this.Model2D_displayEdges));
-    XML_setString(parent, "Model1D_displayEdges", Boolean.toString(this.Model1D_displayEdges));
-    XML_setString(parent, "Solid_displayEdges", Boolean.toString(this.Solid_displayEdges));
-    XML_setString(parent, "Section_displayEdges", Boolean.toString(this.Section_displayEdges));
-    XML_setString(parent, "Camera_displayEdges", Boolean.toString(this.Camera_displayEdges));
-    XML_setString(parent, "LandPoint_displayPoints", Boolean.toString(this.LandPoint_displayPoints));
+    XML_setBoolean(parent, "Face_displayEdges", this.Face_displayEdges);
+    XML_setBoolean(parent, "Face_displayVertexCount", this.Face_displayVertexCount);
+    XML_setBoolean(parent, "Curve_displayVertexCount", this.Curve_displayVertexCount);
+    XML_setBoolean(parent, "Vertex_displayVertices", this.Vertex_displayVertices);
+    XML_setBoolean(parent, "Curve_displayVertices", this.Curve_displayVertices);
+    XML_setBoolean(parent, "Group_displayPivot", this.Group_displayPivot);  
+    XML_setBoolean(parent, "displayReferencePivot", this.displayReferencePivot);
+    XML_setBoolean(parent, "Group_displayEdges", this.Group_displayEdges);
+    XML_setBoolean(parent, "Group_displayBox", this.Group_displayBox);
+    XML_setBoolean(parent, "Model2D_displayEdges", this.Model2D_displayEdges);
+    XML_setBoolean(parent, "Model1D_displayEdges", this.Model1D_displayEdges);
+    XML_setBoolean(parent, "Solid_displayEdges", this.Solid_displayEdges);
+    XML_setBoolean(parent, "Section_displayEdges", this.Section_displayEdges);
+    XML_setBoolean(parent, "Camera_displayEdges", this.Camera_displayEdges);
+    XML_setBoolean(parent, "LandPoint_displayPoints", this.LandPoint_displayPoints);
   
     XML_setFloat(parent, "softPower", this.softPower);
     XML_setFloat(parent, "softRadius", this.softRadius);    
@@ -21683,15 +21683,15 @@ class solarchvision_Select3Ds {
     
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.posVector = parent.getInt("posVector");
-    this.rotVector = parent.getInt("rotVector");
-    this.scaleVector = parent.getInt("scaleVector");
-    this.posValue = parent.getFloat("posValue");
-    this.rotValue = parent.getFloat("rotValue");
-    this.scaleValue = parent.getFloat("scaleValue");
-    this.alignX = parent.getInt("alignX");
-    this.alignY = parent.getInt("alignY");
-    this.alignZ = parent.getInt("alignZ");
+    this.posVector = XML_getInt(parent, "posVector");
+    this.rotVector = XML_getInt(parent, "rotVector");
+    this.scaleVector = XML_getInt(parent, "scaleVector");
+    this.posValue = XML_getFloat(parent, "posValue");
+    this.rotValue = XML_getFloat(parent, "rotValue");
+    this.scaleValue = XML_getFloat(parent, "scaleValue");
+    this.alignX = XML_getInt(parent, "alignX");
+    this.alignY = XML_getInt(parent, "alignY");
+    this.alignZ = XML_getInt(parent, "alignZ");
 
     this.displayReferencePivot = XML_getBoolean(parent, "displayReferencePivot");
     this.Group_displayPivot = XML_getBoolean(parent, "Group_displayPivot");
@@ -21709,8 +21709,8 @@ class solarchvision_Select3Ds {
     this.Camera_displayEdges = XML_getBoolean(parent, "Camera_displayEdges");
     this.LandPoint_displayPoints = XML_getBoolean(parent, "LandPoint_displayPoints");
 
-    this.softPower = parent.getFloat("softPower");
-    this.softRadius = parent.getFloat("softRadius");
+    this.softPower = XML_getFloat(parent, "softPower");
+    this.softRadius = XML_getFloat(parent, "softRadius");
 
   
     {
@@ -26053,8 +26053,8 @@ class solarchvision_Tropo3D {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
-    XML_setString(parent, "displaySurface", Boolean.toString(this.displaySurface));
-    XML_setString(parent, "displayTexture", Boolean.toString(this.displayTexture));
+    XML_setBoolean(parent, "displaySurface", this.displaySurface);
+    XML_setBoolean(parent, "displayTexture", this.displayTexture);
   }
   
   
@@ -26366,7 +26366,7 @@ class solarchvision_Sky3D {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
-    XML_setString(parent, "displaySurface", Boolean.toString(this.displaySurface));
+    XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
     XML_setFloat(parent, "scale", this.scale);
     XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
@@ -26392,21 +26392,21 @@ class solarchvision_Sky3D {
     XML parent = xml.getChild(this.CLASS_STAMP);
     
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
-    this.displayTessellation = parent.getInt("displayTessellation");
-    this.scale = parent.getFloat("scale");
-    this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = parent.getInt("ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = parent.getFloat("ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = parent.getInt("PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");
+    this.displayTessellation = XML_getInt(parent, "displayTessellation");
+    this.scale = XML_getFloat(parent, "scale");
+    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
+    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
+    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
+    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
+    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
+    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
     
-    this.stp_slp = parent.getFloat("stp_slp");
-    this.stp_dir = parent.getFloat("stp_dir");
-    this.num_slp = parent.getInt("num_slp");
-    this.num_dir = parent.getInt("num_dir");   
+    this.stp_slp = XML_getFloat(parent, "stp_slp");
+    this.stp_dir = XML_getFloat(parent, "stp_dir");
+    this.num_slp = XML_getInt(parent, "num_slp");
+    this.num_dir = XML_getInt(parent, "num_dir");   
     
-    this.calculatedResolution = parent.getFloat("calculatedResolution");
+    this.calculatedResolution = XML_getFloat(parent, "calculatedResolution");
   }   
 }
 
@@ -27548,13 +27548,13 @@ class solarchvision_Sun3D {
     XML_setInt(parent, "PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
     XML_setFloat(parent, "PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);
     
-    XML_setString(parent, "displayGrid", Boolean.toString(this.displayGrid));
-    XML_setString(parent, "displayPath", Boolean.toString(this.displayPath));
-    XML_setString(parent, "displayPattern", Boolean.toString(this.displayPattern));
+    XML_setBoolean(parent, "displayGrid", this.displayGrid);
+    XML_setBoolean(parent, "displayPath", this.displayPath);
+    XML_setBoolean(parent, "displayPattern", this.displayPattern);
            
     
-    XML_setString(parent, "displaySurface", Boolean.toString(this.displaySurface));
-    XML_setString(parent, "displayTexture", Boolean.toString(this.displayTexture));
+    XML_setBoolean(parent, "displaySurface", this.displaySurface);
+    XML_setBoolean(parent, "displayTexture", this.displayTexture);
   }
   
   
@@ -27564,12 +27564,12 @@ class solarchvision_Sun3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = parent.getInt("ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = parent.getFloat("ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = parent.getInt("PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");
+    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
+    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
+    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
+    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
+    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
+    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
     
     this.displayGrid = XML_getBoolean(parent, "displayGrid");      
     this.displayPath = XML_getBoolean(parent, "displayPath");
@@ -27697,8 +27697,8 @@ class solarchvision_Moon3D {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
-    XML_setString(parent, "displaySurface", Boolean.toString(this.displaySurface));
-    XML_setString(parent, "displayTexture", Boolean.toString(this.displayTexture));
+    XML_setBoolean(parent, "displaySurface", this.displaySurface);
+    XML_setBoolean(parent, "displayTexture", this.displayTexture);
   }
   
   
@@ -28086,8 +28086,8 @@ class solarchvision_Earth3D {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
     
-    XML_setString(parent, "displaySurface", Boolean.toString(this.displaySurface));
-    XML_setString(parent, "displayTexture", Boolean.toString(this.displayTexture));
+    XML_setBoolean(parent, "displaySurface", this.displaySurface);
+    XML_setBoolean(parent, "displayTexture", this.displayTexture);
   }
   
   
@@ -29084,12 +29084,12 @@ class solarchvision_Land3D {
       XML parent = xml.addChild(this.CLASS_STAMP);
       
       XML_setInt(parent, "displayTessellation", this.displayTessellation);
-      XML_setString(parent, "loadTextures", Boolean.toString(this.loadTextures));  
-      XML_setString(parent, "loadMesh", Boolean.toString(this.loadMesh));
-      XML_setString(parent, "displaySurface", Boolean.toString(this.displaySurface));
-      XML_setString(parent, "displayPoints", Boolean.toString(this.displayPoints));
-      XML_setString(parent, "displayTexture", Boolean.toString(this.displayTexture));
-      XML_setString(parent, "displayDepth", Boolean.toString(this.displayDepth));
+      XML_setBoolean(parent, "loadTextures", this.loadTextures);  
+      XML_setBoolean(parent, "loadMesh", this.loadMesh);
+      XML_setBoolean(parent, "displaySurface", this.displaySurface);
+      XML_setBoolean(parent, "displayPoints", this.displayPoints);
+      XML_setBoolean(parent, "displayTexture", this.displayTexture);
+      XML_setBoolean(parent, "displayDepth", this.displayDepth);
       XML_setInt(parent, "pallet_CLR", this.pallet_CLR);
       XML_setInt(parent, "pallet_DIR", this.pallet_DIR);
       XML_setFloat(parent, "pallet_MLT", this.pallet_MLT);
@@ -29172,20 +29172,20 @@ class solarchvision_Land3D {
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
       
-      this.displayTessellation = parent.getInt("displayTessellation");
+      this.displayTessellation = XML_getInt(parent, "displayTessellation");
       this.loadTextures = XML_getBoolean(parent, "loadTextures");      
       this.loadMesh = XML_getBoolean(parent, "loadMesh");
       this.displaySurface = XML_getBoolean(parent, "displaySurface");
       this.displayPoints = XML_getBoolean(parent, "displayPoints");
       this.displayTexture = XML_getBoolean(parent, "displayTexture");
       this.displayDepth = XML_getBoolean(parent, "displayDepth");
-      this.pallet_CLR = parent.getInt("pallet_CLR");
-      this.pallet_DIR = parent.getInt("pallet_DIR");
-      this.pallet_MLT = parent.getFloat("pallet_MLT");  
-      this.skipStart = parent.getInt("skipStart");
-      this.skipEnd = parent.getInt("skipEnd");
-      this.num_rows = parent.getInt("num_rows");
-      this.num_columns = parent.getInt("num_columns");
+      this.pallet_CLR = XML_getInt(parent, "pallet_CLR");
+      this.pallet_DIR = XML_getInt(parent, "pallet_DIR");
+      this.pallet_MLT = XML_getFloat(parent, "pallet_MLT");  
+      this.skipStart = XML_getInt(parent, "skipStart");
+      this.skipEnd = XML_getInt(parent, "skipEnd");
+      this.num_rows = XML_getInt(parent, "num_rows");
+      this.num_columns = XML_getInt(parent, "num_columns");
 
 
       this.Mesh = new float [this.num_rows][this.num_columns][3];
@@ -29205,7 +29205,7 @@ class solarchvision_Land3D {
       XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
       
       int pre_Land3D_Textures_num = this.Textures_num;
-      this.Textures_num = parent.getInt("ni");
+      this.Textures_num = XML_getInt(parent, "ni");
   
       if (pre_Land3D_Textures_num != this.Textures_num) {
         int ni = this.Textures_num;
@@ -30399,7 +30399,7 @@ class solarchvision_Model2Ds {
         XML_setContent(child, txt);
       }  
       
-      XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+      XML_setBoolean(parent, "displayAll", this.displayAll);
       XML_setInt(parent, "num_files_PEOPLE", this.num_files_PEOPLE);
       XML_setInt(parent, "num_files_TREES", this.num_files_TREES);   
     }
@@ -30455,7 +30455,7 @@ class solarchvision_Model2Ds {
     
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
-      int ni = parent.getInt("ni");
+      int ni = XML_getInt(parent, "ni");
   
       this.XYZS = new float [ni][4];
       this.MAP = new int [ni];
@@ -30473,14 +30473,14 @@ class solarchvision_Model2Ds {
       }
       
       this.displayAll = XML_getBoolean(parent, "displayAll");
-      this.num_files_PEOPLE = parent.getInt("num_files_PEOPLE");
-      this.num_files_TREES = parent.getInt("num_files_TREES");  
+      this.num_files_PEOPLE = XML_getInt(parent, "num_files_PEOPLE");
+      this.num_files_TREES = XML_getInt(parent, "num_files_TREES");  
     }
     
     {
       XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
     
-      int ni = parent.getInt("ni");
+      int ni = XML_getInt(parent, "ni");
   
       int reload_All_textures = 0;
   
@@ -31611,8 +31611,8 @@ class solarchvision_Model1Ds {
     } 
     
     
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
-    XML_setString(parent, "displayLeaves", Boolean.toString(this.displayLeaves));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
+    XML_setBoolean(parent, "displayLeaves", this.displayLeaves);
   }
   
   
@@ -31621,7 +31621,7 @@ class solarchvision_Model1Ds {
     println("Loading:" + this.CLASS_STAMP);
     
     XML parent = xml.getChild(this.CLASS_STAMP);
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
 
     this.XYZSR = new float [ni][5];
     this.Type = new int [ni];
@@ -32233,7 +32233,7 @@ class solarchvision_Solids {
       XML_setContent(child, txt);
     }    
     
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
     XML_setInt(parent, "pallet_CLR", this.pallet_CLR);
     XML_setInt(parent, "pallet_DIR", this.pallet_DIR);
     XML_setFloat(parent, "pallet_MLT", this.pallet_MLT);
@@ -32245,7 +32245,7 @@ class solarchvision_Solids {
     println("Loading:" + this.CLASS_STAMP);
     
     XML parent = xml.getChild(this.CLASS_STAMP);
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
 
     this.DEF = new float [ni][13];
 
@@ -32269,9 +32269,9 @@ class solarchvision_Solids {
     }
     
     this.displayAll = XML_getBoolean(parent, "displayAll");    
-    this.pallet_CLR = parent.getInt("pallet_CLR");
-    this.pallet_DIR = parent.getInt("pallet_DIR");
-    this.pallet_MLT = parent.getFloat("pallet_MLT");   
+    this.pallet_CLR = XML_getInt(parent, "pallet_CLR");
+    this.pallet_DIR = XML_getInt(parent, "pallet_DIR");
+    this.pallet_MLT = XML_getFloat(parent, "pallet_MLT");   
   }    
 
 }
@@ -32427,7 +32427,7 @@ class solarchvision_Points {
       XML_setContent(child, txt);
     }    
 
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
   }
   
   
@@ -32437,7 +32437,7 @@ class solarchvision_Points {
     
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
     allVertices = new float [ni][3];
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
@@ -32566,8 +32566,8 @@ class solarchvision_User3D {
     XML_setInt(parent, "export_PrecisionVertex", this.export_PrecisionVertex);
     XML_setInt(parent, "export_PrecisionVtexture", this.export_PrecisionVtexture);
     XML_setInt(parent, "export_PolyToPoly", this.export_PolyToPoly);
-    XML_setString(parent, "export_MaterialLibrary", Boolean.toString(this.export_MaterialLibrary));
-    XML_setString(parent, "export_BackSides", Boolean.toString(this.export_BackSides));
+    XML_setBoolean(parent, "export_MaterialLibrary", this.export_MaterialLibrary);
+    XML_setBoolean(parent, "export_BackSides", this.export_BackSides);
     XML_setInt(parent, "export_PalletResolution", this.export_PalletResolution);
 
   }
@@ -32579,54 +32579,54 @@ class solarchvision_User3D {
     
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.default_Material = parent.getInt("default_Material");
-    this.default_Tessellation = parent.getInt("default_Tessellation");
-    this.default_Layer = parent.getInt("default_Layer");
-    this.default_Visibility = parent.getInt("default_Visibility");
-    this.default_Weight = parent.getInt("default_Weight");
-    this.default_Closed = parent.getInt("default_Closed");
+    this.default_Material = XML_getInt(parent, "default_Material");
+    this.default_Tessellation = XML_getInt(parent, "default_Tessellation");
+    this.default_Layer = XML_getInt(parent, "default_Layer");
+    this.default_Visibility = XML_getInt(parent, "default_Visibility");
+    this.default_Weight = XML_getInt(parent, "default_Weight");
+    this.default_Closed = XML_getInt(parent, "default_Closed");
 
-    this.create_Length = parent.getFloat("create_Length");
-    this.create_Width = parent.getFloat("create_Width");
-    this.create_Height = parent.getFloat("create_Height");
-    this.create_Volume = parent.getFloat("create_Volume");
-    this.create_Orientation = parent.getFloat("create_Orientation");
-    this.create_powX = parent.getFloat("create_powX");
-    this.create_powY = parent.getFloat("create_powY");
-    this.create_powZ = parent.getFloat("create_powZ");
-    this.create_powAll = parent.getFloat("create_powAll");
-    this.create_powRnd = parent.getInt("create_powRnd");
-    this.create_SphereDegree = parent.getInt("create_SphereDegree");
-    this.create_CylinderDegree = parent.getInt("create_CylinderDegree");
-    this.create_PolyDegree = parent.getInt("create_PolyDegree");
-    this.create_Parametric_Type = parent.getInt("create_Parametric_Type");
-    this.create_Person_Type = parent.getInt("create_Person_Type");
-    this.create_Plant_Type = parent.getInt("create_Plant_Type");
-    this.create_Model1D_Type = parent.getInt("create_Model1D_Type");
-    this.create_Model1D_DegreeMin = parent.getInt("create_Model1D_DegreeMin");
-    this.create_Model1D_DegreeMax = parent.getInt("create_Model1D_DegreeMax");
-    this.create_Model1D_Seed = parent.getInt("create_Model1D_Seed");
-    this.create_Model1D_TrunkSize = parent.getFloat("create_Model1D_TrunkSize");
-    this.create_Model1D_LeafSize = parent.getFloat("create_Model1D_LeafSize");
-    this.create_MeshOrSolid = parent.getInt("create_MeshOrSolid");
-    this.create_Snap = parent.getInt("create_Snap");
+    this.create_Length = XML_getFloat(parent, "create_Length");
+    this.create_Width = XML_getFloat(parent, "create_Width");
+    this.create_Height = XML_getFloat(parent, "create_Height");
+    this.create_Volume = XML_getFloat(parent, "create_Volume");
+    this.create_Orientation = XML_getFloat(parent, "create_Orientation");
+    this.create_powX = XML_getFloat(parent, "create_powX");
+    this.create_powY = XML_getFloat(parent, "create_powY");
+    this.create_powZ = XML_getFloat(parent, "create_powZ");
+    this.create_powAll = XML_getFloat(parent, "create_powAll");
+    this.create_powRnd = XML_getInt(parent, "create_powRnd");
+    this.create_SphereDegree = XML_getInt(parent, "create_SphereDegree");
+    this.create_CylinderDegree = XML_getInt(parent, "create_CylinderDegree");
+    this.create_PolyDegree = XML_getInt(parent, "create_PolyDegree");
+    this.create_Parametric_Type = XML_getInt(parent, "create_Parametric_Type");
+    this.create_Person_Type = XML_getInt(parent, "create_Person_Type");
+    this.create_Plant_Type = XML_getInt(parent, "create_Plant_Type");
+    this.create_Model1D_Type = XML_getInt(parent, "create_Model1D_Type");
+    this.create_Model1D_DegreeMin = XML_getInt(parent, "create_Model1D_DegreeMin");
+    this.create_Model1D_DegreeMax = XML_getInt(parent, "create_Model1D_DegreeMax");
+    this.create_Model1D_Seed = XML_getInt(parent, "create_Model1D_Seed");
+    this.create_Model1D_TrunkSize = XML_getFloat(parent, "create_Model1D_TrunkSize");
+    this.create_Model1D_LeafSize = XML_getFloat(parent, "create_Model1D_LeafSize");
+    this.create_MeshOrSolid = XML_getInt(parent, "create_MeshOrSolid");
+    this.create_Snap = XML_getInt(parent, "create_Snap");
     
-    this.modify_TessellateRows = parent.getInt("modify_TessellateRows");
-    this.modify_TessellateColumns = parent.getInt("modify_TessellateColumns");
-    this.modify_OpenningDepth = parent.getFloat("modify_OpenningDepth");
-    this.modify_OpenningArea = parent.getFloat("modify_OpenningArea");
-    this.modify_OpenningDeviation = parent.getFloat("modify_OpenningDeviation");
-    this.modify_WeldTreshold = parent.getFloat("modify_WeldTreshold");
-    this.modify_OffsetAmount = parent.getFloat("modify_OffsetAmount");
+    this.modify_TessellateRows = XML_getInt(parent, "modify_TessellateRows");
+    this.modify_TessellateColumns = XML_getInt(parent, "modify_TessellateColumns");
+    this.modify_OpenningDepth = XML_getFloat(parent, "modify_OpenningDepth");
+    this.modify_OpenningArea = XML_getFloat(parent, "modify_OpenningArea");
+    this.modify_OpenningDeviation = XML_getFloat(parent, "modify_OpenningDeviation");
+    this.modify_WeldTreshold = XML_getFloat(parent, "modify_WeldTreshold");
+    this.modify_OffsetAmount = XML_getFloat(parent, "modify_OffsetAmount");
     
-    this.export_Scale = parent.getFloat("export_Scale");
-    this.export_FlipZYaxis = parent.getInt("export_FlipZYaxis");
-    this.export_PrecisionVertex = parent.getInt("export_PrecisionVertex");
-    this.export_PrecisionVtexture = parent.getInt("export_PrecisionVtexture");
-    this.export_PolyToPoly = parent.getInt("export_PolyToPoly");
+    this.export_Scale = XML_getFloat(parent, "export_Scale");
+    this.export_FlipZYaxis = XML_getInt(parent, "export_FlipZYaxis");
+    this.export_PrecisionVertex = XML_getInt(parent, "export_PrecisionVertex");
+    this.export_PrecisionVtexture = XML_getInt(parent, "export_PrecisionVtexture");
+    this.export_PolyToPoly = XML_getInt(parent, "export_PolyToPoly");
     this.export_MaterialLibrary  = XML_getBoolean(parent, "export_MaterialLibrary");
     this.export_BackSides = XML_getBoolean(parent, "export_BackSides");
-    this.export_PalletResolution = parent.getInt("export_PalletResolution");    
+    this.export_PalletResolution = XML_getInt(parent, "export_PalletResolution");    
     
   }      
   
@@ -37331,7 +37331,7 @@ class solarchvision_Cameras {
       XML_setContent(child, txt);
     }
     
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
   }
   
   
@@ -37341,7 +37341,7 @@ class solarchvision_Cameras {
     
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    int ni = parent.getInt("ni");
+    int ni = XML_getInt(parent, "ni");
 
     this.options = new float [ni][9];
     this.Type = new int [ni];
@@ -37982,7 +37982,7 @@ class solarchvision_Sections {
         XML_setContent(child, txt);
       }
       
-      XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+      XML_setBoolean(parent, "displayAll", this.displayAll);
     }
 
     {
@@ -38048,7 +38048,7 @@ class solarchvision_Sections {
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
       
-      int ni = parent.getInt("ni");
+      int ni = XML_getInt(parent, "ni");
   
       this.f_options = new float [ni][6];
       this.i_options = new int   [ni][3];
@@ -38078,7 +38078,7 @@ class solarchvision_Sections {
     {
       XML parent = xml.getChild(this.CLASS_STAMP + ".SolidImpact");
     
-      int ni = parent.getInt("ni");
+      int ni = XML_getInt(parent, "ni");
   
       this.SolidImpact = new PImage [ni];
   
@@ -38098,9 +38098,9 @@ class solarchvision_Sections {
     {
       XML parent = xml.getChild(this.CLASS_STAMP + ".SolarImpacts");
     
-      int ni = parent.getInt("ni");
-      int nj = parent.getInt("nj");
-      int nk = parent.getInt("nk");
+      int ni = XML_getInt(parent, "ni");
+      int nj = XML_getInt(parent, "nj");
+      int nk = XML_getInt(parent, "nk");
   
       this.SolarImpact = new PImage [ni][nj][nk]; 
   
@@ -38241,7 +38241,7 @@ class solarchvision_WindRose {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
       
-    XML_setString(parent, "displayImage", Boolean.toString(this.displayImage));
+    XML_setBoolean(parent, "displayImage", this.displayImage);
     XML_setInt(parent, "RES", this.RES);
     XML_setInt(parent, "renderedRES", this.renderedRES);
     XML_setFloat(parent, "scale", this.scale);    
@@ -38255,9 +38255,9 @@ class solarchvision_WindRose {
     XML parent = xml.getChild(this.CLASS_STAMP);
     
     this.displayImage = XML_getBoolean(parent, "displayImage");
-    this.RES = parent.getInt("RES");
-    this.renderedRES = parent.getInt("renderedRES");
-    this.scale = parent.getFloat("scale");      
+    this.RES = XML_getInt(parent, "RES");
+    this.renderedRES = XML_getInt(parent, "renderedRES");
+    this.scale = XML_getFloat(parent, "scale");      
   }   
 }
 
@@ -38576,7 +38576,7 @@ class solarchvision_WindFlow {
     
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setString(parent, "displayAll", Boolean.toString(this.displayAll));
+    XML_setBoolean(parent, "displayAll", this.displayAll);
     
     XML_setInt(parent, "pallet_CLR", this.pallet_CLR);
     XML_setInt(parent, "pallet_DIR", this.pallet_DIR);
@@ -38593,9 +38593,9 @@ class solarchvision_WindFlow {
     
     this.displayAll = XML_getBoolean(parent, "displayAll");
     
-    this.pallet_CLR = parent.getInt("pallet_CLR");
-    this.pallet_DIR = parent.getInt("pallet_DIR");
-    this.pallet_MLT = parent.getFloat("pallet_MLT");
+    this.pallet_CLR = XML_getInt(parent, "pallet_CLR");
+    this.pallet_DIR = XML_getInt(parent, "pallet_DIR");
+    this.pallet_MLT = XML_getFloat(parent, "pallet_MLT");
    
   }   
 }
@@ -48781,7 +48781,7 @@ void SOLARCHVISION_save_project (String myFile) {
   {
     XML parent = xml.addChild("SOLARCHVISION_variables");
   
-    XML_setString(parent, "displayOutput_inExplorer", Boolean.toString(displayOutput_inExplorer));
+    XML_setBoolean(parent, "displayOutput_inExplorer", displayOutput_inExplorer);
 
     XML_setInt(parent, "current_ObjectCategory", current_ObjectCategory);
   
@@ -48811,11 +48811,11 @@ void SOLARCHVISION_save_project (String myFile) {
     XML_setInt(parent, "SampleMember_End", SampleMember_End);
     XML_setInt(parent, "SampleStation_Start", SampleStation_Start);
     XML_setInt(parent, "SampleStation_End", SampleStation_End);
-    XML_setString(parent, "CLIMATE_TMYEPW_load", Boolean.toString(CLIMATE_TMYEPW_load));
-    XML_setString(parent, "CLIMATE_CWEEDS_load", Boolean.toString(CLIMATE_CWEEDS_load));
-    XML_setString(parent, "CLIMATE_CLMREC_load", Boolean.toString(CLIMATE_CLMREC_load));  
-    XML_setString(parent, "ENSEMBLE_FORECAST_load", Boolean.toString(ENSEMBLE_FORECAST_load));
-    XML_setString(parent, "ENSEMBLE_OBSERVED_load", Boolean.toString(ENSEMBLE_OBSERVED_load));
+    XML_setBoolean(parent, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load);
+    XML_setBoolean(parent, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load);
+    XML_setBoolean(parent, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load);  
+    XML_setBoolean(parent, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load);
+    XML_setBoolean(parent, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load);
     XML_setInt(parent, "GRIB2_Month", GRIB2_Month);
     XML_setInt(parent, "GRIB2_Day", GRIB2_Day);
     XML_setInt(parent, "GRIB2_ModelRun", GRIB2_ModelRun);
@@ -48835,7 +48835,7 @@ void SOLARCHVISION_save_project (String myFile) {
     XML_setInt(parent, "AERIAL_graphOption", AERIAL_graphOption);
     XML_setInt(parent, "Develop_Option", Develop_Option);
     XML_setInt(parent, "Develop_DayHour", Develop_DayHour);
-    XML_setString(parent, "DevelopData_update", Boolean.toString(DevelopData_update));
+    XML_setBoolean(parent, "DevelopData_update", DevelopData_update);
     XML_setInt(parent, "numberOfLayers", numberOfLayers);
 
     XML_setFloat(parent, "Develop_AngleInclination", Develop_AngleInclination);
@@ -48953,7 +48953,7 @@ void SOLARCHVISION_load_project (String myFile) {
   myFile = myFile.replace(char(92), '/');
 
 
-  int continue_process = 1;
+  boolean continue_process = true;
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
@@ -48962,189 +48962,21 @@ void SOLARCHVISION_load_project (String myFile) {
   }
   catch (Exception e) {
     println("Can't read:", myFile);
-    continue_process = 0;
+    continue_process = false;
   }
 
-  if (continue_process == 1) { 
-
-    {
-      XML parent = xml.getChild("SOLARCHVISION_variables");
-      
-      displayOutput_inExplorer = XML_getBoolean(parent, "displayOutput_inExplorer");
-
-      current_ObjectCategory = parent.getInt("current_ObjectCategory");
-
-      GlobalAlbedo = parent.getFloat("GlobalAlbedo");
-      Interpolation_Weight = parent.getFloat("Interpolation_Weight");
-      
-      CLIMATIC_SolarForecast = parent.getInt("CLIMATIC_SolarForecast");
-      CLIMATIC_WeatherForecast = parent.getInt("CLIMATIC_WeatherForecast");
-      SOLARCHVISION_automated = parent.getInt("SOLARCHVISION_automated");
-
-      CLIMATE_TMYEPW_start = parent.getInt("CLIMATE_TMYEPW_start");
-      CLIMATE_TMYEPW_end = parent.getInt("CLIMATE_TMYEPW_end");
-      CLIMATE_CWEEDS_start = parent.getInt("CLIMATE_CWEEDS_start");
-      CLIMATE_CWEEDS_end = parent.getInt("CLIMATE_CWEEDS_end");
-      CLIMATE_CLMREC_start = parent.getInt("CLIMATE_CLMREC_start");
-      CLIMATE_CLMREC_end = parent.getInt("CLIMATE_CLMREC_end");
-      ENSEMBLE_FORECAST_start = parent.getInt("ENSEMBLE_FORECAST_start");
-      ENSEMBLE_FORECAST_end = parent.getInt("ENSEMBLE_FORECAST_end");
-      ENSEMBLE_FORECAST_maxDays = parent.getInt("ENSEMBLE_FORECAST_maxDays");
-      ENSEMBLE_OBSERVED_maxDays = parent.getInt("ENSEMBLE_OBSERVED_maxDays");      
-      ENSEMBLE_OBSERVED_numNearest = parent.getInt("ENSEMBLE_OBSERVED_numNearest");
-      ENSEMBLE_OBSERVED_start = parent.getInt("ENSEMBLE_OBSERVED_start");
-      ENSEMBLE_OBSERVED_end = parent.getInt("ENSEMBLE_OBSERVED_end");
-      SampleYear_Start = parent.getInt("SampleYear_Start");
-      SampleYear_End = parent.getInt("SampleYear_End");
-      SampleMember_Start = parent.getInt("SampleMember_Start");
-      SampleMember_End = parent.getInt("SampleMember_End");
-      SampleStation_Start = parent.getInt("SampleStation_Start");
-      SampleStation_End = parent.getInt("SampleStation_End");
-      CLIMATE_TMYEPW_load = XML_getBoolean(parent, "CLIMATE_TMYEPW_load");
-      CLIMATE_CWEEDS_load = XML_getBoolean(parent, "CLIMATE_CWEEDS_load");
-      CLIMATE_CLMREC_load = XML_getBoolean(parent, "CLIMATE_CLMREC_load");
-      ENSEMBLE_FORECAST_load = XML_getBoolean(parent, "ENSEMBLE_FORECAST_load");
-      ENSEMBLE_OBSERVED_load = XML_getBoolean(parent, "ENSEMBLE_OBSERVED_load");
-      GRIB2_Month = parent.getInt("GRIB2_Month");
-      GRIB2_Day = parent.getInt("GRIB2_Day");
-      GRIB2_ModelRun = parent.getInt("GRIB2_ModelRun");
-      AERIAL_num = parent.getInt("AERIAL_num");
-      AERIAL_Center_Longitude = parent.getFloat("AERIAL_Center_Longitude");
-      AERIAL_Center_Latitude = parent.getFloat("AERIAL_Center_Latitude");
-      GRIB2_Hour_Start = parent.getInt("GRIB2_Hour_Start");
-      GRIB2_Hour_End = parent.getInt("GRIB2_Hour_End");
-      GRIB2_Hour_Step = parent.getInt("GRIB2_Hour_Step");
-      GRIB2_Layer_Start = parent.getInt("GRIB2_Layer_Start");
-      GRIB2_Layer_End = parent.getInt("GRIB2_Layer_End");
-      GRIB2_Layer_Step = parent.getInt("GRIB2_Layer_Step");
-      GRIB2_Hour = parent.getInt("GRIB2_Hour");
-      GRIB2_Layer = parent.getInt("GRIB2_Layer");
-      GRIB2_DomainSelection = parent.getInt("GRIB2_DomainSelection");
-      GRIB2_TGL_number = parent.getInt("GRIB2_TGL_number");
-      AERIAL_graphOption = parent.getInt("AERIAL_graphOption");
-      Develop_Option = parent.getInt("Develop_Option");
-      Develop_DayHour = parent.getInt("Develop_DayHour");
-      //DevelopData_update = XML_getBoolean(parent, "DevelopData_update");
-      numberOfLayers = parent.getInt("numberOfLayers");
-      Develop_AngleInclination = parent.getFloat("Develop_AngleInclination");
-      Develop_AngleOrientation = parent.getFloat("Develop_AngleOrientation");
-      DevelopLayer_id = parent.getInt("DevelopLayer_id");
-      
-      changeCurrentLayerTo(parent.getInt("CurrentLayer_id"));
-
-      Impact_TYPE = parent.getInt("Impact_TYPE");
-
-      COLOR_STYLE_Current = parent.getInt("COLOR_STYLE_Current");
-      COLOR_STYLE_Number = parent.getInt("COLOR_STYLE_Number");
-      
-      CurrentDataSource = parent.getInt("CurrentDataSource");
-      DrawnFrame = parent.getInt("DrawnFrame");
-
-
-  
-      Planetary_Magnification = parent.getFloat("Planetary_Magnification");
-
-      
-      Camera_Variation = parent.getInt("Camera_Variation");
-
-      Materials_Selection = parent.getInt("Materials_Selection");
-      OBJECTS_scale = parent.getFloat("OBJECTS_scale");
-      
-      FrameVariation = parent.getInt("FrameVariation");
-      Language_Active = parent.getInt("Language_Active");
-  
-      IMPACTS_displayDay = parent.getInt("IMPACTS_displayDay");
-      
-
-  
-  
-      BIOSPHERE_drawResolution = parent.getFloat("BIOSPHERE_drawResolution");
-  
-
+  if (continue_process) { 
     
-  
-      {
-        String new_Default_Font = XML_getString(parent, "Default_Font");
-        if (Default_Font.equals(new_Default_Font)) {
-        } else {
-          Default_Font = new_Default_Font;        
-          SOLARCHVISION_loadDefaultFontStyle();
-        }
-      } 
+    try {
+      SOLARCHVISION_parse_XML_variables(xml, false); // first try: loading without printing logs
     }
-  
+    catch (Exception e) {
+      println("Problem loading variables:", myFile);
 
-    STATION.from_XML(xml);
-    
-    allPoints.from_XML(xml);
-    
-    allCurves.from_XML(xml);
-  
-    allFaces.from_XML(xml);
-  
-    allGroups.from_XML(xml);
-    
-    allCameras.from_XML(xml);
-    
-    allSolids.from_XML(xml);
-    
-    allSections.from_XML(xml);
-    
-    allModel1Ds.from_XML(xml);
-    
-    allModel2Ds.from_XML(xml);    
-    
-    Select3Ds.from_XML(xml);
-    
-    User3D.from_XML(xml);
-    
-    Land3D.from_XML(xml);  
-    
-    Earth3D.from_XML(xml);
-    
-    Sky3D.from_XML(xml);
-    
-    Tropo3D.from_XML(xml);
-    
-    Moon3D.from_XML(xml);
-    
-    Sun3D.from_XML(xml);
+      SOLARCHVISION_parse_XML_variables(xml, true); // second try with printing logs
+      System.exit(1);
+    }    
 
-    WIN3D.from_XML(xml);    
-    
-    WORLD.from_XML(xml);
-    
-    STUDY.from_XML(xml);
-    
-    allWindRoses.from_XML(xml);
-    
-    allWindFlows.from_XML(xml);
-    
-    allSolidImpacts.from_XML(xml);
-    
-    allSolarImpacts.from_XML(xml);
-    
-    LAYER_windspd200hPa.from_XML(xml);
-    LAYER_thicknesses_1000_500.from_XML(xml);
-    LAYER_heightp500hPa.from_XML(xml);
-    LAYER_ceilingsky.from_XML(xml);
-    LAYER_cloudcover.from_XML(xml);
-    LAYER_winddir.from_XML(xml);
-    LAYER_windspd.from_XML(xml);
-    LAYER_pressure.from_XML(xml);
-    LAYER_drybulb.from_XML(xml);
-    LAYER_relhum.from_XML(xml);
-    LAYER_dirnorrad.from_XML(xml);
-    LAYER_difhorrad.from_XML(xml);
-    LAYER_glohorrad.from_XML(xml);
-    LAYER_direffect.from_XML(xml);
-    LAYER_difeffect.from_XML(xml);
-    LAYER_precipitation.from_XML(xml);
-    LAYER_developed.from_XML(xml);
-  
-    println("End of loading XML.");
-  
-  
     // loading only weather data // 
     SOLARCHVISION_update_station(2); 
     SOLARCHVISION_update_station(3);
@@ -49186,7 +49018,179 @@ void SOLARCHVISION_load_project (String myFile) {
   
     SOLARCHVISION_modify_Viewport_Title();
   }
+
 }
+
+
+void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
+  
+  diag_XML_input = desired_diag;
+
+  XML parent = xml.getChild("SOLARCHVISION_variables");
+    
+  displayOutput_inExplorer = XML_getBoolean(parent, "displayOutput_inExplorer");
+
+  current_ObjectCategory = XML_getInt(parent, "current_ObjectCategory");
+
+  GlobalAlbedo = XML_getFloat(parent, "GlobalAlbedo");
+  Interpolation_Weight = XML_getFloat(parent, "Interpolation_Weight");
+  
+  CLIMATIC_SolarForecast = XML_getInt(parent, "CLIMATIC_SolarForecast");
+  CLIMATIC_WeatherForecast = XML_getInt(parent, "CLIMATIC_WeatherForecast");
+  SOLARCHVISION_automated = XML_getInt(parent, "SOLARCHVISION_automated");
+
+  CLIMATE_TMYEPW_start = XML_getInt(parent, "CLIMATE_TMYEPW_start");
+  CLIMATE_TMYEPW_end = XML_getInt(parent, "CLIMATE_TMYEPW_end");
+  CLIMATE_CWEEDS_start = XML_getInt(parent, "CLIMATE_CWEEDS_start");
+  CLIMATE_CWEEDS_end = XML_getInt(parent, "CLIMATE_CWEEDS_end");
+  CLIMATE_CLMREC_start = XML_getInt(parent, "CLIMATE_CLMREC_start");
+  CLIMATE_CLMREC_end = XML_getInt(parent, "CLIMATE_CLMREC_end");
+  ENSEMBLE_FORECAST_start = XML_getInt(parent, "ENSEMBLE_FORECAST_start");
+  ENSEMBLE_FORECAST_end = XML_getInt(parent, "ENSEMBLE_FORECAST_end");
+  ENSEMBLE_FORECAST_maxDays = XML_getInt(parent, "ENSEMBLE_FORECAST_maxDays");
+  ENSEMBLE_OBSERVED_maxDays = XML_getInt(parent, "ENSEMBLE_OBSERVED_maxDays");      
+  ENSEMBLE_OBSERVED_numNearest = XML_getInt(parent, "ENSEMBLE_OBSERVED_numNearest");
+  ENSEMBLE_OBSERVED_start = XML_getInt(parent, "ENSEMBLE_OBSERVED_start");
+  ENSEMBLE_OBSERVED_end = XML_getInt(parent, "ENSEMBLE_OBSERVED_end");
+  SampleYear_Start = XML_getInt(parent, "SampleYear_Start");
+  SampleYear_End = XML_getInt(parent, "SampleYear_End");
+  SampleMember_Start = XML_getInt(parent, "SampleMember_Start");
+  SampleMember_End = XML_getInt(parent, "SampleMember_End");
+  SampleStation_Start = XML_getInt(parent, "SampleStation_Start");
+  SampleStation_End = XML_getInt(parent, "SampleStation_End");
+  CLIMATE_TMYEPW_load = XML_getBoolean(parent, "CLIMATE_TMYEPW_load");
+  CLIMATE_CWEEDS_load = XML_getBoolean(parent, "CLIMATE_CWEEDS_load");
+  CLIMATE_CLMREC_load = XML_getBoolean(parent, "CLIMATE_CLMREC_load");
+  ENSEMBLE_FORECAST_load = XML_getBoolean(parent, "ENSEMBLE_FORECAST_load");
+  ENSEMBLE_OBSERVED_load = XML_getBoolean(parent, "ENSEMBLE_OBSERVED_load");
+  GRIB2_Month = XML_getInt(parent, "GRIB2_Month");
+  GRIB2_Day = XML_getInt(parent, "GRIB2_Day");
+  GRIB2_ModelRun = XML_getInt(parent, "GRIB2_ModelRun");
+  AERIAL_num = XML_getInt(parent, "AERIAL_num");
+  AERIAL_Center_Longitude = XML_getFloat(parent, "AERIAL_Center_Longitude");
+  AERIAL_Center_Latitude = XML_getFloat(parent, "AERIAL_Center_Latitude");
+  GRIB2_Hour_Start = XML_getInt(parent, "GRIB2_Hour_Start");
+  GRIB2_Hour_End = XML_getInt(parent, "GRIB2_Hour_End");
+  GRIB2_Hour_Step = XML_getInt(parent, "GRIB2_Hour_Step");
+  GRIB2_Layer_Start = XML_getInt(parent, "GRIB2_Layer_Start");
+  GRIB2_Layer_End = XML_getInt(parent, "GRIB2_Layer_End");
+  GRIB2_Layer_Step = XML_getInt(parent, "GRIB2_Layer_Step");
+  GRIB2_Hour = XML_getInt(parent, "GRIB2_Hour");
+  GRIB2_Layer = XML_getInt(parent, "GRIB2_Layer");
+  GRIB2_DomainSelection = XML_getInt(parent, "GRIB2_DomainSelection");
+  GRIB2_TGL_number = XML_getInt(parent, "GRIB2_TGL_number");
+  AERIAL_graphOption = XML_getInt(parent, "AERIAL_graphOption");
+  Develop_Option = XML_getInt(parent, "Develop_Option");
+  Develop_DayHour = XML_getInt(parent, "Develop_DayHour");
+  //DevelopData_update = XML_getBoolean(parent, "DevelopData_update");
+  numberOfLayers = XML_getInt(parent, "numberOfLayers");
+  Develop_AngleInclination = XML_getFloat(parent, "Develop_AngleInclination");
+  Develop_AngleOrientation = XML_getFloat(parent, "Develop_AngleOrientation");
+  DevelopLayer_id = XML_getInt(parent, "DevelopLayer_id");
+  
+  changeCurrentLayerTo(XML_getInt(parent, "CurrentLayer_id"));
+
+  Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
+
+  COLOR_STYLE_Current = XML_getInt(parent, "COLOR_STYLE_Current");
+  COLOR_STYLE_Number = XML_getInt(parent, "COLOR_STYLE_Number");
+  
+  CurrentDataSource = XML_getInt(parent, "CurrentDataSource");
+  DrawnFrame = XML_getInt(parent, "DrawnFrame");
+
+  Planetary_Magnification = XML_getFloat(parent, "Planetary_Magnification");
+
+  Camera_Variation = XML_getInt(parent, "Camera_Variation");
+
+  Materials_Selection = XML_getInt(parent, "Materials_Selection");
+  OBJECTS_scale = XML_getFloat(parent, "OBJECTS_scale");
+  
+  FrameVariation = XML_getInt(parent, "FrameVariation");
+  Language_Active = XML_getInt(parent, "Language_Active");
+
+  IMPACTS_displayDay = XML_getInt(parent, "IMPACTS_displayDay");
+
+  BIOSPHERE_drawResolution = XML_getFloat(parent, "BIOSPHERE_drawResolution");
+
+  String new_Default_Font = XML_getString(parent, "Default_Font");
+  if (Default_Font.equals(new_Default_Font)) {
+  } else {
+    Default_Font = new_Default_Font;        
+    SOLARCHVISION_loadDefaultFontStyle();
+  }
+
+
+  STATION.from_XML(xml);
+  
+  allPoints.from_XML(xml);
+  
+  allCurves.from_XML(xml);
+
+  allFaces.from_XML(xml);
+
+  allGroups.from_XML(xml);
+  
+  allCameras.from_XML(xml);
+  
+  allSolids.from_XML(xml);
+  
+  allSections.from_XML(xml);
+  
+  allModel1Ds.from_XML(xml);
+  
+  allModel2Ds.from_XML(xml);    
+  
+  Select3Ds.from_XML(xml);
+  
+  User3D.from_XML(xml);
+  
+  Land3D.from_XML(xml);  
+  
+  Earth3D.from_XML(xml);
+  
+  Sky3D.from_XML(xml);
+  
+  Tropo3D.from_XML(xml);
+  
+  Moon3D.from_XML(xml);
+  
+  Sun3D.from_XML(xml);
+
+  WIN3D.from_XML(xml);    
+  
+  WORLD.from_XML(xml);
+  
+  STUDY.from_XML(xml);
+  
+  allWindRoses.from_XML(xml);
+  
+  allWindFlows.from_XML(xml);
+  
+  allSolidImpacts.from_XML(xml);
+  
+  allSolarImpacts.from_XML(xml);
+  
+  LAYER_windspd200hPa.from_XML(xml);
+  LAYER_thicknesses_1000_500.from_XML(xml);
+  LAYER_heightp500hPa.from_XML(xml);
+  LAYER_ceilingsky.from_XML(xml);
+  LAYER_cloudcover.from_XML(xml);
+  LAYER_winddir.from_XML(xml);
+  LAYER_windspd.from_XML(xml);
+  LAYER_pressure.from_XML(xml);
+  LAYER_drybulb.from_XML(xml);
+  LAYER_relhum.from_XML(xml);
+  LAYER_dirnorrad.from_XML(xml);
+  LAYER_difhorrad.from_XML(xml);
+  LAYER_glohorrad.from_XML(xml);
+  LAYER_direffect.from_XML(xml);
+  LAYER_difeffect.from_XML(xml);
+  LAYER_precipitation.from_XML(xml);
+  LAYER_developed.from_XML(xml);
+
+  println("End of loading XML.");
+}  
+
 
 
 void SOLARCHVISION_hold_project () {
@@ -56920,7 +56924,7 @@ void load_ENSEMBLE_FORECAST (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
-  int continue_process = 1;
+  boolean continue_process = true;
 
   XML FileALL = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
@@ -56929,10 +56933,10 @@ void load_ENSEMBLE_FORECAST (String FileName, int Load_Layer) {
   }
   catch (Exception e) {
     println("Can't read:", FileName);
-    continue_process = 0;
+    continue_process = false;
   }
 
-  if (continue_process == 1) { 
+  if (continue_process) { 
 
     //println(TIME.year, TIME.month, TIME.day, TIME.hour);
 
@@ -57716,55 +57720,53 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
 
 
 
-boolean display_input_XML = true; // false;
-boolean display_output_XML = true; // false; // true;
+boolean diag_XML_input = false;
+boolean diag_XML_output = false; 
 
 
 String XML_getContent(XML xml) {
  String result = xml.getContent(); 
- //if (display_input_XML) println("<" + result + ">");
+ //if (diag_XML_input) println("<" + result + ">");
  return result;
 }
 
 String XML_getString(XML xml, String tag) {
- if (display_input_XML) print(tag + "=");
+ if (diag_XML_input) print(tag + "=");
  String result = xml.getString(tag); 
- if (display_input_XML) println('"' + result + '"');
+ if (diag_XML_input) println('"' + result + '"');
  return result;
 }
 
 float XML_getFloat(XML xml, String tag) {
- if (display_input_XML) print(tag + "=");
+ if (diag_XML_input) print(tag + "=");
  float result = xml.getFloat(tag); 
- if (display_input_XML) println(result);
+ if (diag_XML_input) println(result);
  return result;
 }
 
 int XML_getInt(XML xml, String tag) {
- if (display_input_XML) print(tag + "=");
+ if (diag_XML_input) print(tag + "=");
  int result = xml.getInt(tag); 
- if (display_input_XML) println(result);
+ if (diag_XML_input) println(result);
  return result;
 }
 
 Boolean XML_getBoolean(XML xml, String tag) {
- if (display_input_XML) print(tag + "=");
+ if (diag_XML_input) print(tag + "=");
  Boolean result = Boolean.parseBoolean(xml.getString(tag)); 
- if (display_input_XML) println(result);
+ if (diag_XML_input) println(result);
  return result;
 }
 
 
 
 void XML_setContent(XML xml, String value) {
- if (display_output_XML) {
-   println("<" + value + ">");
- }
+ //if (diag_XML_output) println("<" + value + ">");
  xml.setContent(value); 
 }
 
 void XML_setString(XML xml, String tag, String value) {
- if (display_output_XML) {
+ if (diag_XML_output) {
    print(tag + "=");
    println('"' + value + '"');
  }
@@ -57772,7 +57774,7 @@ void XML_setString(XML xml, String tag, String value) {
 }
 
 void XML_setFloat(XML xml, String tag, float value) {
- if (display_output_XML) {
+ if (diag_XML_output) {
    print(tag + "=");
    println(value);
  }
@@ -57780,7 +57782,7 @@ void XML_setFloat(XML xml, String tag, float value) {
 }
 
 void XML_setInt(XML xml, String tag, int value) {
- if (display_output_XML) {
+ if (diag_XML_output) {
    print(tag + "=");
    println(value);
  }
@@ -57788,7 +57790,7 @@ void XML_setInt(XML xml, String tag, int value) {
 }
 
 void XML_setBoolean(XML xml, String tag, boolean value) {
- if (display_output_XML) {
+ if (diag_XML_output) {
    print(tag + "=");
    println(value);
  }
