@@ -21699,9 +21699,7 @@ class solarchvision_Select3Ds {
 
   
     {
-      String token = "selected_LandPoints";
-      println(token);
-      String txt = parent.getString(token);
+      String txt = parent.getString("selected_LandPoints");
       if (txt.equals("")) {
         this.LandPoint_ids = new int[0]; 
       }
@@ -21716,9 +21714,7 @@ class solarchvision_Select3Ds {
     
 
     {
-      String token = "selected_Model1Ds";
-      println(token);
-      String txt = parent.getString(token);      
+      String txt = parent.getString("selected_Model1Ds");      
       if (txt.equals("")) {
         this.Model1D_ids = new int[0]; 
       }
@@ -21732,9 +21728,7 @@ class solarchvision_Select3Ds {
     }
 
     {
-      String token = "selected_Model2Ds";
-      println(token);
-      String txt = parent.getString(token);    
+      String txt = parent.getString("selected_Model2Ds");    
       if (txt.equals("")) {
         this.Model2D_ids = new int[0]; 
       }
@@ -21748,9 +21742,7 @@ class solarchvision_Select3Ds {
     }
     
     {
-      String token = "selected_Groups";
-      println(token);
-      String txt = parent.getString(token);         
+      String txt = parent.getString("selected_Groups");         
       if (txt.equals("")) {
         this.Group_ids = new int[0]; 
       }
@@ -21764,9 +21756,7 @@ class solarchvision_Select3Ds {
     }
 
     {
-      String token = "selected_Faces";
-      println(token);
-      String txt = parent.getString(token); 
+      String txt = parent.getString("selected_Faces"); 
       if (txt.equals("")) {
         this.Face_ids = new int[0]; 
       }
@@ -21781,9 +21771,7 @@ class solarchvision_Select3Ds {
 
 
     {
-      String token = "selected_Curves";
-      println(token);
-      String txt = parent.getString(token); 
+      String txt = parent.getString("selected_Curves"); 
       if (txt.equals("")) {
         this.Curve_ids = new int[0]; 
       }
@@ -21798,9 +21786,7 @@ class solarchvision_Select3Ds {
 
     
     {
-      String token = "selected_Solids";
-      println(token);
-      String txt = parent.getString(token); 
+      String txt = parent.getString("selected_Solids"); 
       if (txt.equals("")) {
         this.Solid_ids = new int[0]; 
       }
@@ -21816,9 +21802,7 @@ class solarchvision_Select3Ds {
 
 
     {
-      String token = "selected_Sections";
-      println(token);
-      String txt = parent.getString(token); 
+      String txt = parent.getString("selected_Sections"); 
       if (txt.equals("")) {
         this.Section_ids = new int[0]; 
       }
@@ -21833,9 +21817,7 @@ class solarchvision_Select3Ds {
 
 
     {
-      String token = "selected_Cameras";
-      println(token);
-      String txt = parent.getString(token); 
+      String txt = parent.getString("selected_Cameras"); 
       if (txt.equals("")) {
         this.Camera_ids = new int[0]; 
       }
@@ -21850,9 +21832,7 @@ class solarchvision_Select3Ds {
 
 
     {
-      String token = "selected_Points";
-      println(token);
-      String txt = parent.getString(token); 
+      String txt = parent.getString("selected_Points"); 
       if (txt.equals("")) {
         this.Vertex_ids = new int[0]; 
       }
@@ -21867,9 +21847,7 @@ class solarchvision_Select3Ds {
 
 
     {
-      String token = "softSelection_ids";
-      println(token);
-      String txt = parent.getString(token);       
+      String txt = parent.getString("softSelection_ids");       
       if (txt.equals("")) {
         this.softSelection_ids = new int[0]; 
       }
@@ -21884,9 +21862,7 @@ class solarchvision_Select3Ds {
 
     
     {
-      String token = "softSelection_values";
-      println(token);
-      String txt = parent.getString(token);       
+      String txt = parent.getString("softSelection_values");       
       if (txt.equals("")) {
         this.softSelection_values = new float[0]; 
       }
