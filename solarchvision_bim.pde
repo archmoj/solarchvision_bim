@@ -11210,7 +11210,7 @@ class solarchvision_Faces {
     this.options = new int [ni][6];
     this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
-      String txt = children[i].getContent();
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
       int nj = parts.length;
       int[][] newItem = new int [1][nj];
@@ -11596,7 +11596,7 @@ class solarchvision_Curves {
     this.options = new int [ni][6];
     this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
-      String txt = children[i].getContent();
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
       int nj = parts.length;
       int[][] newItem = new int [1][nj];
@@ -12112,22 +12112,37 @@ class solarchvision_Groups {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
       
-      this.Faces[i][0] = int(split(children[i].getString("Faces"), "|")[0]);
-      this.Faces[i][1] = int(split(children[i].getString("Faces"), "|")[1]);
+      {
+        String[] parts = split(XML_getString(children[i], "Faces"), "|");
+        this.Faces[i][0] = int(parts[0]);
+        this.Faces[i][1] = int(parts[1]);
+      }
       
-      this.Curves[i][0] = int(split(children[i].getString("Curves"), "|")[0]);
-      this.Curves[i][1] = int(split(children[i].getString("Curves"), "|")[1]);
+      {
+        String[] parts = split(XML_getString(children[i], "Curves"), "|");
+        this.Curves[i][0] = int(parts[0]);
+        this.Curves[i][1] = int(parts[1]);
+      }
 
-      this.Solids[i][0] = int(split(children[i].getString("Solids"), "|")[0]);
-      this.Solids[i][1] = int(split(children[i].getString("Solids"), "|")[1]);
+      {
+        String[] parts = split(XML_getString(children[i], "Solids"), "|");
+        this.Solids[i][0] = int(parts[0]);
+        this.Solids[i][1] = int(parts[1]);
+      }
 
-      this.Model1Ds[i][0] = int(split(children[i].getString("Model1Ds"), "|")[0]);
-      this.Model1Ds[i][1] = int(split(children[i].getString("Model1Ds"), "|")[1]);
-
-      this.Model2Ds[i][0] = int(split(children[i].getString("Model2Ds"), "|")[0]);
-      this.Model2Ds[i][1] = int(split(children[i].getString("Model2Ds"), "|")[1]);      
+      {
+        String[] parts = split(XML_getString(children[i], "Model1Ds"), "|");
+        this.Model1Ds[i][0] = int(parts[0]);
+        this.Model1Ds[i][1] = int(parts[1]);
+      }      
       
-      String txt = children[i].getContent();
+      {
+        String[] parts = split(XML_getString(children[i], "Model2Ds"), "|");
+        this.Model2Ds[i][0] = int(parts[0]);
+        this.Model2Ds[i][1] = int(parts[1]);
+      }         
+      
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
       for (int j = 0; j < 9; j++) {
         this.PivotMatrix[i][j] = float(parts[j]);
@@ -13496,7 +13511,7 @@ class solarchvision_SolidImpacts {
     
       int ni = XML_getInt(child, "ni");
       this.Z = new float [ni];
-      String txt = child.getContent();
+      String txt = XML_getContent(child);
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.Z[i] = float(parts[i]);
@@ -13508,7 +13523,7 @@ class solarchvision_SolidImpacts {
     
       int ni = XML_getInt(child, "ni");
       this.R = new float [ni];
-      String txt = child.getContent();
+      String txt = XML_getContent(child);
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.R[i] = float(parts[i]);
@@ -13520,7 +13535,7 @@ class solarchvision_SolidImpacts {
     
       int ni = XML_getInt(child, "ni");
       this.U = new float [ni];
-      String txt = child.getContent();
+      String txt = XML_getContent(child);
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.U[i] = float(parts[i]);
@@ -13532,7 +13547,7 @@ class solarchvision_SolidImpacts {
     
       int ni = XML_getInt(child, "ni");
       this.V = new float [ni];
-      String txt = child.getContent();
+      String txt = XML_getContent(child);
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.V[i] = float(parts[i]);
@@ -13544,7 +13559,7 @@ class solarchvision_SolidImpacts {
     
       int ni = XML_getInt(child, "ni");
       this.X = new float [ni];
-      String txt = child.getContent();
+      String txt = XML_getContent(child);
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.X[i] = float(parts[i]);
@@ -13557,7 +13572,7 @@ class solarchvision_SolidImpacts {
     
       int ni = XML_getInt(child, "ni");
       this.Y = new float [ni];
-      String txt = child.getContent();
+      String txt = XML_getContent(child);
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.Y[i] = float(parts[i]);
@@ -29177,7 +29192,7 @@ class solarchvision_Land3D {
 
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < this.num_rows * this.num_columns; i++) {
-        String txt = children[i].getContent();
+        String txt = XML_getContent(children[i]);
         String[] parts = split(txt, ",");
         for (int j = 0; j < parts.length; j++) {
           this.Mesh[(i / this.num_columns)][(i % this.num_columns)][j] = float(parts[j]);
@@ -29208,7 +29223,7 @@ class solarchvision_Land3D {
         this.Textures_U_scale[i] = children[i].getFloat("U_scale");
         this.Textures_V_scale[i] = children[i].getFloat("V_scale");
   
-        String new_Texture_path = children[i].getContent();
+        String new_Texture_path = XML_getContent(children[i]);
   
         if (this.Textures_path[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
         } else {
@@ -30448,7 +30463,7 @@ class solarchvision_Model2Ds {
   
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
-        String txt = children[i].getContent();
+        String txt = XML_getContent(children[i]);
         String[] parts = split(txt, ",");
         this.setX(i, float(parts[0]));
         this.setY(i, float(parts[1]));
@@ -30479,7 +30494,7 @@ class solarchvision_Model2Ds {
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {      
   
-        String new_Texture_path = children[i].getContent();
+        String new_Texture_path = XML_getContent(children[i]);
         if ((reload_All_textures == 0) && (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
         } else {
           this.ImagePath[i] = new_Texture_path;
@@ -31620,7 +31635,7 @@ class solarchvision_Model1Ds {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
-      String txt = children[i].getContent();
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
 
       this.setX(i, float(parts[0]));
@@ -32237,7 +32252,7 @@ class solarchvision_Solids {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
-      String txt = children[i].getContent();
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
       this.set_posX(i, float(parts[0]));
       this.set_posY(i, float(parts[1]));
@@ -32426,7 +32441,7 @@ class solarchvision_Points {
     allVertices = new float [ni][3];
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
-      String txt = children[i].getContent();
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
  
       allPoints.setX(i, float(parts[0]));
@@ -37336,7 +37351,7 @@ class solarchvision_Cameras {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
-      String txt = children[i].getContent();
+      String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
       this.set_posX(i, float(parts[0]));
       this.set_posY(i, float(parts[1]));
@@ -38042,7 +38057,7 @@ class solarchvision_Sections {
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
   
-        String txt = children[i].getContent();
+        String txt = XML_getContent(children[i]);
         String[] parts = split(txt, ",");
 
         this.setX(i, float(parts[0]));
@@ -38070,7 +38085,7 @@ class solarchvision_Sections {
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {      
   
-        String TEXTURE_path = children[i].getContent();
+        String TEXTURE_path = XML_getContent(children[i]);
   
         this.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
   
@@ -38094,7 +38109,7 @@ class solarchvision_Sections {
         for (int j = 0; j < nj; j++) {
           for (int k = 0; k < nk; k++) {
   
-            String TEXTURE_path = children[(i * nj + j) * nk + k].getContent();
+            String TEXTURE_path = XML_getContent(children[(i * nj + j) * nk + k]);
   
             this.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
   
@@ -57704,10 +57719,16 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
 boolean display_input_XML = true;
 
 
+String XML_getContent(XML xml) {
+ String result = xml.getContent(); 
+ //if (display_input_XML) println("<" + result + ">");
+ return result;
+}
+
 String XML_getString(XML xml, String str) {
  if (display_input_XML) print(str + "=");
  String result = xml.getString(str); 
- if (display_input_XML) println("'" + result + "'");
+ if (display_input_XML) println('"' + result + '"');
  return result;
 }
 
