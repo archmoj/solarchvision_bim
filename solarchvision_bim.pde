@@ -5132,11 +5132,11 @@ class solarchvision_WORLD {
     this.displayAll_CLMREC = parent.getInt("displayAll_CLMREC");
     this.displayAll_TMYEPW = parent.getInt("displayAll_TMYEPW");
 
-    this.displayNear_SWOB = Boolean.parseBoolean(XML_getString(parent, "displayNear_SWOB"));
-    this.displayNear_NAEFS = Boolean.parseBoolean(XML_getString(parent, "displayNear_NAEFS"));
-    this.displayNear_CWEEDS = Boolean.parseBoolean(XML_getString(parent, "displayNear_CWEEDS"));
-    this.displayNear_CLMREC = Boolean.parseBoolean(XML_getString(parent, "displayNear_CLMREC"));      
-    this.displayNear_TMYEPW = Boolean.parseBoolean(XML_getString(parent, "displayNear_TMYEPW"));        
+    this.displayNear_SWOB = XML_getBoolean(parent, "displayNear_SWOB");
+    this.displayNear_NAEFS = XML_getBoolean(parent, "displayNear_NAEFS");
+    this.displayNear_CWEEDS = XML_getBoolean(parent, "displayNear_CWEEDS");
+    this.displayNear_CLMREC = XML_getBoolean(parent, "displayNear_CLMREC");      
+    this.displayNear_TMYEPW = XML_getBoolean(parent, "displayNear_TMYEPW");        
   }    
     
 }
@@ -8945,9 +8945,9 @@ class solarchvision_STUDY {
     this.filter = parent.getInt("filter");
     this.TrendJoinHours = parent.getInt("TrendJoinHours");
     this.TrendJoinType = parent.getInt("TrendJoinType");
-    this.export_info_node = Boolean.parseBoolean(XML_getString(parent, "export_info_node"));
-    this.export_info_norm = Boolean.parseBoolean(XML_getString(parent, "export_info_norm"));
-    this.export_info_prob = Boolean.parseBoolean(XML_getString(parent, "export_info_prob"));
+    this.export_info_node = XML_getBoolean(parent, "export_info_node");
+    this.export_info_norm = XML_getBoolean(parent, "export_info_norm");
+    this.export_info_prob = XML_getBoolean(parent, "export_info_prob");
     this.pallet_SORT_CLR = parent.getInt("pallet_SORT_CLR");
     this.pallet_SORT_DIR = parent.getInt("pallet_SORT_DIR");
     this.pallet_SORT_MLT = parent.getFloat("pallet_SORT_MLT");
@@ -8967,15 +8967,15 @@ class solarchvision_STUDY {
     this.rect_scale = parent.getFloat("rect_scale");
     this.rect_offset_x = parent.getFloat("rect_offset_x");
     
-    this.impact_summary = Boolean.parseBoolean(XML_getString(parent, "impact_summary"));
+    this.impact_summary = XML_getBoolean(parent, "impact_summary");
     this.ImpactLayer = parent.getInt("ImpactLayer");
     this.PlotImpacts = parent.getInt("PlotImpacts");
-    this.Impacts_update = Boolean.parseBoolean(XML_getString(parent, "Impacts_update"));
+    this.Impacts_update = XML_getBoolean(parent, "Impacts_update");
     
-    this.displayRaws = Boolean.parseBoolean(XML_getString(parent, "displayRaws"));
-    this.displaySorted = Boolean.parseBoolean(XML_getString(parent, "displaySorted"));
-    this.displayNormals = Boolean.parseBoolean(XML_getString(parent, "displayNormals"));
-    this.displayProbs = Boolean.parseBoolean(XML_getString(parent, "displayProbs"));
+    this.displayRaws = XML_getBoolean(parent, "displayRaws");
+    this.displaySorted = XML_getBoolean(parent, "displaySorted");
+    this.displayNormals = XML_getBoolean(parent, "displayNormals");
+    this.displayProbs = XML_getBoolean(parent, "displayProbs");
     this.sumInterval = parent.getInt("sumInterval");
     this.LevelPix = parent.getFloat("LevelPix");
     this.Pix = parent.getFloat("Pix");
@@ -11227,9 +11227,9 @@ class solarchvision_Faces {
       setClose(i, children[i].getInt("close"));
     }
 
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
-    this.displayNormals = Boolean.parseBoolean(XML_getString(parent, "displayNormals"));
-    this.displayEdges = Boolean.parseBoolean(XML_getString(parent, "displayEdges"));
+    this.displayAll = XML_getBoolean(parent, "displayAll");
+    this.displayNormals = XML_getBoolean(parent, "displayNormals");
+    this.displayEdges = XML_getBoolean(parent, "displayEdges");
     this.displayTessellation = parent.getInt("displayTessellation");
     
     this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
@@ -11613,7 +11613,7 @@ class solarchvision_Curves {
       setClose(i, children[i].getInt("close"));
     }
 
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
+    this.displayAll = XML_getBoolean(parent, "displayAll");
   }    
   
 }
@@ -13491,13 +13491,13 @@ class solarchvision_SolidImpacts {
     this.WindDirection = parent.getFloat(this.CLASS_STAMP + ".WindDirection");
     this.Power = parent.getFloat(this.CLASS_STAMP + ".Power");
 
-    this.displayPoints = Boolean.parseBoolean(XML_getString(parent, this.CLASS_STAMP + ".displayPoints"));
-    this.displayLines = Boolean.parseBoolean(XML_getString(parent, this.CLASS_STAMP + ".displayLines"));
+    this.displayPoints = XML_getBoolean(parent, this.CLASS_STAMP + ".displayPoints");
+    this.displayLines = XML_getBoolean(parent, this.CLASS_STAMP + ".displayLines");
     
     this.RES1 = parent.getInt(this.CLASS_STAMP + ".RES1");
     this.RES2 = parent.getInt(this.CLASS_STAMP + ".RES2");
     this.Grade = parent.getFloat(this.CLASS_STAMP + ".Grade");
-    this.displayImage = Boolean.parseBoolean(XML_getString(parent, this.CLASS_STAMP + ".displayImage"));
+    this.displayImage = XML_getBoolean(parent, this.CLASS_STAMP + ".displayImage");
     this.sectionType = parent.getInt(this.CLASS_STAMP + ".sectionType");
     this.positionStep = parent.getFloat(this.CLASS_STAMP + ".positionStep");
     this.Process_subDivisions = parent.getInt(this.CLASS_STAMP + ".Process_subDivisions");
@@ -14152,7 +14152,7 @@ class solarchvision_SolarImpacts {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displayImage = Boolean.parseBoolean(XML_getString(parent, "displayImage"));
+    this.displayImage = XML_getBoolean(parent, "displayImage");
     
     this.X = parent.getFloat("X");
     this.Y = parent.getFloat("Y");     
@@ -21693,21 +21693,21 @@ class solarchvision_Select3Ds {
     this.alignY = parent.getInt("alignY");
     this.alignZ = parent.getInt("alignZ");
 
-    this.displayReferencePivot = Boolean.parseBoolean(XML_getString(parent, "displayReferencePivot"));
-    this.Group_displayPivot = Boolean.parseBoolean(XML_getString(parent, "Group_displayPivot"));
-    this.Group_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Group_displayEdges"));
-    this.Group_displayBox = Boolean.parseBoolean(XML_getString(parent, "Group_displayBox"));
-    this.Face_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Face_displayEdges"));
-    this.Face_displayVertexCount = Boolean.parseBoolean(XML_getString(parent, "Face_displayVertexCount"));
-    this.Curve_displayVertexCount = Boolean.parseBoolean(XML_getString(parent, "Curve_displayVertexCount"));
-    this.Vertex_displayVertices = Boolean.parseBoolean(XML_getString(parent, "Vertex_displayVertices"));      
-    this.Curve_displayVertices = Boolean.parseBoolean(XML_getString(parent, "Curve_displayVertices"));
-    this.Model2D_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Model2D_displayEdges"));
-    this.Model1D_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Model1D_displayEdges"));
-    this.Solid_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Solid_displayEdges"));
-    this.Section_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Section_displayEdges"));
-    this.Camera_displayEdges = Boolean.parseBoolean(XML_getString(parent, "Camera_displayEdges"));
-    this.LandPoint_displayPoints = Boolean.parseBoolean(XML_getString(parent, "LandPoint_displayPoints"));
+    this.displayReferencePivot = XML_getBoolean(parent, "displayReferencePivot");
+    this.Group_displayPivot = XML_getBoolean(parent, "Group_displayPivot");
+    this.Group_displayEdges = XML_getBoolean(parent, "Group_displayEdges");
+    this.Group_displayBox = XML_getBoolean(parent, "Group_displayBox");
+    this.Face_displayEdges = XML_getBoolean(parent, "Face_displayEdges");
+    this.Face_displayVertexCount = XML_getBoolean(parent, "Face_displayVertexCount");
+    this.Curve_displayVertexCount = XML_getBoolean(parent, "Curve_displayVertexCount");
+    this.Vertex_displayVertices = XML_getBoolean(parent, "Vertex_displayVertices");      
+    this.Curve_displayVertices = XML_getBoolean(parent, "Curve_displayVertices");
+    this.Model2D_displayEdges = XML_getBoolean(parent, "Model2D_displayEdges");
+    this.Model1D_displayEdges = XML_getBoolean(parent, "Model1D_displayEdges");
+    this.Solid_displayEdges = XML_getBoolean(parent, "Solid_displayEdges");
+    this.Section_displayEdges = XML_getBoolean(parent, "Section_displayEdges");
+    this.Camera_displayEdges = XML_getBoolean(parent, "Camera_displayEdges");
+    this.LandPoint_displayPoints = XML_getBoolean(parent, "LandPoint_displayPoints");
 
     this.softPower = parent.getFloat("softPower");
     this.softRadius = parent.getFloat("softRadius");
@@ -26064,8 +26064,8 @@ class solarchvision_Tropo3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displaySurface = Boolean.parseBoolean(XML_getString(parent, "displaySurface"));
-    this.displayTexture = Boolean.parseBoolean(XML_getString(parent, "displayTexture"));
+    this.displaySurface = XML_getBoolean(parent, "displaySurface");
+    this.displayTexture = XML_getBoolean(parent, "displayTexture");
   }   
 }
 
@@ -26391,7 +26391,7 @@ class solarchvision_Sky3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displaySurface = Boolean.parseBoolean(XML_getString(parent, "displaySurface"));
+    this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = parent.getInt("displayTessellation");
     this.scale = parent.getFloat("scale");
     this.ACTIVE_pallet_CLR = parent.getInt("ACTIVE_pallet_CLR");
@@ -27571,12 +27571,12 @@ class solarchvision_Sun3D {
     this.PASSIVE_pallet_DIR = parent.getInt("PASSIVE_pallet_DIR");
     this.PASSIVE_pallet_MLT = parent.getFloat("PASSIVE_pallet_MLT");
     
-    this.displayGrid = Boolean.parseBoolean(XML_getString(parent, "displayGrid"));      
-    this.displayPath = Boolean.parseBoolean(XML_getString(parent, "displayPath"));
-    this.displayPattern = Boolean.parseBoolean(XML_getString(parent, "displayPattern"));      
+    this.displayGrid = XML_getBoolean(parent, "displayGrid");      
+    this.displayPath = XML_getBoolean(parent, "displayPath");
+    this.displayPattern = XML_getBoolean(parent, "displayPattern");      
     
-    this.displaySurface = Boolean.parseBoolean(XML_getString(parent, "displaySurface"));
-    this.displayTexture = Boolean.parseBoolean(XML_getString(parent, "displayTexture"));
+    this.displaySurface = XML_getBoolean(parent, "displaySurface");
+    this.displayTexture = XML_getBoolean(parent, "displayTexture");
   }   
 }
 
@@ -27708,8 +27708,8 @@ class solarchvision_Moon3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displaySurface = Boolean.parseBoolean(XML_getString(parent, "displaySurface"));
-    this.displayTexture = Boolean.parseBoolean(XML_getString(parent, "displayTexture"));
+    this.displaySurface = XML_getBoolean(parent, "displaySurface");
+    this.displayTexture = XML_getBoolean(parent, "displayTexture");
   }   
 }
 
@@ -28097,8 +28097,8 @@ class solarchvision_Earth3D {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displaySurface = Boolean.parseBoolean(XML_getString(parent, "displaySurface"));
-    this.displayTexture = Boolean.parseBoolean(XML_getString(parent, "displayTexture"));
+    this.displaySurface = XML_getBoolean(parent, "displaySurface");
+    this.displayTexture = XML_getBoolean(parent, "displayTexture");
   }      
 
 }
@@ -29173,12 +29173,12 @@ class solarchvision_Land3D {
       XML parent = xml.getChild(this.CLASS_STAMP);
       
       this.displayTessellation = parent.getInt("displayTessellation");
-      this.loadTextures = Boolean.parseBoolean(XML_getString(parent, "loadTextures"));      
-      this.loadMesh = Boolean.parseBoolean(XML_getString(parent, "loadMesh"));
-      this.displaySurface = Boolean.parseBoolean(XML_getString(parent, "displaySurface"));
-      this.displayPoints = Boolean.parseBoolean(XML_getString(parent, "displayPoints"));
-      this.displayTexture = Boolean.parseBoolean(XML_getString(parent, "displayTexture"));
-      this.displayDepth = Boolean.parseBoolean(XML_getString(parent, "displayDepth"));
+      this.loadTextures = XML_getBoolean(parent, "loadTextures");      
+      this.loadMesh = XML_getBoolean(parent, "loadMesh");
+      this.displaySurface = XML_getBoolean(parent, "displaySurface");
+      this.displayPoints = XML_getBoolean(parent, "displayPoints");
+      this.displayTexture = XML_getBoolean(parent, "displayTexture");
+      this.displayDepth = XML_getBoolean(parent, "displayDepth");
       this.pallet_CLR = parent.getInt("pallet_CLR");
       this.pallet_DIR = parent.getInt("pallet_DIR");
       this.pallet_MLT = parent.getFloat("pallet_MLT");  
@@ -30472,7 +30472,7 @@ class solarchvision_Model2Ds {
         this.MAP[i] = int(parts[4]);
       }
       
-      this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
+      this.displayAll = XML_getBoolean(parent, "displayAll");
       this.num_files_PEOPLE = parent.getInt("num_files_PEOPLE");
       this.num_files_TREES = parent.getInt("num_files_TREES");  
     }
@@ -31652,8 +31652,8 @@ class solarchvision_Model1Ds {
       this.setLeafSize(i, float(parts[10]));
     }
     
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
-    this.displayLeaves = Boolean.parseBoolean(XML_getString(parent, "displayLeaves"));
+    this.displayAll = XML_getBoolean(parent, "displayAll");
+    this.displayLeaves = XML_getBoolean(parent, "displayLeaves");
   }    
 }
 
@@ -32268,7 +32268,7 @@ class solarchvision_Solids {
       this.set_rotZ(i, float(parts[11]));
     }
     
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));    
+    this.displayAll = XML_getBoolean(parent, "displayAll");    
     this.pallet_CLR = parent.getInt("pallet_CLR");
     this.pallet_DIR = parent.getInt("pallet_DIR");
     this.pallet_MLT = parent.getFloat("pallet_MLT");   
@@ -32449,7 +32449,7 @@ class solarchvision_Points {
       allPoints.setZ(i, float(parts[2]));
     }    
     
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
+    this.displayAll = XML_getBoolean(parent, "displayAll");
   }      
   
   
@@ -32624,8 +32624,8 @@ class solarchvision_User3D {
     this.export_PrecisionVertex = parent.getInt("export_PrecisionVertex");
     this.export_PrecisionVtexture = parent.getInt("export_PrecisionVtexture");
     this.export_PolyToPoly = parent.getInt("export_PolyToPoly");
-    this.export_MaterialLibrary  = Boolean.parseBoolean(XML_getString(parent, "export_MaterialLibrary"));
-    this.export_BackSides = Boolean.parseBoolean(XML_getString(parent, "export_BackSides"));
+    this.export_MaterialLibrary  = XML_getBoolean(parent, "export_MaterialLibrary");
+    this.export_BackSides = XML_getBoolean(parent, "export_BackSides");
     this.export_PalletResolution = parent.getInt("export_PalletResolution");    
     
   }      
@@ -37365,7 +37365,7 @@ class solarchvision_Cameras {
       this.set_type(i,   int(parts[9]));
     }
     
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
+    this.displayAll = XML_getBoolean(parent, "displayAll");
   }    
 
 }
@@ -38072,7 +38072,7 @@ class solarchvision_Sections {
         this.set_res2(i, int(parts[8]));
       }
       
-      this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));      
+      this.displayAll = XML_getBoolean(parent, "displayAll");      
     }
     
     {
@@ -38254,7 +38254,7 @@ class solarchvision_WindRose {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displayImage = Boolean.parseBoolean(XML_getString(parent, "displayImage"));
+    this.displayImage = XML_getBoolean(parent, "displayImage");
     this.RES = parent.getInt("RES");
     this.renderedRES = parent.getInt("renderedRES");
     this.scale = parent.getFloat("scale");      
@@ -38591,7 +38591,7 @@ class solarchvision_WindFlow {
   
     XML parent = xml.getChild(this.CLASS_STAMP);
     
-    this.displayAll = Boolean.parseBoolean(XML_getString(parent, "displayAll"));
+    this.displayAll = XML_getBoolean(parent, "displayAll");
     
     this.pallet_CLR = parent.getInt("pallet_CLR");
     this.pallet_DIR = parent.getInt("pallet_DIR");
@@ -48970,7 +48970,7 @@ void SOLARCHVISION_load_project (String myFile) {
     {
       XML parent = xml.getChild("SOLARCHVISION_variables");
       
-      displayOutput_inExplorer = Boolean.parseBoolean(XML_getString(parent, "displayOutput_inExplorer"));
+      displayOutput_inExplorer = XML_getBoolean(parent, "displayOutput_inExplorer");
 
       current_ObjectCategory = parent.getInt("current_ObjectCategory");
 
@@ -49000,11 +49000,11 @@ void SOLARCHVISION_load_project (String myFile) {
       SampleMember_End = parent.getInt("SampleMember_End");
       SampleStation_Start = parent.getInt("SampleStation_Start");
       SampleStation_End = parent.getInt("SampleStation_End");
-      CLIMATE_TMYEPW_load = Boolean.parseBoolean(XML_getString(parent, "CLIMATE_TMYEPW_load"));
-      CLIMATE_CWEEDS_load = Boolean.parseBoolean(XML_getString(parent, "CLIMATE_CWEEDS_load"));
-      CLIMATE_CLMREC_load = Boolean.parseBoolean(XML_getString(parent, "CLIMATE_CLMREC_load"));
-      ENSEMBLE_FORECAST_load = Boolean.parseBoolean(XML_getString(parent, "ENSEMBLE_FORECAST_load"));
-      ENSEMBLE_OBSERVED_load = Boolean.parseBoolean(XML_getString(parent, "ENSEMBLE_OBSERVED_load"));
+      CLIMATE_TMYEPW_load = XML_getBoolean(parent, "CLIMATE_TMYEPW_load");
+      CLIMATE_CWEEDS_load = XML_getBoolean(parent, "CLIMATE_CWEEDS_load");
+      CLIMATE_CLMREC_load = XML_getBoolean(parent, "CLIMATE_CLMREC_load");
+      ENSEMBLE_FORECAST_load = XML_getBoolean(parent, "ENSEMBLE_FORECAST_load");
+      ENSEMBLE_OBSERVED_load = XML_getBoolean(parent, "ENSEMBLE_OBSERVED_load");
       GRIB2_Month = parent.getInt("GRIB2_Month");
       GRIB2_Day = parent.getInt("GRIB2_Day");
       GRIB2_ModelRun = parent.getInt("GRIB2_ModelRun");
@@ -49024,7 +49024,7 @@ void SOLARCHVISION_load_project (String myFile) {
       AERIAL_graphOption = parent.getInt("AERIAL_graphOption");
       Develop_Option = parent.getInt("Develop_Option");
       Develop_DayHour = parent.getInt("Develop_DayHour");
-      //DevelopData_update = Boolean.parseBoolean(XML_getString(parent, "DevelopData_update"));
+      //DevelopData_update = XML_getBoolean(parent, "DevelopData_update");
       numberOfLayers = parent.getInt("numberOfLayers");
       Develop_AngleInclination = parent.getFloat("Develop_AngleInclination");
       Develop_AngleOrientation = parent.getFloat("Develop_AngleOrientation");
@@ -57742,6 +57742,13 @@ float XML_getFloat(XML xml, String str) {
 int XML_getInt(XML xml, String str) {
  if (display_input_XML) print(str + "=");
  int result = xml.getInt(str); 
+ if (display_input_XML) println(result);
+ return result;
+}
+
+Boolean XML_getBoolean(XML xml, String str) {
+ if (display_input_XML) print(str + "=");
+ Boolean result = Boolean.parseBoolean(xml.getString(str)); 
  if (display_input_XML) println(result);
  return result;
 }
