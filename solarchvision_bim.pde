@@ -11718,12 +11718,13 @@ class solarchvision_Groups {
 
   void inserted_nFaces (int n, int dt) { 
     for (int i = n + 1; i < this.num; i++) {
-      this.setStart_Face(i, dt + this.getStop_Face(i));
-      this.setStop_Face(i, dt + this.getStop_Face(i));
+      this.setStart_Face(i, this.getStart_Face(i) + dt);
+      this.setStop_Face(i, this.getStop_Face(i) + dt);
     }  
-    this.setStop_Face(n, dt + this.getStop_Face(n)); // because adding the faces also changes the end pointer of the same object
+    
+    this.setStop_Face(n, this.getStop_Face(n) + dt); // because adding the faces also changes the end pointer of the same object
   }
-  
+
 
   int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
   
