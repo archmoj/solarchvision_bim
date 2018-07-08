@@ -10419,7 +10419,7 @@ class solarchvision_Faces {
     
           for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
     
-            if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+            if (allGroups.getStart_Face(OBJ_NUM) <= allGroups.getStop_Face(OBJ_NUM)) {
     
               for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
     
@@ -10436,7 +10436,7 @@ class solarchvision_Faces {
     
                   int prev_mt = -1;
     
-                  for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+                  for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
     
                     if (_turn == 3) {
                       if (User3D.export_MaterialLibrary) {
@@ -10597,7 +10597,7 @@ class solarchvision_Faces {
     
           for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
     
-            if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+            if (allGroups.getStart_Face(OBJ_NUM) <= allGroups.getStop_Face(OBJ_NUM)) {
     
               for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
     
@@ -10621,7 +10621,7 @@ class solarchvision_Faces {
                     }
                   }  
     
-                  for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+                  for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
     
                     int Tessellation = this.getTessellation(f);
     
@@ -10884,11 +10884,11 @@ class solarchvision_Faces {
     
         for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
     
-          if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+          if (allGroups.getStart_Face(OBJ_NUM) <= allGroups.getStop_Face(OBJ_NUM)) {
     
             htmlOutput.println("\t\t\t\t<group>");
             
-            for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+            for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
           
               if (this.nodes[f].length > 2) {
                 
@@ -11714,6 +11714,28 @@ class solarchvision_Groups {
   void setStop_Model2D (int n, int t) {
     this.Model2Ds[n][1] = t;
   }  
+
+
+  void append_Curve (int n, int t) {
+    this.setStop_Curve(n, t + this.getStop_Curve(n));
+  }
+
+  void append_Face (int n, int t) {
+    this.setStop_Face(n, t + this.getStop_Face(n));
+  }
+
+  void append_Solid (int n, int t) {
+    this.setStop_Solid(n, t + this.getStop_Solid(n));
+  }
+
+  void append_Model1D (int n, int t) {
+    this.setStop_Model1D(n, t + this.getStop_Model1D(n));
+  }
+  
+  void append_Model2D (int n, int t) {
+    this.setStop_Model2D(n, t + this.getStop_Model2D(n));
+  }
+    
   
 
   int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
@@ -14408,7 +14430,7 @@ class solarchvision_Edit3Ds {
 
       int OBJ_NUM = Select3Ds.Group_ids[o];
 
-      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allFaces.nodes.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
@@ -14453,7 +14475,7 @@ class solarchvision_Edit3Ds {
         }
       }
       
-      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allCurves.nodes.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
@@ -15181,7 +15203,7 @@ class solarchvision_Scale3Ds {
       }
   
   
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Model1D(OBJ_NUM); f <= allGroups.getStop_Model1D(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
           float x = allModel1Ds.getX(f);
@@ -15209,7 +15231,7 @@ class solarchvision_Scale3Ds {
       }  
   
   
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Model2D(OBJ_NUM); f <= allGroups.getStop_Model2D(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
           float x = allModel2Ds.getX(f);
@@ -15240,7 +15262,7 @@ class solarchvision_Scale3Ds {
         }
       }     
   
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Solid(OBJ_NUM); f <= allGroups.getStop_Solid(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allSolids.DEF.length)) {
   
           float x = allSolids.get_posX(f);
@@ -15751,7 +15773,7 @@ class solarchvision_Rotate3Ds {
       }    
   
   
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Model1D(OBJ_NUM); f <= allGroups.getStop_Model1D(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
           float x = allModel1Ds.getX(f); 
@@ -15807,7 +15829,7 @@ class solarchvision_Rotate3Ds {
         }
       }         
   
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Model2D(OBJ_NUM); f <= allGroups.getStop_Model2D(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
           float x = allModel2Ds.getX(f); 
@@ -15856,7 +15878,7 @@ class solarchvision_Rotate3Ds {
         }
       }         
   
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Solid(OBJ_NUM); f <= allGroups.getStop_Solid(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allSolids.DEF.length)) {
   
           float x = allSolids.get_posX(f);
@@ -16156,21 +16178,21 @@ class solarchvision_Move3Ds {
         allGroups.Pivots[OBJ_NUM][2] += dz;
       }
   
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Model1D(OBJ_NUM); f <= allGroups.getStop_Model1D(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allModel1Ds.num)) {
   
           allModel1Ds.move(f, dx, dy, dz);
         }
       }
   
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Model2D(OBJ_NUM); f <= allGroups.getStop_Model2D(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allModel2Ds.num)) {
   
           allModel2Ds.move(f, dx, dy, dz);
         }
       }
   
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Solid(OBJ_NUM); f <= allGroups.getStop_Solid(OBJ_NUM); f++) {
         if ((0 <= f) && (f < allSolids.DEF.length)) {
   
           float Solid_posX = allSolids.get_posX(f);
@@ -16733,7 +16755,7 @@ class solarchvision_Clone3Ds {
 
       int OBJ_NUM = Select3Ds.Group_ids[o];
 
-      if ((0 <= allGroups.Faces[OBJ_NUM][0]) && (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1])) { 
+      if ((0 <= allGroups.getStart_Face(OBJ_NUM)) && (allGroups.getStart_Face(OBJ_NUM) <= allGroups.getStop_Face(OBJ_NUM))) { 
 
         int number_of_Vertices_before = allPoints.getLength();
 
@@ -16745,8 +16767,8 @@ class solarchvision_Clone3Ds {
           allGroups.Pivots[new_OBJ_NUM][j] = allGroups.Pivots[OBJ_NUM][j];
         }
 
-        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
+        if ((0 <= allGroups.getStop_Model1D(OBJ_NUM)) && (allGroups.getStart_Model1D(OBJ_NUM) <= allGroups.getStop_Model1D(OBJ_NUM))) { 
+          for (int q = allGroups.getStart_Model1D(OBJ_NUM); q <= allGroups.getStop_Model1D(OBJ_NUM); q++) {
 
             float x = allModel1Ds.getX(q);
             float y = allModel1Ds.getY(q);
@@ -16777,8 +16799,8 @@ class solarchvision_Clone3Ds {
           }
         }
 
-        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
+        if ((0 <= allGroups.getStop_Model2D(OBJ_NUM)) && (allGroups.getStart_Model2D(OBJ_NUM) <= allGroups.getStop_Model2D(OBJ_NUM))) { 
+          for (int q = allGroups.getStart_Model2D(OBJ_NUM); q <= allGroups.getStop_Model2D(OBJ_NUM); q++) {
   
             float x = allModel2Ds.getX(q);
             float y = allModel2Ds.getY(q);
@@ -16798,8 +16820,8 @@ class solarchvision_Clone3Ds {
         }
 
 
-        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
-          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+        if ((0 <= allGroups.getStop_Solid(OBJ_NUM)) && (allGroups.getStart_Solid(OBJ_NUM) <= allGroups.getStop_Solid(OBJ_NUM))) { 
+          for (int q = allGroups.getStart_Solid(OBJ_NUM); q <= allGroups.getStop_Solid(OBJ_NUM); q++) {
 
             float Solid_posX = allSolids.get_posX(q);
             float Solid_posY = allSolids.get_posY(q);
@@ -16826,7 +16848,7 @@ class solarchvision_Clone3Ds {
         int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
 
-        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
 
           if ((0 <= f) && (f < allFaces.nodes.length)) {
 
@@ -16883,7 +16905,7 @@ class solarchvision_Clone3Ds {
         }
       }
       
-      if ((0 <= allGroups.Curves[OBJ_NUM][0]) && (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1])) { 
+      if ((0 <= allGroups.getStart_Curve(OBJ_NUM)) && (allGroups.getStart_Curve(OBJ_NUM) <= allGroups.getStop_Curve(OBJ_NUM))) { 
 
         int number_of_Vertices_before = allPoints.getLength();
 
@@ -16895,8 +16917,8 @@ class solarchvision_Clone3Ds {
           allGroups.Pivots[new_OBJ_NUM][j] = allGroups.Pivots[OBJ_NUM][j];
         }
 
-        if ((0 <= allGroups.Model1Ds[OBJ_NUM][1]) && (allGroups.Model1Ds[OBJ_NUM][0] <= allGroups.Model1Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model1Ds[OBJ_NUM][0]; q <= allGroups.Model1Ds[OBJ_NUM][1]; q++) {
+        if ((0 <= allGroups.getStop_Model1D(OBJ_NUM)) && (allGroups.getStart_Model1D(OBJ_NUM) <= allGroups.getStop_Model1D(OBJ_NUM))) { 
+          for (int q = allGroups.getStart_Model1D(OBJ_NUM); q <= allGroups.getStop_Model1D(OBJ_NUM); q++) {
 
             float x = allModel1Ds.getX(q);
             float y = allModel1Ds.getY(q);
@@ -16927,8 +16949,8 @@ class solarchvision_Clone3Ds {
           }
         }
 
-        if ((0 <= allGroups.Model2Ds[OBJ_NUM][1]) && (allGroups.Model2Ds[OBJ_NUM][0] <= allGroups.Model2Ds[OBJ_NUM][1])) { 
-          for (int q = allGroups.Model2Ds[OBJ_NUM][0]; q <= allGroups.Model2Ds[OBJ_NUM][1]; q++) {
+        if ((0 <= allGroups.getStop_Model2D(OBJ_NUM)) && (allGroups.getStart_Model2D(OBJ_NUM) <= allGroups.getStop_Model2D(OBJ_NUM))) { 
+          for (int q = allGroups.getStart_Model2D(OBJ_NUM); q <= allGroups.getStop_Model2D(OBJ_NUM); q++) {
 
             float x = allModel2Ds.getX(q);
             float y = allModel2Ds.getY(q);
@@ -16947,8 +16969,8 @@ class solarchvision_Clone3Ds {
           }
         }
 
-        if ((0 <= allGroups.Solids[OBJ_NUM][1]) && (allGroups.Solids[OBJ_NUM][0] <= allGroups.Solids[OBJ_NUM][1])) { 
-          for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+        if ((0 <= allGroups.getStop_Solid(OBJ_NUM)) && (allGroups.getStart_Solid(OBJ_NUM) <= allGroups.getStop_Solid(OBJ_NUM))) { 
+          for (int q = allGroups.getStart_Solid(OBJ_NUM); q <= allGroups.getStop_Solid(OBJ_NUM); q++) {
 
             float Solid_posX = allSolids.get_posX(q);
             float Solid_posY = allSolids.get_posY(q);
@@ -16974,7 +16996,7 @@ class solarchvision_Clone3Ds {
         int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
 
-        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) {
 
           if ((0 <= f) && (f < allCurves.nodes.length)) {
 
@@ -17420,8 +17442,8 @@ class solarchvision_Delete3Ds {
 
       int OBJ_NUM = Select3Ds.Group_ids[o];
 
-      int startFace = allGroups.Faces[OBJ_NUM][0];
-      int endFace = allGroups.Faces[OBJ_NUM][1];
+      int startFace = allGroups.getStart_Face(OBJ_NUM);
+      int endFace = allGroups.getStop_Face(OBJ_NUM);
 
       {
 
@@ -17459,8 +17481,8 @@ class solarchvision_Delete3Ds {
       }
 
 
-      int startCurve = allGroups.Curves[OBJ_NUM][0];
-      int endCurve = allGroups.Curves[OBJ_NUM][1];
+      int startCurve = allGroups.getStart_Curve(OBJ_NUM);
+      int endCurve = allGroups.getStop_Curve(OBJ_NUM);
 
       {
 
@@ -17498,8 +17520,8 @@ class solarchvision_Delete3Ds {
       }
 
 
-      int startallModel1Ds = allGroups.Model1Ds[OBJ_NUM][0];
-      int endallModel1Ds = allGroups.Model1Ds[OBJ_NUM][1];
+      int startallModel1Ds = allGroups.getStart_Model1D(OBJ_NUM);
+      int endallModel1Ds = allGroups.getStop_Model1D(OBJ_NUM);
 
       {
 
@@ -17577,8 +17599,8 @@ class solarchvision_Delete3Ds {
         allModel1Ds.num = allModel1Ds.XYZSR.length;
       }
 
-      int startallModel2Ds = allGroups.Model2Ds[OBJ_NUM][0];
-      int endallModel2Ds = allGroups.Model2Ds[OBJ_NUM][1];
+      int startallModel2Ds = allGroups.getStart_Model2D(OBJ_NUM);
+      int endallModel2Ds = allGroups.getStop_Model2D(OBJ_NUM);
 
       {
 
@@ -17620,8 +17642,8 @@ class solarchvision_Delete3Ds {
         allModel2Ds.num = allModel2Ds.XYZS.length;
       }
 
-      int startSolid = allGroups.Solids[OBJ_NUM][0];
-      int endSolid = allGroups.Solids[OBJ_NUM][1];
+      int startSolid = allGroups.getStart_Solid(OBJ_NUM);
+      int endSolid = allGroups.getStop_Solid(OBJ_NUM);
 
       {
         if ((0 <= startSolid) && (startSolid <= endSolid)) {
@@ -19298,12 +19320,12 @@ class solarchvision_Select3Ds {
   
         int include_OBJ_in_newSelection = -1;    
   
-        if (allGroups.Faces[OBJ_NUM][0] <= allGroups.Faces[OBJ_NUM][1]) {
+        if (allGroups.getStart_Face(OBJ_NUM) <= allGroups.getStop_Face(OBJ_NUM)) {
   
           if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
           if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
   
-          for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+          for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
             if ((0 <= f) && (f < allFaces.nodes.length)) { 
   
               for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -19342,12 +19364,12 @@ class solarchvision_Select3Ds {
           }
         }
         
-        if (allGroups.Curves[OBJ_NUM][0] <= allGroups.Curves[OBJ_NUM][1]) {
+        if (allGroups.getStart_Curve(OBJ_NUM) <= allGroups.getStop_Curve(OBJ_NUM)) {
   
           if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
           if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
   
-          for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+          for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) {
             if ((0 <= f) && (f < allCurves.nodes.length)) { 
   
               for (int j = 0; j < allCurves.nodes[f].length; j++) {
@@ -20081,7 +20103,14 @@ class solarchvision_Select3Ds {
 
   void deselect_Vertices () {
     this.Vertex_ids = new int [0];
+    
+    this.deselect_softSelection();
   }
+  
+  void deselect_softSelection () {
+    this.softSelection_ids = new int [0];
+    this.softSelection_values = new float [0];
+  }  
 
   void deselect_Faces () {
     this.Face_ids = new int [0];
@@ -20737,7 +20766,7 @@ class solarchvision_Select3Ds {
   
       for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-        if ((allGroups.Model1Ds[OBJ_NUM][0] <= f) && (f <= allGroups.Model1Ds[OBJ_NUM][1])) { 
+        if ((allGroups.getStart_Model1D(OBJ_NUM) <= f) && (f <= allGroups.getStop_Model1D(OBJ_NUM))) { 
   
           int previously_added = 0;
           for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20768,7 +20797,7 @@ class solarchvision_Select3Ds {
   
       for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-        if ((allGroups.Model2Ds[OBJ_NUM][0] <= f) && (f <= allGroups.Model2Ds[OBJ_NUM][1])) { 
+        if ((allGroups.getStart_Model2D(OBJ_NUM) <= f) && (f <= allGroups.getStop_Model2D(OBJ_NUM))) { 
   
           int previously_added = 0;
           for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20799,7 +20828,7 @@ class solarchvision_Select3Ds {
   
       for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-        if ((allGroups.Solids[OBJ_NUM][0] <= f) && (f <= allGroups.Solids[OBJ_NUM][1])) { 
+        if ((allGroups.getStart_Solid(OBJ_NUM) <= f) && (f <= allGroups.getStop_Solid(OBJ_NUM))) { 
   
           int previously_added = 0;
           for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20833,7 +20862,7 @@ class solarchvision_Select3Ds {
   
         for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-          if ((allGroups.Faces[OBJ_NUM][0] <= f) && (f <= allGroups.Faces[OBJ_NUM][1])) { 
+          if ((allGroups.getStart_Face(OBJ_NUM) <= f) && (f <= allGroups.getStop_Face(OBJ_NUM))) { 
   
             int previously_added = 0;
             for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20866,7 +20895,7 @@ class solarchvision_Select3Ds {
   
         for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-          if ((allGroups.Curves[OBJ_NUM][0] <= f) && (f <= allGroups.Curves[OBJ_NUM][1])) { 
+          if ((allGroups.getStart_Curve(OBJ_NUM) <= f) && (f <= allGroups.getStop_Curve(OBJ_NUM))) { 
   
             int previously_added = 0;
             for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20905,7 +20934,7 @@ class solarchvision_Select3Ds {
   
             for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-              if ((allGroups.Faces[OBJ_NUM][0] <= f) && (f <= allGroups.Faces[OBJ_NUM][1])) { 
+              if ((allGroups.getStart_Face(OBJ_NUM) <= f) && (f <= allGroups.getStop_Face(OBJ_NUM))) { 
   
                 int previously_added = 0;
                 for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20934,7 +20963,7 @@ class solarchvision_Select3Ds {
   
             for (int OBJ_NUM = 0; OBJ_NUM < allGroups.num; OBJ_NUM++) {
   
-              if ((allGroups.Curves[OBJ_NUM][0] <= f) && (f <= allGroups.Curves[OBJ_NUM][1])) { 
+              if ((allGroups.getStart_Curve(OBJ_NUM) <= f) && (f <= allGroups.getStop_Curve(OBJ_NUM))) { 
   
                 int previously_added = 0;
                 for (int q = 0; q < this.Group_ids.length; q++) {
@@ -21034,7 +21063,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[i];
   
-      for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Model1D(OBJ_NUM); f <= allGroups.getStop_Model1D(OBJ_NUM); f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < this.Model1D_ids.length; q++) {
@@ -21063,7 +21092,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[i];
   
-      for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Model2D(OBJ_NUM); f <= allGroups.getStop_Model2D(OBJ_NUM); f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < this.Model2D_ids.length; q++) {
@@ -21092,7 +21121,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[i];
   
-      for (int f = allGroups.Solids[OBJ_NUM][0]; f <= allGroups.Solids[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Solid(OBJ_NUM); f <= allGroups.getStop_Solid(OBJ_NUM); f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < this.Solid_ids.length; q++) {
@@ -21121,7 +21150,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[i];
   
-      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < this.Face_ids.length; q++) {
@@ -21149,7 +21178,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[i];
   
-      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) { 
   
         int previously_added = 0;
         for (int q = 0; q < this.Curve_ids.length; q++) {
@@ -21178,7 +21207,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[i];
   
-      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) { 
   
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
   
@@ -21200,7 +21229,7 @@ class solarchvision_Select3Ds {
         }
       }
       
-      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) { 
+      for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) { 
   
         for (int j = 0; j < allCurves.nodes[f].length; j++) {
   
@@ -21531,7 +21560,7 @@ class solarchvision_Select3Ds {
   
       int OBJ_NUM = this.Group_ids[o];
   
-      for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
   
         if ((0 <= f) && (f < allFaces.nodes.length)) { 
           for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -21559,7 +21588,7 @@ class solarchvision_Select3Ds {
   
   
   
-      for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+      for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) {
   
         if ((0 <= f) && (f < allCurves.nodes.length)) { 
           for (int j = 0; j < allCurves.nodes[f].length; j++) {
@@ -33173,8 +33202,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -33183,7 +33212,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33322,8 +33351,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -33332,7 +33361,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += 2 * allFaces.nodes[f].length;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += 2 * allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, 2 * allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33503,8 +33532,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -33513,7 +33542,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33662,8 +33691,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -33672,7 +33701,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33817,8 +33846,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -33829,7 +33858,7 @@ class solarchvision_Modify3Ds {
                   allGroups.Faces[i][j] += User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1;
                 }
               }  
-              allGroups.Faces[OBJ_NUM][1] += User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1; // because adding the faces also changes the end pointer of the same object 
+              allGroups.append_Face(OBJ_NUM, User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1); // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33994,8 +34023,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -34004,7 +34033,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += allFaces.nodes[f].length - 1;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34148,8 +34177,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -34158,7 +34187,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += allFaces.nodes[f].length - 1;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34289,8 +34318,8 @@ class solarchvision_Modify3Ds {
   
           if (allFaces.nodes[f].length > 3) { // <<<<<<<<<<< the condition to perform the process 
   
-            int startFace = allGroups.Faces[OBJ_NUM][0];
-            int endFace = allGroups.Faces[OBJ_NUM][1];          
+            int startFace = allGroups.getStart_Face(OBJ_NUM);
+            int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
             if ((startFace <= f) && (f <= endFace)) {
   
@@ -34299,7 +34328,7 @@ class solarchvision_Modify3Ds {
                   allGroups.Faces[i][j] += allFaces.nodes[f].length - 1;
                 }
               }  
-              allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+              allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34424,8 +34453,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
 
           if ((startFace <= f) && (f <= endFace)) {
             
@@ -34482,8 +34511,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -34492,7 +34521,7 @@ class solarchvision_Modify3Ds {
                 allGroups.Faces[i][j] += allFaces.nodes[f].length;
               }
             }  
-            allGroups.Faces[OBJ_NUM][1] += allFaces.nodes[f].length; // because adding the faces also changes the end pointer of the same object 
+            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34597,8 +34626,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Face_ids[q];
   
-          int startFace = allGroups.Faces[OBJ_NUM][0];
-          int endFace = allGroups.Faces[OBJ_NUM][1];          
+          int startFace = allGroups.getStart_Face(OBJ_NUM);
+          int endFace = allGroups.getStop_Face(OBJ_NUM);          
   
           if ((startFace <= f) && (f <= endFace)) {
   
@@ -34721,8 +34750,8 @@ class solarchvision_Modify3Ds {
   
           int f = Select3Ds.Curve_ids[q];
   
-          int startCurve = allGroups.Curves[OBJ_NUM][0];
-          int endCurve = allGroups.Curves[OBJ_NUM][1];          
+          int startCurve = allGroups.getStart_Curve(OBJ_NUM);
+          int endCurve = allGroups.getStop_Curve(OBJ_NUM);          
   
           if ((startCurve <= f) && (f <= endCurve)) {
   
@@ -44160,7 +44189,7 @@ void mouseClicked () {
                             }
                           }
 
-                          for (int q = allGroups.Faces[OBJ_NUM][0]; q <= allGroups.Faces[OBJ_NUM][1]; q++) {                    
+                          for (int q = allGroups.getStart_Face(OBJ_NUM); q <= allGroups.getStop_Face(OBJ_NUM); q++) {                    
                             if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.default_Material);
                             if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.default_Tessellation);
                             if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (q, User3D.default_Layer);
@@ -44261,7 +44290,7 @@ void mouseClicked () {
                             }
                           }
      
-                          for (int q = allGroups.Faces[OBJ_NUM][0]; q <= allGroups.Faces[OBJ_NUM][1]; q++) {                    
+                          for (int q = allGroups.getStart_Face(OBJ_NUM); q <= allGroups.getStop_Face(OBJ_NUM); q++) {                    
                             int n = allFaces.nodes[q].length;
 
                             if (n > 2) {
@@ -45997,7 +46026,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         int OBJ_NUM = Select3Ds.Group_ids[o];
 
 
-        for (int f = allGroups.Faces[OBJ_NUM][0]; f <= allGroups.Faces[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.getStart_Face(OBJ_NUM); f <= allGroups.getStop_Face(OBJ_NUM); f++) {
           if ((0 <= f) && (f < allFaces.nodes.length)) { 
 
             int Tessellation = allFaces.getTessellation(f);
@@ -46041,7 +46070,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
 
 
-        for (int f = allGroups.Curves[OBJ_NUM][0]; f <= allGroups.Curves[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.getStart_Curve(OBJ_NUM); f <= allGroups.getStop_Curve(OBJ_NUM); f++) {
           if ((0 <= f) && (f < allCurves.nodes.length)) { 
 
             beginShape();
@@ -46064,7 +46093,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
         
 
-        for (int f = allGroups.Model1Ds[OBJ_NUM][0]; f <= allGroups.Model1Ds[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.getStart_Model1D(OBJ_NUM); f <= allGroups.getStop_Model1D(OBJ_NUM); f++) {
 
           if ((0 <= f) && (f < allModel1Ds.Faces.length)) { 
 
@@ -46090,7 +46119,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
 
 
-        for (int f = allGroups.Model2Ds[OBJ_NUM][0]; f <= allGroups.Model2Ds[OBJ_NUM][1]; f++) {
+        for (int f = allGroups.getStart_Model2D(OBJ_NUM); f <= allGroups.getStop_Model2D(OBJ_NUM); f++) {
 
           if ((0 <= f) && (f < allModel2Ds.Faces.length)) { 
 
@@ -46115,7 +46144,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           }
         }
 
-        for (int q = allGroups.Solids[OBJ_NUM][0]; q <= allGroups.Solids[OBJ_NUM][1]; q++) {
+        for (int q = allGroups.getStart_Solid(OBJ_NUM); q <= allGroups.getStop_Solid(OBJ_NUM); q++) {
 
           if ((0 < q) && (q < allSolids.Faces.length)) {
 
