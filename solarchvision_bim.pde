@@ -11716,26 +11716,35 @@ class solarchvision_Groups {
   }  
 
 
-  void append_Curve (int n, int t) {
-    this.setStop_Curve(n, t + this.getStop_Curve(n));
+  void append_Curve (int n, int dt) {
+    this.setStop_Curve(n, dt + this.getStop_Curve(n));
   }
 
-  void append_Face (int n, int t) {
-    this.setStop_Face(n, t + this.getStop_Face(n));
+  void append_Face (int n, int dt) {
+    this.setStop_Face(n, dt + this.getStop_Face(n));
   }
 
-  void append_Solid (int n, int t) {
-    this.setStop_Solid(n, t + this.getStop_Solid(n));
+  void append_Solid (int n, int dt) {
+    this.setStop_Solid(n, dt + this.getStop_Solid(n));
   }
 
-  void append_Model1D (int n, int t) {
-    this.setStop_Model1D(n, t + this.getStop_Model1D(n));
+  void append_Model1D (int n, int dt) {
+    this.setStop_Model1D(n, dt + this.getStop_Model1D(n));
   }
   
-  void append_Model2D (int n, int t) {
-    this.setStop_Model2D(n, t + this.getStop_Model2D(n));
+  void append_Model2D (int n, int dt) {
+    this.setStop_Model2D(n, dt + this.getStop_Model2D(n));
   }
     
+    
+  void inserted_nFaces (int n, int dt) { 
+    for (int i = OBJ_NUM + 1; i < this.num; i++) {
+      for (int j = 0; j < 2; j++) {
+        this.Faces[i][j] += dt;
+      }
+    }  
+    this.append_Face(n, dt); // because adding the faces also changes the end pointer of the same object
+  }
   
 
   int beginNewGroup (float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz) {
@@ -33207,12 +33216,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += allFaces.nodes[f].length;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33356,12 +33360,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += 2 * allFaces.nodes[f].length;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, 2 * allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, 2 * allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33537,12 +33536,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += allFaces.nodes[f].length;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33696,12 +33690,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += allFaces.nodes[f].length;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -33853,12 +33842,7 @@ class solarchvision_Modify3Ds {
   
             if (allFaces.nodes[f].length == 4) {
   
-              for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-                for (int j = 0; j < 2; j++) {
-                  allGroups.Faces[i][j] += User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1;
-                }
-              }  
-              allGroups.append_Face(OBJ_NUM, User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1); // because adding the faces also changes the end pointer of the same object 
+              allGroups.inserted_nFaces(OBJ_NUM, User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1); // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34028,12 +34012,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += allFaces.nodes[f].length - 1;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34182,12 +34161,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += allFaces.nodes[f].length - 1;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34323,12 +34297,7 @@ class solarchvision_Modify3Ds {
   
             if ((startFace <= f) && (f <= endFace)) {
   
-              for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-                for (int j = 0; j < 2; j++) {
-                  allGroups.Faces[i][j] += allFaces.nodes[f].length - 1;
-                }
-              }  
-              allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
+              allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
@@ -34516,12 +34485,7 @@ class solarchvision_Modify3Ds {
   
           if ((startFace <= f) && (f <= endFace)) {
   
-            for (int i = OBJ_NUM + 1; i < allGroups.num; i++) {
-              for (int j = 0; j < 2; j++) {
-                allGroups.Faces[i][j] += allFaces.nodes[f].length;
-              }
-            }  
-            allGroups.append_Face(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
+            allGroups.inserted_nFaces(OBJ_NUM, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object 
   
             for (int p = new_selection_Face_ids.length - 1; p >= 0; p--) {
   
