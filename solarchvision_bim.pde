@@ -2718,6 +2718,8 @@ class solarchvision_WIN3D {
       
           allPoints.draw();
       
+          allModel0Ds.draw();
+      
           allModel1Ds.draw(TypeWindow.WIN3D);
       
           allWindRoses.draw();
@@ -29363,37 +29365,42 @@ float branchAngle = PI / 3.0;
 float branchRatio = 0.7; // relational position of branches 
 int treeSeed = 0;        // this could be a random integer. Note: when using 0, the random rotation option is disabled. 
 int treeDepth = 7;       // depth of the tree
-float treeHeight0 = 150; // height of the first element at the start 
-float treeWidth0 = 20;   // weight of the first element at the start
+float treeHeight0 = 25; // height of the first element at the start 
+float treeWidth0 = 5;   // weight of the first element at the start
 int elementSegments = 8; // number of polygons to create each cone
 
 
-float Par_A1 = branchAngle;
-float Par_A2 = Par_A1;
 
-float Par_B1 = branchRatio;
-float Par_B2 = Par_B1;
 
-float Par_C1 = treeWidth0;
-float Par_C2 = Par_C1;  
-  
-float Par_D1 = treeHeight0;
-float Par_D2 = Par_D1;
 
-float Par_X1 = 0;
-float Par_X2 = Par_X1;
 
-float Par_Y1 = 0;
-float Par_Y2 = Par_Y1;
 
-float Par_Z1 = -100; // some value simply to triger the initial animation
-float Par_Z2 = 0;
+
 
 class solarchvision_Model0Ds {
   
   private final static String CLASS_STAMP = "Model0Ds";
 
-  PGraphics graph;  
+  
+  void draw () {
+
+    float x = 0; 
+    float y = 0;
+    float z = 0;
+    
+    WIN3D.graphics.pushMatrix();
+    WIN3D.graphics.translate(x, y, z);
+
+
+    // Call to draw the tree
+    randomSeed(treeSeed);
+    this.branch(treeWidth0, treeHeight0, treeDepth, treeDepth);
+    
+    WIN3D.graphics.popMatrix();
+
+  }
+  
+  
 
   void branch(float w, float h, int n, int nStart) {
     
@@ -29401,26 +29408,26 @@ class solarchvision_Model0Ds {
     
     if (n > 0) {
       
-      graph.pushMatrix();
+      WIN3D.graphics.pushMatrix();
       
-      branchTwist();
+      this.branchTwist();
       
-      drawSegment(w, h);
-      branch(w * branchRatio, h * branchRatio, n - 1, n);
+      this.drawSegment(w, h);
+      this.branch(w * branchRatio, h * branchRatio, n - 1, n);
       
-      graph.popMatrix();
+      WIN3D.graphics.popMatrix();
     
       if (n != nStart) {
     
-        graph.pushMatrix();
+        WIN3D.graphics.pushMatrix();
   
-        branchTwist();
-        branchDeclination();
+        this.branchTwist();
+        this.branchDeclination();
         
-        drawSegment(w, h);
-        branch(w * branchRatio, h * branchRatio, n - 1, n);
+        this.drawSegment(w, h);
+        this.branch(w * branchRatio, h * branchRatio, n - 1, n);
         
-        graph.popMatrix();
+        WIN3D.graphics.popMatrix();
       }
   
     }
@@ -29429,32 +29436,32 @@ class solarchvision_Model0Ds {
   
   void branchTwist () {
     
-    float angle = 0.5 * Par_Y1 - PI;
+    float angle = -PI * 137.5 / 180.0; //golden angle ratio
     
     if (treeSeed != 0) { // i.e. to disable making random rotations 
       angle += random(0, HALF_PI);
     }
     
-    graph.rotateZ(angle);
+    WIN3D.graphics.rotateZ(angle);
   }
   
   
   void branchDeclination () {
     
-    graph.rotateY(branchAngle);
+    WIN3D.graphics.rotateY(branchAngle);
   }
   
   
   void drawSegment(float w, float h) {
 
-    graph.pushMatrix();
-    graph.translate(0, 0, 0.5 * h);
+    WIN3D.graphics.pushMatrix();
+    WIN3D.graphics.translate(0, 0, 0.5 * h);
     
-    drawElements(w, h);
+    this.drawElements(w, h);
     
-    graph.popMatrix();
+    WIN3D.graphics.popMatrix();
     
-    graph.translate(0, 0, h);
+    WIN3D.graphics.translate(0, 0, h);
   }
   
 
@@ -29462,13 +29469,13 @@ class solarchvision_Model0Ds {
   
   void drawElements(float w, float h) {
     
-    graph.fill(63, 255, 63);
-    graph.stroke(0, 127, 0);
-    graph.strokeWeight(0);
+    WIN3D.graphics.fill(0, 127, 0);
+    WIN3D.graphics.stroke(0, 0, 0);
+    WIN3D.graphics.strokeWeight(1);
 
     
     for (int i = 0; i < elementSegments; i++) {
-      graph.beginShape();
+      WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
   
         float U = 0;
@@ -29485,9 +29492,9 @@ class solarchvision_Model0Ds {
         float z = h * (V - 0.5);
   
   
-        graph.vertex(x, y, z);
+        WIN3D.graphics.vertex(x, y, z);
       }
-      graph.endShape(CLOSE);
+      WIN3D.graphics.endShape(CLOSE);
     }
   }  
 
