@@ -18150,7 +18150,7 @@ class solarchvision_Select3Ds {
     float rotZ = 0;
   
     if (current_ObjectCategory == ObjectCategory.GROUP) { 
-  
+
       if (this.Group_ids.length > 0) {
       
         int o = this.Group_ids.length - 1; // applying the local coordinates of the last selected object <<<<<<<<<<<<<<<<<<<<<<<
@@ -18326,7 +18326,7 @@ class solarchvision_Select3Ds {
       x = A[0];
       y = A[1];
       z = A[2];
-  
+
   
       if (posX_min > x) posX_min = x;   
       if (posY_min > y) posY_min = y;   
@@ -18337,8 +18337,13 @@ class solarchvision_Select3Ds {
       if (posZ_max < z) posZ_max = z;
     }   
   
-    if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
-  
+    if ((is_undefined_FLOAT(posX_min) == false) &&  
+        (is_undefined_FLOAT(posY_min) == false) &&
+        (is_undefined_FLOAT(posZ_min) == false) &&
+        (is_undefined_FLOAT(-posX_max) == false) &&
+        (is_undefined_FLOAT(-posY_max) == false) &&
+        (is_undefined_FLOAT(-posZ_max) == false)) {
+      
       float dx = posX;
       float dy = posY;
       float dz = posZ;
@@ -43901,7 +43906,9 @@ void mouseClicked () {
                     z1 = allPoints.getZ(Select3Ds.Vertex_ids[Select3Ds.Vertex_ids.length - 1]);
                   }             
   
-                  if ((x1 != FLOAT_undefined) && (y1 != FLOAT_undefined) && (z1 != FLOAT_undefined)) {       
+                  if ((is_undefined_FLOAT(x1) == false) &&  
+                      (is_undefined_FLOAT(y1) == false) &&
+                      (is_undefined_FLOAT(z1) == false)) {     
   
                     float x2 = RxP[1];
                     float y2 = RxP[2];
