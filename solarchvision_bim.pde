@@ -18153,21 +18153,15 @@ class solarchvision_Select3Ds {
 
       if (this.Group_ids.length > 0) {
       
-        int o = this.Group_ids.length - 1; // applying the local coordinates of the last selected object <<<<<<<<<<<<<<<<<<<<<<<
+        for (int o = 0; o < this.Group_ids.length - 1; o++) {
     
-        int OBJ_ID = this.Group_ids[o];
-    
-        posX = allGroups.Pivots[OBJ_ID][0];
-        posY = allGroups.Pivots[OBJ_ID][1];
-        posZ = allGroups.Pivots[OBJ_ID][2];
-    
-        scaleX = allGroups.Pivots[OBJ_ID][3];
-        scaleY = allGroups.Pivots[OBJ_ID][4];
-        scaleZ = allGroups.Pivots[OBJ_ID][5];
-    
-        rotX = allGroups.Pivots[OBJ_ID][6];
-        rotY = allGroups.Pivots[OBJ_ID][7];
-        rotZ = allGroups.Pivots[OBJ_ID][8];
+          int OBJ_ID = this.Group_ids[o];
+      
+          posX += allGroups.Pivots[OBJ_ID][0] / this.Group_ids.length;
+          posY += allGroups.Pivots[OBJ_ID][1] / this.Group_ids.length;
+          posZ += allGroups.Pivots[OBJ_ID][2] / this.Group_ids.length;
+
+        }
       }
     }
   
