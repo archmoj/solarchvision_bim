@@ -11205,14 +11205,14 @@ class solarchvision_Faces {
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
+    
+    this.empty();
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");
     
     XML[] children = parent.getChildren("item");
     
-    this.options = new int [ni][6];
-    this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
       String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
@@ -11591,14 +11591,14 @@ class solarchvision_Curves {
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
+    
+    this.empty();    
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");
     
     XML[] children = parent.getChildren("item");
     
-    this.options = new int [ni][6];
-    this.nodes = new int [0][0];
     for (int i = 0; i < ni; i++) {
       String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
@@ -12184,18 +12184,13 @@ class solarchvision_Groups {
     
     println("Loading:" + this.CLASS_STAMP);
 
+    this.empty();
+
     XML parent = xml.getChild(this.CLASS_STAMP);
-  
+
     int ni = XML_getInt(parent, "ni");
 
     this.num = ni;
-
-    this.Faces = new int [ni][2];
-    this.Curves = new int [ni][2];
-    this.Solids = new int [ni][2];
-    this.Model0Ds = new int [ni][2];
-    this.Model2Ds = new int [ni][2];
-    this.Pivots = new float [ni][9];
 
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
@@ -25210,6 +25205,7 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 void SOLARCHVISION_delete_ALL () {
   
+  allModel0Ds.empty();
   allModel1Ds.empty();
   allModel2Ds.empty();
 
@@ -29896,18 +29892,14 @@ class solarchvision_Model0Ds {
     
     println("Loading:" + this.CLASS_STAMP);
     
+    this.empty();    
+    
     XML parent = xml.getChild(this.CLASS_STAMP);
+    
     int ni = XML_getInt(parent, "ni");
-
-    this.XYZSR = new float [ni][5];
-    this.Type = new int [ni];
-    this.DegreeMin = new int [ni];
-    this.DegreeMax = new int [ni];
-    this.Seed = new int [ni];
-    this.TrunkSize = new float [ni];
-    this.LeafSize = new float [ni];
+    
     this.num = ni;
-
+    
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
@@ -31024,17 +31016,12 @@ class solarchvision_Model1Ds {
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
+
+    this.empty();
     
     XML parent = xml.getChild(this.CLASS_STAMP);
+    
     int ni = XML_getInt(parent, "ni");
-
-    this.XYZSR = new float [ni][5];
-    this.Type = new int [ni];
-    this.DegreeMin = new int [ni];
-    this.DegreeMax = new int [ni];
-    this.Seed = new int [ni];
-    this.TrunkSize = new float [ni];
-    this.LeafSize = new float [ni];
     this.num = ni;
 
     XML[] children = parent.getChildren("item");         
@@ -31957,12 +31944,12 @@ class solarchvision_Model2Ds {
     
     println("Loading:" + this.CLASS_STAMP);
     
+    this.empty();    
+    
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
+      
       int ni = XML_getInt(parent, "ni");
-  
-      this.XYZS = new float [ni][4];
-      this.MAP = new int [ni];
       this.num = ni;
   
       XML[] children = parent.getChildren("item");         
@@ -32608,10 +32595,11 @@ class solarchvision_Solids {
     
     println("Loading:" + this.CLASS_STAMP);
     
+    this.empty();
+    
     XML parent = xml.getChild(this.CLASS_STAMP);
+    
     int ni = XML_getInt(parent, "ni");
-
-    this.DEF = new float [ni][13];
 
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
