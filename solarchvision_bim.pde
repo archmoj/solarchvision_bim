@@ -9314,8 +9314,8 @@ class solarchvision_ROLLOUT {
       if (this.child == 6) { // Fractals
   
         User3D.create_Model0D_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_Type", User3D.create_Model0D_Type, 0, 0, 1), 1));
-        User3D.create_Model0D_DegreeMin = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_DegreeMin", User3D.create_Model0D_DegreeMin, 1, 9, 1), 1));
-        User3D.create_Model0D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_DegreeMax", User3D.create_Model0D_DegreeMax, 1, 9, 1), 1));
+        User3D.create_Model0D_DegreeMin = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_DegreeMin", User3D.create_Model0D_DegreeMin, 0, 12, 1), 1));
+        User3D.create_Model0D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_DegreeMax", User3D.create_Model0D_DegreeMax, 0, 12, 1), 1));
         User3D.create_Model0D_Seed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_Seed", User3D.create_Model0D_Seed, -1, 32767, 1), 1));
         User3D.create_Model0D_TrunkSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_TrunkSize", User3D.create_Model0D_TrunkSize, 0, 10, 0.1), 0.1);
         User3D.create_Model0D_LeafSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_LeafSize", User3D.create_Model0D_LeafSize, 0, 10, 0.1), 0.1);
@@ -14526,6 +14526,7 @@ class solarchvision_Edit3Ds {
         q += p;
 
         if (q < 0) q = 0;
+        if (q > 12) q = 12;
 
         allModel0Ds.setDegreeMax(OBJ_ID, q);
 
@@ -14566,6 +14567,7 @@ class solarchvision_Edit3Ds {
         q += p;
 
         if (q < 0) q = 0;
+        if (q > 12) q = 12;
 
         allModel0Ds.setDegreeMin(OBJ_ID, q);
 
@@ -14575,7 +14577,7 @@ class solarchvision_Edit3Ds {
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
         float q = allModel0Ds.getTrunkSize(OBJ_ID);
 
-        q += 0.25 * p;
+        q += 0.125 * p;
 
         if (q < 0) q = 0;
 
@@ -14587,7 +14589,7 @@ class solarchvision_Edit3Ds {
       if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
         float q = allModel0Ds.getLeafSize(OBJ_ID);
 
-        q += 0.25 * p;
+        q += 0.125 * p;
 
         if (q < 0) q = 0;
 
@@ -29597,27 +29599,26 @@ class solarchvision_Model0Ds {
   
 //this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
 
+            randomSeed(0);
+            
             WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
             WIN3D.graphics.noStroke();
             //WIN3D.graphics.stroke(0, 0, 0);
             //WIN3D.graphics.strokeWeight(1);
 
             WIN3D.graphics.pushMatrix();
-
             WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
-
             WIN3D.graphics.translate(x, -y, z);
-            
             WIN3D.graphics.rotateZ(rot);
             
-        
-            // Call to draw the tree
-            randomSeed(this.treeSeed);
             
             float treeHeight0 = r;
-            float treeWidth0 = r * 0.1;
+            float treeWidth0 = r * TrunkSize * 0.1;
             
-            this.makeBranch(treeWidth0, treeHeight0, this.treeDepth, this.treeDepth);
+            randomSeed(this.treeSeed);
+            
+            // Call to draw the tree
+            this.makeBranch(treeWidth0, treeHeight0, dMax, dMax); 
             
             WIN3D.graphics.popMatrix();
           }
