@@ -2718,7 +2718,7 @@ class solarchvision_WIN3D {
       
           allPoints.draw();
       
-          allModel0Ds.draw();
+          allModel0Ds.draw(TypeWindow.WIN3D);
       
           allModel1Ds.draw(TypeWindow.WIN3D);
       
@@ -16230,6 +16230,10 @@ class solarchvision_Drop3Ds {
 
   }
   
+  
+  
+  
+  
   void Model1Ds () {
 
     for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
@@ -29361,44 +29365,268 @@ solarchvision_Land3D Land3D = new solarchvision_Land3D();
 
 
 
-float branchAngle = PI / 3.0;
-float branchRatio = 0.7; // relational position of branches 
-int treeSeed = 0;        // this could be a random integer. Note: when using 0, the random rotation option is disabled. 
-int treeDepth = 7;       // depth of the tree
-float treeHeight0 = 25; // height of the first element at the start 
-float treeWidth0 = 5;   // weight of the first element at the start
-int elementSegments = 8; // number of polygons to create each cone
-
-
-
-
-
-
-
-
 
 class solarchvision_Model0Ds {
   
   private final static String CLASS_STAMP = "Model0Ds";
 
+  float branchAngle = PI / 3.0;
+  float branchRatio = 0.7; // relational position of branches 
+  int treeSeed = 0;        // this could be a random integer. Note: when using 0, the random rotation option is disabled. 
+  int treeDepth = 7;       // depth of the tree
+  float treeHeight0 = 25; // height of the first element at the start 
+  float treeWidth0 = 5;   // weight of the first element at the start
+  int elementSegments = 8; // number of polygons to create each cone
+
+
+
+  boolean displayAll = true;
+  boolean displayLeaves = true;
+
+  float[][] XYZSR = new float[0][5];
   
-  void draw () {
-
-    float x = 0; 
-    float y = 0;
-    float z = 0;
-    
-    WIN3D.graphics.pushMatrix();
-    WIN3D.graphics.translate(x, y, z);
-
-
-    // Call to draw the tree
-    randomSeed(treeSeed);
-    this.branch(treeWidth0, treeHeight0, treeDepth, treeDepth);
-    
-    WIN3D.graphics.popMatrix();
-
+  float getX (int n) {
+    return this.XYZSR[n][0]; 
   }
+
+  float getY (int n) {
+    return this.XYZSR[n][1]; 
+  }
+
+  float getZ (int n) {
+    return this.XYZSR[n][2]; 
+  }
+
+  float getS (int n) {
+    return this.XYZSR[n][3]; 
+  }
+  
+  float getR (int n) {
+    return this.XYZSR[n][4]; 
+  }  
+
+  void setX (int n, float f) {
+    this.XYZSR[n][0] = f;  
+  }
+
+  void setY (int n, float f) {
+    this.XYZSR[n][1] = f;  
+  }
+
+  void setZ (int n, float f) {
+    this.XYZSR[n][2] = f;  
+  }
+
+  void setS (int n, float f) {
+    this.XYZSR[n][3] = f;  
+  }  
+  
+  void setR (int n, float f) {
+    this.XYZSR[n][4] = f;  
+  }     
+  
+  void move (int n, float dx, float dy, float dz) {
+    this.XYZSR[n][0] += dx;  
+    this.XYZSR[n][1] += dy;
+    this.XYZSR[n][2] += dz;
+  }  
+
+  void magS (int n, float f) {
+    this.XYZSR[n][3] *= f;  
+  }    
+
+  
+  int[] Type = new int[0];
+  int[] Seed = new int[0];  
+  int[] DegreeMin = new int[0];
+  int[] DegreeMax = new int[0];
+  
+  int getType (int n) {
+    return this.Type[n]; 
+  }  
+
+  void setType (int n, int t) {
+    this.Type[n] = t;  
+  }  
+  
+  int getSeed (int n) {
+    return this.Seed[n]; 
+  }  
+
+  void setSeed (int n, int t) {
+    this.Seed[n] = t;  
+  }    
+  
+  int getDegreeMin (int n) {
+    return this.DegreeMin[n]; 
+  }  
+
+  void setDegreeMin (int n, int t) {
+    this.DegreeMin[n] = t;  
+  }    
+  
+  int getDegreeMax (int n) {
+    return this.DegreeMax[n]; 
+  }  
+
+  void setDegreeMax (int n, int t) {
+    this.DegreeMax[n] = t;  
+  }  
+
+
+  float[] TrunkSize = new float[0];
+  float[] LeafSize = new float[0];
+
+  float getTrunkSize (int n) {
+    return this.TrunkSize[n]; 
+  }  
+
+  void setTrunkSize (int n, float t) {
+    this.TrunkSize[n] = t;  
+  }  
+  
+  float getLeafSize (int n) {
+    return this.LeafSize[n]; 
+  }  
+
+  void setLeafSize (int n, float t) {
+    this.LeafSize[n] = t;  
+  }   
+  
+  
+  int num = 0; 
+  
+  
+  float[][] Vertices;
+  int[][] Faces;
+
+
+
+
+  void draw (int target_window) {
+  
+    this.Faces = new int [this.num][4];
+  
+    this.Vertices = new float [4 * this.num][3];
+  
+    boolean proceed = true;
+  
+    if (this.displayAll == false) {
+      proceed = false;
+    }
+  
+    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+      proceed = false;
+    }
+
+    
+    if (proceed) {  
+      
+      if (target_window == TypeWindow.OBJ) {
+        if (User3D.export_MaterialLibrary) {
+    
+          if (this.num != 0) {
+    
+            mtlOutput.println("newmtl " + "Model1Ds_Trunk");
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
+            mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+    
+            mtlOutput.println("newmtl " + "Model1Ds_Leaf");
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
+            mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+          }
+        }
+      }      
+      
+      
+  
+      for (int f = 0; f < this.num; f++) {
+  
+        float x = this.getX(f);
+        float y = this.getY(f);
+        float z = this.getZ(f);
+  
+        float r = this.getS(f) * 0.5;
+        float rot = this.getR(f);
+  
+        int n = this.getType(f);
+  
+        int dMin = this.getDegreeMin(f);
+  
+        int dMax = this.getDegreeMax(f);
+  
+        int s = this.getSeed(f);
+  
+        float TrunkSize = this.getTrunkSize(f);
+  
+        float LeafSize = this.getLeafSize(f);
+  
+        randomSeed(s);
+  
+  
+
+        if (n == 0) {
+          
+          if (target_window == TypeWindow.OBJ) {
+          
+            num_vertices_added = 0;
+    
+            if (User3D.export_PolyToPoly == 1) {
+              obj_lastGroupNumber += 1;
+              objOutput.println("g Model0Ds_" + nf(f, 0));
+            }    
+          }
+  
+          float Alpha = 0;
+          float Beta = rot; 
+  
+  
+          if (target_window == TypeWindow.OBJ) {
+            for (int _turn = 1; _turn < 4; _turn++) {
+//this.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+            }
+    
+            obj_lastVertexNumber += num_vertices_added;
+            obj_lastVtextureNumber += num_vertices_added;  
+          }
+          
+          if (target_window == TypeWindow.WIN3D) {
+  
+//this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+
+            WIN3D.graphics.pushMatrix();
+            WIN3D.graphics.translate(x, y, z);
+        
+            // Call to draw the tree
+            randomSeed(this.treeSeed);
+            this.branch(this.treeWidth0, this.treeHeight0, this.treeDepth, this.treeDepth);
+            
+            WIN3D.graphics.popMatrix();
+          }
+  
+        }
+      }
+    }
+  }
+
+  
   
   
 
@@ -29413,7 +29641,7 @@ class solarchvision_Model0Ds {
       this.branchTwist();
       
       this.drawSegment(w, h);
-      this.branch(w * branchRatio, h * branchRatio, n - 1, n);
+      this.branch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
       
       WIN3D.graphics.popMatrix();
     
@@ -29425,7 +29653,7 @@ class solarchvision_Model0Ds {
         this.branchDeclination();
         
         this.drawSegment(w, h);
-        this.branch(w * branchRatio, h * branchRatio, n - 1, n);
+        this.branch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
         
         WIN3D.graphics.popMatrix();
       }
@@ -29438,7 +29666,7 @@ class solarchvision_Model0Ds {
     
     float angle = -PI * 137.5 / 180.0; //golden angle ratio
     
-    if (treeSeed != 0) { // i.e. to disable making random rotations 
+    if (this.treeSeed != 0) { // i.e. to disable making random rotations 
       angle += random(0, HALF_PI);
     }
     
@@ -29448,7 +29676,7 @@ class solarchvision_Model0Ds {
   
   void branchDeclination () {
     
-    WIN3D.graphics.rotateY(branchAngle);
+    WIN3D.graphics.rotateY(this.branchAngle);
   }
   
   
@@ -29474,7 +29702,7 @@ class solarchvision_Model0Ds {
     WIN3D.graphics.strokeWeight(1);
 
     
-    for (int i = 0; i < elementSegments; i++) {
+    for (int i = 0; i < this.elementSegments; i++) {
       WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
   
@@ -29485,10 +29713,10 @@ class solarchvision_Model0Ds {
         if ((j == 2) || (j == 3)) V = 1;
   
         float T = w;
-        if ((j == 2) || (j == 3)) T *= branchRatio; // for conic trunks
+        if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
   
-        float x = T * cos((i + U) * TWO_PI / float(elementSegments));
-        float y = T * sin((i + U) * TWO_PI / float(elementSegments));
+        float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
+        float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
         float z = h * (V - 0.5);
   
   
@@ -29650,7 +29878,7 @@ class solarchvision_Model1Ds {
       if (target_window == TypeWindow.OBJ) {
         if (User3D.export_MaterialLibrary) {
     
-          if (allModel1Ds.num != 0) {
+          if (this.num != 0) {
     
             mtlOutput.println("newmtl " + "Model1Ds_Trunk");
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -29715,7 +29943,7 @@ class solarchvision_Model1Ds {
     
             if (User3D.export_PolyToPoly == 1) {
               obj_lastGroupNumber += 1;
-              objOutput.println("g allModel1Ds_" + nf(f, 0));
+              objOutput.println("g Model1Ds_" + nf(f, 0));
             }    
           }
   
@@ -29725,7 +29953,7 @@ class solarchvision_Model1Ds {
   
           if (target_window == TypeWindow.OBJ) {
             for (int _turn = 1; _turn < 4; _turn++) {
-              allModel1Ds.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+              this.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
             }
     
             obj_lastVertexNumber += num_vertices_added;
@@ -29869,11 +30097,11 @@ class solarchvision_Model1Ds {
   
               if (User3D.export_PolyToPoly == 0) {
                 obj_lastGroupNumber += 1;
-                objOutput.println(("g allModel1Ds_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
+                objOutput.println(("g Model1Ds_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
               }
   
               if (User3D.export_MaterialLibrary) {
-                objOutput.println("usemtl allModel1Ds_Trunk");
+                objOutput.println("usemtl Model1Ds_Trunk");
               }
   
               obj_lastFaceNumber += 1;
@@ -29986,11 +30214,11 @@ class solarchvision_Model1Ds {
   
             if (User3D.export_PolyToPoly == 0) {
               obj_lastGroupNumber += 1;
-              objOutput.println(("g allModel1Ds_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
+              objOutput.println(("g Model1Ds_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
             }
   
             if (User3D.export_MaterialLibrary) {
-              objOutput.println("usemtl allModel1Ds_Leaf");
+              objOutput.println("usemtl Model1Ds_Leaf");
             }
   
             obj_lastFaceNumber += 1;
@@ -31388,314 +31616,7 @@ class solarchvision_Model2Ds {
     return return_point;
   }
 
-  void add_onLand (int people_or_trees) {
 
-    println(CLASS_STAMP + ".add_onLand");
-  
-    //randomSeed(0);
-  
-    float[][] treesXYZS = {
-      {
-        0, 0, 0, 0
-      }
-    };
-  
-    int Tessellation = Land3D.displayTessellation;
-    if (WIN3D.FacesShade == SHADE.Surface_Base) {
-      Tessellation = 0;
-    }
-  
-    int TotalSubNo = 1;  
-    if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
-  
-  
-  
-    if ((Land3D.displayTexture) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
-  
-      for (int i = Land3D.skipStart; i < Land3D.num_rows - 1 - Land3D.skipEnd; i++) {
-        for (int j = 0; j < Land3D.num_columns - 1; j++) {
-  
-          float[][] base_Vertices = new float [4][3];
-  
-          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
-          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
-          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
-  
-          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
-          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
-          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
-  
-          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
-  
-          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
-          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
-          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];
-  
-          for (int n = 0; n < TotalSubNo; n++) {
-  
-            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
-  
-            int n_Map = -1; 
-            for (int q = 0; q < Land3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
-  
-              n_Map = q; 
-  
-              for (int s = 0; s < subFace.length; s++) {
-  
-                float u = (subFace[s][0] / Land3D.Textures_U_scale[q] + 0.5);
-                float v = (-subFace[s][1] / Land3D.Textures_V_scale[q] + 0.5);
-  
-                if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
-  
-                  n_Map = -1;
-  
-                  break;
-                }
-              }            
-  
-              if (n_Map == q) break;
-            }
-  
-            if (n_Map != -1) {
-  
-              int max_o = int(10000 / pow(2, Land3D.displayTessellation)); // number of tries to find green points!
-  
-              //if (max_o > 100) max_o = 100;
-  
-              //if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-              if (i > 10) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-              
-              //if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
-  
-              for (int o = 0; o < max_o; o++) {
-  
-                float di = random(1);
-                float dj = random(1);
-  
-                float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-                float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-                float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
-                
-                // do not create trees close to each other
-/*                
-                for (int p = 0; p < ?.length; p++) {
-                }
-????????                
-                if () {
-                  
-                  break; 
-                }
-*/                
-  
-                float u = (x / Land3D.Textures_U_scale[n_Map] + 0.5);
-                float v = (-y / Land3D.Textures_V_scale[n_Map] + 0.5);
-  
-                int uPixel = int(u * Land3D.Textures_map[n_Map].width);
-                int vPixel = int(v * Land3D.Textures_map[n_Map].height);
-  
-                color COL = Land3D.Textures_map[n_Map].get(uPixel, vPixel);
-                //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-                float r = COL >> 16 & 0xFF; 
-                float g = COL >> 8 & 0xFF;
-                float b = COL & 0xFF;
-  
-                //if ((g > r + 8) && (g > b + 16)) { // looks more green
-                if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
-  
-                  if (g < 56) { // not on grass (light green) 
-  
-                    //if (z + STATION.getElevation() > 5) { // not in water (below see level)
-  
-                    //float s = 5 + random(10); 
-                    float s = 5 + random(12.5);
-                    //float s = 10 + random(20); // bigger trees        
-  
-                    int foundNearTree = 0;
-  
-                    for (int f = 1; f < treesXYZS.length; f++) {
-  
-                      float x0 = treesXYZS[f][0];
-                      float y0 = treesXYZS[f][1];
-                      float z0 = treesXYZS[f][2];
-                      float s0 = treesXYZS[f][3];
-  
-                      //if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
-                      if (dist(x0, y0, z0, x, y, z) < 0.5 * (s0 + s)) { //avoids creating trees close to each other
-                        foundNearTree = 1;
-  
-                        break;
-                      }
-                    }
-  
-                    if (foundNearTree == 0) {
-  
-                      if (people_or_trees == 2) {
-                        this.create("TREES", 0, x, y, z, s);
-                      } else {
-                        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, s, random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
-                      }                  
-  
-  
-                      float[][] newTree = {
-                        {
-                          x, y, z, s
-                        }
-                      };
-                      treesXYZS = (float [][]) concat(treesXYZS, newTree);
-                    }
-                    //}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    } else {
-  
-      for (int i = Land3D.skipStart; i < Land3D.num_rows - 1 - Land3D.skipEnd; i++) {
-        for (int j = 0; j < Land3D.num_columns - 1; j++) {
-  
-          float[][] base_Vertices = new float [4][3];
-  
-          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
-          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
-          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
-  
-          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
-          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
-          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
-  
-          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
-  
-          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
-          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
-          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];      
-  
-          for (int n = 0; n < TotalSubNo; n++) {
-  
-            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
-  
-            int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
-  
-  
-            if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-            //if (i > 10) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-  
-            for (int o = 0; o < max_o; o++) {
-  
-              float di = random(1);
-              float dj = random(1);
-  
-              float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
-              float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
-              float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
-  
-              if (z + STATION.getElevation() > 0) { // i.e. above sea level 
-  
-                if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
-  
-                  if (people_or_trees == 1) {
-                    this.create("PEOPLE", 0, x, y, z, 2.5);
-                  } else if (people_or_trees == 2) {
-                    this.create("TREES", 0, x, y, z, 5 + random(10));
-                  } else {
-                    allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  void add_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
-  
-    for (int i = 0; i < n; i++) {
-  
-      float a = random(360);
-      float b = pow(random(pow(r1, 2), pow(r2, 2)), 0.5); // to make it uniform on the surface
-  
-      float x = x0 + b * funcs.cos_ang(a);
-      float y = y0 + b * funcs.sin_ang(a);
-      float z = z0;
-  
-      if (people_or_trees == 1) {
-        this.create("PEOPLE", 0, x, y, z, 2.5);
-      } else if (people_or_trees == 2) {
-        this.create("TREES", 0, x, y, z, 5 + random(10));
-      } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
-      }
-    }
-  }
-  
-  void add_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
-  
-    for (int i = 0; i < n; i++) {
-  
-      //float a = random(-rx, rx); 
-      //float b = random(-ry, ry);
-  
-      // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
-      float a = random(1-rx, rx-1);  
-      float b = random(1-ry, ry-1);
-  
-      float x = a * funcs.cos_ang(rot) - b * funcs.sin_ang(rot);
-      float y = a * funcs.sin_ang(rot) + b * funcs.cos_ang(rot);
-      float z = 0;
-  
-      x += x0;
-      y += y0;
-      z += z0;
-  
-      if (people_or_trees == 1) {
-        this.create("PEOPLE", 0, x, y, z, 2.5);
-      } else if (people_or_trees == 2) {
-        this.create("TREES", 0, x, y, z, 5 + random(10));
-      } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
-      }
-    }
-  }
-  
-  void add_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
-  
-    float x0 = 0.5 * (x1 + x2);
-    float y0 = 0.5 * (y1 + y2);
-    float z0 = 0.5 * (z1 + z2);
-  
-    float rx = 0.5 * abs(x2 - x1);
-    float ry = 0.5 * abs(y2 - y1);
-  
-    for (int i = 0; i < n; i++) {
-  
-      //float a = random(-rx, rx); 
-      //float b = random(-ry, ry);
-  
-      // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
-      float a = random(1-rx, rx-1);  
-      float b = random(1-ry, ry-1);
-  
-      float x = x0 + a;
-      float y = y0 + b;
-      float z = z0;
-  
-      if (people_or_trees == 1) {
-        this.create("PEOPLE", 0, x, y, z, 2.5);
-      } else if (people_or_trees == 2) {
-        this.create("TREES", 0, x, y, z, 5 + random(10));
-      } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
-      }
-    }
-  }  
   
   void create (String t, int m, float x, float y, float z, float s) {
   
@@ -36690,14 +36611,331 @@ class solarchvision_Create3Ds {
     }
   }  
 
+
+
+  void add_onLand (int people_or_trees) {
+
+    println(CLASS_STAMP + ".add_onLand");
+  
+    //randomSeed(0);
+  
+    float[][] treesXYZS = {
+      {
+        0, 0, 0, 0
+      }
+    };
+  
+    int Tessellation = Land3D.displayTessellation;
+    if (WIN3D.FacesShade == SHADE.Surface_Base) {
+      Tessellation = 0;
+    }
+  
+    int TotalSubNo = 1;  
+    if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+  
+  
+  
+    if ((Land3D.displayTexture) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+  
+      for (int i = Land3D.skipStart; i < Land3D.num_rows - 1 - Land3D.skipEnd; i++) {
+        for (int j = 0; j < Land3D.num_columns - 1; j++) {
+  
+          float[][] base_Vertices = new float [4][3];
+  
+          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
+          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
+          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
+  
+          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
+          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
+          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
+  
+          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
+  
+          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
+          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
+          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];
+  
+          for (int n = 0; n < TotalSubNo; n++) {
+  
+            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+  
+            int n_Map = -1; 
+            for (int q = 0; q < Land3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+  
+              n_Map = q; 
+  
+              for (int s = 0; s < subFace.length; s++) {
+  
+                float u = (subFace[s][0] / Land3D.Textures_U_scale[q] + 0.5);
+                float v = (-subFace[s][1] / Land3D.Textures_V_scale[q] + 0.5);
+  
+                if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+  
+                  n_Map = -1;
+  
+                  break;
+                }
+              }            
+  
+              if (n_Map == q) break;
+            }
+  
+            if (n_Map != -1) {
+  
+              int max_o = int(10000 / pow(2, Land3D.displayTessellation)); // number of tries to find green points!
+  
+              //if (max_o > 100) max_o = 100;
+  
+              //if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+              if (i > 10) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+              
+              //if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
+  
+              for (int o = 0; o < max_o; o++) {
+  
+                float di = random(1);
+                float dj = random(1);
+  
+                float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+                float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+                float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+                
+                // do not create trees close to each other
+/*                
+                for (int p = 0; p < ?.length; p++) {
+                }
+????????                
+                if () {
+                  
+                  break; 
+                }
+*/                
+  
+                float u = (x / Land3D.Textures_U_scale[n_Map] + 0.5);
+                float v = (-y / Land3D.Textures_V_scale[n_Map] + 0.5);
+  
+                int uPixel = int(u * Land3D.Textures_map[n_Map].width);
+                int vPixel = int(v * Land3D.Textures_map[n_Map].height);
+  
+                color COL = Land3D.Textures_map[n_Map].get(uPixel, vPixel);
+                //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                float r = COL >> 16 & 0xFF; 
+                float g = COL >> 8 & 0xFF;
+                float b = COL & 0xFF;
+  
+                //if ((g > r + 8) && (g > b + 16)) { // looks more green
+                if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
+  
+                  if (g < 56) { // not on grass (light green) 
+  
+                    //if (z + STATION.getElevation() > 5) { // not in water (below see level)
+  
+                    //float s = 5 + random(10); 
+                    float s = 5 + random(12.5);
+                    //float s = 10 + random(20); // bigger trees        
+  
+                    int foundNearTree = 0;
+  
+                    for (int f = 1; f < treesXYZS.length; f++) {
+  
+                      float x0 = treesXYZS[f][0];
+                      float y0 = treesXYZS[f][1];
+                      float z0 = treesXYZS[f][2];
+                      float s0 = treesXYZS[f][3];
+  
+                      //if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
+                      if (dist(x0, y0, z0, x, y, z) < 0.5 * (s0 + s)) { //avoids creating trees close to each other
+                        foundNearTree = 1;
+  
+                        break;
+                      }
+                    }
+  
+                    if (foundNearTree == 0) {
+  
+                      if (people_or_trees == 2) {
+                        allModel2Ds.create("TREES", 0, x, y, z, s);
+                      } else {
+                        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, s, random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                      }                  
+  
+  
+                      float[][] newTree = {
+                        {
+                          x, y, z, s
+                        }
+                      };
+                      treesXYZS = (float [][]) concat(treesXYZS, newTree);
+                    }
+                    //}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } else {
+  
+      for (int i = Land3D.skipStart; i < Land3D.num_rows - 1 - Land3D.skipEnd; i++) {
+        for (int j = 0; j < Land3D.num_columns - 1; j++) {
+  
+          float[][] base_Vertices = new float [4][3];
+  
+          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
+          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
+          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
+  
+          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
+          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
+          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
+  
+          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
+  
+          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
+          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
+          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];      
+  
+          for (int n = 0; n < TotalSubNo; n++) {
+  
+            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+  
+            int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+  
+  
+            if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            //if (i > 10) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+  
+            for (int o = 0; o < max_o; o++) {
+  
+              float di = random(1);
+              float dj = random(1);
+  
+              float x = funcs.bilinear(subFace[0][0], subFace[1][0], subFace[2][0], subFace[3][0], di, dj);
+              float y = funcs.bilinear(subFace[0][1], subFace[1][1], subFace[2][1], subFace[3][1], di, dj);
+              float z = funcs.bilinear(subFace[0][2], subFace[1][2], subFace[2][2], subFace[3][2], di, dj);
+  
+              if (z + STATION.getElevation() > 0) { // i.e. above sea level 
+  
+                if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
+  
+                  if (people_or_trees == 1) {
+                    allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+                  } else if (people_or_trees == 2) {
+                    allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+                  } else {
+                    allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  void add_onPolar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
+  
+    for (int i = 0; i < n; i++) {
+  
+      float a = random(360);
+      float b = pow(random(pow(r1, 2), pow(r2, 2)), 0.5); // to make it uniform on the surface
+  
+      float x = x0 + b * funcs.cos_ang(a);
+      float y = y0 + b * funcs.sin_ang(a);
+      float z = z0;
+  
+      if (people_or_trees == 1) {
+        allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+      } else if (people_or_trees == 2) {
+        allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+      } else {
+        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+      }
+    }
+  }
+  
+  void add_onPlane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
+  
+    for (int i = 0; i < n; i++) {
+  
+      //float a = random(-rx, rx); 
+      //float b = random(-ry, ry);
+  
+      // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
+      float a = random(1-rx, rx-1);  
+      float b = random(1-ry, ry-1);
+  
+      float x = a * funcs.cos_ang(rot) - b * funcs.sin_ang(rot);
+      float y = a * funcs.sin_ang(rot) + b * funcs.cos_ang(rot);
+      float z = 0;
+  
+      x += x0;
+      y += y0;
+      z += z0;
+  
+      if (people_or_trees == 1) {
+        allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+      } else if (people_or_trees == 2) {
+        allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+      } else {
+        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+      }
+    }
+  }
+  
+  void add_onMesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
+  
+    float x0 = 0.5 * (x1 + x2);
+    float y0 = 0.5 * (y1 + y2);
+    float z0 = 0.5 * (z1 + z2);
+  
+    float rx = 0.5 * abs(x2 - x1);
+    float ry = 0.5 * abs(y2 - y1);
+  
+    for (int i = 0; i < n; i++) {
+  
+      //float a = random(-rx, rx); 
+      //float b = random(-ry, ry);
+  
+      // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
+      float a = random(1-rx, rx-1);  
+      float b = random(1-ry, ry-1);
+  
+      float x = x0 + a;
+      float y = y0 + b;
+      float z = z0;
+  
+      if (people_or_trees == 1) {
+        allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+      } else if (people_or_trees == 2) {
+        allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+      } else {
+        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+      }
+    }
+  }  
+
+
+
+
+
+
+
   
   void add_DefaultModel (int n) {
   
     if (Land3D.loadMesh) {
   
-      allModel2Ds.add_onLand(1); // 1 = people
+      Create3Ds.add_onLand(1); // 1 = people
   
-      allModel2Ds.add_onLand(2); // 2 = 2D trees
+      Create3Ds.add_onLand(2); // 2 = 2D trees
     } else {
       //allModel2Ds.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
       //allModel2Ds.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
@@ -43315,12 +43553,12 @@ void mouseClicked () {
             }
             
             if (menu_option.equals("Add People on Land")) {
-              allModel2Ds.add_onLand(1); // 1 = people, 2 = 2D trees
+              Create3Ds.add_onLand(1); // 1 = people, 2 = 2D trees, 3 = 3D trees
               WIN3D.update = true;
             }                  
 
             if (menu_option.equals("Add 2D-Trees on Land")) {
-              allModel2Ds.add_onLand(2); // 1 = people, 2 = 2D trees
+              Create3Ds.add_onLand(2); // 1 = people, 2 = 2D trees, 3 = 3D trees
               WIN3D.update = true;
             }   
 
