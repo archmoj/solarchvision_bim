@@ -4460,7 +4460,7 @@ class solarchvision_WORLD {
   
         if (check_it == 1) {  
   
-          if (isInside(pointLongitude, pointLatitude, this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1]) == 1) {
+          if (isInside(pointLongitude, pointLatitude, this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1])) {
             float d_Center = dist(pointLongitude, pointLatitude, 0.5 * (this.VIEW_BoundariesX[i][0] + this.VIEW_BoundariesX[i][1]), 0.5 * (this.VIEW_BoundariesY[i][0] + this.VIEW_BoundariesY[i][1]));
             float d_Size = dist(this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1]);
   
@@ -9077,7 +9077,7 @@ class solarchvision_ROLLOUT {
   
         textAlign(LEFT, CENTER);    
   
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
           this.parent = i;
           this.child = 1; // <<<<<
   
@@ -9121,7 +9121,7 @@ class solarchvision_ROLLOUT {
   
         textAlign(LEFT, CENTER);     
   
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
           this.child = i;
   
           this.update = true;
@@ -9628,7 +9628,7 @@ class solarchvision_ROLLOUT {
     }    
   
     if (this.include) {
-      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY) == 1) {  
+      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY)) {  
         SOLARCHVISION_X_clicked = -1;
         SOLARCHVISION_Y_clicked = -1;
       }
@@ -9670,7 +9670,7 @@ class solarchvision_ROLLOUT {
     cr = 0.25 * (h + 2 * o);
     triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
   
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
       if (mouseButton == LEFT) {
   
         if (stp_v < 0) {
@@ -9687,7 +9687,7 @@ class solarchvision_ROLLOUT {
     cy += 2 * cr;
     triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
   
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
   
       if (mouseButton == LEFT) {
   
@@ -9722,7 +9722,7 @@ class solarchvision_ROLLOUT {
       q = (new_value - min_v) / (max_v - min_v);
     }
   
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2)) == 1) {
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
   
       q = 1;
   
@@ -19142,7 +19142,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -19235,7 +19235,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -19331,7 +19331,7 @@ class solarchvision_Select3Ds {
                 float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
                 if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
                     if (mouseButton == RIGHT) {
                       include_OBJ_in_newSelection = 1;
                       break_loops = 1;
@@ -19375,7 +19375,7 @@ class solarchvision_Select3Ds {
                 float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
                 if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
                     if (mouseButton == RIGHT) {
                       include_OBJ_in_newSelection = 1;
                       break_loops = 1;
@@ -19467,7 +19467,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -19555,7 +19555,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -19639,7 +19639,7 @@ class solarchvision_Select3Ds {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
             if (mouseButton == RIGHT) {
               include_OBJ_in_newSelection = 1;
             }
@@ -19725,7 +19725,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -19826,7 +19826,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -19924,7 +19924,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -20017,7 +20017,7 @@ class solarchvision_Select3Ds {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
               if (mouseButton == RIGHT) {
                 include_OBJ_in_newSelection = 1;
                 break_loops = 1;
@@ -40777,7 +40777,7 @@ void mouseWheel (MouseEvent event) {
 
               if (UI_BAR_d.Items[i][0].equals("Day")) {
 
-                if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+                if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
                   int keep_STUDY_i_Start = STUDY.i_Start;
                   int keep_STUDY_i_End = STUDY.i_End;
@@ -40811,7 +40811,7 @@ void mouseWheel (MouseEvent event) {
 
               if (UI_BAR_d.Items[i][0].equals("Year")) {
 
-                if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+                if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
                   int keep_STUDY_joinDays = STUDY.joinDays;
 
@@ -40835,7 +40835,7 @@ void mouseWheel (MouseEvent event) {
 
               if (UI_BAR_d.Items[i][0].equals("Scenario")) {
 
-                if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+                if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
                   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
                     int keep_SampleYear_Start = SampleYear_Start;
@@ -40974,7 +40974,7 @@ void mouseWheel (MouseEvent event) {
 
 
           if (WORLD.include) {
-            if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY) == 1) {
+            if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
               int keep_WORLD_Zoom = WORLD.Zoom;
 
@@ -40993,7 +40993,7 @@ void mouseWheel (MouseEvent event) {
           }    
 
           if (WIN3D.include) {
-            if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
+            if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
               float[] P = Select3Ds.getPivot();
 
@@ -41322,7 +41322,7 @@ void mouseReleased () {
         } else {        
 
           if (WIN3D.include) {
-            if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
+            if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
               if ((WIN3D.UI_CurrentTask == UITASK.RectSelect) || (WIN3D.UI_CurrentTask > UITASK.Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
 
@@ -41489,8 +41489,8 @@ void mouseDragged () {
           dragging_started = 1;
         }
       } else if (WIN3D.include) {
-        if (isInside(pmouseX, pmouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
-          if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
+        if (isInside(pmouseX, pmouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
+          if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
             if (dragging_started == 0) {
 
@@ -41880,7 +41880,7 @@ void mouseClicked () {
       }    
 
 
-      if ((UI_BAR_a.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_pixel_A) == 0)) {
+      if ((UI_BAR_a.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_pixel_A) == false)) {
         
         String menu_option = UI_BAR_a.Items[UI_BAR_a.selected_parent][UI_BAR_a.selected_child];
 
@@ -44140,25 +44140,25 @@ void mouseClicked () {
         SOLARCHVISION_X_clicked = mouseX;
         SOLARCHVISION_Y_clicked = mouseY;
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_pixel_A) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_pixel_A)) {
           UI_BAR_a.update = true;
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B)) {
           UI_BAR_b.update = true;
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
           UI_BAR_c.update = true;
           typeUserCommand = 1;
         }  
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) {
           UI_BAR_d.update = true;
         }  
 
         if (WORLD.include) {
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY) == 1) {
+          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
             float mouse_lon = 360.0 * ((mouseX - WORLD.cX) * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
             float mouse_lat = -180.0 * ((mouseY - WORLD.cY) * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
@@ -44407,7 +44407,7 @@ void mouseClicked () {
         }
 
         if (WIN3D.include) {
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY) == 1) {
+          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
             float Image_X = 0;
             float Image_Y = 0;
@@ -45558,9 +45558,11 @@ void mouseClicked () {
   }
 }
 
-int isInside (float x, float y, float x1, float y1, float x2, float y2) {
-  if ((x1 < x) && (x < x2) && (y1 < y) && (y < y2)) return 1;
-  else return 0;
+boolean isInside (float x, float y, float x1, float y1, float x2, float y2) {
+  if ((x1 < x) && (x < x2) && (y1 < y) && (y < y2)) {
+    return true;
+  }
+  return false;
 } 
 
 
@@ -45952,7 +45954,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
         }
 
       }
@@ -45994,7 +45996,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
             }
           }
 
@@ -46039,7 +46041,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
             }
           }
 
@@ -46088,7 +46090,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
               }
             }
 
@@ -46140,7 +46142,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
               }
             }
 
@@ -46186,7 +46188,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
             }
           }
 
@@ -46249,7 +46251,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
             }
           }
 
@@ -46292,7 +46294,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
               text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
             }
           }
@@ -46336,7 +46338,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
               text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
             }
           }
@@ -46379,7 +46381,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
         }
       }
 
@@ -46418,7 +46420,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R) == 1) {
+          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R)) {
 
             float[] COL = PAINT.getColorStyle(14, _u); // <<<<<<<<<<<<<<<<<
             fill(COL[1], COL[2], COL[3], COL[0]);
@@ -46490,7 +46492,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
                 if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
                 }
               }
 
@@ -46514,7 +46516,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
               }
             }
 
@@ -46540,7 +46542,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
               }
             }
 
@@ -46566,7 +46568,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
               }
             }
 
@@ -46597,7 +46599,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                   float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                    if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                    if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
                   }
                 }
 
@@ -46736,7 +46738,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
           }
         }
         endShape(CLOSE);
@@ -46851,8 +46853,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
           if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
-              if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
+            if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+              if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
                 line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
               }
             }
@@ -46961,8 +46963,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
       if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-        if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
-          if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY) == 1) {
+        if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+          if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
             line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
           }
         }
@@ -51880,7 +51882,7 @@ class solarchvision_UI_BAR_a {
   
         if (i > 0) cx += 1.5 * this.width_parent; // to include SOLARCHVISION title     
   
-        if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr) == 1) {
+        if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
   
           if (this.selected_parent == -1) {
   
@@ -51920,7 +51922,7 @@ class solarchvision_UI_BAR_a {
   
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
   
-            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_pixel_A, cx + this.width_child, cy + cr + j * SOLARCHVISION_pixel_A) == 1) {
+            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_pixel_A, cx + this.width_child, cy + cr + j * SOLARCHVISION_pixel_A)) {
   
               this.selected_child = j;
   
@@ -52533,7 +52535,7 @@ class solarchvision_UI_BAR_b {
   
   
   
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
   
           if (mouseButton == RIGHT) {       
   
@@ -54556,7 +54558,7 @@ class solarchvision_UI_BAR_d {
   
         if (this.Items[i][0].equals("Day")) {
   
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
   
             if (mouseButton == LEFT) {
               STUDY.i_Start = int(funcs.roundTo(24.0 * (SOLARCHVISION_X_clicked - x1) / (x2 - x1) - 0.5, 1));
@@ -54606,7 +54608,7 @@ class solarchvision_UI_BAR_d {
   
         if (this.Items[i][0].equals("Year")) {
   
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
   
             if (mouseButton == LEFT) {
               float keep_TIME_Date = TIME.date;
@@ -54717,7 +54719,7 @@ class solarchvision_UI_BAR_d {
             n2 = ENSEMBLE_OBSERVED_end;
           }  
   
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
   
             if (mouseButton == LEFT) {
   
@@ -54924,7 +54926,7 @@ class solarchvision_UI_BAR_d {
         float y1 = temp_offsetY + (ry - 0.15) * displayBarHeight;
         float y2 = temp_offsetY + (ry + 0.15) * displayBarHeight;
   
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2) == 1) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
   
           STUDY.ImpactLayer = n;
   
