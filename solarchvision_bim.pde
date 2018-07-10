@@ -37275,7 +37275,7 @@ class solarchvision_Create3Ds {
                       if (people_or_trees == 2) {
                         allModel2Ds.create("TREES", 0, x, y, z, s);
                       } else {
-                        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, s, random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                        allModel0Ds.create(User3D.create_Model1D_Type, x, y, z, s, random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
                       }                  
   
   
@@ -37345,7 +37345,7 @@ class solarchvision_Create3Ds {
                   } else if (people_or_trees == 2) {
                     allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
                   } else {
-                    allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                    allModel0Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
                   }
                 }
               }
@@ -37372,7 +37372,7 @@ class solarchvision_Create3Ds {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+        allModel0Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
   }
@@ -37401,7 +37401,7 @@ class solarchvision_Create3Ds {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+        allModel0Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
   }
@@ -37433,7 +37433,7 @@ class solarchvision_Create3Ds {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+        allModel0Ds.create(User3D.create_Model1D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, User3D.create_Model1D_Seed, User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
   }  
@@ -44069,12 +44069,17 @@ void mouseClicked () {
             }
             
             if (menu_option.equals("Add People on Land")) {
-              Create3Ds.add_onLand(1); // 1 = people, 2 = 2D trees, 3 = 3D trees
+              Create3Ds.add_onLand(1); // 1 = people
               WIN3D.update = true;
             }                  
 
             if (menu_option.equals("Add 2D-Trees on Land")) {
-              Create3Ds.add_onLand(2); // 1 = people, 2 = 2D trees, 3 = 3D trees
+              Create3Ds.add_onLand(2); // 2 = 2D trees
+              WIN3D.update = true;
+            }   
+
+            if (menu_option.equals("Add 3D-Trees on Land")) {
+              Create3Ds.add_onLand(3); // 3 = 3D trees
               WIN3D.update = true;
             }   
 
@@ -51854,6 +51859,7 @@ class solarchvision_UI_BAR_a {
       "Person", 
       "Add People on Land",
       "Add 2D-Trees on Land",      
+      "Add 3D-Trees on Land",
       "House1", 
       "House2", 
       "Box", 
