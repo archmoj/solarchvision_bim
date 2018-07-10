@@ -15596,8 +15596,8 @@ class solarchvision_Rotate3Ds {
         allModel0Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
         allModel0Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
         allModel0Ds.setZ(f, z0 + (z));
-  
-        allModel0Ds.setR(f, allModel0Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        allModel0Ds.setR(f, allModel0Ds.getR(f) - r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       } else if (the_Vector == 1) {
         allModel0Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
         allModel0Ds.setY(f, y0 + (y));
@@ -15807,7 +15807,7 @@ class solarchvision_Rotate3Ds {
   
   
           if (the_Vector == 2) {
-            allModel0Ds.setR(f, allModel0Ds.getR(f) + r); // <<<<<<<<<
+            //allModel0Ds.setR(f, allModel0Ds.getR(f) + r); // <<<<<<<<<
           } else if (the_Vector == 1) {
           } else if (the_Vector == 0) {
           }
@@ -17509,18 +17509,18 @@ class solarchvision_Delete3Ds {
       }
 
 
-      int startallModel0Ds = allGroups.getStart_Model0D(OBJ_ID);
-      int endallModel0Ds = allGroups.getStop_Model0D(OBJ_ID);
+      int startModel0Ds = allGroups.getStart_Model0D(OBJ_ID);
+      int endModel0Ds = allGroups.getStop_Model0D(OBJ_ID);
 
       {
 
-        if ((0 <= startallModel0Ds) && (startallModel0Ds <= endallModel0Ds)) {
+        if ((0 <= startModel0Ds) && (startModel0Ds <= endModel0Ds)) {
 
           for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
 
             for (int j = 0; j < 2; j++) {
 
-              allGroups.Model0Ds[i][j] -= 1 + endallModel0Ds - startallModel0Ds;
+              allGroups.Model0Ds[i][j] -= 1 + endModel0Ds - startModel0Ds;
 
               if (allGroups.Model0Ds[i][j] < 0) allGroups.Model0Ds[i][j] = 0;
             }
@@ -17533,53 +17533,53 @@ class solarchvision_Delete3Ds {
         allGroups.Model0Ds = (int[][]) concat(startList, endList);
       }  
 
-      if ((0 <= startallModel0Ds) && (startallModel0Ds <= endallModel0Ds)) {
+      if ((0 <= startModel0Ds) && (startModel0Ds <= endModel0Ds)) {
 
         {
-          float[][] startList = (float[][]) subset(allModel0Ds.XYZSR, 0, startallModel0Ds);
-          float[][] endList = (float[][]) subset(allModel0Ds.XYZSR, endallModel0Ds + 1);
+          float[][] startList = (float[][]) subset(allModel0Ds.XYZSR, 0, startModel0Ds);
+          float[][] endList = (float[][]) subset(allModel0Ds.XYZSR, endModel0Ds + 1);
 
           allModel0Ds.XYZSR = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel0Ds.Type, 0, startallModel0Ds);
-          int[] endList = (int[]) subset(allModel0Ds.Type, endallModel0Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.Type, 0, startModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.Type, endModel0Ds + 1);
 
           allModel0Ds.Type = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel0Ds.DegreeMin, 0, startallModel0Ds);
-          int[] endList = (int[]) subset(allModel0Ds.DegreeMin, endallModel0Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.DegreeMin, 0, startModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.DegreeMin, endModel0Ds + 1);
 
           allModel0Ds.DegreeMin = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel0Ds.DegreeMax, 0, startallModel0Ds);
-          int[] endList = (int[]) subset(allModel0Ds.DegreeMax, endallModel0Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.DegreeMax, 0, startModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.DegreeMax, endModel0Ds + 1);
 
           allModel0Ds.DegreeMax = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel0Ds.Seed, 0, startallModel0Ds);
-          int[] endList = (int[]) subset(allModel0Ds.Seed, endallModel0Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.Seed, 0, startModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.Seed, endModel0Ds + 1);
 
           allModel0Ds.Seed = (int[]) concat(startList, endList);
         }
 
         {
-          float[] startList = (float[]) subset(allModel0Ds.TrunkSize, 0, startallModel0Ds);
-          float[] endList = (float[]) subset(allModel0Ds.TrunkSize, endallModel0Ds + 1);
+          float[] startList = (float[]) subset(allModel0Ds.TrunkSize, 0, startModel0Ds);
+          float[] endList = (float[]) subset(allModel0Ds.TrunkSize, endModel0Ds + 1);
 
           allModel0Ds.TrunkSize = (float[]) concat(startList, endList);
         }
 
         {
-          float[] startList = (float[]) subset(allModel0Ds.LeafSize, 0, startallModel0Ds);
-          float[] endList = (float[]) subset(allModel0Ds.LeafSize, endallModel0Ds + 1);
+          float[] startList = (float[]) subset(allModel0Ds.LeafSize, 0, startModel0Ds);
+          float[] endList = (float[]) subset(allModel0Ds.LeafSize, endModel0Ds + 1);
 
           allModel0Ds.LeafSize = (float[]) concat(startList, endList);
         }
@@ -17588,18 +17588,18 @@ class solarchvision_Delete3Ds {
         allModel0Ds.num = allModel0Ds.XYZSR.length;
       }
 
-      int startallModel2Ds = allGroups.getStart_Model2D(OBJ_ID);
-      int endallModel2Ds = allGroups.getStop_Model2D(OBJ_ID);
+      int startModel2Ds = allGroups.getStart_Model2D(OBJ_ID);
+      int endModel2Ds = allGroups.getStop_Model2D(OBJ_ID);
 
       {
 
-        if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
+        if ((0 <= startModel2Ds) && (startModel2Ds <= endModel2Ds)) {
 
           for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
 
             for (int j = 0; j < 2; j++) {
 
-              allGroups.Model2Ds[i][j] -= 1 + endallModel2Ds - startallModel2Ds;
+              allGroups.Model2Ds[i][j] -= 1 + endModel2Ds - startModel2Ds;
 
               if (allGroups.Model2Ds[i][j] < 0) allGroups.Model2Ds[i][j] = 0;
             }
@@ -17612,18 +17612,18 @@ class solarchvision_Delete3Ds {
         allGroups.Model2Ds = (int[][]) concat(startList, endList);
       }  
 
-      if ((0 <= startallModel2Ds) && (startallModel2Ds <= endallModel2Ds)) {
+      if ((0 <= startModel2Ds) && (startModel2Ds <= endModel2Ds)) {
 
         {
-          float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, startallModel2Ds);
-          float[][] endList = (float[][]) subset(allModel2Ds.XYZS, endallModel2Ds + 1);
+          float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, startModel2Ds);
+          float[][] endList = (float[][]) subset(allModel2Ds.XYZS, endModel2Ds + 1);
 
           allModel2Ds.XYZS = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel2Ds.MAP, 0, startallModel2Ds);
-          int[] endList = (int[]) subset(allModel2Ds.MAP, endallModel2Ds + 1);
+          int[] startList = (int[]) subset(allModel2Ds.MAP, 0, startModel2Ds);
+          int[] endList = (int[]) subset(allModel2Ds.MAP, endModel2Ds + 1);
 
           allModel2Ds.MAP = (int[]) concat(startList, endList);
         }
@@ -29364,8 +29364,7 @@ class solarchvision_Model0Ds {
   float branchRatio = 0.7; // relational position of branches 
   int treeSeed = 0;        // this could be a random integer. Note: when using 0, the random rotation option is disabled. 
   int treeDepth = 7;       // depth of the tree
-  float treeHeight0 = 10; // height of the first element at the start 
-  float treeWidth0 = 1;   // weight of the first element at the start
+
   int elementSegments = 8; // number of polygons to create each cone
 
 
@@ -29609,11 +29608,16 @@ class solarchvision_Model0Ds {
 
             WIN3D.graphics.translate(x, -y, z);
             
+            WIN3D.graphics.rotateZ(rot);
             
         
             // Call to draw the tree
             randomSeed(this.treeSeed);
-            this.makeBranch(this.treeWidth0, this.treeHeight0, this.treeDepth, this.treeDepth);
+            
+            float treeHeight0 = r;
+            float treeWidth0 = r * 0.1;
+            
+            this.makeBranch(treeWidth0, treeHeight0, this.treeDepth, this.treeDepth);
             
             WIN3D.graphics.popMatrix();
           }
@@ -29710,8 +29714,7 @@ class solarchvision_Model0Ds {
         float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
         float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
         float z = h * (V - 0.5);
-  
-  
+
         WIN3D.graphics.vertex(x, -y, z);
       }
       WIN3D.graphics.endShape(CLOSE);
