@@ -1757,7 +1757,7 @@ class solarchvision_UITASK {
   private final static int DegreeMin = 11; 
   private final static int TrunkSize = 12; 
   private final static int LeafSize = 13; 
-  private final static int All_Model1DsProps = 14; 
+  private final static int Model0DsProps = 14; 
   private final static int Pivot = 15; 
   private final static int Normal = 16; 
   private final static int FirstVertex = 17; 
@@ -3356,9 +3356,9 @@ class solarchvision_WIN3D {
           break;
   
         case '1' :
-          allModel1Ds.displayAll = !allModel1Ds.displayAll;
-          if (allModel1Ds.displayAll) {
-            current_ObjectCategory = ObjectCategory.MODEL1D;
+          allModel0Ds.displayAll = !allModel0Ds.displayAll;
+          if (allModel0Ds.displayAll) {
+            current_ObjectCategory = ObjectCategory.MODEL0D;
             UI_BAR_b.update = true;
           }
           this.update = true; 
@@ -9333,8 +9333,8 @@ class solarchvision_ROLLOUT {
         //Land3D.displayDepth = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
   
         //allModel2Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
+        //allModel0Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel0Ds.displayAll", allModel0Ds.displayAll, 0, 1, 1), 1));
+        //allModel0Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel0Ds.displayLeaves", allModel0Ds.displayLeaves, 0, 1, 1), 1));
         //allCurves.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
         //allFaces.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
   
@@ -9559,7 +9559,7 @@ class solarchvision_ROLLOUT {
         //Select3Ds.Curve_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Curve_displayVertices", Select3Ds.Curve_displayVertices, 0, 1, 1), 1));
   
         //Select3Ds.Model2D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Model2D_displayEdges", Select3Ds.Model2D_displayEdges, 0, 1, 1), 1));
-        //Select3Ds.Model1D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Model1D_displayEdges", Select3Ds.Model1D_displayEdges, 0, 1, 1), 1));
+        //Select3Ds.Model0D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Model0D_displayEdges", Select3Ds.Model0D_displayEdges, 0, 1, 1), 1));
   
         //Select3Ds.Solid_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Solid_displayEdges", Select3Ds.Solid_displayEdges, 0, 1, 1), 1));
   
@@ -14341,8 +14341,8 @@ class solarchvision_Edit3Ds {
       this.Faces(p);
     }         
     
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(p);
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0Ds(p);
     }    
     
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -14574,31 +14574,31 @@ class solarchvision_Edit3Ds {
 
 
 
-  void Model1Ds (int p) {
+  void Model0Ds (int p) {
 
-    for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model1D_ids[o];
+      int OBJ_ID = Select3Ds.Model0D_ids[o];
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
-        allModel1Ds.setSeed(OBJ_ID, allModel1Ds.getSeed(OBJ_ID) + p);
+        allModel0Ds.setSeed(OBJ_ID, allModel0Ds.getSeed(OBJ_ID) + p);
       } 
       if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) {
-        int q = allModel1Ds.getDegreeMax(OBJ_ID);
+        int q = allModel0Ds.getDegreeMax(OBJ_ID);
 
         q += p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.setDegreeMax(OBJ_ID, q);
+        allModel0Ds.setDegreeMax(OBJ_ID, q);
 
-        User3D.create_Model1D_DegreeMax = q;
+        User3D.create_Model0D_DegreeMax = q;
         ROLLOUT.update = true;
       }
       if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-        int q1 = allModel1Ds.getDegreeMin(OBJ_ID);
-        int q2 = allModel1Ds.getDegreeMax(OBJ_ID);
+        int q1 = allModel0Ds.getDegreeMin(OBJ_ID);
+        int q2 = allModel0Ds.getDegreeMax(OBJ_ID);
         q1 += p;
         q2 += p;
 
@@ -14615,49 +14615,49 @@ class solarchvision_Edit3Ds {
 
         if (change_them == 1) {
 
-          allModel1Ds.setDegreeMin(OBJ_ID, q1);
-          allModel1Ds.setDegreeMax(OBJ_ID, q2);
+          allModel0Ds.setDegreeMin(OBJ_ID, q1);
+          allModel0Ds.setDegreeMax(OBJ_ID, q2);
 
-          User3D.create_Model1D_DegreeMin = q1;
-          User3D.create_Model1D_DegreeMax = q2;
+          User3D.create_Model0D_DegreeMin = q1;
+          User3D.create_Model0D_DegreeMax = q2;
 
           ROLLOUT.update = true;
         }
       }
       if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) {
-        int q = allModel1Ds.getDegreeMin(OBJ_ID);
+        int q = allModel0Ds.getDegreeMin(OBJ_ID);
 
         q += p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.setDegreeMin(OBJ_ID, q);
+        allModel0Ds.setDegreeMin(OBJ_ID, q);
 
-        User3D.create_Model1D_DegreeMin = q;
+        User3D.create_Model0D_DegreeMin = q;
         ROLLOUT.update = true;
       }        
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
-        float q = allModel1Ds.getTrunkSize(OBJ_ID);
+        float q = allModel0Ds.getTrunkSize(OBJ_ID);
 
         q += 0.25 * p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.setTrunkSize(OBJ_ID, q);
+        allModel0Ds.setTrunkSize(OBJ_ID, q);
 
-        User3D.create_Model1D_TrunkSize = q;
+        User3D.create_Model0D_TrunkSize = q;
         ROLLOUT.update = true;
       }
       if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
-        float q = allModel1Ds.getLeafSize(OBJ_ID);
+        float q = allModel0Ds.getLeafSize(OBJ_ID);
 
         q += 0.25 * p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.setLeafSize(OBJ_ID, q);
+        allModel0Ds.setLeafSize(OBJ_ID, q);
 
-        User3D.create_Model1D_LeafSize = q;
+        User3D.create_Model0D_LeafSize = q;
         ROLLOUT.update = true;
       }
     }
@@ -14878,8 +14878,8 @@ class solarchvision_Scale3Ds {
       this.Model2Ds(x0, y0, z0, sx, sy, sz);
     }
   
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(x0, y0, z0, sx, sy, sz);
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0Ds(x0, y0, z0, sx, sy, sz);
     }  
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -15117,15 +15117,15 @@ class solarchvision_Scale3Ds {
   }  
 
 
-  void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void Model0Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
-    for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Model1D_ids[o];
+      int f = Select3Ds.Model0D_ids[o];
   
-      float x = allModel1Ds.getX(f);
-      float y = allModel1Ds.getY(f); 
-      float z = allModel1Ds.getZ(f);
+      float x = allModel0Ds.getX(f);
+      float y = allModel0Ds.getY(f); 
+      float z = allModel0Ds.getZ(f);
   
       float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
   
@@ -15139,11 +15139,11 @@ class solarchvision_Scale3Ds {
       y = B[1];
       z = B[2];
   
-      allModel1Ds.setX(f, x);
-      allModel1Ds.setY(f, y);
-      allModel1Ds.setZ(f, z);
+      allModel0Ds.setX(f, x);
+      allModel0Ds.setY(f, y);
+      allModel0Ds.setZ(f, z);
   
-      allModel1Ds.magS(f, sz);
+      allModel0Ds.magS(f, sz);
     }
   }  
 
@@ -15252,12 +15252,12 @@ class solarchvision_Scale3Ds {
       }
   
   
-      for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
+      for (int f = allGroups.getStart_Model0D(OBJ_ID); f <= allGroups.getStop_Model0D(OBJ_ID); f++) {
+        if ((0 <= f) && (f < allModel0Ds.num)) {
   
-          float x = allModel1Ds.getX(f);
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
+          float x = allModel0Ds.getX(f);
+          float y = allModel0Ds.getY(f); 
+          float z = allModel0Ds.getZ(f);
   
           float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
   
@@ -15271,11 +15271,11 @@ class solarchvision_Scale3Ds {
           y = B[1];
           z = B[2];
   
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
+          allModel0Ds.setX(f, x);
+          allModel0Ds.setY(f, y);
+          allModel0Ds.setZ(f, z);
   
-          allModel1Ds.magS(f, sz);
+          allModel0Ds.magS(f, sz);
         }
       }  
   
@@ -15385,8 +15385,8 @@ class solarchvision_Rotate3Ds {
       this.Faces(x0, y0, z0, r, the_Vector);
     }  
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(x0, y0, z0, r, the_Vector);
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0Ds(x0, y0, z0, r, the_Vector);
     }   
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -15646,30 +15646,30 @@ class solarchvision_Rotate3Ds {
   
   
   
-  void Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  void Model0Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < Select3Ds.Model1D_ids.length; q++) {
+    for (int q = 0; q < Select3Ds.Model0D_ids.length; q++) {
   
-      int f = Select3Ds.Model1D_ids[q];
+      int f = Select3Ds.Model0D_ids[q];
   
-      float x = allModel1Ds.getX(f) - x0; 
-      float y = allModel1Ds.getY(f) - y0; 
-      float z = allModel1Ds.getZ(f) - z0;
+      float x = allModel0Ds.getX(f) - x0; 
+      float y = allModel0Ds.getY(f) - y0; 
+      float z = allModel0Ds.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel1Ds.setZ(f, z0 + (z));
+        allModel0Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allModel0Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allModel0Ds.setZ(f, z0 + (z));
   
-        allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        allModel0Ds.setR(f, allModel0Ds.getR(f) + r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       } else if (the_Vector == 1) {
-        allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel1Ds.setY(f, y0 + (y));
-        allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+        allModel0Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allModel0Ds.setY(f, y0 + (y));
+        allModel0Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allModel1Ds.setX(f, x0 + (x)); 
-        allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+        allModel0Ds.setX(f, x0 + (x)); 
+        allModel0Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allModel0Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
   }  
@@ -15822,12 +15822,12 @@ class solarchvision_Rotate3Ds {
       }    
   
   
-      for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
+      for (int f = allGroups.getStart_Model0D(OBJ_ID); f <= allGroups.getStop_Model0D(OBJ_ID); f++) {
+        if ((0 <= f) && (f < allModel0Ds.num)) {
   
-          float x = allModel1Ds.getX(f); 
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
+          float x = allModel0Ds.getX(f); 
+          float y = allModel0Ds.getY(f); 
+          float z = allModel0Ds.getZ(f);
   
           float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
   
@@ -15865,13 +15865,13 @@ class solarchvision_Rotate3Ds {
           y = B[1];
           z = B[2];
   
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
+          allModel0Ds.setX(f, x);
+          allModel0Ds.setY(f, y);
+          allModel0Ds.setZ(f, z);
   
   
           if (the_Vector == 2) {
-            allModel1Ds.setR(f, allModel1Ds.getR(f) + r); // <<<<<<<<<
+            allModel0Ds.setR(f, allModel0Ds.getR(f) + r); // <<<<<<<<<
           } else if (the_Vector == 1) {
           } else if (the_Vector == 0) {
           }
@@ -16034,8 +16034,8 @@ class solarchvision_Move3Ds {
       this.Faces(dx, dy, dz);
     }  
     
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(dx, dy, dz);
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0Ds(dx, dy, dz);
     }    
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -16127,13 +16127,13 @@ class solarchvision_Move3Ds {
   }
   
   
-  void Model1Ds (float dx, float dy, float dz) {
+  void Model0Ds (float dx, float dy, float dz) {
   
-    for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Model1D_ids[o];
+      int f = Select3Ds.Model0D_ids[o];
   
-      allModel1Ds.move(f, dx, dy, dz); 
+      allModel0Ds.move(f, dx, dy, dz); 
     }
   } 
     
@@ -16227,10 +16227,10 @@ class solarchvision_Move3Ds {
         allGroups.Pivots[OBJ_ID][2] += dz;
       }
   
-      for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
+      for (int f = allGroups.getStart_Model0D(OBJ_ID); f <= allGroups.getStop_Model0D(OBJ_ID); f++) {
+        if ((0 <= f) && (f < allModel0Ds.num)) {
   
-          allModel1Ds.move(f, dx, dy, dz);
+          allModel0Ds.move(f, dx, dy, dz);
         }
       }
   
@@ -16271,8 +16271,8 @@ class solarchvision_Drop3Ds {
 
   void selection () {
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(); 
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0Ds(); 
     }       
     
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -16285,15 +16285,15 @@ class solarchvision_Drop3Ds {
   
   
   
-  void Model1Ds () {
+  void Model0Ds () {
 
-    for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model1D_ids[o];
+      int OBJ_ID = Select3Ds.Model0D_ids[o];
 
-      float x = allModel1Ds.getX(OBJ_ID);
-      float y = allModel1Ds.getY(OBJ_ID);
-      float z = allModel1Ds.getZ(OBJ_ID);
+      float x = allModel0Ds.getX(OBJ_ID);
+      float y = allModel0Ds.getY(OBJ_ID);
+      float z = allModel0Ds.getZ(OBJ_ID);
 
       float[] ray_start = {
         x, y, z
@@ -16314,9 +16314,9 @@ class solarchvision_Drop3Ds {
       }
 
       if (RxP[0] >= 0) {
-        allModel1Ds.setX(OBJ_ID, RxP[1]); 
-        allModel1Ds.setY(OBJ_ID, RxP[2]); 
-        allModel1Ds.setZ(OBJ_ID, RxP[3]);
+        allModel0Ds.setX(OBJ_ID, RxP[1]); 
+        allModel0Ds.setY(OBJ_ID, RxP[2]); 
+        allModel0Ds.setZ(OBJ_ID, RxP[3]);
       } else {
         ray_direction[2] = 1; // <<<< going upwards
 
@@ -16329,9 +16329,9 @@ class solarchvision_Drop3Ds {
         }
 
         if (RxP[0] >= 0) {
-          allModel1Ds.setX(OBJ_ID, RxP[1]); 
-          allModel1Ds.setY(OBJ_ID, RxP[2]); 
-          allModel1Ds.setZ(OBJ_ID, RxP[3]);
+          allModel0Ds.setX(OBJ_ID, RxP[1]); 
+          allModel0Ds.setY(OBJ_ID, RxP[2]); 
+          allModel0Ds.setZ(OBJ_ID, RxP[3]);
         }
       }
     }
@@ -16416,8 +16416,8 @@ class solarchvision_Clone3Ds {
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
     }
   
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(produce_same_variation);
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0Ds(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -16451,40 +16451,40 @@ class solarchvision_Clone3Ds {
 
 
 
-  void Model1Ds (boolean produce_same_variation) {
+  void Model0Ds (boolean produce_same_variation) {
 
-    int number_of_allModel1Ds_before = allModel1Ds.num; 
+    int number_of_allModel0Ds_before = allModel0Ds.num; 
 
-    for (int o = 0; o < Select3Ds.Model1D_ids.length; o++) {
+    for (int o = 0; o < Select3Ds.Model0D_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Model1D_ids[o];
+      int OBJ_ID = Select3Ds.Model0D_ids[o];
 
-      float x = allModel1Ds.getX(OBJ_ID);
-      float y = allModel1Ds.getY(OBJ_ID);
-      float z = allModel1Ds.getZ(OBJ_ID);
-      float d = allModel1Ds.getS(OBJ_ID);
-      float rot = allModel1Ds.getR(OBJ_ID);
+      float x = allModel0Ds.getX(OBJ_ID);
+      float y = allModel0Ds.getY(OBJ_ID);
+      float z = allModel0Ds.getZ(OBJ_ID);
+      float d = allModel0Ds.getS(OBJ_ID);
+      float rot = allModel0Ds.getR(OBJ_ID);
 
-      int n = allModel1Ds.getType(OBJ_ID);
-      int dMin = allModel1Ds.getDegreeMin(OBJ_ID);
-      int dMax = allModel1Ds.getDegreeMax(OBJ_ID);
-      int s = allModel1Ds.getSeed(OBJ_ID);
-      float TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-      float LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+      int n = allModel0Ds.getType(OBJ_ID);
+      int dMin = allModel0Ds.getDegreeMin(OBJ_ID);
+      int dMax = allModel0Ds.getDegreeMax(OBJ_ID);
+      int s = allModel0Ds.getSeed(OBJ_ID);
+      float TrunkSize = allModel0Ds.getTrunkSize(OBJ_ID);
+      float LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
 
       if (produce_same_variation == false) randomSeed(millis());
-      allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+      allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
     }
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Model1Ds();
+    Select3Ds.deselect_Model0Ds();
 
-    for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
+    for (int o = number_of_allModel0Ds_before; o < allModel0Ds.num; o++) {
 
-      int[] newlyAddedallModel1Ds = {o};
+      int[] newlyAddedallModel0Ds = {o};
 
-      Select3Ds.Model1D_ids = concat(Select3Ds.Model1D_ids, newlyAddedallModel1Ds);
+      Select3Ds.Model0D_ids = concat(Select3Ds.Model0D_ids, newlyAddedallModel0Ds);
     }
   }
 
@@ -16820,27 +16820,27 @@ class solarchvision_Clone3Ds {
           allGroups.Pivots[new_OBJ_ID][j] = allGroups.Pivots[OBJ_ID][j];
         }
 
-        if ((0 <= allGroups.getStop_Model1D(OBJ_ID)) && (allGroups.getStart_Model1D(OBJ_ID) <= allGroups.getStop_Model1D(OBJ_ID))) { 
-          for (int q = allGroups.getStart_Model1D(OBJ_ID); q <= allGroups.getStop_Model1D(OBJ_ID); q++) {
+        if ((0 <= allGroups.getStop_Model0D(OBJ_ID)) && (allGroups.getStart_Model0D(OBJ_ID) <= allGroups.getStop_Model0D(OBJ_ID))) { 
+          for (int q = allGroups.getStart_Model0D(OBJ_ID); q <= allGroups.getStop_Model0D(OBJ_ID); q++) {
 
-            float x = allModel1Ds.getX(q);
-            float y = allModel1Ds.getY(q);
-            float z = allModel1Ds.getZ(q);
+            float x = allModel0Ds.getX(q);
+            float y = allModel0Ds.getY(q);
+            float z = allModel0Ds.getZ(q);
 
-            float d = allModel1Ds.getS(q);
-            float rot = allModel1Ds.getR(q);
+            float d = allModel0Ds.getS(q);
+            float rot = allModel0Ds.getR(q);
 
-            int n = allModel1Ds.getType(q);
+            int n = allModel0Ds.getType(q);
 
-            int dMin = allModel1Ds.getDegreeMin(q);
+            int dMin = allModel0Ds.getDegreeMin(q);
 
-            int dMax = allModel1Ds.getDegreeMax(q);
+            int dMax = allModel0Ds.getDegreeMax(q);
 
-            int s = allModel1Ds.getSeed(q);
+            int s = allModel0Ds.getSeed(q);
 
-            float TrunkSize = allModel1Ds.getTrunkSize(q);
+            float TrunkSize = allModel0Ds.getTrunkSize(q);
 
-            float LeafSize = allModel1Ds.getLeafSize(q);
+            float LeafSize = allModel0Ds.getLeafSize(q);
 
             if (produce_same_variation == false) {
               randomSeed(millis());
@@ -16848,7 +16848,7 @@ class solarchvision_Clone3Ds {
               rot = random(360);
               s = int(random(32767));
             }
-            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+            allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
           }
         }
 
@@ -16970,27 +16970,27 @@ class solarchvision_Clone3Ds {
           allGroups.Pivots[new_OBJ_ID][j] = allGroups.Pivots[OBJ_ID][j];
         }
 
-        if ((0 <= allGroups.getStop_Model1D(OBJ_ID)) && (allGroups.getStart_Model1D(OBJ_ID) <= allGroups.getStop_Model1D(OBJ_ID))) { 
-          for (int q = allGroups.getStart_Model1D(OBJ_ID); q <= allGroups.getStop_Model1D(OBJ_ID); q++) {
+        if ((0 <= allGroups.getStop_Model0D(OBJ_ID)) && (allGroups.getStart_Model0D(OBJ_ID) <= allGroups.getStop_Model0D(OBJ_ID))) { 
+          for (int q = allGroups.getStart_Model0D(OBJ_ID); q <= allGroups.getStop_Model0D(OBJ_ID); q++) {
 
-            float x = allModel1Ds.getX(q);
-            float y = allModel1Ds.getY(q);
-            float z = allModel1Ds.getZ(q);
+            float x = allModel0Ds.getX(q);
+            float y = allModel0Ds.getY(q);
+            float z = allModel0Ds.getZ(q);
 
-            float d = allModel1Ds.getS(q);
-            float rot = allModel1Ds.getR(q);
+            float d = allModel0Ds.getS(q);
+            float rot = allModel0Ds.getR(q);
 
-            int n = allModel1Ds.getType(q);
+            int n = allModel0Ds.getType(q);
 
-            int dMin = allModel1Ds.getDegreeMin(q);
+            int dMin = allModel0Ds.getDegreeMin(q);
 
-            int dMax = allModel1Ds.getDegreeMax(q);
+            int dMax = allModel0Ds.getDegreeMax(q);
 
-            int s = allModel1Ds.getSeed(q);
+            int s = allModel0Ds.getSeed(q);
 
-            float TrunkSize = allModel1Ds.getTrunkSize(q);
+            float TrunkSize = allModel0Ds.getTrunkSize(q);
 
-            float LeafSize = allModel1Ds.getLeafSize(q);
+            float LeafSize = allModel0Ds.getLeafSize(q);
 
             if (produce_same_variation == false) {
               randomSeed(millis());
@@ -16998,7 +16998,7 @@ class solarchvision_Clone3Ds {
               rot = random(360);
               s = int(random(32767));
             }
-            allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+            allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
           }
         }
 
@@ -17152,8 +17152,8 @@ class solarchvision_Delete3Ds {
       Delete3Ds.selected_Sections();
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Delete3Ds.selected_Model1Ds();
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      Delete3Ds.selected_Model0Ds();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -17266,75 +17266,75 @@ class solarchvision_Delete3Ds {
 
 
 
-  void selected_Model1Ds () {
+  void selected_Model0Ds () {
 
-    Select3Ds.Model1D_ids = sort(Select3Ds.Model1D_ids);
+    Select3Ds.Model0D_ids = sort(Select3Ds.Model0D_ids);
 
-    for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model1D_ids[o];
+      int OBJ_ID = Select3Ds.Model0D_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
-        if ((allGroups.Model1Ds[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Model1Ds[q][1])) {
-          if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
-        } else if (allGroups.Model1Ds[q][0] > OBJ_ID) {
-          if (allGroups.Model1Ds[q][0] >= 0) allGroups.Model1Ds[q][0] -= 1;
-          if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
+        if ((allGroups.Model0Ds[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Model0Ds[q][1])) {
+          if (allGroups.Model0Ds[q][1] >= 0) allGroups.Model0Ds[q][1] -= 1;
+        } else if (allGroups.Model0Ds[q][0] > OBJ_ID) {
+          if (allGroups.Model0Ds[q][0] >= 0) allGroups.Model0Ds[q][0] -= 1;
+          if (allGroups.Model0Ds[q][1] >= 0) allGroups.Model0Ds[q][1] -= 1;
         }
       }
 
 
       {
-        float[][] startList = (float[][]) subset(allModel1Ds.XYZSR, 0, OBJ_ID);
-        float[][] endList = (float[][]) subset(allModel1Ds.XYZSR, OBJ_ID + 1);
+        float[][] startList = (float[][]) subset(allModel0Ds.XYZSR, 0, OBJ_ID);
+        float[][] endList = (float[][]) subset(allModel0Ds.XYZSR, OBJ_ID + 1);
 
-        allModel1Ds.XYZSR = (float[][]) concat(startList, endList);
+        allModel0Ds.XYZSR = (float[][]) concat(startList, endList);
       }
 
       {
-        int[] startList = (int[]) subset(allModel1Ds.Type, 0, OBJ_ID);
-        int[] endList = (int[]) subset(allModel1Ds.Type, OBJ_ID + 1);
+        int[] startList = (int[]) subset(allModel0Ds.Type, 0, OBJ_ID);
+        int[] endList = (int[]) subset(allModel0Ds.Type, OBJ_ID + 1);
 
-        allModel1Ds.Type = (int[]) concat(startList, endList);
+        allModel0Ds.Type = (int[]) concat(startList, endList);
       }
 
       {
-        int[] startList = (int[]) subset(allModel1Ds.DegreeMin, 0, OBJ_ID);
-        int[] endList = (int[]) subset(allModel1Ds.DegreeMin, OBJ_ID + 1);
+        int[] startList = (int[]) subset(allModel0Ds.DegreeMin, 0, OBJ_ID);
+        int[] endList = (int[]) subset(allModel0Ds.DegreeMin, OBJ_ID + 1);
 
-        allModel1Ds.DegreeMin = (int[]) concat(startList, endList);
+        allModel0Ds.DegreeMin = (int[]) concat(startList, endList);
       }
 
       {
-        int[] startList = (int[]) subset(allModel1Ds.DegreeMax, 0, OBJ_ID);
-        int[] endList = (int[]) subset(allModel1Ds.DegreeMax, OBJ_ID + 1);
+        int[] startList = (int[]) subset(allModel0Ds.DegreeMax, 0, OBJ_ID);
+        int[] endList = (int[]) subset(allModel0Ds.DegreeMax, OBJ_ID + 1);
 
-        allModel1Ds.DegreeMax = (int[]) concat(startList, endList);
+        allModel0Ds.DegreeMax = (int[]) concat(startList, endList);
       }
 
       {
-        int[] startList = (int[]) subset(allModel1Ds.Seed, 0, OBJ_ID);
-        int[] endList = (int[]) subset(allModel1Ds.Seed, OBJ_ID + 1);
+        int[] startList = (int[]) subset(allModel0Ds.Seed, 0, OBJ_ID);
+        int[] endList = (int[]) subset(allModel0Ds.Seed, OBJ_ID + 1);
 
-        allModel1Ds.Seed = (int[]) concat(startList, endList);
+        allModel0Ds.Seed = (int[]) concat(startList, endList);
       }
 
       {
-        float[] startList = (float[]) subset(allModel1Ds.TrunkSize, 0, OBJ_ID);
-        float[] endList = (float[]) subset(allModel1Ds.TrunkSize, OBJ_ID + 1);
+        float[] startList = (float[]) subset(allModel0Ds.TrunkSize, 0, OBJ_ID);
+        float[] endList = (float[]) subset(allModel0Ds.TrunkSize, OBJ_ID + 1);
 
-        allModel1Ds.TrunkSize = (float[]) concat(startList, endList);
+        allModel0Ds.TrunkSize = (float[]) concat(startList, endList);
       }
 
       {
-        float[] startList = (float[]) subset(allModel1Ds.LeafSize, 0, OBJ_ID);
-        float[] endList = (float[]) subset(allModel1Ds.LeafSize, OBJ_ID + 1);
+        float[] startList = (float[]) subset(allModel0Ds.LeafSize, 0, OBJ_ID);
+        float[] endList = (float[]) subset(allModel0Ds.LeafSize, OBJ_ID + 1);
 
-        allModel1Ds.LeafSize = (float[]) concat(startList, endList);
+        allModel0Ds.LeafSize = (float[]) concat(startList, endList);
       }
 
-      allModel1Ds.num -= 1;
+      allModel0Ds.num -= 1;
     }
   }
 
@@ -17573,83 +17573,83 @@ class solarchvision_Delete3Ds {
       }
 
 
-      int startallModel1Ds = allGroups.getStart_Model1D(OBJ_ID);
-      int endallModel1Ds = allGroups.getStop_Model1D(OBJ_ID);
+      int startallModel0Ds = allGroups.getStart_Model0D(OBJ_ID);
+      int endallModel0Ds = allGroups.getStop_Model0D(OBJ_ID);
 
       {
 
-        if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
+        if ((0 <= startallModel0Ds) && (startallModel0Ds <= endallModel0Ds)) {
 
           for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
 
             for (int j = 0; j < 2; j++) {
 
-              allGroups.Model1Ds[i][j] -= 1 + endallModel1Ds - startallModel1Ds;
+              allGroups.Model0Ds[i][j] -= 1 + endallModel0Ds - startallModel0Ds;
 
-              if (allGroups.Model1Ds[i][j] < 0) allGroups.Model1Ds[i][j] = 0;
+              if (allGroups.Model0Ds[i][j] < 0) allGroups.Model0Ds[i][j] = 0;
             }
           }
         }   
 
-        int[][] startList = (int[][]) subset(allGroups.Model1Ds, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allGroups.Model1Ds, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allGroups.Model0Ds, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allGroups.Model0Ds, OBJ_ID + 1);
 
-        allGroups.Model1Ds = (int[][]) concat(startList, endList);
+        allGroups.Model0Ds = (int[][]) concat(startList, endList);
       }  
 
-      if ((0 <= startallModel1Ds) && (startallModel1Ds <= endallModel1Ds)) {
+      if ((0 <= startallModel0Ds) && (startallModel0Ds <= endallModel0Ds)) {
 
         {
-          float[][] startList = (float[][]) subset(allModel1Ds.XYZSR, 0, startallModel1Ds);
-          float[][] endList = (float[][]) subset(allModel1Ds.XYZSR, endallModel1Ds + 1);
+          float[][] startList = (float[][]) subset(allModel0Ds.XYZSR, 0, startallModel0Ds);
+          float[][] endList = (float[][]) subset(allModel0Ds.XYZSR, endallModel0Ds + 1);
 
-          allModel1Ds.XYZSR = (float[][]) concat(startList, endList);
+          allModel0Ds.XYZSR = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel1Ds.Type, 0, startallModel1Ds);
-          int[] endList = (int[]) subset(allModel1Ds.Type, endallModel1Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.Type, 0, startallModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.Type, endallModel0Ds + 1);
 
-          allModel1Ds.Type = (int[]) concat(startList, endList);
+          allModel0Ds.Type = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel1Ds.DegreeMin, 0, startallModel1Ds);
-          int[] endList = (int[]) subset(allModel1Ds.DegreeMin, endallModel1Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.DegreeMin, 0, startallModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.DegreeMin, endallModel0Ds + 1);
 
-          allModel1Ds.DegreeMin = (int[]) concat(startList, endList);
+          allModel0Ds.DegreeMin = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel1Ds.DegreeMax, 0, startallModel1Ds);
-          int[] endList = (int[]) subset(allModel1Ds.DegreeMax, endallModel1Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.DegreeMax, 0, startallModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.DegreeMax, endallModel0Ds + 1);
 
-          allModel1Ds.DegreeMax = (int[]) concat(startList, endList);
+          allModel0Ds.DegreeMax = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel1Ds.Seed, 0, startallModel1Ds);
-          int[] endList = (int[]) subset(allModel1Ds.Seed, endallModel1Ds + 1);
+          int[] startList = (int[]) subset(allModel0Ds.Seed, 0, startallModel0Ds);
+          int[] endList = (int[]) subset(allModel0Ds.Seed, endallModel0Ds + 1);
 
-          allModel1Ds.Seed = (int[]) concat(startList, endList);
+          allModel0Ds.Seed = (int[]) concat(startList, endList);
         }
 
         {
-          float[] startList = (float[]) subset(allModel1Ds.TrunkSize, 0, startallModel1Ds);
-          float[] endList = (float[]) subset(allModel1Ds.TrunkSize, endallModel1Ds + 1);
+          float[] startList = (float[]) subset(allModel0Ds.TrunkSize, 0, startallModel0Ds);
+          float[] endList = (float[]) subset(allModel0Ds.TrunkSize, endallModel0Ds + 1);
 
-          allModel1Ds.TrunkSize = (float[]) concat(startList, endList);
+          allModel0Ds.TrunkSize = (float[]) concat(startList, endList);
         }
 
         {
-          float[] startList = (float[]) subset(allModel1Ds.LeafSize, 0, startallModel1Ds);
-          float[] endList = (float[]) subset(allModel1Ds.LeafSize, endallModel1Ds + 1);
+          float[] startList = (float[]) subset(allModel0Ds.LeafSize, 0, startallModel0Ds);
+          float[] endList = (float[]) subset(allModel0Ds.LeafSize, endallModel0Ds + 1);
 
-          allModel1Ds.LeafSize = (float[]) concat(startList, endList);
+          allModel0Ds.LeafSize = (float[]) concat(startList, endList);
         }
 
 
-        allModel1Ds.num = allModel1Ds.XYZSR.length;
+        allModel0Ds.num = allModel0Ds.XYZSR.length;
       }
 
       int startallModel2Ds = allGroups.getStart_Model2D(OBJ_ID);
@@ -43691,17 +43691,17 @@ void mouseClicked () {
             }     
 
             if (menu_option.equals("Model1DsProps")) {
-              UI_set_to_Modify_All_Model1DsProps(0);
+              UI_set_to_Modify_Model0DsProps(0);
               UI_BAR_b.hghlight("allFP0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick Model1DsProps")) {
-              UI_set_to_Modify_All_Model1DsProps(1);
+              UI_set_to_Modify_Model0DsProps(1);
               UI_BAR_b.hghlight("allFP1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign Model1DsProps")) {
-              UI_set_to_Modify_All_Model1DsProps(2);
+              UI_set_to_Modify_Model0DsProps(2);
               UI_BAR_b.hghlight("allFP2");
               UI_BAR_b.update = true;
             }                 
@@ -45204,7 +45204,7 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.All_Model1DsProps) { // all properties
+                        if (WIN3D.UI_CurrentTask == UITASK.Model0DsProps) { // all properties
                           User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
                           User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
                           User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
@@ -45220,7 +45220,7 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);                    
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
-                        if (WIN3D.UI_CurrentTask == UITASK.All_Model1DsProps) { // all properties
+                        if (WIN3D.UI_CurrentTask == UITASK.Model0DsProps) { // all properties
                           allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
                           allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);                    
                           allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
@@ -49083,8 +49083,8 @@ void UI_set_to_Modify_LeafSize (int n) {
   ROLLOUT.update = true;
 }
 
-void UI_set_to_Modify_All_Model1DsProps (int n) {
-  WIN3D.UI_CurrentTask = UITASK.All_Model1DsProps;
+void UI_set_to_Modify_Model0DsProps (int n) {
+  WIN3D.UI_CurrentTask = UITASK.Model0DsProps;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT.update = true;
