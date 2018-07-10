@@ -163,9 +163,10 @@ class solarchvision_OBJECTTYPE {
   
   private final static String CLASS_STAMP = "OBJECTTYPE";
   
-  private final static int LANDPOINT = -1;
-  private final static int MODEL0D = 0; 
-  private final static int MODEL1D = 1; 
+  private final static int MODEL1D = -1;
+  
+  private final static int LANDPOINT = 0;
+  private final static int MODEL0D = 1; 
   private final static int MODEL2D = 2; 
   private final static int GROUP = 3;
   private final static int FACE = 4; 
@@ -29367,7 +29368,7 @@ class solarchvision_Model0Ds {
   int treeSeed = 0;        // this could be a random integer. Note: when using 0, the random rotation option is disabled. 
   int treeDepth = 7;       // depth of the tree
 
-  int elementSegments = 8; // number of polygons to create each cone
+  int elementSegments = 5; // number of polygons to create each cone
 
 
 
@@ -29490,12 +29491,11 @@ class solarchvision_Model0Ds {
   
   float[][] Vertices;
   int[][] Faces;
+  
+  int numVertices = 0;
+  int numFaces = 0;
 
   void draw (int target_window) {
-  
-    this.Faces = new int [this.num][4];
-  
-    this.Vertices = new float [4 * this.num][3];
   
     boolean proceed = true;
   
@@ -29598,8 +29598,6 @@ class solarchvision_Model0Ds {
           if (target_window == TypeWindow.WIN3D) {
   
 //this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
-
-            randomSeed(0);
             
             WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
             WIN3D.graphics.noStroke();
@@ -29642,7 +29640,6 @@ class solarchvision_Model0Ds {
       
       this.twistBranch();
       
-      this.drawSegment(w, h);
       this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
       
       WIN3D.graphics.popMatrix();
@@ -29654,7 +29651,7 @@ class solarchvision_Model0Ds {
         this.twistBranch();
         this.tiltBranch();
         
-        this.drawSegment(w, h);
+        this.drawSegment(w, h, n, nStart);
         this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
         
         WIN3D.graphics.popMatrix();
@@ -29682,22 +29679,20 @@ class solarchvision_Model0Ds {
   }
   
   
-  void drawSegment(float w, float h) {
+  void drawSegment(float w, float h, int n, int nStart) {
 
     WIN3D.graphics.pushMatrix();
     WIN3D.graphics.translate(0, 0, 0.5 * h);
     
-    this.drawElements(w, h);
+    this.drawElements(w, h, n, nStart);
     
     WIN3D.graphics.popMatrix();
     
     WIN3D.graphics.translate(0, 0, h);
   }
   
-
-
   
-  void drawElements(float w, float h) {
+  void drawElements(float w, float h, int n, int nStart) {
 
     for (int i = 0; i < this.elementSegments; i++) {
       WIN3D.graphics.beginShape();
@@ -29715,12 +29710,75 @@ class solarchvision_Model0Ds {
         float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
         float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
         float z = h * (V - 0.5);
-
+        
         WIN3D.graphics.vertex(x, -y, z);
+
+        if ((i == 0) && shouldRecordFace(n, nStart)) {
+          numVertices++;
+        }
       }
+      
+      if ((i == 0) && shouldRecordFace(n, nStart)) {
+       numFaces++;
+      }
+      
       WIN3D.graphics.endShape(CLOSE);
     }
+    
+    
+    Vertices = new float[numVertices][3];
+    Faces = new int[numFaces][4];
+    
+    numVertices = 0;
+    numFaces = 0;
+
+    for (int i = 0; i < 1; i++) {
+      for (int j = 0; j < 4; j++) {
+  
+        float U = 0;
+        if ((j == 1) || (j == 2)) U = 1;
+  
+        float V = 0;
+        if ((j == 2) || (j == 3)) V = 1;
+  
+        float T = w;
+        if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
+  
+        float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
+        float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
+        float z = h * (V - 0.5);
+
+        if (shouldRecordFace(n, nStart)) {
+
+          Vertices[numVertices][0] = WIN3D.graphics.modelX(x, 0, 0);
+          Vertices[numVertices][1] = WIN3D.graphics.modelY(0, y, 0);
+          Vertices[numVertices][2] = WIN3D.graphics.modelZ(0, 0, 0);
+       
+          numVertices++;
+        }
+      }
+      
+      if (shouldRecordFace(n, nStart)) {
+      
+        Faces[numFaces][0] = Vertices.length - 3; 
+        Faces[numFaces][1] = Vertices.length - 2; 
+        Faces[numFaces][2] = Vertices.length - 1; 
+        Faces[numFaces][3] = Vertices.length; 
+     
+        numFaces++;
+      }
+    }    
   }  
+  
+  
+  boolean shouldRecordFace (int n, int nStart) { // root and initial branches of the trees are selectable, not all small branches
+    if (n < nStart - 1) {
+      return false; 
+    } 
+    return true;
+  }
+  
+
   
   
   
@@ -42715,135 +42773,135 @@ void mouseClicked () {
 
             if (menu_option.equals("3D-Tree")) {
               UI_set_to_Create_allModel0Ds();
-              UI_BAR_b.hghlight("3D-Tree");
+              UI_BAR_b.highlight("3D-Tree");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("2D-Tree")) {
               UI_set_to_Create_Tree();
-              UI_BAR_b.hghlight("2D-Tree");
+              UI_BAR_b.highlight("2D-Tree");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Person")) {
               UI_set_to_Create_Person();
-              UI_BAR_b.hghlight("Person");
+              UI_BAR_b.highlight("Person");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Point")) {
               UI_set_to_Create_Vertex();
-              UI_BAR_b.hghlight("Point");
+              UI_BAR_b.highlight("Point");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Spline")) {
               UI_set_to_Create_Curve();
-              UI_BAR_b.hghlight("Spline");
+              UI_BAR_b.highlight("Spline");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Surface")) {
               UI_set_to_Create_Face();
-              UI_BAR_b.hghlight("Surface");
+              UI_BAR_b.highlight("Surface");
               UI_BAR_b.update = true;
             }
 
             
             if (menu_option.equals("Parametric 1")) {
               UI_set_to_Create_Parametric(1);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Parametric 2")) {
               UI_set_to_Create_Parametric(2);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Parametric 3")) {
               UI_set_to_Create_Parametric(3);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Parametric 4")) {
               UI_set_to_Create_Parametric(4);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Parametric 5")) {
               UI_set_to_Create_Parametric(5);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Parametric 6")) {
               UI_set_to_Create_Parametric(6);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Parametric 7")) {
               UI_set_to_Create_Parametric(7);
-              UI_BAR_b.hghlight("Parametric");      
+              UI_BAR_b.highlight("Parametric");      
               UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Tri")) {
               UI_set_to_Create_Tri();
-              UI_BAR_b.hghlight("Tri");
+              UI_BAR_b.highlight("Tri");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Plane")) {
               UI_set_to_Create_Plane();
-              UI_BAR_b.hghlight("Plane");
+              UI_BAR_b.highlight("Plane");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Poly")) {
               UI_set_to_Create_Poly();
-              UI_BAR_b.hghlight("Poly");
+              UI_BAR_b.highlight("Poly");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Extrude")) {
               UI_set_to_Create_Extrude();
-              UI_BAR_b.hghlight("Extrude");
+              UI_BAR_b.highlight("Extrude");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Hyper")) {
               UI_set_to_Create_Hyper();
-              UI_BAR_b.hghlight("Hyper");
+              UI_BAR_b.highlight("Hyper");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("House1")) {
               UI_set_to_Create_House1();
-              UI_BAR_b.hghlight("House1");
+              UI_BAR_b.highlight("House1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("House2")) {
               UI_set_to_Create_House2();
-              UI_BAR_b.hghlight("House2");
+              UI_BAR_b.highlight("House2");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Box")) {
               UI_set_to_Create_Box();
-              UI_BAR_b.hghlight("Box");
+              UI_BAR_b.highlight("Box");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Icosahedron")) {
               UI_set_to_Create_Icosahedron();
-              UI_BAR_b.hghlight("Icosahedron");
+              UI_BAR_b.highlight("Icosahedron");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Octahedron")) {
               UI_set_to_Create_Octahedron();
-              UI_BAR_b.hghlight("Octahedron");
+              UI_BAR_b.highlight("Octahedron");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Sphere")) {
               UI_set_to_Create_Sphere();
-              UI_BAR_b.hghlight("Sphere");
+              UI_BAR_b.highlight("Sphere");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Cylinder")) {
               UI_set_to_Create_Cylinder();
-              UI_BAR_b.hghlight("Cylinder");
+              UI_BAR_b.highlight("Cylinder");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Cushion")) {
               UI_set_to_Create_Cushion();
-              UI_BAR_b.hghlight("Cushion");
+              UI_BAR_b.highlight("Cushion");
               UI_BAR_b.update = true;
             }
 
@@ -42851,7 +42909,7 @@ void mouseClicked () {
 
             if (menu_option.equals("Drop on LandSurface")) {
               UI_set_to_Modify_Drop(0);
-              UI_BAR_b.hghlight("DrL±");
+              UI_BAR_b.highlight("DrL±");
               UI_BAR_b.update = true;  
 
               Drop3Ds.selection();
@@ -42859,7 +42917,7 @@ void mouseClicked () {
             }
             if (menu_option.equals("Drop on ModelSurface (Down)")) {
               UI_set_to_Modify_Drop(1);
-              UI_BAR_b.hghlight("DrM-");
+              UI_BAR_b.highlight("DrM-");
               UI_BAR_b.update = true;  
 
               Drop3Ds.selection(); 
@@ -42867,7 +42925,7 @@ void mouseClicked () {
             }                      
             if (menu_option.equals("Drop on ModelSurface (Up)")) {
               UI_set_to_Modify_Drop(2);
-              UI_BAR_b.hghlight("DrM+");
+              UI_BAR_b.highlight("DrM+");
               UI_BAR_b.update = true;  
 
               Drop3Ds.selection();
@@ -42878,115 +42936,115 @@ void mouseClicked () {
 
             if (menu_option.equals("Get dX")) {
               UI_set_to_Modify_GetLength(0);
-              UI_BAR_b.hghlight("GLx");
+              UI_BAR_b.highlight("GLx");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Get dY")) {
               UI_set_to_Modify_GetLength(1);
-              UI_BAR_b.hghlight("GLy");
+              UI_BAR_b.highlight("GLy");
               UI_BAR_b.update = true;
             }              
             if (menu_option.equals("Get dZ")) {
               UI_set_to_Modify_GetLength(2);
-              UI_BAR_b.hghlight("GLz");
+              UI_BAR_b.highlight("GLz");
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Get dXYZ")) {
               UI_set_to_Modify_GetLength(3);
-              UI_BAR_b.hghlight("GL³");
+              UI_BAR_b.highlight("GL³");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Get dXY")) {
               UI_set_to_Modify_GetLength(4);
-              UI_BAR_b.hghlight("GL²");
+              UI_BAR_b.highlight("GL²");
               UI_BAR_b.update = true;
             }      
             if (menu_option.equals("Get Angle")) {
               UI_set_to_Modify_GetLength(5);
-              UI_BAR_b.hghlight("GLa");
+              UI_BAR_b.highlight("GLa");
               UI_BAR_b.update = true;
             }               
 
 
             if (menu_option.equals("MoveX")) {
               UI_set_to_Modify_Move(0);
-              UI_BAR_b.hghlight("MVx");
+              UI_BAR_b.highlight("MVx");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("MoveY")) {
               UI_set_to_Modify_Move(1);
-              UI_BAR_b.hghlight("MVy");
+              UI_BAR_b.highlight("MVy");
               UI_BAR_b.update = true;
             }              
             if (menu_option.equals("MoveZ")) {
               UI_set_to_Modify_Move(2);
-              UI_BAR_b.hghlight("MVz");
+              UI_BAR_b.highlight("MVz");
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Move")) {
               UI_set_to_Modify_Move(3);
-              UI_BAR_b.hghlight("MV³");
+              UI_BAR_b.highlight("MV³");
               UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("ScaleX")) {
               UI_set_to_Modify_Scale(0);
-              UI_BAR_b.hghlight("SCx");
+              UI_BAR_b.highlight("SCx");
               UI_BAR_b.update = true;
             }          
             if (menu_option.equals("ScaleY")) {
               UI_set_to_Modify_Scale(1);
-              UI_BAR_b.hghlight("SCy");
+              UI_BAR_b.highlight("SCy");
               UI_BAR_b.update = true;
             }      
             if (menu_option.equals("ScaleZ")) {
               UI_set_to_Modify_Scale(2);
-              UI_BAR_b.hghlight("SCz");
+              UI_BAR_b.highlight("SCz");
               UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Scale")) {
               UI_set_to_Modify_Scale(3);
-              UI_BAR_b.hghlight("SC³");
+              UI_BAR_b.highlight("SC³");
               UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("PowerX")) {
               UI_set_to_Modify_Power(0);
-              UI_BAR_b.hghlight("PWx");
+              UI_BAR_b.highlight("PWx");
               UI_BAR_b.update = true;
             }          
             if (menu_option.equals("PowerY")) {
               UI_set_to_Modify_Power(1);
-              UI_BAR_b.hghlight("PWy");
+              UI_BAR_b.highlight("PWy");
               UI_BAR_b.update = true;
             }      
             if (menu_option.equals("PowerZ")) {
               UI_set_to_Modify_Power(2);
-              UI_BAR_b.hghlight("PWz");
+              UI_BAR_b.highlight("PWz");
               UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Power")) {
               UI_set_to_Modify_Power(3);
-              UI_BAR_b.hghlight("PW³");
+              UI_BAR_b.highlight("PW³");
               UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("RotateX")) {
               UI_set_to_Modify_Rotate(0);
-              UI_BAR_b.hghlight("RTx");
+              UI_BAR_b.highlight("RTx");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("RotateY")) {
               UI_set_to_Modify_Rotate(1);
-              UI_BAR_b.hghlight("RTy");
+              UI_BAR_b.highlight("RTy");
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("RotateZ")) {
               UI_set_to_Modify_Rotate(2);
-              UI_BAR_b.hghlight("RTz");
+              UI_BAR_b.highlight("RTz");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Rotate")) {
@@ -42996,39 +43054,39 @@ void mouseClicked () {
 
             if (menu_option.equals("Pivot")) {
               UI_set_to_Modify_Pivot(0);
-              UI_BAR_b.hghlight("SPvt0");
+              UI_BAR_b.highlight("SPvt0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick Pivot")) {
               UI_set_to_Modify_Pivot(1);
-              UI_BAR_b.hghlight("SPvt1");
+              UI_BAR_b.highlight("SPvt1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign Pivot")) {
               UI_set_to_Modify_Pivot(2);
-              UI_BAR_b.hghlight("SPvt2");
+              UI_BAR_b.highlight("SPvt2");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Save Current ReferenceBox")) {
               Select3Ds.save_current_BoundingBox();
-              UI_BAR_b.hghlight("<pvt>");
+              UI_BAR_b.highlight("<pvt>");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Reset Saved ReferenceBox")) {
               Select3Ds.apply_saved_BoundingBox();
-              UI_BAR_b.hghlight(">pvt<");
+              UI_BAR_b.highlight(">pvt<");
               UI_BAR_b.update = true;  
               WIN3D.update = true;
             }
             if (menu_option.equals("Use Selection ReferenceBox")) {
               Select3Ds.calculate_BoundingBox();
-              UI_BAR_b.hghlight("|pvt|");
+              UI_BAR_b.highlight("|pvt|");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Use Origin ReferenceBox")) {
               Select3Ds.apply_origin_ReferenceBox();
-              UI_BAR_b.hghlight(".pvt.");
+              UI_BAR_b.highlight(".pvt.");
               UI_BAR_b.update = true;  
               WIN3D.update = true;
             }
@@ -43057,19 +43115,19 @@ void mouseClicked () {
 
             if (menu_option.equals("Solid")) {
               UI_set_to_Create_Solid();
-              UI_BAR_b.hghlight("SLD");
+              UI_BAR_b.highlight("SLD");
               UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Section")) {
               UI_set_to_Create_Section();
-              UI_BAR_b.hghlight("SEC");
+              UI_BAR_b.highlight("SEC");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Camera")) {
               UI_set_to_Create_Camera();
-              UI_BAR_b.hghlight("CAM");
+              UI_BAR_b.highlight("CAM");
               UI_BAR_b.update = true;
             }
 
@@ -43144,105 +43202,105 @@ void mouseClicked () {
 
             if (menu_option.equals("Change Seed/Material")) {
               UI_set_to_Modify_Seed(0);
-              UI_BAR_b.hghlight("Mat0");
+              UI_BAR_b.highlight("Mat0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick Seed/Material")) {
               UI_set_to_Modify_Seed(1);
-              UI_BAR_b.hghlight("Mat1");
+              UI_BAR_b.highlight("Mat1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign Seed/Material")) {
               UI_set_to_Modify_Seed(2);
-              UI_BAR_b.hghlight("Mat2");
+              UI_BAR_b.highlight("Mat2");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change Tessellation")) {
               UI_set_to_Modify_Tessellation(0);
-              UI_BAR_b.hghlight("Tes0");
+              UI_BAR_b.highlight("Tes0");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Tessellation")) {
               UI_set_to_Modify_Tessellation(1);
-              UI_BAR_b.hghlight("Tes1");
+              UI_BAR_b.highlight("Tes1");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Tessellation")) {
               UI_set_to_Modify_Tessellation(2);
-              UI_BAR_b.hghlight("Tes2");
+              UI_BAR_b.highlight("Tes2");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change Layer")) {
               UI_set_to_Modify_Layer(0);
-              UI_BAR_b.hghlight("Lyr0");
+              UI_BAR_b.highlight("Lyr0");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Layer")) {
               UI_set_to_Modify_Layer(1);
-              UI_BAR_b.hghlight("Lyr1");
+              UI_BAR_b.highlight("Lyr1");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Layer")) {
               UI_set_to_Modify_Layer(2);
-              UI_BAR_b.hghlight("Lyr2");
+              UI_BAR_b.highlight("Lyr2");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change Visibility")) {
               UI_set_to_Modify_Visibility(0);
-              UI_BAR_b.hghlight("Vsb0");
+              UI_BAR_b.highlight("Vsb0");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Visibility")) {
               UI_set_to_Modify_Visibility(1);
-              UI_BAR_b.hghlight("Vsb1");
+              UI_BAR_b.highlight("Vsb1");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Visibility")) {
               UI_set_to_Modify_Visibility(2);
-              UI_BAR_b.hghlight("Vsb2");
+              UI_BAR_b.highlight("Vsb2");
               UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Change Weight")) {
               UI_set_to_Modify_Weight(0);
-              UI_BAR_b.hghlight("Wgt0");
+              UI_BAR_b.highlight("Wgt0");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Pick Weight")) {
               UI_set_to_Modify_Weight(1);
-              UI_BAR_b.hghlight("Wgt1");
+              UI_BAR_b.highlight("Wgt1");
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Assign Weight")) {
               UI_set_to_Modify_Weight(2);
-              UI_BAR_b.hghlight("Wgt2");
+              UI_BAR_b.highlight("Wgt2");
               UI_BAR_b.update = true;
             } 
 
             if (menu_option.equals("Flip Normal")) {
               UI_set_to_Modify_Normal(1);
-              UI_BAR_b.hghlight("Norm1");
+              UI_BAR_b.highlight("Norm1");
               UI_BAR_b.update = true;
             }                
 
             if (menu_option.equals("Set-Out Normal")) {
               UI_set_to_Modify_Normal(2);
-              UI_BAR_b.hghlight("Norm2");
+              UI_BAR_b.highlight("Norm2");
               UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Set-In Normal")) {
               UI_set_to_Modify_Normal(3);
-              UI_BAR_b.hghlight("Norm3");
+              UI_BAR_b.highlight("Norm3");
               UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Get FirstVertex")) {
               UI_set_to_Modify_FirstVertex(1);
-              UI_BAR_b.hghlight("1stV");
+              UI_BAR_b.highlight("1stV");
               UI_BAR_b.update = true;
             }     
             
@@ -43250,97 +43308,97 @@ void mouseClicked () {
 
             if (menu_option.equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
-              UI_BAR_b.hghlight("dgMax0");
+              UI_BAR_b.highlight("dgMax0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick DegreeMax")) {
               UI_set_to_Modify_DegreeMax(1);
-              UI_BAR_b.hghlight("dgMax1");
+              UI_BAR_b.highlight("dgMax1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign DegreeMax")) {
               UI_set_to_Modify_DegreeMax(2);
-              UI_BAR_b.hghlight("dgMax2");
+              UI_BAR_b.highlight("dgMax2");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Change DegreeDif")) {
               UI_set_to_Modify_DegreeDif(0);
-              UI_BAR_b.hghlight("dgDif0");
+              UI_BAR_b.highlight("dgDif0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick DegreeDif")) {
               UI_set_to_Modify_DegreeDif(1);
-              UI_BAR_b.hghlight("dgDif1");
+              UI_BAR_b.highlight("dgDif1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign DegreeDif")) {
               UI_set_to_Modify_DegreeDif(2);
-              UI_BAR_b.hghlight("dgDif2");
+              UI_BAR_b.highlight("dgDif2");
               UI_BAR_b.update = true;
             }                 
 
             if (menu_option.equals("Change DegreeMin")) {
               UI_set_to_Modify_DegreeMin(0);
-              UI_BAR_b.hghlight("dgMin0");
+              UI_BAR_b.highlight("dgMin0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick DegreeMin")) {
               UI_set_to_Modify_DegreeMin(1);
-              UI_BAR_b.hghlight("dgMin1");
+              UI_BAR_b.highlight("dgMin1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign DegreeMin")) {
               UI_set_to_Modify_DegreeMin(2);
-              UI_BAR_b.hghlight("dgMin2");
+              UI_BAR_b.highlight("dgMin2");
               UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
-              UI_BAR_b.hghlight("trSz0");
+              UI_BAR_b.highlight("trSz0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick TrunkSize")) {
               UI_set_to_Modify_TrunkSize(1);
-              UI_BAR_b.hghlight("trSz1");
+              UI_BAR_b.highlight("trSz1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign TrunkSize")) {
               UI_set_to_Modify_TrunkSize(2);
-              UI_BAR_b.hghlight("trSz2");
+              UI_BAR_b.highlight("trSz2");
               UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Change LeafSize")) {
               UI_set_to_Modify_LeafSize(0);
-              UI_BAR_b.hghlight("lfSz0");
+              UI_BAR_b.highlight("lfSz0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick LeafSize")) {
               UI_set_to_Modify_LeafSize(1);
-              UI_BAR_b.hghlight("lfSz1");
+              UI_BAR_b.highlight("lfSz1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign LeafSize")) {
               UI_set_to_Modify_LeafSize(2);
-              UI_BAR_b.hghlight("lfSz2");
+              UI_BAR_b.highlight("lfSz2");
               UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Model1DsProps")) {
               UI_set_to_Modify_Model0DsProps(0);
-              UI_BAR_b.hghlight("allFP0");
+              UI_BAR_b.highlight("allFP0");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Pick Model1DsProps")) {
               UI_set_to_Modify_Model0DsProps(1);
-              UI_BAR_b.hghlight("allFP1");
+              UI_BAR_b.highlight("allFP1");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Assign Model1DsProps")) {
               UI_set_to_Modify_Model0DsProps(2);
-              UI_BAR_b.hghlight("allFP2");
+              UI_BAR_b.highlight("allFP2");
               UI_BAR_b.update = true;
             }                 
 
@@ -43363,12 +43421,12 @@ void mouseClicked () {
 
             if (menu_option.equals("Orthographic")) {
               UI_set_to_View_ProjectionType(0);
-              UI_BAR_b.hghlight("P<>");
+              UI_BAR_b.highlight("P<>");
               UI_BAR_b.update = true;
             }           
             if (menu_option.equals("Perspective")) {
               UI_set_to_View_ProjectionType(1);
-              UI_BAR_b.hghlight("P><");
+              UI_BAR_b.highlight("P><");
               UI_BAR_b.update = true;
             }   
 
@@ -43404,8 +43462,8 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }              
-            if (menu_option.equals("Select Model1Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL1D;
+            if (menu_option.equals("Select Model0Ds")) {
+              current_ObjectCategory = ObjectCategory.MODEL0D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }  
@@ -43540,33 +43598,33 @@ void mouseClicked () {
 
             if (menu_option.equals("Click Select")) {
               UI_set_to_View_ClickSelect(0);
-              UI_BAR_b.hghlight("±CS");
+              UI_BAR_b.highlight("±CS");
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Click Select+")) {
               UI_set_to_View_ClickSelect(1);
-              UI_BAR_b.hghlight("+CS");
+              UI_BAR_b.highlight("+CS");
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Click Select-")) {
               UI_set_to_View_ClickSelect(2);
-              UI_BAR_b.hghlight("-CS");
+              UI_BAR_b.highlight("-CS");
               UI_BAR_b.update = true;
             }            
 
             if (menu_option.equals("Window Select")) {
               UI_set_to_View_WindowSelect(0);
-              UI_BAR_b.hghlight("±WS");
+              UI_BAR_b.highlight("±WS");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Window Select+")) {
               UI_set_to_View_WindowSelect(1);
-              UI_BAR_b.hghlight("+WS");
+              UI_BAR_b.highlight("+WS");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Window Select-")) {
               UI_set_to_View_WindowSelect(2);
-              UI_BAR_b.hghlight("-WS");
+              UI_BAR_b.highlight("-WS");
               UI_BAR_b.update = true;
             }
 
@@ -43801,268 +43859,268 @@ void mouseClicked () {
         
             if (menu_option.equals("TargetRoll")) {
               UI_set_to_View_TargetRoll(0);
-              UI_BAR_b.hghlight("TRL");
+              UI_BAR_b.highlight("TRL");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("TargetRollZ")) {
               UI_set_to_View_TargetRoll(1);
-              UI_BAR_b.hghlight("TRLz");
+              UI_BAR_b.highlight("TRLz");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("TargetRollXY")) {
               UI_set_to_View_TargetRoll(2);
-              UI_BAR_b.hghlight("TRLxy");
+              UI_BAR_b.highlight("TRLxy");
               UI_BAR_b.update = true;
             }          
             if (menu_option.equals("CameraRoll")) {
               UI_set_to_View_CameraRoll(0);
-              UI_BAR_b.hghlight("CRL");
+              UI_BAR_b.highlight("CRL");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("CameraRollZ")) {
               UI_set_to_View_CameraRoll(1);
-              UI_BAR_b.hghlight("CRLz");
+              UI_BAR_b.highlight("CRLz");
               UI_BAR_b.update = true;
             }                
             if (menu_option.equals("CameraRollXY")) {
               UI_set_to_View_CameraRoll(2);
-              UI_BAR_b.hghlight("CRLxy");
+              UI_BAR_b.highlight("CRLxy");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("Orbit")) {
               UI_set_to_View_Orbit(0);
-              UI_BAR_b.hghlight("OR");
+              UI_BAR_b.highlight("OR");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("OrbitZ")) {
               UI_set_to_View_Orbit(1);
-              UI_BAR_b.hghlight("ORz");
+              UI_BAR_b.highlight("ORz");
               UI_BAR_b.update = true;
             }           
             if (menu_option.equals("OrbitXY")) {
               UI_set_to_View_Orbit(2);
-              UI_BAR_b.hghlight("ORxy");
+              UI_BAR_b.highlight("ORxy");
               UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("LandOrbit")) {
               UI_set_to_View_LandOrbit(0);
-              UI_BAR_b.hghlight("LNOR");
+              UI_BAR_b.highlight("LNOR");
               UI_BAR_b.update = true;
             }   
 
             if (menu_option.equals("Pan")) {
               UI_set_to_View_Pan(0);
-              UI_BAR_b.hghlight("Pan");
+              UI_BAR_b.highlight("Pan");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PanX")) {
               UI_set_to_View_Pan(1);
-              UI_BAR_b.hghlight("PanX");
+              UI_BAR_b.highlight("PanX");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PanY")) {
               UI_set_to_View_Pan(2);
-              UI_BAR_b.hghlight("PanY");
+              UI_BAR_b.highlight("PanY");
               UI_BAR_b.update = true;
             }          
 
             if (menu_option.equals("Zoom")) {
               UI_set_to_View_ZOOM(0);
-              UI_BAR_b.hghlight("±ZM");
+              UI_BAR_b.highlight("±ZM");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Zoom as default")) {
               UI_set_to_View_ZOOM(1);
-              UI_BAR_b.hghlight("0ZM");
+              UI_BAR_b.highlight("0ZM");
               UI_BAR_b.update = true;
             }
 
 
             if (menu_option.equals("TruckX")) {
               UI_set_to_View_Truck(1);
-              UI_BAR_b.hghlight("DIx");
+              UI_BAR_b.highlight("DIx");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("TruckY")) {
               UI_set_to_View_Truck(2);
-              UI_BAR_b.hghlight("DIy");
+              UI_BAR_b.highlight("DIy");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("TruckZ")) {
               UI_set_to_View_Truck(0);
-              UI_BAR_b.hghlight("DIz");
+              UI_BAR_b.highlight("DIz");
               UI_BAR_b.update = true;
             }          
             if (menu_option.equals("DistZ")) {
               UI_set_to_View_Truck(0);
-              UI_BAR_b.hghlight("±CDZ");
+              UI_BAR_b.highlight("±CDZ");
               UI_BAR_b.update = true;
             }     
             if (menu_option.equals("CameraDistance")) {
               UI_set_to_View_CameraDistance(0);
-              UI_BAR_b.hghlight("±CDS");
+              UI_BAR_b.highlight("±CDS");
               UI_BAR_b.update = true;
             }   
             if (menu_option.equals("DistMouseXY")) {
               UI_set_to_View_DistMouseXY(0);
-              UI_BAR_b.hghlight("±CDM");
+              UI_BAR_b.highlight("±CDM");
               UI_BAR_b.update = true;
             }  
 
             if (menu_option.equals("Look at origin")) {
               UI_set_to_View_LookAtOrigin(0);
-              UI_BAR_b.hghlight("LAO");
+              UI_BAR_b.highlight("LAO");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Look at direction")) {
               UI_set_to_View_LookAtDirection(0);
-              UI_BAR_b.hghlight("LAD");
+              UI_BAR_b.highlight("LAD");
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Look at selection")) {
               UI_set_to_View_LookAtSelection(0);
-              UI_BAR_b.hghlight("LAS");
+              UI_BAR_b.highlight("LAS");
               UI_BAR_b.update = true;
             }          
  
             
             if (menu_option.equals("3DModelSize")) {
               UI_set_to_View_3DModelSize();
-              UI_BAR_b.hghlight("±SZ");
+              UI_BAR_b.highlight("±SZ");
               UI_BAR_b.update = true;
             }          
 
             if (menu_option.equals("SkydomeSize")) {
               UI_set_to_View_SkydomeSize();
-              UI_BAR_b.hghlight("±SK");
+              UI_BAR_b.highlight("±SK");
               UI_BAR_b.update = true;
             }       
 
             if (menu_option.equals("AllModelSize")) {
               UI_set_to_View_AllModelSize();
-              UI_BAR_b.hghlight("±SA");
+              UI_BAR_b.highlight("±SA");
               UI_BAR_b.update = true;
             }     
 
             if (menu_option.equals("Display All Viewports")) {
               UI_set_to_Viewport(0);
-              UI_BAR_b.hghlight("AllViewports");
+              UI_BAR_b.highlight("AllViewports");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Enlarge 3D Viewport")) {
               UI_set_to_Viewport(1);
-              UI_BAR_b.hghlight("Expand3DView");
+              UI_BAR_b.highlight("Expand3DView");
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Enlarge Time Viewport")) {
               UI_set_to_Viewport(2);
-              UI_BAR_b.hghlight("ExpandTimeView");
+              UI_BAR_b.highlight("ExpandTimeView");
               UI_BAR_b.update = true;
             }              
             if (menu_option.equals("Enlarge Map Viewport")) {
               UI_set_to_Viewport(3);
-              UI_BAR_b.hghlight("ExpandMapView");
+              UI_BAR_b.highlight("ExpandMapView");
               UI_BAR_b.update = true;
             }             
 
             if (menu_option.equals("Top")) {
               UI_set_to_View_3DViewPoint(0);
-              UI_BAR_b.hghlight("Top");
+              UI_BAR_b.highlight("Top");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Front")) {
               UI_set_to_View_3DViewPoint(1);
-              UI_BAR_b.hghlight("Front");
+              UI_BAR_b.highlight("Front");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Left")) {
               UI_set_to_View_3DViewPoint(2);
-              UI_BAR_b.hghlight("Left");
+              UI_BAR_b.highlight("Left");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Back")) {
               UI_set_to_View_3DViewPoint(3);
-              UI_BAR_b.hghlight("Back");
+              UI_BAR_b.highlight("Back");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Right")) {
               UI_set_to_View_3DViewPoint(4);
-              UI_BAR_b.hghlight("Right");
+              UI_BAR_b.highlight("Right");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Bottom")) {
               UI_set_to_View_3DViewPoint(5);
-              UI_BAR_b.hghlight("Bottom");
+              UI_BAR_b.highlight("Bottom");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("S.W.")) {
               UI_set_to_View_3DViewPoint(6);
-              UI_BAR_b.hghlight("S.W.");
+              UI_BAR_b.highlight("S.W.");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("S.E.")) {
               UI_set_to_View_3DViewPoint(7);
-              UI_BAR_b.hghlight("S.E.");
+              UI_BAR_b.highlight("S.E.");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("N.E.")) {
               UI_set_to_View_3DViewPoint(8);
-              UI_BAR_b.hghlight("N.E.");
+              UI_BAR_b.highlight("N.E.");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("N.W.")) {
               UI_set_to_View_3DViewPoint(9);
-              UI_BAR_b.hghlight("N.W.");
+              UI_BAR_b.highlight("N.W.");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("PivotX:Minimum")) {
               UI_set_to_View_PivotX(-1);
-              UI_BAR_b.hghlight("X<");
+              UI_BAR_b.highlight("X<");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotX:Center")) {
               UI_set_to_View_PivotX(0);
-              UI_BAR_b.hghlight("X|");
+              UI_BAR_b.highlight("X|");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotX:Maximum")) {
               UI_set_to_View_PivotX(1);
-              UI_BAR_b.hghlight("X>");
+              UI_BAR_b.highlight("X>");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("PivotY:Minimum")) {
               UI_set_to_View_PivotY(-1);
-              UI_BAR_b.hghlight("Y<");
+              UI_BAR_b.highlight("Y<");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotY:Center")) {
               UI_set_to_View_PivotY(0);
-              UI_BAR_b.hghlight("Y|");
+              UI_BAR_b.highlight("Y|");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotY:Maximum")) {
               UI_set_to_View_PivotY(1);
-              UI_BAR_b.hghlight("Y>");
+              UI_BAR_b.highlight("Y>");
               UI_BAR_b.update = true;
             }
 
             if (menu_option.equals("PivotZ:Minimum")) {
               UI_set_to_View_PivotZ(-1);
-              UI_BAR_b.hghlight("Z<");
+              UI_BAR_b.highlight("Z<");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotZ:Center")) {
               UI_set_to_View_PivotZ(0);
-              UI_BAR_b.hghlight("Z|");
+              UI_BAR_b.highlight("Z|");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("PivotZ:Maximum")) {
               UI_set_to_View_PivotZ(1);
-              UI_BAR_b.hghlight("Z>");
+              UI_BAR_b.highlight("Z>");
               UI_BAR_b.update = true;
             }
           }
@@ -44414,7 +44472,7 @@ void mouseClicked () {
                     RxP = allSections.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.SOLID) {
                     RxP = allSolids.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                  } else if (current_ObjectCategory == ObjectCategory.MODEL0D) {
                     RxP = allModel1Ds.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
                     RxP = allModel2Ds.intersect(ray_start, ray_direction);
@@ -44829,40 +44887,40 @@ void mouseClicked () {
                     }      
   
   
-                    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
   
                       int OBJ_ID = int(RxP[0]);
   
                       if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model0D_DegreeMax = allModel0Ds.getDegreeMax(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-                          User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID); 
-                          User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
+                          User3D.create_Model0D_DegreeMax = allModel0Ds.getDegreeMax(OBJ_ID); 
+                          User3D.create_Model0D_DegreeMin = allModel0Ds.getDegreeMin(OBJ_ID);
                         }
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) User3D.create_Model0D_DegreeMin = allModel0Ds.getDegreeMin(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model0D_TrunkSize = allModel0Ds.getTrunkSize(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model0D_LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.Model0DsProps) { // all properties
-                          User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                          User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
-                          User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-                          User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+                          User3D.create_Model0D_DegreeMax = allModel0Ds.getDegreeMax(OBJ_ID);
+                          User3D.create_Model0D_DegreeMin = allModel0Ds.getDegreeMin(OBJ_ID);
+                          User3D.create_Model0D_TrunkSize = allModel0Ds.getTrunkSize(OBJ_ID);
+                          User3D.create_Model0D_LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
                         }
                       } 
                       if (WIN3D.UI_TaskModifyParameter == 2) { //Assign
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel0Ds.setDegreeMax(OBJ_ID, User3D.create_Model0D_DegreeMax);                    
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-                          allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax); 
-                          allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);
+                          allModel0Ds.setDegreeMax(OBJ_ID, User3D.create_Model0D_DegreeMax); 
+                          allModel0Ds.setDegreeMin(OBJ_ID, User3D.create_Model0D_DegreeMin);
                         }                 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);                    
-                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
-                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel0Ds.setDegreeMin(OBJ_ID, User3D.create_Model0D_DegreeMin);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel0Ds.setTrunkSize(OBJ_ID, User3D.create_Model0D_TrunkSize);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel0Ds.setLeafSize(OBJ_ID, User3D.create_Model0D_LeafSize);
                         if (WIN3D.UI_CurrentTask == UITASK.Model0DsProps) { // all properties
-                          allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-                          allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);                    
-                          allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
-                          allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+                          allModel0Ds.setDegreeMax(OBJ_ID, User3D.create_Model0D_DegreeMax);
+                          allModel0Ds.setDegreeMin(OBJ_ID, User3D.create_Model0D_DegreeMin);                    
+                          allModel0Ds.setTrunkSize(OBJ_ID, User3D.create_Model0D_TrunkSize);                    
+                          allModel0Ds.setLeafSize(OBJ_ID, User3D.create_Model0D_LeafSize);
                         }
                       }
                     }                        
@@ -44937,7 +44995,11 @@ void mouseClicked () {
                   }
   
   
-                  if ((current_ObjectCategory != ObjectCategory.MODEL1D) && (current_ObjectCategory != ObjectCategory.MODEL2D) && (current_ObjectCategory != ObjectCategory.LANDPOINT) && (current_ObjectCategory != ObjectCategory.CAMERA) && (current_ObjectCategory != ObjectCategory.SECTION)) {
+                  if ((current_ObjectCategory != ObjectCategory.MODEL0D) && 
+                      (current_ObjectCategory != ObjectCategory.MODEL2D) && 
+                      (current_ObjectCategory != ObjectCategory.LANDPOINT) && 
+                      (current_ObjectCategory != ObjectCategory.CAMERA) && 
+                      (current_ObjectCategory != ObjectCategory.SECTION)) {
   
                     x -= rx * Select3Ds.alignX;
                     y -= ry * Select3Ds.alignY;
@@ -44946,7 +45008,7 @@ void mouseClicked () {
   
   
   
-                  //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.MODEL2D)) {
+                  //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.MODEL0D) || (current_ObjectCategory == ObjectCategory.MODEL2D)) {
                   if (current_ObjectCategory == ObjectCategory.GROUP) {
   
                     if (addToLastGroup == false) {
@@ -48382,7 +48444,7 @@ void SOLARCHVISION_modify_Viewport_Title () {
   String s = "Cam" + nf(WIN3D.currentCamera, 2);
 
   UI_BAR_b.Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b 
-  UI_BAR_b.hghlight(s);
+  UI_BAR_b.highlight(s);
 
   UI_BAR_b.update = true;
 }  
@@ -48978,7 +49040,7 @@ void UI_set_to_View_LookAtSelection (int n) {
 
   { // automatically set another choice of ineterest
     UI_set_to_View_CameraDistance(0);
-    UI_BAR_b.hghlight("±CDS");
+    UI_BAR_b.highlight("±CDS");
     UI_BAR_b.update = true;
   }
 
@@ -49006,7 +49068,7 @@ void UI_set_to_View_LookAtOrigin (int n) {
     // automatically set another choice of ineterest
 
     UI_set_to_View_Truck(0);
-    UI_BAR_b.hghlight("±CDZ");
+    UI_BAR_b.highlight("±CDZ");
     UI_BAR_b.update = true;
   }
 
@@ -51567,7 +51629,7 @@ class solarchvision_UI_BAR_a {
       "Select Section", 
       "Select Camera", 
       "Select LandPoint", 
-      "Select Model1Ds", 
+      "Select Model0Ds", 
       "Select Model2Ds", 
       "Select Group", 
       "Select Face", 
@@ -52312,7 +52374,7 @@ class solarchvision_UI_BAR_b {
     , 
   
     {
-      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
+      "4", "Land", "0D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
     }
     , 
     {
@@ -52407,7 +52469,7 @@ class solarchvision_UI_BAR_b {
   boolean displayText; 
   
   
-  void hghlight (String s) {
+  void highlight (String s) {
   
     int break_loops = 0;
   
@@ -55119,7 +55181,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "Move dx=? dy=? dz=?";
       
-      UI_BAR_b.hghlight("MV³");
+      UI_BAR_b.highlight("MV³");
       UI_BAR_b.update = true;
     }
   }  
@@ -55194,7 +55256,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
       
-      UI_BAR_b.hghlight("SC³");
+      UI_BAR_b.highlight("SC³");
       UI_BAR_b.update = true;      
     }        
   }    
@@ -55264,7 +55326,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("groups")) {current_ObjectCategory = ObjectCategory.GROUP; UI_BAR_b.update = true;}
         else if (low_case.equals("model2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_BAR_b.update = true;}
-        else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_BAR_b.update = true;}
+        else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL0D; UI_BAR_b.update = true;}
         else if (low_case.equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_BAR_b.update = true;}
         else if (low_case.equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_BAR_b.update = true;}
         else if (low_case.equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_BAR_b.update = true;}
@@ -55319,7 +55381,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "2Dman m=? x=? y=? z=?";
 
       UI_set_to_Create_Person();
-      UI_BAR_b.hghlight("Person");
+      UI_BAR_b.highlight("Person");
       UI_BAR_b.update = true;      
     }  
   }
@@ -55355,7 +55417,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "2Dtree m=? x=? y=? z=? h=?";
       
       UI_set_to_Create_Tree();
-      UI_BAR_b.hghlight("2D-Tree");
+      UI_BAR_b.highlight("2D-Tree");
       UI_BAR_b.update = true;      
     }  
   }    
@@ -55392,9 +55454,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        allModel1Ds.create(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
+        allModel0Ds.create(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
         WIN3D.update = true;  
-        current_ObjectCategory = ObjectCategory.MODEL1D; 
+        current_ObjectCategory = ObjectCategory.MODEL0D; 
         UI_BAR_b.update = true;
         //Select3Ds.select_Last();
       }
@@ -55403,7 +55465,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
       
       UI_set_to_Create_allModel0Ds();
-      UI_BAR_b.hghlight("3D-Tree");
+      UI_BAR_b.highlight("3D-Tree");
       UI_BAR_b.update = true;      
     }  
   }     
@@ -55450,7 +55512,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
 
       UI_set_to_Create_Box();
-      UI_BAR_b.hghlight("Box");
+      UI_BAR_b.highlight("Box");
       UI_BAR_b.update = true;            
     }  
   }  
@@ -55499,7 +55561,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
 
       UI_set_to_Create_Box();
-      UI_BAR_b.hghlight("Box");
+      UI_BAR_b.highlight("Box");
       UI_BAR_b.update = true;      
     }  
   }     
@@ -55550,7 +55612,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House1();
-      UI_BAR_b.hghlight("House1");
+      UI_BAR_b.highlight("House1");
       UI_BAR_b.update = true;      
     }  
   }     
@@ -55601,7 +55663,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House1();
-      UI_BAR_b.hghlight("House2");
+      UI_BAR_b.highlight("House2");
       UI_BAR_b.update = true;      
     }  
   }       
@@ -55650,7 +55712,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
       
       UI_set_to_Create_Cylinder();
-      UI_BAR_b.hghlight("Cylinder");
+      UI_BAR_b.highlight("Cylinder");
       UI_BAR_b.update = true;            
     }  
   }   
@@ -55697,7 +55759,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
       
       UI_set_to_Create_Sphere();
-      UI_BAR_b.hghlight("Sphere");
+      UI_BAR_b.highlight("Sphere");
       UI_BAR_b.update = true;      
     }  
   }   
@@ -55755,7 +55817,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
       
       UI_set_to_Create_Sphere();
-      UI_BAR_b.hghlight("Sphere");
+      UI_BAR_b.highlight("Sphere");
       UI_BAR_b.update = true;      
     }  
   }   
@@ -55806,7 +55868,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
       
       UI_set_to_Create_Cushion();
-      UI_BAR_b.hghlight("Cushion");
+      UI_BAR_b.highlight("Cushion");
       UI_BAR_b.update = true;      
     }  
   }   
@@ -55856,7 +55918,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
       
       UI_set_to_Create_Octahedron();
-      UI_BAR_b.hghlight("Octahedron");
+      UI_BAR_b.highlight("Octahedron");
       UI_BAR_b.update = true;      
     }  
   }  
@@ -55901,7 +55963,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
       
       UI_set_to_Create_Icosahedron();
-      UI_BAR_b.hghlight("Icosahedron");
+      UI_BAR_b.highlight("Icosahedron");
       UI_BAR_b.update = true;            
     }  
   } 
@@ -55950,7 +56012,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
       
       UI_set_to_Create_Extrude();
-      UI_BAR_b.hghlight("Extrude");
+      UI_BAR_b.highlight("Extrude");
       UI_BAR_b.update = true;      
     }  
   }       
@@ -55999,7 +56061,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
       
       UI_set_to_Create_Hyper();
-      UI_BAR_b.hghlight("Hyper");
+      UI_BAR_b.highlight("Hyper");
       UI_BAR_b.update = true;      
     }  
   }       
@@ -56046,7 +56108,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
       
       UI_set_to_Create_Plane();
-      UI_BAR_b.hghlight("Poly");
+      UI_BAR_b.highlight("Poly");
       UI_BAR_b.update = true;      
     }  
   }  
@@ -56469,7 +56531,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
       
       UI_set_to_Create_Solid();
-      UI_BAR_b.hghlight("SLD");
+      UI_BAR_b.highlight("SLD");
       UI_BAR_b.update = true;      
     }  
   }  
@@ -56516,7 +56578,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
       
       UI_set_to_Create_Section();
-      UI_BAR_b.hghlight("SEC");
+      UI_BAR_b.highlight("SEC");
       UI_BAR_b.update = true;      
     }  
   }
@@ -56563,7 +56625,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
       
       UI_set_to_Create_Camera();
-      UI_BAR_b.hghlight("CAM");
+      UI_BAR_b.highlight("CAM");
       UI_BAR_b.update = true;      
     }  
   }  
@@ -56608,7 +56670,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Spline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
       
       UI_set_to_Create_Curve();
-      UI_BAR_b.hghlight("Curve");
+      UI_BAR_b.highlight("Curve");
       UI_BAR_b.update = true;                
     }  
   }  
@@ -56658,7 +56720,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
 
       UI_set_to_Create_Curve();
-      UI_BAR_b.hghlight("Curve");
+      UI_BAR_b.highlight("Curve");
       UI_BAR_b.update = true;                      
     }  
   } 
@@ -56782,219 +56844,219 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (Command_CAPITAL.equals("DISTZ")) {
     UI_set_to_View_Truck(0);
-    UI_BAR_b.hghlight("±CDZ");
+    UI_BAR_b.highlight("±CDZ");
     UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("DISTC")) {
     UI_set_to_View_CameraDistance(0);
-    UI_BAR_b.hghlight("±CDS");
+    UI_BAR_b.highlight("±CDS");
     UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("DISTP")) {
     UI_set_to_View_DistMouseXY(0);
-    UI_BAR_b.hghlight("±CDM");
+    UI_BAR_b.highlight("±CDM");
     UI_BAR_b.update = true;    
   } 
 
 
   else if (Command_CAPITAL.equals("SIZEALL")) {
     UI_set_to_View_AllModelSize();
-    UI_BAR_b.hghlight("±SA");
+    UI_BAR_b.highlight("±SA");
     UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("SIZESKY")) {
     UI_set_to_View_SkydomeSize();
-    UI_BAR_b.hghlight("±SK");
+    UI_BAR_b.highlight("±SK");
     UI_BAR_b.update = true;    
   } 
   else if (Command_CAPITAL.equals("SIZE3D")) {
     UI_set_to_View_3DModelSize();
-    UI_BAR_b.hghlight("±SZ");
+    UI_BAR_b.highlight("±SZ");
     UI_BAR_b.update = true;    
   } 
 
   else if (Command_CAPITAL.equals("ALLVIEWPORTS")) {
     UI_set_to_Viewport(0);
-    UI_BAR_b.hghlight("AllViewports");
+    UI_BAR_b.highlight("AllViewports");
     UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("ENLARGE3D")) {
     UI_set_to_Viewport(1);
-    UI_BAR_b.hghlight("Expand3DView");
+    UI_BAR_b.highlight("Expand3DView");
     UI_BAR_b.update = true;    
   } 
   
   else if (Command_CAPITAL.equals("LOOKORG")) {
     UI_set_to_View_LookAtOrigin(0);
-    UI_BAR_b.hghlight("LAO");
+    UI_BAR_b.highlight("LAO");
     UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("LOOKDIR")) {
     UI_set_to_View_LookAtDirection(0);
-    UI_BAR_b.hghlight("LAD");
+    UI_BAR_b.highlight("LAD");
     UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("LOOKSEL")) {
     UI_set_to_View_LookAtSelection(0);
-    UI_BAR_b.hghlight("LAS");
+    UI_BAR_b.highlight("LAS");
     UI_BAR_b.update = true;    
   }   
   
   else if (Command_CAPITAL.equals("TRUCKZ")) {
     UI_set_to_View_Truck(0);
-    UI_BAR_b.hghlight("DIz");
+    UI_BAR_b.highlight("DIz");
     UI_BAR_b.update = true;
   }   
   else if (Command_CAPITAL.equals("TRUCKX")) {
     UI_set_to_View_Truck(1);
-    UI_BAR_b.hghlight("DIx");
+    UI_BAR_b.highlight("DIx");
     UI_BAR_b.update = true;
   }   
   else if (Command_CAPITAL.equals("TRUCKY")) {
     UI_set_to_View_Truck(2);
-    UI_BAR_b.hghlight("DIy");
+    UI_BAR_b.highlight("DIy");
     UI_BAR_b.update = true;
   }   
 
   else if (Command_CAPITAL.equals("TROLL")) {
     UI_set_to_View_TargetRoll(0);
-    UI_BAR_b.hghlight("TRL");
+    UI_BAR_b.highlight("TRL");
     UI_BAR_b.update = true;
   }   
   else if (Command_CAPITAL.equals("TROLLZ")) {
     UI_set_to_View_TargetRoll(1);
-    UI_BAR_b.hghlight("TRLz");
+    UI_BAR_b.highlight("TRLz");
     UI_BAR_b.update = true;    
   }   
   else if (Command_CAPITAL.equals("TROLLXY")) {
     UI_set_to_View_TargetRoll(2);
-    UI_BAR_b.hghlight("TRLxy");
+    UI_BAR_b.highlight("TRLxy");
     UI_BAR_b.update = true;    
   }     
   
   else if (Command_CAPITAL.equals("CROLL")) {
     UI_set_to_View_CameraRoll(0);
-    UI_BAR_b.hghlight("CRL");
+    UI_BAR_b.highlight("CRL");
     UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("CROLLZ")) {
     UI_set_to_View_CameraRoll(1);
-    UI_BAR_b.hghlight("CRLz");
+    UI_BAR_b.highlight("CRLz");
     UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("CROLLXY")) {
     UI_set_to_View_CameraRoll(2);
-    UI_BAR_b.hghlight("CRLxy");
+    UI_BAR_b.highlight("CRLxy");
     UI_BAR_b.update = true;   
   }   
   
   
   else if (Command_CAPITAL.equals("ORBIT")) {
     UI_set_to_View_Orbit(0);
-    UI_BAR_b.hghlight("OR");
+    UI_BAR_b.highlight("OR");
     UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("ORBITZ")) {
     UI_set_to_View_Orbit(1);
-    UI_BAR_b.hghlight("ORz");
+    UI_BAR_b.highlight("ORz");
     UI_BAR_b.update = true;   
   }   
   else if (Command_CAPITAL.equals("ORBITXY")) {
     UI_set_to_View_Orbit(2);
-    UI_BAR_b.hghlight("ORxy");
+    UI_BAR_b.highlight("ORxy");
     UI_BAR_b.update = true;   
   }
   
   else if (Command_CAPITAL.equals("LANDORBIT")) {
     UI_set_to_View_LandOrbit(0);
-    UI_BAR_b.hghlight("LNOR");
+    UI_BAR_b.highlight("LNOR");
     UI_BAR_b.update = true;   
   }    
   
   else if (Command_CAPITAL.equals("PAN")) {
     UI_set_to_View_Pan(0);
-    UI_BAR_b.hghlight("Pan");
+    UI_BAR_b.highlight("Pan");
     UI_BAR_b.update = true;   
   }  
   else if (Command_CAPITAL.equals("PANX")) {
     UI_set_to_View_Pan(1);
-    UI_BAR_b.hghlight("PanX");
+    UI_BAR_b.highlight("PanX");
     UI_BAR_b.update = true;   
   }  
   else if (Command_CAPITAL.equals("PANY")) {
     UI_set_to_View_Pan(2);
-    UI_BAR_b.hghlight("PanY");
+    UI_BAR_b.highlight("PanY");
     UI_BAR_b.update = true;    
   }  
 
   else if (Command_CAPITAL.equals("ZOOM")) {
     UI_set_to_View_ZOOM(0);
-    UI_BAR_b.hghlight("±ZM");
+    UI_BAR_b.highlight("±ZM");
     UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("NORMALZOOM")) {
     UI_set_to_View_ZOOM(1);
-    UI_BAR_b.hghlight("0ZM");
+    UI_BAR_b.highlight("0ZM");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("ORTHOGRAPHIC")) {
     UI_set_to_View_ProjectionType(0);
-    UI_BAR_b.hghlight("P<>");
+    UI_BAR_b.highlight("P<>");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("PERSPECTIVE")) {
     UI_set_to_View_ProjectionType(1);
-    UI_BAR_b.hghlight("P><");
+    UI_BAR_b.highlight("P><");
     UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("TOP")) {
     UI_set_to_View_3DViewPoint(0);
-    UI_BAR_b.hghlight("Top");
+    UI_BAR_b.highlight("Top");
     UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("FRONT")) {
     UI_set_to_View_3DViewPoint(1);
-    UI_BAR_b.hghlight("Front");
+    UI_BAR_b.highlight("Front");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("LEFT")) {
     UI_set_to_View_3DViewPoint(2);
-    UI_BAR_b.hghlight("Left");
+    UI_BAR_b.highlight("Left");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("BACK")) {
     UI_set_to_View_3DViewPoint(3);
-    UI_BAR_b.hghlight("Back");
+    UI_BAR_b.highlight("Back");
     UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("RIGHT")) {
     UI_set_to_View_3DViewPoint(4);
-    UI_BAR_b.hghlight("Right");
+    UI_BAR_b.highlight("Right");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("BOTTOM")) {
     UI_set_to_View_3DViewPoint(5);
-    UI_BAR_b.hghlight("Bottom");
+    UI_BAR_b.highlight("Bottom");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("S.W.")) {
     UI_set_to_View_3DViewPoint(6);
-    UI_BAR_b.hghlight("S.W.");
+    UI_BAR_b.highlight("S.W.");
     UI_BAR_b.update = true;    
   }    
   else if (Command_CAPITAL.equals("S.E.")) {
     UI_set_to_View_3DViewPoint(7);
-    UI_BAR_b.hghlight("S.E.");
+    UI_BAR_b.highlight("S.E.");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("N.E.")) {
     UI_set_to_View_3DViewPoint(8);
-    UI_BAR_b.hghlight("N.E.");
+    UI_BAR_b.highlight("N.E.");
     UI_BAR_b.update = true;    
   }  
   else if (Command_CAPITAL.equals("N.W.")) {
     UI_set_to_View_3DViewPoint(9);
-    UI_BAR_b.hghlight("N.W.");
+    UI_BAR_b.highlight("N.W.");
     UI_BAR_b.update = true;    
   }    
   
