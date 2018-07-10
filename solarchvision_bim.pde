@@ -29551,8 +29551,8 @@ class solarchvision_Model0Ds {
         float y = this.getY(f);
         float z = this.getZ(f);
   
-        float size = this.getS(f);
-        float r = this.getR(f);
+        float rad = this.getS(f);
+        float rot = this.getR(f);
   
         int n = this.getType(f);
   
@@ -29583,7 +29583,7 @@ class solarchvision_Model0Ds {
           }
   
           float Alpha = 0;
-          float Beta = r; 
+          float Beta = rot; 
   
   
           if (target_window == TypeWindow.OBJ) {
@@ -29607,11 +29607,11 @@ class solarchvision_Model0Ds {
             WIN3D.graphics.pushMatrix();
             WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
             WIN3D.graphics.translate(x, -y, z);
-            WIN3D.graphics.rotateZ(r);
+            WIN3D.graphics.rotateZ(rot);
             
             
-            float treeHeight0 = size;
-            float treeWidth0 = size * TrunkSize * 0.1;
+            float treeHeight0 = rad;
+            float treeWidth0 = rad * TrunkSize * 0.15;
             
             randomSeed(this.treeSeed);
             
@@ -29626,33 +29626,33 @@ class solarchvision_Model0Ds {
             x *= OBJECTS_scale;
             y *= OBJECTS_scale;
             z *= OBJECTS_scale;
-            r *= OBJECTS_scale;
+            rad *= OBJECTS_scale;
             // ----------------        
     
             float t = PI + WIN3D.rotation_Z * PI / 180.0;
             if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
     
     
-            this.Vertices[f * 4 + 0][0] = (x - r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][0] = (x - rad * cos(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][1] = (y - rad * sin(rot)) / OBJECTS_scale;
             this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
     
-            this.Vertices[f * 4 + 1][0] = (x + r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][0] = (x + rad * cos(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][1] = (y + rad * sin(rot)) / OBJECTS_scale;
             this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
     
-            this.Vertices[f * 4 + 2][0] = (x + r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][1] = (y + r * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][2] = (z + 2 * r) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][0] = (x + rad * cos(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][1] = (y + rad * sin(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][2] = (z + 2 * rad) / OBJECTS_scale;
     
-            this.Vertices[f * 4 + 3][0] = (x - r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][1] = (y - r * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][2] = (z + 2 * r) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][0] = (x - rad * cos(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][1] = (y - rad * sin(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][2] = (z + 2 * rad) / OBJECTS_scale;
     
             this.Faces[f][0] = f * 4 + 0;
             this.Faces[f][1] = f * 4 + 1;
             this.Faces[f][2] = f * 4 + 2;
-            this.Faces[f][3] = f * 4 + 3;            
+            this.Faces[f][3] = f * 4 + 3;           
             
             
           }
@@ -48839,6 +48839,8 @@ void UI_set_to_View_ClickSelect (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.PickSelect;
 
+  addNewSelectionToPreviousSelection = 0;
+
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1;
   }
@@ -48852,6 +48854,8 @@ void UI_set_to_View_ClickSelect (int n) {
 
 void UI_set_to_View_WindowSelect (int n) {
   WIN3D.UI_CurrentTask = UITASK.RectSelect;
+
+  addNewSelectionToPreviousSelection = 0;
 
   if (n == 1) {
     addNewSelectionToPreviousSelection = 1;
