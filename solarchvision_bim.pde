@@ -29694,6 +29694,8 @@ class solarchvision_Model0Ds {
   
   void drawElements(float w, float h, int n, int nStart) {
 
+    final int reducedSegments = 3; // these is to reduce the base for selection
+    
     for (int i = 0; i < this.elementSegments; i++) {
       WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
@@ -29713,12 +29715,12 @@ class solarchvision_Model0Ds {
         
         WIN3D.graphics.vertex(x, -y, z);
 
-        if ((i == 0) && shouldRecordFace(n, nStart)) {
+        if ((i < reducedSegments) && shouldRecordFace(n, nStart)) {
           numVertices++;
         }
       }
       
-      if ((i == 0) && shouldRecordFace(n, nStart)) {
+      if ((i < reducedSegments) && shouldRecordFace(n, nStart)) {
        numFaces++;
       }
       
@@ -29732,7 +29734,7 @@ class solarchvision_Model0Ds {
     numVertices = 0;
     numFaces = 0;
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < reducedSegments; i++) { // we use reducedSegments instead of this.elementSegments to reduce
       for (int j = 0; j < 4; j++) {
   
         float U = 0;
@@ -46152,7 +46154,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
   }    
-
+/*
   if (current_ObjectCategory == ObjectCategory.MODEL0D) {
 
     if (Select3Ds.Model0D_displayEdges) {
@@ -46198,7 +46200,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
   }
-
+*/
   if (current_ObjectCategory == ObjectCategory.FACE) {    
 
     if (Select3Ds.Face_displayEdges) {
