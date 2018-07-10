@@ -29491,14 +29491,12 @@ class solarchvision_Model0Ds {
   
   float[][] Vertices;
   int[][] Faces;
-  int count_Faces; 
 
   void draw (int target_window) {
     
-    Vertices = new float[0][3];
-    Faces = new int[0][4];    
-    count_Faces = 0;
-  
+    this.Faces = new int [this.num][4];
+    this.Vertices = new float [4 * this.num][3];
+    
     boolean proceed = true;
   
     if (this.displayAll == false) {
@@ -29553,8 +29551,8 @@ class solarchvision_Model0Ds {
         float y = this.getY(f);
         float z = this.getZ(f);
   
-        float r = this.getS(f) * 0.5;
-        float rot = this.getR(f);
+        float size = this.getS(f);
+        float r = this.getR(f);
   
         int n = this.getType(f);
   
@@ -29562,13 +29560,13 @@ class solarchvision_Model0Ds {
   
         int dMax = this.getDegreeMax(f);
   
-        int s = this.getSeed(f);
+        int seed = this.getSeed(f);
   
         float TrunkSize = this.getTrunkSize(f);
   
         float LeafSize = this.getLeafSize(f);
   
-        randomSeed(s);
+        randomSeed(seed);
   
   
 
@@ -29585,7 +29583,7 @@ class solarchvision_Model0Ds {
           }
   
           float Alpha = 0;
-          float Beta = rot; 
+          float Beta = r; 
   
   
           if (target_window == TypeWindow.OBJ) {
@@ -29599,7 +29597,7 @@ class solarchvision_Model0Ds {
           
           if (target_window == TypeWindow.WIN3D) {
   
-//this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
+//this.branch_main(x, y, z, Alpha, Beta, scale, dMin, dMin, dMax, TrunkSize, LeafSize);
             
             WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
             WIN3D.graphics.noStroke();
@@ -29609,11 +29607,11 @@ class solarchvision_Model0Ds {
             WIN3D.graphics.pushMatrix();
             WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
             WIN3D.graphics.translate(x, -y, z);
-            WIN3D.graphics.rotateZ(rot);
+            WIN3D.graphics.rotateZ(r);
             
             
-            float treeHeight0 = r;
-            float treeWidth0 = r * TrunkSize * 0.1;
+            float treeHeight0 = size;
+            float treeWidth0 = size * TrunkSize * 0.1;
             
             randomSeed(this.treeSeed);
             
@@ -29621,6 +29619,42 @@ class solarchvision_Model0Ds {
             this.makeBranch(treeWidth0, treeHeight0, dMax, dMax); 
             
             WIN3D.graphics.popMatrix();
+            
+            
+            
+            // ----------------
+            x *= OBJECTS_scale;
+            y *= OBJECTS_scale;
+            z *= OBJECTS_scale;
+            r *= OBJECTS_scale;
+            // ----------------        
+    
+            float t = PI + WIN3D.rotation_Z * PI / 180.0;
+            if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
+    
+    
+            this.Vertices[f * 4 + 0][0] = (x - r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
+    
+            this.Vertices[f * 4 + 1][0] = (x + r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
+    
+            this.Vertices[f * 4 + 2][0] = (x + r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][2] = (z + 2 * r) / OBJECTS_scale;
+    
+            this.Vertices[f * 4 + 3][0] = (x - r * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][2] = (z + 2 * r) / OBJECTS_scale;
+    
+            this.Faces[f][0] = f * 4 + 0;
+            this.Faces[f][1] = f * 4 + 1;
+            this.Faces[f][2] = f * 4 + 2;
+            this.Faces[f][3] = f * 4 + 3;            
+            
+            
           }
   
         }
@@ -29653,7 +29687,7 @@ class solarchvision_Model0Ds {
         this.twistBranch();
         this.tiltBranch();
         
-        this.drawSegment(w, h, n, nStart);
+        this.drawElement(w, h);
         this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
         
         WIN3D.graphics.popMatrix();
@@ -29681,12 +29715,12 @@ class solarchvision_Model0Ds {
   }
   
   
-  void drawSegment(float w, float h, int n, int nStart) {
+  void drawElement(float w, float h) {
 
     WIN3D.graphics.pushMatrix();
     WIN3D.graphics.translate(0, 0, 0.5 * h);
     
-    this.drawElements(w, h, n, nStart);
+    this.drawSegments(w, h);
     
     WIN3D.graphics.popMatrix();
     
@@ -29694,10 +29728,8 @@ class solarchvision_Model0Ds {
   }
   
   
-  void drawElements(float w, float h, int n, int nStart) {
+  void drawSegments(float w, float h) {
 
-    final int reducedSegments = 3; // these is to reduce the base for selection
-    
     for (int i = 0; i < this.elementSegments; i++) {
       WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
@@ -29717,71 +29749,14 @@ class solarchvision_Model0Ds {
         
         WIN3D.graphics.vertex(x, -y, z);
 
-        if ((j == 0) && (i < reducedSegments) && shouldRecordFace(n, nStart)) {
-          count_Faces++;
-        }
       }
 
       WIN3D.graphics.endShape(CLOSE);
     }
     
-    println("count_Faces=", count_Faces);
-    
-    
-    Vertices = new float[count_Faces * 4][3];
-    Faces = new int[count_Faces][4];
-    
-    int id_Vertex = 0;
-    int id_Face = 0;
-
-    for (int i = 0; i < reducedSegments; i++) { // we use reducedSegments instead of this.elementSegments to reduce
-    
-      if (shouldRecordFace(n, nStart)) {
-    
-        for (int j = 0; j < 4; j++) {
-    
-          float U = 0;
-          if ((j == 1) || (j == 2)) U = 1;
-    
-          float V = 0;
-          if ((j == 2) || (j == 3)) V = 1;
-    
-          float T = w;
-          if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
-    
-          float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
-          float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
-          float z = h * (V - 0.5);
-  
-          //Vertices[id_Vertex][0] = WIN3D.graphics.modelX(x, 0, 0);
-          //Vertices[id_Vertex][1] = WIN3D.graphics.modelY(0, y, 0);
-          //Vertices[id_Vertex][2] = WIN3D.graphics.modelZ(0, 0, z);
-          
-          println("x=", Vertices[id_Vertex][0]);
-          println("y=", Vertices[id_Vertex][1]);
-          println("z=", Vertices[id_Vertex][2]);
-          
-       
-          id_Vertex++;
-        }
-
-        Faces[id_Face][0] = id_Vertex - 3; 
-        Faces[id_Face][1] = id_Vertex - 2; 
-        Faces[id_Face][2] = id_Vertex - 1; 
-        Faces[id_Face][3] = id_Vertex; 
-     
-        id_Face++;
-      }
-    }    
   }  
   
   
-  boolean shouldRecordFace (int n, int nStart) { // root and initial branches of the trees are selectable, not all small branches
-    if (n < nStart - 3) {
-      return false; 
-    } 
-    return true;
-  }
   
 
   
@@ -30090,7 +30065,6 @@ class solarchvision_Model1Ds {
   void draw (int target_window) {
   
     this.Faces = new int [this.num][4];
-  
     this.Vertices = new float [4 * this.num][3];
   
     boolean proceed = true;
@@ -31211,9 +31185,7 @@ class solarchvision_Model2Ds {
   void draw (int target_window) {
   
     this.Faces = new int [this.num * this.num_visualFaces][4];
-  
     this.Vertices = new float [4 * this.num * this.num_visualFaces][5]; // note we are keeping u & v at 3rd and 4th members
-    
     
     boolean proceed = true;
   
@@ -32336,7 +32308,6 @@ class solarchvision_Solids {
   void draw () {
   
     this.Faces = new int [this.num_visualFaces * this.DEF.length][this.numdisplayAllDegree]; 
-  
     this.Vertices = new float [this.num_visualFaces * this.numdisplayAllDegree * this.DEF.length][3];
   
     if (this.displayAll) {
@@ -37543,7 +37514,6 @@ class solarchvision_Cameras {
   void draw () {
   
     this.Faces = new int [this.num][4];
-  
     this.Vertices = new float [4 * this.num][3];
   
     if (this.displayAll) {
@@ -38081,7 +38051,6 @@ class solarchvision_Sections {
   void draw (int target_window) {
     
     this.Faces = new int [this.num][4];
-  
     this.Vertices = new float [4 * this.num][3];
   
   
@@ -45128,7 +45097,7 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Model0Ds) {
   
                       randomSeed(millis());
-                      allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 2 * rz, rot, User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+                      allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 2 * rz, random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
                     }        
                   }
 
@@ -55439,7 +55408,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       float y = 0;
       float z = 0;
       float h = 5.0;
-      float r = 0;
+      float r = random(360);
       float Tk = 1.0; //TrunkSize
       float Lf = 1.0; //LeafSize
        
