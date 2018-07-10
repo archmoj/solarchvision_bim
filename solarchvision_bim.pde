@@ -29489,13 +29489,15 @@ class solarchvision_Model0Ds {
   int num = 0; 
   
   
-  float[][] Vertices = new float[0][3];
-  int[][] Faces = new int[0][4];
-  
-  int numVertices = 0;
-  int numFaces = 0;
+  float[][] Vertices;
+  int[][] Faces;
+  int count_Faces; 
 
   void draw (int target_window) {
+    
+    Vertices = new float[0][3];
+    Faces = new int[0][4];    
+    count_Faces = 0;
   
     boolean proceed = true;
   
@@ -29715,66 +29717,67 @@ class solarchvision_Model0Ds {
         
         WIN3D.graphics.vertex(x, -y, z);
 
-        if ((i < reducedSegments) && shouldRecordFace(n, nStart)) {
-          numVertices++;
+        if ((j == 0) && (i < reducedSegments) && shouldRecordFace(n, nStart)) {
+          count_Faces++;
         }
       }
-      
-      if ((i < reducedSegments) && shouldRecordFace(n, nStart)) {
-       numFaces++;
-      }
-      
+
       WIN3D.graphics.endShape(CLOSE);
     }
     
+    println("count_Faces=", count_Faces);
     
-    Vertices = new float[numVertices][3];
-    Faces = new int[numFaces][4];
     
-    numVertices = 0;
-    numFaces = 0;
+    Vertices = new float[count_Faces * 4][3];
+    Faces = new int[count_Faces][4];
+    
+    int id_Vertex = 0;
+    int id_Face = 0;
 
     for (int i = 0; i < reducedSegments; i++) { // we use reducedSegments instead of this.elementSegments to reduce
-      for (int j = 0; j < 4; j++) {
-  
-        float U = 0;
-        if ((j == 1) || (j == 2)) U = 1;
-  
-        float V = 0;
-        if ((j == 2) || (j == 3)) V = 1;
-  
-        float T = w;
-        if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
-  
-        float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
-        float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
-        float z = h * (V - 0.5);
-
-        if (shouldRecordFace(n, nStart)) {
-
-          Vertices[numVertices][0] = WIN3D.graphics.modelX(x, 0, 0);
-          Vertices[numVertices][1] = WIN3D.graphics.modelY(0, y, 0);
-          Vertices[numVertices][2] = WIN3D.graphics.modelZ(0, 0, z);
-       
-          numVertices++;
-        }
-      }
-      
+    
       if (shouldRecordFace(n, nStart)) {
-      
-        Faces[numFaces][0] = Vertices.length - 4; 
-        Faces[numFaces][1] = Vertices.length - 3; 
-        Faces[numFaces][2] = Vertices.length - 2; 
-        Faces[numFaces][3] = Vertices.length - 1; 
+    
+        for (int j = 0; j < 4; j++) {
+    
+          float U = 0;
+          if ((j == 1) || (j == 2)) U = 1;
+    
+          float V = 0;
+          if ((j == 2) || (j == 3)) V = 1;
+    
+          float T = w;
+          if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
+    
+          float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
+          float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
+          float z = h * (V - 0.5);
+  
+          //Vertices[id_Vertex][0] = WIN3D.graphics.modelX(x, 0, 0);
+          //Vertices[id_Vertex][1] = WIN3D.graphics.modelY(0, y, 0);
+          //Vertices[id_Vertex][2] = WIN3D.graphics.modelZ(0, 0, z);
+          
+          println("x=", Vertices[id_Vertex][0]);
+          println("y=", Vertices[id_Vertex][1]);
+          println("z=", Vertices[id_Vertex][2]);
+          
+       
+          id_Vertex++;
+        }
+
+        Faces[id_Face][0] = id_Vertex - 3; 
+        Faces[id_Face][1] = id_Vertex - 2; 
+        Faces[id_Face][2] = id_Vertex - 1; 
+        Faces[id_Face][3] = id_Vertex; 
      
-        numFaces++;
+        id_Face++;
       }
     }    
   }  
   
   
   boolean shouldRecordFace (int n, int nStart) { // root and initial branches of the trees are selectable, not all small branches
-    if (n < nStart - 1) {
+    if (n < nStart - 3) {
       return false; 
     } 
     return true;
