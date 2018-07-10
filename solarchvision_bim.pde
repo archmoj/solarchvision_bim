@@ -29489,8 +29489,8 @@ class solarchvision_Model0Ds {
   int num = 0; 
   
   
-  float[][] Vertices;
-  int[][] Faces;
+  float[][] Vertices = new float[0][3];
+  int[][] Faces = new int[0][4];
   
   int numVertices = 0;
   int numFaces = 0;
@@ -29754,7 +29754,7 @@ class solarchvision_Model0Ds {
 
           Vertices[numVertices][0] = WIN3D.graphics.modelX(x, 0, 0);
           Vertices[numVertices][1] = WIN3D.graphics.modelY(0, y, 0);
-          Vertices[numVertices][2] = WIN3D.graphics.modelZ(0, 0, 0);
+          Vertices[numVertices][2] = WIN3D.graphics.modelZ(0, 0, z);
        
           numVertices++;
         }
@@ -29762,10 +29762,10 @@ class solarchvision_Model0Ds {
       
       if (shouldRecordFace(n, nStart)) {
       
-        Faces[numFaces][0] = Vertices.length - 3; 
-        Faces[numFaces][1] = Vertices.length - 2; 
-        Faces[numFaces][2] = Vertices.length - 1; 
-        Faces[numFaces][3] = Vertices.length; 
+        Faces[numFaces][0] = Vertices.length - 4; 
+        Faces[numFaces][1] = Vertices.length - 3; 
+        Faces[numFaces][2] = Vertices.length - 2; 
+        Faces[numFaces][3] = Vertices.length - 1; 
      
         numFaces++;
       }
@@ -46156,7 +46156,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
   }    
-/*
+
   if (current_ObjectCategory == ObjectCategory.MODEL0D) {
 
     if (Select3Ds.Model0D_displayEdges) {
@@ -46202,7 +46202,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
   }
-*/
+
   if (current_ObjectCategory == ObjectCategory.FACE) {    
 
     if (Select3Ds.Face_displayEdges) {
