@@ -8743,7 +8743,7 @@ class solarchvision_STUDY {
         //int l = 3 * int(this.ImpactLayer / 3) + 1; //this.ImpactLayer;    
   
         int target_window = TypeWindow.STUDY;
-        Sun3D.draw_Cycles(x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
+        Sun3D.drawCycles(x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
   
         this.drawPositionGrid(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
   
@@ -24937,7 +24937,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME.date;
 
-    Sun3D.draw_Cycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, 4);
+    Sun3D.drawCycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, TypeWindow.STUDY);
 
     STUDY.perDays = keep_STUDY_perDays;
     STUDY.joinDays = keep_STUDY_joinDays; 
@@ -26895,7 +26895,7 @@ class solarchvision_Sun3D {
   
       float previous_DATE = TIME.date;
   
-      Sun3D.draw_Cycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, 3);
+      Sun3D.drawCycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, TypeWindow.WIN3D);
   
       STUDY.perDays = keep_STUDY_perDays;
       STUDY.joinDays = keep_STUDY_joinDays; 
@@ -26906,7 +26906,7 @@ class solarchvision_Sun3D {
   
   
   
-  void draw_Cycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
+  void drawCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
   
     // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export
   
