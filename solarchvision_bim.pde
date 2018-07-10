@@ -163,7 +163,8 @@ class solarchvision_OBJECTTYPE {
   
   private final static String CLASS_STAMP = "OBJECTTYPE";
   
-  private final static int LANDPOINT = 0; 
+  private final static int LANDPOINT = -1;
+  private final static int MODEL0D = 0; 
   private final static int MODEL1D = 1; 
   private final static int MODEL2D = 2; 
   private final static int GROUP = 3;
@@ -11630,6 +11631,7 @@ class solarchvision_Groups {
   int[][] Curves = new int[0][2]; // start curve - end curve
   int[][] Faces = new int[0][2]; // start face - end face
   int[][] Solids = new int[0][2]; // start solid - end solid
+  int[][] Model0Ds = new int[0][2]; // start Model0Ds - end Model0Ds
   int[][] Model1Ds = new int[0][2]; // start Model1Ds - end Model1Ds
   int[][] Model2Ds = new int[0][2]; // start Model2Ds - end Model2Ds
   
@@ -11660,6 +11662,14 @@ class solarchvision_Groups {
   int getStop_Solid (int n) {
     return this.Solids[n][1];
   }  
+
+  int getStart_Model0D (int n) {
+    return this.Model0Ds[n][0];
+  }
+
+  int getStop_Model0D (int n) {
+    return this.Model0Ds[n][1];
+  }
 
   int getStart_Model1D (int n) {
     return this.Model1Ds[n][0];
@@ -11699,6 +11709,14 @@ class solarchvision_Groups {
 
   void setStop_Solid (int n, int t) {
     this.Solids[n][1] = t;
+  }
+  
+  void setStart_Model0D (int n, int t) {
+    this.Model0Ds[n][0] = t;
+  }
+
+  void setStop_Model0D (int n, int t) {
+    this.Model0Ds[n][1] = t;
   }
   
   void setStart_Model1D (int n, int t) {
@@ -11743,17 +11761,20 @@ class solarchvision_Groups {
         x, y, z, sx, sy, sz, rx, ry, rz
       }
     }; 
-  
     this.Pivots = (float[][]) concat(this.Pivots, newObject_Pivots);
   
-  
-  
+    int[][] newObject_allModel0Ds = {
+      {
+        allModel0Ds.num, -1
+      }
+    }; // i.e. null because start > end 
+    this.Model0Ds = (int[][]) concat(this.Model0Ds, newObject_allModel0Ds);     
+    
     int[][] newObject_allModel1Ds = {
       {
         allModel1Ds.num, -1
       }
     }; // i.e. null because start > end 
-  
     this.Model1Ds = (int[][]) concat(this.Model1Ds, newObject_allModel1Ds);     
   
     int[][] newObject_allModel2Ds = {
@@ -11761,7 +11782,6 @@ class solarchvision_Groups {
         allModel2Ds.num, -1
       }
     }; // i.e. null because start > end 
-  
     this.Model2Ds = (int[][]) concat(this.Model2Ds, newObject_allModel2Ds);   
   
     int[][] newObject_allSolids = {
@@ -11769,7 +11789,6 @@ class solarchvision_Groups {
         allSolids.DEF.length, -1
       }
     }; // i.e. null because start > end 
-  
     this.Solids = (int[][]) concat(this.Solids, newObject_allSolids);      
   
     int[][] newObject_Faces = {
@@ -11777,7 +11796,6 @@ class solarchvision_Groups {
         allFaces.nodes.length, -1
       }
     }; // i.e. null because start > end   
-  
     this.Faces = (int[][]) concat(this.Faces, newObject_Faces);
   
     int[][] newObject_Curves = {
@@ -11785,7 +11803,6 @@ class solarchvision_Groups {
         allCurves.nodes.length, -1
       }
     }; // i.e. null because start > end   
-  
     this.Curves = (int[][]) concat(this.Curves, newObject_Curves);
     
   
@@ -11798,17 +11815,13 @@ class solarchvision_Groups {
   
 
   void empty () {
-    
+
+    this.Model0Ds = new int [0][2];
     this.Model1Ds = new int [0][2];
-  
     this.Model2Ds = new int [0][2];
-  
     this.Faces = new int [0][2];
-  
     this.Curves = new int [0][2];
-  
     this.Solids = new int [0][2];
-  
     this.Pivots = new float [0][9];
   
     this.num = 0;
@@ -11828,6 +11841,7 @@ class solarchvision_Groups {
     if (current_ObjectCategory == ObjectCategory.CURVE) run_process = true;
     if (current_ObjectCategory == ObjectCategory.MODEL2D) run_process = true;
     if (current_ObjectCategory == ObjectCategory.MODEL1D) run_process = true;
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) run_process = true;
   
     if (run_process) {
   
@@ -11846,7 +11860,29 @@ class solarchvision_Groups {
       boolean pre_addToLastGroup = addToLastGroup;
       addToLastGroup = true;
   
+      if (current_ObjectCategory == ObjectCategory.MODEL0D) {
   
+        for (int o = 0; o < Select3Ds.Model0D_ids.length; o++) {
+  
+          int OBJ_ID = Select3Ds.Model0D_ids[o];
+  
+          float x = allModel0Ds.getX(OBJ_ID);
+          float y = allModel0Ds.getY(OBJ_ID);
+          float z = allModel0Ds.getZ(OBJ_ID);
+          float d = allModel0Ds.getS(OBJ_ID);
+          float rot = allModel0Ds.getR(OBJ_ID);
+  
+          int n = allModel0Ds.getType(OBJ_ID);
+          int dMin = allModel0Ds.getDegreeMin(OBJ_ID);
+          int dMax = allModel0Ds.getDegreeMax(OBJ_ID);
+          int s = allModel0Ds.getSeed(OBJ_ID);
+          float TrunkSize = allModel0Ds.getTrunkSize(OBJ_ID);
+          float LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
+  
+          allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+        }
+      }  
+      
       if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
         for (int o = 0; o < Select3Ds.Model1D_ids.length; o++) {
@@ -12086,6 +12122,9 @@ class solarchvision_Groups {
   
         this.Curves[OBJ_ID][0] = 0;
         this.Curves[OBJ_ID][1] = -1;
+
+        this.Model0Ds[OBJ_ID][0] = 0;
+        this.Model0Ds[OBJ_ID][1] = -1;
   
         this.Model1Ds[OBJ_ID][0] = 0;
         this.Model1Ds[OBJ_ID][1] = -1;
@@ -12125,6 +12164,7 @@ class solarchvision_Groups {
   
         if ((0 <= this.Faces[OBJ_ID][0]) && (this.Faces[OBJ_ID][0] <= this.Faces[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Curves[OBJ_ID][0]) && (this.Curves[OBJ_ID][0] <= this.Curves[OBJ_ID][1])) notEmpty = true;
+        if ((0 <= this.Model0Ds[OBJ_ID][0]) && (this.Model0Ds[OBJ_ID][0] <= this.Model0Ds[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Model1Ds[OBJ_ID][0]) && (this.Model1Ds[OBJ_ID][0] <= this.Model1Ds[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Model2Ds[OBJ_ID][0]) && (this.Model2Ds[OBJ_ID][0] <= this.Model2Ds[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Solids[OBJ_ID][0]) && (this.Solids[OBJ_ID][0] <= this.Solids[OBJ_ID][1])) notEmpty = true;
@@ -12161,6 +12201,10 @@ class solarchvision_Groups {
       XML child = parent.addChild("item");
       XML_setInt(child, "id", i);
 
+      XML_setString(child, "Model0Ds", 
+                    nf(this.getStart_Model0D(i), 0) + "|" + 
+                    nf(this.getStop_Model0D(i), 0));
+               
       XML_setString(child, "Model1Ds", 
                     nf(this.getStart_Model1D(i), 0) + "|" + 
                     nf(this.getStop_Model1D(i), 0));
@@ -12205,6 +12249,7 @@ class solarchvision_Groups {
     this.Faces = new int [ni][2];
     this.Curves = new int [ni][2];
     this.Solids = new int [ni][2];
+    this.Model0Ds = new int [ni][2];
     this.Model1Ds = new int [ni][2];
     this.Model2Ds = new int [ni][2];
     this.Pivots = new float [ni][9];
@@ -12230,6 +12275,12 @@ class solarchvision_Groups {
         this.setStop_Solid(i, int(parts[1]));
       }
 
+      {
+        String[] parts = split(XML_getString(children[i], "Model0Ds"), "|");
+        this.setStart_Model0D(i, int(parts[0]));
+        this.setStop_Model0D(i, int(parts[1]));
+      }      
+      
       {
         String[] parts = split(XML_getString(children[i], "Model1Ds"), "|");
         this.setStart_Model1D(i, int(parts[0]));
@@ -17875,6 +17926,7 @@ class solarchvision_Select3Ds {
   
   boolean Model2D_displayEdges = true;
   boolean Model1D_displayEdges = true;
+  boolean Model0D_displayEdges = true;
   boolean Solid_displayEdges = true;
   boolean Section_displayEdges = true;
   boolean Camera_displayEdges = true;
@@ -17884,6 +17936,7 @@ class solarchvision_Select3Ds {
   int[] Camera_ids = new int[0];
   int[] Section_ids = new int[0];
   int[] Solid_ids = new int[0];
+  int[] Model0D_ids = new int[0];
   int[] Model1D_ids = new int[0];
   int[] Model2D_ids = new int[0];
   int[] Group_ids = new int[0];
@@ -18136,6 +18189,9 @@ class solarchvision_Select3Ds {
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
       theVertices = this.Model2D_ids;
     }
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      theVertices = this.Model0D_ids;
+    }  
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       theVertices = this.Model1D_ids;
     }  
@@ -18303,6 +18359,13 @@ class solarchvision_Select3Ds {
         x = allModel1Ds.getX(n);
         y = allModel1Ds.getY(n);
         z = allModel1Ds.getZ(n);
+      }  
+      if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+        int n = theVertices[q];
+  
+        x = allModel0Ds.getX(n);
+        y = allModel0Ds.getY(n);
+        z = allModel0Ds.getZ(n);
       }  
       if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
         int n = theVertices[q];
@@ -18650,7 +18713,55 @@ class solarchvision_Select3Ds {
       this.calculate_BoundingBox();
     }
   
+
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
   
+      int OBJ_ID = int(RxP[0]);
+  
+      int found_at = -1;
+  
+      int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+      if (addNewSelectionToPreviousSelection != 0) {
+  
+        for (int o = this.Model0D_ids.length - 1; o >= 0; o--) {
+          if (this.Model0D_ids[o] == OBJ_ID) {
+            found_at = o;
+            if (addNewSelectionToPreviousSelection == 1) {
+              use_it = 0;
+            }
+            if (addNewSelectionToPreviousSelection == -1) {
+              use_it = -1;
+            }
+            break;
+          }
+        }
+      }
+  
+      if (use_it == -1) {
+        int[] startList = (int[]) subset(this.Model0D_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Model0D_ids, found_at + 1);
+  
+        this.Model0D_ids = (int[]) concat(startList, endList);
+      }
+  
+      if (use_it == 1) {
+        int[] newObject_id = {
+          OBJ_ID
+        };
+  
+        this.Model0D_ids = (int[]) concat(this.Model0D_ids, newObject_id);
+      }
+  
+      WIN3D.update = true;
+  
+      this.calculate_BoundingBox();
+    }
+    
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
       int OBJ_ID = int(RxP[0]);
@@ -19219,6 +19330,99 @@ class solarchvision_Select3Ds {
     }   
   
   
+
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+  
+      for (int OBJ_ID = 0; OBJ_ID < allModel0Ds.Faces.length; OBJ_ID++) {
+  
+        int break_loops = 0;
+  
+        int include_OBJ_in_newSelection = -1;    
+  
+        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+        int f = OBJ_ID;
+  
+        for (int j = 0; j < allModel0Ds.Faces[f].length; j++) {
+  
+          int vNo = allModel0Ds.Faces[f][j];
+  
+          float x = allModel0Ds.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allModel0Ds.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allModel0Ds.Vertices[vNo][2] * OBJECTS_scale;
+  
+          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
+  
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+              if (mouseButton == RIGHT) {
+                include_OBJ_in_newSelection = 1;
+                break_loops = 1;
+              }
+            } else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }
+            }
+  
+            if (break_loops == 1) break;
+          } else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }
+          }                  
+  
+          if (break_loops == 1) break;
+        }
+  
+  
+        if (include_OBJ_in_newSelection == 1) {
+  
+          int found_at = -1;
+  
+          int use_it = 0; // 0:nothing 1:add -1:subtract
+  
+          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+  
+          if (addNewSelectionToPreviousSelection != 0) {
+  
+            for (int o = this.Model0D_ids.length - 1; o >= 0; o--) {
+              if (this.Model0D_ids[o] == OBJ_ID) {
+                found_at = o;
+                if (addNewSelectionToPreviousSelection == 1) {
+                  use_it = 0;
+                }
+                if (addNewSelectionToPreviousSelection == -1) {
+                  use_it = -1;
+                }
+                break;
+              }
+            }
+          }
+  
+          if (use_it == -1) {
+            int[] startList = (int[]) subset(this.Model0D_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Model0D_ids, found_at + 1);
+  
+            this.Model0D_ids = (int[]) concat(startList, endList);
+          }
+  
+          if (use_it == 1) {
+            int[] newObject_id = {
+              OBJ_ID
+            };
+  
+            this.Model0D_ids = (int[]) concat(this.Model0D_ids, newObject_id);
+          }
+        }
+      }
+    }
+    
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
   
@@ -20132,6 +20336,10 @@ class solarchvision_Select3Ds {
   void deselect_Sections () {
     this.Section_ids = new int [0];
   }  
+
+  void deselect_Model0Ds () {
+    this.Model0D_ids = new int [0];
+  }
   
   void deselect_Model1Ds () {
     this.Model1D_ids = new int [0];
@@ -20160,11 +20368,21 @@ class solarchvision_Select3Ds {
       this.deselect_Cameras();
     }  
   
-    if ((current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.MODEL2D) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || (current_ObjectCategory == ObjectCategory.SOLID)) {  
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.MODEL0D) || 
+        (current_ObjectCategory == ObjectCategory.MODEL1D) || 
+        (current_ObjectCategory == ObjectCategory.MODEL2D) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX) || 
+        (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || 
+        (current_ObjectCategory == ObjectCategory.SOLID)) {  
   
       this.Model1D_ids = new int [0];
   
       this.deselect_Groups();
+      
+      this.deselect_Model0Ds();
   
       this.deselect_Model1Ds();
       
@@ -20190,6 +20408,13 @@ class solarchvision_Select3Ds {
         this.LandPoint_ids[i] = i;
       }
     }  
+
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0D_ids = new int [allModel0Ds.num];
+      for (int i = 0; i < this.Model0D_ids.length; i++) { 
+        this.Model0D_ids[i] = i;
+      }
+    }
   
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1D_ids = new int [allModel1Ds.num];
@@ -20287,7 +20512,35 @@ class solarchvision_Select3Ds {
         }
       }
     }     
+
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      int[] pre_Selection_Model0D_ids = sort(this.Model0D_ids);
   
+      this.Model0D_ids = new int [0];
+  
+      for (int i = 0; i < allModel0Ds.num; i++) {
+        int found = -1; 
+  
+        for (int j = 0; j < pre_Selection_Model0D_ids.length; j++) {
+  
+          if (pre_Selection_Model0D_ids[j] == i) {
+            found = 1;
+            break;
+          } else if (pre_Selection_Model0D_ids[j] > i) {
+            break;
+          }
+        }
+  
+        if (found == -1) {
+          int[] new_Item = {
+            i
+          };
+  
+          this.Model0D_ids = concat(this.Model0D_ids, new_Item);
+        }
+      }
+    }    
+    
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       int[] pre_Selection_Model1D_ids = sort(this.Model1D_ids);
   
@@ -20683,7 +20936,16 @@ class solarchvision_Select3Ds {
         this.Solid_ids = concat(this.Solid_ids, new_Item);
       }
     } 
-  
+
+    if (current_ObjectCategory == ObjectCategory.MODEL0D) {
+      this.Model0D_ids = new int [0];
+      
+      if (allModel0Ds.num > 0) {
+        int[] new_Item = {allModel0Ds.num - 1};
+        this.Model0D_ids = concat(this.Model0D_ids, new_Item);
+      }
+    } 
+    
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1D_ids = new int [0];
       
@@ -20756,7 +21018,36 @@ class solarchvision_Select3Ds {
   }
 
 
-
+  void convert_Model0Ds_to_Groups () {
+  
+    this.Group_ids = new int [0];
+  
+    for (int i = 0; i < this.Model0D_ids.length; i++) {
+  
+      int f = this.Model0D_ids[i];
+  
+      for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
+  
+        if ((allGroups.getStart_Model0D(OBJ_ID) <= f) && (f <= allGroups.getStop_Model0D(OBJ_ID))) { 
+  
+          int previously_added = 0;
+          for (int q = 0; q < this.Group_ids.length; q++) {
+            if (this.Group_ids[q] == OBJ_ID) {
+              previously_added = 1;
+              break;
+            }
+          }
+          if (previously_added == 0) {
+            int[] new_Item = {
+              OBJ_ID
+            };
+            this.Group_ids = concat(this.Group_ids, new_Item);
+          }
+        }
+      }
+    }
+  }
+  
   void convert_Model1Ds_to_Groups () {
   
     this.Group_ids = new int [0];
@@ -21055,6 +21346,32 @@ class solarchvision_Select3Ds {
     }
   }
   
+  void convert_Groups_to_Model0Ds () {
+  
+    this.Model0D_ids = new int [0];
+    
+    for (int i = 0; i < this.Group_ids.length; i++) {
+  
+      int OBJ_ID = this.Group_ids[i];
+  
+      for (int f = allGroups.getStart_Model0D(OBJ_ID); f <= allGroups.getStop_Model0D(OBJ_ID); f++) { 
+  
+        int previously_added = 0;
+        for (int q = 0; q < this.Model0D_ids.length; q++) {
+          if (this.Model0D_ids[q] == f) {
+            previously_added = 1;
+            break;
+          }
+        }
+        if (previously_added == 0) {
+          int[] new_Item = {
+            f
+          };
+          this.Model0D_ids = concat(this.Model0D_ids, new_Item);
+        }
+      }
+    }
+  }
   
   void convert_Groups_to_Model1Ds () {
   
@@ -21648,6 +21965,7 @@ class solarchvision_Select3Ds {
     XML_setBoolean(parent, "Group_displayBox", this.Group_displayBox);
     XML_setBoolean(parent, "Model2D_displayEdges", this.Model2D_displayEdges);
     XML_setBoolean(parent, "Model1D_displayEdges", this.Model1D_displayEdges);
+    XML_setBoolean(parent, "Model0D_displayEdges", this.Model0D_displayEdges);
     XML_setBoolean(parent, "Solid_displayEdges", this.Solid_displayEdges);
     XML_setBoolean(parent, "Section_displayEdges", this.Section_displayEdges);
     XML_setBoolean(parent, "Camera_displayEdges", this.Camera_displayEdges);
@@ -21666,6 +21984,16 @@ class solarchvision_Select3Ds {
       XML_setString(parent, "selected_LandPoints", txt);
     }    
     
+    { 
+      String txt = "";
+      int ni = Model0D_ids.length;
+      for (int i = 0; i < ni; i++) {
+        txt += nf(this.Model0D_ids[i], 0);
+        if (i < ni - 1) txt += "|";
+      }
+      XML_setString(parent, "selected_Model0Ds", txt);
+    }      
+
     { 
       String txt = "";
       int ni = Model1D_ids.length;
@@ -21814,6 +22142,7 @@ class solarchvision_Select3Ds {
     this.Curve_displayVertices = XML_getBoolean(parent, "Curve_displayVertices");
     this.Model2D_displayEdges = XML_getBoolean(parent, "Model2D_displayEdges");
     this.Model1D_displayEdges = XML_getBoolean(parent, "Model1D_displayEdges");
+    this.Model0D_displayEdges = XML_getBoolean(parent, "Model0D_displayEdges");
     this.Solid_displayEdges = XML_getBoolean(parent, "Solid_displayEdges");
     this.Section_displayEdges = XML_getBoolean(parent, "Section_displayEdges");
     this.Camera_displayEdges = XML_getBoolean(parent, "Camera_displayEdges");
@@ -21837,7 +22166,20 @@ class solarchvision_Select3Ds {
       }
     }
     
-
+    {
+      String txt = XML_getString(parent, "selected_Model0Ds");      
+      if (txt.equals("")) {
+        this.Model0D_ids = new int[0]; 
+      }
+      else {
+        String[] parts = split(txt, "|");
+        this.Model0D_ids = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+          this.Model0D_ids[i] = int(parts[i]);
+        }
+      }
+    }
+    
     {
       String txt = XML_getString(parent, "selected_Model1Ds");      
       if (txt.equals("")) {
@@ -22069,6 +22411,7 @@ float pre_LocationLON;
 
 boolean pre_WORLD_autoView;
 
+boolean pre_Selection_Model0D_displayEdges;
 boolean pre_Selection_Model1D_displayEdges;
 boolean pre_Selection_Model2D_displayEdges;
 
@@ -22561,6 +22904,7 @@ void draw () {
 
         pre_Selection_LandPoint_displayPoints = Select3Ds.LandPoint_displayPoints;
 
+        pre_Selection_Model0D_displayEdges = Select3Ds.Model0D_displayEdges;
         pre_Selection_Model1D_displayEdges = Select3Ds.Model1D_displayEdges;
         pre_Selection_Model2D_displayEdges = Select3Ds.Model2D_displayEdges;
         pre_allPoints_displayAll = allPoints.displayAll;
@@ -22738,7 +23082,10 @@ void draw () {
           WIN3D.update = true;
         }          
 
-
+        if (pre_Selection_Model0D_displayEdges != Select3Ds.Model0D_displayEdges) {
+          WIN3D.update = true;
+        }     
+        
         if (pre_Selection_Model1D_displayEdges != Select3Ds.Model1D_displayEdges) {
           WIN3D.update = true;
         }     
@@ -29500,9 +29847,6 @@ class solarchvision_Model0Ds {
   float[][] Vertices;
   int[][] Faces;
 
-
-
-
   void draw (int target_window) {
   
     this.Faces = new int [this.num][4];
@@ -29527,7 +29871,7 @@ class solarchvision_Model0Ds {
     
           if (this.num != 0) {
     
-            mtlOutput.println("newmtl " + "Model1Ds_Trunk");
+            mtlOutput.println("newmtl " + "Model0Ds_Trunk");
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
             mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
             mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
@@ -29540,7 +29884,7 @@ class solarchvision_Model0Ds {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
     
-            mtlOutput.println("newmtl " + "Model1Ds_Leaf");
+            mtlOutput.println("newmtl " + "Model0Ds_Leaf");
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
             mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
             mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
@@ -29725,6 +30069,178 @@ class solarchvision_Model0Ds {
       WIN3D.graphics.endShape(CLOSE);
     }
   }  
+  
+  
+  
+  void create (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
+  
+    float[] TempModel0Ds_TrunkSize = {
+      TrunkSize
+    }; 
+    this.TrunkSize = concat(this.TrunkSize, TempModel0Ds_TrunkSize);  
+  
+    float[] TempModel0Ds_LeafSize = {
+      LeafSize
+    }; 
+    this.LeafSize = concat(this.LeafSize, TempModel0Ds_LeafSize);
+  
+    int[] TempModel0Ds_Type = {
+      PlantType
+    }; 
+    this.Type = concat(this.Type, TempModel0Ds_Type);
+  
+    int[] TempModel0Ds_DegreeMin = {
+      PlantDegreeMin
+    }; 
+    this.DegreeMin = concat(this.DegreeMin, TempModel0Ds_DegreeMin);
+  
+    int[] TempModel0Ds_DegreeMax = {
+      PlantDegreeMax
+    }; 
+    this.DegreeMax = concat(this.DegreeMax, TempModel0Ds_DegreeMax);
+  
+    int q = PlantSeed;
+    if (q == -1) q = int(random(32767));
+  
+    int[] TempModel0Ds_Seed = {
+      q
+    }; 
+    this.Seed = concat(this.Seed, TempModel0Ds_Seed);
+  
+    float[][] TempModel0Ds_XYZSR = {
+      {
+        x, y, z, s, rot
+      }
+    };
+    this.XYZSR = (float[][]) concat(this.XYZSR, TempModel0Ds_XYZSR);
+  
+    this.num += 1;
+  
+  
+  
+    if (User3D.create_MeshOrSolid != 0) {
+  
+      randomSeed(q);
+  
+//this.branch_add_allSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin, PlantDegreeMin, PlantDegreeMax, TrunkSize, LeafSize);
+    }
+  
+  
+    if (allGroups.num > 0) allGroups.Model0Ds[allGroups.num - 1][1] = this.num - 1;
+  
+  }  
+  
+  
+  void empty () {
+  
+    this.XYZSR = new float [0][5]; 
+  
+    this.Type = new int [0];
+  
+    this.DegreeMin = new int [0];
+  
+    this.DegreeMax = new int [0];
+  
+    this.Seed = new int [0];
+  
+    this.TrunkSize = new float [0];
+  
+    this.LeafSize = new float [0];
+  
+    this.num = 0;
+  
+    for (int q = 0; q < allGroups.num; q++) {
+      allGroups.Model0Ds[q][0] = 0;
+      allGroups.Model0Ds[q][1] = -1;
+    }    
+
+    Select3Ds.deselect_Groups();  
+    Select3Ds.deselect_Model0Ds();
+  }  
+  
+  
+  public void to_XML (XML xml) {
+    
+    println("Saving:" + this.CLASS_STAMP);
+    
+    XML parent = xml.addChild(this.CLASS_STAMP);
+    
+    int ni = this.num;
+    XML_setInt(parent, "ni", ni);
+    for (int i = 0; i < ni; i++) {
+      XML child = parent.addChild("item");
+      XML_setInt(child, "id", i);
+      String txt = "";
+      txt += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getType(i), 0);
+      txt += ",";
+      txt += nf(this.getDegreeMin(i), 0);
+      txt += ",";
+      txt += nf(this.getDegreeMax(i), 0);
+      txt += ",";
+      txt += nf(this.getSeed(i), 0);
+      txt += ",";
+      txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
+
+      XML_setContent(child, txt);
+    } 
+    
+    
+    XML_setBoolean(parent, "displayAll", this.displayAll);
+    XML_setBoolean(parent, "displayLeaves", this.displayLeaves);
+  }
+  
+  
+  public void from_XML (XML xml) {
+    
+    println("Loading:" + this.CLASS_STAMP);
+    
+    XML parent = xml.getChild(this.CLASS_STAMP);
+    int ni = XML_getInt(parent, "ni");
+
+    this.XYZSR = new float [ni][5];
+    this.Type = new int [ni];
+    this.DegreeMin = new int [ni];
+    this.DegreeMax = new int [ni];
+    this.Seed = new int [ni];
+    this.TrunkSize = new float [ni];
+    this.LeafSize = new float [ni];
+    this.num = ni;
+
+    XML[] children = parent.getChildren("item");         
+    for (int i = 0; i < ni; i++) {
+
+      String txt = XML_getContent(children[i]);
+      String[] parts = split(txt, ",");
+
+      this.setX(i, float(parts[0]));
+      this.setY(i, float(parts[1]));
+      this.setZ(i, float(parts[2]));
+      this.setS(i, float(parts[3]));
+      this.setR(i, float(parts[4]));
+
+      this.setType(i, int(parts[5]));
+      this.setDegreeMin(i, int(parts[6]));
+      this.setDegreeMax(i, int(parts[7]));
+      this.setSeed(i, int(parts[8]));
+      this.setTrunkSize(i, float(parts[9]));
+      this.setLeafSize(i, float(parts[10]));
+    }
+    
+    this.displayAll = XML_getBoolean(parent, "displayAll");
+    this.displayLeaves = XML_getBoolean(parent, "displayLeaves");
+  }      
 
 }
 
@@ -30697,45 +31213,45 @@ class solarchvision_Model1Ds {
   
   void create (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
   
-    float[] TempallModel1Ds_TrunkSize = {
+    float[] TempModel1Ds_TrunkSize = {
       TrunkSize
     }; 
-    this.TrunkSize = concat(this.TrunkSize, TempallModel1Ds_TrunkSize);  
+    this.TrunkSize = concat(this.TrunkSize, TempModel1Ds_TrunkSize);  
   
-    float[] TempallModel1Ds_LeafSize = {
+    float[] TempModel1Ds_LeafSize = {
       LeafSize
     }; 
-    this.LeafSize = concat(this.LeafSize, TempallModel1Ds_LeafSize);
+    this.LeafSize = concat(this.LeafSize, TempModel1Ds_LeafSize);
   
-    int[] TempallModel1Ds_Type = {
+    int[] TempModel1Ds_Type = {
       PlantType
     }; 
-    this.Type = concat(this.Type, TempallModel1Ds_Type);
+    this.Type = concat(this.Type, TempModel1Ds_Type);
   
-    int[] TempallModel1Ds_DegreeMin = {
+    int[] TempModel1Ds_DegreeMin = {
       PlantDegreeMin
     }; 
-    this.DegreeMin = concat(this.DegreeMin, TempallModel1Ds_DegreeMin);
+    this.DegreeMin = concat(this.DegreeMin, TempModel1Ds_DegreeMin);
   
-    int[] TempallModel1Ds_DegreeMax = {
+    int[] TempModel1Ds_DegreeMax = {
       PlantDegreeMax
     }; 
-    this.DegreeMax = concat(this.DegreeMax, TempallModel1Ds_DegreeMax);
+    this.DegreeMax = concat(this.DegreeMax, TempModel1Ds_DegreeMax);
   
     int q = PlantSeed;
     if (q == -1) q = int(random(32767));
   
-    int[] TempallModel1Ds_Seed = {
+    int[] TempModel1Ds_Seed = {
       q
     }; 
-    this.Seed = concat(this.Seed, TempallModel1Ds_Seed);
+    this.Seed = concat(this.Seed, TempModel1Ds_Seed);
   
-    float[][] TempallModel1Ds_XYZSR = {
+    float[][] TempModel1Ds_XYZSR = {
       {
         x, y, z, s, rot
       }
     };
-    this.XYZSR = (float[][]) concat(this.XYZSR, TempallModel1Ds_XYZSR);
+    this.XYZSR = (float[][]) concat(this.XYZSR, TempModel1Ds_XYZSR);
   
     this.num += 1;
   
