@@ -11632,7 +11632,6 @@ class solarchvision_Groups {
   int[][] Faces = new int[0][2]; // start face - end face
   int[][] Solids = new int[0][2]; // start solid - end solid
   int[][] Model0Ds = new int[0][2]; // start Model0Ds - end Model0Ds
-  int[][] Model1Ds = new int[0][2]; // start Model1Ds - end Model1Ds
   int[][] Model2Ds = new int[0][2]; // start Model2Ds - end Model2Ds
   
   int num = 0; 
@@ -11671,14 +11670,6 @@ class solarchvision_Groups {
     return this.Model0Ds[n][1];
   }
 
-  int getStart_Model1D (int n) {
-    return this.Model1Ds[n][0];
-  }
-
-  int getStop_Model1D (int n) {
-    return this.Model1Ds[n][1];
-  }
-  
   int getStart_Model2D (int n) {
     return this.Model2Ds[n][0];
   }
@@ -11719,14 +11710,6 @@ class solarchvision_Groups {
     this.Model0Ds[n][1] = t;
   }
   
-  void setStart_Model1D (int n, int t) {
-    this.Model1Ds[n][0] = t;
-  }
-
-  void setStop_Model1D (int n, int t) {
-    this.Model1Ds[n][1] = t;
-  }
-
   void setStart_Model2D (int n, int t) {
     this.Model2Ds[n][0] = t;
   }
@@ -11770,13 +11753,6 @@ class solarchvision_Groups {
     }; // i.e. null because start > end 
     this.Model0Ds = (int[][]) concat(this.Model0Ds, newObject_allModel0Ds);     
     
-    int[][] newObject_allModel1Ds = {
-      {
-        allModel1Ds.num, -1
-      }
-    }; // i.e. null because start > end 
-    this.Model1Ds = (int[][]) concat(this.Model1Ds, newObject_allModel1Ds);     
-  
     int[][] newObject_allModel2Ds = {
       {
         allModel2Ds.num, -1
@@ -11817,7 +11793,6 @@ class solarchvision_Groups {
   void empty () {
 
     this.Model0Ds = new int [0][2];
-    this.Model1Ds = new int [0][2];
     this.Model2Ds = new int [0][2];
     this.Faces = new int [0][2];
     this.Curves = new int [0][2];
@@ -11840,7 +11815,6 @@ class solarchvision_Groups {
     if (current_ObjectCategory == ObjectCategory.FACE) run_process = true;
     if (current_ObjectCategory == ObjectCategory.CURVE) run_process = true;
     if (current_ObjectCategory == ObjectCategory.MODEL2D) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) run_process = true;
     if (current_ObjectCategory == ObjectCategory.MODEL0D) run_process = true;
   
     if (run_process) {
@@ -11880,29 +11854,6 @@ class solarchvision_Groups {
           float LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
   
           allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
-        }
-      }  
-      
-      if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-        for (int o = 0; o < Select3Ds.Model1D_ids.length; o++) {
-  
-          int OBJ_ID = Select3Ds.Model1D_ids[o];
-  
-          float x = allModel1Ds.getX(OBJ_ID);
-          float y = allModel1Ds.getY(OBJ_ID);
-          float z = allModel1Ds.getZ(OBJ_ID);
-          float d = allModel1Ds.getS(OBJ_ID);
-          float rot = allModel1Ds.getR(OBJ_ID);
-  
-          int n = allModel1Ds.getType(OBJ_ID);
-          int dMin = allModel1Ds.getDegreeMin(OBJ_ID);
-          int dMax = allModel1Ds.getDegreeMax(OBJ_ID);
-          int s = allModel1Ds.getSeed(OBJ_ID);
-          float TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-          float LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-  
-          allModel1Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
         }
       }  
   
@@ -12125,10 +12076,7 @@ class solarchvision_Groups {
 
         this.Model0Ds[OBJ_ID][0] = 0;
         this.Model0Ds[OBJ_ID][1] = -1;
-  
-        this.Model1Ds[OBJ_ID][0] = 0;
-        this.Model1Ds[OBJ_ID][1] = -1;
-  
+
         this.Model2Ds[OBJ_ID][0] = 0;
         this.Model2Ds[OBJ_ID][1] = -1;
   
@@ -12165,7 +12113,6 @@ class solarchvision_Groups {
         if ((0 <= this.Faces[OBJ_ID][0]) && (this.Faces[OBJ_ID][0] <= this.Faces[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Curves[OBJ_ID][0]) && (this.Curves[OBJ_ID][0] <= this.Curves[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Model0Ds[OBJ_ID][0]) && (this.Model0Ds[OBJ_ID][0] <= this.Model0Ds[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Model1Ds[OBJ_ID][0]) && (this.Model1Ds[OBJ_ID][0] <= this.Model1Ds[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Model2Ds[OBJ_ID][0]) && (this.Model2Ds[OBJ_ID][0] <= this.Model2Ds[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Solids[OBJ_ID][0]) && (this.Solids[OBJ_ID][0] <= this.Solids[OBJ_ID][1])) notEmpty = true;
   
@@ -12204,10 +12151,6 @@ class solarchvision_Groups {
       XML_setString(child, "Model0Ds", 
                     nf(this.getStart_Model0D(i), 0) + "|" + 
                     nf(this.getStop_Model0D(i), 0));
-               
-      XML_setString(child, "Model1Ds", 
-                    nf(this.getStart_Model1D(i), 0) + "|" + 
-                    nf(this.getStop_Model1D(i), 0));
                
       XML_setString(child, "Model2Ds", 
                     nf(this.getStart_Model2D(i), 0) + "|" + 
@@ -12250,7 +12193,6 @@ class solarchvision_Groups {
     this.Curves = new int [ni][2];
     this.Solids = new int [ni][2];
     this.Model0Ds = new int [ni][2];
-    this.Model1Ds = new int [ni][2];
     this.Model2Ds = new int [ni][2];
     this.Pivots = new float [ni][9];
 
@@ -12279,12 +12221,6 @@ class solarchvision_Groups {
         String[] parts = split(XML_getString(children[i], "Model0Ds"), "|");
         this.setStart_Model0D(i, int(parts[0]));
         this.setStop_Model0D(i, int(parts[1]));
-      }      
-      
-      {
-        String[] parts = split(XML_getString(children[i], "Model1Ds"), "|");
-        this.setStart_Model1D(i, int(parts[0]));
-        this.setStop_Model1D(i, int(parts[1]));
       }      
       
       {
@@ -17925,7 +17861,6 @@ class solarchvision_Select3Ds {
   
   
   boolean Model2D_displayEdges = true;
-  boolean Model1D_displayEdges = true;
   boolean Model0D_displayEdges = true;
   boolean Solid_displayEdges = true;
   boolean Section_displayEdges = true;
@@ -17937,7 +17872,6 @@ class solarchvision_Select3Ds {
   int[] Section_ids = new int[0];
   int[] Solid_ids = new int[0];
   int[] Model0D_ids = new int[0];
-  int[] Model1D_ids = new int[0];
   int[] Model2D_ids = new int[0];
   int[] Group_ids = new int[0];
   int[] Face_ids = new int[0];
@@ -18192,9 +18126,6 @@ class solarchvision_Select3Ds {
     if (current_ObjectCategory == ObjectCategory.MODEL0D) {
       theVertices = this.Model0D_ids;
     }  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      theVertices = this.Model1D_ids;
-    }  
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
       theVertices = this.LandPoint_ids;
     }    
@@ -18353,13 +18284,6 @@ class solarchvision_Select3Ds {
         y = allModel2Ds.getY(n);
         z = allModel2Ds.getZ(n);
       }     
-      if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-        int n = theVertices[q];
-  
-        x = allModel1Ds.getX(n);
-        y = allModel1Ds.getY(n);
-        z = allModel1Ds.getZ(n);
-      }  
       if (current_ObjectCategory == ObjectCategory.MODEL0D) {
         int n = theVertices[q];
   
@@ -18762,53 +18686,6 @@ class solarchvision_Select3Ds {
       this.calculate_BoundingBox();
     }
     
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      int OBJ_ID = int(RxP[0]);
-  
-      int found_at = -1;
-  
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-  
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-  
-      if (addNewSelectionToPreviousSelection != 0) {
-  
-        for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-          if (this.Model1D_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-  
-      if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Model1D_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Model1D_ids, found_at + 1);
-  
-        this.Model1D_ids = (int[]) concat(startList, endList);
-      }
-  
-      if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-  
-        this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
-      }
-  
-      WIN3D.update = true;
-  
-      this.calculate_BoundingBox();
-    }
   
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -19423,98 +19300,6 @@ class solarchvision_Select3Ds {
       }
     }
     
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-  
-      for (int OBJ_ID = 0; OBJ_ID < allModel1Ds.Faces.length; OBJ_ID++) {
-  
-        int break_loops = 0;
-  
-        int include_OBJ_in_newSelection = -1;    
-  
-        if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-        if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-  
-        int f = OBJ_ID;
-  
-        for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
-  
-          int vNo = allModel1Ds.Faces[f][j];
-  
-          float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
-  
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
-  
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-  
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
-          }                  
-  
-          if (break_loops == 1) break;
-        }
-  
-  
-        if (include_OBJ_in_newSelection == 1) {
-  
-          int found_at = -1;
-  
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-  
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-  
-          if (addNewSelectionToPreviousSelection != 0) {
-  
-            for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-              if (this.Model1D_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-  
-          if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Model1D_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Model1D_ids, found_at + 1);
-  
-            this.Model1D_ids = (int[]) concat(startList, endList);
-          }
-  
-          if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-  
-            this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
-          }
-        }
-      }
-    }    
   
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
@@ -20341,10 +20126,7 @@ class solarchvision_Select3Ds {
     this.Model0D_ids = new int [0];
   }
   
-  void deselect_Model1Ds () {
-    this.Model1D_ids = new int [0];
-  }
-  
+
   void deselect_Model2Ds () {
     this.Model2D_ids = new int [0];
   }  
@@ -20370,7 +20152,6 @@ class solarchvision_Select3Ds {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || 
         (current_ObjectCategory == ObjectCategory.MODEL0D) || 
-        (current_ObjectCategory == ObjectCategory.MODEL1D) || 
         (current_ObjectCategory == ObjectCategory.MODEL2D) || 
         (current_ObjectCategory == ObjectCategory.FACE) || 
         (current_ObjectCategory == ObjectCategory.CURVE) || 
@@ -20378,14 +20159,10 @@ class solarchvision_Select3Ds {
         (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || 
         (current_ObjectCategory == ObjectCategory.SOLID)) {  
   
-      this.Model1D_ids = new int [0];
-  
       this.deselect_Groups();
       
       this.deselect_Model0Ds();
-  
-      this.deselect_Model1Ds();
-      
+
       this.deselect_Model2Ds();
   
       this.deselect_Curves();
@@ -20413,13 +20190,6 @@ class solarchvision_Select3Ds {
       this.Model0D_ids = new int [allModel0Ds.num];
       for (int i = 0; i < this.Model0D_ids.length; i++) { 
         this.Model0D_ids[i] = i;
-      }
-    }
-  
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = new int [allModel1Ds.num];
-      for (int i = 0; i < this.Model1D_ids.length; i++) { 
-        this.Model1D_ids[i] = i;
       }
     }
   
@@ -20541,34 +20311,6 @@ class solarchvision_Select3Ds {
       }
     }    
     
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      int[] pre_Selection_Model1D_ids = sort(this.Model1D_ids);
-  
-      this.Model1D_ids = new int [0];
-  
-      for (int i = 0; i < allModel1Ds.num; i++) {
-        int found = -1; 
-  
-        for (int j = 0; j < pre_Selection_Model1D_ids.length; j++) {
-  
-          if (pre_Selection_Model1D_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Model1D_ids[j] > i) {
-            break;
-          }
-        }
-  
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-  
-          this.Model1D_ids = concat(this.Model1D_ids, new_Item);
-        }
-      }
-    }    
-  
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
       int[] pre_Selection_Model2D_ids = sort(this.Model2D_ids);
   
@@ -20945,15 +20687,6 @@ class solarchvision_Select3Ds {
         this.Model0D_ids = concat(this.Model0D_ids, new_Item);
       }
     } 
-    
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = new int [0];
-      
-      if (allModel1Ds.num > 0) {
-        int[] new_Item = {allModel1Ds.num - 1};
-        this.Model1D_ids = concat(this.Model1D_ids, new_Item);
-      }
-    } 
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2D_ids = new int [0];
@@ -21047,37 +20780,6 @@ class solarchvision_Select3Ds {
       }
     }
   }
-  
-  void convert_Model1Ds_to_Groups () {
-  
-    this.Group_ids = new int [0];
-  
-    for (int i = 0; i < this.Model1D_ids.length; i++) {
-  
-      int f = this.Model1D_ids[i];
-  
-      for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-  
-        if ((allGroups.getStart_Model1D(OBJ_ID) <= f) && (f <= allGroups.getStop_Model1D(OBJ_ID))) { 
-  
-          int previously_added = 0;
-          for (int q = 0; q < this.Group_ids.length; q++) {
-            if (this.Group_ids[q] == OBJ_ID) {
-              previously_added = 1;
-              break;
-            }
-          }
-          if (previously_added == 0) {
-            int[] new_Item = {
-              OBJ_ID
-            };
-            this.Group_ids = concat(this.Group_ids, new_Item);
-          }
-        }
-      }
-    }
-  }
-  
   
   void convert_Model2Ds_to_Groups () {
   
@@ -21373,35 +21075,7 @@ class solarchvision_Select3Ds {
     }
   }
   
-  void convert_Groups_to_Model1Ds () {
-  
-    this.Model1D_ids = new int [0];
-    
-    for (int i = 0; i < this.Group_ids.length; i++) {
-  
-      int OBJ_ID = this.Group_ids[i];
-  
-      for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) { 
-  
-        int previously_added = 0;
-        for (int q = 0; q < this.Model1D_ids.length; q++) {
-          if (this.Model1D_ids[q] == f) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            f
-          };
-          this.Model1D_ids = concat(this.Model1D_ids, new_Item);
-        }
-      }
-    }
-  }
-  
-  
-  
+ 
   void convert_Groups_to_Model2Ds () {
   
     this.Model2D_ids = new int [0];
@@ -21964,7 +21638,6 @@ class solarchvision_Select3Ds {
     XML_setBoolean(parent, "Group_displayEdges", this.Group_displayEdges);
     XML_setBoolean(parent, "Group_displayBox", this.Group_displayBox);
     XML_setBoolean(parent, "Model2D_displayEdges", this.Model2D_displayEdges);
-    XML_setBoolean(parent, "Model1D_displayEdges", this.Model1D_displayEdges);
     XML_setBoolean(parent, "Model0D_displayEdges", this.Model0D_displayEdges);
     XML_setBoolean(parent, "Solid_displayEdges", this.Solid_displayEdges);
     XML_setBoolean(parent, "Section_displayEdges", this.Section_displayEdges);
@@ -21994,16 +21667,7 @@ class solarchvision_Select3Ds {
       XML_setString(parent, "selected_Model0Ds", txt);
     }      
 
-    { 
-      String txt = "";
-      int ni = Model1D_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Model1D_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Model1Ds", txt);
-    }      
-  
+ 
     { 
       String txt = "";
       int ni = Model2D_ids.length;
@@ -22141,7 +21805,6 @@ class solarchvision_Select3Ds {
     this.Vertex_displayVertices = XML_getBoolean(parent, "Vertex_displayVertices");      
     this.Curve_displayVertices = XML_getBoolean(parent, "Curve_displayVertices");
     this.Model2D_displayEdges = XML_getBoolean(parent, "Model2D_displayEdges");
-    this.Model1D_displayEdges = XML_getBoolean(parent, "Model1D_displayEdges");
     this.Model0D_displayEdges = XML_getBoolean(parent, "Model0D_displayEdges");
     this.Solid_displayEdges = XML_getBoolean(parent, "Solid_displayEdges");
     this.Section_displayEdges = XML_getBoolean(parent, "Section_displayEdges");
@@ -22180,20 +21843,6 @@ class solarchvision_Select3Ds {
       }
     }
     
-    {
-      String txt = XML_getString(parent, "selected_Model1Ds");      
-      if (txt.equals("")) {
-        this.Model1D_ids = new int[0]; 
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Model1D_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Model1D_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
     {
       String txt = XML_getString(parent, "selected_Model2Ds");    
       if (txt.equals("")) {
@@ -22412,7 +22061,6 @@ float pre_LocationLON;
 boolean pre_WORLD_autoView;
 
 boolean pre_Selection_Model0D_displayEdges;
-boolean pre_Selection_Model1D_displayEdges;
 boolean pre_Selection_Model2D_displayEdges;
 
 boolean pre_Selection_Solid_displayEdges;
@@ -22905,7 +22553,6 @@ void draw () {
         pre_Selection_LandPoint_displayPoints = Select3Ds.LandPoint_displayPoints;
 
         pre_Selection_Model0D_displayEdges = Select3Ds.Model0D_displayEdges;
-        pre_Selection_Model1D_displayEdges = Select3Ds.Model1D_displayEdges;
         pre_Selection_Model2D_displayEdges = Select3Ds.Model2D_displayEdges;
         pre_allPoints_displayAll = allPoints.displayAll;
         pre_allFaces_displayEdges = allFaces.displayEdges;
@@ -23083,10 +22730,6 @@ void draw () {
         }          
 
         if (pre_Selection_Model0D_displayEdges != Select3Ds.Model0D_displayEdges) {
-          WIN3D.update = true;
-        }     
-        
-        if (pre_Selection_Model1D_displayEdges != Select3Ds.Model1D_displayEdges) {
           WIN3D.update = true;
         }     
 
@@ -31268,10 +30911,7 @@ class solarchvision_Model1Ds {
   
       this.branch_add_allSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin, PlantDegreeMin, PlantDegreeMax, TrunkSize, LeafSize);
     }
-  
-  
-    if (allGroups.num > 0) allGroups.Model1Ds[allGroups.num - 1][1] = this.num - 1;
-  
+
   }  
   
   
@@ -31292,14 +30932,8 @@ class solarchvision_Model1Ds {
     this.LeafSize = new float [0];
   
     this.num = 0;
-  
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Model1Ds[q][0] = 0;
-      allGroups.Model1Ds[q][1] = -1;
-    }    
 
     Select3Ds.deselect_Groups();  
-    Select3Ds.deselect_Model1Ds();
   }  
   
   
@@ -43007,8 +42641,8 @@ void mouseClicked () {
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
-            if (menu_option.equals("Display/Hide Selected 1D Edges")) {
-              Select3Ds.Model1D_displayEdges = !Select3Ds.Model1D_displayEdges;
+            if (menu_option.equals("Display/Hide Selected 0D Edges")) {
+              Select3Ds.Model0D_displayEdges = !Select3Ds.Model0D_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -43887,15 +43521,15 @@ void mouseClicked () {
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
-            if (menu_option.equals("Model1Ds >> Group")) {
-              Select3Ds.convert_Model1Ds_to_Groups();
+            if (menu_option.equals("Model0Ds >> Group")) {
+              Select3Ds.convert_Model0Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
-            if (menu_option.equals("Group >> Model1Ds")) {
-              Select3Ds.convert_Groups_to_Model1Ds();
-              current_ObjectCategory = ObjectCategory.MODEL1D;
+            if (menu_option.equals("Group >> Model0Ds")) {
+              Select3Ds.convert_Groups_to_Model0Ds();
+              current_ObjectCategory = ObjectCategory.MODEL0D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }            
@@ -44816,11 +44450,11 @@ void mouseClicked () {
                     z1 = allModel2Ds.getZ(Select3Ds.Model2D_ids[Select3Ds.Model2D_ids.length - 1]);
                   }
   
-                  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                  if (current_ObjectCategory == ObjectCategory.MODEL0D) {
   
-                    x1 = allModel1Ds.getX(Select3Ds.Model1D_ids[Select3Ds.Model1D_ids.length - 1]); 
-                    y1 = allModel1Ds.getY(Select3Ds.Model1D_ids[Select3Ds.Model1D_ids.length - 1]); 
-                    z1 = allModel1Ds.getZ(Select3Ds.Model1D_ids[Select3Ds.Model1D_ids.length - 1]);
+                    x1 = allModel0Ds.getX(Select3Ds.Model0D_ids[Select3Ds.Model0D_ids.length - 1]); 
+                    y1 = allModel0Ds.getY(Select3Ds.Model0D_ids[Select3Ds.Model0D_ids.length - 1]); 
+                    z1 = allModel0Ds.getZ(Select3Ds.Model0D_ids[Select3Ds.Model0D_ids.length - 1]);
                   }            
   
                   if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -45241,7 +44875,7 @@ void mouseClicked () {
                   
                   int keep_number_of_allGroups = allGroups.num;
                   int keep_number_of_allModel2Ds = allModel2Ds.num;
-                  int keep_number_of_allModel1Ds = allModel1Ds.num;
+                  int keep_number_of_allModel0Ds = allModel0Ds.num;
                   int keep_number_of_allSolids = allSolids.DEF.length;
                   int keep_number_of_allSections = allSections.num;
                   int keep_number_of_allCameras = allCameras.num;
@@ -45823,15 +45457,15 @@ void mouseClicked () {
                   }   
   
   
-                  if (keep_number_of_allModel1Ds != allModel1Ds.num) { // if any allModel1Ds created during the process
+                  if (keep_number_of_allModel0Ds != allModel0Ds.num) { // if any allModel0Ds created during the process
   
-                    Select3Ds.deselect_Model1Ds();
+                    Select3Ds.deselect_Model0Ds();
   
-                    for (int o = keep_number_of_allModel1Ds; o < allModel1Ds.num; o++) {
+                    for (int o = keep_number_of_allModel0Ds; o < allModel0Ds.num; o++) {
   
-                      int[] newlyAddedallModel1Ds = {o};
+                      int[] newlyAddedallModel0Ds = {o};
   
-                      Select3Ds.Model1D_ids = concat(Select3Ds.Model1D_ids, newlyAddedallModel1Ds);
+                      Select3Ds.Model0D_ids = concat(Select3Ds.Model0D_ids, newlyAddedallModel0Ds);
                     }  
   
                     Select3Ds.calculate_BoundingBox();
@@ -46453,9 +46087,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }    
 
-  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+  if (current_ObjectCategory == ObjectCategory.MODEL0D) {
 
-    if (Select3Ds.Model1D_displayEdges) {
+    if (Select3Ds.Model0D_displayEdges) {
 
       pushMatrix();
 
@@ -46467,19 +46101,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = Select3Ds.Model1D_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
 
-          int f = Select3Ds.Model1D_ids[o];
+          int f = Select3Ds.Model0D_ids[o];
 
           beginShape();
 
-          for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
+          for (int j = 0; j < allModel0Ds.Faces[f].length; j++) {
 
-            int vNo = allModel1Ds.Faces[f][j];
+            int vNo = allModel0Ds.Faces[f][j];
 
-            float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-            float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+            float x = allModel0Ds.Vertices[vNo][0] * OBJECTS_scale;
+            float y = allModel0Ds.Vertices[vNo][1] * OBJECTS_scale;
+            float z = -allModel0Ds.Vertices[vNo][2] * OBJECTS_scale;
 
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
@@ -46821,19 +46455,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
         
 
-        for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
+        for (int f = allGroups.getStart_Model0D(OBJ_ID); f <= allGroups.getStop_Model0D(OBJ_ID); f++) {
 
-          if ((0 <= f) && (f < allModel1Ds.Faces.length)) { 
+          if ((0 <= f) && (f < allModel0Ds.Faces.length)) { 
 
             beginShape();
 
-            for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
+            for (int j = 0; j < allModel0Ds.Faces[f].length; j++) {
 
-              int vNo = allModel1Ds.Faces[f][j];
+              int vNo = allModel0Ds.Faces[f][j];
 
-              float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allModel0Ds.Vertices[vNo][0] * OBJECTS_scale;
+              float y = allModel0Ds.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -allModel0Ds.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
@@ -52546,8 +52180,8 @@ class solarchvision_UI_BAR_a {
                     fill(127);
                   }
                 }    
-                if (this.Items[i][j].equals("Display/Hide Selected 1D Edges")) {
-                  if (Select3Ds.Model1D_displayEdges == false) {
+                if (this.Items[i][j].equals("Display/Hide Selected 0D Edges")) {
+                  if (Select3Ds.Model0D_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
@@ -57129,15 +56763,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
-  else if (Command_CAPITAL.equals("1D>GROUP")) {
-    Select3Ds.convert_Model1Ds_to_Groups();
+  else if (Command_CAPITAL.equals("0D>GROUP")) {
+    Select3Ds.convert_Model0Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
-  else if (Command_CAPITAL.equals("GROUP>1D")) {
-    Select3Ds.convert_Groups_to_Model1Ds();
-    current_ObjectCategory = ObjectCategory.MODEL1D;
+  else if (Command_CAPITAL.equals("GROUP>0D")) {
+    Select3Ds.convert_Groups_to_Model0Ds();
+    current_ObjectCategory = ObjectCategory.MODEL0D;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }              
