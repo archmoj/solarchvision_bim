@@ -29957,6 +29957,8 @@ class solarchvision_Model0Ds {
 
             WIN3D.graphics.pushMatrix();
             WIN3D.graphics.translate(x, y, z);
+            
+            WIN3D.graphics.scale(OBJECTS_scale);
         
             // Call to draw the tree
             randomSeed(this.treeSeed);
@@ -52863,7 +52865,7 @@ class solarchvision_UI_BAR_b {
           }        
   
           if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
-            if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
+            if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel0Ds();
             else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
             else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
             else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
