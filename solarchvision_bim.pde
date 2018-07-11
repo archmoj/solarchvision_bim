@@ -5153,13 +5153,13 @@ class solarchvision_STUDY {
   
   private final static String CLASS_STAMP = "STUDY";
 
-  int pallet_SORT_CLR = -1;
-  int pallet_SORT_DIR = -1;
-  float pallet_SORT_MLT = 2;
+  int SORT_pallet_CLR = -1;
+  int SORT_pallet_DIR = -1;
+  float SORT_pallet_MLT = 2;
   
-  int pallet_PROB_CLR = -1;
-  int pallet_PROB_DIR = 1;
-  float pallet_PROB_MLT = 0.5;
+  int PROB_pallet_CLR = -1;
+  int PROB_pallet_DIR = 1;
+  float PROB_pallet_MLT = 0.5;
   
   int ACTIVE_pallet_CLR = 19; //15; //14; 
   int ACTIVE_pallet_DIR = 1;
@@ -5939,9 +5939,9 @@ class solarchvision_STUDY {
 
     this.Pix = (100.0 * this.view_S / this.LevelPix);
 
-    int PAL_type = this.pallet_PROB_CLR; 
-    int PAL_direction = this.pallet_PROB_DIR;  
-    float PAL_multiplier = this.pallet_PROB_MLT;
+    int PAL_type = this.PROB_pallet_CLR; 
+    int PAL_direction = this.PROB_pallet_DIR;  
+    float PAL_multiplier = this.PROB_pallet_MLT;
   
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = this.Pix;
@@ -6085,9 +6085,9 @@ class solarchvision_STUDY {
   
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
   
-    int PAL_type = this.pallet_SORT_CLR; 
-    int PAL_direction = this.pallet_SORT_DIR;  
-    float PAL_multiplier = this.pallet_SORT_MLT;
+    int PAL_type = this.SORT_pallet_CLR; 
+    int PAL_direction = this.SORT_pallet_DIR;  
+    float PAL_multiplier = this.SORT_pallet_MLT;
   
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = 0;
@@ -8896,12 +8896,12 @@ class solarchvision_STUDY {
     XML_setBoolean(parent, "export_info_node", this.export_info_node);
     XML_setBoolean(parent, "export_info_norm", this.export_info_norm);
     XML_setBoolean(parent, "export_info_prob", this.export_info_prob);
-    XML_setInt(parent, "pallet_SORT_CLR", this.pallet_SORT_CLR);
-    XML_setInt(parent, "pallet_SORT_DIR", this.pallet_SORT_DIR);
-    XML_setFloat(parent, "pallet_SORT_MLT", this.pallet_SORT_MLT);
-    XML_setInt(parent, "pallet_PROB_CLR", this.pallet_PROB_CLR);
-    XML_setInt(parent, "pallet_PROB_DIR", this.pallet_PROB_DIR);
-    XML_setFloat(parent, "pallet_PROB_MLT", this.pallet_PROB_MLT);
+    XML_setInt(parent, "SORT_pallet_CLR", this.SORT_pallet_CLR);
+    XML_setInt(parent, "SORT_pallet_DIR", this.SORT_pallet_DIR);
+    XML_setFloat(parent, "SORT_pallet_MLT", this.SORT_pallet_MLT);
+    XML_setInt(parent, "PROB_pallet_CLR", this.PROB_pallet_CLR);
+    XML_setInt(parent, "PROB_pallet_DIR", this.PROB_pallet_DIR);
+    XML_setFloat(parent, "PROB_pallet_MLT", this.PROB_pallet_MLT);
     XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
     XML_setInt(parent, "ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
     XML_setFloat(parent, "ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
@@ -8952,12 +8952,12 @@ class solarchvision_STUDY {
     this.export_info_node = XML_getBoolean(parent, "export_info_node");
     this.export_info_norm = XML_getBoolean(parent, "export_info_norm");
     this.export_info_prob = XML_getBoolean(parent, "export_info_prob");
-    this.pallet_SORT_CLR = XML_getInt(parent, "pallet_SORT_CLR");
-    this.pallet_SORT_DIR = XML_getInt(parent, "pallet_SORT_DIR");
-    this.pallet_SORT_MLT = XML_getFloat(parent, "pallet_SORT_MLT");
-    this.pallet_PROB_CLR = XML_getInt(parent, "pallet_PROB_CLR");
-    this.pallet_PROB_DIR = XML_getInt(parent, "pallet_PROB_DIR");
-    this.pallet_PROB_MLT = XML_getFloat(parent, "pallet_PROB_MLT");
+    this.SORT_pallet_CLR = XML_getInt(parent, "SORT_pallet_CLR");
+    this.SORT_pallet_DIR = XML_getInt(parent, "SORT_pallet_DIR");
+    this.SORT_pallet_MLT = XML_getFloat(parent, "SORT_pallet_MLT");
+    this.PROB_pallet_CLR = XML_getInt(parent, "PROB_pallet_CLR");
+    this.PROB_pallet_DIR = XML_getInt(parent, "PROB_pallet_DIR");
+    this.PROB_pallet_MLT = XML_getFloat(parent, "PROB_pallet_MLT");
     this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
     this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
     this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
@@ -9489,13 +9489,13 @@ class solarchvision_ROLLOUT {
         STUDY.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_DIR", STUDY.PASSIVE_pallet_DIR, -2, 2, 2), 1));
         STUDY.PASSIVE_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_MLT", STUDY.PASSIVE_pallet_MLT, 0.125, 8, -2);       
   
-        STUDY.pallet_SORT_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_CLR", STUDY.pallet_SORT_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_SORT_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_DIR", STUDY.pallet_SORT_DIR, -2, 2, 2), 1));
-        STUDY.pallet_SORT_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_SORT_MLT", STUDY.pallet_SORT_MLT, 0.125, 8, -2);
+        STUDY.SORT_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.SORT_pallet_CLR", STUDY.SORT_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.SORT_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.SORT_pallet_DIR", STUDY.SORT_pallet_DIR, -2, 2, 2), 1));
+        STUDY.SORT_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.SORT_pallet_MLT", STUDY.SORT_pallet_MLT, 0.125, 8, -2);
   
-        STUDY.pallet_PROB_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_CLR", STUDY.pallet_PROB_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.pallet_PROB_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_DIR", STUDY.pallet_PROB_DIR, -2, 2, 2), 1));
-        STUDY.pallet_PROB_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.pallet_PROB_MLT", STUDY.pallet_PROB_MLT, 0.125, 8, -2);
+        STUDY.PROB_pallet_CLR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PROB_pallet_CLR", STUDY.PROB_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.PROB_pallet_DIR = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PROB_pallet_DIR", STUDY.PROB_pallet_DIR, -2, 2, 2), 1));
+        STUDY.PROB_pallet_MLT = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "STUDY.PROB_pallet_MLT", STUDY.PROB_pallet_MLT, 0.125, 8, -2);
   
         STUDY.O_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
       }
