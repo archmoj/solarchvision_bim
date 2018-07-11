@@ -10162,11 +10162,11 @@ class solarchvision_Faces {
   }
 
   
-  void makeEmpty () {
+  void makeEmpty (int n) {
   
-    this.nodes = new int [0][0];
+    this.nodes = new int [n][0];
   
-    this.options = new int [0][6];
+    this.options = new int [n][6];
   
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Faces[q][0] = 0;
@@ -11205,13 +11205,12 @@ class solarchvision_Faces {
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
-    
-    this.makeEmpty();
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");
     
-    this.options = new int [ni][6];
+    this.makeEmpty(ni);
+    this.nodes = new int [0][0];
     
     XML[] children = parent.getChildren("item");
     
@@ -11415,24 +11414,19 @@ class solarchvision_Curves {
   }
 
 
-  void makeEmpty () {
+  void makeEmpty (int n) {
   
-    println("hello!");
-    
-    this.nodes = new int [0][0];
+    this.nodes = new int [n][0];
   
-  println("hello!2");
-  
-    this.options = new int [0][6];
-  println("hello!3");
+    this.options = new int [n][6];
+
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Curves[q][0] = 0;
       allGroups.Curves[q][1] = -1;
     }  
-  println("hello!4");
+
     Select3Ds.deselect_Groups();
     Select3Ds.deselect_Curves();
-    println("hello!5");
   }
   
 
@@ -11599,13 +11593,12 @@ class solarchvision_Curves {
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
-    
-    this.makeEmpty();
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");
     
-    this.options = new int [ni][6];
+    this.makeEmpty(ni);
+    this.nodes = new int [0][0];
     
     XML[] children = parent.getChildren("item");
     
@@ -11802,16 +11795,16 @@ class solarchvision_Groups {
   
   
 
-  void makeEmpty () {
+  void makeEmpty (int n) {
 
-    this.Model0Ds = new int [0][2];
-    this.Model2Ds = new int [0][2];
-    this.Faces = new int [0][2];
-    this.Curves = new int [0][2];
-    this.Solids = new int [0][2];
-    this.Pivots = new float [0][9];
-  
-    this.num = 0;
+    this.num = n;
+    
+    this.Model0Ds = new int [n][2];
+    this.Model2Ds = new int [n][2];
+    this.Faces = new int [n][2];
+    this.Curves = new int [n][2];
+    this.Solids = new int [n][2];
+    this.Pivots = new float [n][9];
     
     Select3Ds.deselect_Groups();
   }    
@@ -12194,13 +12187,11 @@ class solarchvision_Groups {
     
     println("Loading:" + this.CLASS_STAMP);
 
-    this.makeEmpty();
-
     XML parent = xml.getChild(this.CLASS_STAMP);
 
     int ni = XML_getInt(parent, "ni");
-
-    this.num = ni;
+    
+    this.makeEmpty(ni);
 
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
@@ -22263,7 +22254,7 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
 
-  if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(); //not deleting all
+  if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(0); //not deleting all
   if ((Step == 0) || (Step == 2)) Create3Ds.add_Model_Main();
 }
 
@@ -25215,20 +25206,20 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 void SOLARCHVISION_delete_ALL () {
   
-  allModel0Ds.makeEmpty();
-  allModel1Ds.makeEmpty();
-  allModel2Ds.makeEmpty();
+  allModel0Ds.makeEmpty(0);
+  allModel1Ds.makeEmpty(0);
+  allModel2Ds.makeEmpty(0);
 
-  allCurves.makeEmpty();
-  allFaces.makeEmpty();
+  allCurves.makeEmpty(0);
+  allFaces.makeEmpty(0);
   
-  allPoints.makeEmpty();
+  allPoints.makeEmpty(0);
 
-  allSolids.makeEmpty();
-  allSections.makeEmpty();
-  allCameras.makeEmpty();
+  allSolids.makeEmpty(0);
+  allSections.makeEmpty(0);
+  allCameras.makeEmpty(0);
 
-  allGroups.makeEmpty(); 
+  allGroups.makeEmpty(0); 
 
   WIN3D.update = true;
 }
@@ -29827,23 +29818,23 @@ class solarchvision_Model0Ds {
   }  
   
   
-  void makeEmpty () {
+  void makeEmpty (int n) {
+    
+    this.num = n;
   
-    this.XYZSR = new float [0][5]; 
+    this.XYZSR = new float [n][5]; 
   
-    this.Type = new int [0];
+    this.Type = new int [n];
   
-    this.DegreeMin = new int [0];
+    this.DegreeMin = new int [n];
   
-    this.DegreeMax = new int [0];
+    this.DegreeMax = new int [n];
   
-    this.Seed = new int [0];
+    this.Seed = new int [n];
   
-    this.TrunkSize = new float [0];
+    this.TrunkSize = new float [n];
   
-    this.LeafSize = new float [0];
-  
-    this.num = 0;
+    this.LeafSize = new float [n];
   
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Model0Ds[q][0] = 0;
@@ -29902,13 +29893,11 @@ class solarchvision_Model0Ds {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.makeEmpty();    
-    
     XML parent = xml.getChild(this.CLASS_STAMP);
     
     int ni = XML_getInt(parent, "ni");
     
-    this.num = ni;
+    this.makeEmpty(ni);  
     
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
@@ -30958,105 +30947,27 @@ class solarchvision_Model1Ds {
   }  
   
   
-  void makeEmpty () {
+  void makeEmpty (int n) {
+    
+    this.num = n;
   
-    this.XYZSR = new float [0][5]; 
+    this.XYZSR = new float [n][5]; 
   
-    this.Type = new int [0];
+    this.Type = new int [n];
   
-    this.DegreeMin = new int [0];
+    this.DegreeMin = new int [n];
   
-    this.DegreeMax = new int [0];
+    this.DegreeMax = new int [n];
   
-    this.Seed = new int [0];
+    this.Seed = new int [n];
   
-    this.TrunkSize = new float [0];
+    this.TrunkSize = new float [n];
   
-    this.LeafSize = new float [0];
-  
-    this.num = 0;
+    this.LeafSize = new float [n];
 
     Select3Ds.deselect_Groups();  
   }  
-  
-  
-  public void to_XML (XML xml) {
-    
-    println("Saving:" + this.CLASS_STAMP);
-    
-    XML parent = xml.addChild(this.CLASS_STAMP);
-    
-    int ni = this.num;
-    XML_setInt(parent, "ni", ni);
-    for (int i = 0; i < ni; i++) {
-      XML child = parent.addChild("item");
-      XML_setInt(child, "id", i);
-      String txt = "";
-      txt += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getY(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getType(i), 0);
-      txt += ",";
-      txt += nf(this.getDegreeMin(i), 0);
-      txt += ",";
-      txt += nf(this.getDegreeMax(i), 0);
-      txt += ",";
-      txt += nf(this.getSeed(i), 0);
-      txt += ",";
-      txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
 
-      XML_setContent(child, txt);
-    } 
-    
-    
-    XML_setBoolean(parent, "displayAll", this.displayAll);
-    XML_setBoolean(parent, "displayLeaves", this.displayLeaves);
-  }
-  
-  
-  public void from_XML (XML xml) {
-    
-    println("Loading:" + this.CLASS_STAMP);
-
-    this.makeEmpty();
-    
-    XML parent = xml.getChild(this.CLASS_STAMP);
-    
-    int ni = XML_getInt(parent, "ni");
-    this.num = ni;
-
-    XML[] children = parent.getChildren("item");         
-    for (int i = 0; i < ni; i++) {
-
-      String txt = XML_getContent(children[i]);
-      String[] parts = split(txt, ",");
-
-      this.setX(i, float(parts[0]));
-      this.setY(i, float(parts[1]));
-      this.setZ(i, float(parts[2]));
-      this.setS(i, float(parts[3]));
-      this.setR(i, float(parts[4]));
-
-      this.setType(i, int(parts[5]));
-      this.setDegreeMin(i, int(parts[6]));
-      this.setDegreeMax(i, int(parts[7]));
-      this.setSeed(i, int(parts[8]));
-      this.setTrunkSize(i, float(parts[9]));
-      this.setLeafSize(i, float(parts[10]));
-    }
-    
-    this.displayAll = XML_getBoolean(parent, "displayAll");
-    this.displayLeaves = XML_getBoolean(parent, "displayLeaves");
-  }    
 }
 
 solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
@@ -31855,22 +31766,24 @@ class solarchvision_Model2Ds {
     if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
   
-  void makeEmpty () {
-  
-    this.XYZS = new float [0][4]; 
-  
-    this.MAP = new int [0];
-  
-    this.num = 0;
-  
+  void makeEmpty (int n) {
+
+    this.num = n;
+    
+    this.XYZS = new float [n][4]; 
+
+    this.MAP = new int [n];
+
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Model2Ds[q][0] = 0;
       allGroups.Model2Ds[q][1] = -1;
     }  
-  
+
     Select3Ds.deselect_Groups();
+
     Select3Ds.deselect_Model2Ds();
   }  
+  
   
   
   
@@ -31953,14 +31866,13 @@ class solarchvision_Model2Ds {
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
-    
-    this.makeEmpty();    
-    
+
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
       
       int ni = XML_getInt(parent, "ni");
-      this.num = ni;
+     
+      this.makeEmpty(ni);   
   
       XML[] children = parent.getChildren("item");         
       for (int i = 0; i < ni; i++) {
@@ -31982,7 +31894,7 @@ class solarchvision_Model2Ds {
       XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
     
       int ni = XML_getInt(parent, "ni");
-  
+      
       int reload_All_textures = 0;
   
       if (this.ImagePath.length != ni) {
@@ -32279,8 +32191,8 @@ class solarchvision_Solids {
   }
 
 
-  void makeEmpty () {
-    this.DEF = new float [0][13]; 
+  void makeEmpty (int n) {
+    this.DEF = new float [n][13]; 
   
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Solids[q][0] = 0;
@@ -32605,7 +32517,7 @@ class solarchvision_Solids {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.makeEmpty();
+    this.makeEmpty(0);
     
     XML parent = xml.getChild(this.CLASS_STAMP);
     
@@ -32729,9 +32641,9 @@ class solarchvision_Points {
   }
   
   
-  void makeEmpty () {
+  void makeEmpty (int n) {
   
-    allVertices = new float [0][3];
+    allVertices = new float [n][3];
   
     Select3Ds.deselect_Groups();
     Select3Ds.deselect_Faces();
@@ -37482,11 +37394,11 @@ class solarchvision_Cameras {
   }  
 
 
-  void makeEmpty () {
+  void makeEmpty (int n) {
   
-    this.options = new float [0][9]; 
+    this.options = new float [n][9]; 
   
-    this.Type = new int [0];
+    this.Type = new int [n];
   
     this.add_first();
   
@@ -38026,15 +37938,15 @@ class solarchvision_Sections {
   
   
   
-  void makeEmpty () {
-    this.f_options = new float [0][6]; 
-    this.i_options = new int   [0][3];
+  void makeEmpty (int n) {
+    this.f_options = new float [n][6]; 
+    this.i_options = new int   [n][3];
   
-    this.SolidImpact = new PImage [0];
+    this.SolidImpact = new PImage [n];
   
-    this.SolarImpact = new PImage [0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    this.SolarImpact = new PImage [n][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
   
-    this.num = 0;
+    this.num = n;
   
     Select3Ds.deselect_Sections();
   }    
@@ -43784,42 +43696,42 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Erase All Model1Ds")) {
-              allModel1Ds.makeEmpty();
+              allModel1Ds.makeEmpty(0);
               WIN3D.update = true;
             }      
     
             if (menu_option.equals("Erase All Model2Ds")) {
-              allModel2Ds.makeEmpty();
+              allModel2Ds.makeEmpty(0);
               WIN3D.update = true;
             }        
     
             if (menu_option.equals("Erase All Groups")) {
-              allGroups.makeEmpty();
+              allGroups.makeEmpty(0);
               WIN3D.update = true;
             }
     
             if (menu_option.equals("Erase All Solids")) {
-              allSolids.makeEmpty();
+              allSolids.makeEmpty(0);
               WIN3D.update = true;
             }          
     
             if (menu_option.equals("Erase All Sections")) {
-              allSections.makeEmpty();
+              allSections.makeEmpty(0);
               WIN3D.update = true;
             }       
     
             if (menu_option.equals("Erase All Cameras")) {
-              allCameras.makeEmpty();
+              allCameras.makeEmpty(0);
               WIN3D.update = true;
             }    
     
             if (menu_option.equals("Erase Faces")) {
-              allFaces.makeEmpty();
+              allFaces.makeEmpty(0);
               WIN3D.update = true;
             }             
     
             if (menu_option.equals("Erase Curves")) {
-              allCurves.makeEmpty();
+              allCurves.makeEmpty(0);
               WIN3D.update = true;
             }  
     
@@ -49404,13 +49316,9 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allSections.to_XML(xml);
   
-  allModel1Ds.to_XML(xml);
+  allModel0Ds.to_XML(xml);
   
   allModel2Ds.to_XML(xml);
-  
-  Select3Ds.to_XML(xml);  
-  
-  User3D.to_XML(xml);
   
   Land3D.to_XML(xml);  
   
@@ -49426,6 +49334,10 @@ void SOLARCHVISION_save_project (String myFile) {
 
   WIN3D.to_XML(xml);
   
+  User3D.to_XML(xml);
+  
+  Select3Ds.to_XML(xml);      
+  
   WORLD.to_XML(xml);
   
   STUDY.to_XML(xml);
@@ -49437,7 +49349,7 @@ void SOLARCHVISION_save_project (String myFile) {
   allSolidImpacts.to_XML(xml);
   
   allSolarImpacts.to_XML(xml);  
-
+  
   LAYER_windspd200hPa.to_XML(xml);
   LAYER_thicknesses_1000_500.to_XML(xml);
   LAYER_heightp500hPa.to_XML(xml);
@@ -49651,13 +49563,9 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   
   allSections.from_XML(xml);
   
-  allModel1Ds.from_XML(xml);
+  allModel0Ds.from_XML(xml);
   
   allModel2Ds.from_XML(xml);    
-  
-  Select3Ds.from_XML(xml);
-  
-  User3D.from_XML(xml);
   
   Land3D.from_XML(xml);  
   
@@ -49672,6 +49580,10 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   Sun3D.from_XML(xml);
 
   WIN3D.from_XML(xml);    
+
+  User3D.from_XML(xml);
+  
+  Select3Ds.from_XML(xml);
   
   WORLD.from_XML(xml);
   
@@ -55245,15 +55157,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
         else if (low_case.equals("selection")) {Delete3Ds.selection(); WIN3D.update = true;}
-        else if (low_case.equals("groups")) {allGroups.makeEmpty(); WIN3D.update = true;}
-        else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(); WIN3D.update = true;}
-        else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("groups")) {allGroups.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {Delete3Ds.selected_isolatedVertices(); WIN3D.update = true;}
-        else if (low_case.equals("faces")) {allFaces.makeEmpty(); WIN3D.update = true;}
-        else if (low_case.equals("lines")) {allCurves.makeEmpty(); WIN3D.update = true;}
-        else if (low_case.equals("solids")) {allSolids.makeEmpty(); WIN3D.update = true;}
-        else if (low_case.equals("sections")) {allSections.makeEmpty(); WIN3D.update = true;}
-        else if (low_case.equals("cameras")) {allCameras.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("faces")) {allFaces.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("lines")) {allCurves.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("solids")) {allSolids.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("sections")) {allSections.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("cameras")) {allCameras.makeEmpty(0); WIN3D.update = true;}
       }
     }
     else {
