@@ -10162,9 +10162,9 @@ class solarchvision_Faces {
   }
 
   
-  void empty () {
+  void makeEmpty () {
   
-    this.nodes = new int [0][3];
+    this.nodes = new int [0][0];
   
     this.options = new int [0][6];
   
@@ -11206,10 +11206,12 @@ class solarchvision_Faces {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.empty();
+    this.makeEmpty();
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");
+    
+    this.options = new int [ni][6];
     
     XML[] children = parent.getChildren("item");
     
@@ -11413,19 +11415,24 @@ class solarchvision_Curves {
   }
 
 
-  void empty () {
+  void makeEmpty () {
   
-    this.nodes = new int [0][3];
+    println("hello!");
+    
+    this.nodes = new int [0][0];
+  
+  println("hello!2");
   
     this.options = new int [0][6];
-  
+  println("hello!3");
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Curves[q][0] = 0;
       allGroups.Curves[q][1] = -1;
     }  
-  
+  println("hello!4");
     Select3Ds.deselect_Groups();
     Select3Ds.deselect_Curves();
+    println("hello!5");
   }
   
 
@@ -11585,6 +11592,7 @@ class solarchvision_Curves {
     }
     
     XML_setBoolean(parent, "displayAll", this.displayAll);
+
   }
 
 
@@ -11592,10 +11600,12 @@ class solarchvision_Curves {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.empty();    
+    this.makeEmpty();
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");
+    
+    this.options = new int [ni][6];
     
     XML[] children = parent.getChildren("item");
     
@@ -11618,8 +11628,9 @@ class solarchvision_Curves {
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
-  }    
-  
+    
+  }
+
 }
 
 solarchvision_Curves allCurves = new solarchvision_Curves(); 
@@ -11791,7 +11802,7 @@ class solarchvision_Groups {
   
   
 
-  void empty () {
+  void makeEmpty () {
 
     this.Model0Ds = new int [0][2];
     this.Model2Ds = new int [0][2];
@@ -12141,7 +12152,6 @@ class solarchvision_Groups {
     
     println("Saving:" + this.CLASS_STAMP);
 
-
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setInt(parent, "ni", this.num);
     
@@ -12184,7 +12194,7 @@ class solarchvision_Groups {
     
     println("Loading:" + this.CLASS_STAMP);
 
-    this.empty();
+    this.makeEmpty();
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
@@ -22253,7 +22263,7 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
 
-  if ((Step == 0) || (Step == 1)) allGroups.empty(); //not deleting all
+  if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(); //not deleting all
   if ((Step == 0) || (Step == 2)) Create3Ds.add_Model_Main();
 }
 
@@ -25205,20 +25215,20 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 void SOLARCHVISION_delete_ALL () {
   
-  allModel0Ds.empty();
-  allModel1Ds.empty();
-  allModel2Ds.empty();
+  allModel0Ds.makeEmpty();
+  allModel1Ds.makeEmpty();
+  allModel2Ds.makeEmpty();
 
-  allCurves.empty();
-  allFaces.empty();
+  allCurves.makeEmpty();
+  allFaces.makeEmpty();
   
-  allPoints.empty();
+  allPoints.makeEmpty();
 
-  allSolids.empty();
-  allSections.empty();
-  allCameras.empty();
+  allSolids.makeEmpty();
+  allSections.makeEmpty();
+  allCameras.makeEmpty();
 
-  allGroups.empty(); 
+  allGroups.makeEmpty(); 
 
   WIN3D.update = true;
 }
@@ -29817,7 +29827,7 @@ class solarchvision_Model0Ds {
   }  
   
   
-  void empty () {
+  void makeEmpty () {
   
     this.XYZSR = new float [0][5]; 
   
@@ -29892,7 +29902,7 @@ class solarchvision_Model0Ds {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.empty();    
+    this.makeEmpty();    
     
     XML parent = xml.getChild(this.CLASS_STAMP);
     
@@ -30948,7 +30958,7 @@ class solarchvision_Model1Ds {
   }  
   
   
-  void empty () {
+  void makeEmpty () {
   
     this.XYZSR = new float [0][5]; 
   
@@ -31017,7 +31027,7 @@ class solarchvision_Model1Ds {
     
     println("Loading:" + this.CLASS_STAMP);
 
-    this.empty();
+    this.makeEmpty();
     
     XML parent = xml.getChild(this.CLASS_STAMP);
     
@@ -31845,7 +31855,7 @@ class solarchvision_Model2Ds {
     if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
   
-  void empty () {
+  void makeEmpty () {
   
     this.XYZS = new float [0][4]; 
   
@@ -31944,7 +31954,7 @@ class solarchvision_Model2Ds {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.empty();    
+    this.makeEmpty();    
     
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
@@ -32269,7 +32279,7 @@ class solarchvision_Solids {
   }
 
 
-  void empty () {
+  void makeEmpty () {
     this.DEF = new float [0][13]; 
   
     for (int q = 0; q < allGroups.num; q++) {
@@ -32595,7 +32605,7 @@ class solarchvision_Solids {
     
     println("Loading:" + this.CLASS_STAMP);
     
-    this.empty();
+    this.makeEmpty();
     
     XML parent = xml.getChild(this.CLASS_STAMP);
     
@@ -32719,7 +32729,7 @@ class solarchvision_Points {
   }
   
   
-  void empty () {
+  void makeEmpty () {
   
     allVertices = new float [0][3];
   
@@ -37472,7 +37482,7 @@ class solarchvision_Cameras {
   }  
 
 
-  void empty () {
+  void makeEmpty () {
   
     this.options = new float [0][9]; 
   
@@ -38016,7 +38026,7 @@ class solarchvision_Sections {
   
   
   
-  void empty () {
+  void makeEmpty () {
     this.f_options = new float [0][6]; 
     this.i_options = new int   [0][3];
   
@@ -43774,42 +43784,42 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Erase All Model1Ds")) {
-              allModel1Ds.empty();
+              allModel1Ds.makeEmpty();
               WIN3D.update = true;
             }      
     
             if (menu_option.equals("Erase All Model2Ds")) {
-              allModel2Ds.empty();
+              allModel2Ds.makeEmpty();
               WIN3D.update = true;
             }        
     
             if (menu_option.equals("Erase All Groups")) {
-              allGroups.empty();
+              allGroups.makeEmpty();
               WIN3D.update = true;
             }
     
             if (menu_option.equals("Erase All Solids")) {
-              allSolids.empty();
+              allSolids.makeEmpty();
               WIN3D.update = true;
             }          
     
             if (menu_option.equals("Erase All Sections")) {
-              allSections.empty();
+              allSections.makeEmpty();
               WIN3D.update = true;
             }       
     
             if (menu_option.equals("Erase All Cameras")) {
-              allCameras.empty();
+              allCameras.makeEmpty();
               WIN3D.update = true;
             }    
     
             if (menu_option.equals("Erase Faces")) {
-              allFaces.empty();
+              allFaces.makeEmpty();
               WIN3D.update = true;
             }             
     
             if (menu_option.equals("Erase Curves")) {
-              allCurves.empty();
+              allCurves.makeEmpty();
               WIN3D.update = true;
             }  
     
@@ -49379,6 +49389,8 @@ void SOLARCHVISION_save_project (String myFile) {
 
 
   STATION.to_XML(xml);
+
+  allGroups.to_XML(xml);
   
   allPoints.to_XML(xml);
 
@@ -49386,8 +49398,6 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allFaces.to_XML(xml);
 
-  allGroups.to_XML(xml);
-  
   allCameras.to_XML(xml);
   
   allSolids.to_XML(xml);
@@ -49627,13 +49637,13 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   STATION.from_XML(xml);
   
+  allGroups.from_XML(xml);
+  
   allPoints.from_XML(xml);
   
   allCurves.from_XML(xml);
 
   allFaces.from_XML(xml);
-
-  allGroups.from_XML(xml);
   
   allCameras.from_XML(xml);
   
@@ -55235,15 +55245,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
         else if (low_case.equals("selection")) {Delete3Ds.selection(); WIN3D.update = true;}
-        else if (low_case.equals("groups")) {allGroups.empty(); WIN3D.update = true;}
-        else if (low_case.equals("model2ds")) {allModel2Ds.empty(); WIN3D.update = true;}
-        else if (low_case.equals("model1ds")) {allModel1Ds.empty(); WIN3D.update = true;}
+        else if (low_case.equals("groups")) {allGroups.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {Delete3Ds.selected_isolatedVertices(); WIN3D.update = true;}
-        else if (low_case.equals("faces")) {allFaces.empty(); WIN3D.update = true;}
-        else if (low_case.equals("lines")) {allCurves.empty(); WIN3D.update = true;}
-        else if (low_case.equals("solids")) {allSolids.empty(); WIN3D.update = true;}
-        else if (low_case.equals("sections")) {allSections.empty(); WIN3D.update = true;}
-        else if (low_case.equals("cameras")) {allCameras.empty(); WIN3D.update = true;}
+        else if (low_case.equals("faces")) {allFaces.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("lines")) {allCurves.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("solids")) {allSolids.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("sections")) {allSections.makeEmpty(); WIN3D.update = true;}
+        else if (low_case.equals("cameras")) {allCameras.makeEmpty(); WIN3D.update = true;}
       }
     }
     else {
