@@ -17166,17 +17166,17 @@ class solarchvision_Delete3Ds {
       int OBJ_ID = Select3Ds.Section_ids[o];
 
       {
-        float[][] startList = (float[][]) subset(allSections.f_options, 0, OBJ_ID);
-        float[][] endList = (float[][]) subset(allSections.f_options, OBJ_ID + 1);
+        float[][] startList = (float[][]) subset(allSections.f_data, 0, OBJ_ID);
+        float[][] endList = (float[][]) subset(allSections.f_data, OBJ_ID + 1);
 
-        allSections.f_options = (float[][]) concat(startList, endList);
+        allSections.f_data = (float[][]) concat(startList, endList);
       }
 
       {
-        int[][] startList = (int[][]) subset(allSections.i_options, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allSections.i_options, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allSections.i_data, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allSections.i_data, OBJ_ID + 1);
 
-        allSections.i_options = (int[][]) concat(startList, endList);
+        allSections.i_data = (int[][]) concat(startList, endList);
       }
 
       {
@@ -37784,91 +37784,91 @@ class solarchvision_Sections {
   
   boolean displayAll = true;
 
-  float[][] f_options = new float[0][6];
-  int  [][] i_options = new int  [0][3];
+  float[][] f_data = new float[0][6];
+  int  [][] i_data = new int  [0][3];
 
   int num = 0;
   
   int get_type (int n) { // Type
-    return this.i_options[n][0]; 
+    return this.i_data[n][0]; 
   }  
 
   int get_res1 (int n) { // RES1
-    return this.i_options[n][1]; 
+    return this.i_data[n][1]; 
   }  
 
   int get_res2 (int n) { // RES1
-    return this.i_options[n][2]; 
+    return this.i_data[n][2]; 
   }  
   
   void set_type (int n, int t) {
-    this.i_options[n][0] = t;  
+    this.i_data[n][0] = t;  
   }      
   
   void set_res1 (int n, int t) {
-    this.i_options[n][1] = t;  
+    this.i_data[n][1] = t;  
   }      
 
   void set_res2 (int n, int t) {
-    this.i_options[n][2] = t;  
+    this.i_data[n][2] = t;  
   }      
   
   
 
   float getX (int n) { // offsetX
-    return this.f_options[n][0]; 
+    return this.f_data[n][0]; 
   }
 
   float getY (int n) { // offsetY
-    return this.f_options[n][1]; 
+    return this.f_data[n][1]; 
   }
 
   float getZ (int n) { // elevation
-    return this.f_options[n][2]; 
+    return this.f_data[n][2]; 
   }
 
   float getR (int n) { // rotation
-    return this.f_options[n][3]; 
+    return this.f_data[n][3]; 
   }
 
   float getU (int n) { // scaleU
-    return this.f_options[n][4]; 
+    return this.f_data[n][4]; 
   }
   
   float getV (int n) { //scaleV
-    return this.f_options[n][5]; 
+    return this.f_data[n][5]; 
   }  
   
   
 
   void setX (int n, float f) {
-    this.f_options[n][0] = f;  
+    this.f_data[n][0] = f;  
   }
 
   void setY (int n, float f) {
-    this.f_options[n][1] = f;  
+    this.f_data[n][1] = f;  
   }
   
   void setZ (int n, float f) {
-    this.f_options[n][2] = f;  
+    this.f_data[n][2] = f;  
   }  
   
   void setR (int n, float f) {
-    this.f_options[n][3] = f;  
+    this.f_data[n][3] = f;  
   }
 
   void setU (int n, float f) {
-    this.f_options[n][4] = f;  
+    this.f_data[n][4] = f;  
   }
   
   void setV (int n, float f) {
-    this.f_options[n][5] = f;  
+    this.f_data[n][5] = f;  
   }    
   
   void move (int n, float dx, float dy, float dz) {
-    this.f_options[n][0] += dx;  
-    this.f_options[n][1] += dy;  
-    this.f_options[n][2] += dz;  
+    this.f_data[n][0] += dx;  
+    this.f_data[n][1] += dy;  
+    this.f_data[n][2] += dz;  
   }      
 
 
@@ -37896,19 +37896,19 @@ class solarchvision_Sections {
   
   void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
 
-    int[][] Temp_i_options = {
+    int[][] Temp_i_data = {
       {
         t, RES1, RES2
       }
     };
-    this.i_options = (int[][]) concat(this.i_options, Temp_i_options);  
+    this.i_data = (int[][]) concat(this.i_data, Temp_i_data);  
   
-    float[][] Temp_f_options = {
+    float[][] Temp_f_data = {
       {
         x, y, z, r, u, v
       }
     };
-    this.f_options = (float[][]) concat(this.f_options, Temp_f_options);
+    this.f_data = (float[][]) concat(this.f_data, Temp_f_data);
     
     PImage[] Temp_SolidImpact = {
       createImage(RES1, RES2, RGB)
@@ -37932,8 +37932,8 @@ class solarchvision_Sections {
   
   
   void makeEmpty (int n) {
-    this.f_options = new float [n][6]; 
-    this.i_options = new int   [n][3];
+    this.f_data = new float [n][6]; 
+    this.i_data = new int   [n][3];
   
     this.SolidImpact = new PImage [n];
   
@@ -38453,8 +38453,8 @@ class solarchvision_Sections {
       
       int ni = XML_getInt(parent, "ni");
   
-      this.f_options = new float [ni][6];
-      this.i_options = new int   [ni][3];
+      this.f_data = new float [ni][6];
+      this.i_data = new int   [ni][3];
       this.num = ni;
   
       XML[] children = parent.getChildren("item");         
