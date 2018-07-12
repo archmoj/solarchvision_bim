@@ -9320,6 +9320,10 @@ class solarchvision_ROLLOUT {
         User3D.create_Model0D_Seed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_Seed", User3D.create_Model0D_Seed, -1, 32767, 1), 1));
         User3D.create_Model0D_TrunkSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_TrunkSize", User3D.create_Model0D_TrunkSize, 0, 10, 0.1), 0.1);
         User3D.create_Model0D_LeafSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_LeafSize", User3D.create_Model0D_LeafSize, 0, 10, 0.1), 0.1);
+        
+        User3D.create_Model0D_BranchTilt = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchTilt", User3D.create_Model0D_BranchTilt, 0, 10, 0.1), 0.1);
+        User3D.create_Model0D_BranchTwist = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchTwist", User3D.create_Model0D_BranchTwist, 0, 10, 0.1), 0.1);
+        User3D.create_Model0D_BranchRatio = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchRatio", User3D.create_Model0D_BranchRatio, 0, 10, 0.1), 0.1);        
       }    
   
       if (this.child == 7) { // Environment
@@ -11850,6 +11854,9 @@ class solarchvision_Groups {
           float z = allModel0Ds.getZ(OBJ_ID);
           float d = allModel0Ds.getScale(OBJ_ID);
           float rot = allModel0Ds.getRotation(OBJ_ID);
+          float tilt = allModel0Ds.getBranchTilt(OBJ_ID);
+          float twist = allModel0Ds.getBranchTwist(OBJ_ID);
+          float ratio = allModel0Ds.getBranchRatio(OBJ_ID);
   
           int n = allModel0Ds.getType(OBJ_ID);
           int dMin = allModel0Ds.getDegreeMin(OBJ_ID);
@@ -11858,7 +11865,7 @@ class solarchvision_Groups {
           float TrunkSize = allModel0Ds.getTrunkSize(OBJ_ID);
           float LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
   
-          allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+          allModel0Ds.create(n, x, y, z, d, rot, tilt, twist, ratio, dMin, dMax, s, TrunkSize, LeafSize);
         }
       }  
   
@@ -16399,6 +16406,9 @@ class solarchvision_Clone3Ds {
       float z = allModel0Ds.getZ(OBJ_ID);
       float d = allModel0Ds.getScale(OBJ_ID);
       float rot = allModel0Ds.getRotation(OBJ_ID);
+      float tilt = allModel0Ds.getBranchTilt(OBJ_ID);
+      float twist = allModel0Ds.getBranchTwist(OBJ_ID);
+      float ratio = allModel0Ds.getBranchRatio(OBJ_ID);      
 
       int n = allModel0Ds.getType(OBJ_ID);
       int dMin = allModel0Ds.getDegreeMin(OBJ_ID);
@@ -16408,7 +16418,7 @@ class solarchvision_Clone3Ds {
       float LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
 
       if (produce_same_variation == false) randomSeed(millis());
-      allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+      allModel0Ds.create(n, x, y, z, d, rot, tilt, twist, ratio, dMin, dMax, s, TrunkSize, LeafSize);
     }
 
     // selecting new objetcs
@@ -16764,6 +16774,10 @@ class solarchvision_Clone3Ds {
 
             float d = allModel0Ds.getScale(q);
             float rot = allModel0Ds.getRotation(q);
+            
+            float tilt = allModel0Ds.getBranchTilt(q);
+            float twist = allModel0Ds.getBranchTwist(q);
+            float ratio = allModel0Ds.getBranchRatio(q);                        
 
             int n = allModel0Ds.getType(q);
 
@@ -16776,6 +16790,8 @@ class solarchvision_Clone3Ds {
             float TrunkSize = allModel0Ds.getTrunkSize(q);
 
             float LeafSize = allModel0Ds.getLeafSize(q);
+            
+
 
             if (produce_same_variation == false) {
               randomSeed(millis());
@@ -16783,7 +16799,7 @@ class solarchvision_Clone3Ds {
               rot = random(360);
               s = int(random(32767));
             }
-            allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+            allModel0Ds.create(n, x, y, z, d, rot, tilt, twist, ratio, dMin, dMax, s, TrunkSize, LeafSize);
           }
         }
 
@@ -16914,6 +16930,10 @@ class solarchvision_Clone3Ds {
 
             float d = allModel0Ds.getScale(q);
             float rot = allModel0Ds.getRotation(q);
+            
+            float tilt = allModel0Ds.getBranchTilt(q);
+            float twist = allModel0Ds.getBranchTwist(q);
+            float ratio = allModel0Ds.getBranchRatio(q);                        
 
             int n = allModel0Ds.getType(q);
 
@@ -16933,7 +16953,7 @@ class solarchvision_Clone3Ds {
               rot = random(360);
               s = int(random(32767));
             }
-            allModel0Ds.create(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);
+            allModel0Ds.create(n, x, y, z, d, rot, tilt, twist, ratio, dMin, dMax, s, TrunkSize, LeafSize);
           }
         }
 
@@ -29360,8 +29380,7 @@ class solarchvision_Model0Ds {
   
   private final static String CLASS_STAMP = "Model0Ds";
 
-  float branchTilt = PI / 3.0;
-  float branchRatio = 0.7; // relational position of branches 
+
 
   int elementSegments = 5; // number of polygons to create each cone
 
@@ -29392,6 +29411,19 @@ class solarchvision_Model0Ds {
     return this.f_data[n][4]; 
   }  
   
+  float getBranchTilt (int n) {
+    return this.f_data[n][5]; 
+  }    
+
+  float getBranchTwist (int n) {
+    return this.f_data[n][6]; 
+  }    
+
+  float getBranchRatio (int n) {
+    return this.f_data[n][7]; 
+  }    
+  
+  
   void setX (int n, float f) {
     this.f_data[n][0] = f;  
   }
@@ -29411,6 +29443,19 @@ class solarchvision_Model0Ds {
   void setRotation (int n, float f) {
     this.f_data[n][4] = f;  
   }     
+
+  
+  void setBranchTilt (int n, float f) {
+    this.f_data[n][5] = f;  
+  }    
+
+  void setBranchTwist (int n, float f) {
+    this.f_data[n][6] = f;  
+  }    
+
+  void setBranchRatio (int n, float f) {
+    this.f_data[n][7] = f;  
+  }    
   
   void move (int n, float dx, float dy, float dz) {
     this.f_data[n][0] += dx;  
@@ -29481,8 +29526,16 @@ class solarchvision_Model0Ds {
   }   
   
   
+
+
+
+
   int num = 0; 
-  
+
+
+  float BranchTilt;
+  float BranchTwist;
+  float BranchRatio;  
   
   float[][] Vertices;
   int[][] Faces;
@@ -29560,7 +29613,10 @@ class solarchvision_Model0Ds {
         float trunkSize = this.getTrunkSize(f);
   
         float leafSize = this.getLeafSize(f);
-  
+        
+        BranchTilt = this.getBranchTilt(f);
+        BranchTwist = this.getBranchTwist(f);
+        BranchRatio = this.getBranchRatio(f);
   
 
         if (n == 0) {
@@ -29667,9 +29723,9 @@ class solarchvision_Model0Ds {
       
       WIN3D.graphics.pushMatrix();
       
-      this.twistBranch();
+      this.twistBranch(this.BranchTwist);
       
-      this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
+      this.makeBranch(w * this.BranchRatio, h * this.BranchRatio, n - 1, n);
       
       WIN3D.graphics.popMatrix();
     
@@ -29677,11 +29733,11 @@ class solarchvision_Model0Ds {
     
         WIN3D.graphics.pushMatrix();
   
-        this.twistBranch();
-        this.tiltBranch();
+        this.twistBranch(this.BranchTwist);
+        this.tiltBranch(this.BranchTilt);
         
         this.drawElement(w, h);
-        this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
+        this.makeBranch(w * this.BranchRatio, h * this.BranchRatio, n - 1, n);
         
         WIN3D.graphics.popMatrix();
       }
@@ -29690,18 +29746,15 @@ class solarchvision_Model0Ds {
   }
   
   
-  void twistBranch () {
-    
-    float angle = -PI * 137.5 / 180.0; //golden angle ratio
-    //float angle = random(0, HALF_PI);
-    
+  void twistBranch (float angle) {
+
     WIN3D.graphics.rotateZ(angle);
   }
   
   
-  void tiltBranch () {
+  void tiltBranch (float angle) {
     
-    WIN3D.graphics.rotateY(this.branchTilt);
+    WIN3D.graphics.rotateY(angle);
   }
   
   
@@ -29731,7 +29784,7 @@ class solarchvision_Model0Ds {
         if ((j == 2) || (j == 3)) V = 1;
   
         float T = w;
-        if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
+        if ((j == 2) || (j == 3)) T *= this.BranchRatio; // for conic trunks
   
         float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
         float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
@@ -29752,7 +29805,7 @@ class solarchvision_Model0Ds {
   
   
   
-  void create (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
+  void create (int PlantType, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
   
     float[] TempModel0Ds_TrunkSize = {
       TrunkSize
@@ -29789,7 +29842,7 @@ class solarchvision_Model0Ds {
   
     float[][] TempModel0Ds_f_data = {
       {
-        x, y, z, s, rot
+        x, y, z, s, rot, tilt, twist, ratio
       }
     };
     this.f_data = (float[][]) concat(this.f_data, TempModel0Ds_f_data);
@@ -29815,7 +29868,7 @@ class solarchvision_Model0Ds {
     
     this.num = n;
   
-    this.f_data = new float [n][5]; 
+    this.f_data = new float [n][8]; 
   
     this.Type = new int [n];
   
@@ -29861,6 +29914,12 @@ class solarchvision_Model0Ds {
       txt += ",";
       txt += nf(this.getRotation(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
+      txt += nf(this.getBranchTilt(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getBranchTwist(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getBranchRatio(i), 0, 4).replace(",", "."); // <<<<      
+      txt += ",";
       txt += nf(this.getType(i), 0);
       txt += ",";
       txt += nf(this.getDegreeMin(i), 0);
@@ -29903,13 +29962,16 @@ class solarchvision_Model0Ds {
       this.setZ(i, float(parts[2]));
       this.setScale(i, float(parts[3]));
       this.setRotation(i, float(parts[4]));
+      this.setBranchTilt(i, float(parts[5]));
+      this.setBranchTwist(i, float(parts[6]));
+      this.setBranchRatio(i, float(parts[7]));
 
-      this.setType(i, int(parts[5]));
-      this.setDegreeMin(i, int(parts[6]));
-      this.setDegreeMax(i, int(parts[7]));
-      this.setSeed(i, int(parts[8]));
-      this.setTrunkSize(i, float(parts[9]));
-      this.setLeafSize(i, float(parts[10]));
+      this.setType(i, int(parts[8]));
+      this.setDegreeMin(i, int(parts[9]));
+      this.setDegreeMax(i, int(parts[10]));
+      this.setSeed(i, int(parts[11]));
+      this.setTrunkSize(i, float(parts[12]));
+      this.setLeafSize(i, float(parts[13]));
     }
     
     this.displayAll = XML_getBoolean(parent, "displayAll");
@@ -32762,12 +32824,20 @@ class solarchvision_User3D {
   float create_Model0D_TrunkSize = 1; //0.5;
   float create_Model0D_LeafSize = 1; //1; 
   
+  float create_Model0D_BranchTilt = PI / 3.0; 
+  float create_Model0D_BranchTwist = -PI * 137.5 / 180.0; //golden angle ratio
+  float create_Model0D_BranchRatio = 0.75;
+  
+  
+
+  
   int create_Model1D_Type = 0;
   int create_Model1D_DegreeMin = 1; //2; 
   int create_Model1D_DegreeMax = 6; //5; //8;
   int create_Model1D_Seed = -1; // -1:random, 0-99 choice
   float create_Model1D_TrunkSize = 1; //0.5;
   float create_Model1D_LeafSize = 1; //1; 
+
   
   int create_MeshOrSolid = 0; // 0:Mesh 1:Solid
   int create_Snap = 0;
@@ -36882,7 +36952,10 @@ class solarchvision_Create3Ds {
                       if (people_or_trees == 2) {
                         allModel2Ds.create("TREES", 0, x, y, z, s);
                       } else {
-                        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, s, random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+                        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, s, random(360),
+                                           User3D.create_Model0D_BranchTilt, User3D.create_Model0D_BranchTwist, User3D.create_Model0D_BranchRatio, 
+                                           User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, 
+                                           User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
                       }                  
   
   
@@ -36952,7 +37025,10 @@ class solarchvision_Create3Ds {
                   } else if (people_or_trees == 2) {
                     allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
                   } else {
-                    allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+                    allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), 
+                                       User3D.create_Model0D_BranchTilt, User3D.create_Model0D_BranchTwist, User3D.create_Model0D_BranchRatio, 
+                                       User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, 
+                                       User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);                    
                   }
                 }
               }
@@ -36979,7 +37055,10 @@ class solarchvision_Create3Ds {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), 
+                           User3D.create_Model0D_BranchTilt, User3D.create_Model0D_BranchTwist, User3D.create_Model0D_BranchRatio, 
+                           User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, 
+                           User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
       }
     }
   }
@@ -37008,7 +37087,10 @@ class solarchvision_Create3Ds {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), 
+                           User3D.create_Model0D_BranchTilt, User3D.create_Model0D_BranchTwist, User3D.create_Model0D_BranchRatio, 
+                           User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, 
+                           User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
       }
     }
   }
@@ -37040,7 +37122,10 @@ class solarchvision_Create3Ds {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+        allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 5 + random(10), random(360), 
+                           User3D.create_Model0D_BranchTilt, User3D.create_Model0D_BranchTwist, User3D.create_Model0D_BranchRatio, 
+                           User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, 
+                           User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);        
       }
     }
   }  
@@ -45000,7 +45085,10 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Model0Ds) {
   
                       randomSeed(millis());
-                      allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 2 * rz, random(360), User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);
+                      allModel0Ds.create(User3D.create_Model0D_Type, x, y, z, 2 * rz, random(360), 
+                                         User3D.create_Model0D_BranchTilt, User3D.create_Model0D_BranchTwist, User3D.create_Model0D_BranchRatio, 
+                                         User3D.create_Model0D_DegreeMin, User3D.create_Model0D_DegreeMax, User3D.create_Model0D_Seed, 
+                                         User3D.create_Model0D_TrunkSize, User3D.create_Model0D_LeafSize);                      
                     }        
                   }
 
@@ -55316,6 +55404,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       float z = 0;
       float h = 5.0;
       float r = random(360);
+      float tilt = random(90);
+      float twist = random(360);
+      float ratio = 0.5 + random(0.5);
       float Tk = 1.0; //TrunkSize
       float Lf = 1.0; //LeafSize
        
@@ -55332,12 +55423,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (low_case.equals("z")) z = float(parameters[1]);
           else if (low_case.equals("h")) h = float(parameters[1]);
           else if (low_case.equals("r")) r = float(parameters[1]) * PI / 180.0;
+          else if (low_case.equals("tilt")) tilt = float(parameters[1]) * PI / 180.0;
+          else if (low_case.equals("twist")) twist = float(parameters[1]) * PI / 180.0;
+          else if (low_case.equals("ratio")) ratio = float(parameters[1]);
           else if (low_case.equals("tk")) Tk = float(parameters[1]);
           else if (low_case.equals("lf")) Lf = float(parameters[1]);
         }
       }
       if (h != 0) {
-        allModel0Ds.create(m, x, y, z, h, r, Min, Max, Sd, Tk, Lf);
+        allModel0Ds.create(m, x, y, z, h, r, tilt, twist, ratio, Min, Max, Sd, Tk, Lf);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL0D; 
         UI_BAR_b.update = true;
@@ -55345,7 +55439,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? Tk=? Lf=?";
+      return_message = "3Dtree m=? Sd=? Min=? Max=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? Tk=? Lf=?";
       
       UI_set_to_Create_allModel0Ds();
       UI_BAR_b.highlight("3D-Tree");
