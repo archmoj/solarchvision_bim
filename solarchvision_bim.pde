@@ -17221,10 +17221,10 @@ class solarchvision_Delete3Ds {
 
 
       {
-        float[][] startList = (float[][]) subset(allModel0Ds.XYZSR, 0, OBJ_ID);
-        float[][] endList = (float[][]) subset(allModel0Ds.XYZSR, OBJ_ID + 1);
+        float[][] startList = (float[][]) subset(allModel0Ds.f_data, 0, OBJ_ID);
+        float[][] endList = (float[][]) subset(allModel0Ds.f_data, OBJ_ID + 1);
 
-        allModel0Ds.XYZSR = (float[][]) concat(startList, endList);
+        allModel0Ds.f_data = (float[][]) concat(startList, endList);
       }
 
       {
@@ -17535,10 +17535,10 @@ class solarchvision_Delete3Ds {
       if ((0 <= startModel0Ds) && (startModel0Ds <= endModel0Ds)) {
 
         {
-          float[][] startList = (float[][]) subset(allModel0Ds.XYZSR, 0, startModel0Ds);
-          float[][] endList = (float[][]) subset(allModel0Ds.XYZSR, endModel0Ds + 1);
+          float[][] startList = (float[][]) subset(allModel0Ds.f_data, 0, startModel0Ds);
+          float[][] endList = (float[][]) subset(allModel0Ds.f_data, endModel0Ds + 1);
 
-          allModel0Ds.XYZSR = (float[][]) concat(startList, endList);
+          allModel0Ds.f_data = (float[][]) concat(startList, endList);
         }
 
         {
@@ -17584,7 +17584,7 @@ class solarchvision_Delete3Ds {
         }
 
 
-        allModel0Ds.num = allModel0Ds.XYZSR.length;
+        allModel0Ds.num = allModel0Ds.f_data.length;
       }
 
       int startModel2Ds = allGroups.getStart_Model2D(OBJ_ID);
@@ -29360,10 +29360,8 @@ class solarchvision_Model0Ds {
   
   private final static String CLASS_STAMP = "Model0Ds";
 
-  float branchAngle = PI / 3.0;
+  float branchTilt = PI / 3.0;
   float branchRatio = 0.7; // relational position of branches 
-  int treeSeed = 0;        // this could be a random integer. Note: when using 0, the random rotation option is disabled. 
-  int treeDepth = 7;       // depth of the tree
 
   int elementSegments = 5; // number of polygons to create each cone
 
@@ -29372,56 +29370,56 @@ class solarchvision_Model0Ds {
   boolean displayAll = true;
   boolean displayLeaves = true;
 
-  float[][] XYZSR = new float[0][5];
+  float[][] f_data = new float[0][5];
   
   float getX (int n) {
-    return this.XYZSR[n][0]; 
+    return this.f_data[n][0]; 
   }
 
   float getY (int n) {
-    return this.XYZSR[n][1]; 
+    return this.f_data[n][1]; 
   }
 
   float getZ (int n) {
-    return this.XYZSR[n][2]; 
+    return this.f_data[n][2]; 
   }
 
   float getS (int n) {
-    return this.XYZSR[n][3]; 
+    return this.f_data[n][3]; 
   }
   
   float getR (int n) {
-    return this.XYZSR[n][4]; 
+    return this.f_data[n][4]; 
   }  
 
   void setX (int n, float f) {
-    this.XYZSR[n][0] = f;  
+    this.f_data[n][0] = f;  
   }
 
   void setY (int n, float f) {
-    this.XYZSR[n][1] = f;  
+    this.f_data[n][1] = f;  
   }
 
   void setZ (int n, float f) {
-    this.XYZSR[n][2] = f;  
+    this.f_data[n][2] = f;  
   }
 
   void setS (int n, float f) {
-    this.XYZSR[n][3] = f;  
+    this.f_data[n][3] = f;  
   }  
   
   void setR (int n, float f) {
-    this.XYZSR[n][4] = f;  
+    this.f_data[n][4] = f;  
   }     
   
   void move (int n, float dx, float dy, float dz) {
-    this.XYZSR[n][0] += dx;  
-    this.XYZSR[n][1] += dy;
-    this.XYZSR[n][2] += dz;
+    this.f_data[n][0] += dx;  
+    this.f_data[n][1] += dy;
+    this.f_data[n][2] += dz;
   }  
 
   void magS (int n, float f) {
-    this.XYZSR[n][3] *= f;  
+    this.f_data[n][3] *= f;  
   }    
 
   
@@ -29559,11 +29557,9 @@ class solarchvision_Model0Ds {
   
         int seed = this.getSeed(f);
   
-        float TrunkSize = this.getTrunkSize(f);
+        float trunkSize = this.getTrunkSize(f);
   
-        float LeafSize = this.getLeafSize(f);
-  
-        randomSeed(seed);
+        float leafSize = this.getLeafSize(f);
   
   
 
@@ -29608,9 +29604,9 @@ class solarchvision_Model0Ds {
             
             
             float treeHeight0 = rad;
-            float treeWidth0 = rad * TrunkSize * 0.15;
+            float treeWidth0 = rad * trunkSize * 0.15;
             
-            randomSeed(this.treeSeed);
+            randomSeed(seed);
             
             // Call to draw the tree
             this.makeBranch(treeWidth0, treeHeight0, dMax, dMax); 
@@ -29697,10 +29693,7 @@ class solarchvision_Model0Ds {
   void twistBranch () {
     
     float angle = -PI * 137.5 / 180.0; //golden angle ratio
-    
-    if (this.treeSeed != 0) { // i.e. to disable making random rotations 
-      angle += random(0, HALF_PI);
-    }
+    //float angle = random(0, HALF_PI);
     
     WIN3D.graphics.rotateZ(angle);
   }
@@ -29708,7 +29701,7 @@ class solarchvision_Model0Ds {
   
   void tiltBranch () {
     
-    WIN3D.graphics.rotateY(this.branchAngle);
+    WIN3D.graphics.rotateY(this.branchTilt);
   }
   
   
@@ -29794,12 +29787,12 @@ class solarchvision_Model0Ds {
     }; 
     this.Seed = concat(this.Seed, TempModel0Ds_Seed);
   
-    float[][] TempModel0Ds_XYZSR = {
+    float[][] TempModel0Ds_f_data = {
       {
         x, y, z, s, rot
       }
     };
-    this.XYZSR = (float[][]) concat(this.XYZSR, TempModel0Ds_XYZSR);
+    this.f_data = (float[][]) concat(this.f_data, TempModel0Ds_f_data);
   
     this.num += 1;
   
@@ -29822,7 +29815,7 @@ class solarchvision_Model0Ds {
     
     this.num = n;
   
-    this.XYZSR = new float [n][5]; 
+    this.f_data = new float [n][5]; 
   
     this.Type = new int [n];
   
