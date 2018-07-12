@@ -1755,19 +1755,22 @@ class solarchvision_UITASK {
   private final static int Weight = 8; 
   private final static int DegreeMax = 9; 
   private final static int DegreeDif = 10; 
-  private final static int DegreeMin = 11; 
-  private final static int TrunkSize = 12; 
-  private final static int LeafSize = 13; 
-  private final static int Model0DsProps = 14; 
-  private final static int Pivot = 15; 
-  private final static int Normal = 16; 
-  private final static int FirstVertex = 17; 
-  private final static int Drop = 18; 
-  private final static int GetLength = 19; 
-  private final static int PowerX = 20; 
-  private final static int PowerY = 21; 
-  private final static int PowerZ = 22; 
-  private final static int PowerAll = 23;  
+  private final static int DegreeMin = 11;
+  private final static int BranchTilt = 12; 
+  private final static int BranchTwist = 13; 
+  private final static int BranchRatio = 14; 
+  private final static int TrunkSize = 15; 
+  private final static int LeafSize = 16; 
+  private final static int Model0DsProps = 17; 
+  private final static int Pivot = 18; 
+  private final static int Normal = 19; 
+  private final static int FirstVertex = 20; 
+  private final static int Drop = 21; 
+  private final static int GetLength = 22; 
+  private final static int PowerX = 23; 
+  private final static int PowerY = 24; 
+  private final static int PowerZ = 25; 
+  private final static int PowerAll = 26;  
   
 }
 
@@ -9321,9 +9324,9 @@ class solarchvision_ROLLOUT {
         User3D.create_Model0D_TrunkSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_TrunkSize", User3D.create_Model0D_TrunkSize, 0, 10, 0.1), 0.1);
         User3D.create_Model0D_LeafSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_LeafSize", User3D.create_Model0D_LeafSize, 0, 10, 0.1), 0.1);
         
-        User3D.create_Model0D_BranchTilt = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchTilt", User3D.create_Model0D_BranchTilt, 0, 10, 0.1), 0.1);
-        User3D.create_Model0D_BranchTwist = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchTwist", User3D.create_Model0D_BranchTwist, 0, 10, 0.1), 0.1);
-        User3D.create_Model0D_BranchRatio = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchRatio", User3D.create_Model0D_BranchRatio, 0, 10, 0.1), 0.1);        
+        User3D.create_Model0D_BranchTilt = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchTilt", User3D.create_Model0D_BranchTilt, 0, 360, 5), 0.1);
+        User3D.create_Model0D_BranchTwist = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchTwist", User3D.create_Model0D_BranchTwist, 0, 360, 5), 0.1);
+        User3D.create_Model0D_BranchRatio = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model0D_BranchRatio", User3D.create_Model0D_BranchRatio, 0, 1, 0.05), 0.01);        
       }    
   
       if (this.child == 7) { // Environment
@@ -14578,6 +14581,39 @@ class solarchvision_Edit3Ds {
         User3D.create_Model0D_DegreeMin = q;
         ROLLOUT.update = true;
       }        
+      if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) {
+        float q = allModel0Ds.getBranchTilt(OBJ_ID);
+
+        q += PI / 72.0;
+
+        allModel0Ds.setBranchTilt(OBJ_ID, q);
+
+        User3D.create_Model0D_BranchTilt = q;
+        ROLLOUT.update = true;
+      }
+      if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) {
+        float q = allModel0Ds.getBranchTwist(OBJ_ID);
+
+        q += PI / 72.0;
+
+        allModel0Ds.setBranchTwist(OBJ_ID, q);
+
+        User3D.create_Model0D_BranchTwist = q;
+        ROLLOUT.update = true;
+      }
+      if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) {
+        float q = allModel0Ds.getBranchRatio(OBJ_ID);
+
+        q += 0.125 * p;
+
+        if (q < 0.2) q = 0.2;
+        if (q > 1.0) q = 1.0;
+
+        allModel0Ds.setBranchRatio(OBJ_ID, q);
+
+        User3D.create_Model0D_BranchRatio = q;
+        ROLLOUT.update = true;
+      }      
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
         float q = allModel0Ds.getTrunkSize(OBJ_ID);
 
@@ -29408,15 +29444,15 @@ class solarchvision_Model0Ds {
   }
   
   float getRotation (int n) {
-    return this.f_data[n][4]; 
+    return this.f_data[n][4] * 180 / PI; 
   }  
   
   float getBranchTilt (int n) {
-    return this.f_data[n][5]; 
+    return this.f_data[n][5] * 180 / PI; 
   }    
 
   float getBranchTwist (int n) {
-    return this.f_data[n][6]; 
+    return this.f_data[n][6] * 180 / PI; 
   }    
 
   float getBranchRatio (int n) {
@@ -29441,16 +29477,15 @@ class solarchvision_Model0Ds {
   }  
   
   void setRotation (int n, float f) {
-    this.f_data[n][4] = f;  
+    this.f_data[n][4] = f * PI / 180;  
   }     
 
-  
   void setBranchTilt (int n, float f) {
-    this.f_data[n][5] = f;  
+    this.f_data[n][5] = f * PI / 180;  
   }    
 
   void setBranchTwist (int n, float f) {
-    this.f_data[n][6] = f;  
+    this.f_data[n][6] = f * PI / 180;  
   }    
 
   void setBranchRatio (int n, float f) {
@@ -43315,6 +43350,54 @@ void mouseClicked () {
               UI_BAR_b.highlight("dgMin2");
               UI_BAR_b.update = true;
             }     
+            
+            if (menu_option.equals("Change BranchTilt")) {
+              UI_set_to_Modify_BranchTilt(0);
+              UI_BAR_b.highlight("bTilt0");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Pick BranchTilt")) {
+              UI_set_to_Modify_BranchTilt(1);
+              UI_BAR_b.highlight("bTilt1");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Assign BranchTilt")) {
+              UI_set_to_Modify_BranchTilt(2);
+              UI_BAR_b.highlight("bTilt2");
+              UI_BAR_b.update = true;
+            }                 
+            
+            if (menu_option.equals("Change BranchTwist")) {
+              UI_set_to_Modify_BranchTwist(0);
+              UI_BAR_b.highlight("bTwist0");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Pick BranchTwist")) {
+              UI_set_to_Modify_BranchTwist(1);
+              UI_BAR_b.highlight("bTwist1");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Assign BranchTwist")) {
+              UI_set_to_Modify_BranchTwist(2);
+              UI_BAR_b.highlight("bTwist2");
+              UI_BAR_b.update = true;
+            }                 
+
+            if (menu_option.equals("Change BranchRatio")) {
+              UI_set_to_Modify_BranchRatio(0);
+              UI_BAR_b.highlight("bRatio0");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Pick BranchRatio")) {
+              UI_set_to_Modify_BranchRatio(1);
+              UI_BAR_b.highlight("bRatio1");
+              UI_BAR_b.update = true;
+            }
+            if (menu_option.equals("Assign BranchRatio")) {
+              UI_set_to_Modify_BranchRatio(2);
+              UI_BAR_b.highlight("bRatio2");
+              UI_BAR_b.update = true;
+            }     
 
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
@@ -43372,7 +43455,16 @@ void mouseClicked () {
             }    
             if (menu_option.equals("Change DegreeMin")) {
               UI_set_to_Modify_DegreeMin(0);
-            }     
+            }
+            if (menu_option.equals("Change BranchTilt")) {
+              UI_set_to_Modify_BranchTilt(0);
+            }
+            if (menu_option.equals("Change BranchTwist")) {
+              UI_set_to_Modify_BranchTwist(0);
+            }            
+            if (menu_option.equals("Change BranchRatio")) {
+              UI_set_to_Modify_BranchRatio(0);
+            }            
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
             }
@@ -44860,6 +44952,10 @@ void mouseClicked () {
                           User3D.create_Model0D_DegreeMin = allModel0Ds.getDegreeMin(OBJ_ID);
                         }
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) User3D.create_Model0D_DegreeMin = allModel0Ds.getDegreeMin(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model0D_BranchTilt = allModel0Ds.getBranchTilt(OBJ_ID);                        
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model0D_BranchTwist = allModel0Ds.getBranchTwist(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model0D_BranchRatio = allModel0Ds.getBranchRatio(OBJ_ID);
+                        
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model0D_TrunkSize = allModel0Ds.getTrunkSize(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model0D_LeafSize = allModel0Ds.getLeafSize(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.Model0DsProps) { // all properties
@@ -44875,7 +44971,10 @@ void mouseClicked () {
                           allModel0Ds.setDegreeMax(OBJ_ID, User3D.create_Model0D_DegreeMax); 
                           allModel0Ds.setDegreeMin(OBJ_ID, User3D.create_Model0D_DegreeMin);
                         }                 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel0Ds.setDegreeMin(OBJ_ID, User3D.create_Model0D_DegreeMin);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel0Ds.setDegreeMin(OBJ_ID, User3D.create_Model0D_DegreeMin);     
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel0Ds.setBranchTilt(OBJ_ID, User3D.create_Model0D_BranchTilt);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel0Ds.setBranchTwist(OBJ_ID, User3D.create_Model0D_BranchTwist);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel0Ds.setBranchRatio(OBJ_ID, User3D.create_Model0D_BranchRatio);               
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel0Ds.setTrunkSize(OBJ_ID, User3D.create_Model0D_TrunkSize);                    
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel0Ds.setLeafSize(OBJ_ID, User3D.create_Model0D_LeafSize);
                         if (WIN3D.UI_CurrentTask == UITASK.Model0DsProps) { // all properties
@@ -48736,6 +48835,32 @@ void UI_set_to_Modify_DegreeMin (int n) {
   ROLLOUT.update = true;
 }
 
+
+
+
+
+void UI_set_to_Modify_BranchTilt (int n) {
+  WIN3D.UI_CurrentTask = UITASK.BranchTilt;
+  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT.update = true;
+}
+
+void UI_set_to_Modify_BranchTwist (int n) {
+  WIN3D.UI_CurrentTask = UITASK.BranchTwist;
+  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT.update = true;
+}
+
+void UI_set_to_Modify_BranchRatio (int n) {
+  WIN3D.UI_CurrentTask = UITASK.BranchRatio;
+  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT.update = true;
+}
+
+
 void UI_set_to_Modify_TrunkSize (int n) {
   WIN3D.UI_CurrentTask = UITASK.TrunkSize;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
@@ -51660,7 +51785,10 @@ class solarchvision_UI_BAR_a {
       "Change Weight", 
       "Change DegreeMax", 
       "Change DegreeDif", 
-      "Change DegreeMin", 
+      "Change DegreeMin",
+      "Change BranchTilt",
+      "Change BranchTwist",
+      "Change BranchRatio",
       "Change TrunkSize", 
       "Change LeafSize"
     }
@@ -52423,7 +52551,12 @@ class solarchvision_UI_BAR_b {
     //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
     //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
     //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
-    //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
+    //{"1", "bTilt0", "bTilt1", "bTilt2", "Change BranchTilt", "1.0"},
+    //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
+    //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
+    //{"1", "bRatio0", "bRatio1", "bRatio2", "Change BranchRatio", "1.0"},    
+    
+    //{"1", "trSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
     //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
     //{"1", "allFP0", "allFP1", "allFP2", "Model1DsProps", "1.0"},
   
