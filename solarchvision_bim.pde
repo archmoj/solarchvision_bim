@@ -11848,8 +11848,8 @@ class solarchvision_Groups {
           float x = allModel0Ds.getX(OBJ_ID);
           float y = allModel0Ds.getY(OBJ_ID);
           float z = allModel0Ds.getZ(OBJ_ID);
-          float d = allModel0Ds.getS(OBJ_ID);
-          float rot = allModel0Ds.getR(OBJ_ID);
+          float d = allModel0Ds.getScale(OBJ_ID);
+          float rot = allModel0Ds.getRotation(OBJ_ID);
   
           int n = allModel0Ds.getType(OBJ_ID);
           int dMin = allModel0Ds.getDegreeMin(OBJ_ID);
@@ -15596,7 +15596,7 @@ class solarchvision_Rotate3Ds {
         allModel0Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
         allModel0Ds.setZ(f, z0 + (z));
 
-        allModel0Ds.setR(f, allModel0Ds.getR(f) - r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        allModel0Ds.setRotation(f, allModel0Ds.getRotation(f) - r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       } else if (the_Vector == 1) {
         allModel0Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
         allModel0Ds.setY(f, y0 + (y));
@@ -15806,7 +15806,7 @@ class solarchvision_Rotate3Ds {
   
   
           if (the_Vector == 2) {
-            //allModel0Ds.setR(f, allModel0Ds.getR(f) + r); // <<<<<<<<<
+            //allModel0Ds.setRotation(f, allModel0Ds.getRotation(f) + r); // <<<<<<<<<
           } else if (the_Vector == 1) {
           } else if (the_Vector == 0) {
           }
@@ -16397,8 +16397,8 @@ class solarchvision_Clone3Ds {
       float x = allModel0Ds.getX(OBJ_ID);
       float y = allModel0Ds.getY(OBJ_ID);
       float z = allModel0Ds.getZ(OBJ_ID);
-      float d = allModel0Ds.getS(OBJ_ID);
-      float rot = allModel0Ds.getR(OBJ_ID);
+      float d = allModel0Ds.getScale(OBJ_ID);
+      float rot = allModel0Ds.getRotation(OBJ_ID);
 
       int n = allModel0Ds.getType(OBJ_ID);
       int dMin = allModel0Ds.getDegreeMin(OBJ_ID);
@@ -16762,8 +16762,8 @@ class solarchvision_Clone3Ds {
             float y = allModel0Ds.getY(q);
             float z = allModel0Ds.getZ(q);
 
-            float d = allModel0Ds.getS(q);
-            float rot = allModel0Ds.getR(q);
+            float d = allModel0Ds.getScale(q);
+            float rot = allModel0Ds.getRotation(q);
 
             int n = allModel0Ds.getType(q);
 
@@ -16912,8 +16912,8 @@ class solarchvision_Clone3Ds {
             float y = allModel0Ds.getY(q);
             float z = allModel0Ds.getZ(q);
 
-            float d = allModel0Ds.getS(q);
-            float rot = allModel0Ds.getR(q);
+            float d = allModel0Ds.getScale(q);
+            float rot = allModel0Ds.getRotation(q);
 
             int n = allModel0Ds.getType(q);
 
@@ -29384,14 +29384,14 @@ class solarchvision_Model0Ds {
     return this.f_data[n][2]; 
   }
 
-  float getS (int n) {
+  float getScale (int n) {
     return this.f_data[n][3]; 
   }
   
-  float getR (int n) {
+  float getRotation (int n) {
     return this.f_data[n][4]; 
   }  
-
+  
   void setX (int n, float f) {
     this.f_data[n][0] = f;  
   }
@@ -29404,11 +29404,11 @@ class solarchvision_Model0Ds {
     this.f_data[n][2] = f;  
   }
 
-  void setS (int n, float f) {
+  void setScale (int n, float f) {
     this.f_data[n][3] = f;  
   }  
   
-  void setR (int n, float f) {
+  void setRotation (int n, float f) {
     this.f_data[n][4] = f;  
   }     
   
@@ -29546,8 +29546,8 @@ class solarchvision_Model0Ds {
         float y = this.getY(f);
         float z = this.getZ(f);
   
-        float rad = this.getS(f);
-        float rot = this.getR(f);
+        float rad = this.getScale(f);
+        float rot = this.getRotation(f);
   
         int n = this.getType(f);
   
@@ -29857,9 +29857,9 @@ class solarchvision_Model0Ds {
       txt += ",";
       txt += nf(this.getZ(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
-      txt += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
+      txt += nf(this.getScale(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
-      txt += nf(this.getR(i), 0, 4).replace(",", "."); // <<<<
+      txt += nf(this.getRotation(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
       txt += nf(this.getType(i), 0);
       txt += ",";
@@ -29901,8 +29901,8 @@ class solarchvision_Model0Ds {
       this.setX(i, float(parts[0]));
       this.setY(i, float(parts[1]));
       this.setZ(i, float(parts[2]));
-      this.setS(i, float(parts[3]));
-      this.setR(i, float(parts[4]));
+      this.setScale(i, float(parts[3]));
+      this.setRotation(i, float(parts[4]));
 
       this.setType(i, int(parts[5]));
       this.setDegreeMin(i, int(parts[6]));
