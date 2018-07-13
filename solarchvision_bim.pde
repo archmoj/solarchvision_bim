@@ -11196,12 +11196,12 @@ class solarchvision_Faces {
       }
       XML_setContent(child, txt);
       
-      XML_setInt(child, "material", getMaterial(i));
-      XML_setInt(child, "tessellation", getTessellation(i));
-      XML_setInt(child, "layer", getLayer(i));
-      XML_setInt(child, "visibility", getVisibility(i));
-      XML_setInt(child, "weight", getWeight(i));
-      XML_setInt(child, "close", getClose(i));
+      XML_setInt(child, "material", this.getMaterial(i));
+      XML_setInt(child, "tessellation", this.getTessellation(i));
+      XML_setInt(child, "layer", this.getLayer(i));
+      XML_setInt(child, "visibility", this.getVisibility(i));
+      XML_setInt(child, "weight", this.getWeight(i));
+      XML_setInt(child, "close", this.getClose(i));
     }
     
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -11216,7 +11216,6 @@ class solarchvision_Faces {
     XML_setInt(parent, "PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
     XML_setFloat(parent, "PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);           
   }
-
 
   public void from_XML (XML xml) {
     
@@ -11240,12 +11239,12 @@ class solarchvision_Faces {
       }
       this.nodes = (int[][]) concat(this.nodes, newItem);
 
-      setMaterial(i, children[i].getInt("material"));
-      setTessellation(i, children[i].getInt("tessellation"));
-      setLayer(i, children[i].getInt("layer"));
-      setVisibility(i, children[i].getInt("visibility"));
-      setWeight(i, children[i].getInt("weight"));
-      setClose(i, children[i].getInt("close"));
+      this.setMaterial(i, children[i].getInt("material"));
+      this.setTessellation(i, children[i].getInt("tessellation"));
+      this.setLayer(i, children[i].getInt("layer"));
+      this.setVisibility(i, children[i].getInt("visibility"));
+      this.setWeight(i, children[i].getInt("weight"));
+      this.setClose(i, children[i].getInt("close"));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
@@ -11598,12 +11597,12 @@ class solarchvision_Curves {
       }
       XML_setContent(child, txt);
       
-      XML_setInt(child, "material", getMaterial(i));
-      XML_setInt(child, "tessellation", getTessellation(i));
-      XML_setInt(child, "layer", getLayer(i));
-      XML_setInt(child, "visibility", getVisibility(i));
-      XML_setInt(child, "weight", getWeight(i));
-      XML_setInt(child, "close", getClose(i));
+      XML_setInt(child, "material", this.getMaterial(i));
+      XML_setInt(child, "tessellation", this.getTessellation(i));
+      XML_setInt(child, "layer", this.getLayer(i));
+      XML_setInt(child, "visibility", this.getVisibility(i));
+      XML_setInt(child, "weight", this.getWeight(i));
+      XML_setInt(child, "close", this.getClose(i));
     }
     
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -11633,12 +11632,12 @@ class solarchvision_Curves {
       }
       this.nodes = (int[][]) concat(this.nodes, newItem);
 
-      setMaterial(i, children[i].getInt("material"));
-      setTessellation(i, children[i].getInt("tessellation"));
-      setLayer(i, children[i].getInt("layer"));
-      setVisibility(i, children[i].getInt("visibility"));
-      setWeight(i, children[i].getInt("weight"));
-      setClose(i, children[i].getInt("close"));
+      this.setMaterial(i, children[i].getInt("material"));
+      this.setTessellation(i, children[i].getInt("tessellation"));
+      this.setLayer(i, children[i].getInt("layer"));
+      this.setVisibility(i, children[i].getInt("visibility"));
+      this.setWeight(i, children[i].getInt("weight"));
+      this.setClose(i, children[i].getInt("close"));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
@@ -29857,6 +29856,13 @@ class solarchvision_Model0Ds {
     for (int i = 0; i < ni; i++) {
       XML child = parent.addChild("item");
       XML_setInt(child, "id", i);
+      
+      XML_setInt(child, "type", getType(i));
+      XML_setInt(child, "seed", getSeed(i));
+      XML_setInt(child, "degreeMin", getDegreeMin(i));
+      XML_setInt(child, "degreeMax", getDegreeMax(i));
+      
+      
       String txt = "";
       txt += nf(this.getX(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
@@ -29877,23 +29883,19 @@ class solarchvision_Model0Ds {
       txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
       txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<      
-      txt += ",";
-      txt += nf(this.getType(i), 0);
-      txt += ",";
-      txt += nf(this.getDegreeMin(i), 0);
-      txt += ",";
-      txt += nf(this.getDegreeMax(i), 0);
-      txt += ",";
-      txt += nf(this.getSeed(i), 0);
-
 
       XML_setContent(child, txt);
     } 
-    
-    
+
     XML_setBoolean(parent, "displayAll", this.displayAll);
     XML_setBoolean(parent, "displayLeaves", this.displayLeaves);
   }
+
+
+
+    
+
+
   
   
   public void from_XML (XML xml) {
@@ -29909,6 +29911,11 @@ class solarchvision_Model0Ds {
     XML[] children = parent.getChildren("item");         
     for (int i = 0; i < ni; i++) {
 
+      this.setType(i, children[i].getInt("type"));
+      this.setSeed(i, children[i].getInt("seed"));
+      this.setDegreeMin(i, children[i].getInt("degreeMin"));
+      this.setDegreeMax(i, children[i].getInt("degreeMax"));      
+      
       String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");
 
@@ -29923,11 +29930,6 @@ class solarchvision_Model0Ds {
       this.setTrunkSize(i, float(parts[8]));
       this.setLeafSize(i, float(parts[9]));
       
-      this.setType(i, int(parts[10]));
-      this.setDegreeMin(i, int(parts[11]));
-      this.setDegreeMax(i, int(parts[12]));
-      this.setSeed(i, int(parts[13]));
-
     }
     
     this.displayAll = XML_getBoolean(parent, "displayAll");
