@@ -17311,20 +17311,6 @@ class solarchvision_Delete3Ds {
         allModel0Ds.Seed = (int[]) concat(startList, endList);
       }
 
-      {
-        float[] startList = (float[]) subset(allModel0Ds.TrunkSize, 0, OBJ_ID);
-        float[] endList = (float[]) subset(allModel0Ds.TrunkSize, OBJ_ID + 1);
-
-        allModel0Ds.TrunkSize = (float[]) concat(startList, endList);
-      }
-
-      {
-        float[] startList = (float[]) subset(allModel0Ds.LeafSize, 0, OBJ_ID);
-        float[] endList = (float[]) subset(allModel0Ds.LeafSize, OBJ_ID + 1);
-
-        allModel0Ds.LeafSize = (float[]) concat(startList, endList);
-      }
-
       allModel0Ds.num -= 1;
     }
   }
@@ -17624,21 +17610,6 @@ class solarchvision_Delete3Ds {
 
           allModel0Ds.Seed = (int[]) concat(startList, endList);
         }
-
-        {
-          float[] startList = (float[]) subset(allModel0Ds.TrunkSize, 0, startModel0Ds);
-          float[] endList = (float[]) subset(allModel0Ds.TrunkSize, endModel0Ds + 1);
-
-          allModel0Ds.TrunkSize = (float[]) concat(startList, endList);
-        }
-
-        {
-          float[] startList = (float[]) subset(allModel0Ds.LeafSize, 0, startModel0Ds);
-          float[] endList = (float[]) subset(allModel0Ds.LeafSize, endModel0Ds + 1);
-
-          allModel0Ds.LeafSize = (float[]) concat(startList, endList);
-        }
-
 
         allModel0Ds.num = allModel0Ds.f_data.length;
       }
@@ -29425,7 +29396,7 @@ class solarchvision_Model0Ds {
   boolean displayAll = true;
   boolean displayLeaves = true;
 
-  float[][] f_data = new float[0][5];
+  float[][] f_data = new float[0][9];
   
   float getX (int n) {
     return this.f_data[n][0]; 
@@ -29458,7 +29429,14 @@ class solarchvision_Model0Ds {
   float getBranchRatio (int n) {
     return this.f_data[n][7]; 
   }    
+
+  float getTrunkSize (int n) {
+    return this.f_data[n][8]; 
+  }  
   
+  float getLeafSize (int n) {
+    return this.f_data[n][9]; 
+  }      
   
   void setX (int n, float f) {
     this.f_data[n][0] = f;  
@@ -29492,6 +29470,15 @@ class solarchvision_Model0Ds {
     this.f_data[n][7] = f;  
   }    
   
+  void setTrunkSize (int n, float f) {
+    this.f_data[n][8] = f;  
+  }  
+
+  void setLeafSize (int n, float f) {
+    this.f_data[n][9] = f;  
+  }     
+  
+  
   void move (int n, float dx, float dy, float dz) {
     this.f_data[n][0] += dx;  
     this.f_data[n][1] += dy;
@@ -29501,6 +29488,8 @@ class solarchvision_Model0Ds {
   void magS (int n, float f) {
     this.f_data[n][3] *= f;  
   }    
+  
+  
 
   
   int[] Type = new int[0];
@@ -29541,24 +29530,9 @@ class solarchvision_Model0Ds {
   }  
 
 
-  float[] TrunkSize = new float[0];
-  float[] LeafSize = new float[0];
 
-  float getTrunkSize (int n) {
-    return this.TrunkSize[n]; 
-  }  
 
-  void setTrunkSize (int n, float t) {
-    this.TrunkSize[n] = t;  
-  }  
-  
-  float getLeafSize (int n) {
-    return this.LeafSize[n]; 
-  }  
 
-  void setLeafSize (int n, float t) {
-    this.LeafSize[n] = t;  
-  }   
   
   
 
@@ -29840,17 +29814,7 @@ class solarchvision_Model0Ds {
   
   
   
-  void create (int PlantType, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
-  
-    float[] TempModel0Ds_TrunkSize = {
-      TrunkSize
-    }; 
-    this.TrunkSize = concat(this.TrunkSize, TempModel0Ds_TrunkSize);  
-  
-    float[] TempModel0Ds_LeafSize = {
-      LeafSize
-    }; 
-    this.LeafSize = concat(this.LeafSize, TempModel0Ds_LeafSize);
+  void create (int PlantType, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float trunkSize, float leafSize) {
   
     int[] TempModel0Ds_Type = {
       PlantType
@@ -29877,7 +29841,7 @@ class solarchvision_Model0Ds {
   
     float[][] TempModel0Ds_f_data = {
       {
-        x, y, z, s, rot, tilt, twist, ratio
+        x, y, z, s, rot, tilt, twist, ratio, trunkSize, leafSize
       }
     };
     this.f_data = (float[][]) concat(this.f_data, TempModel0Ds_f_data);
@@ -29903,7 +29867,7 @@ class solarchvision_Model0Ds {
     
     this.num = n;
   
-    this.f_data = new float [n][8]; 
+    this.f_data = new float [n][9]; 
   
     this.Type = new int [n];
   
@@ -29912,10 +29876,6 @@ class solarchvision_Model0Ds {
     this.DegreeMax = new int [n];
   
     this.Seed = new int [n];
-  
-    this.TrunkSize = new float [n];
-  
-    this.LeafSize = new float [n];
   
     for (int q = 0; q < allGroups.num; q++) {
       allGroups.Model0Ds[q][0] = 0;
@@ -29953,7 +29913,11 @@ class solarchvision_Model0Ds {
       txt += ",";
       txt += nf(this.getBranchTwist(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
-      txt += nf(this.getBranchRatio(i), 0, 4).replace(",", "."); // <<<<      
+      txt += nf(this.getBranchRatio(i), 0, 4).replace(",", "."); // <<<<     
+      txt += ",";
+      txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
+      txt += ",";
+      txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<      
       txt += ",";
       txt += nf(this.getType(i), 0);
       txt += ",";
@@ -29962,10 +29926,7 @@ class solarchvision_Model0Ds {
       txt += nf(this.getDegreeMax(i), 0);
       txt += ",";
       txt += nf(this.getSeed(i), 0);
-      txt += ",";
-      txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
-      txt += ",";
-      txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<
+
 
       XML_setContent(child, txt);
     } 
@@ -30000,13 +29961,14 @@ class solarchvision_Model0Ds {
       this.setBranchTilt(i, float(parts[5]));
       this.setBranchTwist(i, float(parts[6]));
       this.setBranchRatio(i, float(parts[7]));
+      this.setTrunkSize(i, float(parts[8]));
+      this.setLeafSize(i, float(parts[9]));
+      
+      this.setType(i, int(parts[10]));
+      this.setDegreeMin(i, int(parts[11]));
+      this.setDegreeMax(i, int(parts[12]));
+      this.setSeed(i, int(parts[13]));
 
-      this.setType(i, int(parts[8]));
-      this.setDegreeMin(i, int(parts[9]));
-      this.setDegreeMax(i, int(parts[10]));
-      this.setSeed(i, int(parts[11]));
-      this.setTrunkSize(i, float(parts[12]));
-      this.setLeafSize(i, float(parts[13]));
     }
     
     this.displayAll = XML_getBoolean(parent, "displayAll");
