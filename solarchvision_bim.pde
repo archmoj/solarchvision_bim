@@ -10080,7 +10080,6 @@ class solarchvision_Faces {
   void makeEmpty (int n) {
   
     this.nodes = new int [n][0];
-  
     this.options = new int [n][6];
   
     if (allGroups != null) {
@@ -11276,14 +11275,12 @@ class solarchvision_Curves {
   
   boolean displayAll = true; 
 
-  int[][] nodes = new int[0][0];
-  
-  int[][] options = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
+  int[][] nodes;
+  int[][] options;
 
   void makeEmpty (int n) {
   
     this.nodes = new int [n][0];
-  
     this.options = new int [n][6];
 
     if (allGroups != null) {
@@ -11661,21 +11658,17 @@ class solarchvision_Groups {
     makeEmpty(0);
   }    
 
-
-  int[][] Curves = new int[0][2]; // start curve - end curve
-  int[][] Faces = new int[0][2]; // start face - end face
-  int[][] Solids = new int[0][2]; // start solid - end solid
-  int[][] Model0Ds = new int[0][2]; // start Model0Ds - end Model0Ds
-  int[][] Model2Ds = new int[0][2]; // start Model2Ds - end Model2Ds
-  
-  int num = 0; 
-  
-  float[][] Pivots = new float[0][9];
+  int num; 
+  int[][] Curves;
+  int[][] Faces;
+  int[][] Solids;
+  int[][] Model0Ds;
+  int[][] Model2Ds;
+  float[][] Pivots;
 
   void makeEmpty (int n) {
 
     this.num = n;
-    
     this.Model0Ds = new int [n][2];
     this.Model2Ds = new int [n][2];
     this.Faces = new int [n][2];
@@ -29423,24 +29416,20 @@ class solarchvision_Model0Ds {
   boolean displayAll = true;
   boolean displayLeaves = true;
 
+  int num;
   float[][] f_data;
-  int[] Type = new int[0];
-  int[] Seed = new int[0];  
-  int[] DegreeMin = new int[0];
-  int[] DegreeMax = new int[0];
+  int[] Type;
+  int[] Seed;  
+  int[] DegreeMin;
+  int[] DegreeMax;
   
   void makeEmpty (int n) {
     
     this.num = n;
-  
     this.f_data = new float [n][10]; 
-  
     this.Type = new int [n];
-  
     this.DegreeMin = new int [n];
-  
     this.DegreeMax = new int [n];
-  
     this.Seed = new int [n];
   
   
@@ -29596,7 +29585,7 @@ class solarchvision_Model0Ds {
 
 
 
-  int num = 0; 
+  
 
 
   float BranchTilt;
@@ -30030,29 +30019,23 @@ class solarchvision_Model1Ds {
 
   float[][] XYZSR;
 
-  int[] Type = new int[0];
-  int[] Seed = new int[0];  
-  int[] DegreeMin = new int[0];
-  int[] DegreeMax = new int[0];
-  float[] TrunkSize = new float[0];
-  float[] LeafSize = new float[0];
+  int num; 
+  int[] Type;
+  int[] Seed;  
+  int[] DegreeMin;
+  int[] DegreeMax;
+  float[] TrunkSize;
+  float[] LeafSize;
   
   void makeEmpty (int n) {
     
     this.num = n;
-  
     this.XYZSR = new float [n][5]; 
-  
     this.Type = new int [n];
-  
     this.DegreeMin = new int [n];
-  
     this.DegreeMax = new int [n];
-  
     this.Seed = new int [n];
-  
     this.TrunkSize = new float [n];
-  
     this.LeafSize = new float [n];
 
     if (Select3Ds != null) {
@@ -30164,10 +30147,7 @@ class solarchvision_Model1Ds {
   void setLeafSize (int n, float t) {
     this.LeafSize[n] = t;  
   }   
-  
-  
-  int num = 0; 
-  
+
   
   float[][] Vertices;
   int[][] Faces;
@@ -31083,7 +31063,27 @@ class solarchvision_Model2Ds {
 
   boolean displayAll = true;
 
-  float[][] XYZS = new float[0][4];
+  int num;
+  float[][] XYZS;
+  
+  void makeEmpty (int n) {
+
+    this.num = n;
+    this.XYZS = new float [n][4]; 
+    this.MAP = new int [n];
+
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Model2Ds[q][0] = 0;
+        allGroups.Model2Ds[q][1] = -1;
+      }  
+    }
+
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Model2Ds();
+    }
+  }    
   
   float getX (int n) {
     return this.XYZS[n][0]; 
@@ -31128,7 +31128,6 @@ class solarchvision_Model2Ds {
   }
   
   int[] MAP = new int[0];
-  int num = 0; 
   
   String[] ImagePath;
   int num_files_PEOPLE = 0;
@@ -31870,26 +31869,7 @@ class solarchvision_Model2Ds {
     if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
   
-  void makeEmpty (int n) {
 
-    this.num = n;
-    
-    this.XYZS = new float [n][4]; 
-
-    this.MAP = new int [n];
-
-    if (allGroups != null) {
-      for (int q = 0; q < allGroups.num; q++) {
-        allGroups.Model2Ds[q][0] = 0;
-        allGroups.Model2Ds[q][1] = -1;
-      }  
-    }
-
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Model2Ds();
-    }
-  }  
   
   
   
@@ -32055,7 +32035,23 @@ class solarchvision_Solids {
   int pallet_DIR = -1; 
   float pallet_MLT = 0.01; //1; 
 
-  float[][] DEF = new float[0][13];
+  float[][] DEF;
+  
+  void makeEmpty (int n) {
+    this.DEF = new float [n][13]; 
+  
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Solids[q][0] = 0;
+        allGroups.Solids[q][1] = -1;
+      }
+    }
+    
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Solids();
+    }
+  }      
   
   void updatePosition (int n, float a, float b, float c) {
   
@@ -32302,21 +32298,7 @@ class solarchvision_Solids {
   }
 
 
-  void makeEmpty (int n) {
-    this.DEF = new float [n][13]; 
-  
-    if (allGroups != null) {
-      for (int q = 0; q < allGroups.num; q++) {
-        allGroups.Solids[q][0] = 0;
-        allGroups.Solids[q][1] = -1;
-      }
-    }
-    
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Solids();
-    }
-  }    
+
 
 
 
@@ -32696,6 +32678,18 @@ class solarchvision_Points {
     
   boolean displayAll = false;
   
+  void makeEmpty (int n) {
+  
+    allVertices = new float [n][3];
+  
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Faces();
+      Select3Ds.deselect_Curves();
+      Select3Ds.deselect_Vertices();
+    }
+  }    
+  
   void setX (int n, float f) { 
   
     allVertices[n][0] = f;
@@ -32760,17 +32754,7 @@ class solarchvision_Points {
   }
   
   
-  void makeEmpty (int n) {
-  
-    allVertices = new float [n][3];
-  
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Faces();
-      Select3Ds.deselect_Curves();
-      Select3Ds.deselect_Vertices();
-    }
-  }  
+
   
   
   void draw () {
@@ -37411,15 +37395,22 @@ class solarchvision_Cameras {
   
   boolean displayAll = false;
   
-  float[][] options = {
-    {
-      WIN3D.position_X, WIN3D.position_Y, WIN3D.position_Z, WIN3D.position_T, WIN3D.rotation_X, WIN3D.rotation_Y, WIN3D.rotation_Z, WIN3D.rotation_T, WIN3D.Zoom
+  float[][] options;
+  int[] Type;
+  int num;
+  
+  void makeEmpty (int n) {
+    
+    this.num = n;  
+    this.options = new float [n][9]; 
+    this.Type = new int [n];
+  
+    this.add_first();
+  
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Cameras();
     }
-  };
-  int[] Type = {
-    WIN3D.ViewType
-  };
-  int num = 1;
+  }  
 
 
   float get_posX (int n) {
@@ -37543,32 +37534,6 @@ class solarchvision_Cameras {
     this.num += 1;
   }  
 
-
-  void makeEmpty (int n) {
-  
-    this.options = new float [n][9]; 
-  
-    this.Type = new int [n];
-  
-    this.add_first();
-  
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Cameras();
-    }
-  }
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   private float[][] Vertices;
   private int[][] Faces;
@@ -37947,10 +37912,24 @@ class solarchvision_Sections {
   
   boolean displayAll = true;
 
+  int num;
   float[][] f_data = new float[0][6];
   int  [][] i_data = new int  [0][3];
 
-  int num = 0;
+  void makeEmpty (int n) {
+    this.f_data = new float [n][6]; 
+    this.i_data = new int   [n][3];
+  
+    this.SolidImpact = new PImage [n];
+  
+    this.SolarImpact = new PImage [n][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+  
+    this.num = n;
+  
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Sections();
+    }
+  }      
   
   int get_type (int n) { // Type
     return this.i_data[n][0]; 
@@ -38093,21 +38072,7 @@ class solarchvision_Sections {
   }  
   
   
-  
-  void makeEmpty (int n) {
-    this.f_data = new float [n][6]; 
-    this.i_data = new int   [n][3];
-  
-    this.SolidImpact = new PImage [n];
-  
-    this.SolarImpact = new PImage [n][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
-  
-    this.num = n;
-  
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Sections();
-    }
-  }    
+
   
   
   private float[][] Vertices;
