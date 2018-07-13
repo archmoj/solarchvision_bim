@@ -1,3 +1,7 @@
+
+// Model0Ds --> export, solid, shadow 
+
+
 // move should keep the same distance of bounding box - now only moves the center
 
 // please define station elevation data for CWEEDS points!
