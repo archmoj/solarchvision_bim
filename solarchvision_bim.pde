@@ -10055,6 +10055,10 @@ class solarchvision_Faces {
   
   private final static String CLASS_STAMP = "Faces";
   
+  solarchvision_Faces () { // constructor
+    makeEmpty(0);
+  }    
+  
   boolean displayAll = true; 
   boolean displayNormals = false;
   boolean displayEdges = true;
@@ -10070,9 +10074,28 @@ class solarchvision_Faces {
   float PASSIVE_pallet_MLT = 8; //1;   
   
   
-  int[][] nodes = new int[0][0];
+  int[][] nodes;
+  int[][] options;
+
+  void makeEmpty (int n) {
   
-  int[][] options = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
+    this.nodes = new int [n][0];
+  
+    this.options = new int [n][6];
+  
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Faces[q][0] = 0;
+        allGroups.Faces[q][1] = -1;
+      }
+    }  
+  
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Faces();
+    }
+  }
+
   
   int getMaterial (int n) {
     return this.options[n][0];
@@ -10169,20 +10192,7 @@ class solarchvision_Faces {
   }
 
   
-  void makeEmpty (int n) {
-  
-    this.nodes = new int [n][0];
-  
-    this.options = new int [n][6];
-  
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Faces[q][0] = 0;
-      allGroups.Faces[q][1] = -1;
-    }  
-  
-    Select3Ds.deselect_Groups();
-    Select3Ds.deselect_Faces();
-  }
+
   
   
   
@@ -11259,13 +11269,36 @@ solarchvision_Faces allFaces = new solarchvision_Faces();
 class solarchvision_Curves {
   
   private final static String CLASS_STAMP = "Curves";
+
+  solarchvision_Curves () { // constructor
+    makeEmpty(0);
+  }    
   
   boolean displayAll = true; 
 
   int[][] nodes = new int[0][0];
   
   int[][] options = new int[0][6]; // 0:material, 1:tessellation, 2:layer, 3:visibility, 4:weight, 5:close
+
+  void makeEmpty (int n) {
   
+    this.nodes = new int [n][0];
+  
+    this.options = new int [n][6];
+
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Curves[q][0] = 0;
+        allGroups.Curves[q][1] = -1;
+      }
+    }  
+  
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Curves();
+    }
+  }
+
   int getMaterial (int n) {
     return this.options[n][0];
   }
@@ -11420,22 +11453,6 @@ class solarchvision_Curves {
     this.create(newCurve_nodes);
   }
 
-
-  void makeEmpty (int n) {
-  
-    this.nodes = new int [n][0];
-  
-    this.options = new int [n][6];
-
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Curves[q][0] = 0;
-      allGroups.Curves[q][1] = -1;
-    }  
-
-    Select3Ds.deselect_Groups();
-    Select3Ds.deselect_Curves();
-  }
-  
 
 
 
@@ -11640,6 +11657,11 @@ class solarchvision_Groups {
   
   private final static String CLASS_STAMP = "Groups";
 
+  solarchvision_Groups () { // constructor
+    makeEmpty(0);
+  }    
+
+
   int[][] Curves = new int[0][2]; // start curve - end curve
   int[][] Faces = new int[0][2]; // start face - end face
   int[][] Solids = new int[0][2]; // start solid - end solid
@@ -11649,6 +11671,24 @@ class solarchvision_Groups {
   int num = 0; 
   
   float[][] Pivots = new float[0][9];
+
+  void makeEmpty (int n) {
+
+    this.num = n;
+    
+    this.Model0Ds = new int [n][2];
+    this.Model2Ds = new int [n][2];
+    this.Faces = new int [n][2];
+    this.Curves = new int [n][2];
+    this.Solids = new int [n][2];
+    this.Pivots = new float [n][9];
+    
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+    }
+  }    
+
+
 
   int getStart_Curve (int n) {
     return this.Curves[n][0];
@@ -11802,19 +11842,6 @@ class solarchvision_Groups {
   
   
 
-  void makeEmpty (int n) {
-
-    this.num = n;
-    
-    this.Model0Ds = new int [n][2];
-    this.Model2Ds = new int [n][2];
-    this.Faces = new int [n][2];
-    this.Curves = new int [n][2];
-    this.Solids = new int [n][2];
-    this.Pivots = new float [n][9];
-    
-    Select3Ds.deselect_Groups();
-  }    
 
 
 
@@ -29386,12 +29413,12 @@ solarchvision_Land3D Land3D = new solarchvision_Land3D();
 class solarchvision_Model0Ds {
   
   private final static String CLASS_STAMP = "Model0Ds";
-
-
+  
+  solarchvision_Model0Ds () { // constructor
+    makeEmpty(0);
+  }  
 
   int elementSegments = 5; // number of polygons to create each cone
-
-
 
   boolean displayAll = true;
   boolean displayLeaves = true;
@@ -29416,18 +29443,21 @@ class solarchvision_Model0Ds {
   
     this.Seed = new int [n];
   
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Model0Ds[q][0] = 0;
-      allGroups.Model0Ds[q][1] = -1;
-    }    
+  
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Model0Ds[q][0] = 0;
+        allGroups.Model0Ds[q][1] = -1;
+      }  
+    }  
 
-    Select3Ds.deselect_Groups();  
-    Select3Ds.deselect_Model0Ds();
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();  
+      Select3Ds.deselect_Model0Ds();
+    }
   }
 
-  solarchvision_Model0Ds () { // constructor
-    makeEmpty(0);
-  }
+
   
   float getX (int n) {
     return this.f_data[n][0]; 
@@ -29991,6 +30021,10 @@ class solarchvision_Model1Ds {
   
   private final static String CLASS_STAMP = "Model1Ds";
 
+  solarchvision_Model1Ds () { // constructor
+    makeEmpty(0);
+  }
+
   boolean displayAll = true;
   boolean displayLeaves = true;
 
@@ -30021,12 +30055,12 @@ class solarchvision_Model1Ds {
   
     this.LeafSize = new float [n];
 
-    Select3Ds.deselect_Groups();  
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+    }  
   }    
   
-  solarchvision_Model1Ds () { // constructor
-    makeEmpty(0);
-  }
+
   
   
   float getX (int n) {
@@ -31043,6 +31077,10 @@ class solarchvision_Model2Ds {
   
   private final static String CLASS_STAMP = "Model2Ds";
 
+  solarchvision_Model2Ds () { // constructor
+    makeEmpty(0);
+  }  
+
   boolean displayAll = true;
 
   float[][] XYZS = new float[0][4];
@@ -31840,14 +31878,17 @@ class solarchvision_Model2Ds {
 
     this.MAP = new int [n];
 
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Model2Ds[q][0] = 0;
-      allGroups.Model2Ds[q][1] = -1;
-    }  
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Model2Ds[q][0] = 0;
+        allGroups.Model2Ds[q][1] = -1;
+      }  
+    }
 
-    Select3Ds.deselect_Groups();
-
-    Select3Ds.deselect_Model2Ds();
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Model2Ds();
+    }
   }  
   
   
@@ -32004,6 +32045,10 @@ solarchvision_Model2Ds allModel2Ds = new solarchvision_Model2Ds();
 class solarchvision_Solids {
   
   private final static String CLASS_STAMP = "Solids";
+  
+  solarchvision_Solids () { // constructor
+    makeEmpty(0);
+  }    
   
   boolean displayAll = true;  
   int pallet_CLR = 17; //1; 
@@ -32260,13 +32305,17 @@ class solarchvision_Solids {
   void makeEmpty (int n) {
     this.DEF = new float [n][13]; 
   
-    for (int q = 0; q < allGroups.num; q++) {
-      allGroups.Solids[q][0] = 0;
-      allGroups.Solids[q][1] = -1;
+    if (allGroups != null) {
+      for (int q = 0; q < allGroups.num; q++) {
+        allGroups.Solids[q][0] = 0;
+        allGroups.Solids[q][1] = -1;
+      }
     }
-  
-    Select3Ds.deselect_Groups();
-    Select3Ds.deselect_Solids();
+    
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Solids();
+    }
   }    
 
 
@@ -32640,6 +32689,10 @@ float[][] allVertices = new float[0][3];
 class solarchvision_Points {
   
   private final static String CLASS_STAMP = "Points";
+   
+  solarchvision_Points () { // constructor
+    makeEmpty(0);
+  }     
     
   boolean displayAll = false;
   
@@ -32711,10 +32764,12 @@ class solarchvision_Points {
   
     allVertices = new float [n][3];
   
-    Select3Ds.deselect_Groups();
-    Select3Ds.deselect_Faces();
-    Select3Ds.deselect_Curves();
-    Select3Ds.deselect_Vertices();
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Groups();
+      Select3Ds.deselect_Faces();
+      Select3Ds.deselect_Curves();
+      Select3Ds.deselect_Vertices();
+    }
   }  
   
   
@@ -37350,6 +37405,10 @@ class solarchvision_Cameras {
 
   private final static String CLASS_STAMP = "Cameras";
   
+  solarchvision_Cameras () { // constructor
+    makeEmpty(0);
+  }    
+  
   boolean displayAll = false;
   
   float[][] options = {
@@ -37493,7 +37552,9 @@ class solarchvision_Cameras {
   
     this.add_first();
   
-    Select3Ds.deselect_Cameras();
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Cameras();
+    }
   }
     
   
@@ -37879,6 +37940,10 @@ solarchvision_Cameras allCameras = new solarchvision_Cameras();
 class solarchvision_Sections {
 
   private final static String CLASS_STAMP = "Sections";
+
+  solarchvision_Sections () { // constructor
+    makeEmpty(0);
+  }  
   
   boolean displayAll = true;
 
@@ -38039,7 +38104,9 @@ class solarchvision_Sections {
   
     this.num = n;
   
-    Select3Ds.deselect_Sections();
+    if (Select3Ds != null) {
+      Select3Ds.deselect_Sections();
+    }
   }    
   
   
